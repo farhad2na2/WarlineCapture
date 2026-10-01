@@ -1,0 +1,159 @@
+{
+  "baselineCommit": "aeffb64c1a7dda27f90dedc244d5aff5454f7cb1",
+  "missions": [
+    {
+      "missionId": "saga.ch01.m01.first_contact",
+      "definition": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset",
+      "sha256": "b029211c747e5b9f9e9c3c655f2264da38b65bfbcfca13fac80b26cb4f886ca7",
+      "operationMapId": "opmap.ch01.district_edge_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset",
+          "sha256": "1567c4637104c12dda084947206cbf3733d74c21f2f8c939d9b4e6940f4bfb28",
+          "contentHash": "95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch01.m02.establish_base",
+      "definition": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M02_EstablishBase.asset",
+      "sha256": "9cc24c0afa637c340d7bcacf45d19b9a5e2c85f28d26750d0d66e99a6a6d2194",
+      "operationMapId": "opmap.ch01.forward_post_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset",
+          "sha256": "aee6f5242223035798a4f7ec9bce1d7e65ba55f7c5d5e668f97f7728ea9f6683",
+          "contentHash": "b1c94518610b4bbcd0ce6ee3678e272a3bf505819b9eea52be44224657ba0ce6"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch01.m03.radar_warning",
+      "definition": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M03_RadarWarning.asset",
+      "sha256": "0a42080d251d3e8dd2c2431bc233d703b7ff24370173b8b190fe630a4fd97845",
+      "operationMapId": "opmap.ch01.convoy_approach_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ConvoyApproach01.asset",
+          "sha256": "47d4d558c7126e9f6db83f91184d5b7b1731ade8b47792d2a563c03602e70e87",
+          "contentHash": "58d30c88c8151e501c04f8b05fcc1d165fc0f624619f71b9f4c1013bb2692c50"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch01.m05.breach_assault",
+      "definition": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M05_BreachAssault.asset",
+      "sha256": "60675e59bcc20c2f0b58748af68dea4c966dea3886d67e9423bd584c149bdce1",
+      "operationMapId": "opmap.ch01.breach_assault_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_BreachAssault01.asset",
+          "sha256": "6074650f7e15181d92a564f52d46a86dcd47106679dd8e1c4fc76eb95f7731e8",
+          "contentHash": "0299e5e23bcfe8a668500e712ef72e6115777dce96884b9c8f967931d5b22208"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch02.m01.gridlock",
+      "definition": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset",
+      "sha256": "762274173d3abec43d3d40317fe6143dd62aa0270c2080b39d04dff015dcea7d",
+      "operationMapId": "opmap.ch02.hospital_corridor_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset",
+          "sha256": "dc8b455739f89114362b3fa44e299db56eb114f2b10829dd689b0dd63d4325f7",
+          "contentHash": "35eec606a5c759849272d581994533078b6f489ba26bab1096ce60fdfbd3d859"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch02.m03.market_lifeline",
+      "definition": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M03_MarketLifeline.asset",
+      "sha256": "8185247a312bc2fad1b2eefa33210488d7e405c44584db159c504f4cd4596e01",
+      "operationMapId": "opmap.ch02.old_market_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_OldMarket01.asset",
+          "sha256": "076a37160a6a6170f32465601e273cf6e208bb7272a3a98ebf9d382837effe17",
+          "contentHash": "302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch03.m01.signal_trace",
+      "definition": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M01_SignalTrace.asset",
+      "sha256": "67c038d4bcc4436ba40aa4672f2ebc77f6d294c4e9af520670ec5b5ebf6a9e7c",
+      "operationMapId": "opmap.ch03.signal_trace_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter03/OperationMap_Ch03_SignalTrace01.asset",
+          "sha256": "11542698bd7474c5112ee7e248a91e9f8b6e2f8dc5d43e0aebaca3ff75e2e719",
+          "contentHash": "302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch03.m02.safehouse_sweep",
+      "definition": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M02_SafehouseSweep.asset",
+      "sha256": "2e47cd2cdeaa3b3fbcc377d5ab000b16fe604bc51bee09032b2f43f9853929ae",
+      "operationMapId": "opmap.ch03.safehouse_sweep_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter03/OperationMap_Ch03_SafehouseSweep01.asset",
+          "sha256": "0c008d179060999b641c345e102efc51264703e6beea9807465add68392160a2",
+          "contentHash": "302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch03.m03.false_front",
+      "definition": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M03_FalseFront.asset",
+      "sha256": "8ba6a73a4ea33390fd595aae9fdf95b2f60cb13e9183107402f1426d7e55b949",
+      "operationMapId": "opmap.ch03.false_front_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter03/OperationMap_Ch03_FalseFront01.asset",
+          "sha256": "a0f2f818f4e7a3bc15c48cdbb9e850851b398a8f4da9980f5909f0fad2aa499c",
+          "contentHash": "302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch03.m04.evidence_chain",
+      "definition": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M04_EvidenceChain.asset",
+      "sha256": "da3bb340c00fb63e0d6642368635a95f0607a135033392eca55abc58c999c34f",
+      "operationMapId": "opmap.ch03.evidence_chain_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter03/OperationMap_Ch03_EvidenceChain01.asset",
+          "sha256": "220e139d7f5ea8e1c246bccf893d7afbf26422bfb8fb02a03971635324277deb",
+          "contentHash": "9ec5c0dc2197bfa36e29b52d1c9bb57a8e809f96e1c1a2b43c1445925e3c8bc4"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    },
+    {
+      "missionId": "saga.ch03.m05.network_break",
+      "definition": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M05_NetworkBreak.asset",
+      "sha256": "6559e0cd55497453a85cda683406bf94818459321542dfc5e55f8a5c32f954c9",
+      "operationMapId": "opmap.ch03.network_break_01",
+      "maps": [
+        {
+          "path": "Assets/Game/Configs/OperationMaps/Chapter03/OperationMap_Ch03_NetworkBreak01.asset",
+          "sha256": "05359c80fc658fe74c47614f9781f93d1569827eddee5f7c5027f7b8a9947ed5",
+          "contentHash": "9494c8023034456ee0593c31e190e650791ac2e45a0f7d43cda61ae99be32d03"
+        }
+      ],
+      "nativeAcceptance": "unchanged; not rerun or promoted"
+    }
+  ]
+}

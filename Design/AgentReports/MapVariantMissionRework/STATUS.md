@@ -2,7 +2,7 @@
 
 Updated 2026-10-01. This isolated checkout contains the CH02-M02 Supply Line
 pilot, a CH02-M04 Power Relay review candidate, and a CH01-M04 Airlift
-candidate and a CH04-M01 Air Corridor candidate ready for mission review. No map or mission is qualified for release,
+candidate, a CH04-M01 Air Corridor candidate and a CH02-M05 Route Reopened candidate ready for mission review. Steel Push is also ready for mission review following final desktop checks. No map or mission is qualified for release,
 and these review bindings have not been promoted
 to `main`.
 
@@ -17,14 +17,14 @@ to `main`.
 | CH02-M02 Supply Line | RefineryDistrict | Review candidate in progress; see `SupplyLine/WORKSPACE.md` |
 | CH02-M03 Market Lifeline | Retain urban | Generator basis pinned to legacy Supply Line map; regression pending |
 | CH02-M04 Power Relay | RefineryDistrict | ARIA public-input victory and result/return passed; visual and negative gates pending; see `PowerRelay/WORKSPACE.md` |
-| CH02-M05 Route Reopened | AshLinePort | Not started |
+| CH02-M05 Route Reopened | AshLinePort | Final English ARIA/Persian manual, native convoy and records losses, fresh Retry and result/return passed; human/device acceptance pending; see `RouteReopened/READINESS.md` |
 | CH03-M01 Signal Trace | Retain urban | No migration; baseline not rerun |
 | CH03-M02 Safehouse Sweep | Retain urban | No migration; baseline not rerun |
 | CH03-M03 False Front | Retain urban | No migration; baseline not rerun |
 | CH03-M04 Evidence Chain | Retain urban | No migration; baseline not rerun |
 | CH03-M05 Network Break | Retain urban | No migration; baseline not rerun |
 | CH04-M01 Air Corridor | CityEdgeAirfield | Final English manual/Retry and Persian ARIA normal-input victory/result/return passed; visible gray Build actions, exact shortage/refund, saved Continue and real radar-loss gates passed; ready for Editor review; see `AirCorridor/WORKSPACE.md` |
-| CH04-M02 Steel Push | RefineryDistrict | Generator basis pinned to legacy Supply Line map; migration not started |
+| CH04-M02 Steel Push | RefineryDistrict | Final English ARIA first clear/replay, Persian manual, shortage fixture and native defeat/fresh Retry passed; human/device acceptance pending; see `SteelPush/READINESS.md` |
 | CH04-M03 Split Front | RefineryDistrict | Generator basis pinned to legacy Supply Line map; migration not started |
 
 Supply Line gates: candidate generation, packed content build, mission

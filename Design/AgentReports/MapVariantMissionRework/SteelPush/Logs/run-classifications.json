@@ -1,0 +1,227 @@
+[
+  {
+    "log": "steel-push-en-aria-01.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-en-aria-replay-02.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-en-aria-replay-05.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-en-aria-replay-06.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-en-aria-replay-07.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-en-aria-replay-08.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-en-aria-replay-09.log",
+    "verdict": "Passed",
+    "acceptance": "Normal-input English ARIA first clear and Replay"
+  },
+  {
+    "log": "steel-push-en-saved-replay-03.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-en-saved-replay-04.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-fa-manual-01.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-fa-manual-02.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-fa-manual-04.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-fa-manual-05.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-fa-manual-06.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-fa-manual-07.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-fa-manual-08.log",
+    "verdict": "Passed",
+    "acceptance": "Normal-input Persian manual first clear"
+  },
+  {
+    "log": "steel-push-prep-01.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-prep-02.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-03.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-04.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-prep-05.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-06.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-prep-07.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-08.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-09.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-10.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-11.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-prep-12.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-prep-13.log",
+    "verdict": "Passed",
+    "acceptance": "Automated configuration, rules and media"
+  },
+  {
+    "log": "steel-push-retreat-loss-01.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-02.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-03.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-04.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-05.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-retreat-loss-06.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-retreat-loss-07.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-08.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-09.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-10.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-11.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-12.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-13.log",
+    "verdict": "Failed",
+    "acceptance": "Retained failed evidence"
+  },
+  {
+    "log": "steel-push-retreat-loss-14.log",
+    "verdict": "Passed",
+    "acceptance": "Normal-input armored withdrawal, native defeat and fresh Retry; no live assistance"
+  },
+  {
+    "log": "steel-push-shortage-01.log",
+    "verdict": "Passed",
+    "acceptance": "Historical; not final-revision acceptance"
+  },
+  {
+    "log": "steel-push-shortage-02.log",
+    "verdict": "Passed",
+    "acceptance": "Injected fuel fault, normal combat and return"
+  }
+]

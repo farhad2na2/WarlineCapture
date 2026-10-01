@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch04_M02_SteelPush
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch04.m02.steel_push
-  operationMapId: opmap.ch04.steel_push_01
+  operationMapId: opmap.ch04.steel_push_refinery_approach
   requiredAnchors:
   - anchorId: anchor.ch04.m02.forward_post
     kind: 7
@@ -27,13 +27,23 @@ MonoBehaviour:
     kind: 3
   - anchorId: anchor.ch04.m02.squad_b
     kind: 3
+  - anchorId: anchor.ch04.m02.tank_support_b
+    kind: 3
+  - anchorId: anchor.ch04.m02.apc_support
+    kind: 3
   - anchorId: anchor.ch04.m02.armor_support
     kind: 3
   - anchorId: anchor.ch04.m02.civilians
     kind: 5
   - anchorId: anchor.ch04.m02.vanguard_spawn
     kind: 1
+  - anchorId: anchor.ch04.m02.vanguard_command
+    kind: 1
   - anchorId: anchor.ch04.m02.main_spawn
+    kind: 1
+  - anchorId: anchor.ch04.m02.main_tank_support
+    kind: 1
+  - anchorId: anchor.ch04.m02.main_command
     kind: 1
   - anchorId: anchor.ch04.m02.contact
     kind: 6
@@ -71,13 +81,13 @@ MonoBehaviour:
     - unitConfigKey: unit.ch04.m02.veh_tank_usa
       runtimePrefabSourceKey: Unit_Veh_Tank_USA
       expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
-      spawnAnchorId: anchor.ch04.m02.squad_b
+      spawnAnchorId: anchor.ch04.m02.tank_support_b
       missionRoleId: role.friendly.command_squad
       count: 1
     - unitConfigKey: unit.ch04.m02.veh_apc_fast
       runtimePrefabSourceKey: Unit_Veh_APC_Fast
       expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
-      spawnAnchorId: anchor.ch04.m02.squad_b
+      spawnAnchorId: anchor.ch04.m02.apc_support
       missionRoleId: role.friendly.command_squad
       count: 1
   - groupId: group.ch04.m02.infantry
@@ -119,7 +129,7 @@ MonoBehaviour:
     - unitConfigKey: unit.ch04.m02.veh_apc_fast
       runtimePrefabSourceKey: Unit_Veh_APC_Fast
       expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
-      spawnAnchorId: anchor.ch04.m02.vanguard_spawn
+      spawnAnchorId: anchor.ch04.m02.vanguard_command
       missionRoleId: role.hostile.convoy
       count: 1
   - groupId: group.ch04.m02.main_body
@@ -134,13 +144,13 @@ MonoBehaviour:
     - unitConfigKey: unit.ch04.m02.veh_tank_usa
       runtimePrefabSourceKey: Unit_Veh_Tank_USA
       expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
-      spawnAnchorId: anchor.ch04.m02.main_spawn
+      spawnAnchorId: anchor.ch04.m02.main_tank_support
       missionRoleId: role.hostile.convoy
       count: 1
     - unitConfigKey: unit.ch04.m02.veh_apc_fast
       runtimePrefabSourceKey: Unit_Veh_APC_Fast
       expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
-      spawnAnchorId: anchor.ch04.m02.main_spawn
+      spawnAnchorId: anchor.ch04.m02.main_command
       missionRoleId: role.hostile.convoy
       count: 1
   patrolRoutes:
@@ -185,7 +195,7 @@ MonoBehaviour:
     buildZone:
       anchorId: anchor.ch04.m02.build_zone
       halfWidthCells: 65
-      halfHeightCells: 30
+      halfHeightCells: 25
     delayedWave:
       unitGroupId: 
       routeId: 

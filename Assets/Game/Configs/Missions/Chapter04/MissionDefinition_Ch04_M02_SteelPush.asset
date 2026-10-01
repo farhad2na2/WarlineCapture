@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.steel_push.summary
   locationNameKey: mission.steel_push.location
   scenarioId: scenario.ch04.m02.steel_push
-  operationMapId: opmap.ch04.steel_push_01
+  operationMapId: opmap.ch04.steel_push_refinery_approach
   briefingSequenceId: seq.ch04.m02.brief
   commsSequenceId: seq.ch04.m02.comms
   debriefSequenceId: seq.ch04.m02.debrief

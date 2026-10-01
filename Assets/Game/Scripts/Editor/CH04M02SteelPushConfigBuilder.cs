@@ -13,20 +13,20 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-    public static class CH04M02SteelPushConfigBuilder
+    public static partial class CH04M02SteelPushConfigBuilder
     {
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M02_SteelPush.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M02_SteelPush.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SteelPush01.asset";
-        public const string MapId="opmap.ch04.steel_push_01",ScenarioId="scenario.ch04.m02.steel_push",Prefix="anchor.ch04.m02.";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SteelPushRefineryApproach.asset";
+        public const string MapId="opmap.ch04.steel_push_refinery_approach",ScenarioId="scenario.ch04.m02.steel_push",Prefix="anchor.ch04.m02.";
         public const string ReserveBuildingId="Building_SteelPush_ReserveDepot";
         public const string ReservePrefabPath="Assets/Game/Prefabs/Buildings/CH04M02SteelPush/"+ReserveBuildingId+".prefab";
         public static void Build()
         {
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"})Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter04");
-            AssetDatabase.Refresh();BuildReservePrefab();BuildMap();BuildScenario();BuildMission();
+            AssetDatabase.Refresh();BuildReservePrefab();BuildRefineryMap();BuildScenario();BuildMission();
             M01FirstContactConfigBuilder.RefreshChapterCatalogs();AssetDatabase.SaveAssets();
-            Debug.Log("[SteelPushConfig] result=Passed chapter=4 mission=2 tanks=3 apc=1 infantry=4 hostiles=5 reserve=finite terrain=urban-fuel-yard");
+            Debug.Log("[SteelPushConfig] result=Passed chapter=4 mission=2 tanks=3 apc=1 infantry=4 hostiles=5 reserve=finite terrain=refinery-approach");
         }
         private static void BuildReservePrefab()
         {
@@ -47,61 +47,6 @@ namespace Game.Editor
             }
             finally{UnityEngine.Object.DestroyImmediate(root);}
         }
-        private static void BuildMap()
-        {
-            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.LegacyMapPath,MapPath);
-            var data=new SerializedObject(map);Replace(data,"ch02.m02","ch04.m02");
-            S(data.FindProperty("operationMapId"),MapId);
-            var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(590,0,410);
-            bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(845,100,490);MissionCameraBoundsAuthoring.Apply(bounds);
-            var minimap=data.FindProperty("minimap");S(minimap.FindPropertyRelative("minimapId"),"minimap.ch04.m02.steel_push");
-            minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(590,0,410);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(255,80);
-            S(data.FindProperty("planningCameraId"),"camera.ch04.m02.planning");S(data.FindProperty("battleCameraId"),"camera.ch04.m02.battle");
-            var cameras=data.FindProperty("cameras");
-            for(int i=0;i<cameras.arraySize;i++)
-            {
-                var camera=cameras.GetArrayElementAtIndex(i);S(camera.FindPropertyRelative("cameraId"),i==0?"camera.ch04.m02.planning":"camera.ch04.m02.battle");
-                var focus=new Vector3(755,0,435);var position=focus+new Vector3(0,i==0?95:82,-65);
-                camera.FindPropertyRelative("position").vector3Value=position;camera.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;
-            }
-            (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
-                ("forward_post",796,450,OperationMapAnchorKind.Base,1,12),
-                ("fuel_reserve",796,450,OperationMapAnchorKind.Build,1,1),
-                ("initial_barracks",738,450,OperationMapAnchorKind.Build,1,1),
-                ("build_zone",775,450,OperationMapAnchorKind.Build,1,38),
-                ("squad_a",748,426,OperationMapAnchorKind.Deployment,1,2),
-                ("squad_b",740,426,OperationMapAnchorKind.Deployment,1,2),
-                ("armor_support",754,426,OperationMapAnchorKind.Deployment,1,2),
-                ("civilians",782,430,OperationMapAnchorKind.Civilian,0,2),
-                ("vanguard_spawn",635,426,OperationMapAnchorKind.Spawn,2,3),
-                ("main_spawn",602,426,OperationMapAnchorKind.Spawn,2,3),
-                ("contact",700,426,OperationMapAnchorKind.Hostile,2,3),
-                ("fork",730,426,OperationMapAnchorKind.Lane,1,3),
-                ("inner_core",825,426,OperationMapAnchorKind.Base,1,5),
-                ("return_rts",766,435,OperationMapAnchorKind.Camera,1,2),
-                ("defense_tower",721,415,OperationMapAnchorKind.Build,1,3),
-                ("defense_barrier",724,427,OperationMapAnchorKind.Build,1,3)};
-            var surface=AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
-            Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Steel Push surface missing");
-            using(blob)
-            {
-                var anchors=data.FindProperty("anchors");anchors.arraySize=seeds.Length;
-                for(int i=0;i<seeds.Length;i++)
-                {
-                    var seed=seeds[i];Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new int2(seed.x,seed.z),out var sample),"Missing surface: "+seed.id);
-                    var anchor=anchors.GetArrayElementAtIndex(i);S(anchor.FindPropertyRelative("anchorId"),Prefix+seed.id);
-                    I(anchor.FindPropertyRelative("kind"),(int)seed.kind);I(anchor.FindPropertyRelative("factionId"),seed.faction);I(anchor.FindPropertyRelative("laneIndex"),0);
-                    anchor.FindPropertyRelative("position").vector3Value=new Vector3(seed.x,sample.Height,seed.z);
-                    anchor.FindPropertyRelative("radius").floatValue=seed.radius;
-                }
-            }
-            using(var sha=SHA256.Create())
-            {
-                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(map.ContentHash+":steel-push-industrial-yard-v1"))).Replace("-","").ToLowerInvariant();
-                S(data.FindProperty("contentHash"),hash);S(data.FindProperty("generatedMetadataHash"),hash);
-            }
-            data.ApplyModifiedPropertiesWithoutUndo();Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);
-        }
         private static void BuildScenario()
         {
             var scenario=Clone<ScenarioSetupConfig>(M03RadarWarningConfigBuilder.ScenarioPath,ScenarioPath);var data=new SerializedObject(scenario);
@@ -112,7 +57,7 @@ namespace Game.Editor
             var runtime=data.FindProperty("missionRuntime");S(runtime.FindPropertyRelative("baseMissionRoleId"),"role.friendly.fuel_reserve");
             I(runtime.FindPropertyRelative("startingCredits"),0);
             I(runtime.FindPropertyRelative("startingMaterials"),200);
-            var buildZone=runtime.FindPropertyRelative("buildZone");I(buildZone.FindPropertyRelative("halfWidthCells"),65);I(buildZone.FindPropertyRelative("halfHeightCells"),30);
+            var buildZone=runtime.FindPropertyRelative("buildZone");I(buildZone.FindPropertyRelative("halfWidthCells"),65);I(buildZone.FindPropertyRelative("halfHeightCells"),25);
             // Scripted starting buildings pass the same mission catalogue policy
             // as player construction. The already-present reserve uses the one slot.
             var buildCatalog=runtime.FindPropertyRelative("buildCatalog");buildCatalog.arraySize=4;
@@ -121,9 +66,16 @@ namespace Game.Editor
             var groups=data.FindProperty("unitGroups");groups.arraySize=5;
             Group(groups.GetArrayElementAtIndex(0),"tank_front",1,"squad_a","role.friendly.command_squad",new[]{"Veh_Tank_USA"});
             Group(groups.GetArrayElementAtIndex(1),"armor_support",1,"squad_b","role.friendly.command_squad",new[]{"Veh_Tank_USA","Veh_Tank_USA","Veh_APC_Fast"});
+            var supportUnits=groups.GetArrayElementAtIndex(1).FindPropertyRelative("units");
+            S(supportUnits.GetArrayElementAtIndex(1).FindPropertyRelative("spawnAnchorId"),Prefix+"tank_support_b");
+            S(supportUnits.GetArrayElementAtIndex(2).FindPropertyRelative("spawnAnchorId"),Prefix+"apc_support");
             Group(groups.GetArrayElementAtIndex(2),"infantry",1,"armor_support","role.friendly.command_squad",new[]{"Chr_Soldier_Male_02_Alt_02","Chr_Soldier_Male_02_Alt_04","Chr_Soldier_Female_01_Alt_01","Chr_Soldier_Female_02_Alt_01"});
             Group(groups.GetArrayElementAtIndex(3),"vanguard",2,"vanguard_spawn","role.hostile.convoy",new[]{"Veh_Light_Armored_Car","Veh_APC_Fast"});
             Group(groups.GetArrayElementAtIndex(4),"main_body",2,"main_spawn","role.hostile.convoy",new[]{"Veh_Tank_USA","Veh_Tank_USA","Veh_APC_Fast"});
+            S(groups.GetArrayElementAtIndex(3).FindPropertyRelative("units").GetArrayElementAtIndex(1).FindPropertyRelative("spawnAnchorId"),Prefix+"vanguard_command");
+            var mainUnits=groups.GetArrayElementAtIndex(4).FindPropertyRelative("units");
+            S(mainUnits.GetArrayElementAtIndex(1).FindPropertyRelative("spawnAnchorId"),Prefix+"main_tank_support");
+            S(mainUnits.GetArrayElementAtIndex(2).FindPropertyRelative("spawnAnchorId"),Prefix+"main_command");
             var routes=data.FindProperty("patrolRoutes");routes.arraySize=2;
             for(int i=0;i<2;i++)
             {

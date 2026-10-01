@@ -50,8 +50,11 @@ namespace Game.Runtime
                         foreach(var entity in entities)
                         {
                             var info=em.GetComponentData<RuntimeBuildingCombatInfo>(entity);if(info.RuntimeBuildingId!=request.BuildingRuntimeId||info.OwnerFactionId!=1)continue;
-                            if(request.ActualOrigin.x<590||request.ActualOrigin.y<435||
-                                request.ActualOrigin.x+request.ActualFootprint.x>845||request.ActualOrigin.y+request.ActualFootprint.y>490)
+                            if(!em.HasComponent<OperationMapBoundsComponent>(mapQuery.GetSingletonEntity()))
+                            {facts.HostileRosterIntegrityFault=1;break;}
+                            var bounds=em.GetComponentData<OperationMapBoundsComponent>(mapQuery.GetSingletonEntity());
+                            if(request.ActualOrigin.x<bounds.PlayableMin.x||request.ActualOrigin.y<bounds.PlayableMin.z||
+                                request.ActualOrigin.x+request.ActualFootprint.x>bounds.PlayableMax.x||request.ActualOrigin.y+request.ActualFootprint.y>bounds.PlayableMax.z)
                             {facts.HostileRosterIntegrityFault=1;break;}
                             var storage=em.GetComponentData<BuildingResourceStorageComponent>(entity);
                             if(storage.FuelStorageCapacity<SteelStartingFuel){facts.HostileRosterIntegrityFault=1;break;}

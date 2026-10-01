@@ -19,7 +19,9 @@ namespace Game.Rendering
             sockets=state.GetEntityQuery(typeof(OperationMapMissionPresentationSocket));
             missions=state.GetEntityQuery(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent));
             hidden=state.GetEntityQuery(typeof(OperationMapMissionPresentationHiddenTag));
+            steelVegetation=new NativeList<Entity>(Allocator.Persistent);
         }
+        public void OnDestroy(ref SystemState state){if(steelVegetation.IsCreated)steelVegetation.Dispose();}
         public void OnUpdate(ref SystemState state)
         {
             var em=state.EntityManager;FixedString64Bytes active=default;
@@ -27,6 +29,7 @@ namespace Game.Rendering
             using var roots=sockets.ToEntityArray(Allocator.Temp);
             var wanted=new HashSet<Entity>();
             foreach(var root in roots)if(em.GetComponentData<OperationMapMissionPresentationSocket>(root).MissionId.Equals(active))Collect(em,root,wanted);
+            CollectSteelReserveSocket(em,active,wanted);
             using var retired=hidden.ToEntityArray(Allocator.Temp);
             foreach(var renderer in retired)if(!wanted.Contains(renderer)){if(em.HasComponent<DisableRendering>(renderer))em.RemoveComponent<DisableRendering>(renderer);em.RemoveComponent<OperationMapMissionPresentationHiddenTag>(renderer);}
             int added=0;

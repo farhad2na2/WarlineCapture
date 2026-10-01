@@ -63,6 +63,11 @@ namespace Game.UI.Runtime
                UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var tutorialTarget) &&
                !tutorialTarget.NeedsSelection && !tutorialTarget.Moving && !tutorialTarget.ExecutingAttack)
             {
+                if(tutorialTarget.BattleAction==UiTutorialBattleAction.Hold&&UiShellRuntimeGateway.IsDefensePreparationGuideContext())
+                {
+                    var command=ObserveWatchButton(_commandControlsView?.HoldButton);
+                    if(command.Available){kind=AriaPlayObservationKind.Control;target=command.Id;position=command.Position;}
+                }
                 TacticalCommandMode required=tutorialTarget.BattleAction switch
                 {
                     UiTutorialBattleAction.Move=>TacticalCommandMode.Move,

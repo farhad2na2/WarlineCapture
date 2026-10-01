@@ -1,0 +1,1 @@
+Wrapper --reuse dispatch exit=6. COMMAND_FAILED: No Pipeline instance found for this project. Existing Editor preserved. No executeMethod log or pass marker produced.

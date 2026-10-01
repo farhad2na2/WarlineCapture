@@ -1,0 +1,1505 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-10-01T08:44:11Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-10-01T08:44:11.816652Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+-logFile
+/private/tmp/steel-push-prep-05.log
+-executeMethod
+Game.Editor.CH04M02SteelPushConfigBuilder.PrepareRefineryReview
+Successfully changed project path to: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55505 [Flags] 2 [Guid] 1470307824 [EditorId] 1470307824 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55505 [Flags] 2 [Guid] 1470307824 [EditorId] 1470307824 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-81804" after 0.0 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              5c46cc55e1fe40c6b88b1ad0d97b112e
+  Correlation Id:          a12e24994cdf1129b78ddeb885cfe210
+  External correlation Id: 5482238039109931981
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.22s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-10-01T08:44:12.03608Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.22s
+[Licensing::Module] Licensing is initialized (took 0.01s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Artifact Garbage Collection - Removed 1 unused hashed content files
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56804
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.002357 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.199 seconds
+Domain Reload Profiling: 426ms
+	BeginReloadAssembly (59ms)
+		CreateAndSetChildDomain (7ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (26ms)
+	LoadAllAssembliesAndSetupDomain (130ms)
+		LoadAssemblies (53ms)
+		AnalyzeDomain (100ms)
+			TypeCache.Refresh (99ms)
+				TypeCache.ScanAssembly (92ms)
+	FinalizeReload (200ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (39ms)
+			BeforeProcessingInitializeOnLoad (37ms)
+			ProcessInitializeOnLoadAttributes (43ms)
+			ProcessInitializeOnLoadMethodAttributes (44ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-b9b41bb666d9b434679641e7e0b1a1cb
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 17.9195ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 15.7649ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Runtime.dll, with 138 defines and 327 references
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.MapPreparation.Native.dll, with 138 defines and 298 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.ScenarioLab.Runtime.dll, with 138 defines and 319 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Rocks.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.PlayMode.dll, with 138 defines and 317 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Composition.dll, with 138 defines and 335 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 12.5334ms
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Editor.dll, with 136 defines and 354 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Collections, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Collections.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.Editor.dll, with 136 defines and 332 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Burst.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Cecil.Awesome, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null with Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.CodeGen/Unity.Cecil.Awesome.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Scripting, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/Unity.Scripting.dll
+  - EILPP : Game.Tests.PlayMode : : 354ms (~198ms)
+    - EILPP : Game.Tests.PlayMode : Cloner: 1ms 
+  - EILPP : Game.Tests.MapPreparation.Native : : 354ms (~200ms)
+    - EILPP : Game.Tests.MapPreparation.Native : Cloner: 1ms 
+    - EILPP : Game.Tests.PlayMode : ComponentDataPP: 89ms 
+    - EILPP : Game.Tests.PlayMode : StaticTypeRegistryPostProcessor: 66ms 
+    - EILPP : Game.Tests.MapPreparation.Native : ComponentDataPP: 88ms 
+    - EILPP : Game.Tests.MapPreparation.Native : StaticTypeRegistryPostProcessor: 65ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEditor.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 499.9647ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 510.6240ms
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Shell.Ecs.dll, with 138 defines and 326 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+  - EILPP : Game.UI.Shell.Ecs : : 617ms (~87ms)
+    - EILPP : Game.UI.Shell.Ecs : Cloner: 11ms 
+    - EILPP : Game.UI.Shell.Ecs : StaticTypeRegistryPostProcessor: 18ms 
+    - EILPP : Game.UI.Shell.Ecs : WriteAssembly: 501ms 
+  - EILPP : Game.Composition : : 1115ms (~183ms)
+    - EILPP : Game.Composition : Cloner: 40ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+    - EILPP : Game.Composition : ComponentDataPP: 50ms 
+    - EILPP : Game.Composition : StaticTypeRegistryPostProcessor: 335ms 
+    - EILPP : Game.Composition : WriteAssembly: 507ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 1360.6005ms
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil.Rocks, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.Rocks.dll
+  - EILPP : Game.Runtime : : 2213ms (~472ms)
+    - EILPP : Game.Runtime : GetAllComponentTypes: 1ms 
+    - EILPP : Game.Runtime : Cloner: 138ms 
+    - EILPP : Game.Runtime : ComponentDataPP: 10ms 
+    - EILPP : Game.Runtime : StaticTypeRegistryPostProcessor: 113ms 
+    - EILPP : Game.Runtime : WriteAssembly: 1479ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 2771.3422ms
+  - EILPP : Game.Editor : : 2807ms (~444ms)
+    - EILPP : Game.Editor : GetAllComponentTypes: 19ms 
+    - EILPP : Game.Editor : ComponentDataPP: 20ms 
+    - EILPP : Game.Editor : StaticTypeRegistryPostProcessor: 119ms 
+    - EILPP : Game.Editor : WriteAssembly: 2205ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+  - EILPP : Game.Tests.Editor : : 2822ms (~451ms)
+    - EILPP : Game.Tests.Editor : GetAllComponentTypes: 1ms 
+    - EILPP : Game.Tests.Editor : Cloner: 31ms 
+    - EILPP : Game.Tests.Editor : ComponentDataPP: 86ms 
+    - EILPP : Game.Tests.Editor : StaticTypeRegistryPostProcessor: 38ms 
+    - EILPP : Game.Tests.Editor : WriteAssembly: 2215ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 3219.0893ms
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 4826.7558ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 4918.5076ms
+ExitCode: 0 Duration: 12s
+[1417/2004  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[BUSY       6s] Csc Library/Bee/artifacts/200b0aE.dag/Game.Runtime.dll (+2 others)
+[1972/2004  6s] Csc Library/Bee/artifacts/200b0aE.dag/Game.Runtime.dll (+2 others)
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(29,84): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(30,89): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+[1980/2004  0s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.UI.ScenarioLab.Runtime.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.ScenarioLab.Runtime.dll, with 138 defines and 319 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1983/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.MapPreparation.Native.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.MapPreparation.Native.dll, with 138 defines and 298 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1984/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.PlayMode.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.PlayMode.dll, with 138 defines and 317 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1989/2004  2s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Composition.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Composition.dll, with 138 defines and 335 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1992/2004  2s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.UI.Shell.Ecs.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Shell.Ecs.dll, with 138 defines and 326 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1995/2004  3s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Editor.dll, with 136 defines and 354 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1998/2004  4s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Runtime.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Runtime.dll, with 138 defines and 327 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1999/2004  0s] CopyFiles Library/ScriptAssemblies/Game.Runtime.pdb
+[2000/2004  0s] CopyFiles Library/ScriptAssemblies/Game.Runtime.dll
+[2001/2004  5s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.Editor.dll, with 136 defines and 332 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+*** Tundra build success (12.18 seconds), 12 items updated, 2004 evaluated
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(29,84): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(30,89): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+AssetDatabase: script compilation time: 12.562221s
+Total cache size 268044014
+Total cache size after purge 268044014, took 00:00:00.2014034
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 168ms
+The assembly Game.Authoring is using the BakingVersion attribute. But the following Baker/Baking systems/EntitySceneOptimizations systems are missing the attribute:
+Game.Authoring.SupportAbilityCatalogAuthoring+SupportBaker.
+
+Updating these bakers/systems won't trigger a scene import automatically. Please add a BakingVersion attribute on them and update their version number everytime you want them to be rerun before an import. 
+Or don't use the attribute at all in their assembly to trigger scene import automatically after each changes in the assembly.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Scenes.Editor.TypeDependencyCache:PrintMissingBakingVersionAttributesWarning (System.Collections.Generic.Dictionary`2<string, System.Collections.Generic.List`1<System.Type>>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:305)
+Unity.Scenes.Editor.TypeDependencyCache:RegisterBakingAssemblies () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:284)
+Unity.Scenes.Editor.TypeDependencyCache:.cctor () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:61)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+Start HTTP server: port:7800
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  5.416 seconds
+Domain Reload Profiling: 6085ms
+	BeginReloadAssembly (102ms)
+		DisableScriptedObjects (5ms)
+		CreateAndSetChildDomain (30ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (7ms)
+	initialDomainReloadingComplete (33ms)
+	LoadAllAssembliesAndSetupDomain (522ms)
+		LoadAssemblies (202ms)
+		AnalyzeDomain (294ms)
+			TypeCache.Refresh (237ms)
+				TypeCache.ScanAssembly (220ms)
+			BuildScriptInfoCaches (52ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (5417ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (5ms)
+			BeforeProcessingInitializeOnLoad (45ms)
+			ProcessInitializeOnLoadAttributes (2594ms)
+			ProcessInitializeOnLoadMethodAttributes (2546ms)
+		AwakeInstancesAfterBackupRestoration (7ms)
+Starting new worker id: 0 with log in /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=73ddd5c2a2e114d40be2ecb8bf17480c): Total: 20.886 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=7032 ms
+		Asset DB Callback time: managed=523 ms, native=15 ms
+		Scripting: domain reloads=1, domain reload time=698 ms, compile time=12563 ms, other=52 ms
+		Project Asset Count: scripts=3421, non-scripts=20781
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 7.585ms
+	ApplyChangesToAssetFolders: 0.218ms
+	Scan: 981.306ms
+	Collect global state as custom dependencies: 3.739ms
+	OnSourceAssetsModified: 0.319ms
+	CategorizeScriptCompilationAssets: 61.826ms
+	ProcessAssetsWithTransientArtifactChanges: 74.877ms
+	CategorizeAssets: 149.859ms
+	CompileScripts: 12563.163ms
+	ImportOutOfDateAssets: 5601.915ms (5446.695ms without children)
+		ReloadNativeAssets: 0.288ms
+		UnloadImportedAssets: 9.253ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.110ms
+		ImportSchedulerStart: 143.565ms
+	PostProcessAllAssets: 524.158ms
+		VCAutoAddAssetPostprocess 0.941ms
+		XRBuildSystem.XRAssetImported 0.117ms
+		MonoPostProcessAllAssets: 522.891ms
+			AssetPostprocessor.OnPostprocessAllAssets 335.634ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 39.104ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 14.920ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 6.875ms
+			SyncVS.PostprocessSyncProject 5.279ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 4.506ms
+			AssetChangedListener.OnPostprocessAllAssets 2.016ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 1.778ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.561ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.195ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 1.075ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.960ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.867ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.771ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.570ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.412ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.358ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.281ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.268ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.251ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.225ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.183ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.173ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.170ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.168ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.168ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.151ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.142ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.141ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.140ms
+			PostProcessor.OnPostprocessAllAssets 0.134ms
+			AssetEvents.OnPostprocessAllAssets 0.130ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.118ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.100ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.096ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.082ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.070ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.068ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.053ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.052ms
+	PostAssetChangesProfiler: 7.613ms
+	UnloadStreamsBegin: 0.814ms
+	PersistCurrentRevisions: 0.489ms
+	GenerateScriptTypeHashes: 3.516ms
+	GenerateScriptTypeSerializationHashes: 5.041ms
+	Untracked: 907.093ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.05 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.098ms
+Initializing Unity extensions:
+Worker ready: AssetImportWorkerHW0 0
+2026-10-01 10:44:35.644 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc5fed08c0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:35.645 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc5fed0a00 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:35.645 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc5fed0aa0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:35.648 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc5ff246e0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 1869 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            1083.123 ms
+	Integration:            646.700 ms
+	Integration of assets:  618.584 ms
+	Thread Wait Time:       -0.026 ms
+	Total Operation Time:   2348.382 ms
+Unloading 15142 unused Assets / (35.2 MB). Loaded Objects now: 45717.
+Memory consumption went from 1.27 GB to 1.24 GB.
+Total: 98.654334 ms (FindLiveObjects: 11.538333 ms CreateObjectMapping: 12.074667 ms MarkObjects: 47.363625 ms  DeleteObjects: 27.675500 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+2026-10-01 10:44:39.753 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc6d6477a0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:39.753 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc6d6478e0 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:39.753 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc6d647980 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 10:44:39.757 Unity[81804:41054334] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xc5ff22580 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+
+Asset Pipeline Refresh (id=b6e025363655048038a89b016c61eb3d): Total: 0.712 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=712 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3421, non-scripts=20781
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.152ms
+	Scan: 417.173ms
+	Collect global state as custom dependencies: 0.123ms
+	ProcessAssetsWithTransientArtifactChanges: 0.472ms
+	CategorizeAssets: 116.876ms
+	ImportOutOfDateAssets: 141.339ms (19.348ms without children)
+		ReloadNativeAssets: 0.520ms
+		UnloadImportedAssets: 0.085ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.790ms
+		ImportSchedulerStart: 119.596ms
+	GatherAllCurrentPrimaryImportResultRevisions: 1.714ms
+	UnloadStreamsBegin: 11.673ms
+	PersistCurrentRevisions: 0.493ms
+	Untracked: 21.293ms
+
+Asset Pipeline Refresh (id=e98326bb254074a7386ee8f39d89ffe7): Total: 0.206 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=bf72a902156024e26908cdd28de366d6): Total: 0.007 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[SteelPushRefineryRoutes] result=Passed corridor=7x7 samples=2387 sourceHash=2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778 crop=535,585:900,685 SupplyLineOverlap=None
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushConfigBuilder:BuildRefineryMap () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:75)
+Game.Editor.CH04M02SteelPushConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.cs:27)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:16)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs Line: 75)
+
+Importing 'GUID: 544af073d8659466f8fbe72be1d76bd7 - Path: Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SteelPushRefineryApproach.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 544af073d8659466f8fbe72be1d76bd7' -> (Import Result ID: '4fc319a7cba188d3cc7169a643b92a01') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=fbd0bad6049e83ca36edf379924a212b DependenciesID=df6b6c6c24d5423c638b1e9f0f715f9c StaticDependenciesID=476f066c630a887f38bcda5136e34289 
+Importing 'GUID: f5eb5c2d2e932c548a01876109d52b46 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f5eb5c2d2e932c548a01876109d52b46' -> (Import Result ID: 'aca785b62c79992a5593fe21b8c264c0') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a208e1f320389ca7eb6a0eb9964aacf7 DependenciesID=6ccf8b627064ab17933ac73470790e01 StaticDependenciesID=441cf893bdab9ac229c3d5b110390dfb 
+Importing 'GUID: f7b62c45e7f714be88a0f8c7553b982a - Path: Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M02_SteelPush.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f7b62c45e7f714be88a0f8c7553b982a' -> (Import Result ID: '6ba133a2c58ace602702f93e39a473b3') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=77168bc94129b636a059748ec2a8f484 DependenciesID=cec4d04d2e605907a6f77910bfc6013f StaticDependenciesID=a4f1bb921fab7cd4fb5a12140d3df234 
+Importing 'GUID: ea5ec61ae534a4edb9da9d456802fc28 - Path: Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M02_SteelPush.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ea5ec61ae534a4edb9da9d456802fc28' -> (Import Result ID: '9bf44c732f93beb7b4e43821c51ed6a5') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=5dc178e545064d8f3354f53b339dbbd0 DependenciesID=da9340c806a9d15dfcb476d027cdb668 StaticDependenciesID=a88caefc8167e0f2e649a53a67cac04d 
+Importing 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0 - Path: Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0' -> (Import Result ID: '2a1092250bd152cfac6c70c407441169') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=b13a4c76d4d28e874607acc5b7e5a933 DependenciesID=1abec5566432fde144a268aa20320e44 StaticDependenciesID=db7280134245c256051d256aaf8de3a9 
+Asset Pipeline Refresh (id=5a6dc5ae4b38f446cb7256cf5ea95229): Total: 0.173 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=50fc623d22483442e9c07334cf354b77): Total: 0.188 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=24
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M01FirstContactConfigBuilder:RefreshChapterCatalogs () (at Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs:75)
+Game.Editor.CH04M02SteelPushConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.cs:28)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:16)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs Line: 75)
+
+[SteelPushConfig] result=Passed chapter=4 mission=2 tanks=3 apc=1 infantry=4 hostiles=5 reserve=finite terrain=refinery-approach
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.cs:29)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:16)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.cs Line: 29)
+
+Loaded scene 'Library/Unused/6664436bbae83405684cb5a2e3a430ec'
+	Deserialize:            3.177 ms
+	Integration:            3.734 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.005 ms
+	Total Operation Time:   6.918 ms
+Asset Pipeline Refresh (id=2dedfd873f7294da88217c2ec07b7fa7): Total: 0.005 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=b63840c79d4f24cceafd69b5474c7182): Total: 0.193 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: ef3183cbf9a84e5196963a22a5e4969d - Path: Assets/Game/Resources/FutureMissionComics/CH04M02_SteelPush.png' with importer (TextureImporter)
+Imported 'GUID: ef3183cbf9a84e5196963a22a5e4969d' -> (Import Result ID: '6eb1784a72b454d160e89718c4287981') in 0.214 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=36f01afa31f9a7c5d8a9f3bec2aabd8d DependenciesID=3a4ee48081deed8f224b8db4a5195f16 StaticDependenciesID=acdd7a6243c3628be080b304b9575ed9 
+
+Asset Pipeline Refresh (id=06692d45f627a49fc8f3bb96aa8dfcfc): Total: 0.369 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=3 ms, native=359 ms
+		Asset DB Callback time: managed=3 ms, native=1 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3421, non-scripts=20781
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 5
+	ApplyChangesToAssetFolders: 0.065ms
+	Scan: 4.093ms
+	CategorizeAssets: 5.931ms
+	ImportOutOfDateAssets: 344.350ms (15.789ms without children)
+		ImportManagerImport: 216.150ms (0.870ms without children)
+		ReloadNativeAssets: 0.774ms
+		UnloadImportedAssets: 0.161ms
+		ReloadImportedAssets: 0.173ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.794ms
+		ImportSchedulerStart: 109.678ms
+	PostProcessAllAssets: 3.839ms
+		XRBuildSystem.XRAssetImported 0.111ms
+		MonoPostProcessAllAssets: 3.671ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.125ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.544ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.521ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 0.436ms
+			SyncVS.PostprocessSyncProject 0.401ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.248ms
+	PostAssetChangesProfiler: 1.682ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.441ms
+	PersistCurrentRevisions: 0.511ms
+	Untracked: 7.635ms
+
+Importing 'GUID: 99d25f658ebe4927a88fe3f6dde6395c - Path: Assets/Game/Resources/FutureMissionComics/CH04M02_SteelPush_Comms.png' with importer (TextureImporter)
+Imported 'GUID: 99d25f658ebe4927a88fe3f6dde6395c' -> (Import Result ID: 'c3497465d71c560d5a9280f66337c6c1') in 0.204 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5184e68a851f6f2e694f0b8493c782c5 DependenciesID=5940021c575c07b0e785ff7d080609bf StaticDependenciesID=185a1b0de689d7a7cc8c51b1b3a24695 
+
+Asset Pipeline Refresh (id=c03b24d73611a4df293691f38cc64cd6): Total: 0.361 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=1 ms, native=353 ms
+		Asset DB Callback time: managed=4 ms, native=1 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3421, non-scripts=20781
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 5
+	ApplyChangesToAssetFolders: 0.062ms
+	Scan: 6.273ms
+	CategorizeAssets: 5.855ms
+	ImportOutOfDateAssets: 335.245ms (15.467ms without children)
+		ImportManagerImport: 208.155ms (0.879ms without children)
+		ReloadNativeAssets: 0.515ms
+		UnloadImportedAssets: 0.101ms
+		ReloadImportedAssets: 0.138ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.615ms
+		ImportSchedulerStart: 109.387ms
+	PostProcessAllAssets: 4.669ms
+		XRBuildSystem.XRAssetImported 0.115ms
+		MonoPostProcessAllAssets: 4.497ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 2.025ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.956ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.440ms
+			SyncVS.PostprocessSyncProject 0.420ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.252ms
+	PostAssetChangesProfiler: 1.655ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.424ms
+	PersistCurrentRevisions: 0.511ms
+	Untracked: 5.994ms
+
+Importing 'GUID: 75a18f7e42964d4fbc7a627c38641227 - Path: Assets/Game/Resources/FutureMissionComics/CH04M02_SteelPush_Debrief.png' with importer (TextureImporter)
+Imported 'GUID: 75a18f7e42964d4fbc7a627c38641227' -> (Import Result ID: '6b0ede0d9e46a9c949e0c0d4204bbae1') in 0.204 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2f4acb2d9671fb03820d7235a2c7cf04 DependenciesID=04efca4b82f7d944c7b07d45fc25dd73 StaticDependenciesID=b75b19a77102c259f5bbebaed1711e83 
+
+Asset Pipeline Refresh (id=40f4d5061b68f4db7a6e241fd8e0c6d2): Total: 0.355 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=1 ms, native=350 ms
+		Asset DB Callback time: managed=2 ms, native=1 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3421, non-scripts=20781
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 5
+	ApplyChangesToAssetFolders: 0.068ms
+	Scan: 4.699ms
+	CategorizeAssets: 6.326ms
+	ImportOutOfDateAssets: 332.642ms (15.403ms without children)
+		ImportManagerImport: 205.271ms (0.838ms without children)
+		ReloadNativeAssets: 0.557ms
+		UnloadImportedAssets: 0.108ms
+		ReloadImportedAssets: 0.167ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.670ms
+		ImportSchedulerStart: 109.629ms
+	PostProcessAllAssets: 2.619ms
+		XRBuildSystem.XRAssetImported 0.114ms
+		MonoPostProcessAllAssets: 2.446ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.956ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.425ms
+			SyncVS.PostprocessSyncProject 0.394ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.256ms
+	PostAssetChangesProfiler: 1.572ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.428ms
+	PersistCurrentRevisions: 0.515ms
+	Untracked: 6.516ms
+
+Importing 'GUID: e6477a611f6bb4d7292a5f4ba28d96ce - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: e6477a611f6bb4d7292a5f4ba28d96ce' -> (Import Result ID: '754013e6ff1627b653a7ac3f3142cff1') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4b261565e1805d3537514fbd621b8466 DependenciesID=6356b7b3dda443b12e143db80dbf310e StaticDependenciesID=878baeea1a4f26044ee6219bc2b20781 
+Asset Pipeline Refresh (id=62b115fcd08114f7e9a1d3d649839725): Total: 0.207 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: eb77960c539ea4d10a14a0c88d5bba58 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: eb77960c539ea4d10a14a0c88d5bba58' -> (Import Result ID: '5b8ca088f7f7522e482c070eed747c2f') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df28103c7bbe88ebf280d24783efc505 DependenciesID=b02646f3bcb3b5b32387650339e4500b StaticDependenciesID=07513a8b66f65b2ab3814d8fa8008033 
+Asset Pipeline Refresh (id=d468e1ebfa95e4d68b5360b9513df230): Total: 0.204 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 5692d846398684bd6aabd3c7c00f8b51 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-samira.wav' with importer (AudioImporter)
+Imported 'GUID: 5692d846398684bd6aabd3c7c00f8b51' -> (Import Result ID: 'f7807c0b1a5bdd3252c79a881b673a78') in 0.055 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=497bfe61e8dd01eb375d21a81180099e DependenciesID=74b11e761344dfada864ddff71c7a292 StaticDependenciesID=686b9127add00603e8c8799ac252668d 
+Asset Pipeline Refresh (id=013e9103ea9074a67b8b8ba7253a96d2): Total: 0.212 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2a82dcee8de474dd4ab8b945451cf8ab - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-samira.wav' with importer (AudioImporter)
+Imported 'GUID: 2a82dcee8de474dd4ab8b945451cf8ab' -> (Import Result ID: '7b8b3cd83fae5682fa7ecd9c6c7aa86c') in 0.069 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=973c4b25eba270abe19d7b315c6fd579 DependenciesID=dd8fb7bd9213bd023185b0fd9edadbbb StaticDependenciesID=6cf1ed51fe860a0113f96f16314db959 
+Asset Pipeline Refresh (id=d48442801b7594caaa8c0d1b38ec77fe): Total: 0.223 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f2325041eb2e5425abad497de6531545 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: f2325041eb2e5425abad497de6531545' -> (Import Result ID: '5ec84eb53b8a0bf64db65d4764a8557a') in 0.056 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7d037523b9db026cfe10e807d4c80a13 DependenciesID=f113ffa948a0f0d0593ba7a5d900c1ca StaticDependenciesID=53eeac32856c168a60bedbe027abdadf 
+Asset Pipeline Refresh (id=ecfd0c058c2db4506a4fd3215c1e20a8): Total: 0.208 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: add46498ef4ba4bcea62c322ab35b0ea - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: add46498ef4ba4bcea62c322ab35b0ea' -> (Import Result ID: 'cbde697d5ed253e0e5ecc05e5583b115') in 0.063 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=aa10a21dd9eba7a821caaa517d80bed1 DependenciesID=2b4efa35774a67d517b576f8925cccff StaticDependenciesID=ac1eb30e4404d394ce99a9f328a05b96 
+Asset Pipeline Refresh (id=da3e42c9511bc42e8a20061c401935b2): Total: 0.214 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 69719136c7a5043dd901efc232999b00 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-comms-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: 69719136c7a5043dd901efc232999b00' -> (Import Result ID: '600feae53fef4c17f0b02f9cae485452') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df1cc05c656d0a3163d7b43317b739f9 DependenciesID=d1d3e9e3913fea6d63fe270077c14446 StaticDependenciesID=44074f57c6083a4a981c19bf75b1e3cf 
+Asset Pipeline Refresh (id=6aadc3527d2404e0cb96f66d51a635f8): Total: 0.200 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 06a3a679abc08488e95a6866ff27661d - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-comms-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: 06a3a679abc08488e95a6866ff27661d' -> (Import Result ID: 'cbe577538954427d9a2063176e262a3a') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=255c097d5f4ba87d8385d6b69cb39aeb DependenciesID=30a9e26ed2b2fab80cc28513a76ebd20 StaticDependenciesID=a64202870710c4e2772ba3aeda76d251 
+Asset Pipeline Refresh (id=8f854f6e09c9946f78856d968b0325ae): Total: 0.210 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d970f090ec26e4e0ebee3472ef254f51 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-samira.wav' with importer (AudioImporter)
+Imported 'GUID: d970f090ec26e4e0ebee3472ef254f51' -> (Import Result ID: '8c8eeecd876cd075897c2a3529c2f20e') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=24ca59f10aeffa962db4e4644b4275e0 DependenciesID=0f8ef633ee01a7529349664ea5e8c9ce StaticDependenciesID=6d590caffd5d5b495349b0408a7cda43 
+Asset Pipeline Refresh (id=0eab0bafd56b94e7f9ad8eeaf2aaf468): Total: 0.198 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 8dac25758a72348368e72b803947c0e4 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-samira.wav' with importer (AudioImporter)
+Imported 'GUID: 8dac25758a72348368e72b803947c0e4' -> (Import Result ID: 'be0895405ded37923d3fe4e80afa9fed') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4e576cb659e1be4c099b2e9095302059 DependenciesID=858d4567e95c53cca023fde0376606dc StaticDependenciesID=fdecd5a8d085a4e0bd038d293269b770 
+Asset Pipeline Refresh (id=3e29bc50c72194d7f8f63f6e5f7cb1f1): Total: 0.200 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f1ce29357d92343c5bc38d50a3c089fe - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: f1ce29357d92343c5bc38d50a3c089fe' -> (Import Result ID: '73cd73c780c11d54a0499ef2698609b7') in 0.053 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=dfe2380f273bbb460938b2fd5bb420dd DependenciesID=ba81a5e01868eaa30a3651143b19a4c6 StaticDependenciesID=2d2ba19ca0e4c71abe3d1f868f506540 
+Asset Pipeline Refresh (id=6ba8f7c40bdb340d58e588c97588081b): Total: 0.203 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 12b081d0bc97d4fcdb7847e6b71fc986 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-dalia.wav' with importer (AudioImporter)
+Imported 'GUID: 12b081d0bc97d4fcdb7847e6b71fc986' -> (Import Result ID: '06d30e4d5afea017f45ff3e4e9ad258c') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=082a226da0552cee48cedc57d2af51b6 DependenciesID=d99f9d08f310ec9e84fbb6055cdb71a1 StaticDependenciesID=6dd28675d0ea4a2b754d42f74f47e42d 
+Asset Pipeline Refresh (id=bcdf5e7bad9eb44a3a7b47a065abf9fc): Total: 0.215 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 06b58d911f8dc43af922b26d892e8141 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: 06b58d911f8dc43af922b26d892e8141' -> (Import Result ID: 'e4e6edfd8ca0edef736459762be00ca7') in 0.058 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0045d14221549c1aa4b4531e38cc6eca DependenciesID=d289fb5a364aebdc4ed42e1cd43610fb StaticDependenciesID=eecab40655b88f1ca55180bd645a4936 
+Asset Pipeline Refresh (id=88ad44d213b4d460ba65a6c4ccbcd313): Total: 0.210 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e565f4df529214db49632bf0790f0d75 - Path: Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: e565f4df529214db49632bf0790f0d75' -> (Import Result ID: '696d5f46b41db2face30b4a00ce7ed39') in 0.061 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=65ee7856c1dcd3be65b1d3800136832d DependenciesID=8d7b8412d6ac09114e522f3a39b12e94 StaticDependenciesID=948b04960a37d3102a40538c18c4528b 
+Asset Pipeline Refresh (id=fe31dd8c8f07641aca2e81d6daaf4511): Total: 0.211 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a3743e972309340d58297e6d007081c7 - Path: Assets/Game/Configs/Missions/Chapter04/CH04M02_SteelPush_FieldGuide.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a3743e972309340d58297e6d007081c7' -> (Import Result ID: '32d27a4f2da143775d94b23fd67571e8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=fe430f0afaa8d2c000158d9fa1f82468 DependenciesID=4bdad473b760f54072464602b81f8ce7 StaticDependenciesID=26e93772f926ae48e68e841b737ea111 
+Importing 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc' -> (Import Result ID: 'e0facfc4c60941b519e6451cbd3071f1') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=62d630281ea5878bf5aa058de937a29c DependenciesID=bd97e0011492dfecf00164ff446c62ad StaticDependenciesID=1184052f807c50263c30b9d199eb184c 
+Importing 'GUID: dc1f27aae7c03472a81feb4b7cc5931b - Path: Assets/Game/Audio/Events/AudioEventCatalogConfig.asset' with importer (NativeFormatImporter)
+Imported 'GUID: dc1f27aae7c03472a81feb4b7cc5931b' -> (Import Result ID: 'd2d6cbcdad216bf1cbc92036f442ffb5') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=617e8bb61ac9f3d75f225ed31600d502 DependenciesID=2d42228c2d33d9926854ede9d067bc02 StaticDependenciesID=c0d5b3a9c6482b7735f3edee74ae25b2 
+Importing 'GUID: edaa44fa96c9542ddbfe741b20222c58 - Path: Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset' with importer (NativeFormatImporter)
+Imported 'GUID: edaa44fa96c9542ddbfe741b20222c58' -> (Import Result ID: '67294aeec4be8981e3beac432ff774e7') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=dd9b830afbaf5bee097ff8f15011e48f DependenciesID=aad622c66fb1a8c41287fdf4ca9aff08 StaticDependenciesID=9c7714986e09c18f1f7d490c200f1327 
+Asset Pipeline Refresh (id=fce75184a722f41c4a01a81f267f8ce3): Total: 0.160 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=13a98e278376c400eb372b00bf5fd846): Total: 0.186 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[SteelPushMedia] result=Passed comics=3 dialogueCrops=7 voices=14 mode=voiced
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:ConfigureMedia () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:99)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:30)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:17)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs Line: 99)
+
+Importing 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a - Path: Assets/AddressableAssetsData/AddressableAssetSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a' -> (Import Result ID: '30daf186fcd0b2e038755729aadd6455') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=03e1ac9578e9f5a0dcb1fc28a175ee06 DependenciesID=e56a6154ab6f035c9e36ec86f7be3256 StaticDependenciesID=08a02df1845cc1da3f26f76c5b7f7841 
+Importing 'GUID: 7d88517ac86e74d8597a104b718db569 - Path: Assets/Game/Configs/Narrative/Chapter04/CH04M02_SteelPush_Narrative.asset' with importer (NativeFormatImporter)
+Main Object Name 'CH04M02_SteelPush_brief' does not match filename 'CH04M02_SteelPush_Narrative'
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:37)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:17)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+[Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs line 37]
+
+Imported 'GUID: 7d88517ac86e74d8597a104b718db569' -> (Import Result ID: '79f4129464d05eda65f8f6c1a171702b') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=27e8e355a4122a1ffb26adb17f679a02 DependenciesID=0424be40d13fac7029c67c8750a166cf StaticDependenciesID=c5c9e161e40b57da1ffc94a7ad5ba2e6 
+Importing 'GUID: aed08c727318c408e951a8eda278ecb3 - Path: Assets/AddressableAssetsData/AssetGroups/Steel Push Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: aed08c727318c408e951a8eda278ecb3' -> (Import Result ID: 'c779ef68059f755262306785a1ff8db6') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=1fda5bb43c81a7416e6c18736321a487 DependenciesID=80e9c6792882eb0e37abfe719e3a39c8 StaticDependenciesID=38d8808afe4847aa47efed54e7d886b7 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'bd7417e013b1006aa60032eb16c22534') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=7555ee1a934caa5e77d5827fbc49cb78 StaticDependenciesID=7387646a401642392133a0971ae85c56 
+Asset Pipeline Refresh (id=8079f3d90bf324b06a86d9159341c05e): Total: 0.180 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[CampaignComicCoverage] result=Passed mission=seq.ch04.m02. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:38)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:17)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch04.m02. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:38)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:17)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            3.118 ms
+	Integration:            432.610 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.007 ms
+	Total Operation Time:   435.736 ms
+Unloading 62 unused Assets / (5.6 MB). Loaded Objects now: 52324.
+Memory consumption went from 1.55 GB to 1.54 GB.
+Total: 49.716583 ms (FindLiveObjects: 1.177708 ms CreateObjectMapping: 8.858792 ms MarkObjects: 39.010292 ms  DeleteObjects: 0.669250 ms)
+
+Importing 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e - Path: Assets/Game/Scenes/Menu.unity' with importer (DefaultImporter)
+Imported 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e' -> (Import Result ID: '52773ff349842ec2ead28eb7a568d9e8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=400b224708e4470bb8f670c7ab291fe5 DependenciesID=34bcf059de88941e104d9a6f2cb704e1 StaticDependenciesID=4dc6483a1b812b40d0172b63018d6fbf 
+Asset Pipeline Refresh (id=eef0f30df99b5412db0e324989f49ee7): Total: 0.151 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[SteelPushNarrative] result=Passed sequences=3 dialogueStates=7 locales=en,fa-IR comics=3
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushNarrativeBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs:50)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:17)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushNarrativeBuilder.cs Line: 50)
+
+[SteelPushRules] result=Passed fuel=binding,spending,civilian-floor,damage,destruction deadline=240s progression=17
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH04M02SteelPushRulesValidation.cs:43)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushRulesValidation.cs Line: 43)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch02.m05. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:38)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch02.m05. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:38)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch03.m01. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:39)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch03.m01. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:39)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch03.m02. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:40)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch03.m02. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:40)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch03.m03. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:41)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch03.m03. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:41)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch03.m04. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:42)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch03.m04. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:42)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch03.m05. dialogueStates=6 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:43)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch03.m05. dialogueStates=6 distinct16x9=6 distinct20x9=6
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:43)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed mission=seq.ch04.m01. dialogueStates=6 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:44)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch04.m01. dialogueStates=6 distinct16x9=6 distinct20x9=6
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:44)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+[CampaignComicCoverage] result=Passed sequences=40 dialogueStates=95 aspects=16x9,20x9 shipGate=enabled
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateAll () (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:45)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:18)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 45)
+
+[SteelPushCheckpoint] result=Passed dialogue=7 locales=en,fa-IR fuel=physical-finite controls=existing-only
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs:19)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs Line: 19)
+
+[SteelPushRefineryPreparation] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushConfigBuilder:PrepareRefineryReview () (at Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs:80)
+
+(Filename: Assets/Game/Scripts/Editor/CH04M02SteelPushConfigBuilder.Refinery.cs Line: 80)
+
+[Project] Loading completed in 37.965 seconds
+	Project init time: 				0.000 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.000 seconds
+		Asset Database init time: 		0.000 seconds
+		Global illumination init time: 	0.000 seconds
+		Assemblies load time: 			0.000 seconds
+		Unity extensions init time: 	0.000 seconds
+		Asset Database refresh time: 	0.000 seconds
+	Scene opening time: 			0.000 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1790844289779,"processId":81804,"projectLoad":37.964593167,"projectInit":0.0,"templateInit":0.0,"packageManagerInit":0.0,"assetDatabaseInit":0.0,"globalIlluminationInit":0.0,"assembliesLoad":0.0,"unityExtensionsInit":0.0,"assetDatabaseRefresh":0.0,"sceneOpening":0.0}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1790844289780,"processId":81804,"editorVersion":"6000.5.2f1 (eb73d3b415a1)","branch":"6000.5/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+Scanning for USB devices : 0.082ms
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+[INFO ] [relay] relay.startup port=9001 mcpClientPort=9002 editorPid=81804
+[INFO ] [relay] log === RELAY SERVER STARTED === (unity-ai-relay v1.0.12-build.96)
+[INFO ] [relay] log Starting relay server...
+[INFO ] [relay] log Command line arguments: ["bun","/$bunfs/root/relay_mac_arm64","--relay","--port","9001","--mcp-client-port","9002","--editor-pid","81804","--shutdown-delay","180","--log-dir","/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs"]
+[INFO ] [relay] log Parsed config: {"port":9001,"mcpClientPort":9002,"editorPid":"81804","shutdownDelaySeconds":180}
+[INFO ] [relay] log Initializing relay components...
+[INFO ] [relay] log Creating RelayEditor...
+[INFO ] [relay] log WebSocket server started
+[INFO ] [relay] log Relay server initialization completed
+[INFO ] [relay] log MCP Client initialized at port: 9002
+[INFO ] [relay] log Unity MCP Relay server started | Port: 9002 | Endpoints: /mcp/start-server, /mcp/stop-server, /mcp/server-status, /mcp/call-tool
+[INFO ] [relay] log [shell-env] PATH augmented with shell environment (22 entries)
+[INFO ] [relay] log Unity client connected with ID: editor-81804-biuc8h (relay 1.0.12-build.96)
+[INFO ] [relay] connection.established clientId=editor-81804-biuc8h port=9001
+GPU Resident Drawer created.
+Request Asset Garbage Collect because used heap size increased from 1.54 GB to 2.05 GB, exceeding the threshold of 394.2 MB.
+Unloading 150 Unused Serialized files (Serialized files now loaded: 0)
+Created GICache directory at /Users/farhad/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.002s, timestamps: [37.983 - 37.985]
+Unloading 511 unused Assets / (186.9 MB). Loaded Objects now: 53245.
+Memory consumption went from 2.05 GB to 1.86 GB.
+Total: 80.682667 ms (FindLiveObjects: 3.767084 ms CreateObjectMapping: 10.427541 ms MarkObjects: 61.142292 ms  DeleteObjects: 5.345542 ms)
+
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Starting new worker id: 1 with log in /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs/AssetImportWorkerHW1.log
+[Worker0] Imported GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '937a5265da66dffe26eb01f7ed14f03e') in 0.117359375 seconds
+[Worker0] Imported GUID: 42dfa01cda16f4f7eb4ca6b7ddb734bf - Path: Assets/Game/Scripts/Editor/CH04M02SteelPushInputProbe.Refinery.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2002d6ad9a6591ecc37830cad10a64fe') in 0.017430291 seconds
+[Worker0] Imported GUID: 91118ece95bef48ae9d3d0b56b777610 - Path: Assets/Game/Scripts/Editor/CH04M02SteelPushInputProbe.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7bf66db2d80f137c24b334a2a7a2b0ec') in 0.009595417 seconds
+[Worker0] Imported GUID: 48c8f7e03f1d245ecb494abcdbcd9ce8 - Path: Assets/Game/Scripts/Editor/CH04M02SteelPushPresentationBuilder.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f81a463c6eebe8df654f1c302ba78038') in 0.009402417 seconds
+[Worker0] Imported GUID: 963a94ce118264f2abd36bf6c007b3cf - Path: Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SteelPush.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a16268c0e0bd026655173fdf7aab3df5') in 0.009242709 seconds
+[Worker0] Imported GUID: e6c77ac9ec3f419197ca90e2072d9f5c - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialTarget.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e400dd31e0cbce5949eedae7aa79ed5e') in 0.008955792 seconds
+[Worker0] Imported GUID: b2bdb5dc56922421e93e6c927f06dec5 - Path: Assets/Game/Scripts/Editor/CH04M02SteelPushInputProbe.Negatives.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '66f96736f9d239a434888b79e7d1412e') in 0.009502459 seconds
+MonoPathRemapper: Attempts to remap: 204956; Successful remaps: 33762
+Thread 0x387ff7000 may have been prematurely finalized
+Serialized file version minimum: 22, current 23
+[LAYOUT] About to save layout /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+Pipeline Server stopped
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+[INFO ] [relay] log Shutdown request received from client editor-81804-biuc8h
+[INFO ] [relay] log Unity client requested immediate shutdown - shutting down now, reason: Shutdown requested by client
+Unable to list connected devices. 
+List of devices attached
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+
+UnityEditor.Android.CommandInvokationFailure: Unable to list connected devices. 
+/Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb devices
+
+Environment Variables:
+ZSH_TMUX_AUTOSTART = false
+COLORTERM = 
+ZSH_TMUX_AUTOSTARTED = true
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = 9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df
+CODEX_SANDBOX_NETWORK_DISABLED = 1
+_ = /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+XPC_FLAGS = 0x0
+CODEX_SHELL = 1
+DISABLE_AUTO_UPDATE = true
+OMLX_API_KEY = 4488
+SHLVL = 2
+CODEX_TECTONIC_PATH = /Applications/ChatGPT.app/Contents/Resources/tectonic/tectonic
+TERM = dumb
+CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE = 1
+NO_COLOR = 1
+CODEX_VERSION = 0.159.2
+CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY = MCowBQYDK2VwAyEADIhhF5THiilBJRcYrKjjRh+aEHgA3mavayxRL7ebxWg=
+LANG = C.UTF-8
+LC_CTYPE = C.UTF-8
+XPC_SERVICE_NAME = 0
+PWD = /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+CODEX_CLI_PATH = /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex
+USER = farhad
+MallocNanoZone = 0
+COMMAND_MODE = unix2003
+SSH_AUTH_SOCK = /var/run/com.apple.launchd.dEXTzNaT7Q/Listeners
+LOG_FORMAT = json
+LC_ALL = C.UTF-8
+OSLogRateLimit = 64
+PATH = /usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/farhad/.codex/tmp/arg0/codex-arg0P0TmOV:/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/farhad/.unity/bin:/Users/farhad/bin:/Users/farhad/.lmstudio/bin:/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+GH_PAGER = cat
+RUST_LOG = warn
+PAGER = cat
+BROWSER_USE_ACCESS_VERIFYING_IDENTITY = MCowBQYDK2VwAyEADIhhF5THiilBJRcYrKjjRh+aEHgA3mavayxRL7ebxWg=
+HOME = /Users/farhad
+CODEX_INTERNAL_ORIGINATOR_OVERRIDE = Codex Desktop
+LOGNAME = farhad
+GIT_PAGER = cat
+CODEX_MCP_NODE_PATH = /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node
+TMPDIR = /var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+SHELL = /bin/zsh
+CODEX_APP_TOOLS_PIPE_PATH = /tmp/codex-browser-use/143f1a10-b2db-414a-a93b-030a1474291c.sock
+CODEX_THREAD_ID = 01a0ed16-07e1-76b0-977d-2664c4c950d5
+CODEX_CI = 1
+CODEX_SESSION_ID = 01a0ed16-07e1-76b0-977d-2664c4c950d5
+
+
+stderr[
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+]
+stdout[
+List of devices attached
+]
+exit code: 1
+  at UnityEditor.Android.Command.WaitForProgramToRun (UnityEditor.Utils.Program p, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00099] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:221 
+  at UnityEditor.Android.Command.Run (System.Diagnostics.ProcessStartInfo psi, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00017] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:159 
+  at UnityEditor.Android.Command.Run (System.String command, System.String args, System.String workingdir, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg, System.Text.Encoding inputEncoding) [0x0000c] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:117 
+  at UnityEditor.Android.ADB.RunInternal (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00008] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:240 
+  at UnityEditor.Android.ADB.Run (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00013] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:233 
+  at UnityEditor.Android.AndroidDeploymentTargetsExtension.GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext context, UnityEditor.ProgressHandler progressHandler) [0x0029d] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:393 
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:456)
+UnityEditor.Android.TargetScanWorker:DoScan (UnityEditor.DeploymentTargets.IDeploymentTargetsExtension,UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,System.Threading.CancellationToken) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:188)
+UnityEditor.Android.TargetScanWorker/<>c__DisplayClass15_0:<MainThreadProcessing>b__0 () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:227)
+System.Threading.Tasks.Task:InnerInvoke ()
+System.Threading.Tasks.Task:Execute ()
+System.Threading.Tasks.Task:ExecutionContextCallback (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.Tasks.Task:ExecuteWithThreadLocal (System.Threading.Tasks.Task&)
+System.Threading.Tasks.Task:ExecuteEntry (bool)
+System.Threading.Tasks.Task:System.Threading.IThreadPoolWorkItem.ExecuteWorkItem ()
+System.Threading.ThreadPoolWorkQueue:Dispatch ()
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 456)
+
+Android Extension - Scanning For ADB Devices 3250 ms
+Killing ADB server in 0.099943 seconds.
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Unloading 11 unused Assets / (10.1 KB). Loaded Objects now: 53149.
+Memory consumption went from 1.69 GB to 1.69 GB.
+Total: 62.613500 ms (FindLiveObjects: 1.119125 ms CreateObjectMapping: 9.567250 ms MarkObjects: 51.589917 ms  DeleteObjects: 0.336833 ms)
+
+Thread 0x3a1d17000 may have been prematurely finalized
+VB/C# compiler server shut down successfully.
+MSBuild server shut down successfully.
+Worker ready: AssetImportWorkerHW1 1
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+Thread 0x16e7d7000 may have been prematurely finalized
+Thread 0x16e863000 may have been prematurely finalized
+Thread 0x16e8ef000 may have been prematurely finalized
+Thread 0x16ea07000 may have been prematurely finalized
+Thread 0x16ebab000 may have been prematurely finalized
+Thread 0x16ea93000 may have been prematurely finalized
+Thread 0x16e97b000 may have been prematurely finalized
+Thread 0x16eb1f000 may have been prematurely finalized
+Thread 0x16ec37000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x30371f000 may have been prematurely finalized
+Cleanup mono
+CodeReloadManager destroyed
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 405 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 34

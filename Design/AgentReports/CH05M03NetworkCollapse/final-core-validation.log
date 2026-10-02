@@ -1,0 +1,71 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M03NetworkCollapseIntegration.ValidateCore
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[NetworkCollapseRoutes] result=Passed boulevard=401x7 rearCarrierLane=97x5 evidenceApproaches=3x13x3 buildLots=4 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M03NetworkCollapseConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseConfigBuilder.cs:459)
+Game.Editor.CH05M03NetworkCollapseMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseMapValidation.cs:114)
+Game.Editor.CH05M03NetworkCollapseIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseIntegration.cs:32)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[NetworkCollapseMap] result=Passed identities=2972 owners=314 renderOnly=2658 roots=3 grid=440x220 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M03NetworkCollapseMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseMapValidation.cs:115)
+Game.Editor.CH05M03NetworkCollapseIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseIntegration.cs:32)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[NetworkCollapseRules] result=Passed originalRoster=21 verification=ordered targetSuppression=actual audit=preserved occupancy=original settlement=idempotent
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M03NetworkCollapseRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseRulesValidation.cs:35)
+Game.Editor.CH05M03NetworkCollapseIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseIntegration.cs:33)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[NetworkCollapseObjectives] result=Passed writer=published nodes=verified audit=actual extraction=original protection=qualified
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M03NetworkCollapseObjectiveValidation:Run () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseObjectiveValidation.cs:53)
+Game.Editor.CH05M03NetworkCollapseIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseIntegration.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[NetworkCollapseCoreValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=NotRequested
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M03NetworkCollapseIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M03NetworkCollapseIntegration.cs:35)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M03NetworkCollapseIntegration.ValidateCore
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8588c730/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

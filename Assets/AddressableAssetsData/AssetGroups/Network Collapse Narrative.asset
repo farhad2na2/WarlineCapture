@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Network Collapse Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Network Collapse Narrative
+  m_GUID: f8bc29df38fbb4ee3b8eae094e6f4297
+  m_SerializeEntries:
+  - m_GUID: 56ba14ba6a644ce89bfdb1a4b4f68ffd
+    m_Address: narrative.network_collapse.ch05m03_networkcollapse
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca6721c4398d439c921c381ea5a97822
+    m_Address: narrative.network_collapse.ch05m03_networkcollapse_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de9d3073c24f4f98ba45a539e8bdc405
+    m_Address: narrative.network_collapse.ch05m03_networkcollapse_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1e85f7bb852ed4fd99acae842d0ab3c4, type: 2}
+    - {fileID: 11400000, guid: 9ae2f416ca6be4ba2937d714b6dbb185, type: 2}

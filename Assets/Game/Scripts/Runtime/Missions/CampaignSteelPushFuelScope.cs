@@ -15,6 +15,8 @@ namespace Game.Runtime
             if(missions.CalculateEntityCount()!=1)return false;
             var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if(runtime.Phase==MissionPhaseKind.None)return false;
+            if(runtime.MissionId.ToString()==CampaignMissionSequence.NetworkCollapse)
+            { if(em.HasComponent<CampaignMissionNetworkCollapseState>(root)){var mission=em.GetComponentData<CampaignMissionNetworkCollapseState>(root);if(CampaignMissionNetworkCollapseRuleUtility.Matches(in mission,in runtime))reserve=mission.Reserve;}return true; }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.TrustUnderFire)
             {
                 if(em.HasComponent<CampaignMissionTrustUnderFireState>(root))

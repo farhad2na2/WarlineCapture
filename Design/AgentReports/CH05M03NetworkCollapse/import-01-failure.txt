@@ -1,0 +1,3 @@
+Initial source import failed (integration type unavailable). Corrected missing List LINQ helper with native TrueForAll and ambiguous float3/Vector3 with explicit cast. No mission readiness claimed.
+Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs(345,41): error CS1061: 'List<OperationMapDefinition>' does not contain a definition for 'All' and no accessible extension method 'All' accepting a first argument of type 'List<OperationMapDefinition>' could be found (are you missing a using directive or an assembly reference?)
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(327,32): error CS0034: Operator '+' is ambiguous on operands of type 'float3' and 'Vector3'

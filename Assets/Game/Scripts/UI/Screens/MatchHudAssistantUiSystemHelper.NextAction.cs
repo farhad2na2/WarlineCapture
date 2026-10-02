@@ -27,7 +27,8 @@ namespace Game.UI.Runtime
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
-            if(UiShellRuntimeGateway.IsTrustUnderFireGuideContext()){ShowArmorBreakNextAction();return;}
+            if(UiShellRuntimeGateway.IsNetworkCollapseGuideContext()){ShowNetworkCollapseNextAction();return;}
+            if(UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext()){ShowArmorBreakNextAction();return;}
             if(UiShellRuntimeGateway.IsCitywideAlertGuideContext()){if(step==1)ShowProductionCue();else ShowArmorBreakNextAction();return;}
             if(UiShellRuntimeGateway.IsArmorBreakGuideContext()) {ShowArmorBreakNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==5)
@@ -104,6 +105,14 @@ namespace Game.UI.Runtime
             else WaitForTutorialArrival(); // The mission finale owns this transition.
         }
 
+        private void ShowNetworkCollapseNextAction()
+        {
+            if(ShowMissingSelection(out var target))return;
+            if(target.Moving||target.ExecutingAttack||target.BattleAction==UiTutorialBattleAction.Watch){WaitForTutorialArrival();return;}
+            if(UiShellRuntimeGateway.TryReadNetworkCollapse(out var m)&&m.Stage==8&&!m.EngineerAboard)
+                ShowCommandOrDestination(_commandControlsView?.CommandWheelPanel?.NextBoardButton,TacticalCommandMode.Board);
+            else ShowArmorBreakNextAction();
+        }
         private void ShowArmorBreakNextAction()
         {
             if(ShowMissingSelection(out var target))return;
@@ -214,7 +223,7 @@ namespace Game.UI.Runtime
             {
                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
-                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
             else ShowTutorialWorld(target.Selection,true);
         }

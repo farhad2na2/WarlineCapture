@@ -134,6 +134,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.NetworkVerifyOne and <= CampaignMissionGuidancePromptKind.NetworkExtract => (byte)((int)prompt-116),
             >= CampaignMissionGuidancePromptKind.TrustNorthResponse and <= CampaignMissionGuidancePromptKind.TrustStabilize => (byte)((int)prompt-108),
             >= CampaignMissionGuidancePromptKind.CitywideRecruit and <= CampaignMissionGuidancePromptKind.CitywideStabilize => (byte)((int)prompt-100),
             >= CampaignMissionGuidancePromptKind.ArmorBreakCoverage and <= CampaignMissionGuidancePromptKind.ArmorBreakAuthority => (byte)((int)prompt-91),
@@ -160,6 +161,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.NetworkVerifyOne and <= CampaignMissionGuidancePromptKind.NetworkExtract ? (byte)8 :
             prompt is >= CampaignMissionGuidancePromptKind.TrustNorthResponse and <= CampaignMissionGuidancePromptKind.TrustStabilize ? (byte)8 :
             prompt is >= CampaignMissionGuidancePromptKind.CitywideRecruit and <= CampaignMissionGuidancePromptKind.CitywideStabilize ? (byte)8 :
             prompt is >= CampaignMissionGuidancePromptKind.ArmorBreakCoverage and <= CampaignMissionGuidancePromptKind.ArmorBreakAuthority ? (byte)7 :

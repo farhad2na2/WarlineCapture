@@ -137,6 +137,26 @@ namespace Game.Editor
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
                 }
+                var network = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH05M03NetworkCollapseConfigBuilder.MapPath);
+                if (network != null)
+                {
+                    string networkError = "Logical source binding is not permitted for this independent physical map.";
+                    if (network.SourceBinding.IsConfigured ||
+                        !network.TryValidateMetadata(out networkError) ||
+                        !network.TryValidateLocalContentReferences(out networkError))
+                        throw new InvalidOperationException("Network Collapse production entity delivery requires a valid independent map: " + networkError);
+                    string mapPath = CH05M03NetworkCollapseConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, network.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Network Collapse production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH05M03NetworkCollapseContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Network Collapse production unit fixture missing; run CH05M03NetworkCollapseContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
             }
             return scenes;
         }

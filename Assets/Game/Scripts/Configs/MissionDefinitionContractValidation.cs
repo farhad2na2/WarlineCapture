@@ -222,6 +222,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.RestoreRouteLink:
                 case MissionObjectiveRuleKind.CaptureRouteHub:
                 case MissionObjectiveRuleKind.PreserveRouteRecords:
+                case MissionObjectiveRuleKind.DisableVerifiedNetwork:
+                case MissionObjectiveRuleKind.RecoverNetworkAudit:
+                case MissionObjectiveRuleKind.ExtractNetworkEvidence:
                 case MissionObjectiveRuleKind.ProtectTrustNorthRoute:
                 case MissionObjectiveRuleKind.ProtectTrustSouthRoute:
                 case MissionObjectiveRuleKind.VerifyTrustBroadcast:

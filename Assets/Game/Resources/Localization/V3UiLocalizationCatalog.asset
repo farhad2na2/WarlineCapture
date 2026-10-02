@@ -2819,6 +2819,234 @@ MonoBehaviour:
       value: Hold the clear archive for 15 seconds while the sealed audit is secured.
     - key: mission.network_break.tutorial.8.title
       value: Hold the archive
+    - key: mission.network_collapse.deadline
+      value: Complete within fifteen minutes
+    - key: mission.network_collapse.enemy_intel
+      value: Three separately verified radar nodes, each guarded by two riflemen.
+        Preserve neutral services and audit custody.
+    - key: mission.network_collapse.forces
+      value: "Two tanks \xB7 four riflemen \xB7 evidence engineer \xB7 APC"
+    - key: mission.network_collapse.guide.diagram
+      value: ORDERED VERIFICATION | CIVIC PROTECTION | AUDIT CUSTODY
+    - key: mission.network_collapse.guide.example
+      value: "Clear guards \u2192 recon on foot \u2192 disable verified node \u2192
+        preserve audit \u2192 extract."
+    - key: mission.network_collapse.guide.mistake
+      value: An unverified node is not a valid target. Show Me moves only the camera.
+    - key: mission.network_collapse.hud.audit_hold
+      value: 'Recover audit: {0}/6 s'
+    - key: mission.network_collapse.hud.extraction_hold
+      value: 'Evidence custody: {0}/6 s'
+    - key: mission.network_collapse.hud.fuel
+      value: "Fuel: {0} \xB7 civic reserve protected"
+    - key: mission.network_collapse.hud.recon_hold
+      value: 'Verify node {0}: {1}/6 s'
+    - key: mission.network_collapse.hud.stage.1
+      value: Verify node one
+    - key: mission.network_collapse.hud.stage.2
+      value: Disable the verified first node
+    - key: mission.network_collapse.hud.stage.3
+      value: Verify node two
+    - key: mission.network_collapse.hud.stage.4
+      value: Disable the verified second node
+    - key: mission.network_collapse.hud.stage.5
+      value: Verify node three
+    - key: mission.network_collapse.hud.stage.6
+      value: Disable the verified third node
+    - key: mission.network_collapse.hud.stage.7
+      value: Recover the complete audit
+    - key: mission.network_collapse.hud.stage.8
+      value: Extract the evidence team
+    - key: mission.network_collapse.hud.time
+      value: 'Evidence window: {0}m {1}s'
+    - key: mission.network_collapse.intel.civilian
+      value: CIVIC SERVICES
+    - key: mission.network_collapse.intel.confirmed
+      value: 3 + 6
+    - key: mission.network_collapse.intel.military
+      value: VERIFIED MILITARY
+    - key: mission.network_collapse.intel.protected
+      value: 2 + 4
+    - key: mission.network_collapse.label.deadline
+      value: DEADLINE
+    - key: mission.network_collapse.label.fuel
+      value: FUEL
+    - key: mission.network_collapse.location
+      value: "Sahrin \xB7 civic communications district"
+    - key: mission.network_collapse.marker.audit
+      value: AUDIT
+    - key: mission.network_collapse.marker.extraction
+      value: EXTRACTION
+    - key: mission.network_collapse.marker.node1
+      value: NODE 1
+    - key: mission.network_collapse.marker.node2
+      value: NODE 2
+    - key: mission.network_collapse.marker.node3
+      value: NODE 3
+    - key: mission.network_collapse.marker.recon1
+      value: VERIFY 1
+    - key: mission.network_collapse.marker.recon2
+      value: VERIFY 2
+    - key: mission.network_collapse.marker.recon3
+      value: VERIFY 3
+    - key: mission.network_collapse.name
+      value: Network Collapse
+    - key: mission.network_collapse.objective.audit
+      value: Recover the complete audit
+    - key: mission.network_collapse.objective.extract
+      value: Extract the evidence team
+    - key: mission.network_collapse.objective.extraction
+      value: Extract the evidence team
+    - key: mission.network_collapse.objective.network
+      value: Verify and disable three nodes
+    - key: mission.network_collapse.objective.nodes
+      value: Verify and disable three nodes
+    - key: mission.network_collapse.objective.protection
+      value: Preserve civic services and staff
+    - key: mission.network_collapse.resources
+      value: "80/240 Materials \xB7 100 Fuel \xB7 20 civic Fuel protected"
+    - key: mission.network_collapse.result.audit
+      value: Complete audit
+    - key: mission.network_collapse.result.audit_lost
+      value: The audit archive was destroyed.
+    - key: mission.network_collapse.result.carrier_lost
+      value: The extraction APC was lost.
+    - key: mission.network_collapse.result.civic_lost
+      value: A protected civic service was destroyed.
+    - key: mission.network_collapse.result.defeat
+      value: EVIDENCE RESPONSE FAILED
+    - key: mission.network_collapse.result.engineer_lost
+      value: The original evidence engineer was lost.
+    - key: mission.network_collapse.result.escort_losses
+      value: Escort losses
+    - key: mission.network_collapse.result.escort_lost
+      value: All escorts were lost while military threats remained.
+    - key: mission.network_collapse.result.extraction
+      value: Evidence extracted
+    - key: mission.network_collapse.result.fuel_lost
+      value: The civic Fuel reserve was lost.
+    - key: mission.network_collapse.result.incomplete
+      value: INCOMPLETE
+    - key: mission.network_collapse.result.integrity
+      value: The original evidence custody chain could not be established.
+    - key: mission.network_collapse.result.loss
+      value: Preserve the evidence engineer, APC, civic services and audit. Verify
+        nodes in order before attacking.
+    - key: mission.network_collapse.result.losses
+      value: LOSSES
+    - key: mission.network_collapse.result.nodes
+      value: Verified nodes
+    - key: mission.network_collapse.result.objectives
+      value: MISSION OBJECTIVES
+    - key: mission.network_collapse.result.safe
+      value: SAFE
+    - key: mission.network_collapse.result.secured
+      value: SECURED
+    - key: mission.network_collapse.result.staff_losses
+      value: Staff losses
+    - key: mission.network_collapse.result.staff_lost
+      value: Original civic staff were lost.
+    - key: mission.network_collapse.result.subtitle
+      value: "NETWORK COLLAPSE \xB7 COMPLETE AUDIT"
+    - key: mission.network_collapse.result.success
+      value: All verified nodes are disabled. Civic services and staff survived;
+        the original evidence engineer delivered the complete audit.
+    - key: mission.network_collapse.result.success_short
+      value: Three nodes disabled. Complete audit extracted.
+    - key: mission.network_collapse.result.timeout
+      value: The fifteen-minute evidence window closed.
+    - key: mission.network_collapse.result.unverified
+      value: A node was disabled before ordered verification.
+    - key: mission.network_collapse.result.verified
+      value: VERIFIED
+    - key: mission.network_collapse.result.victory
+      value: AUDIT SECURED
+    - key: mission.network_collapse.reward.audit
+      value: Complete audit
+    - key: mission.network_collapse.reward.card
+      value: "Commander XP \xB7 Credits \xB7 complete audit evidence"
+    - key: mission.network_collapse.star.1
+      value: Complete the mission
+    - key: mission.network_collapse.star.2
+      value: No escort losses
+    - key: mission.network_collapse.star.3
+      value: No civilian losses
+    - key: mission.network_collapse.summary
+      value: Confirm three command nodes in order. Preserve civic services, recover
+        the complete audit and extract the evidence team.
+    - key: mission.network_collapse.supply.optional
+      value: 'Optional Supply: 40 Materials and 3 Fuel. Collect by moving a ground
+        unit to the crate; the mission works without it.'
+    - key: mission.network_collapse.tutorial.1.body
+      value: Move the escort into firing position and Attack the first guards. Move
+        the original engineer to the external recon marker; hold six seconds after
+        the guards are defeated.
+    - key: mission.network_collapse.tutorial.1.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.1.body.recon
+      value: Defeat the guards. Move the original engineer to the external recon
+        marker and hold uncontested for six seconds.
+    - key: mission.network_collapse.tutorial.1.title
+      value: Verify node one
+    - key: mission.network_collapse.tutorial.2.body
+      value: Attack only the confirmed first radar node. Preserve the civic service
+        and original staff.
+    - key: mission.network_collapse.tutorial.2.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.2.title
+      value: Disable the verified first node
+    - key: mission.network_collapse.tutorial.3.body
+      value: Clear the second guards, then Move the original engineer to the second
+        recon marker for six seconds.
+    - key: mission.network_collapse.tutorial.3.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.3.body.recon
+      value: Defeat the guards. Move the original engineer to the external recon
+        marker and hold uncontested for six seconds.
+    - key: mission.network_collapse.tutorial.3.title
+      value: Verify node two
+    - key: mission.network_collapse.tutorial.4.body
+      value: Attack the confirmed second radar node. Keep the audit archive intact.
+    - key: mission.network_collapse.tutorial.4.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.4.title
+      value: Disable the verified second node
+    - key: mission.network_collapse.tutorial.5.body
+      value: Clear the third guards. Move the original engineer to the third recon
+        marker for six seconds.
+    - key: mission.network_collapse.tutorial.5.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.5.body.recon
+      value: Defeat the guards. Move the original engineer to the external recon
+        marker and hold uncontested for six seconds.
+    - key: mission.network_collapse.tutorial.5.title
+      value: Verify node three
+    - key: mission.network_collapse.tutorial.6.body
+      value: Attack the confirmed third radar node. Preserve both neutral services
+        and the complete audit.
+    - key: mission.network_collapse.tutorial.6.body.approach
+      value: Move the escort into weapon range, then use Attack against the verified
+        military target.
+    - key: mission.network_collapse.tutorial.6.title
+      value: Disable the verified third node
+    - key: mission.network_collapse.tutorial.7.body
+      value: Move the original engineer to the external audit gate. Hold six uncontested
+        seconds with the archive intact.
+    - key: mission.network_collapse.tutorial.7.title
+      value: Recover the complete audit
+    - key: mission.network_collapse.tutorial.8.body
+      value: Board the original engineer into the APC and Move to extraction. Preserve
+        the full audit chain and hold six seconds.
+    - key: mission.network_collapse.tutorial.8.body.board
+      value: Select the original engineer and use Board to enter the supplied APC.
+        Then select the APC and Move to the extraction marker.
+    - key: mission.network_collapse.tutorial.8.title
+      value: Extract the evidence team
     - key: mission.power_relay.deadline
       value: 10 active minutes
     - key: mission.power_relay.enemy_intel
@@ -4267,6 +4495,41 @@ MonoBehaviour:
     - key: narrative.network_break.debrief-samira
       value: The audit survived. Its traffic shows Vanguard moving toward the city.
         We have proof, and no time to waste.
+    - key: narrative.network_collapse.brief-01
+      value: "Three command nodes sit among homes and civic services. A blind long-range
+        strike would destroy the audit with them. We take the ground route: clear
+        each node\u2019s guards, verify its external access, then disable only the
+        confirmed node."
+    - key: narrative.network_collapse.brief-02
+      value: Work through the three nodes in order. After clearing each guard group,
+        hold the original engineer at its recon marker for six seconds. That confirms
+        the node for Attack. After the third node, bring the engineer to the audit
+        custody marker and hold for six seconds.
+    - key: narrative.network_collapse.brief-03
+      value: Protect both civic buildings, their staff, the original engineer and
+        the APC. Once the audit is secured, board the engineer into the APC and move
+        to the marked extraction point. Hold there for six seconds. Preserving the
+        people and the proof is part of the same mission.
+    - key: narrative.network_collapse.comms-01
+      value: "The first verified node is isolated. The opening records connect Qassem\u2019s
+        authorization to the original shutdown and the current attacks. The remaining
+        audit still needs its physical chain. Continue in order; keep the engineer,
+        protected services and custody equipment intact."
+    - key: narrative.network_collapse.debrief-01
+      value: The verified network is down, and the engineer brought the complete
+        audit out safely. The protected buildings and staff survived. We chose the
+        slower route because destroying the evidence would only leave Qassem another
+        chance to claim we lied.
+    - key: narrative.network_collapse.debrief-02
+      value: The complete audit ties Qassem to the original override, the attempted
+        erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware.
+        Civilian and military authorities have copies. He manufactured the crisis
+        to make permanent emergency rule appear necessary.
+    - key: narrative.network_collapse.debrief-03
+      value: The Relay complex is still sealed. The physical access keys, engineers,
+        medical supplies, Fuel and reinforcements must reach the city center. The
+        next corridor carries what Sahrin needs to recover; keep those priorities
+        connected.
     - key: narrative.power_relay.brief.01
       value: The substation serving our homes, shelters and water treatment has failed.
         Displaced families are waiting in the open, and the nearest shelter is already
@@ -5840,6 +6103,8 @@ MonoBehaviour:
       value: RADIO
     - key: ui.home.archive.debrief
       value: DEBRIEF
+    - key: ui.home.archive.network_collapse.audit
+      value: VERIFIED COMPLETE AUDIT
     - key: ui.home.archive.trust_under_fire.broadcast_source
       value: VERIFIED BROADCAST SOURCE
     - key: ui.home.archive.trust_under_fire.relay
@@ -13498,6 +13763,378 @@ MonoBehaviour:
     - key: mission.network_break.tutorial.8.title
       value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648 \u062D\u0641\u0638
         \u06A9\u0646"
+    - key: mission.network_collapse.deadline
+      value: "\u062A\u0627 \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u06A9\u0627\u0645\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.enemy_intel
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u0631\u0627\u062F\u0627\u0631 \u0628\u0627
+        \u062F\u0648 \u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0631\u0627\u06CC
+        \u0647\u0631 \u06AF\u0631\u0647. \u062E\u062F\u0645\u0627\u062A \u0628\u06CC\u200C\u0637\u0631\u0641
+        \u0648 \u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0634\u0648\u0627\u0647\u062F
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.network_collapse.forces
+      value: "\u062F\u0648 \u062A\u0627\u0646\u06A9 \xB7 \u0686\u0647\u0627\u0631
+        \u0633\u0631\u0628\u0627\u0632 \xB7 \u0645\u0647\u0646\u062F\u0633 \u0634\u0648\u0627\u0647\u062F
+        \xB7 \u0646\u0641\u0631\u0628\u0631"
+    - key: mission.network_collapse.guide.diagram
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u0628\u0647\u200C\u062A\u0631\u062A\u06CC\u0628
+        | \u062D\u0641\u0638 \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC
+        | \u062D\u0641\u0627\u0638\u062A \u0627\u0632 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC"
+    - key: mission.network_collapse.guide.example
+      value: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627
+        \u2190 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u067E\u06CC\u0627\u062F\u0647
+        \u2190 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644\u200C\u0633\u0627\u0632\u06CC
+        \u06AF\u0631\u0647 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u2190
+        \u062D\u0641\u0638 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u2190 \u062E\u0631\u0648\u062C"
+    - key: mission.network_collapse.guide.mistake
+      value: "\u06AF\u0631\u0647 \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647
+        \u0647\u062F\u0641 \u0645\u062C\u0627\u0632 \u0646\u06CC\u0633\u062A. \xAB\u0646\u0634\u0627\u0646
+        \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.network_collapse.hud.audit_hold
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062D\u0633\u0627\u0628\u0631\u0633\u06CC:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_collapse.hud.extraction_hold
+      value: "\u062D\u0641\u0627\u0638\u062A \u0627\u0632 \u0634\u0648\u0627\u0647\u062F:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_collapse.hud.fuel
+      value: "\u0633\u0648\u062E\u062A: {0} \xB7 \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u0634\u0647\u0631\u06CC \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.network_collapse.hud.recon_hold
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u06AF\u0631\u0647 {0}: {1} \u0627\u0632
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_collapse.hud.stage.1
+      value: "\u06AF\u0631\u0647 \u0627\u0648\u0644 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.2
+      value: "\u06AF\u0631\u0647 \u0627\u0648\u0644 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.3
+      value: "\u06AF\u0631\u0647 \u062F\u0648\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.4
+      value: "\u06AF\u0631\u0647 \u062F\u0648\u0645 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.5
+      value: "\u06AF\u0631\u0647 \u0633\u0648\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.6
+      value: "\u06AF\u0631\u0647 \u0633\u0648\u0645 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.7
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646"
+    - key: mission.network_collapse.hud.stage.8
+      value: "\u062A\u06CC\u0645 \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u062E\u0627\u0631\u062C
+        \u06A9\u0646"
+    - key: mission.network_collapse.hud.time
+      value: "\u0641\u0631\u0635\u062A \u0634\u0648\u0627\u0647\u062F: {0} \u062F\u0642\u06CC\u0642\u0647
+        \u0648 {1} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_collapse.intel.civilian
+      value: "\u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC"
+    - key: mission.network_collapse.intel.confirmed
+      value: "\u06F3 + \u06F6"
+    - key: mission.network_collapse.intel.military
+      value: "\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.network_collapse.intel.protected
+      value: "\u06F2 + \u06F4"
+    - key: mission.network_collapse.label.deadline
+      value: "\u0645\u0647\u0644\u062A"
+    - key: mission.network_collapse.label.fuel
+      value: "\u0633\u0648\u062E\u062A"
+    - key: mission.network_collapse.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0645\u062D\u0644\u0647\u0654
+        \u0627\u0631\u062A\u0628\u0627\u0637\u0627\u062A \u0634\u0647\u0631\u06CC"
+    - key: mission.network_collapse.marker.audit
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC"
+    - key: mission.network_collapse.marker.extraction
+      value: "\u062E\u0631\u0648\u062C"
+    - key: mission.network_collapse.marker.node1
+      value: "\u06AF\u0631\u0647 1"
+    - key: mission.network_collapse.marker.node2
+      value: "\u06AF\u0631\u0647 2"
+    - key: mission.network_collapse.marker.node3
+      value: "\u06AF\u0631\u0647 3"
+    - key: mission.network_collapse.marker.recon1
+      value: "\u062A\u0623\u06CC\u06CC\u062F 1"
+    - key: mission.network_collapse.marker.recon2
+      value: "\u062A\u0623\u06CC\u06CC\u062F 2"
+    - key: mission.network_collapse.marker.recon3
+      value: "\u062A\u0623\u06CC\u06CC\u062F 3"
+    - key: mission.network_collapse.name
+      value: "\u0641\u0631\u0648\u067E\u0627\u0634\u06CC \u0634\u0628\u06A9\u0647"
+    - key: mission.network_collapse.objective.audit
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646"
+    - key: mission.network_collapse.objective.extract
+      value: "\u062A\u06CC\u0645 \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u062E\u0627\u0631\u062C
+        \u06A9\u0646"
+    - key: mission.network_collapse.objective.extraction
+      value: "\u062A\u06CC\u0645 \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u062E\u0627\u0631\u062C
+        \u06A9\u0646"
+    - key: mission.network_collapse.objective.network
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.objective.nodes
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.objective.protection
+      value: "\u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.network_collapse.resources
+      value: "\u06F8\u06F0 \u0627\u0632 \u06F2\u06F4\u06F0 \u0645\u0635\u0627\u0644\u062D
+        \xB7 \u06F1\u06F0\u06F0 \u0633\u0648\u062E\u062A \xB7 \u06F2\u06F0 \u0633\u0648\u062E\u062A
+        \u0634\u0647\u0631\u06CC \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.network_collapse.result.audit
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644"
+    - key: mission.network_collapse.result.audit_lost
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: mission.network_collapse.result.carrier_lost
+      value: "\u0646\u0641\u0631\u0628\u0631 \u062E\u0631\u0648\u062C \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.network_collapse.result.civic_lost
+      value: "\u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: mission.network_collapse.result.defeat
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A \u0634\u0648\u0627\u0647\u062F
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.network_collapse.result.engineer_lost
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0634\u0648\u0627\u0647\u062F
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.network_collapse.result.escort_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.network_collapse.result.escort_lost
+      value: "\u0647\u0645\u0647\u0654 \u0627\u0633\u06A9\u0648\u0631\u062A\u200C\u0647\u0627
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646 \u0648 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0628\u0627\u0642\u06CC \u0645\u0648\u0646\u062F\u0646."
+    - key: mission.network_collapse.result.extraction
+      value: "\u0634\u0648\u0627\u0647\u062F \u062E\u0627\u0631\u062C \u0634\u062F"
+    - key: mission.network_collapse.result.fuel_lost
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A \u0634\u0647\u0631\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.network_collapse.result.incomplete
+      value: "\u0646\u0627\u0642\u0635"
+    - key: mission.network_collapse.result.integrity
+      value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0627\u0635\u0644\u06CC
+        \u062D\u0641\u0627\u0638\u062A \u0627\u0632 \u0634\u0648\u0627\u0647\u062F
+        \u0628\u0631\u0642\u0631\u0627\u0631 \u0646\u0634\u062F."
+    - key: mission.network_collapse.result.loss
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0634\u0648\u0627\u0647\u062F\u060C
+        \u0646\u0641\u0631\u0628\u0631\u060C \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC
+        \u0648 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646. \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0645\u0644\u0647 \u06AF\u0631\u0647\u200C\u0647\u0627
+        \u0631\u0648 \u0628\u0647\u200C\u062A\u0631\u062A\u06CC\u0628 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646."
+    - key: mission.network_collapse.result.losses
+      value: "\u062A\u0644\u0641\u0627\u062A"
+    - key: mission.network_collapse.result.nodes
+      value: "\u06AF\u0631\u0647\u200C\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.network_collapse.result.objectives
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.network_collapse.result.safe
+      value: "\u0627\u0645\u0646"
+    - key: mission.network_collapse.result.secured
+      value: "\u0645\u062D\u0641\u0648\u0638"
+    - key: mission.network_collapse.result.staff_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646"
+    - key: mission.network_collapse.result.staff_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0627\u0635\u0644\u06CC
+        \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A\u0646."
+    - key: mission.network_collapse.result.subtitle
+      value: "\u0641\u0631\u0648\u067E\u0627\u0634\u06CC \u0634\u0628\u06A9\u0647
+        \xB7 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644"
+    - key: mission.network_collapse.result.success
+      value: "\u0647\u0645\u0647\u0654 \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644
+        \u0634\u062F\u0646. \u062E\u062F\u0645\u0627\u062A \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0632\u0646\u062F\u0647 \u0645\u0648\u0646\u062F\u0646\u061B \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F."
+    - key: mission.network_collapse.result.success_short
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644
+        \u0634\u062F. \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u062E\u0627\u0631\u062C \u0634\u062F."
+    - key: mission.network_collapse.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u0634\u0648\u0627\u0647\u062F \u062A\u0645\u0648\u0645 \u0634\u062F."
+    - key: mission.network_collapse.result.unverified
+      value: "\u06AF\u0631\u0647 \u067E\u06CC\u0634 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F
+        \u0628\u0647\u200C\u062A\u0631\u062A\u06CC\u0628 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644
+        \u0634\u062F."
+    - key: mission.network_collapse.result.verified
+      value: "\u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.network_collapse.result.victory
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.network_collapse.reward.audit
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644"
+    - key: mission.network_collapse.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u0634\u0648\u0627\u0647\u062F
+        \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644"
+    - key: mission.network_collapse.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.network_collapse.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.network_collapse.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
+    - key: mission.network_collapse.summary
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0631\u0648 \u0628\u0647\u200C\u062A\u0631\u062A\u06CC\u0628 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646. \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646\u060C \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u06A9\u0627\u0645\u0644 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646 \u0648 \u062A\u06CC\u0645 \u0634\u0648\u0627\u0647\u062F \u0631\u0648
+        \u062E\u0627\u0631\u062C \u06A9\u0646."
+    - key: mission.network_collapse.supply.optional
+      value: "\u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u06F4\u06F0 \u0645\u0635\u0627\u0644\u062D \u0648 \u06F3 \u0633\u0648\u062E\u062A.
+        \u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u0631\u0648 \u0628\u0647 \u0635\u0646\u062F\u0648\u0642 \u0628\u0628\u0631\u061B
+        \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0628\u062F\u0648\u0646\u0634
+        \u0647\u0645 \u06A9\u0627\u0645\u0644 \u0645\u06CC\u200C\u0634\u0647."
+    - key: mission.network_collapse.tutorial.1.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0645\u0633\u062A\u0642\u0631
+        \u06A9\u0646 \u0648 \u0628\u0647 \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0627\u0648\u0644 \u062D\u0645\u0644\u0647 \u06A9\u0646. \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0628\u0628\u0631\u061B \u067E\u0633 \u0627\u0632 \u0634\u06A9\u0633\u062A
+        \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.1.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.1.body.recon
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627 \u0631\u0648
+        \u0634\u06A9\u0633\u062A \u0628\u062F\u0647. \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646
+        \u062F\u0634\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.1.title
+      value: "\u06AF\u0631\u0647 \u0627\u0648\u0644 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.2.body
+      value: "\u0641\u0642\u0637 \u0628\u0647 \u06AF\u0631\u0647 \u0631\u0627\u062F\u0627\u0631
+        \u0627\u0648\u0644\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646. \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.network_collapse.tutorial.2.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.2.title
+      value: "\u06AF\u0631\u0647 \u0627\u0648\u0644 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.3.body
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u062F\u0648\u0645
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646\u060C
+        \u0633\u067E\u0633 \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u062F\u0648\u0645 \u0628\u0628\u0631."
+    - key: mission.network_collapse.tutorial.3.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.3.body.recon
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627 \u0631\u0648
+        \u0634\u06A9\u0633\u062A \u0628\u062F\u0647. \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646
+        \u062F\u0634\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.3.title
+      value: "\u06AF\u0631\u0647 \u062F\u0648\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.4.body
+      value: "\u0628\u0647 \u06AF\u0631\u0647 \u0631\u0627\u062F\u0627\u0631 \u062F\u0648\u0645\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.network_collapse.tutorial.4.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.4.title
+      value: "\u06AF\u0631\u0647 \u062F\u0648\u0645 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.5.body
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0633\u0648\u0645
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646.
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648 \u0634\u0634
+        \u062B\u0627\u0646\u06CC\u0647 \u0628\u0647 \u0646\u0634\u0627\u0646 \u0633\u0648\u0645
+        \u0628\u0628\u0631."
+    - key: mission.network_collapse.tutorial.5.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.5.body.recon
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627 \u0631\u0648
+        \u0634\u06A9\u0633\u062A \u0628\u062F\u0647. \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646
+        \u062F\u0634\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.5.title
+      value: "\u06AF\u0631\u0647 \u0633\u0648\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.6.body
+      value: "\u0628\u0647 \u06AF\u0631\u0647 \u0633\u0648\u0645\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646. \u0647\u0631 \u062F\u0648 \u062E\u062F\u0645\u062A
+        \u0628\u06CC\u200C\u0637\u0631\u0641 \u0648 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u06A9\u0627\u0645\u0644 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.network_collapse.tutorial.6.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0631\u0648 \u0628\u0647 \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627
+        \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0647\u062F\u0641
+        \u0646\u0638\u0627\u0645\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.network_collapse.tutorial.6.title
+      value: "\u06AF\u0631\u0647 \u0633\u0648\u0645 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u063A\u06CC\u0631\u0641\u0639\u0627\u0644 \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.7.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0628\u0628\u0631. \u0628\u0627
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0633\u0627\u0644\u0645 \u0634\u0634
+        \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646 \u062F\u0634\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.7.title
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646"
+    - key: mission.network_collapse.tutorial.8.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646 \u0648
+        \u0628\u0647 \u062E\u0631\u0648\u062C \u0628\u0628\u0631. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u06A9\u0627\u0645\u0644 \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.network_collapse.tutorial.8.body.board
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646 \u0648\u0627\u0631\u062F \u0646\u0641\u0631\u0628\u0631
+        \u062A\u062F\u0627\u0631\u06A9\u200C\u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u06A9\u0646. \u0633\u067E\u0633 \u0646\u0641\u0631\u0628\u0631 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u062E\u0631\u0648\u062C \u0628\u0628\u0631."
+    - key: mission.network_collapse.tutorial.8.title
+      value: "\u062A\u06CC\u0645 \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u062E\u0627\u0631\u062C
+        \u06A9\u0646"
     - key: mission.power_relay.deadline
       value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -16414,6 +17051,105 @@ MonoBehaviour:
         \u0628\u0647 \u0633\u0648\u06CC \u0634\u0647\u0631 \u0645\u06CC\u200C\u0622\u06CC\u062F.
         \u0645\u062F\u0631\u06A9 \u062F\u0627\u0631\u06CC\u0645 \u0648 \u0648\u0642\u062A
         \u06A9\u0645 \u0627\u0633\u062A."
+    - key: narrative.network_collapse.brief-01
+      value: "\u0633\u0647 \u06AF\u0631\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0628\u06CC\u0646 \u062E\u0627\u0646\u0647\u200C\u0647\u0627 \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0642\u0631\u0627\u0631 \u062F\u0627\u0631\u0646.
+        \u06CC\u06A9 \u062D\u0645\u0644\u0647\u0654 \u062F\u0648\u0631\u0628\u0631\u062F
+        \u06A9\u0648\u0631\u060C \u06AF\u0632\u0627\u0631\u0634 \u0628\u0627\u0632\u0631\u0633\u06CC
+        \u0631\u0648 \u0647\u0645 \u0628\u0627 \u0627\u0648\u0646\u200C\u0647\u0627
+        \u0646\u0627\u0628\u0648\u062F \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0627\u0632
+        \u0645\u0633\u06CC\u0631 \u0632\u0645\u06CC\u0646\u06CC \u0645\u06CC\u200C\u0631\u06CC\u0645\u061B
+        \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0647\u0631
+        \u06AF\u0631\u0647 \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u06A9\u0646\u06CC\u0646\u060C \u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC\u0634
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u0646\u060C
+        \u0628\u0639\u062F \u0641\u0642\u0637 \u06AF\u0631\u0647\u0654 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632\u06CC\u0646."
+    - key: narrative.network_collapse.brief-02
+      value: "\u0633\u0647 \u06AF\u0631\u0647 \u0631\u0648 \u0628\u0647 \u062A\u0631\u062A\u06CC\u0628
+        \u067E\u06CC\u0634 \u0628\u0628\u0631\u06CC\u0646. \u0628\u0639\u062F \u0627\u0632
+        \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0647\u0631 \u06AF\u0631\u0647\u060C \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0631\u0648\u06CC
+        \u0646\u0634\u0627\u0646 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0647\u0645\u0648\u0646
+        \u06AF\u0631\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646. \u0628\u0627
+        \u0627\u06CC\u0646 \u06A9\u0627\u0631 \u06AF\u0631\u0647 \u0628\u0631\u0627\u06CC
+        \u062D\u0645\u0644\u0647 \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u0634\u0647.
+        \u0628\u0639\u062F \u0627\u0632 \u06AF\u0631\u0647\u0654 \u0633\u0648\u0645\u060C
+        \u0645\u0647\u0646\u062F\u0633 \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u06AF\u0632\u0627\u0631\u0634
+        \u0628\u0631\u0633\u0648\u0646\u06CC\u0646 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646."
+    - key: narrative.network_collapse.brief-03
+      value: "\u0627\u0632 \u0647\u0631 \u062F\u0648 \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u062E\u062F\u0645\u0627\u062A\u060C \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u0634\u0648\u0646\u060C
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0648 \u0646\u0641\u0631\u0628\u0631
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u0646. \u0648\u0642\u062A\u06CC
+        \u06AF\u0632\u0627\u0631\u0634 \u0627\u0645\u0646 \u0634\u062F\u060C \u0645\u0647\u0646\u062F\u0633
+        \u0631\u0648 \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646\u06CC\u0646
+        \u0648 \u0628\u0647 \u0645\u062D\u0644 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u062E\u0631\u0648\u062C \u062D\u0631\u06A9\u062A \u0628\u062F\u06CC\u0646.
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0648\u0646\u062C\u0627
+        \u0628\u0645\u0648\u0646\u06CC\u0646. \u062D\u0641\u0638 \u0645\u0631\u062F\u0645
+        \u0648 \u0645\u062F\u0631\u06A9\u060C \u0647\u0631 \u062F\u0648 \u0628\u062E\u0634\u06CC
+        \u0627\u0632 \u0647\u0645\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u0646."
+    - key: narrative.network_collapse.comms-01
+      value: "\u0627\u0648\u0644\u06CC\u0646 \u06AF\u0631\u0647\u0654 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062C\u062F\u0627 \u0634\u062F. \u0633\u0646\u062F\u0647\u0627\u06CC \u0627\u0648\u0644\u06CC\u0647\u060C
+        \u0645\u062C\u0648\u0632 \u0642\u0627\u0633\u0645 \u0631\u0648 \u0628\u0647
+        \u062E\u0627\u0645\u0648\u0634\u06CC \u0627\u0635\u0644\u06CC \u0648 \u062D\u0645\u0644\u0647\u200C\u0647\u0627\u06CC
+        \u0641\u0639\u0644\u06CC \u0648\u0635\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0646.
+        \u0628\u062E\u0634 \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647\u0654
+        \u06AF\u0632\u0627\u0631\u0634 \u0647\u0646\u0648\u0632 \u0628\u0647 \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC\u0634 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0647.
+        \u0628\u0647 \u062A\u0631\u062A\u06CC\u0628 \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u06CC\u0646\u061B \u0645\u0647\u0646\u062F\u0633\u060C \u062E\u062F\u0645\u0627\u062A
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647 \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0645\u062F\u0631\u06A9 \u0631\u0648
+        \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646."
+    - key: narrative.network_collapse.debrief-01
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0627\u0632 \u06A9\u0627\u0631 \u0627\u0641\u062A\u0627\u062F \u0648 \u0645\u0647\u0646\u062F\u0633\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0631\u0648 \u0633\u0627\u0644\u0645
+        \u0628\u06CC\u0631\u0648\u0646 \u0622\u0648\u0631\u062F. \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F\u0646. \u0645\u0633\u06CC\u0631
+        \u06A9\u0646\u062F\u062A\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0631\u062F\u06CC\u0645\u060C \u0686\u0648\u0646 \u0646\u0627\u0628\u0648\u062F
+        \u06A9\u0631\u062F\u0646 \u0645\u062F\u0631\u06A9 \u0641\u0642\u0637 \u06CC\u06A9
+        \u0641\u0631\u0635\u062A \u062F\u06CC\u06AF\u0647 \u0628\u0647 \u0642\u0627\u0633\u0645
+        \u0645\u06CC\u200C\u062F\u0627\u062F \u062A\u0627 \u0628\u06AF\u0647 \u062F\u0631\u0648\u063A
+        \u06AF\u0641\u062A\u06CC\u0645."
+    - key: narrative.network_collapse.debrief-02
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644\u060C \u0642\u0627\u0633\u0645
+        \u0631\u0648 \u0628\u0647 \u0641\u0631\u0645\u0627\u0646 \u0627\u0635\u0644\u06CC\u060C
+        \u062A\u0644\u0627\u0634 \u0628\u0631\u0627\u06CC \u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646
+        \u0645\u062F\u0627\u0631\u06A9\u060C \u0628\u0645\u0628\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0647\u0627\u06CC
+        \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631\u060C \u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627\u06CC
+        \u062F\u0631\u0648\u063A\u060C \u0633\u0648\u062E\u062A \u0645\u0646\u062D\u0631\u0641\u200C\u0634\u062F\u0647
+        \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0648\u0635\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0645\u0642\u0627\u0645\u200C\u0647\u0627\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0648 \u0646\u0638\u0627\u0645\u06CC
+        \u0646\u0633\u062E\u0647\u200C\u0647\u0627\u0634 \u0631\u0648 \u062F\u0627\u0631\u0646.
+        \u0627\u0648\u0646 \u0628\u062D\u0631\u0627\u0646 \u0631\u0648 \u0633\u0627\u062E\u062A
+        \u062A\u0627 \u062D\u06A9\u0648\u0645\u062A \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u062F\u0627\u0626\u0645\u06CC \u0631\u0648 \u0636\u0631\u0648\u0631\u06CC
+        \u062C\u0644\u0648\u0647 \u0628\u062F\u0647."
+    - key: narrative.network_collapse.debrief-03
+      value: "\u0645\u062C\u0645\u0648\u0639\u0647\u0654 \u0631\u0644\u0647 \u0647\u0646\u0648\u0632
+        \u0628\u0633\u062A\u0647\u200C\u0633\u062A. \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC \u062F\u0633\u062A\u0631\u0633\u06CC\u060C
+        \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u060C \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u067E\u0632\u0634\u06A9\u06CC\u060C \u0633\u0648\u062E\u062A \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0628\u0627\u06CC\u062F \u0628\u0647 \u0645\u0631\u06A9\u0632
+        \u0634\u0647\u0631 \u0628\u0631\u0633\u0646. \u0645\u0633\u06CC\u0631 \u0628\u0639\u062F\u06CC\u060C
+        \u0686\u06CC\u0632\u0647\u0627\u06CC\u06CC \u0631\u0648 \u062D\u0645\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u0647 \u06A9\u0647 \u0633\u0647\u0631\u06CC\u0646
+        \u0628\u0631\u0627\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0646\u06CC\u0627\u0632
+        \u062F\u0627\u0631\u0647\u061B \u0627\u06CC\u0646 \u0627\u0648\u0644\u0648\u06CC\u062A\u200C\u0647\u0627
+        \u0631\u0648 \u0628\u0647 \u0647\u0645 \u067E\u06CC\u0648\u0633\u062A\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646."
     - key: narrative.power_relay.brief.01
       value: "\u067E\u0633\u062A \u0628\u0631\u0642\u06CC \u06A9\u0647 \u0628\u0647
         \u062E\u0648\u0646\u0647\u200C\u0647\u0627\u060C \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627
@@ -18935,6 +19671,9 @@ MonoBehaviour:
       value: "\u0631\u0627\u062F\u06CC\u0648"
     - key: ui.home.archive.debrief
       value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646\u06CC"
+    - key: ui.home.archive.network_collapse.audit
+      value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
     - key: ui.home.archive.trust_under_fire.broadcast_source
       value: "\u0645\u0646\u0628\u0639 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
         \u0641\u0631\u0633\u062A\u0646\u062F\u0647"

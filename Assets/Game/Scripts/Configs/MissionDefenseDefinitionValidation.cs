@@ -12,7 +12,8 @@ namespace Game.Configs
             bool trustConvoy = scenario.ScenarioId == "scenario.ch05.m02.trust_under_fire" && !scenario.MissionRuntime.Enabled &&
                 scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled &&
                 scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
-            if ((!scenario.MissionRuntime.Enabled && !trustConvoy) || !defense.Enabled ||
+            bool networkRaid = scenario.ScenarioId == "scenario.ch05.m03.network_collapse" && !scenario.MissionRuntime.Enabled && scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled && !scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
+            if ((!scenario.MissionRuntime.Enabled && !trustConvoy && !networkRaid) || !defense.Enabled ||
                 defense.ConvoyElements.Length is < 1 or > 4 ||
                 string.IsNullOrWhiteSpace(defense.ForwardPostStableId) || defense.ForwardPostStableId.Length > 125 ||
                 !HasAnchor(scenario, defense.InnerCoreAnchorId) ||

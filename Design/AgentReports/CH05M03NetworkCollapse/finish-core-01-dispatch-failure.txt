@@ -1,0 +1,2 @@
+Wrapper request acknowledged while Unity was importing scripts. The scheduled callback did not survive domain reload. No validation log or completion receipt was produced. Fresh idle-Editor rerun uses finish-core-02.log. This request is failed evidence, not a pass.
+Wrapper ultimately exited 124: live validation timed out without a completion receipt; existing Editor preserved.

@@ -74,9 +74,10 @@ namespace Game.UI.Runtime
                     UiTutorialBattleAction.Attack=>TacticalCommandMode.Attack,
                     _=>TacticalCommandMode.None
                 };
+                if(UiShellRuntimeGateway.IsNetworkCollapseGuideContext()&&UiShellRuntimeGateway.TryReadNetworkCollapse(out var boarding)&&boarding.Stage==8&&!boarding.EngineerAboard)required=TacticalCommandMode.Board;
                 if(required!=TacticalCommandMode.None && _activeCommandMode!=required)
                 {
-                    var command=ObserveWatchButton(required==TacticalCommandMode.Move
+                    var command=ObserveWatchButton(required==TacticalCommandMode.Board ? _commandControlsView?.CommandWheelPanel?.NextBoardButton : required==TacticalCommandMode.Move
                         ?_commandControlsView?.MoveButton:_commandControlsView?.AttackButton);
                     if(command.Available){kind=AriaPlayObservationKind.Control;target=command.Id;position=command.Position;}
                 }
@@ -95,6 +96,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsGroundedSignalGuideContext() &&
                        !UiShellRuntimeGateway.IsArmorBreakGuideContext() &&
                        !UiShellRuntimeGateway.IsCitywideAlertGuideContext() &&
+                       !UiShellRuntimeGateway.IsNetworkCollapseGuideContext() &&
                        !UiShellRuntimeGateway.IsTrustUnderFireGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
@@ -168,7 +170,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
@@ -204,6 +206,7 @@ namespace Game.UI.Runtime
                 if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var armorTarget) &&
                     armorTarget.BattleAction==UiTutorialBattleAction.Attack)goalId++;
             }
+            if(UiShellRuntimeGateway.IsNetworkCollapseGuideContext()&&UiShellRuntimeGateway.TryReadNetworkCollapse(out var networkProgress))goalId=7000+networkProgress.Stage*8+Mathf.Clamp(networkProgress.HostilesDefeated,0,9)*2+(networkProgress.EngineerAboard?1:0);
             if(UiShellRuntimeGateway.IsTrustUnderFireGuideContext() && UiShellRuntimeGateway.TryReadTrustUnderFire(out var trustProgress)) goalId=6900+trustProgress.Stage*32+Mathf.Clamp(trustProgress.HostilesDefeated,0,9)*2+(trustProgress.NorthCrossed?1:0)+(trustProgress.SouthCrossed?2:0);
             if(UiShellRuntimeGateway.IsCitywideAlertGuideContext() && UiShellRuntimeGateway.TryReadCitywideAlert(out var citywideProgress)) goalId=6800+citywideProgress.Stage*16+Mathf.Clamp(citywideProgress.HostilesCleared,0,11);
             // A delivered load is visible reserve progress, even while the same

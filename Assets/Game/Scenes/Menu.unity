@@ -3854,6 +3854,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1c31b914c97dc4507a15e5f38bb38bb0, type: 2}
   - {fileID: 8671324597173570613, guid: 1c31b914c97dc4507a15e5f38bb38bb0, type: 2}
   - {fileID: -8189438902502151786, guid: 1c31b914c97dc4507a15e5f38bb38bb0, type: 2}
+  - {fileID: 11400000, guid: 1024ec76967074f9eb2f13c2fbee2e43, type: 2}
+  - {fileID: 8149881118569543616, guid: 1024ec76967074f9eb2f13c2fbee2e43, type: 2}
+  - {fileID: -7733787606375683355, guid: 1024ec76967074f9eb2f13c2fbee2e43, type: 2}
   - {fileID: -6300305631338174053, guid: 542982bd8147f4ab3868a37aaa38dd8d, type: 2}
   campaignMissionCatalog: {fileID: 11400000, guid: cb1a7fecce22b2f4b9182d8feebcaed0, type: 2}
   campaignMissionDefinition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619, type: 2}

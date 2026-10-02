@@ -1,0 +1,279 @@
+{
+  "status": "LocalDraftOnly_NoUploadAuthorized",
+  "missionId": "saga.ch05.m03.network_collapse",
+  "providerDraft": "ElevenLabs",
+  "modelDraft": "eleven_v3",
+  "clipCountDraft": 14,
+  "installedClips": 0,
+  "externalRequests": 0,
+  "runtimeNetworkTts": false,
+  "cast": "Existing canonical Dalia, Samira and ARIA voices; no previous mission voice clips bound",
+  "clips": [
+    {
+      "id": "network_collapse-brief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "voiceIdDraft": "MK1Zvh93428YrgOQ8Obr",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-01.wav",
+      "caption": "Three command nodes sit among homes and civic services. A blind long-range strike would destroy the audit with them. We take the ground route: clear each node’s guards, verify its external access, then disable only the confirmed node.",
+      "captionSha256": "9d03ce1b8d33123dca37c2bfd588b46d07602488d8f9199de1711f9b74177098",
+      "requestDraft": {
+        "text": "Three command nodes sit among homes and civic services. A blind long-range strike would destroy the audit with them. We take the ground route: clear each node’s guards, verify its external access, then disable only the confirmed node.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15300,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-brief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "MK1Zvh93428YrgOQ8Obr",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-01.wav",
+      "caption": "سه گرهٔ فرماندهی بین خانه‌ها و خدمات شهری قرار دارن. یک حملهٔ دوربرد کور، گزارش بازرسی رو هم با اون‌ها نابود می‌کنه. از مسیر زمینی می‌ریم؛ نگهبان‌های هر گره رو پاک‌سازی کنین، دسترسی بیرونیش رو تأیید کنین، بعد فقط گرهٔ تأییدشده رو از کار بندازین.",
+      "captionSha256": "94a9ce59e554da36e468a683310acd84a89b758aeb63544758fa63c3785a238e",
+      "requestDraft": {
+        "text": "[conversational tone] سه گرهٔ فرماندهی بین خانه‌ها و خدمات شهری قرار دارن. یک حملهٔ دوربرد کور، گزارش بازرسی رو هم با اون‌ها نابود می‌کنه. از مسیر زمینی می‌ریم؛ نگهبان‌های هر گره رو پاک‌سازی کنین، دسترسی بیرونیش رو تأیید کنین، بعد فقط گرهٔ تأییدشده رو از کار بندازین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15301,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-brief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-02.wav",
+      "caption": "Work through the three nodes in order. After clearing each guard group, hold the original engineer at its recon marker for six seconds. That confirms the node for Attack. After the third node, bring the engineer to the audit custody marker and hold for six seconds.",
+      "captionSha256": "0992b176273476fd0e7ff97f88fcd34bcdb9981ee3172fe062b9fe704276e824",
+      "requestDraft": {
+        "text": "Work through the three nodes in order. After clearing each guard group, hold the original engineer at its recon marker for six seconds. That confirms the node for Attack. After the third node, bring the engineer to the audit custody marker and hold for six seconds.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15302,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-brief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-02.wav",
+      "caption": "سه گره رو به ترتیب پیش ببرین. بعد از پاک‌سازی نگهبان‌های هر گره، مهندس اصلی رو شش ثانیه روی نشان شناسایی همون گره نگه دارین. با این کار گره برای حمله تأیید می‌شه. بعد از گرهٔ سوم، مهندس رو به نشان نگهداری گزارش برسونین و شش ثانیه نگه دارین.",
+      "captionSha256": "9f74f6a4dd5b7d96bce5fb1bf00a8d5757056076cf6c5573e4d32e6908e6a18d",
+      "requestDraft": {
+        "text": "[conversational tone] سه گره رو به ترتیب پیش ببرین. بعد از پاک‌سازی نگهبان‌های هر گره، مهندس اصلی رو شش ثانیه روی نشان شناسایی همون گره نگه دارین. با این کار گره برای حمله تأیید می‌شه. بعد از گرهٔ سوم، مهندس رو به نشان نگهداری گزارش برسونین و شش ثانیه نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15303,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "voiceIdDraft": "7uxeJ73HfJL9gOH2mttA",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-03.wav",
+      "caption": "Protect both civic buildings, their staff, the original engineer and the APC. Once the audit is secured, board the engineer into the APC and move to the marked extraction point. Hold there for six seconds. Preserving the people and the proof is part of the same mission.",
+      "captionSha256": "cd6aae4b810771c17b10b1c823b4bd28b322fa3df4cbc053bc4aef5a7f510c83",
+      "requestDraft": {
+        "text": "Protect both civic buildings, their staff, the original engineer and the APC. Once the audit is secured, board the engineer into the APC and move to the marked extraction point. Hold there for six seconds. Preserving the people and the proof is part of the same mission.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15304,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "7uxeJ73HfJL9gOH2mttA",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-03.wav",
+      "caption": "از هر دو ساختمان خدمات، کارکنانشون، مهندس اصلی و نفربر محافظت کنین. وقتی گزارش امن شد، مهندس رو سوار نفربر کنین و به محل مشخص‌شدهٔ خروج حرکت بدین. شش ثانیه اونجا بمونین. حفظ مردم و مدرک، هر دو بخشی از همین مأموریتن.",
+      "captionSha256": "9a005d3df59e2f2251411254c115c3aaf25dd67142a475843786236a3a18e962",
+      "requestDraft": {
+        "text": "[conversational tone] از هر دو ساختمان خدمات، کارکنانشون، مهندس اصلی و نفربر محافظت کنین. وقتی گزارش امن شد، مهندس رو سوار نفربر کنین و به محل مشخص‌شدهٔ خروج حرکت بدین. شش ثانیه اونجا بمونین. حفظ مردم و مدرک، هر دو بخشی از همین مأموریتن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15305,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-comms-01.wav",
+      "caption": "The first verified node is isolated. The opening records connect Qassem’s authorization to the original shutdown and the current attacks. The remaining audit still needs its physical chain. Continue in order; keep the engineer, protected services and custody equipment intact.",
+      "captionSha256": "da13ee6d0e40d1d238abb468fe8ddc99250df40009bc4a411fa7de6a0396aee8",
+      "requestDraft": {
+        "text": "The first verified node is isolated. The opening records connect Qassem’s authorization to the original shutdown and the current attacks. The remaining audit still needs its physical chain. Continue in order; keep the engineer, protected services and custody equipment intact.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15306,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-comms-01.wav",
+      "caption": "اولین گرهٔ تأییدشده جدا شد. سندهای اولیه، مجوز قاسم رو به خاموشی اصلی و حمله‌های فعلی وصل می‌کنن. بخش باقی‌موندهٔ گزارش هنوز به زنجیرهٔ فیزیکیش نیاز داره. به ترتیب ادامه بدین؛ مهندس، خدمات محافظت‌شده و تجهیزات نگهداری مدرک رو سالم نگه دارین.",
+      "captionSha256": "8583443e21c02e45f3dd9e2fa7a6b0867cd1958e2f6dc9d38f3242f5e77b2e87",
+      "requestDraft": {
+        "text": "[conversational tone] اولین گرهٔ تأییدشده جدا شد. سندهای اولیه، مجوز قاسم رو به خاموشی اصلی و حمله‌های فعلی وصل می‌کنن. بخش باقی‌موندهٔ گزارش هنوز به زنجیرهٔ فیزیکیش نیاز داره. به ترتیب ادامه بدین؛ مهندس، خدمات محافظت‌شده و تجهیزات نگهداری مدرک رو سالم نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15307,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "voiceIdDraft": "MK1Zvh93428YrgOQ8Obr",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-01.wav",
+      "caption": "The verified network is down, and the engineer brought the complete audit out safely. The protected buildings and staff survived. We chose the slower route because destroying the evidence would only leave Qassem another chance to claim we lied.",
+      "captionSha256": "da6ba6206279e6867d4a55a81756905d2e5bf8daee757bbd8c7a45e2cf9c1b08",
+      "requestDraft": {
+        "text": "The verified network is down, and the engineer brought the complete audit out safely. The protected buildings and staff survived. We chose the slower route because destroying the evidence would only leave Qassem another chance to claim we lied.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15308,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "MK1Zvh93428YrgOQ8Obr",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-01.wav",
+      "caption": "شبکهٔ تأییدشده از کار افتاد و مهندس، گزارش کامل رو سالم بیرون آورد. ساختمان‌ها و کارکنان محافظت‌شده سالم موندن. مسیر کندتر رو انتخاب کردیم، چون نابود کردن مدرک فقط یک فرصت دیگه به قاسم می‌داد تا بگه دروغ گفتیم.",
+      "captionSha256": "b95ddaed2ddc0fe59f41099fbf2afadd249afad2f85e5d849f77236715015dd8",
+      "requestDraft": {
+        "text": "[conversational tone] شبکهٔ تأییدشده از کار افتاد و مهندس، گزارش کامل رو سالم بیرون آورد. ساختمان‌ها و کارکنان محافظت‌شده سالم موندن. مسیر کندتر رو انتخاب کردیم، چون نابود کردن مدرک فقط یک فرصت دیگه به قاسم می‌داد تا بگه دروغ گفتیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15309,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-02.wav",
+      "caption": "The complete audit ties Qassem to the original override, the attempted erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware. Civilian and military authorities have copies. He manufactured the crisis to make permanent emergency rule appear necessary.",
+      "captionSha256": "fda01f9215b0947deb9f2bdcd7ed0bc750c723e0402650507cc17f1bfcd51bf9",
+      "requestDraft": {
+        "text": "The complete audit ties Qassem to the original override, the attempted erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware. Civilian and military authorities have copies. He manufactured the crisis to make permanent emergency rule appear necessary.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15310,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "Fi9tPTnEcbh3of7hOHC8",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-02.wav",
+      "caption": "گزارش کامل، قاسم رو به فرمان اصلی، تلاش برای پاک کردن مدارک، بمب‌گذاری‌های خط خاکستر، گزارش‌های دروغ، سوخت منحرف‌شده و تجهیزات ونگارد وصل می‌کنه. مقام‌های غیرنظامی و نظامی نسخه‌هاش رو دارن. اون بحران رو ساخت تا حکومت اضطراری دائمی رو ضروری جلوه بده.",
+      "captionSha256": "dbd794f305c6422dac42839d828489956b813eb8f6f60ed6fa51033b2e177d99",
+      "requestDraft": {
+        "text": "[conversational tone] گزارش کامل، قاسم رو به فرمان اصلی، تلاش برای پاک کردن مدارک، بمب‌گذاری‌های خط خاکستر، گزارش‌های دروغ، سوخت منحرف‌شده و تجهیزات ونگارد وصل می‌کنه. مقام‌های غیرنظامی و نظامی نسخه‌هاش رو دارن. اون بحران رو ساخت تا حکومت اضطراری دائمی رو ضروری جلوه بده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15311,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "network_collapse-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "voiceIdDraft": "7uxeJ73HfJL9gOH2mttA",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-03.wav",
+      "caption": "The Relay complex is still sealed. The physical access keys, engineers, medical supplies, Fuel and reinforcements must reach the city center. The next corridor carries what Sahrin needs to recover; keep those priorities connected.",
+      "captionSha256": "68c71e4e0f8e75daa24634ff880f80a49d6325f24e5ffb73862044d8a6a96217",
+      "requestDraft": {
+        "text": "The Relay complex is still sealed. The physical access keys, engineers, medical supplies, Fuel and reinforcements must reach the city center. The next corridor carries what Sahrin needs to recover; keep those priorities connected.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15312,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "network_collapse-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "voiceIdDraft": "7uxeJ73HfJL9gOH2mttA",
+      "destinationDraft": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPathDraft": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-03.wav",
+      "caption": "مجموعهٔ رله هنوز بسته‌ست. کلیدهای فیزیکی دسترسی، مهندس‌ها، تجهیزات پزشکی، سوخت و نیروهای کمکی باید به مرکز شهر برسن. مسیر بعدی، چیزهایی رو حمل می‌کنه که سهرین برای بازیابی نیاز داره؛ این اولویت‌ها رو به هم پیوسته نگه دارین.",
+      "captionSha256": "83f6e9b4d19647dd006153a5b98b2e373ef51f4a5a4c5843333d26cfee0ca0a8",
+      "requestDraft": {
+        "text": "[conversational tone] مجموعهٔ رله هنوز بسته‌ست. کلیدهای فیزیکی دسترسی، مهندس‌ها، تجهیزات پزشکی، سوخت و نیروهای کمکی باید به مرکز شهر برسن. مسیر بعدی، چیزهایی رو حمل می‌کنه که سهرین برای بازیابی نیاز داره؛ این اولویت‌ها رو به هم پیوسته نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15313,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    }
+  ]
+}

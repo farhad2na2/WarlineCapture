@@ -179,6 +179,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal) ApplyGroundedSignal(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak) ApplyArmorBreak(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert) ApplyCitywideAlert(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.NetworkCollapse) ApplyNetworkCollapse(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire) ApplyTrustUnderFire(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak) ApplyNetworkBreak(in model);
             bool evidenceChain = model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;

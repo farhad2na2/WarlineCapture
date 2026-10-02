@@ -67,6 +67,7 @@ namespace Game.Runtime
             EntityManager em = state.EntityManager;
             CampaignMissionGuidanceProjectionComponent current = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if (TryUpdateGroundedSignalGuidance(ref state, root, in runtime, in facts, in settings, in current)) return;
+            if (TryUpdateNetworkCollapseGuidance(ref state, root, in runtime, in settings, in current)) return;
             if (TryUpdateTrustUnderFireGuidance(ref state, root, in runtime, in settings, in current)) return;
                 if (TryUpdateCitywideAlertGuidance(ref state, root, in runtime, in settings, in current)) return;
             if (TryUpdateArmorBreakGuidance(ref state, root, in runtime, in settings, in current)) return;

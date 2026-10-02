@@ -10,6 +10,7 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionObjectiveProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes NetworkObjectiveMissionId=CampaignMissionSequence.NetworkCollapse, NetworkObjectiveNodeRole="role.hostile.node.1", NetworkObjectiveEngineerRole="role.friendly.engineer";
         private EntityQuery _boundaryQuery;
 
         public void OnCreate(ref SystemState state)
@@ -106,6 +107,11 @@ namespace Game.Runtime
 
                 switch (objective.Rule)
                 {
+                    case MissionObjectiveRuleKind.DisableVerifiedNetwork:
+                    case MissionObjectiveRuleKind.RecoverNetworkAudit:
+                    case MissionObjectiveRuleKind.ExtractNetworkEvidence:
+                        if(!definition.MissionId.Equals(NetworkObjectiveMissionId)||definition.Defense.Enabled==0||!objective.TargetConfigId.IsEmpty||objective.RequiredCount!=(objective.Rule==MissionObjectiveRuleKind.DisableVerifiedNetwork?3:1)||!objective.MissionRoleId.Equals(objective.Rule==MissionObjectiveRuleKind.DisableVerifiedNetwork?NetworkObjectiveNodeRole:NetworkObjectiveEngineerRole))return false;
+                        break;
                     case MissionObjectiveRuleKind.ProtectTrustNorthRoute:
                     case MissionObjectiveRuleKind.ProtectTrustSouthRoute:
                     case MissionObjectiveRuleKind.VerifyTrustBroadcast:
@@ -277,7 +283,7 @@ namespace Game.Runtime
                 Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
-                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectTrustNorthRoute or MissionObjectiveRuleKind.ProtectTrustSouthRoute or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
+                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectTrustNorthRoute or MissionObjectiveRuleKind.ProtectTrustSouthRoute or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief or MissionObjectiveRuleKind.RecoverNetworkAudit or MissionObjectiveRuleKind.ExtractNetworkEvidence ? (byte)1 : (byte)0
             };
         }
 
@@ -300,6 +306,9 @@ namespace Game.Runtime
             }
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.DisableVerifiedNetwork => facts.NetworkFailure==NetworkCollapseFailure.UnverifiedNodeDestroyed ? MatchObjectiveState.Failed : facts.NetworkNodesVerified==3&&facts.NetworkNodesDisabled==3?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.RecoverNetworkAudit => facts.NetworkFailure is NetworkCollapseFailure.AuditLost or NetworkCollapseFailure.EngineerLost ? MatchObjectiveState.Failed : facts.NetworkAuditRecovered!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ExtractNetworkEvidence => facts.NetworkFailure is NetworkCollapseFailure.CarrierLost or NetworkCollapseFailure.EngineerLost ? MatchObjectiveState.Failed : facts.NetworkExtracted!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.ProtectTrustNorthRoute => facts.TrustFailure is TrustUnderFireFailure.NorthConvoyLost or TrustUnderFireFailure.StaffLost or TrustUnderFireFailure.ShelterLost ? MatchObjectiveState.Failed : facts.TrustNorthArrived != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.ProtectTrustSouthRoute => facts.TrustFailure is TrustUnderFireFailure.SouthConvoyLost or TrustUnderFireFailure.StaffLost or TrustUnderFireFailure.ShelterLost ? MatchObjectiveState.Failed : facts.TrustSouthArrived != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.VerifyTrustBroadcast => facts.TrustRelayVerified != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
@@ -360,6 +369,7 @@ namespace Game.Runtime
             ref CampaignMissionDefinitionBlob definition,
             in CampaignMissionObjectiveBlob objective)
         {
+            if(definition.MissionId.Equals(NetworkObjectiveMissionId))return objective.Rule switch {MissionObjectiveRuleKind.DisableVerifiedNetwork=>new FixedString64Bytes("anchor.ch05.m03.node_2"),MissionObjectiveRuleKind.RecoverNetworkAudit=>new FixedString64Bytes("anchor.ch05.m03.audit_gate"),MissionObjectiveRuleKind.ExtractNetworkEvidence=>new FixedString64Bytes("anchor.ch05.m03.extraction"),_=>default};
             if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)))
                 return new FixedString64Bytes(objective.Rule == MissionObjectiveRuleKind.ProtectTrustNorthRoute ? "anchor.ch05.m02.north_arrival" : objective.Rule == MissionObjectiveRuleKind.ProtectTrustSouthRoute ? "anchor.ch05.m02.south_arrival" : "anchor.ch05.m02.relay_gate");
             if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal)))

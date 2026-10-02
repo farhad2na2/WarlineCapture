@@ -341,6 +341,8 @@ namespace Game.Editor
             if (citywide != null && !maps.Contains(citywide)) maps.Add(citywide);
             var trust = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M02TrustUnderFireConfigBuilder.MapPath);
             if (trust != null && !maps.Contains(trust)) maps.Add(trust);
+            var network = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M03NetworkCollapseConfigBuilder.MapPath);
+            if (network != null && maps.TrueForAll(map => map.OperationMapId != network.OperationMapId)) maps.Add(network);
 
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)

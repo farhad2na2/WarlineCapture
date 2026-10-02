@@ -1,0 +1,27 @@
+{
+  "missionId": "saga.ch05.m03.network_collapse",
+  "sequences": [
+    "seq.ch05.m03.brief",
+    "seq.ch05.m03.comms",
+    "seq.ch05.m03.debrief"
+  ],
+  "captionCount": 7,
+  "englishPersianClipCountDraft": 14,
+  "installedVoiceClips": 0,
+  "providerRequests": 0,
+  "voiceReadiness": "Pending by explicit user instruction: build without sending voices",
+  "status": "Caption-only source ready; native integration root-owned",
+  "castLines": {
+    "Dalia": 2,
+    "ARIA": 3,
+    "Samira": 2
+  },
+  "mechanics": "Three ordered guard-clear/recon6sec/verifiedAttack nodes; original engineer auditcustody6sec then actualBoardAPC+Move extraction6sec; protect2civicowners4staff and engineer/carrier; no Scan/G2G feature promise.",
+  "art": [
+    "Assets/Game/Resources/FutureMissionComics/CH05M03_NetworkCollapse.png",
+    "Assets/Game/Resources/FutureMissionComics/CH05M03_NetworkCollapse_Comms.png",
+    "Assets/Game/Resources/FutureMissionComics/CH05M03_NetworkCollapse_Debrief.png"
+  ],
+  "artReview": "All three inspected; approved command/audit/civil oversight direction retained with seven distinct16:9/20:9 cropped frames.",
+  "checks": "Local draft caption hashes14; no network sending implementation; all voice references null/absent; no previous mission audio reuse."
+}

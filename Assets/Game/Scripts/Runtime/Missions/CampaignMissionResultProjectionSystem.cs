@@ -9,6 +9,7 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionResultProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes NetworkResultMissionId=CampaignMissionSequence.NetworkCollapse, NetworkNodeRole="role.hostile.node.1", NetworkEngineerRole="role.friendly.engineer";
         private static readonly FixedString64Bytes TrustResultMissionId = CampaignMissionSequence.TrustUnderFire;
         private static readonly FixedString64Bytes TrustNorthRole = "role.friendly.convoy.north", TrustSouthRole = "role.friendly.convoy.south", TrustRelayRole = "role.hostile.relay";
         private static readonly FixedString64Bytes CitywideResultMissionId = CampaignMissionSequence.CitywideAlert;
@@ -190,6 +191,7 @@ namespace Game.Runtime
             // combined-arms mastery and authority custody, not a forward-post defense.
             if (definition.MissionId.Equals(ArmorBreakMissionId))
                 return ArmorBreakFactsMatchOutcome(outcome, in facts, ref definition);
+            if(definition.MissionId.Equals(NetworkResultMissionId))return NetworkFactsMatchOutcome(outcome,in facts,ref definition);
             if (definition.MissionId.Equals(TrustResultMissionId)) return TrustFactsMatchOutcome(outcome, in facts, ref definition);
             if (definition.MissionId.Equals(CitywideResultMissionId))
                 return CitywideFactsMatchOutcome(outcome,in facts,ref definition);
@@ -244,6 +246,13 @@ namespace Game.Runtime
                 : outcome == MissionOutcomeKind.Defeat && failureBroken;
         }
 
+        private static bool NetworkFactsMatchOutcome(MissionOutcomeKind outcome,in CampaignMissionAttemptFactsComponent facts,ref CampaignMissionDefinitionBlob definition)
+        {
+            if(definition.Defense.Enabled==0||definition.Objectives.Length!=3||facts.HostileRosterIntegrityFault!=0||facts.NetworkFailure==NetworkCollapseFailure.Integrity)return false;
+            for(int i=0;i<3;i++)if(definition.Objectives[i].Rule!=(MissionObjectiveRuleKind)(38+i)||definition.Objectives[i].RequiredCount!=(i==0?3:1)||!definition.Objectives[i].MissionRoleId.Equals(i==0?NetworkNodeRole:NetworkEngineerRole)||!definition.Objectives[i].TargetConfigId.IsEmpty)return false;
+            if(outcome==MissionOutcomeKind.Defeat)return facts.NetworkFailure!=NetworkCollapseFailure.None;
+            return outcome==MissionOutcomeKind.Victory&&facts.NetworkFailure==NetworkCollapseFailure.None&&facts.NetworkNodesVerified==3&&facts.NetworkNodesDisabled==3&&facts.NetworkAuditRecovered!=0&&facts.NetworkEngineerAboard!=0&&facts.NetworkExtracted!=0&&facts.HostileTotalCount==9&&facts.HostileDefeatedCount==9&&facts.CivilianTotalCount==4&&facts.CivilianLossCount==0&&facts.CommandSquadSpawned!=0&&facts.CommandSquadAlive!=0;
+        }
         private static bool TrustFactsMatchOutcome(MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts, ref CampaignMissionDefinitionBlob definition)
         {
             if (definition.Defense.Enabled == 0 || definition.Objectives.Length != 3 ||

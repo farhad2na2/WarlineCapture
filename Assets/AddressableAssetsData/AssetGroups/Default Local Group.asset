@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 280c684a5cd6747faa06d4e6ec900abd
+    m_Address: campaign/network-collapse/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 30a49de6ed62d49dcbd5b4ef152cb55d
     m_Address: campaign/trust-under-fire/scenario
     m_ReadOnly: 0
@@ -60,6 +65,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55e166dea54754dabab66e8469269813
+    m_Address: campaign/network-collapse/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e62253daa8d54a5bb902cbfab61ce97
     m_Address: campaign/grounded-signal/mission
     m_ReadOnly: 0
@@ -67,6 +77,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 61d7b7f9c413a41bea1cb7267696c46c
     m_Address: campaign/citywide-alert/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62938adc569eb46f681215503cec88ba
+    m_Address: campaign/network-collapse/scenario
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -115,6 +130,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a39c7acde1803494d8620838d388cc8a
+    m_Address: campaign/network-collapse/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a678ffe9103f34b5099564bf1a3aa294
     m_Address: campaign/grounded-signal/minimap
     m_ReadOnly: 0
@@ -122,6 +142,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ab68643a495e2416d8a30c4dc2cfd95c
     m_Address: campaign/trust-under-fire/support-context
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b761b2b98a5714d8282a7ee8935e07d6
+    m_Address: campaign/network-collapse/support-context
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -140,6 +165,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d307d30e56c0542eb980cfb25303ffef
+    m_Address: campaign/network-collapse/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d6890a2727ed5495083cce032799ac15
     m_Address: campaign/trust-under-fire/source-scene
     m_ReadOnly: 0
@@ -150,6 +180,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb2efdf568bcb488fbf37c41a805dc0a
+    m_Address: campaign/network-collapse/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ebf0a0ecfc1aa43848b18f54bcea4449
     m_Address: campaign/armor-break/scenario
     m_ReadOnly: 0
@@ -157,6 +192,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ece24a20c37f041eca4a09a8dcfc5d8d
     m_Address: campaign/trust-under-fire/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa8fa4531f9ba46779d2e7037e80182c
+    m_Address: campaign/network-collapse/source-scene
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

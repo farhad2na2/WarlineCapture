@@ -1,0 +1,1 @@
+[NetworkCollapseInput] result=Failed Actual Supply card is NotReady despite earned charge; Materials capacity projects 80 instead of authored 240

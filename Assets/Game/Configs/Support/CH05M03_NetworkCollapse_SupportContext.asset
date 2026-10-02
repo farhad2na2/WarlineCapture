@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c770b8e33b114dcabd2bbd385f69d2d, type: 3}
+  m_Name: CH05M03_NetworkCollapse_SupportContext
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportMissionContextConfig
+  MissionId: saga.ch05.m03.network_collapse
+  OperationMapId: opmap.ch05.network_collapse
+  MissionSourceVersion: 1
+  Revision: 2
+  GroundMin: {x: 868, y: 308}
+  GroundMax: {x: 1292, y: 512}
+  Entry: {x: 880, y: 100, z: 330}
+  Release: {x: 1006, y: 100, z: 330}
+  Exit: {x: 1280, y: 100, z: 330}
+  Clearance: 20
+  PopulationCeiling: 48
+  RouteAuthored: 1
+  Regions:
+  - Min: {x: 868, y: 308}
+    Max: {x: 1292, y: 512}
+    Visible: 1
+    Protected: 0
+  - Min: {x: 895, y: 440}
+    Max: {x: 920, y: 480}
+    Visible: 1
+    Protected: 1
+  - Min: {x: 1195, y: 440}
+    Max: {x: 1220, y: 480}
+    Visible: 1
+    Protected: 1
+  - Min: {x: 1055, y: 434}
+    Max: {x: 1080, y: 468}
+    Visible: 1
+    Protected: 1

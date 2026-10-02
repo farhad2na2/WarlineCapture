@@ -5,6 +5,8 @@ namespace Game.Components
 {
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
+        public byte NetworkNodesVerified, NetworkNodesDisabled, NetworkAuditRecovered, NetworkExtracted, NetworkEngineerAboard, NetworkCommsReady;
+        public NetworkCollapseFailure NetworkFailure;
         public byte TrustNorthArrived, TrustSouthArrived, TrustRelayVerified, TrustCommsReady, TrustMilitaryCleared, TrustNorthCrossed, TrustSouthCrossed;
         public int TrustStableMilliseconds;
         public TrustUnderFireFailure TrustFailure;

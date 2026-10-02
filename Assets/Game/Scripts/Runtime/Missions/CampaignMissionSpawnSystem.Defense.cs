@@ -75,7 +75,7 @@ namespace Game.Runtime
                 fuel.Enabled = 0;
                 em.SetComponentData(instance, fuel);
             }
-            if((definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak)) || definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert)) || definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire))) && group.FactionId==FactionIdentity.PlayerFactionId)
+            if((definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak)) || definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert)) || definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire)) || definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.NetworkCollapse))) && group.FactionId==FactionIdentity.PlayerFactionId)
                 CampaignMissionRuntimeSystem.ApplyArmorBreakSpawnPolicy(em,instance);
             if(definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SplitFront)))
             {

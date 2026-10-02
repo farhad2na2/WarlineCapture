@@ -43120,6 +43120,7 @@ GameObject:
   - component: {fileID: 8658317658664040937}
   - component: {fileID: 945054700938504488}
   - component: {fileID: 6100148669147972571}
+  - component: {fileID: 980215155539141065}
   m_Layer: 0
   m_Name: SCN08_MatchHudContent
   m_TagString: Untagged
@@ -43228,6 +43229,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70437f94166443dbac6e191950164efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.TrustUnderFireMarkersView
+--- !u!114 &980215155539141065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032040054424849745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a217a4fc8b24244b01478157f918c40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.NetworkCollapseMarkersView
 --- !u!1 &8060166736726619568
 GameObject:
   m_ObjectHideFlags: 0

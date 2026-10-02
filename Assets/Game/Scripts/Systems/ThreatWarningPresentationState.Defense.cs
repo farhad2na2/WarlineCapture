@@ -45,7 +45,15 @@ namespace Game.Runtime
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if(runtime.MissionId.Equals(CampaignMissionSequence.TrustUnderFire) && em.HasComponent<CampaignMissionTrustUnderFireState>(root))
+            if(runtime.MissionId.Equals(CampaignMissionSequence.NetworkCollapse)&&em.HasComponent<CampaignMissionNetworkCollapseState>(root))
+            {
+                var network=em.GetComponentData<CampaignMissionNetworkCollapseState>(root);int stage=CampaignMissionNetworkCollapseRuleUtility.Stage(in network);text=GameText.Get("mission.network_collapse.hud.stage."+stage);
+                if(stage is 1 or 3 or 5)text+="\n"+GameText.Format("mission.network_collapse.hud.recon_hold","Verify node {0}: {1}/6 s",(stage+1)/2,network.VerificationMilliseconds/1000);
+                if(stage==7)text+="\n"+GameText.Format("mission.network_collapse.hud.audit_hold","Recover audit: {0}/6 s",network.RecoveryMilliseconds/1000);
+                if(stage==8)text+="\n"+GameText.Format("mission.network_collapse.hud.extraction_hold","Evidence custody: {0}/6 s",network.ExtractionMilliseconds/1000);
+                int remaining=math.max(0,(900000-network.ElapsedMilliseconds+999)/1000);text+="\n"+GameText.Format("mission.network_collapse.hud.time","Evidence window: {0}m {1}s",remaining/60,remaining%60);
+            }
+            else if(runtime.MissionId.Equals(CampaignMissionSequence.TrustUnderFire) && em.HasComponent<CampaignMissionTrustUnderFireState>(root))
             {
                 var trust = em.GetComponentData<CampaignMissionTrustUnderFireState>(root);
                 int stage = CampaignMissionTrustUnderFireRuleUtility.Stage(in trust);

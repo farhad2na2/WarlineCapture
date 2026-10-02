@@ -79,3 +79,6 @@ MonoBehaviour:
   - missionId: saga.ch05.m02.trust_under_fire
     definition: {fileID: 11400000, guid: 3dc65cceb29954009b581d7e8cab37ff, type: 2}
     scenario: {fileID: 11400000, guid: 30a49de6ed62d49dcbd5b4ef152cb55d, type: 2}
+  - missionId: saga.ch05.m03.network_collapse
+    definition: {fileID: 11400000, guid: eb2efdf568bcb488fbf37c41a805dc0a, type: 2}
+    scenario: {fileID: 11400000, guid: 62938adc569eb46f681215503cec88ba, type: 2}

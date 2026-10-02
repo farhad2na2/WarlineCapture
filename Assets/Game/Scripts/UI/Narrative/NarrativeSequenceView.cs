@@ -37,6 +37,15 @@ namespace Game.UI.Runtime
         public NarrativeDialogueView DialogueView => dialogueView;
         public NarrativePlaybackControlsView PlaybackControlsView => playbackControls;
         public AudioSource VoiceSource => voiceSource;
+        public AudioClip LastNaturallyCompletedVoiceClip { get; private set; }
+        public uint NaturalVoiceCompletionVersion { get; private set; }
+
+        internal void RecordNaturalVoiceCompletion(AudioClip clip)
+        {
+            if (clip == null) return;
+            LastNaturallyCompletedVoiceClip = clip;
+            NaturalVoiceCompletionVersion = NaturalVoiceCompletionVersion == uint.MaxValue ? 1u : NaturalVoiceCompletionVersion + 1u;
+        }
         public NarrativeSequenceAudioView SequenceAudioView => sequenceAudioView;
         public RectTransform PanelMotionRoot => panelMotionRoot != null ? panelMotionRoot : panelImage != null ? panelImage.rectTransform : null;
         public NarrativeCommanderIdentityView CommanderIdentityView => commanderIdentityView;

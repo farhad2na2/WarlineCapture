@@ -40,7 +40,7 @@ MonoBehaviour:
         an honest record of delays and damage; a protected road does not erase what
         still needs repair.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e37787cd092594c9b93c815e2bff1a42, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -87,16 +87,16 @@ MonoBehaviour:
         They point to Qassem's final command network and remain available to civilian
         and military oversight.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 36a3e5458005240b58a067093f49d509, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 17
+      deadlineSeconds: 18.9
       essentialCaption: 1
     continueStateId: TrustUnderFire-debrief-2
     skipStateId: TrustUnderFire-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17
+    durationSeconds: 18.9
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -133,16 +133,16 @@ MonoBehaviour:
         the verified network nodes and protect the people and structures around them.
         If the evidence dies there, Qassem becomes another voice claiming we lied.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: eaafd1b4ca4d84e8c8ac4b2c85c16e9a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 15.285714
+      deadlineSeconds: 16.82
       essentialCaption: 1
     continueStateId: TrustUnderFire-debrief-complete
     skipStateId: TrustUnderFire-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 15.285714
+    durationSeconds: 16.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -229,16 +229,16 @@ MonoBehaviour:
         delays and have reason to be afraid. The shelters have room, but both routes
         are exposed. Today's proof is open routes and safe arrivals.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: c51ad08c02ad04fcb8564fc5f0920551, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 14.071428
+      deadlineSeconds: 17.22
       essentialCaption: 1
     continueStateId: TrustUnderFire-brief-1
     skipStateId: TrustUnderFire-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.071428
+    durationSeconds: 17.22
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -276,16 +276,16 @@ MonoBehaviour:
         route, keep the transports intact, and escort the groups to both shelters.
         Do not take a destructive shortcut through occupied buildings.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 4ea7bcd1266544b858cd2225d03a9536, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.142857
+      deadlineSeconds: 21.54
       essentialCaption: 1
     continueStateId: TrustUnderFire-brief-2
     skipStateId: TrustUnderFire-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.142857
+    durationSeconds: 21.54
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -323,16 +323,16 @@ MonoBehaviour:
         noise behind Qassem's broadcasts. Preserve the broadcast compound and its
         equipment so that report can be checked.
       speaker: 8
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f5f56ed505f5f4862ae184c9681ec7d2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 18
+      deadlineSeconds: 20.98
       essentialCaption: 1
     continueStateId: TrustUnderFire-brief-complete
     skipStateId: TrustUnderFire-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 18
+    durationSeconds: 20.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -420,16 +420,16 @@ MonoBehaviour:
         point and preserve the equipment. Our answer to the abandonment claim must
         remain an honest record, not another promise people cannot check.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 6abe345676f6f439fbdcced6e09ea714, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.357143
+      deadlineSeconds: 22.18
       essentialCaption: 1
     continueStateId: TrustUnderFire-comms-complete
     skipStateId: TrustUnderFire-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.357143
+    durationSeconds: 22.18
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

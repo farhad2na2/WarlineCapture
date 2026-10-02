@@ -14,6 +14,8 @@ namespace Game.UI.Runtime
         private bool autoAdvance;
         private bool autoAdvanceRequested;
         private int appliedVisibleCharacters = -1;
+        private AudioClip completionClip;
+        private bool audiblePlaybackObserved, naturalCompletionEligible, completionRecorded;
 
         public NarrativeDialoguePresentationSystemHelper(NarrativeSequenceView view)
         {
@@ -50,6 +52,9 @@ namespace Game.UI.Runtime
                 punctuation.EllipsisPauseSeconds,
                 style.InstantText);
             voice.Play(voiceClip, settings.Audio);
+            completionClip = voiceClip;
+            audiblePlaybackObserved = completionRecorded = false;
+            naturalCompletionEligible = voiceClip != null;
             elapsed = 0f;
             readyElapsed = 0f;
             tailHold = punctuation.TailHoldSeconds;
@@ -67,6 +72,16 @@ namespace Game.UI.Runtime
                 return;
 
             elapsed += Mathf.Max(0f, unscaledDeltaTime);
+            var source = view.VoiceSource;
+            if (naturalCompletionEligible)
+            {
+                if (source == null || !source.isActiveAndEnabled || source.clip != completionClip || source.mute || source.volume <= 0f)
+                    naturalCompletionEligible = false;
+                else if (source.isPlaying && source.timeSamples > 0)
+                    audiblePlaybackObserved = true;
+                else if (!source.isPlaying && audiblePlaybackObserved && elapsed < completionClip.length)
+                    naturalCompletionEligible = false;
+            }
             if (!IsAdvanceReady)
             {
                 float revealClock = voice.ProgressSeconds > 0f ? voice.ProgressSeconds : elapsed;
@@ -90,6 +105,14 @@ namespace Game.UI.Runtime
             bool voiceComplete = clip == null || !voice.IsPlaying && elapsed >= clip.length;
             if (!voiceComplete)
                 return;
+
+            // Observe the exact natural finish in the production tick. Editor sampling
+            // may miss the last audio frame and timeSamples resets when playback ends.
+            if (!completionRecorded && naturalCompletionEligible && audiblePlaybackObserved && clip == completionClip)
+            {
+                view.RecordNaturalVoiceCompletion(clip);
+                completionRecorded = true;
+            }
 
             readyElapsed += Mathf.Max(0f, unscaledDeltaTime);
             if (autoAdvance && readyElapsed >= tailHold)
@@ -116,6 +139,7 @@ namespace Game.UI.Runtime
             if (paused)
                 return;
             paused = true;
+            naturalCompletionEligible = false;
             voice.Pause();
         }
 
@@ -129,6 +153,9 @@ namespace Game.UI.Runtime
 
         public void Cancel()
         {
+            naturalCompletionEligible = false;
+            completionClip = null;
+            audiblePlaybackObserved = completionRecorded = false;
             voice.Stop();
             paused = false;
             autoAdvanceRequested = false;

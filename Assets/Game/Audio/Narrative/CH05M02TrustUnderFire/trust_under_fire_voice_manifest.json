@@ -1,0 +1,251 @@
+{
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Some residents remember help reaching them. Others remember delays and have reason to be afraid. The shelters have room, but both routes are exposed. Today's proof is open routes and safe arrivals.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-brief-01.wav",
+      "durationSeconds": 12.64,
+      "sha256": "1ded231e56df87682508c2d26e2a6087c2d980448e4bafa78e85312a14875a0a",
+      "captionSha256": "21bef983d517efddfb3d2076f0a23f009c7af6c6a21780f10ad80b7293f4c196"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "بعضی ساکنان رسیدن کمک رو به خاطر دارن. بعضی‌ها تأخیرها رو یادشونه و حق دارن بترسن. پناهگاه‌ها جا دارن، ولی هر دو مسیر در خطرن. مدرک امروز ما، مسیرهای باز و رسیدن سالم مردمه.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-brief-01.wav",
+      "durationSeconds": 16.72,
+      "sha256": "3aedf5ef9974f5f7f70573da5a08012c811c1aaf6edca13834c58f5ebb8180c1",
+      "captionSha256": "12bb9d6fad5bae4f3a9cb1b530a82949bb8867677183782935e27400998d965a"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Qassem's broadcast says we abandoned these neighborhoods. Evacuation is a military priority. Clear the attackers on each protected route, keep the transports intact, and escort the groups to both shelters. Do not take a destructive shortcut through occupied buildings.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-brief-02.wav",
+      "durationSeconds": 17.68,
+      "sha256": "b80a8b753f3def2669af4408c5feca7146d79541f09c5df8f23c5f8ad0a8be6d",
+      "captionSha256": "8ad359f430ad17273455cd79c37957c64c4dd6081652d759f2989476f870a8ec"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "پیام قاسم می‌گه این محله‌ها رو رها کردیم. تخلیهٔ مردم یک اولویت نظامیه. مهاجم‌های هر مسیر محافظت‌شده رو پاک‌سازی کنین، خودروهای انتقال رو سالم نگه دارین و گروه‌ها رو تا هر دو پناهگاه همراهی کنین. برای میان‌بُر، ساختمان‌های محل حضور مردم رو تخریب نکنین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-brief-02.wav",
+      "durationSeconds": 21.04,
+      "sha256": "89eb4d35bf8bc0f5489057c5b7eb7bd7561bcc724782b0836071196e8f5d0687",
+      "captionSha256": "8ff4dc446bd5dbac84e0441fce4151f4946d384a2145194e71e8336049fa672b"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-03",
+      "speaker": "LINA",
+      "locale": "en-US",
+      "text": "We are ready to receive the protected convoys at both shelters. Keep their approaches open. A civilian witness recognized the maintenance noise behind Qassem's broadcasts. Preserve the broadcast compound and its equipment so that report can be checked.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-brief-03.wav",
+      "durationSeconds": 15.6,
+      "sha256": "6321b8059b9e379a7c5718f6944f184163cb4f2f731ebbd6ffc031a8e5e081f7",
+      "captionSha256": "88209a912b13324770ffc8c1ea4247b27522219f0175f5e050c3749f522948a1"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-brief-03",
+      "speaker": "LINA",
+      "locale": "fa-IR",
+      "text": "در هر دو پناهگاه آمادهٔ پذیرش کاروان‌های محافظت‌شده هستیم. مسیر رسیدن به اون‌ها رو باز نگه دارین. یک شاهد غیرنظامی، صدای تعمیرات پشت پیام‌های قاسم رو شناخت. محوطهٔ فرستنده و تجهیزاتش رو حفظ کنین تا بتونیم گزارشش رو بررسی کنیم.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-brief-03.wav",
+      "durationSeconds": 20.48,
+      "sha256": "5a93d3ff4178d27ed2a222320f1a16cc429dbc37b484f1e6b1c62f782151c818",
+      "captionSha256": "e498f03626c4b4f36abfa825f36d3d2ee0a1a28879a178f5eb5247cefe0a46f1"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The witness has identified the marked broadcast compound. ARIA has matched its signal to the recording. Secure its external access point and preserve the equipment. Our answer to the abandonment claim must remain an honest record, not another promise people cannot check.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-comms-01.wav",
+      "durationSeconds": 16.32,
+      "sha256": "d293bbfe9c46eb71f9da8c440ecfae82909771c3a786fa11b0136671df7d9177",
+      "captionSha256": "c687143dd70d5c0674d0ad4177da3695ade04b8996f88d2a79eae587d60641a6"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "شاهد، محوطهٔ فرستندهٔ مشخص‌شده رو شناسایی کرده. آریا سیگنالش رو با صدای ضبط‌شده تطبیق داده. محل دسترسی بیرونی رو امن کنین و تجهیزات رو حفظ کنین. پاسخ ما به ادعای رها کردن مردم باید یک گزارش صادقانه باشه، نه یک وعدهٔ دیگه که مردم نتونن بررسیش کنن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-comms-01.wav",
+      "durationSeconds": 21.68,
+      "sha256": "7f5c287c99f90fc48fecdf42e1d9d3bab28f8774c0cd64220020236385746a62",
+      "captionSha256": "12c342d4259bceb32da82f32eb50704ea7f879676e7550721ee0446fffb48120"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The evacuation groups reached their shelters, and the routes remained open. People could see where help was arriving. We will also keep an honest record of delays and damage; a protected road does not erase what still needs repair.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-debrief-01.wav",
+      "durationSeconds": 14.16,
+      "sha256": "bb9592eb9ec098d38a20c0d34a379644971b88176d50c1dac7b00faa46d2033b",
+      "captionSha256": "c911dd922e6f2ee9ddba593099a5fbeed3803c67811af6e9b35873f8626d5a89"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "گروه‌های تخلیه به پناهگاه‌ها رسیدن و مسیرها باز موندن. مردم دیدن که کمک از کجا می‌رسه. تأخیرها و خسارت‌ها رو هم صادقانه ثبت می‌کنیم؛ یک جادهٔ امن، چیزهایی رو که هنوز باید درست بشن پاک نمی‌کنه.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-debrief-01.wav",
+      "durationSeconds": 15.28,
+      "sha256": "0908c9a9dc7273aa29e8e2e8e41d0b7708561b5d7304b7b4e71b480b79e36279",
+      "captionSha256": "e690492e59b051d65f65feeb3122f27e43f19fdfaceacea23e5758fa57fee65e"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The secured transmitter and the witness recording identify the same source. I have preserved the signal records and their custody trail. They point to Qassem's final command network and remain available to civilian and military oversight.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-debrief-02.wav",
+      "durationSeconds": 14.96,
+      "sha256": "51133ffa45c26de4ed10cf9f9651e76e5f783c1344ee67c6c08224543f2fa742",
+      "captionSha256": "6260895fdccca580762a47db0e768ffd6dfea3b4904cc8bbe96d22c3823c273c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "فرستندهٔ امن‌شده و صدای ضبط‌شدهٔ شاهد، هر دو یک منبع رو مشخص می‌کنن. داده‌های سیگنال و مسیر نگهداریشون رو حفظ کردم. این مدارک به شبکهٔ نهایی فرماندهی قاسم می‌رسن و در اختیار نظارت غیرنظامی و نظامی می‌مونن.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-debrief-02.wav",
+      "durationSeconds": 18.4,
+      "sha256": "617455072fbcab8c252d56f17c973ff2832bdc867e035218393160750b49614e",
+      "captionSha256": "9ac0b29f6bcf638e3bba02a245c9cb8d30c92eb16b7a3237c413f375680ce53d"
+    },
+    {
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The next strike must leave that proof intact. We will isolate the verified network nodes and protect the people and structures around them. If the evidence dies there, Qassem becomes another voice claiming we lied.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/en/trust_under_fire-debrief-03.wav",
+      "durationSeconds": 15.28,
+      "sha256": "abfa99b0551fb7ad969f76c34a0673696f48b0e31154cb4f417a47bc4f444cb4",
+      "captionSha256": "55f6fe580988271edf9793981e5900fd3e0edeb3178f28c07108181c47426763"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "trust_under_fire-debrief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "حملهٔ بعدی باید این مدرک رو سالم نگه داره. گره‌های تأییدشدهٔ شبکه رو جدا می‌کنیم و از مردم و ساختمان‌های اطرافشون محافظت می‌کنیم. اگه مدرک اونجا از بین بره، قاسم تبدیل می‌شه به یک صدای دیگه که می‌گه دروغ گفتیم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/Voice/fa/trust_under_fire-debrief-03.wav",
+      "durationSeconds": 16.32,
+      "sha256": "d67dedfe445e0b959694232efd51cd0ba4f0f287613e098f6e158ea325f478b8",
+      "captionSha256": "f492338b02156f32a53d7f1d0830e034aeb95a680f4043ab47fd776b2588aa40"
+    }
+  ],
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "missionId": "saga.ch05.m02.trust_under_fire",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "generatedAtUtc": "2026-10-02T17:23:18.446435+00:00",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "castAssignment": {
+    "Dalia": "Existing canonical project cast",
+    "Samira": "Existing canonical project cast",
+    "Lina": "Existing Sarah cast, Dr. Lina Mansour",
+    "ARIA": "Existing canonical project cast"
+  }
+}

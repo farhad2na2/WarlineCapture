@@ -1,0 +1,12 @@
+{
+  "result": "Passed",
+  "recordedAtUtc": "2026-10-02T17:23:10.289201+00:00",
+  "clipCount": 14,
+  "provider": "api.elevenlabs.io",
+  "payload": "voice_payload_review.json",
+  "humanReplyRelayedByRoot": "push and do the clips and also push that",
+  "automaticReview": "Rejected: reply does not explicitly authorize exactpayload and destination; previous approvals other missions",
+  "providerRequests": 14,
+  "audioFiles": 14,
+  "followUp": "Root supplied full exact preceding question plus direct human reply; automatic review accepted root session84581. Generation completed and independent file audit Passed. Earlier rejected attempt record retained above."
+}

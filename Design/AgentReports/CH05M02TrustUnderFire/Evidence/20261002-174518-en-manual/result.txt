@@ -1,0 +1,1 @@
+[TrustUnderFireInput] result=Passed scope=VoicedJourney voices=7 dialogue=7 normalInput=Passed result=Passed settlement=Passed return=Passed route=TwoProtectedConvoys verifiedBroadcast=Passed Supply=EarnedAfterClearOnly optionalSupport=approve humanDeviceAcceptance=pending

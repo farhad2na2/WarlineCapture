@@ -1,0 +1,47 @@
+{
+  "result": "Passed",
+  "missionId": "saga.ch05.m02.trust_under_fire",
+  "validatedAtUtc": "2026-10-02T17:25:28.896638+00:00",
+  "clips": 14,
+  "lines": 7,
+  "locales": [
+    "en-US",
+    "fa-IR"
+  ],
+  "wavFiles": 14,
+  "sampleRateHz": 44100,
+  "channels": 1,
+  "sampleWidthBytes": 2,
+  "durationMinimumSeconds": 12.64,
+  "durationMaximumSeconds": 21.68,
+  "durationTotalSeconds": 236.56,
+  "wavBytes": 20865684,
+  "checksumMatches": 14,
+  "captionHashMatches": 14,
+  "canonicalTextMatches": 14,
+  "castIdMatches": 14,
+  "deliveryProfiles": {
+    "source-en": 7,
+    "fa-conversational-v1": 7
+  },
+  "castClipCounts": {
+    "SAMIRA": 6,
+    "DALIA": 4,
+    "LINA": 2,
+    "ARIA": 2
+  },
+  "runtimeNetworkTts": false,
+  "authorization": {
+    "humanReply": "push and do the clips and also push that",
+    "context": "Root supplied the full immediately preceding consolidated exact question naming Trust14ENFA clips, api.elevenlabs.io configured account and existing cast, plus direct human reply.",
+    "automaticReview": "Initial subagent attempts rejected; stronger exact question/reply evidence accepted root generator session84581.",
+    "generationOwner": "root",
+    "requiredPassMarker": "[TrustUnderFireVoiceGeneration] result=Passed clips=14 locales=2 runtimeNetworkTts=0"
+  },
+  "pendingGates": [
+    "Unity import/bindings",
+    "natural EN/FA playback",
+    "normal-input mission result/return",
+    "real player/device acceptance"
+  ]
+}

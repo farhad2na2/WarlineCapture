@@ -207,6 +207,8 @@ namespace Game.Editor
                         if(won)sawDebrief=true;
                         // Let every installed voice reach its natural end before Next.
                         if(narrative.VoiceSource!=null&&narrative.VoiceSource.isPlaying)return;
+                        if(!SessionState.GetBool(Active+".Captioned",false)&&narrative.VoiceSource?.clip!=null &&
+                            !completedVoices.Contains(AssetDatabase.GetAssetPath(narrative.VoiceSource.clip)))return;
                         if(narrative.DialogueView!=null&&narrative.DialogueView.Phase==NarrativeDialoguePhase.AdvanceReady)
                         {
                             Shot("comic-"+narrative.CurrentPanelSprite.name);
@@ -235,7 +237,9 @@ namespace Game.Editor
                     {
                         string language=SessionState.GetString(LocaleKey,"en")=="fa-IR"?"fa":"en";
                         foreach(var line in CH05M02TrustUnderFireCopy.Brief.Concat(CH05M02TrustUnderFireCopy.Comms).Concat(CH05M02TrustUnderFireCopy.Debrief))
-                            if(!SessionState.GetBool(Active+".Captioned",false)&&!completedVoices.Contains(CH05M02TrustUnderFireNarrativeBuilder.VoiceRoot+"/"+language+"/"+line.Id+".wav"))throw new InvalidOperationException("Missing complete natural voice playback: "+line.Id);
+                            if(!SessionState.GetBool(Active+".Captioned",false)&&!completedVoices.Contains(CH05M02TrustUnderFireNarrativeBuilder.VoiceRoot+"/"+language+"/"+line.Id+".wav"))throw new InvalidOperationException("Missing complete natural voice playback: "+line.Id+" maxObserved="+
+                                (voiceProgress.TryGetValue(CH05M02TrustUnderFireNarrativeBuilder.VoiceRoot+"/"+language+"/"+line.Id+".wav",out float maximum)?maximum:0)+
+                                " length="+(AssetDatabase.LoadAssetAtPath<AudioClip>(CH05M02TrustUnderFireNarrativeBuilder.VoiceRoot+"/"+language+"/"+line.Id+".wav")?.length??0));
                         bool gameplayOnly=SessionState.GetBool(Active+".GameplayOnly",false);
                         if((!gameplayOnly&&(panels.Count!=7||!sawDebrief))||!sourceChecked||!resultCaptured)throw new InvalidOperationException("Missing comic/source/result evidence panels="+panels.Count);
                         if(!supportChecked)throw new InvalidOperationException("Native optional Support decision not observed");
@@ -429,6 +433,14 @@ namespace Game.Editor
                     // audio source resets timeSamples at the next panel transition.
                     if(progress>=source.clip.length-.45f)completedVoices.Add(path);
                 }
+            foreach(var narrative in UnityEngine.Object.FindObjectsByType<NarrativeSequenceView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+            {
+                var clip=narrative.LastNaturallyCompletedVoiceClip;
+                if(clip==null||narrative.NaturalVoiceCompletionVersion==0)continue;
+                string path=AssetDatabase.GetAssetPath(clip);
+                if(path.StartsWith(CH05M02TrustUnderFireNarrativeBuilder.VoiceRoot+"/",StringComparison.Ordinal)&&voices.Contains(path)&&completedVoices.Add(path))
+                    Debug.Log("[TrustNaturalVoiceReceipt] clip="+path+" version="+narrative.NaturalVoiceCompletionVersion+" maxObserved="+(voiceProgress.TryGetValue(path,out float maximum)?maximum:0)+" length="+clip.length);
+            }
             var view=UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>();
             if(view?.CurrentPanelSprite==null||!view.IsPanelVisible||!IsOwnPanel(view.CurrentPanelSprite.name))return;
             string panel=view.CurrentPanelSprite.name;

@@ -16,6 +16,6 @@ Audio manifest path: `Assets/Game/Audio/Narrative/CH05M02TrustUnderFire/trust_un
 
 ## Voice approval and readiness
 
-The local exact payload check passed seven bilingual pairs, fourteen clips, zero external requests. Automatic approval review rejected the upload because it required exact new text/destination authorization. Root is requesting that exact approval. No provider upload, retry or workaround occurred.
+The local exact payload check passed seven bilingual pairs and fourteen clips. Initial automatic approval reviews rejected generation; root then supplied the complete preceding exact question plus the direct human reply, and automatic review accepted that stronger authorization evidence. Root generated all fourteen clips. Independent WAV/caption hashes, canonical copy, existing cast IDs, mono44100Hz PCM16, durations and seven conversational Persian profiles passed. Earlier failed approval evidence is retained in `voice_generation_gate.json`; full audit is in `voice_validation.json`. Native installation passed in `voice-install-01.log` (exit 0). Full normal-input English and Persian journeys passed in `voiced-journey-en-02.log` and `voiced-journey-fa-01.log` (exit 0), each with seven naturally completed voices and seven dialogue lines, actual victory, rewards and Campaign return.
 
-Unity integration, crop/caption inspection, natural EN/FA playback, full normal-input evacuation/relay mission, ARIA, result/return, earned Archive replay and real player/device acceptance remain separate root-owned gates.
+Native visual review, automated rules/packing, complete normal-input EN/FA gameplay and natural voice playback are recorded separately in `../review-readiness.md`. Real player/device acceptance remains pending user review.

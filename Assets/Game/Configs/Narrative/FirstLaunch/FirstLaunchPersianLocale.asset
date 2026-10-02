@@ -2698,30 +2698,30 @@ MonoBehaviour:
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-brief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 865e105fd6a2e4ea492cb63ecce22ce1, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-brief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: e21b80ae6e8d84a08a5bd9e7c2159c68, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-brief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 51bed7d61ea324726b526695c8f5ea00, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-comms-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: a467d3af792904305ab9981d496c2213, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-debrief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 47cada9495f3447c4ab0377cdfcc9eba, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-debrief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 42a05e0806101431f8bd77729d53efc5, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: trust_under_fire-debrief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 4942b399fb4634e379d5dc402a7cebe5, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

@@ -1,0 +1,475 @@
+{
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "armor_break-brief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Vanguard's command group is preparing to link heavy weapons to the dormant Relay nodes. Break their military position and protect the relief corridor. We cannot trade the city's infrastructure for this victory.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-brief-01.wav",
+      "durationSeconds": 13.52,
+      "sha256": "ecc4412004ff4ad2c3ecc2e01cf4d077c37786d892a3ad0410b3f4c3be9d51c7",
+      "captionSha256": "e19c1844ab6032c0f4abf280d09e3ff1351405fa109e3027d52107e5e78bff06"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-brief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "گروه فرماندهی ونگارد داره سلاح‌های سنگین رو به گره‌های خاموش رله وصل می‌کنه. موضع نظامیشون رو درهم بشکنین و مسیر امداد رو حفظ کنین. این پیروزی نباید به قیمت زیرساخت شهر تموم بشه.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-brief-01.wav",
+      "durationSeconds": 15.12,
+      "sha256": "d36a07789f8a7c37e84bb05a9c360948545df650756c4c352910fdbae08816b5",
+      "captionSha256": "dec6d0c61c3a48b0e7c8388276573b619f29ae4d47428a2c7ac08a67491c12bc"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-brief-02",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Keep our armor, air defense, and long-range weapons working together. Fuel has been staged for this operation. Clear the military approach before moving the recovery team into the command compound.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-brief-02.wav",
+      "durationSeconds": 11.6,
+      "sha256": "7d392e5fb2355a92b0bba472e979669e316c73e99d62e188b637f482ab9a33ce",
+      "captionSha256": "b681de096c57cf38b85fd9cdc167251c2a0719f67f72cf4240f7ea9671f28d79"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-brief-02",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "زرهی، پدافند هوایی و سلاح‌های دوربردمون باید هماهنگ کار کنن. سوخت این عملیات آماده شده. قبل از ورود تیم بازیابی به محوطهٔ فرماندهی، مسیر نظامی رو پاک‌سازی کنین.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-brief-02.wav",
+      "durationSeconds": 13.04,
+      "sha256": "90d60ab904bd35ca61c75e529fcf1fd332e5da6613dfc815884e3d79ad63e86a",
+      "captionSha256": "3d0b49503908c064c75dbba771fc4305d441ff2fb0a8fe3dd1078eb3358c0f08"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-brief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The authority package is inside the command compound. Defeat the verified military targets, then recover the package. Optional support requires your confirmation for each action. I will mark targets without issuing orders.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-brief-03.wav",
+      "durationSeconds": 14.16,
+      "sha256": "55296f1074b8b576a49f21ed3651a4b36909b8d510a771fd90c68e5a427a89e3",
+      "captionSha256": "492fdd2bdd5d26c3026988a103eebd094fd7edafd2b0b1b62bc1a84573ffeffb"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-brief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بستهٔ اختیار داخل محوطهٔ فرماندهیه. هدف‌های نظامی تأییدشده رو از بین ببر، بعد بسته رو بردار. هر اقدام پشتیبانی اختیاری به تأیید شما نیاز داره. هدف‌ها رو نشون می‌دم، بدون اینکه فرمان بدم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-brief-03.wav",
+      "durationSeconds": 14.96,
+      "sha256": "cd52d68efff2f7640cda1ae7b38e3e6c2dfdded3a82a32153011510f457c5c7a",
+      "captionSha256": "98a11eeb974cc5c1e109d9714de649d16a94f8536dbaf2588f4f820450ccc25e"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The link has begun. Its handshake asks for two keys. Commander, do you authorize one bounded support action? Use the existing Support controls if you choose it. I will wait for your confirmation; we can continue without it.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-comms-01.wav",
+      "durationSeconds": 13.84,
+      "sha256": "619f5a954ab3a72fb38084a7b750ab99de217badefcff534c1652620d26d10e9",
+      "captionSha256": "fc12bb198e4337ecbb5b367ccd36da9bdae8b4d452c377c6ee95f97c1f1d7344"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "اتصال شروع شده. برای برقراریش دو کلید می‌خوان. فرمانده، یک اقدام پشتیبانی محدود رو مجاز می‌دونین؟ اگه انتخابش می‌کنین، از کنترل‌های پشتیبانی استفاده کنین. منتظر تأییدتون می‌مونم؛ بدون اون هم می‌تونیم ادامه بدیم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-comms-01.wav",
+      "durationSeconds": 16.48,
+      "sha256": "73f36c6fbcc619bb6f3948df341b38ea74d00084021ad1ff0db23c9de940f7ff",
+      "captionSha256": "fff7941cc697e2544fb29ef970fcf6203b4d45cc2baf36edd3df6c2953ca93c4"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-comms-02",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "You can break my command group, Commander. You cannot keep the whole city apart. ARIA holds the system knowledge. You hold the emergency authority. Sahrin will bring both of you to the same door.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-comms-02.wav",
+      "durationSeconds": 12.32,
+      "sha256": "cd760a46a99e6b8742a59c3441ee47278bc8fec736912f944d61de417b899f20",
+      "captionSha256": "95e586cfe6cf73837009d596322ae5cd23a51625f7b0d553b15bb03ae4747326"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-comms-02",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "فرمانده، می‌تونی گروه فرماندهی من رو بشکنی. ولی نمی‌تونی تمام شهر رو جدا نگه داری. آریا دانش سامانه رو داره، تو اختیار اضطراری رو. سهرین هر دوتون رو به یک در می‌رسونه.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-comms-02.wav",
+      "durationSeconds": 12.72,
+      "sha256": "2135c0acda643b635af7046714d5200e02d3006ed1db694a2b69154a85ebeeb1",
+      "captionSha256": "0fe236e61b7e0d03a863c8afbbeb50e6aac0db0533a57c160ac0720ca2f848d8"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Vanguard's command group is broken. The authority package is secured and the relief corridor is intact. Keep the recovery team covered while we verify what they were trying to connect.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-debrief-01.wav",
+      "durationSeconds": 11.92,
+      "sha256": "3b6db582f490b3acf92290150e81c9beb9b5e27d83cd0b0c867c24524a713bde",
+      "captionSha256": "c635dea3934a4577e9cfdc6134ecd550e154d92458be05588028f8bd57115efc"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "گروه فرماندهی ونگارد از هم پاشید. بستهٔ اختیار امنه و مسیر امداد سالم مونده. تا بررسی کنیم می‌خواستن چی رو وصل کنن، پوشش تیم بازیابی رو حفظ کنین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-debrief-01.wav",
+      "durationSeconds": 12.24,
+      "sha256": "17f8cdcaffd631fb0c1fea9386d53710e32733f3931a9e2e32be45646c91d926",
+      "captionSha256": "aefbd34d61b087934cccc4b6264efc1c59aaca44d23f9342ee38a028b6781de8"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Protocol Fragment Four is complete. Qassem needs my restored archive as the knowledge key and your current emergency credential as the live authority key. Neither key alone can complete his override.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-debrief-02.wav",
+      "durationSeconds": 12.8,
+      "sha256": "e37d90c902d75d66096570622f01a25d9162b6b44095a6c4cfd7d38feb78ef3b",
+      "captionSha256": "25c28f7d146b582e4116bfc21656decfef7926683d7ad784f46074d504c66001"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "قطعهٔ چهارم پروتکل کامله. قاسم آرشیو بازیابی‌شدهٔ من رو به عنوان کلید دانش و مجوز اضطراری فعلی شما رو به عنوان کلید اختیار زنده می‌خواد. هیچ‌کدوم به‌تنهایی نمی‌تونه کنترل رو بهش بده.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-debrief-02.wav",
+      "durationSeconds": 17.12,
+      "sha256": "71b9de567725e14cf1bc386d9dc1320f5b9da234ec311167ab466d214f3abe39",
+      "captionSha256": "dceb6752cea6cb58394b9a2d1b5360abbbdfa0f09ba0a0c990409d2744e97f25"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-debrief-03",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Warnings are coming in from several districts at once. This was one part of a synchronized attack. Take the evidence with us. The next operation will have to protect the city's routes together.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-debrief-03.wav",
+      "durationSeconds": 10.8,
+      "sha256": "4191a286a05805c87e4ebc58a4a0188cb5ae1abbeed5a802ccbf919cf4629caa",
+      "captionSha256": "fb3d1de0b01774bdfacc0223c8931bc174adadd61c8ee879da8c59f88054fa46"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-debrief-03",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "از چند منطقه هم‌زمان هشدار می‌رسه. این فقط بخشی از یک حملهٔ هماهنگ بود. مدرک رو با خودمون می‌بریم. عملیات بعدی باید مسیرهای شهر رو با هم حفظ کنه.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-debrief-03.wav",
+      "durationSeconds": 11.92,
+      "sha256": "6366994d6f635c1f94b376b54d1c6bba170c69654faa97f35ae2a40a80ec2659",
+      "captionSha256": "296b60d3508af76642008a6b9ee9d0cb90fbb193afb99c484de95e7d5d0b0a50"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "This is the captured handshake. Vanguard hardware was trying to connect to a dormant Civic Relay node. The authority package preserves the request exactly as it was sent.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-01.wav",
+      "durationSeconds": 11.52,
+      "sha256": "45df376edcd1d87befc1a7ba6c0766f4f56a7ee4793056b4e7f852812a22c800",
+      "captionSha256": "fd77cfa12fa1d9a7a77409572fb848183f986437ba86fcc533ab720fb25f0163"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "این درخواست اتصالیه که گرفتیم. تجهیزات ونگارد می‌خواست به یکی از گره‌های خاموش رلهٔ شهری وصل بشه. بستهٔ اختیار، همون درخواست اصلی رو نگه داشته.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-01.wav",
+      "durationSeconds": 11.84,
+      "sha256": "148361747ef2cd5dc5b92894ccad15679fdabc2e24e46d4a9b7aba8285d85f18",
+      "captionSha256": "91b9df351a3b3ff506b4ad17a36ae7a2f65e913be9d66585b2964a45a770d40e"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The first key is my restored archive: the system knowledge needed to identify the Relay's nodes and control paths. Recovering that archive does not authorize me to use it against the city.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-02.wav",
+      "durationSeconds": 12.48,
+      "sha256": "c6cbf5a1caa9bc4fbc52eb9307efa72fa8e33979067d934d8edc16acc041bc0e",
+      "captionSha256": "840a73a121e9d020bc32e99b34f2e196fbf644c9ea179fc7402102a48a9dfa94"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "کلید اول آرشیو بازیابی‌شدهٔ منه؛ دانش سامانه برای شناخت گره‌ها و مسیرهای کنترل رله. بازیابی این آرشیو به من مجوز استفاده از اون علیه شهر رو نمی‌ده.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-02.wav",
+      "durationSeconds": 12.56,
+      "sha256": "cbe9098d26ae63d5073c56afeda9bcb22bd44a8ab22df82978bd3060e74e9ddb",
+      "captionSha256": "7072e58fddd41817c9cf7ea73c0822492ba68a7e53f05d201467ead9d7ae2d78"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The second key is the Commander's current emergency credential. The request needs a living authority, not an old access list or a copied identity.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-03.wav",
+      "durationSeconds": 9.92,
+      "sha256": "33aaeef0efc9e17c619cc843b3f3fbcaf138efebd6ad77f8df59db1a01c8f62b",
+      "captionSha256": "139cc62589c80b2d167b33aacfc4b94f5c6eb46aed37988f03a9ab05e6d866f3"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "کلید دوم، مجوز اضطراری فعلی فرمانده‌ست. این درخواست اختیار زنده می‌خواد، نه فهرست دسترسی قدیمی یا هویت کپی‌شده.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-03.wav",
+      "durationSeconds": 10.72,
+      "sha256": "9585d91c1409b66d79e386a20c1a71205bef3350037917b6155679272be17a16",
+      "captionSha256": "8c2b554741d671e5a885c643441912771ab710d0b24775d48488e7777385c45a"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-04",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Knowledge and authority are separate. Neither key alone completes the override. I have archived Protocol Fragment Four, the authority package, and the two-key diagram so you can inspect the evidence.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-04.wav",
+      "durationSeconds": 13.04,
+      "sha256": "2dc350b8eacd7dc8c1486a55c778667a8a30b6adcc96b100c66faa46657431a5",
+      "captionSha256": "016dcc567ab838997207d7c2905474d2d9f26e0cc51d02d976dbad75e7d5fcf6"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دانش و اختیار از هم جدا هستن. هیچ‌کدوم به‌تنهایی کنترل رو کامل نمی‌کنه. قطعهٔ چهارم پروتکل، بستهٔ اختیار و نمودار دو کلید رو بایگانی کردم تا مدرک رو بررسی کنین.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-04.wav",
+      "durationSeconds": 14.4,
+      "sha256": "1f6c9128d25f34787224bbe76395ecbee47599914cdaea5a34de7e2fa911131e",
+      "captionSha256": "58672d7fb096d6fb2e2c7788911754fdba27f5920597c1b1ab93845302f20288"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-05",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "Then let every district call at once. Fuel, medicine, power, and command will lead you back to the center. I only need the two keys to arrive together.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-05.wav",
+      "durationSeconds": 10.56,
+      "sha256": "88774aacb4cfc491a4a3afed5afe36225b4c3d0f341727eb0b65b2a71fe11ac3",
+      "captionSha256": "6b78e35bd3fc630dbeb4a8bb61c0ff39ec798e2d7bc8cc3fdd227347cd00134b"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-05",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "پس بذار همهٔ منطقه‌ها هم‌زمان کمک بخوان. سوخت، دارو، برق و فرماندهی شما رو به مرکز برمی‌گردونن. فقط کافیه دو کلید با هم برسن.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-05.wav",
+      "durationSeconds": 12.24,
+      "sha256": "4d1e5e30164658a5bd0a6abc96f8365c4ad1ba120f2c6f5c10d2a5541dacc3a1",
+      "captionSha256": "25c8861df78bcaebf38737c4fbc3dd2d2edf460ac91b75d6c75a4e615af5980f"
+    },
+    {
+      "kind": "narrative",
+      "id": "armor_break-close-06",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Sahrin's warnings are spreading. We have the evidence and the choice of our next route. Commander, the citywide response is yours to direct.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/en/armor_break-close-06.wav",
+      "durationSeconds": 8.72,
+      "sha256": "337d2243f97124db048c8287a9b79a405dfbba8074d2435a2d8ad933f27a2c28",
+      "captionSha256": "f84cbc48c795bf13949d8d3382ad2c706f7f26cd8ac1abfcd857edada45572a8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "armor_break-close-06",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "هشدارها دارن توی سهرین پخش می‌شن. مدرک دست ماست و مسیر بعدی رو خودمون انتخاب می‌کنیم. فرمانده، هدایت پاسخ سراسری شهر با شماست.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M05ArmorBreak/Voice/fa/armor_break-close-06.wav",
+      "durationSeconds": 11.76,
+      "sha256": "7de074d91250433ab8a92f5d78de4b0d1be7db19479b153e98b46f356aaaffd9",
+      "captionSha256": "a688aac116afc203974062a52d197364807a094547bedcfc651f4a28bead3444"
+    }
+  ],
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "missionId": "saga.ch04.m05.armor_break",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "generatedAtUtc": "2026-10-02T10:18:11.941641+00:00",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "castAssignment": {
+    "Dalia": "Existing canonical project cast",
+    "Laila": "Existing Sarah cast",
+    "ARIA": "Existing canonical project cast",
+    "Qassem": "Existing George cast"
+  }
+}

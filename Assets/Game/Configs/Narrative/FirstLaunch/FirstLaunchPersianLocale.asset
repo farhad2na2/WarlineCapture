@@ -2316,58 +2316,58 @@ MonoBehaviour:
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-brief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 5d9a7093cde4f43d790c3467b0061a43, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-brief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 5ba3a0caa568740399d4fd3c2a43b946, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-brief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: c3f8a0b931edc4a3997811039387fde0, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-comms-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 9b46299f512074d6cb28617926b24757, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-comms-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 8fc2fdc2ca7bb47e3b1dd6c682498f5b, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-debrief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 723049adc49744313a797fba15ed2719, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-debrief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 518295731f8c34a46a5bc4a93e198261, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-debrief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: b85f56df096924fdb9a40ab7c3054449, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 216a0c443aec241709996c8e587f68f1, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: ed7fef2301cef4e688544d2b87018573, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: b236ac968f2064875a6c8f25f707efe1, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-04
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 37fad00ac8836448a853ebc72376721a, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-05
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 6bafac37bd3884625a089b3d38ffd8fa, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: armor_break-close-06
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 8efa7a658a5da4afbb328d67cb375ffa, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

@@ -39,16 +39,16 @@ MonoBehaviour:
         to the dormant Relay nodes. Break their military position and protect the
         relief corridor. We cannot trade the city's infrastructure for this victory.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 6b275a506a89b44eda926573b82c29dd, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 15
+      deadlineSeconds: 15.62
       essentialCaption: 1
     continueStateId: ArmorBreak-brief-1
     skipStateId: ArmorBreak-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 15
+    durationSeconds: 15.62
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -85,7 +85,7 @@ MonoBehaviour:
         together. Fuel has been staged for this operation. Clear the military approach
         before moving the recovery team into the command compound.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: cac38527d958f4098a33dda967d7b2c2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
         requires your confirmation for each action. I will mark targets without issuing
         orders.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3df847662c6804c4cae3da2f00aebc94, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -228,16 +228,16 @@ MonoBehaviour:
         to connect to a dormant Civic Relay node. The authority package preserves
         the request exactly as it was sent.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: b6c59875b29b94b4f982da9e1a100b6a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.142858
+      deadlineSeconds: 12.34
       essentialCaption: 1
     continueStateId: ArmorBreak-close-1
     skipStateId: ArmorBreak-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.142858
+    durationSeconds: 12.34
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -274,7 +274,7 @@ MonoBehaviour:
         needed to identify the Relay''s nodes and control paths. Recovering that
         archive does not authorize me to use it against the city.'
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 72bb156a7d9a94ebda723abd0999680c, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -320,16 +320,16 @@ MonoBehaviour:
         The request needs a living authority, not an old access list or a copied
         identity.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1695437ecd886464dbcb95f0a19548ef, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.428572
+      deadlineSeconds: 11.22
       essentialCaption: 1
     continueStateId: ArmorBreak-close-3
     skipStateId: ArmorBreak-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.428572
+    durationSeconds: 11.22
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -366,16 +366,16 @@ MonoBehaviour:
         the override. I have archived Protocol Fragment Four, the authority package,
         and the two-key diagram so you can inspect the evidence.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 6bb93b5b894ee41709e980ad0b112da0, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 14.214286
+      deadlineSeconds: 14.9
       essentialCaption: 1
     continueStateId: ArmorBreak-close-4
     skipStateId: ArmorBreak-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.214286
+    durationSeconds: 14.9
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -412,16 +412,16 @@ MonoBehaviour:
         and command will lead you back to the center. I only need the two keys to
         arrive together.
       speaker: 9
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 0144cf8fe88f54caba103a24972c2790, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.785714
+      deadlineSeconds: 12.74
       essentialCaption: 1
     continueStateId: ArmorBreak-close-5
     skipStateId: ArmorBreak-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.785714
+    durationSeconds: 12.74
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -458,16 +458,16 @@ MonoBehaviour:
         the choice of our next route. Commander, the citywide response is yours to
         direct.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7b3dbe9ac76f04d7ea1ea82eb3a2bf8b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10
+      deadlineSeconds: 12.26
       essentialCaption: 1
     continueStateId: ArmorBreak-close-complete
     skipStateId: ArmorBreak-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10
+    durationSeconds: 12.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -554,7 +554,7 @@ MonoBehaviour:
         is secured and the relief corridor is intact. Keep the recovery team covered
         while we verify what they were trying to connect.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a7ea04ab87fb44e8598852e4a62ba1a5, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -600,16 +600,16 @@ MonoBehaviour:
         archive as the knowledge key and your current emergency credential as the
         live authority key. Neither key alone can complete his override.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 94b507f0a24fc4811b9d3f642f844244, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 14.214286
+      deadlineSeconds: 17.62
       essentialCaption: 1
     continueStateId: ArmorBreak-debrief-2
     skipStateId: ArmorBreak-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.214286
+    durationSeconds: 17.62
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -646,7 +646,7 @@ MonoBehaviour:
         was one part of a synchronized attack. Take the evidence with us. The next
         operation will have to protect the city's routes together.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e5b26eb1c24bd4ab69b8812cfb15a999, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -743,16 +743,16 @@ MonoBehaviour:
         if you choose it. I will wait for your confirmation; we can continue without
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 0b821fbdb0df64c708f35b5583ea904e, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 15.928572
+      deadlineSeconds: 16.98
       essentialCaption: 1
     continueStateId: ArmorBreak-comms-1
     skipStateId: ArmorBreak-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 15.928572
+    durationSeconds: 16.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -789,7 +789,7 @@ MonoBehaviour:
         the whole city apart. ARIA holds the system knowledge. You hold the emergency
         authority. Sahrin will bring both of you to the same door.
       speaker: 9
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f55a1fff8bfc3448a8138e430f2ca806, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0

@@ -1,0 +1,1358 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH04M05ArmorBreakInputProbe.RunEnglishWatch
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5db04dea/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakRules] result=Passed mastery=actual-shot,aircraft originals=12 recovery=qualified failures=all stale=session,retry,source settlement=idempotent
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakRulesValidation.cs:112)
+Game.Editor.CH04M05ArmorBreakInputProbe:Run (string,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:74)
+Game.Editor.CH04M05ArmorBreakInputProbe:RunEnglishWatch () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5db04dea/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:427)
+Game.Editor.CH04M05ArmorBreakInputProbe:Run (string,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:80)
+Game.Editor.CH04M05ArmorBreakInputProbe:RunEnglishWatch () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5db04dea/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[ArmorBreakInput] inputFixture=background-game-view-only nativeInputIsolated=3
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:ConfigureFixture () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:317)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:115)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[ArmorBreakInput] touch=ContinueButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:209)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[ArmorBreakInput] touch=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:207)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[ArmorBreakInput] touch=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:201)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch04.m05.armor_break scenario=scenario.ch04.m05.armor_break operationMap=opmap.ch04.armor_break
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=32319 size=1280x520 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=270 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=271 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Update hitch frame=272 BuildingPlacement=195.3ms, GC=0/0/0, Total=197.1ms
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch04.m05.brief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=WatchAriaPlay
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:197)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=ConfirmWatchAria
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:197)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=3929 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=8939 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=13944 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=18954 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=23956 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=28971 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=33966 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=160 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=12 played=1 status=Presented reason=Played at=120.98 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=38980 initialized=1 coverage=0 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=158.6499 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=43994 initialized=1 coverage=1 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=157.7499 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=49013 initialized=1 coverage=1 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=157.7499 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=54025 initialized=1 coverage=1 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=157.7499 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=59043 initialized=1 coverage=1 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=157.7499 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=141.11 damage=480 target=entity=438:5 name='Radar Tank' source='Unit_Veh_Radar_Tank' faction=1 cell=(700,269) hp=20/500 attacker=entity=746:5 name='Strike Jet' source='Unit_Veh_Jet_01' faction=2 cell=(862,433) hp=200/620
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Playback event=VO.ARIA.Message.WarningAirAttackType bus=Voice requestId=55 played=1 status=Presented reason=Played at=146.46 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=64048 initialized=1 coverage=1 air=0 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=69058 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=74065 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=79078 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=84096 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=11593 BuildingPlacement=326.0ms, GC=0/0/0, Total=334.8ms
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=89079 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=94096 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=99106 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=91 played=1 status=Presented reason=Played at=189.99 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=104115 initialized=1 coverage=1 air=1 battery=0 shots=0 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109116 initialized=1 coverage=1 air=1 battery=0 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignMissionNarrative] status=started stage=Comms sequence=seq.ch04.m05.comms session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 179 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=109320 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=14312 GC=0/0/0, Total=165.2ms
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=113136 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=118139 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=123158 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=128180 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=156.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=110 played=1 status=Presented reason=Played at=248.59 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=133180 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.3998 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=138201 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.3998 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=143225 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.3998 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=148228 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=0 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.3998 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=137 played=1 status=Presented reason=Played at=267.20 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=153252 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.1498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=158261 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=153.1498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=163269 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=151.1498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=178 played=1 status=Presented reason=Played at=282.98 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=168274 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=151.1498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=173281 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=151.1498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=178293 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=0 approach=0 command=0 authority=0 recovery=0 fuel=148.3998 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=183293 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=188307 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=18745 BuildingPlacement=160.6ms, GC=0/0/0, Total=174.7ms
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=193321 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=198321 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=203341 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=208343 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=213355 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=218377 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=141.6498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=226 played=1 status=Presented reason=Played at=339.21 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=223394 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=140.6997 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=228409 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=133.1493 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=233423 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=126.0989 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=238428 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=119.4986 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=243433 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=112.3983 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=248447 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=105.498 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=253453 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=0 command=0 authority=0 recovery=0 fuel=97.8475 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=368.01 damage=64 target=entity=461:5 name='Battle Tank' source='Unit_Veh_Tank_USA' faction=1 cell=(899,272) hp=1186/1250 attacker=entity=687:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=2 cell=(973,270) hp=125/125
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=368.84 damage=64 target=entity=461:5 name='Battle Tank' source='Unit_Veh_Tank_USA' faction=1 cell=(899,272) hp=1122/1250 attacker=entity=687:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=2 cell=(973,270) hp=125/125
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=369.67 damage=64 target=entity=461:5 name='Battle Tank' source='Unit_Veh_Tank_USA' faction=1 cell=(899,272) hp=1058/1250 attacker=entity=687:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=2 cell=(973,270) hp=125/125
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=258459 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=0 authority=0 recovery=0 fuel=91.69714 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=263456 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=0 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=266917 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=271912 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=276916 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=281927 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=286941 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=291945 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=296948 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=301947 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=433 played=1 status=Presented reason=Played at=422.34 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=306969 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=311981 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=316992 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=321990 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=327004 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=332020 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=337034 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=342045 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=347063 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=352083 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=357083 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=362104 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=367108 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=372129 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=377138 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=0 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=Engage outcome=None step=-1 clock=382144 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=0 recovery=2968 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakOrdinaryVictory] result=Passed G2A=live G2G=normalAttack aircraft=normalAttack armor=normalMoveAttack authority=hold relief=alive Fuel=realStorage
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:140)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignMissionNarrative] status=started stage=Debrief sequence=seq.ch04.m05.debrief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 180 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignMissionNarrative] status=started stage=ChapterClose sequence=seq.ch04.close.protocol_fragment_04 session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 179 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=DebriefFirstClear outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInputState] phase=ResultAfterDebrief outcome=Victory step=-1 clock=385187 initialized=1 coverage=1 air=1 battery=1 shots=1 aircraft=1 armored=1 approach=1 command=1 authority=1 recovery=6000 fuel=90.7471 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:132)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakInput] touch=ContinueButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:326)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:324)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:176)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=6 kind=ShowLoading region=LoadingLayer route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=6 kind=ShowLoading region=LoadingLayer route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:86)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=6 kind=ShowLoading region=LoadingLayer
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[OperationMapSourceScene] stage=SceneUnloadRequested
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryBeginOperationMapContentUnload (string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:92)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:387)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+UnityEngine.Debug:Log (object)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:UpdateUnload () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:361)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:Update () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:120)
+Game.Composition.MatchSceneView:UpdateOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:449)
+Game.Composition.MatchSceneView:UpdateOperationMapContentUnload () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:102)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:399)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellPresentation] stage=CommandStarted sequence=7 kind=EnterMenu region=None route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[ArmorBreakInput] result=Passed scope=VoicedJourney voices=14 normalInput=Passed dialogue=14 result=Passed settlement=Passed return=Passed route=CombinedArmsAuthority humanDeviceAcceptance=pending
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakInputProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:343)
+Game.Editor.CH04M05ArmorBreakInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs:187)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH04M05ArmorBreakInputProbe.RunEnglishWatch
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+

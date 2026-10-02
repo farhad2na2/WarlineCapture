@@ -1,6 +1,6 @@
 # Armor Break validation status
 
-Snapshot 2026-10-02. Resumed at the user request. Implementation is saved. English and Persian captioned normal-input journeys passed; voices remain pending; this is the captioned review checkpoint.
+Snapshot 2026-10-02. Resumed at the user request. Implementation is saved. English and Persian captioned normal-input journeys passed; 28 approved voices are installed; English ARIA and Persian manual full voiced journeys passed. Human/device acceptance remains pending.
 
 ## Passed native gates
 
@@ -53,7 +53,7 @@ Snapshot 2026-10-02. Resumed at the user request. Implementation is saved. Engli
 - English normal-input journey passed in `input-en-captioned-wrapper-11`: all 14 comic panels, Chapter IV close, actual victory, 3 stars, 2,500 XP / 11,000 credits settlement and return to Campaign. Receipt 0 and wrapper exit 0. This is native Editor evidence; voices and human/device acceptance remain pending.
 ## Pending gates
 
-- 28 English/Persian ElevenLabs clips. Automatic approval review rejected the upload; the question naming the exact payload and provider remains pending. No external generation occurred. Captioned gameplay evidence will not be reported as voice acceptance.
+- Previous upload rejection is retained as history. User explicitly approved on 2026-10-02; 28 ElevenLabs clips generated and verified, then installed through `voice-install-wrapper-01` (receipt/wrapper exit 0). Natural English/Persian voiced journeys subsequently passed; file checks and captioned journeys are kept separate from voiced acceptance.
 - Real player review and production player/device acceptance.
 
 ## User pause
@@ -61,3 +61,10 @@ Snapshot 2026-10-02. Resumed at the user request. Implementation is saved. Engli
 `input-en-captioned-wrapper-09` was stopped at the user request during normal launcher-stage validation. It is incomplete evidence, not a pass. Input was restored and the task Play run exited; Unity Editor and Hub remain open. Source changes remain in the primary checkout for continuation.
 
 Final `map-wrapper-02` passed with receipt/wrapper exit 0 and six unchanged source hashes.
+
+## Approved voice update — 2026-10-02
+
+- User explicitly approved the 28-clip payload after the earlier automatic-review rejection. All 14 English and 14 Persian clips generated on the configured ElevenLabs account; checksum/caption/cast/mono PCM validation passed. No runtime network TTS.
+- `voice-install-wrapper-01`: all 28 clips installed and max-locale narrative deadlines updated; receipt/wrapper exit 0.
+- `input-en-aria-voiced-wrapper-01`: English ARIA full normal-input journey passed with all 14 voices observed near their natural ends, 14 comic panels, chapter close, result, settlement and Campaign return; receipt/wrapper exit 0.
+- `input-fa-voiced-wrapper-01`: Persian manual full normal-input journey passed with all 14 voices observed near their natural ends, 14 comic panels, chapter close, result, settlement and Campaign return; receipt/wrapper exit 0. Human/device acceptance remains pending.

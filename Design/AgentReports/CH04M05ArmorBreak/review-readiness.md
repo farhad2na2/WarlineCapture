@@ -1,4 +1,4 @@
-# CH04-M05 Armor Break — review checkpoint
+# CH04-M05 Armor Break — voiced review checkpoint
 
 ## Playable scope
 
@@ -17,8 +17,8 @@ The successful story includes three briefing panels, two comms panels, three deb
 | Persian normal-input Editor journey | Passed `input-fa-captioned-wrapper-01`, all 14 panels, victory, settlement and return |
 | English ARIA normal-input Editor journey | Passed `input-en-aria-captioned-wrapper-01`, all 14 panels, victory, settlement and return |
 | Final packed Entities/Addressables content | Passed `packed-wrapper-05`, receipt/wrapper exit 0, no Burst/compile errors |
-| Comic voices | Pending exact 28-clip ElevenLabs approval; no external generation occurred |
-| Full voiced journeys | Pending voice installation and natural playback validation |
+| Comic voices | Approved 28 clips generated, checksummed and installed; offline playback |
+| Full voiced journeys | English ARIA and Persian manual passed all 14 natural voice playbacks, chapter close, reward settlement and Campaign return |
 | Human/device acceptance | Pending user review and production player/device run |
 
 The normal-input probes use isolated prerequisite saves, actual campaign launch and native touch/drag/command inputs. They observe live combat, original-unit mastery, package hold and settlement; they do not inject current mission wins. The alternate-loss ARIA fallback is fixture-tested, not a separate full normal-input loss playthrough. The ARIA journey displays Stop but does not manually press Stop mid-combat.
@@ -26,3 +26,5 @@ The normal-input probes use isolated prerequisite saves, actual campaign launch 
 Full failed logs are retained. Earlier candidate combat wins and failed packing runs are not treated as readiness evidence. `validation_status.md` lists the failures and repairs.
 
 The bounded map is 1280 × 520 with 5,327 physical identities, 667 owners and independent scene/loader identities. This is Editor and content evidence for the approved crop; it does not establish full Frontier production-device acceptance.
+
+Voice update evidence: `voice-install-wrapper-01`, `input-en-aria-voiced-wrapper-01`, `input-fa-voiced-wrapper-01`, all receipts and wrapper exits 0. Earlier captioned evidence and failed runs are retained.

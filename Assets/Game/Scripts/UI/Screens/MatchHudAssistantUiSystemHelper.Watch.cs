@@ -95,6 +95,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsGroundedSignalGuideContext() &&
                        !UiShellRuntimeGateway.IsArmorBreakGuideContext() &&
                        !UiShellRuntimeGateway.IsCitywideAlertGuideContext() &&
+                       !UiShellRuntimeGateway.IsTrustUnderFireGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
                        !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
@@ -167,7 +168,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
@@ -203,6 +204,7 @@ namespace Game.UI.Runtime
                 if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var armorTarget) &&
                     armorTarget.BattleAction==UiTutorialBattleAction.Attack)goalId++;
             }
+            if(UiShellRuntimeGateway.IsTrustUnderFireGuideContext() && UiShellRuntimeGateway.TryReadTrustUnderFire(out var trustProgress)) goalId=6900+trustProgress.Stage*32+Mathf.Clamp(trustProgress.HostilesDefeated,0,9)*2+(trustProgress.NorthCrossed?1:0)+(trustProgress.SouthCrossed?2:0);
             if(UiShellRuntimeGateway.IsCitywideAlertGuideContext() && UiShellRuntimeGateway.TryReadCitywideAlert(out var citywideProgress)) goalId=6800+citywideProgress.Stage*16+Mathf.Clamp(citywideProgress.HostilesCleared,0,11);
             // A delivered load is visible reserve progress, even while the same
             // defend-storage instruction remains on screen.

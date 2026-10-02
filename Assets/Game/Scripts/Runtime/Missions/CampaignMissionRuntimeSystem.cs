@@ -48,7 +48,8 @@ namespace Game.Runtime
             if (TryAdvanceSupplyLine(ref state, root, in activeRuntime)) return;
             if (TryAdvanceGridlock(ref state, root, in activeRuntime)) return;
             if (TryAdvanceGroundedSignal(ref state, root, in activeRuntime)) return;
-            if (TryAdvanceCitywideAlert(ref state, root, in activeRuntime)) return;
+            if (TryAdvanceTrustUnderFire(ref state, root, in activeRuntime)) return;
+                if (TryAdvanceCitywideAlert(ref state, root, in activeRuntime)) return;
             if (TryAdvanceArmorBreak(ref state, root, in activeRuntime)) return;
             if (TryAdvanceBreach(ref state, root, in activeRuntime)) return;
             if (TryAdvanceExtraction(ref state, root, in activeRuntime)) return;

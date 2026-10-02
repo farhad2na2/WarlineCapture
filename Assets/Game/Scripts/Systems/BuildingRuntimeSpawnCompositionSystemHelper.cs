@@ -332,6 +332,7 @@ namespace Game.Runtime
             GameObject instance = context.CreateBuildingVisualInstance?.Invoke(definition, context.BuildingRoot);
             if (instance == null)
             {
+                if(requirePreferredOrigin&&IsTrustPlacementDiagnostic())Debug.LogError($"[TrustPlacement] reject=create-visual prefab={definition.Prefab.name}");
                 if(requirePreferredOrigin&&IsCitywidePlacementDiagnostic())Debug.LogError($"[CitywidePlacement] reject=create-visual prefab={definition.Prefab.name}");
                 return false;
             }
@@ -341,6 +342,7 @@ namespace Game.Runtime
                 ? context.GetPlacementFootprint(definition, rotateVertical)
                 : definition.FootprintCells;
             building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap);
+            if(building==null&&requirePreferredOrigin&&IsTrustPlacementDiagnostic())Debug.LogError($"[TrustPlacement] reject=register-building prefab={definition.Prefab.name} origin={originCell} footprint={footprint}");
             if(building==null&&requirePreferredOrigin&&IsCitywidePlacementDiagnostic())Debug.LogError($"[CitywidePlacement] reject=register-building prefab={definition.Prefab.name} origin={originCell} footprint={footprint}");
             return building != null;
         }

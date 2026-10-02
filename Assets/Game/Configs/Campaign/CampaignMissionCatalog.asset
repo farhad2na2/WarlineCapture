@@ -76,3 +76,6 @@ MonoBehaviour:
   - missionId: saga.ch05.m01.citywide_alert
     definition: {fileID: 11400000, guid: d24d1d7c6961340f3a74a4558152d580, type: 2}
     scenario: {fileID: 11400000, guid: 4b3546f043e324077814d1d1dc76df92, type: 2}
+  - missionId: saga.ch05.m02.trust_under_fire
+    definition: {fileID: 11400000, guid: 3dc65cceb29954009b581d7e8cab37ff, type: 2}
+    scenario: {fileID: 11400000, guid: 30a49de6ed62d49dcbd5b4ef152cb55d, type: 2}

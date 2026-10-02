@@ -1,0 +1,1047 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M02TrustUnderFireInputProbe.RunGameplay
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_83a369c1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustRules] result=Passed originals=26 routes=independent crossing=required verification=actual settlement=idempotent supply=first-clear
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireRulesValidation.cs:62)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Run (string,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:83)
+Game.Editor.CH05M02TrustUnderFireInputProbe:RunGameplay () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:74)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_83a369c1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:427)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Run (string,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:89)
+Game.Editor.CH05M02TrustUnderFireInputProbe:RunGameplay () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:74)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_83a369c1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[Command Cache] Cleaned 186 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+Unity.AI.MCP.Editor.Bridge:<RequestDrainOnMainThread>b__69_0 (object) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1468)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+
+[TrustUnderFireInput] inputFixture=background-game-view-only nativeInputIsolated=3
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:ConfigureFixture () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:425)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:124)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=None outcome=None step=-1 clock=0 initialized=0 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[TrustUnderFireInput] touch=ContinueButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:243)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[TrustUnderFireInput] touch=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:241)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[TrustUnderFireInput] touch=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:235)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch05.m02.trust_under_fire scenario=scenario.ch05.m02.trust_under_fire operationMap=opmap.ch05.trust_under_fire
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[TrustUnderFireInputState] phase=None outcome=None step=-1 clock=0 initialized=0 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=None outcome=None step=-1 clock=0 initialized=0 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=24315 size=600x400 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=1181 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=1182 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[PerfDiag] slowUpdate frame=1183 total=113.6ms gc=0/0/0 cpuFrame=7.7ms cpuMain=4.5ms cpuRender=1.0ms gpu=6.0ms steps=RoadBuild=4.4ms, BuildingPlacement=90.6ms, Selection=17.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.3ms units=221 models=26 sourceKeys=221 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=85 batches=0 setPass=51 tris=622706 verts=1051250 memory=alloc=25319MB reserved=27338MB mono=5544MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=1184 Gap=168.6ms GC=0/0/0 LastSteps=RoadBuild=4.4ms, BuildingPlacement=90.6ms, Selection=17.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.3ms
+[TrustPlacement] begin prefab=Building_Trust_Shelter configured=(14, 12) model=(14, 12) preferred=(522, 219) effectiveRect=(x:522, y:219, width:14, height:12) gridOrigin=float3(400f, 0f, 300f) gridSize=600x400
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:32)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:478)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[TrustPlacement] begin prefab=Building_Trust_Shelter configured=(14, 12) model=(14, 12) preferred=(522, 99) effectiveRect=(x:522, y:99, width:14, height:12) gridOrigin=float3(400f, 0f, 300f) gridSize=600x400
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:32)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:478)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[TrustPlacement] begin prefab=Building_Trust_Broadcast configured=(14, 12) model=(14, 12) preferred=(128, 324) effectiveRect=(x:128, y:324, width:14, height:12) gridOrigin=float3(400f, 0f, 300f) gridSize=600x400
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:32)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:478)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[TrustPlacement] begin prefab=Building_Trust_ReserveDepot configured=(26, 25) model=(26, 25) preferred=(380, 350) effectiveRect=(x:380, y:350, width:26, height:25) gridOrigin=float3(400f, 0f, 300f) gridSize=600x400
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:32)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:478)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FrameRateDiag] fps=6.3 avgFrame=158.5ms updateAvg=17.4ms updateMax=113.6ms cpuFrame=51.3ms cpuMain=48.3ms cpuRender=0.9ms gpu=5.3ms drawCalls=68 batches=0 setPass=50 tris=1726380 verts=2989981 units=225 models=26 sourceKeys=225 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=19 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=25323MB reserved=27340MB mono=5546MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1184 source=profilerCounters drawCalls=68 batches=0 setPass=50 tris=1726380 verts=2989981 topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch05.m02.brief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[TrustUnderFireInput] touch=SkipButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:182)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag:PreGame] slowUpdate frame=1337 total=27.6ms gc=0/0/0 cpuFrame=7.3ms cpuMain=4.4ms cpuRender=1.1ms gpu=5.5ms steps=BuildingStartup=0.1ms, MainMenu=27.6ms units=225 models=26 sourceKeys=225 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=126 batches=0 setPass=66 tris=1706893 verts=2946228 memory=alloc=25393MB reserved=27339MB mono=5556MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=0 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInput] touch=ConfirmButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:182)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=1601 total=44.0ms gc=0/0/0 cpuFrame=10.9ms cpuMain=6.2ms cpuRender=1.3ms gpu=8.6ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=43.8ms units=225 models=26 sourceKeys=225 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=129 batches=0 setPass=59 tris=2056300 verts=3566767 memory=alloc=25462MB reserved=27331MB mono=5558MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=1675 total=36.4ms gc=0/0/0 cpuFrame=7.9ms cpuMain=5.1ms cpuRender=1.0ms gpu=7.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=36.2ms units=225 models=26 sourceKeys=225 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=176 batches=0 setPass=67 tris=1982903 verts=3432256 memory=alloc=25480MB reserved=27328MB mono=5559MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=3752 total=26.9ms gc=0/0/0 cpuFrame=9.8ms cpuMain=6.4ms cpuRender=1.1ms gpu=10.6ms steps=RoadBuild=0.0ms, BuildingPlacement=20.5ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=6.2ms units=228 models=26 sourceKeys=228 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=204 batches=0 setPass=64 tris=431619 verts=720878 memory=alloc=25240MB reserved=27160MB mono=5589MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=4110 total=45.3ms gc=0/0/0 cpuFrame=7.8ms cpuMain=5.5ms cpuRender=1.0ms gpu=6.9ms steps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=44.9ms units=228 models=26 sourceKeys=228 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=229 batches=0 setPass=62 tris=1522697 verts=2617123 memory=alloc=25228MB reserved=27152MB mono=5595MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=4434 total=33.6ms gc=0/0/0 cpuFrame=11.7ms cpuMain=6.8ms cpuRender=1.4ms gpu=7.3ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.4ms units=228 models=26 sourceKeys=228 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=123 batches=0 setPass=59 tris=1700968 verts=2936672 memory=alloc=25216MB reserved=27142MB mono=5600MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=FindSquad outcome=None step=-1 clock=0 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=5194 total=35.2ms gc=0/0/0 cpuFrame=6.7ms cpuMain=4.4ms cpuRender=0.3ms gpu=1.9ms steps=RoadBuild=0.0ms, BuildingPlacement=0.4ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=34.7ms units=229 models=26 sourceKeys=229 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=119 batches=0 setPass=59 tris=1706087 verts=2944616 memory=alloc=25188MB reserved=27114MB mono=5615MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInput] touch=SelectCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:262)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=47.99 damage=27 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=973/1000 attacker=entity=585:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(155,340) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=48.44 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=966/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[TrustUnderFireInput] touch=ShowMeButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:274)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=1378 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=48.85 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=959/1000 attacker=entity=585:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(155,340) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=48.92 damage=20 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=939/1000 attacker=entity=578:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(135,350) hp=95/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=49.37 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=932/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=49.70 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=925/1000 attacker=entity=585:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(155,340) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=49.82 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=918/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=49.86 damage=13 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=905/1000 attacker=entity=578:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(135,350) hp=95/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=50.26 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=898/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=50.56 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=891/1000 attacker=entity=585:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(155,340) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=50.71 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=884/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=50.78 damage=13 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=871/1000 attacker=entity=578:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(135,350) hp=95/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=51.16 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=864/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=51.41 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=857/1000 attacker=entity=585:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(155,340) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=51.61 damage=7 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=850/1000 attacker=entity=571:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(115,340) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=51.71 damage=13 target=entity=802:7 name='Verified broadcast source' source='Building_Trust_Broadcast' faction=1 cell=(135,330) hp=837/1000 attacker=entity=578:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(135,350) hp=95/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[PerfDiag] slowUpdate frame=5628 total=43.3ms gc=0/0/0 cpuFrame=9.7ms cpuMain=6.4ms cpuRender=1.1ms gpu=6.8ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=43.1ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=295 batches=0 setPass=88 tris=2002316 verts=3514061 memory=alloc=25272MB reserved=27098MB mono=5716MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=6384 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 24 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInput] normalTouch=dragSelection step=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:286)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=11383 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=6072 BuildingPlacement=1707.7ms, GC=0/0/0, Total=1724.5ms
+[PerfDiag] slowUpdate frame=6072 total=1724.5ms gc=0/0/0 cpuFrame=12.6ms cpuMain=7.3ms cpuRender=1.1ms gpu=15.0ms steps=RoadBuild=0.0ms, BuildingPlacement=1707.7ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=16.3ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=276 batches=0 setPass=87 tris=1561092 verts=2740363 memory=alloc=25883MB reserved=27583MB mono=5874MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=6073 Gap=1877.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=1707.7ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=16.3ms
+[TrustUnderFireInput] touch=SelectCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:262)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInput] normalTouch=dragSelection step=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:286)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag] fps=16.8 avgFrame=59.4ms updateAvg=5.4ms updateMax=78.4ms cpuFrame=27.3ms cpuMain=12.2ms cpuRender=0.4ms gpu=0.2ms drawCalls=284 batches=0 setPass=95 tris=1561108 verts=2740395 units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=15 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=25449MB reserved=27156MB mono=5891MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=6135 source=profilerCounters drawCalls=284 batches=0 setPass=95 tris=1561108 verts=2740395 topSystems=disabled markers=disabled
+[TrustUnderFireInput] touch=MoveCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:262)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=6150 total=33.6ms gc=0/0/0 cpuFrame=57.4ms cpuMain=34.5ms cpuRender=0.4ms gpu=0.2ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.4ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=285 batches=0 setPass=92 tris=1561704 verts=2741583 memory=alloc=25455MB reserved=27158MB mono=5895MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=6157 Gap=254.8ms GC=1/1/1 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.7ms, Selection=1.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.5ms
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=14879 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInput] touch=ShowMeButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:444)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:274)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag] fps=38.4 avgFrame=26.0ms updateAvg=4.2ms updateMax=33.6ms cpuFrame=10.8ms cpuMain=7.9ms cpuRender=1.4ms gpu=10.5ms drawCalls=288 batches=0 setPass=95 tris=1563459 verts=2743474 units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=15 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=25453MB reserved=27160MB mono=5457MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=6285 total=49.1ms gc=0/0/0 cpuFrame=11.3ms cpuMain=7.4ms cpuRender=0.4ms gpu=10.9ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=48.9ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=294 batches=0 setPass=96 tris=1426268 verts=2485131 memory=alloc=25458MB reserved=27165MB mono=5471MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=6377 total=40.7ms gc=0/0/0 cpuFrame=10.8ms cpuMain=7.5ms cpuRender=1.2ms gpu=6.6ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=40.5ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=293 batches=0 setPass=99 tris=896250 verts=1572543 memory=alloc=25467MB reserved=27173MB mono=5488MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=6489 total=39.6ms gc=0/0/0 cpuFrame=14.4ms cpuMain=9.6ms cpuRender=1.4ms gpu=14.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=39.4ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=297 batches=0 setPass=99 tris=537695 verts=944298 memory=alloc=25476MB reserved=27186MB mono=5510MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Update hitch frame=6538 BuildingPlacement=1148.4ms, GC=0/0/0, Total=1151.5ms
+[PerfDiag] slowUpdate frame=6538 total=1151.5ms gc=0/0/0 cpuFrame=10.5ms cpuMain=7.3ms cpuRender=1.2ms gpu=5.6ms steps=RoadBuild=0.0ms, BuildingPlacement=1148.4ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.8ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=297 batches=0 setPass=99 tris=469486 verts=826700 memory=alloc=26029MB reserved=27693MB mono=5544MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=19461 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=6539 Gap=1193.4ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=1148.4ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.8ms
+[FrameRateDiag] fps=47.8 avgFrame=20.9ms updateAvg=2.0ms updateMax=6.1ms cpuFrame=12.1ms cpuMain=8.2ms cpuRender=1.5ms gpu=5.0ms drawCalls=281 batches=0 setPass=99 tris=410323 verts=724818 units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=25594MB reserved=27266MB mono=5575MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=6730 total=41.0ms gc=0/0/0 cpuFrame=12.9ms cpuMain=8.4ms cpuRender=1.5ms gpu=14.1ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=40.8ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=279 batches=0 setPass=99 tris=410421 verts=725015 memory=alloc=25598MB reserved=27269MB mono=5584MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[TrustUnderFireInputState] phase=Engage outcome=None step=1 clock=24782 initialized=1 northCrossed=0 southCrossed=0 northArrived=0 southArrived=0 relay=0 military=0 northHold=0 southHold=0 verification=0 stable=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:148)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInput] touch=step-1-Move
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:446)
+Game.Editor.CH05M02TrustUnderFireInputProbe:DriveManual (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:288)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:232)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag] slowUpdate frame=7064 total=83.3ms gc=0/0/0 cpuFrame=15.4ms cpuMain=7.5ms cpuRender=0.4ms gpu=5.5ms steps=RoadBuild=0.0ms, BuildingPlacement=0.0ms, Selection=81.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.2ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=275 batches=0 setPass=99 tris=394266 verts=686852 memory=alloc=25629MB reserved=27289MB mono=5655MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=242 played=1 status=Presented reason=Played at=83.28 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[TrustFailureSnapshot] failure=BroadcastLost ready=1 northShelter=Entity(722:377) southShelter=Entity(797:275) broadcast=Entity(802:7) reserve=Entity(810:5)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:297)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(462:5) kind=SouthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(549.5f, -0.02187176f, 378.5f) source=Unit_Chr_Soldier_Male_02_Alt_04 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(365:5) kind=NorthEscort observedDead=0 healthInitialized=1 hp=1250/1250 position=float3(550.5f, 0f, 504.5f) source=Unit_Veh_Tank_USA attackRange=120 damage=180 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(428:5) kind=SouthEscort observedDead=0 healthInitialized=1 hp=1250/1250 position=float3(549.5f, 0f, 384.5f) source=Unit_Veh_Tank_USA attackRange=120 damage=180 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(487:5) kind=NorthConvoy observedDead=0 healthInitialized=1 hp=220/220 position=float3(468.5f, 0f, 505.5f) source=Unit_Veh_Truck_Canopy attackRange=2 damage=10 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(499:5) kind=SouthConvoy observedDead=0 healthInitialized=1 hp=220/220 position=float3(472.5f, 0f, 384.5f) source=Unit_Veh_Truck_Canopy attackRange=2 damage=10 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(532:5) kind=NorthHostile observedDead=0 healthInitialized=1 hp=550/550 position=float3(780.5f, 0f, 506.5f) source=Unit_Veh_APC_Fast attackRange=2 damage=10 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(552:5) kind=SouthHostile observedDead=0 healthInitialized=1 hp=550/550 position=float3(799.5f, 0f, 386.5f) source=Unit_Veh_APC_Fast attackRange=2 damage=10 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(411:5) kind=NorthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(552.3052f, 0.015887f, 495.5895f) source=Unit_Chr_Soldier_Female_01_Alt_01 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(395:5) kind=NorthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(553.3073f, 0.01533122f, 498.5678f) source=Unit_Chr_Soldier_Male_02_Alt_02 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(422:5) kind=NorthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(551.4514f, -0.01411839f, 499.5745f) source=Unit_Chr_Soldier_Female_02_Alt_01 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(510:5) kind=Engineer observedDead=0 healthInitialized=1 hp=125/125 position=float3(605.5f, -0.02187176f, 505.5f) source=Unit_Chr_Soldier_Male_02_Alt_02 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(481:5) kind=SouthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(551.5f, -0.02289125f, 379.5f) source=Unit_Chr_Soldier_Female_02_Alt_01 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(456:5) kind=SouthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(552.5f, -0.02187176f, 377.5f) source=Unit_Chr_Soldier_Male_02_Alt_02 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(470:5) kind=SouthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(550.5f, -0.02289926f, 375.5f) source=Unit_Chr_Soldier_Female_01_Alt_01 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(402:5) kind=NorthEscort observedDead=0 healthInitialized=1 hp=125/125 position=float3(550.0695f, 0.01533122f, 497.6046f) source=Unit_Chr_Soldier_Male_02_Alt_04 attackRange=85 damage=16 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(585:5) kind=RelayHostile observedDead=0 healthInitialized=1 hp=85/85 position=float3(555.5f, 0.005105373f, 640.5f) source=Unit_Chr_Insurgent_Female_02 attackRange=35 damage=7 engageTarget=Entity(802:7)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(571:5) kind=RelayHostile observedDead=0 healthInitialized=1 hp=105/105 position=float3(515.5f, 0.01192928f, 640.5f) source=Unit_Chr_Insurgent_Male_03 attackRange=55 damage=7 engageTarget=Entity(802:7)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(578:5) kind=RelayHostile observedDead=0 healthInitialized=1 hp=95/95 position=float3(535.5f, 0.008839609f, 650.5f) source=Unit_Chr_Insurgent_Female_01 attackRange=75 damage=13 engageTarget=Entity(802:7)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(538:5) kind=NorthHostile observedDead=0 healthInitialized=1 hp=105/105 position=float3(778.5f, 0.01181258f, 519.5f) source=Unit_Chr_Insurgent_Male_03 attackRange=55 damage=7 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(545:5) kind=NorthHostile observedDead=0 healthInitialized=1 hp=95/95 position=float3(782.5f, 0.006750256f, 520.5f) source=Unit_Chr_Insurgent_Female_01 attackRange=75 damage=13 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(557:5) kind=SouthHostile observedDead=0 healthInitialized=1 hp=105/105 position=float3(800.5f, -0.01818715f, 370.5f) source=Unit_Chr_Insurgent_Male_03 attackRange=55 damage=7 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(564:5) kind=SouthHostile observedDead=0 healthInitialized=1 hp=95/95 position=float3(802.5f, -0.02324948f, 373.5f) source=Unit_Chr_Insurgent_Female_01 attackRange=75 damage=13 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(524:5) kind=SouthStaff observedDead=0 healthInitialized=1 hp=55/55 position=float3(928.5f, 0.0007173046f, 421.5f) source=Unit_Chr_Civilian_Female_02 attackRange=1.25 damage=1 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(527:5) kind=SouthStaff observedDead=0 healthInitialized=1 hp=55/55 position=float3(931.5f, 0.003101237f, 418.5f) source=Unit_Chr_Civilian_Male_01 attackRange=1.25 damage=1 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(516:5) kind=NorthStaff observedDead=0 healthInitialized=1 hp=55/55 position=float3(929.5f, 0.0005308874f, 538.5f) source=Unit_Chr_Civilian_Female_01 attackRange=1.25 damage=1 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureMember] entity=Entity(519:5) kind=NorthStaff observedDead=0 healthInitialized=1 hp=55/55 position=float3(932.5f, 0.003101237f, 541.5f) source=Unit_Chr_Civilian_Male_01 attackRange=1.25 damage=1 engageTarget=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:305)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureBuilding] bound=1 entity=Entity(722:377) request=1 building=Building_Trust_Shelter status=1 resultCode=0 preferred=int2(522, 219) actualOrigin=int2(522, 219) actualFootprint=int2(14, 12) runtimeBuilding=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:311)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureBuilding] bound=1 entity=Entity(797:275) request=2 building=Building_Trust_Shelter status=1 resultCode=0 preferred=int2(522, 99) actualOrigin=int2(522, 99) actualFootprint=int2(14, 12) runtimeBuilding=2
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:311)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureBuilding] bound=1 entity=Entity(802:7) request=3 building=Building_Trust_Broadcast status=1 resultCode=0 preferred=int2(128, 324) actualOrigin=int2(128, 324) actualFootprint=int2(14, 12) runtimeBuilding=3
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:311)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustFailureBuilding] bound=1 entity=Entity(810:5) request=4 building=Building_Trust_ReserveDepot status=1 resultCode=0 preferred=int2(380, 350) actualOrigin=int2(380, 350) actualFootprint=int2(26, 25) runtimeBuilding=4
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:SnapshotTrustFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionTrustUnderFireState&) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:311)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:144)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: Trust Under Fire failure before further input: BroadcastLost
+Game.Editor.CH05M02TrustUnderFireInputProbe.Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:145)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick() (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:245)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireInput] result=Failed Trust Under Fire failure before further input: BroadcastLost
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:463)
+Game.Editor.CH05M02TrustUnderFireInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs:245)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=7082 BuildingPlacement=1236.6ms, GC=0/0/0, Total=1256.6ms
+[PerfDiag] slowUpdate frame=7082 total=1256.6ms gc=0/0/0 cpuFrame=10.4ms cpuMain=7.2ms cpuRender=1.2ms gpu=10.7ms steps=RoadBuild=0.0ms, BuildingPlacement=1236.6ms, Selection=0.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=19.3ms units=230 models=26 sourceKeys=230 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=267 batches=0 setPass=96 tris=394202 verts=686732 memory=alloc=26183MB reserved=27817MB mono=5728MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.CH05M02TrustUnderFireInputProbe.RunGameplay
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+

@@ -1,0 +1,1 @@
+[TrustUnderFireInput] result=Passed scope=GameplayOnly voices=Pending dialogue=NativeSkip normalInput=Passed result=Passed settlement=Passed return=Passed route=TwoProtectedConvoys verifiedBroadcast=Passed Supply=EarnedAfterClearOnly optionalSupport=approve humanDeviceAcceptance=pending

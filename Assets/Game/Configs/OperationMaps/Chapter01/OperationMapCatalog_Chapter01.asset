@@ -41,6 +41,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7065e2ee8e49b4a3682ce88a38e3eda0, type: 2}
   - {fileID: 11400000, guid: 544af073d8659466f8fbe72be1d76bd7, type: 2}
   - {fileID: 11400000, guid: 78813262332a14b309f1e5bf59e95d9d, type: 2}
+  - {fileID: 11400000, guid: e7d7d748fabed41ea8e690c35cf5fdc9, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
     contentPack:
@@ -210,3 +211,9 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 4
       contentHash: 5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d
+  - definition: {fileID: 11400000, guid: e7d7d748fabed41ea8e690c35cf5fdc9, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch05.trust_under_fire
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 1be77cb5781808ca415ce7afb08265073f163072ed554af024c7b20fc52b1f23

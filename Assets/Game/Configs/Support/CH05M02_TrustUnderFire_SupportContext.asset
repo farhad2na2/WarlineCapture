@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c770b8e33b114dcabd2bbd385f69d2d, type: 3}
+  m_Name: CH05M02_TrustUnderFire_SupportContext
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportMissionContextConfig
+  MissionId: saga.ch05.m02.trust_under_fire
+  OperationMapId: opmap.ch05.trust_under_fire
+  MissionSourceVersion: 1
+  Revision: 2
+  GroundMin: {x: 408, y: 308}
+  GroundMax: {x: 992, y: 692}
+  Entry: {x: 470, y: 100, z: 505}
+  Release: {x: 700, y: 100, z: 505}
+  Exit: {x: 980, y: 100, z: 505}
+  Clearance: 20
+  PopulationCeiling: 48
+  RouteAuthored: 1
+  Regions:
+  - Min: {x: 408, y: 308}
+    Max: {x: 992, y: 692}
+    Visible: 1
+    Protected: 0
+  - Min: {x: 919, y: 494}
+    Max: {x: 960, y: 548}
+    Visible: 1
+    Protected: 1
+  - Min: {x: 919, y: 374}
+    Max: {x: 960, y: 428}
+    Visible: 1
+    Protected: 1
+  - Min: {x: 524, y: 606}
+    Max: {x: 546, y: 642}
+    Visible: 1
+    Protected: 1

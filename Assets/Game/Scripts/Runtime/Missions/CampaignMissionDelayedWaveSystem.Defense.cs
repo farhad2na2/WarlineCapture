@@ -57,6 +57,8 @@ namespace Game.Runtime
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.command")))ready&=armorBreak.ArmorApproached!=0;
                         }
                     }
+                    if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)))
+                        ready &= em.HasComponent<CampaignMissionTrustUnderFireState>(root) && em.GetComponentData<CampaignMissionTrustUnderFireState>(root).Ready != 0;
                     if (runtime.MissionId.Equals(CitywideDelayedMissionId))
                     {
                         ready &= em.HasComponent<CampaignMissionCitywideAlertState>(root);
@@ -85,7 +87,7 @@ namespace Game.Runtime
                                 commands.SetComponent(entity, combat);
                             }
                             commands.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
-                            bool fixedBattery = em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
                                 (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
                                 em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery")) ||
                                 runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) &&

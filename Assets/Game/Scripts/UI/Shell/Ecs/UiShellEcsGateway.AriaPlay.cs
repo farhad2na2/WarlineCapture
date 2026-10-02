@@ -42,7 +42,7 @@ namespace Game.UI.Shell.Ecs
             var mission = missions.GetSingleton<CampaignMissionRuntimeComponent>();
             if (mission.Outcome != Game.Missions.Contracts.MissionOutcomeKind.None) return AriaPlayCapability.None;
             string id = mission.MissionId.ToString();
-            if(id==Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert || id==Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak || id==Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal || id==Game.Missions.Contracts.CampaignMissionSequence.SplitFront || id==Game.Missions.Contracts.CampaignMissionSequence.SteelPush ||
+            if(id==Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire || id==Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert || id==Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak || id==Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal || id==Game.Missions.Contracts.CampaignMissionSequence.SplitFront || id==Game.Missions.Contracts.CampaignMissionSequence.SteelPush ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.AirCorridor ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline ||

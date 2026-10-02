@@ -9,7 +9,10 @@ namespace Game.Configs
         {
             error = "Defense requires a finite, uniquely identified convoy, valid contact timing, core and valid optional radar support.";
             MissionDefenseDefinitionConfig defense = scenario.Defense;
-            if (!scenario.MissionRuntime.Enabled || !defense.Enabled ||
+            bool trustConvoy = scenario.ScenarioId == "scenario.ch05.m02.trust_under_fire" && !scenario.MissionRuntime.Enabled &&
+                scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled &&
+                scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
+            if ((!scenario.MissionRuntime.Enabled && !trustConvoy) || !defense.Enabled ||
                 defense.ConvoyElements.Length is < 1 or > 4 ||
                 string.IsNullOrWhiteSpace(defense.ForwardPostStableId) || defense.ForwardPostStableId.Length > 125 ||
                 !HasAnchor(scenario, defense.InnerCoreAnchorId) ||

@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch05_M02_TrustUnderFire
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch05.m02.trust_under_fire
+  schemaVersion: 1
+  displayNameKey: mission.trust_under_fire.name
+  displaySummaryKey: mission.trust_under_fire.summary
+  locationNameKey: mission.trust_under_fire.location
+  scenarioId: scenario.ch05.m02.trust_under_fire
+  operationMapId: opmap.ch05.trust_under_fire
+  briefingSequenceId: seq.ch05.m02.brief
+  commsSequenceId: seq.ch05.m02.comms
+  debriefSequenceId: seq.ch05.m02.debrief
+  objectives:
+  - objectiveId: obj.ch05.m02.north
+    displayTextKey: mission.trust_under_fire.objective.north
+    rule: 35
+    missionRoleId: role.friendly.convoy.north
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch05.m02.south
+    displayTextKey: mission.trust_under_fire.objective.south
+    rule: 36
+    missionRoleId: role.friendly.convoy.south
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch05.m02.broadcast
+    displayTextKey: mission.trust_under_fire.objective.broadcast
+    rule: 37
+    missionRoleId: role.hostile.relay
+    targetConfigId: 
+    requiredCount: 3
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.trust_under_fire.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.trust_under_fire.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 4
+    displayTextKey: mission.trust_under_fire.star.3
+    threshold: 0
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 2700
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 12000
+  - kind: 0
+    rewardConfigId: reward.ch05.m02.supply_drop_unlock
+    displayTextKey: mission.trust_under_fire.reward.supply
+    amount: 1
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

@@ -1,0 +1,549 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ea19a05fcb4fa5b6afe32e88bedc11, type: 3}
+  m_Name: ScenarioSetup_Ch05_M02_TrustUnderFire
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
+  scenarioId: scenario.ch05.m02.trust_under_fire
+  operationMapId: opmap.ch05.trust_under_fire
+  requiredAnchors:
+  - anchorId: anchor.ch05.m02.forward_post
+    kind: 7
+  - anchorId: anchor.ch05.m02.inner_core
+    kind: 7
+  - anchorId: anchor.ch05.m02.initial_barracks
+    kind: 4
+  - anchorId: anchor.ch05.m02.north_start
+    kind: 3
+  - anchorId: anchor.ch05.m02.north_crossing
+    kind: 11
+  - anchorId: anchor.ch05.m02.north_arrival
+    kind: 2
+  - anchorId: anchor.ch05.m02.north_shelter
+    kind: 2
+  - anchorId: anchor.ch05.m02.north_shelter_origin
+    kind: 4
+  - anchorId: anchor.ch05.m02.south_start
+    kind: 3
+  - anchorId: anchor.ch05.m02.south_crossing
+    kind: 11
+  - anchorId: anchor.ch05.m02.south_arrival
+    kind: 2
+  - anchorId: anchor.ch05.m02.south_shelter
+    kind: 2
+  - anchorId: anchor.ch05.m02.south_shelter_origin
+    kind: 4
+  - anchorId: anchor.ch05.m02.relay
+    kind: 2
+  - anchorId: anchor.ch05.m02.relay_origin
+    kind: 4
+  - anchorId: anchor.ch05.m02.relay_gate
+    kind: 2
+  - anchorId: anchor.ch05.m02.relay_approach
+    kind: 11
+  - anchorId: anchor.ch05.m02.engineer_start
+    kind: 3
+  - anchorId: anchor.ch05.m02.fuel_reserve
+    kind: 4
+  - anchorId: anchor.ch05.m02.escort_north
+    kind: 3
+  - anchorId: anchor.ch05.m02.infantry_north
+    kind: 3
+  - anchorId: anchor.ch05.m02.escort_south
+    kind: 3
+  - anchorId: anchor.ch05.m02.infantry_south
+    kind: 3
+  - anchorId: anchor.ch05.m02.staff_north
+    kind: 5
+  - anchorId: anchor.ch05.m02.staff_south
+    kind: 5
+  - anchorId: anchor.ch05.m02.hostile_north
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_north_infantry
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_south
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_south_infantry
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_relay_a
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_relay_b
+    kind: 1
+  - anchorId: anchor.ch05.m02.hostile_relay_c
+    kind: 1
+  - anchorId: anchor.ch05.m02.return_rts
+    kind: 12
+  deterministicSeed: 5002001
+  encounterStartMilliseconds: 0
+  unitGroups:
+  - groupId: group.ch05.m02.escort.north
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.trust.veh_tank_usa.0.0
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m02.escort_north
+      missionRoleId: role.friendly.escort.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_male_02_alt_02.0.1
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m02.infantry_north
+      missionRoleId: role.friendly.escort.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_male_02_alt_04.0.2
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch05.m02.infantry_north
+      missionRoleId: role.friendly.escort.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_female_01_alt_01.0.3
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m02.infantry_north
+      missionRoleId: role.friendly.escort.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_female_02_alt_01.0.4
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch05.m02.infantry_north
+      missionRoleId: role.friendly.escort.north
+      count: 1
+  - groupId: group.ch05.m02.escort.south
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.trust.veh_tank_usa.1.0
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m02.escort_south
+      missionRoleId: role.friendly.escort.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_male_02_alt_02.1.1
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m02.infantry_south
+      missionRoleId: role.friendly.escort.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_male_02_alt_04.1.2
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch05.m02.infantry_south
+      missionRoleId: role.friendly.escort.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_female_01_alt_01.1.3
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m02.infantry_south
+      missionRoleId: role.friendly.escort.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_soldier_female_02_alt_01.1.4
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch05.m02.infantry_south
+      missionRoleId: role.friendly.escort.south
+      count: 1
+  - groupId: group.ch05.m02.convoy.north
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.trust.veh_truck_canopy.2.0
+      runtimePrefabSourceKey: Unit_Veh_Truck_Canopy
+      expectedAssetGuid: 3d3206505e16446ab8691d740853c31d
+      spawnAnchorId: anchor.ch05.m02.north_start
+      missionRoleId: role.friendly.convoy.north
+      count: 1
+  - groupId: group.ch05.m02.convoy.south
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.trust.veh_truck_canopy.3.0
+      runtimePrefabSourceKey: Unit_Veh_Truck_Canopy
+      expectedAssetGuid: 3d3206505e16446ab8691d740853c31d
+      spawnAnchorId: anchor.ch05.m02.south_start
+      missionRoleId: role.friendly.convoy.south
+      count: 1
+  - groupId: group.ch05.m02.engineer
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.trust.chr_soldier_male_02_alt_02.4.0
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m02.engineer_start
+      missionRoleId: role.friendly.engineer
+      count: 1
+  - groupId: group.ch05.m02.staff.north
+    factionIndex: 0
+    units:
+    - unitConfigKey: unit.trust.chr_civilian_female_01.5.0
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_01
+      expectedAssetGuid: a3873f0cb8f24494eb79c31a4c12ec31
+      spawnAnchorId: anchor.ch05.m02.staff_north
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.trust.chr_civilian_male_01.5.1
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_01
+      expectedAssetGuid: 7c722f33fbe75427289f93b6f35e7e04
+      spawnAnchorId: anchor.ch05.m02.staff_north
+      missionRoleId: role.civilian.protected
+      count: 1
+  - groupId: group.ch05.m02.staff.south
+    factionIndex: 0
+    units:
+    - unitConfigKey: unit.trust.chr_civilian_female_02.6.0
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_02
+      expectedAssetGuid: e9380ca06e23346a48a8d1d09416e955
+      spawnAnchorId: anchor.ch05.m02.staff_south
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.trust.chr_civilian_male_01.6.1
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_01
+      expectedAssetGuid: 7c722f33fbe75427289f93b6f35e7e04
+      spawnAnchorId: anchor.ch05.m02.staff_south
+      missionRoleId: role.civilian.protected
+      count: 1
+  - groupId: group.ch05.m02.hostile.north
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.trust.veh_apc_fast.7.0
+      runtimePrefabSourceKey: Unit_Veh_APC_Fast
+      expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
+      spawnAnchorId: anchor.ch05.m02.hostile_north
+      missionRoleId: role.hostile.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_male_03.7.1
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
+      spawnAnchorId: anchor.ch05.m02.hostile_north_infantry
+      missionRoleId: role.hostile.north
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_female_01.7.2
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
+      expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
+      spawnAnchorId: anchor.ch05.m02.hostile_north_infantry
+      missionRoleId: role.hostile.north
+      count: 1
+  - groupId: group.ch05.m02.hostile.south
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.trust.veh_apc_fast.8.0
+      runtimePrefabSourceKey: Unit_Veh_APC_Fast
+      expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
+      spawnAnchorId: anchor.ch05.m02.hostile_south
+      missionRoleId: role.hostile.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_male_03.8.1
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
+      spawnAnchorId: anchor.ch05.m02.hostile_south_infantry
+      missionRoleId: role.hostile.south
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_female_01.8.2
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
+      expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
+      spawnAnchorId: anchor.ch05.m02.hostile_south_infantry
+      missionRoleId: role.hostile.south
+      count: 1
+  - groupId: group.ch05.m02.hostile.relay
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.trust.chr_insurgent_male_03.9.0
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
+      spawnAnchorId: anchor.ch05.m02.hostile_relay_a
+      missionRoleId: role.hostile.relay
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_female_01.9.1
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
+      expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
+      spawnAnchorId: anchor.ch05.m02.hostile_relay_b
+      missionRoleId: role.hostile.relay
+      count: 1
+    - unitConfigKey: unit.trust.chr_insurgent_female_02.9.2
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
+      expectedAssetGuid: 655c350601d8a48e0b0efcbc75872502
+      spawnAnchorId: anchor.ch05.m02.hostile_relay_c
+      missionRoleId: role.hostile.relay
+      count: 1
+  patrolRoutes:
+  - routeId: route.ch05.m02.north
+    unitGroupId: group.ch05.m02.hostile.north
+    anchorIds:
+    - anchor.ch05.m02.hostile_north
+    - anchor.ch05.m02.hostile_north
+    startDelayMilliseconds: 0
+  - routeId: route.ch05.m02.south
+    unitGroupId: group.ch05.m02.hostile.south
+    anchorIds:
+    - anchor.ch05.m02.hostile_south
+    - anchor.ch05.m02.hostile_south
+    startDelayMilliseconds: 0
+  - routeId: route.ch05.m02.relay
+    unitGroupId: group.ch05.m02.hostile.relay
+    anchorIds:
+    - anchor.ch05.m02.hostile_relay_b
+    - anchor.ch05.m02.hostile_relay_b
+    startDelayMilliseconds: 0
+  restrictions:
+    buildingDisabled: 1
+    productionDisabled: 1
+    economyDisabled: 1
+    transportDisabled: 1
+    airDisabled: 1
+  ambientPresentations: []
+  missionRuntime:
+    enabled: 0
+    startingCredits: 0
+    startingMaterials: 180
+    buildCatalog:
+    - buildingConfigId: Building_Barrack
+      maxCount: 2
+    requiredProducerConfigId: Building_Barrack
+    requiredUnitConfigId: Unit_Chr_Soldier_Male_02_Alt_04
+    baseMissionRoleId: role.friendly.response.clinic
+    baseAnchorId: anchor.ch05.m02.forward_post
+    buildZone:
+      anchorId: anchor.ch05.m02.build_zone
+      halfWidthCells: 65
+      halfHeightCells: 25
+    delayedWave:
+      unitGroupId: 
+      routeId: 
+      targetMissionRoleId: 
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+  defense:
+    enabled: 1
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 1
+    forwardPostStableId: trust_under_fire.shelter.north
+    innerCoreAnchorId: anchor.ch05.m02.inner_core
+    innerCoreRadius: 6
+    sensorMissionRoleId: 
+    initialProducerAnchorId: anchor.ch05.m02.initial_barracks
+    radarPingCharges: 0
+    radarPingCooldownMilliseconds: 60000
+    convoyElements:
+    - elementId: convoy.ch05.m02.north
+      unitGroupId: group.ch05.m02.hostile.north
+      routeId: route.ch05.m02.north
+      contactAnchorId: anchor.ch05.m02.hostile_north
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+      contactAtMilliseconds: 1000
+    - elementId: convoy.ch05.m02.south
+      unitGroupId: group.ch05.m02.hostile.south
+      routeId: route.ch05.m02.south
+      contactAnchorId: anchor.ch05.m02.hostile_south
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+      contactAtMilliseconds: 1000
+    - elementId: convoy.ch05.m02.relay
+      unitGroupId: group.ch05.m02.hostile.relay
+      routeId: route.ch05.m02.relay
+      contactAnchorId: anchor.ch05.m02.relay_gate
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+      contactAtMilliseconds: 1000
+    guidanceSteps:
+    - stepId: guidance.ch05.m02.1
+      titleKey: mission.trust_under_fire.tutorial.1.title
+      bodyKey: mission.trust_under_fire.tutorial.1.body
+      action: 9
+      completion: 9
+      optional: 0
+    - stepId: guidance.ch05.m02.2
+      titleKey: mission.trust_under_fire.tutorial.2.title
+      bodyKey: mission.trust_under_fire.tutorial.2.body
+      action: 4
+      completion: 5
+      optional: 0
+    - stepId: guidance.ch05.m02.3
+      titleKey: mission.trust_under_fire.tutorial.3.title
+      bodyKey: mission.trust_under_fire.tutorial.3.body
+      action: 9
+      completion: 9
+      optional: 0
+    - stepId: guidance.ch05.m02.4
+      titleKey: mission.trust_under_fire.tutorial.4.title
+      bodyKey: mission.trust_under_fire.tutorial.4.body
+      action: 4
+      completion: 5
+      optional: 0
+    - stepId: guidance.ch05.m02.5
+      titleKey: mission.trust_under_fire.tutorial.5.title
+      bodyKey: mission.trust_under_fire.tutorial.5.body
+      action: 4
+      completion: 4
+      optional: 0
+    - stepId: guidance.ch05.m02.6
+      titleKey: mission.trust_under_fire.tutorial.6.title
+      bodyKey: mission.trust_under_fire.tutorial.6.body
+      action: 9
+      completion: 9
+      optional: 0
+    - stepId: guidance.ch05.m02.7
+      titleKey: mission.trust_under_fire.tutorial.7.title
+      bodyKey: mission.trust_under_fire.tutorial.7.body
+      action: 4
+      completion: 5
+      optional: 0
+    - stepId: guidance.ch05.m02.8
+      titleKey: mission.trust_under_fire.tutorial.8.title
+      bodyKey: mission.trust_under_fire.tutorial.8.body
+      action: 5
+      completion: 5
+      optional: 0
+    cameraTour:
+      StartHoldMilliseconds: 350
+      PostHoldMilliseconds: 600
+      ApproachHoldMilliseconds: 650
+      ReturnHoldMilliseconds: 300
+      SmoothTimeSeconds: 1.25
+      PostPerspective: {x: 55, y: 65, z: 0, w: 55}
+      ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}
+  extraction:
+    enabled: 0
+    passengerRoleId: 
+    carrierRoleId: 
+    aircraftRoleId: 
+    rescueAnchorId: 
+    landingAnchorId: 
+    departureAnchorId: 
+    requiredPassengers: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    landingRadius: 0
+    departureRadius: 0
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  breach:
+    enabled: 0
+    gateBuildingId: 
+    coreBuildingId: 
+    approachAnchorId: 
+    gateAnchorId: 
+    coreAnchorId: 
+    archiveAnchorId: 
+    supportRoleId: 
+    counterattackRoleId: 
+    gateHealth: 0
+    coreHealth: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    counterattackWarningMilliseconds: 0
+    archiveRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  gridlock:
+    enabled: 0
+    siteAAnchorId: 
+    siteBAnchorId: 
+    hospitalAnchorId: 
+    obstructionAAnchorId: 
+    obstructionBAnchorId: 
+    fadiRoleId: 
+    workerRoleId: 
+    vehicleRoleId: 
+    counterattackRoleId: 
+    obstructionBuildingId: 
+    workMilliseconds: 0
+    holdMilliseconds: 0
+    deadlineMilliseconds: 0
+    warningMilliseconds: 0
+    workRadius: 0
+    threatRadius: 0
+    hospitalRadius: 0
+  supplyLine:
+    enabled: 0
+    oilAnchorId: 
+    refineryAnchorId: 
+    storageAnchorId: 
+    alternateLaneAnchorId: 
+    oilBuildingId: 
+    refineryBuildingId: 
+    storageBuildingId: 
+    reserveBarrels: 0
+    civilianReserveBarrels: 0
+    holdMilliseconds: 0
+    deadlineMilliseconds: 0
+  marketLifeline:
+    enabled: 0
+    deliveryAnchorId: 
+    manifestAnchorId: 
+    corruptManifestAnchorId: 
+    requiredDeliveries: 0
+    manifestHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    manifestRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  powerRelay:
+    enabled: 0
+    shortRouteAnchorId: 
+    safeRouteAnchorId: 
+    shelterAnchorId: 
+    repairAnchorId: 
+    repairHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    routeRadius: 0
+    shelterRadius: 0
+    repairRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  routeReopened:
+    enabled: 0
+    reliefGoalAnchorId: 
+    fuelGoalAnchorId: 
+    disruptedLinkAnchorId: 
+    hubGateAnchorId: 
+    recordsAnchorId: 
+    linkRepairHoldMilliseconds: 0
+    recordsHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    repairRadius: 0
+    hubRadius: 0
+    recordsRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

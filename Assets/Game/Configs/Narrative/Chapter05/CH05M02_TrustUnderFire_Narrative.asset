@@ -1,0 +1,479 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8189438902502151786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M02_TrustUnderFire_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m02.debrief
+  entryStateId: TrustUnderFire-debrief-0
+  defaultSkipDestinationId: TrustUnderFire-debrief-complete
+  states:
+  - stateId: TrustUnderFire-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-debrief-01
+      textKey: narrative.trust_under_fire.debrief-01
+      englishFallback: The evacuation groups reached their shelters, and the routes
+        remained open. People could see where help was arriving. We will also keep
+        an honest record of delays and damage; a protected road does not erase what
+        still needs repair.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.5
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-debrief-1
+    skipStateId: TrustUnderFire-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.5
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-debrief-02
+      textKey: narrative.trust_under_fire.debrief-02
+      englishFallback: The secured transmitter and the witness recording identify
+        the same source. I have preserved the signal records and their custody trail.
+        They point to Qassem's final command network and remain available to civilian
+        and military oversight.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-debrief-2
+    skipStateId: TrustUnderFire-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8e2ea2d6a04c4599b85c6616535bce39
+      m_SubObjectName: CH05M02_TrustUnderFire_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-debrief-03
+      textKey: narrative.trust_under_fire.debrief-03
+      englishFallback: The next strike must leave that proof intact. We will isolate
+        the verified network nodes and protect the people and structures around them.
+        If the evidence dies there, Qassem becomes another voice claiming we lied.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.285714
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-debrief-complete
+    skipStateId: TrustUnderFire-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.trust_under_fire.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M02_TrustUnderFire_Narrative
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m02.brief
+  entryStateId: TrustUnderFire-brief-0
+  defaultSkipDestinationId: TrustUnderFire-brief-complete
+  states:
+  - stateId: TrustUnderFire-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-brief-01
+      textKey: narrative.trust_under_fire.brief-01
+      englishFallback: Some residents remember help reaching them. Others remember
+        delays and have reason to be afraid. The shelters have room, but both routes
+        are exposed. Today's proof is open routes and safe arrivals.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.071428
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-brief-1
+    skipStateId: TrustUnderFire-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-brief-02
+      textKey: narrative.trust_under_fire.brief-02
+      englishFallback: Qassem's broadcast says we abandoned these neighborhoods.
+        Evacuation is a military priority. Clear the attackers on each protected
+        route, keep the transports intact, and escort the groups to both shelters.
+        Do not take a destructive shortcut through occupied buildings.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 19.142857
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-brief-2
+    skipStateId: TrustUnderFire-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 19.142857
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 9bab85e848b144e0b87e13d0942f48f4
+      m_SubObjectName: CH05M02_TrustUnderFire-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-brief-03
+      textKey: narrative.trust_under_fire.brief-03
+      englishFallback: We are ready to receive the protected convoys at both shelters.
+        Keep their approaches open. A civilian witness recognized the maintenance
+        noise behind Qassem's broadcasts. Preserve the broadcast compound and its
+        equipment so that report can be checked.
+      speaker: 8
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 18
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-brief-complete
+    skipStateId: TrustUnderFire-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 18
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.trust_under_fire.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &8671324597173570613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M02_TrustUnderFire_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m02.comms
+  entryStateId: TrustUnderFire-comms-0
+  defaultSkipDestinationId: TrustUnderFire-comms-complete
+  states:
+  - stateId: TrustUnderFire-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 38e1f7e2aa174a91aa75bab17d93cae1
+      m_SubObjectName: CH05M02_TrustUnderFire_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 38e1f7e2aa174a91aa75bab17d93cae1
+      m_SubObjectName: CH05M02_TrustUnderFire_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: trust_under_fire-comms-01
+      textKey: narrative.trust_under_fire.comms-01
+      englishFallback: The witness has identified the marked broadcast compound.
+        ARIA has matched its signal to the recording. Secure its external access
+        point and preserve the equipment. Our answer to the abandonment claim must
+        remain an honest record, not another promise people cannot check.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 19.357143
+      essentialCaption: 1
+    continueStateId: TrustUnderFire-comms-complete
+    skipStateId: TrustUnderFire-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 19.357143
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: TrustUnderFire-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.trust_under_fire.comms.complete
+    evidenceIds: []
+    missionContextFlags: []

@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
+            if(UiShellRuntimeGateway.IsTrustUnderFireGuideContext()){ShowArmorBreakNextAction();return;}
             if(UiShellRuntimeGateway.IsCitywideAlertGuideContext()){if(step==1)ShowProductionCue();else ShowArmorBreakNextAction();return;}
             if(UiShellRuntimeGateway.IsArmorBreakGuideContext()) {ShowArmorBreakNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==5)
@@ -213,7 +214,7 @@ namespace Game.UI.Runtime
             {
                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
-                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
             else ShowTutorialWorld(target.Selection,true);
         }

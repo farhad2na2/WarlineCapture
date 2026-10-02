@@ -215,6 +215,8 @@ namespace Game.UI.Runtime
 
         private bool TrySelectFutureMission(int number)
         {
+            if ((futureChapter==5 || campaignOperationsView.IsChapterFive) && number==2)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire); return true; }
             if ((futureChapter==5 || campaignOperationsView.IsChapterFive) && number==1)
             { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==5)

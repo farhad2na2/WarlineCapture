@@ -339,6 +339,8 @@ namespace Game.Editor
 
             var citywide = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M01CitywideAlertConfigBuilder.MapPath);
             if (citywide != null && !maps.Contains(citywide)) maps.Add(citywide);
+            var trust = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M02TrustUnderFireConfigBuilder.MapPath);
+            if (trust != null && !maps.Contains(trust)) maps.Add(trust);
 
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)

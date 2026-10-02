@@ -1,0 +1,27 @@
+{
+  "missionId": "saga.ch05.m02.trust_under_fire",
+  "sequences": [
+    "seq.ch05.m02.brief",
+    "seq.ch05.m02.comms",
+    "seq.ch05.m02.debrief"
+  ],
+  "playedPanels": 7,
+  "englishPersianClipCount": 14,
+  "stages": {
+    "brief": 3,
+    "comms": 1,
+    "debrief": 3
+  },
+  "cast": {
+    "Samira": 3,
+    "Dalia": 2,
+    "Lina": 1,
+    "ARIA": 1
+  },
+  "trustResponse": "Honest mixed earned reputation in Samira briefing and protected shelter arrival debrief; no persisted Trust API or invented meter/branch. Evidence and truth are always available.",
+  "mechanics": "Two authored protected land routes, named protected convoys to functional shelters, verified broadcast external access; preserve transports/civic structures/equipment. Native boarding conditional; copy requires no unsupported boarding.",
+  "artReview": "Inspected all three approved CH05M02 images; retain direction and seven distinct16:9/20:9 crop bindings.",
+  "providerRequests": 0,
+  "voiceStatus": "Automatic approval review rejected14clip upload; awaiting exact user response via root. No retry/workaround.",
+  "nativeGates": "Root owns import, installation, native EN/FA full playback and mission result/return."
+}

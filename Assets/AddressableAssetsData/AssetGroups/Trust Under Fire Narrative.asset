@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Trust Under Fire Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Trust Under Fire Narrative
+  m_GUID: f7e85d5ff4c284b0db29a271422af5ee
+  m_SerializeEntries:
+  - m_GUID: 38e1f7e2aa174a91aa75bab17d93cae1
+    m_Address: narrative.trust_under_fire.ch05m02_trustunderfire_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e2ea2d6a04c4599b85c6616535bce39
+    m_Address: narrative.trust_under_fire.ch05m02_trustunderfire_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bab85e848b144e0b87e13d0942f48f4
+    m_Address: narrative.trust_under_fire.ch05m02_trustunderfire
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a80be370826af4c20898eae3ca82e4a0, type: 2}
+    - {fileID: 11400000, guid: 808fe706234a243179e4124d47ca3ac6, type: 2}

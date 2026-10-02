@@ -81,7 +81,8 @@ namespace Game.Missions.Contracts
         EscortPowerRelayFamilies = 22, RestorePowerRelay = 23, SecurePowerRelay = 24,
         SustainRouteLifelines = 25, RestoreRouteLink = 26, CaptureRouteHub = 27, PreserveRouteRecords = 28,
         DefeatArmorBreakMilitary = 29, RecoverArmorBreakAuthority = 30, ProtectArmorBreakRelief = 31,
-        StabilizeCitywideClinic = 32, StabilizeCitywideUtility = 33, EstablishCitywidePerimeter = 34
+        StabilizeCitywideClinic = 32, StabilizeCitywideUtility = 33, EstablishCitywidePerimeter = 34,
+        ProtectTrustNorthRoute = 35, ProtectTrustSouthRoute = 36, VerifyTrustBroadcast = 37
     }
 
     public enum MissionStarRuleKind : byte

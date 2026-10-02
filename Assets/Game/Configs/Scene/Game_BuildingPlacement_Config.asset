@@ -60,6 +60,9 @@ MonoBehaviour:
   - {fileID: 7946926067009766583, guid: 2e8b40311ec3b496aaf498b87fa9d653, type: 3}
   - {fileID: 2621377503714099694, guid: fe074255821a244a4859dc4ada484d69, type: 3}
   - {fileID: 5864866659552159743, guid: 7c3102a2e15c0487197c3d76da7c59e0, type: 3}
+  - {fileID: 8391920436863893071, guid: e414ece2807cc4d6c8e685c9e2e1420d, type: 3}
+  - {fileID: 7779914218362714567, guid: 6cb978bb908d94f68900847f977ba6ce, type: 3}
+  - {fileID: 5737521273519992838, guid: 05e924245d30f454f9eb1cc0e93d19b5, type: 3}
   unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
   initialUnitsConfig: {fileID: 11400000, guid: b201000000000000000000000000000c, type: 2}
   buildPlaneY: 0

@@ -28,6 +28,8 @@ namespace Game.Runtime
                 Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - placementFootprint.y)));
 
             RectInt preferredPlacementRect = context.GetEffectivePlacementRect(definition, clampedPreferred, grid, rotateVertical);
+            bool trustDiagnostic=requirePreferredOrigin&&IsTrustPlacementDiagnostic();
+            if(trustDiagnostic)Debug.Log($"[TrustPlacement] begin prefab={definition.Prefab?.name} configured={definition.FootprintCells} model={placementFootprint} preferred={preferredOrigin} effectiveRect={preferredPlacementRect} gridOrigin={grid.Origin} gridSize={grid.Width}x{grid.Height}");
             bool citywideDiagnostic=requirePreferredOrigin&&IsCitywidePlacementDiagnostic();
             if(citywideDiagnostic)
                 Debug.Log($"[CitywidePlacement] begin prefab={definition.Prefab?.name} configuredFootprint={definition.FootprintCells} modelFootprint={placementFootprint} preferred={preferredOrigin} clamped={clampedPreferred} effectiveRect={preferredPlacementRect} gridOrigin={grid.Origin} gridSize={grid.Width}x{grid.Height}");
@@ -80,12 +82,14 @@ namespace Game.Runtime
                         if (!BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) && context.HasCachedInvalidCellInFootprint != null &&
                             context.HasCachedInvalidCellInFootprint(candidateRect.position, candidateRect.size))
                         {
+                            if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             if(citywideDiagnostic)LogCitywidePlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             continue;
                         }
 
                         if (!context.IsPlacementValid(definition, candidate, placementFootprint, rotateVertical, grid, roads, blockerData))
                         {
+                            if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"placement-validation");
                             if(citywideDiagnostic)LogCitywidePlacementCells(context,definition,candidateRect,grid,roads,blockerData,"placement-validation");
                             if(citywideDiagnostic&&definition.Prefab?.name=="Building_Citywide_ReserveDepot")
                                 SurveyCitywideReserveCandidates(context,grid,roads,blockerData,preferredOrigin);
@@ -143,6 +147,47 @@ namespace Game.Runtime
                 Survey(candidate,true,false);found++;x+=12;
             }
             Debug.Log($"[CitywideReserveSurvey] passiveOnly=true west={west} nearbyClearCandidates={found}");
+        }
+        private static bool IsTrustPlacementDiagnostic()
+        {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return false;
+            using var query=world.EntityManager.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent));
+            return query.CalculateEntityCount()==1&&query.GetSingleton<CampaignMissionRuntimeComponent>().MissionId.Equals(new Unity.Collections.FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire));
+        }
+        private static void LogTrustPlacementCells(Context context,BuildingDefinition definition,RectInt rect,GridConfig grid,
+            DynamicBuffer<GridRoad> roads,DynamicBlockerComponent blockers,string reason)
+        {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;
+            var em=world.EntityManager;using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+            var cache=new BuildingPlacementAuthoredRoadCache();cache.Ensure(em,surfaces,grid);
+            var sidewalks=cache.GetSidewalks();var waters=cache.GetWater();
+            int cached=0,startup=0,road=0,blocked=0,authored=0,sidewalk=0,water=0,outside=0;string first="none";
+            for(int y=rect.yMin;y<rect.yMax;y++)for(int x=rect.xMin;x<rect.xMax;x++)
+            {
+                var cell=new Vector2Int(x,y);bool o=x<0||y<0||x>=grid.Width||y>=grid.Height;int index=y*grid.Width+x;
+                bool c=!o&&context.HasCachedInvalidCellInFootprint?.Invoke(cell,Vector2Int.one)==true;
+                bool v=!o&&context.WallValidationContext.HasRoadInFootprint?.Invoke(grid,cell,Vector2Int.one)==true;
+                bool r=!o&&index<roads.Length&&roads[index].Value!=0,b=!o&&blockers.Blocked.IsCreated&&blockers.Blocked.IsSet(index);
+                bool ar=!o&&cache.Overlaps(grid,cell,Vector2Int.one),sw=!o&&sidewalks!=null&&index<sidewalks.Length&&sidewalks[index],w=!o&&waters!=null&&index<waters.Length&&waters[index];
+                if(c)cached++;if(v)startup++;if(r)road++;if(b)blocked++;if(ar)authored++;if(sw)sidewalk++;if(w)water++;if(o)outside++;
+                if(first=="none"&&(c||v||r||b||ar||sw||w||o))first=$"local={cell} world=({grid.Origin.x+x*grid.CellSize},{grid.Origin.z+y*grid.CellSize}) cached={c} startupRoad={v} gridRoad={r} blocked={b} authoredRoad={ar} sidewalk={sw} water={w} outside={o}";
+            }
+            string overlaps="none";
+            if(context.WallValidationContext.RuntimeBuildings!=null)foreach(var pair in context.WallValidationContext.RuntimeBuildings)
+            {var existing=pair.Value;if(existing?.Definition!=null&&rect.Overlaps(new RectInt(existing.OriginCell,existing.Definition.FootprintCells)))overlaps+=$" runtimeId={pair.Key} origin={existing.OriginCell} footprint={existing.Definition.FootprintCells}";}
+            Debug.LogError($"[TrustPlacement] reject={reason} prefab={definition.Prefab?.name} rect={rect} cached={cached} startupRoad={startup} gridRoad={road} blockers={blocked} authoredRoad={authored} sidewalk={sidewalk} water={water} outside={outside} first={first} overlaps={overlaps}");
+            if(definition.Prefab?.name!="Building_Trust_ReserveDepot")return;
+            // Passive survey only: every candidate must pass the unchanged actual placement callback.
+            int found=0;
+            for(int z=590;z<=650&&found<3;z+=2)for(int x=780;x<=890&&found<3;x+=2)
+            {
+                var cell=new Vector2Int(Mathf.FloorToInt((x-grid.Origin.x)/grid.CellSize),Mathf.FloorToInt((z-grid.Origin.z)/grid.CellSize));
+                var size=context.GetPlacementFootprint(definition,false);var candidate=context.GetEffectivePlacementRect(definition,cell,grid,false);
+                if(context.HasCachedInvalidCellInFootprint?.Invoke(candidate.position,candidate.size)==true)continue;
+                if(!context.IsPlacementValid(definition,cell,size,false,grid,roads,blockers))continue;
+                Debug.Log($"[TrustReserveSurvey] passiveOnly=true actualPlacementValid=true world=({x},{z}) local={cell} footprint={size} effectiveRect={candidate}");found++;
+            }
+            Debug.Log($"[TrustReserveSurvey] passiveOnly=true qualifiedCandidates={found}");
         }
         private static bool IsCitywidePlacementDiagnostic()
         {

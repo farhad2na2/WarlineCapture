@@ -66,6 +66,7 @@ namespace Game.UI.Shell.Ecs
                     areaRadius:5);
                 return true;
             }
+            if(runtime.MissionId.Equals(CampaignMissionSequence.TrustUnderFire) && guidance.GuidanceId is >=69001 and <=69008) return ResolveTrustUnderFireTarget(em,root,in guidance,out target);
             if(runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert) && guidance.GuidanceId is >=68001 and <=68008) return ResolveCitywideAlertTarget(em,root,in guidance,out target);
             if(runtime.MissionId.Equals(CampaignMissionSequence.ArmorBreak) && guidance.GuidanceId is >=67001 and <=67007)
                 return ResolveArmorBreakTarget(em,root,in guidance,out target);

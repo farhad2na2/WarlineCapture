@@ -25,8 +25,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f8a76f4f1da945acb99a58415d8b21a
+    m_Address: campaign/trust-under-fire/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 24436ea782a07423ba0de9f14915ade7
     m_Address: campaign/grounded-signal/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 30a49de6ed62d49dcbd5b4ef152cb55d
+    m_Address: campaign/trust-under-fire/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3dc65cceb29954009b581d7e8cab37ff
+    m_Address: campaign/trust-under-fire/mission
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -85,6 +100,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98093f91f85644a68bca753e817953c9
+    m_Address: campaign/trust-under-fire/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9bef15c600f5d4f8da58222b9e8d08c0
     m_Address: campaign/citywide-alert/source-scene
     m_ReadOnly: 0
@@ -97,6 +117,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a678ffe9103f34b5099564bf1a3aa294
     m_Address: campaign/grounded-signal/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab68643a495e2416d8a30c4dc2cfd95c
+    m_Address: campaign/trust-under-fire/support-context
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -115,8 +140,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6890a2727ed5495083cce032799ac15
+    m_Address: campaign/trust-under-fire/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e7d7d748fabed41ea8e690c35cf5fdc9
+    m_Address: campaign/trust-under-fire/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ebf0a0ecfc1aa43848b18f54bcea4449
     m_Address: campaign/armor-break/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ece24a20c37f041eca4a09a8dcfc5d8d
+    m_Address: campaign/trust-under-fire/surface
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -106,6 +106,13 @@ namespace Game.Runtime
 
                 switch (objective.Rule)
                 {
+                    case MissionObjectiveRuleKind.ProtectTrustNorthRoute:
+                    case MissionObjectiveRuleKind.ProtectTrustSouthRoute:
+                    case MissionObjectiveRuleKind.VerifyTrustBroadcast:
+                        if (!definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || definition.Defense.Enabled == 0 ||
+                            !objective.TargetConfigId.IsEmpty || objective.RequiredCount != (objective.Rule == MissionObjectiveRuleKind.VerifyTrustBroadcast ? 3 : 1) ||
+                            !objective.MissionRoleId.Equals(new FixedString64Bytes(objective.Rule == MissionObjectiveRuleKind.ProtectTrustNorthRoute ? "role.friendly.convoy.north" : objective.Rule == MissionObjectiveRuleKind.ProtectTrustSouthRoute ? "role.friendly.convoy.south" : "role.hostile.relay"))) return false;
+                        break;
                     case MissionObjectiveRuleKind.StabilizeCitywideClinic:
                     case MissionObjectiveRuleKind.StabilizeCitywideUtility:
                     case MissionObjectiveRuleKind.EstablishCitywidePerimeter:
@@ -270,7 +277,7 @@ namespace Game.Runtime
                 Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
-                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
+                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectTrustNorthRoute or MissionObjectiveRuleKind.ProtectTrustSouthRoute or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
             };
         }
 
@@ -293,6 +300,9 @@ namespace Game.Runtime
             }
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.ProtectTrustNorthRoute => facts.TrustFailure is TrustUnderFireFailure.NorthConvoyLost or TrustUnderFireFailure.StaffLost or TrustUnderFireFailure.ShelterLost ? MatchObjectiveState.Failed : facts.TrustNorthArrived != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ProtectTrustSouthRoute => facts.TrustFailure is TrustUnderFireFailure.SouthConvoyLost or TrustUnderFireFailure.StaffLost or TrustUnderFireFailure.ShelterLost ? MatchObjectiveState.Failed : facts.TrustSouthArrived != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.VerifyTrustBroadcast => facts.TrustRelayVerified != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.StabilizeCitywideClinic => facts.CitywideFailure is CitywideAlertFailure.ClinicLost or CitywideAlertFailure.StaffLost or CitywideAlertFailure.ServiceOutage ? MatchObjectiveState.Failed : facts.CitywideClinicRecovered!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.StabilizeCitywideUtility => facts.CitywideFailure is CitywideAlertFailure.UtilityLost or CitywideAlertFailure.StaffLost or CitywideAlertFailure.ServiceOutage ? MatchObjectiveState.Failed : facts.CitywideUtilityRecovered!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.EstablishCitywidePerimeter => facts.CitywideStableMilliseconds>=6000 && facts.CitywideReinforcementReady!=0 && facts.CitywideMilitaryCleared!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
@@ -350,6 +360,8 @@ namespace Game.Runtime
             ref CampaignMissionDefinitionBlob definition,
             in CampaignMissionObjectiveBlob objective)
         {
+            if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)))
+                return new FixedString64Bytes(objective.Rule == MissionObjectiveRuleKind.ProtectTrustNorthRoute ? "anchor.ch05.m02.north_arrival" : objective.Rule == MissionObjectiveRuleKind.ProtectTrustSouthRoute ? "anchor.ch05.m02.south_arrival" : "anchor.ch05.m02.relay_gate");
             if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal)))
             {
                 if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay"))) return new FixedString64Bytes("anchor.ch04.m04.relay");
@@ -422,6 +434,8 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts)
         {
             string objectiveId=objective.ObjectiveId.ToString();
+            if(objectiveId.StartsWith("obj.ch05.m02.",System.StringComparison.Ordinal))
+                return new FixedString128Bytes(objective.Rule==MissionObjectiveRuleKind.ProtectTrustNorthRoute?"mission.trust_under_fire.objective.north":objective.Rule==MissionObjectiveRuleKind.ProtectTrustSouthRoute?"mission.trust_under_fire.objective.south":"mission.trust_under_fire.objective.relay");
             if(objectiveId.StartsWith("obj.ch05.m01.",System.StringComparison.Ordinal))
                 return new FixedString128Bytes(objective.Rule==MissionObjectiveRuleKind.StabilizeCitywideClinic?"mission.citywide_alert.objective.clinic":
                     objective.Rule==MissionObjectiveRuleKind.StabilizeCitywideUtility?"mission.citywide_alert.objective.utility":"mission.citywide_alert.objective.perimeter");

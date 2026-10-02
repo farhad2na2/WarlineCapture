@@ -1,0 +1,18 @@
+{
+    "schema": "warline.trust-under-fire.packed-content.v1",
+    "result": "Passed",
+    "mapId": "opmap.ch05.trust_under_fire",
+    "contentHash": "1be77cb5781808ca415ce7afb08265073f163072ed554af024c7b20fc52b1f23",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "90992732d4aa74998b3ed7a132e27f5d",
+    "unitFixtureSceneGuid": "445bcdf833754422783e0d3c168c49cf",
+    "entityContentPath": "Library/TrustUnderFirePreparedContent/Entities",
+    "entityCatalogPath": "Library/TrustUnderFirePreparedContent/Entities/ContentArchives/archive_dependencies.bin",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/TrustUnderFirePreparedContent/Addressables/catalog.bin",
+    "definitionGuid": "e7d7d748fabed41ea8e690c35cf5fdc9",
+    "bindingGuid": "d6890a2727ed5495083cce032799ac15",
+    "entityCatalogHash": "3326a170a5ccdc9b8f250c058ef2c5eb45d0a954723ee269289d4246f0745f45",
+    "addressablesCatalogHash": "7ab1a06691e4510d04a8c5a8b8a7b5d9abcbdc3375e5fcbe0be11297c9ca2672",
+    "status": "Native packed content built. Normal-input mission and real device acceptance are separate gates.",
+    "entityContentBytes": 87609449
+}

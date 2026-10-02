@@ -1,0 +1,28 @@
+{
+    "files": [
+        {
+            "path": "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Definition.asset",
+            "sha256": "929b76b857dcaa91358db9985b94f2b2bfc2f71fa0a704811c40e7a6b9a2517c"
+        },
+        {
+            "path": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+            "sha256": "64bef4f79bf73442c4a824a17df1f7e9b9119bf13bd4f23297c791061c393829"
+        },
+        {
+            "path": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/RuntimeBinding.unity",
+            "sha256": "5b259c8bb77a1a0b037efe38a0758eb38a683d354d46d17404292c5894a0277a"
+        },
+        {
+            "path": "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Surface.asset",
+            "sha256": "ed6776f98be4af997491789d1b35cd23d90840eabd81eb8dfd9256da8b36174b"
+        },
+        {
+            "path": "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Grid.asset",
+            "sha256": "5cc5490b2ecafbfa59796154e853b2870b764ef4aad8981466dec3a8c52f3c7d"
+        },
+        {
+            "path": "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Minimap.png",
+            "sha256": "6e6f6e141616ce6fc3c6563c3fb2d2994052b0e0901ed4471f1fbf45a57ec4ff"
+        }
+    ]
+}

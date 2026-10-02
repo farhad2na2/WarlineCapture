@@ -109,6 +109,7 @@ namespace Game.UI.Runtime
             ApplyGroundedSignalOutcome(in model);
             ApplyArmorBreakOutcome(in model);
             ApplyCitywideAlertOutcome(in model);
+            ApplyTrustUnderFireOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);

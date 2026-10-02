@@ -3546,6 +3546,208 @@ MonoBehaviour:
         pumps and JRC relief transport.
     - key: mission.supply_line.time_limit
       value: Time limit
+    - key: mission.trust_under_fire.deadline
+      value: Protect and verify within fifteen minutes
+    - key: mission.trust_under_fire.enemy_intel
+      value: Two route ambushes and three verified relay guards. Keep combat away
+        from shelter staff.
+    - key: mission.trust_under_fire.forces
+      value: "Two escorts \xB7 two protected convoys \xB7 one signal engineer"
+    - key: mission.trust_under_fire.guide.diagram
+      value: TWO ROUTES | TWO SHELTERS | VERIFIED SOURCE
+    - key: mission.trust_under_fire.guide.example
+      value: "Clear route \u2192 Move convoy \u2192 protect shelter \u2192 verify
+        source."
+    - key: mission.trust_under_fire.guide.mistake
+      value: Do not move protected convoys through active ambushes. Show Me moves
+        only the camera.
+    - key: mission.trust_under_fire.hud.fuel
+      value: "Fuel: {0} \xB7 shelter allocation protected"
+    - key: mission.trust_under_fire.hud.north_hold
+      value: 'North shelter: {0}/6 s'
+    - key: mission.trust_under_fire.hud.south_hold
+      value: 'South shelter: {0}/6 s'
+    - key: mission.trust_under_fire.hud.stable
+      value: 'Protected routes: {0}/6 s'
+    - key: mission.trust_under_fire.hud.stage.1
+      value: Secure the north route
+    - key: mission.trust_under_fire.hud.stage.2
+      value: Escort the north convoy
+    - key: mission.trust_under_fire.hud.stage.3
+      value: Secure the south route
+    - key: mission.trust_under_fire.hud.stage.4
+      value: Escort the south convoy
+    - key: mission.trust_under_fire.hud.stage.5
+      value: Approach the broadcast compound
+    - key: mission.trust_under_fire.hud.stage.6
+      value: Clear the verified guards
+    - key: mission.trust_under_fire.hud.stage.7
+      value: Verify the broadcast source
+    - key: mission.trust_under_fire.hud.stage.8
+      value: Stabilize the protected routes
+    - key: mission.trust_under_fire.hud.time
+      value: 'Evacuation window: {0}m {1}s'
+    - key: mission.trust_under_fire.hud.verification
+      value: 'Verify broadcast: {0}/6 s'
+    - key: mission.trust_under_fire.intel.civilian
+      value: CIVILIAN RISK
+    - key: mission.trust_under_fire.intel.confirmed
+      value: 9
+    - key: mission.trust_under_fire.intel.military
+      value: VERIFIED MILITARY
+    - key: mission.trust_under_fire.intel.protected
+      value: 2 + 4
+    - key: mission.trust_under_fire.label.deadline
+      value: DEADLINE
+    - key: mission.trust_under_fire.label.fuel
+      value: FUEL
+    - key: mission.trust_under_fire.location
+      value: "Sahrin \xB7 populated quay approaches"
+    - key: mission.trust_under_fire.marker.north
+      value: NORTH SHELTER
+    - key: mission.trust_under_fire.marker.north_crossing
+      value: NORTH CROSSING
+    - key: mission.trust_under_fire.marker.relay
+      value: BROADCAST
+    - key: mission.trust_under_fire.marker.south
+      value: SOUTH SHELTER
+    - key: mission.trust_under_fire.marker.south_crossing
+      value: SOUTH CROSSING
+    - key: mission.trust_under_fire.marker.verification
+      value: VERIFY
+    - key: mission.trust_under_fire.name
+      value: Trust Under Fire
+    - key: mission.trust_under_fire.objective.broadcast
+      value: Verify broadcast source
+    - key: mission.trust_under_fire.objective.north
+      value: Escort north convoy
+    - key: mission.trust_under_fire.objective.relay
+      value: Verify broadcast source
+    - key: mission.trust_under_fire.objective.south
+      value: Escort south convoy
+    - key: mission.trust_under_fire.resources
+      value: "100 Fuel \xB7 20 shelter Fuel protected"
+    - key: mission.trust_under_fire.result.broadcast_lost
+      value: The transmitter was destroyed. Preserve the verified equipment until
+        victory.
+    - key: mission.trust_under_fire.result.convoys
+      value: Protected convoys
+    - key: mission.trust_under_fire.result.defeat
+      value: EVACUATION FAILED
+    - key: mission.trust_under_fire.result.engineer_lost
+      value: The original signal engineer was lost. Protect the engineer until both
+        routes are stabilized.
+    - key: mission.trust_under_fire.result.escort_losses
+      value: Escort losses
+    - key: mission.trust_under_fire.result.escort_lost
+      value: All surviving escorts were lost while military threats remained.
+    - key: mission.trust_under_fire.result.fuel_lost
+      value: The emergency reserve or shelter Fuel allocation was lost.
+    - key: mission.trust_under_fire.result.incomplete
+      value: INCOMPLETE
+    - key: mission.trust_under_fire.result.loss
+      value: Protect the original convoys, shelter staff and engineer. Preserve the
+        shelters, Fuel reserve and broadcast source.
+    - key: mission.trust_under_fire.result.losses
+      value: LOSSES
+    - key: mission.trust_under_fire.result.north_lost
+      value: The north convoy was lost. Clear its route before moving the protected
+        vehicle.
+    - key: mission.trust_under_fire.result.objectives
+      value: MISSION OBJECTIVES
+    - key: mission.trust_under_fire.result.safe
+      value: ALL SAFE
+    - key: mission.trust_under_fire.result.secured
+      value: SECURED
+    - key: mission.trust_under_fire.result.shelter_lost
+      value: A shelter was destroyed. Protect both civilian compounds.
+    - key: mission.trust_under_fire.result.source
+      value: Verified source
+    - key: mission.trust_under_fire.result.south_lost
+      value: The south convoy was lost. Clear its route before moving the protected
+        vehicle.
+    - key: mission.trust_under_fire.result.staff
+      value: Shelter staff safe
+    - key: mission.trust_under_fire.result.staff_losses
+      value: Staff losses
+    - key: mission.trust_under_fire.result.staff_lost
+      value: Original shelter staff were lost. Protect both civilian exclusion areas.
+    - key: mission.trust_under_fire.result.subtitle
+      value: "TRUST UNDER FIRE \xB7 CIVILIAN ROUTES"
+    - key: mission.trust_under_fire.result.success
+      value: Both named convoys reached functioning shelters. The protected staff
+        survived, and the intact transmitter confirmed the witness report.
+    - key: mission.trust_under_fire.result.success_short
+      value: Both shelters reached. Broadcast source verified.
+    - key: mission.trust_under_fire.result.timeout
+      value: The fifteen-minute evacuation window closed.
+    - key: mission.trust_under_fire.result.verified
+      value: VERIFIED
+    - key: mission.trust_under_fire.result.victory
+      value: ROUTES SECURED
+    - key: mission.trust_under_fire.reward.card
+      value: "Commander XP \xB7 Credits \xB7 Supply Drop unlocked afterward"
+    - key: mission.trust_under_fire.reward.supply
+      value: Supply Drop
+    - key: mission.trust_under_fire.star.1
+      value: Complete the mission
+    - key: mission.trust_under_fire.star.2
+      value: No escort losses
+    - key: mission.trust_under_fire.star.3
+      value: No shelter staff losses
+    - key: mission.trust_under_fire.summary
+      value: Protect both evacuation convoys and shelters, then verify the preserved
+        broadcast source.
+    - key: mission.trust_under_fire.tutorial.1.body
+      value: Select the north escort. Move into position and Attack the verified
+        ambush. Preserve the relief convoy.
+    - key: mission.trust_under_fire.tutorial.1.body.approach
+      value: Move the surviving escort into firing position, then use Attack against
+        the marked military target.
+    - key: mission.trust_under_fire.tutorial.1.title
+      value: Secure the north route
+    - key: mission.trust_under_fire.tutorial.2.body
+      value: Move the north convoy across its land bridge to the north arrival marker.
+        Hold stationary six seconds with the shelter and staff alive.
+    - key: mission.trust_under_fire.tutorial.2.title
+      value: Escort the north convoy
+    - key: mission.trust_under_fire.tutorial.3.body
+      value: Select the south escort. Attack the verified ambush while protecting
+        the second convoy and shelter.
+    - key: mission.trust_under_fire.tutorial.3.body.approach
+      value: Move the surviving escort into firing position, then use Attack against
+        the marked military target.
+    - key: mission.trust_under_fire.tutorial.3.title
+      value: Secure the south route
+    - key: mission.trust_under_fire.tutorial.4.body
+      value: Move the south convoy across the independent south bridge. Hold at its
+        arrival marker six seconds.
+    - key: mission.trust_under_fire.tutorial.4.title
+      value: Escort the south convoy
+    - key: mission.trust_under_fire.tutorial.5.body
+      value: Move a surviving escort to the relay approach. Preserve civilian structures
+        and the transmitter.
+    - key: mission.trust_under_fire.tutorial.5.title
+      value: Approach the broadcast compound
+    - key: mission.trust_under_fire.tutorial.6.body
+      value: Attack the three verified military guards. Do not Attack the broadcast
+        building.
+    - key: mission.trust_under_fire.tutorial.6.body.approach
+      value: Move the surviving escort into firing position, then use Attack against
+        the marked military target.
+    - key: mission.trust_under_fire.tutorial.6.title
+      value: Clear the verified guards
+    - key: mission.trust_under_fire.tutorial.7.body
+      value: Move the original signal engineer to the external verification marker.
+        Hold uncontested six seconds with the transmitter intact.
+    - key: mission.trust_under_fire.tutorial.7.title
+      value: Verify the broadcast source
+    - key: mission.trust_under_fire.tutorial.8.body
+      value: Keep both arrived convoys, shelters and staff alive. Preserve the verified
+        transmitter and shelter Fuel, then hold six seconds after all military threats
+        are defeated.
+    - key: mission.trust_under_fire.tutorial.8.title
+      value: Stabilize the protected routes
     - key: narrative.air_corridor.brief-aria
       value: Confirmed hostile aircraft approach from the west, followed by a northern
         strike. Keep the launchers near the radar. They acquire and fire automatically;
@@ -4243,6 +4445,39 @@ MonoBehaviour:
     - key: narrative.supply_line.comms.01
       value: Fuel has reached the reserve. A captured manifest shows the diverted
         tankers used the same dormant corridor we found at the hospital road.
+    - key: narrative.trust_under_fire.brief-01
+      value: Some residents remember help reaching them. Others remember delays and
+        have reason to be afraid. The shelters have room, but both routes are exposed.
+        Today's proof is open routes and safe arrivals.
+    - key: narrative.trust_under_fire.brief-02
+      value: Qassem's broadcast says we abandoned these neighborhoods. Evacuation
+        is a military priority. Clear the attackers on each protected route, keep
+        the transports intact, and escort the groups to both shelters. Do not take
+        a destructive shortcut through occupied buildings.
+    - key: narrative.trust_under_fire.brief-03
+      value: We are ready to receive the protected convoys at both shelters. Keep
+        their approaches open. A civilian witness recognized the maintenance noise
+        behind Qassem's broadcasts. Preserve the broadcast compound and its equipment
+        so that report can be checked.
+    - key: narrative.trust_under_fire.comms-01
+      value: The witness has identified the marked broadcast compound. ARIA has matched
+        its signal to the recording. Secure its external access point and preserve
+        the equipment. Our answer to the abandonment claim must remain an honest
+        record, not another promise people cannot check.
+    - key: narrative.trust_under_fire.debrief-01
+      value: The evacuation groups reached their shelters, and the routes remained
+        open. People could see where help was arriving. We will also keep an honest
+        record of delays and damage; a protected road does not erase what still needs
+        repair.
+    - key: narrative.trust_under_fire.debrief-02
+      value: The secured transmitter and the witness recording identify the same
+        source. I have preserved the signal records and their custody trail. They
+        point to Qassem's final command network and remain available to civilian
+        and military oversight.
+    - key: narrative.trust_under_fire.debrief-03
+      value: The next strike must leave that proof intact. We will isolate the verified
+        network nodes and protect the people and structures around them. If the evidence
+        dies there, Qassem becomes another voice claiming we lied.
     - key: not_enough_money
       value: Not enough money
     - key: operations.conclude
@@ -5605,6 +5840,10 @@ MonoBehaviour:
       value: RADIO
     - key: ui.home.archive.debrief
       value: DEBRIEF
+    - key: ui.home.archive.trust_under_fire.broadcast_source
+      value: VERIFIED BROADCAST SOURCE
+    - key: ui.home.archive.trust_under_fire.relay
+      value: VERIFIED BROADCAST SOURCE
     - key: ui.home.aria
       value: Tactical assistant
     - key: ui.home.armory
@@ -14640,6 +14879,326 @@ MonoBehaviour:
         \u0627\u0645\u062F\u0627\u062F \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
     - key: mission.supply_line.time_limit
       value: "\u0645\u0647\u0644\u062A"
+    - key: mission.trust_under_fire.deadline
+      value: "\u062A\u0627 \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.enemy_intel
+      value: "\u062F\u0648 \u06A9\u0645\u06CC\u0646 \u0645\u0633\u06CC\u0631 \u0648
+        \u0633\u0647 \u0646\u06AF\u0647\u0628\u0627\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647. \u0646\u0628\u0631\u062F \u0631\u0648
+        \u0627\u0632 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u062F\u0648\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.trust_under_fire.forces
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A
+        \xB7 \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \xB7 \u06CC\u06A9 \u0645\u0647\u0646\u062F\u0633 \u0633\u06CC\u06AF\u0646\u0627\u0644"
+    - key: mission.trust_under_fire.guide.diagram
+      value: "\u062F\u0648 \u0645\u0633\u06CC\u0631 | \u062F\u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        | \u0645\u0646\u0628\u0639 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.trust_under_fire.guide.example
+      value: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0645\u0633\u06CC\u0631
+        \u2190 \u062D\u0631\u06A9\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u2190
+        \u062D\u0641\u0638 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u2190 \u062A\u0623\u06CC\u06CC\u062F
+        \u0645\u0646\u0628\u0639"
+    - key: mission.trust_under_fire.guide.mistake
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0632 \u06A9\u0645\u06CC\u0646 \u0641\u0639\u0627\u0644
+        \u0639\u0628\u0648\u0631 \u0646\u062F\u0647. \xAB\u0646\u0634\u0627\u0646
+        \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.trust_under_fire.hud.fuel
+      value: "\u0633\u0648\u062E\u062A: {0} \xB7 \u0633\u0647\u0645 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.trust_under_fire.hud.north_hold
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0634\u0645\u0627\u0644:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.trust_under_fire.hud.south_hold
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u062C\u0646\u0648\u0628:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.trust_under_fire.hud.stable
+      value: "\u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.trust_under_fire.hud.stage.1
+      value: "\u0645\u0633\u06CC\u0631 \u0634\u0645\u0627\u0644\u06CC \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.2
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0634\u0645\u0627\u0644\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.3
+      value: "\u0645\u0633\u06CC\u0631 \u062C\u0646\u0648\u0628\u06CC \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.4
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0646\u0648\u0628\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.5
+      value: "\u0628\u0647 \u0645\u062D\u0648\u0637\u0647\u0654 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0646\u0632\u062F\u06CC\u06A9 \u0634\u0648"
+    - key: mission.trust_under_fire.hud.stage.6
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u067E\u0627\u06A9 \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.7
+      value: "\u0645\u0646\u0628\u0639 \u067E\u06CC\u0627\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.stage.8
+      value: "\u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062A\u062B\u0628\u06CC\u062A \u06A9\u0646"
+    - key: mission.trust_under_fire.hud.time
+      value: "\u0641\u0631\u0635\u062A \u062A\u062E\u0644\u06CC\u0647: {0} \u062F\u0642\u06CC\u0642\u0647
+        \u0648 {1} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.trust_under_fire.hud.verification
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u0641\u0631\u0633\u062A\u0646\u062F\u0647:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.trust_under_fire.intel.civilian
+      value: "\u062E\u0637\u0631 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
+    - key: mission.trust_under_fire.intel.confirmed
+      value: "\u06F9"
+    - key: mission.trust_under_fire.intel.military
+      value: "\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.trust_under_fire.intel.protected
+      value: "\u06F2 + \u06F4"
+    - key: mission.trust_under_fire.label.deadline
+      value: "\u0645\u0647\u0644\u062A"
+    - key: mission.trust_under_fire.label.fuel
+      value: "\u0633\u0648\u062E\u062A"
+    - key: mission.trust_under_fire.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0645\u062D\u0644\u0647\u200C\u0647\u0627\u06CC \u0628\u0646\u062F\u0631\u06CC"
+    - key: mission.trust_under_fire.marker.north
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0634\u0645\u0627\u0644\u06CC"
+    - key: mission.trust_under_fire.marker.north_crossing
+      value: "\u06AF\u0630\u0631\u06AF\u0627\u0647 \u0634\u0645\u0627\u0644\u06CC"
+    - key: mission.trust_under_fire.marker.relay
+      value: "\u0641\u0631\u0633\u062A\u0646\u062F\u0647"
+    - key: mission.trust_under_fire.marker.south
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u062C\u0646\u0648\u0628\u06CC"
+    - key: mission.trust_under_fire.marker.south_crossing
+      value: "\u06AF\u0630\u0631\u06AF\u0627\u0647 \u062C\u0646\u0648\u0628\u06CC"
+    - key: mission.trust_under_fire.marker.verification
+      value: "\u062A\u0623\u06CC\u06CC\u062F"
+    - key: mission.trust_under_fire.name
+      value: "\u0627\u0639\u062A\u0645\u0627\u062F \u0632\u06CC\u0631 \u0622\u062A\u0634"
+    - key: mission.trust_under_fire.objective.broadcast
+      value: "\u0645\u0646\u0628\u0639 \u067E\u06CC\u0627\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.objective.north
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0634\u0645\u0627\u0644\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.objective.relay
+      value: "\u0645\u0646\u0628\u0639 \u067E\u06CC\u0627\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.objective.south
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0646\u0648\u0628\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.resources
+      value: "\u06F1\u06F0\u06F0 \u0633\u0648\u062E\u062A \xB7 \u06F2\u06F0 \u0633\u0648\u062E\u062A
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.trust_under_fire.result.broadcast_lost
+      value: "\u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F. \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u062A\u0627 \u067E\u06CC\u0631\u0648\u0632\u06CC \u062D\u0641\u0638
+        \u06A9\u0646."
+    - key: mission.trust_under_fire.result.convoys
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647"
+    - key: mission.trust_under_fire.result.defeat
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.trust_under_fire.result.engineer_lost
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0633\u06CC\u06AF\u0646\u0627\u0644
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u062A\u0627 \u062A\u062B\u0628\u06CC\u062A
+        \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u0627\u0632 \u0645\u0647\u0646\u062F\u0633
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.trust_under_fire.result.escort_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.trust_under_fire.result.escort_lost
+      value: "\u0647\u0645\u0647\u0654 \u0627\u0633\u06A9\u0648\u0631\u062A\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647 \u062F\u0631
+        \u062D\u0627\u0644\u06CC \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646
+        \u06A9\u0647 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u0647\u0646\u0648\u0632 \u0628\u0627\u0642\u06CC \u0628\u0648\u062F\u0646."
+    - key: mission.trust_under_fire.result.fuel_lost
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u06CC\u0627 \u0633\u0647\u0645 \u0633\u0648\u062E\u062A \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.trust_under_fire.result.incomplete
+      value: "\u0646\u0627\u0642\u0635"
+    - key: mission.trust_under_fire.result.loss
+      value: "\u0627\u0632 \u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0627\u0635\u0644\u06CC\u060C \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0648 \u0645\u0647\u0646\u062F\u0633
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646. \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A \u0648 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.trust_under_fire.result.losses
+      value: "\u062A\u0644\u0641\u0627\u062A"
+    - key: mission.trust_under_fire.result.north_lost
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0634\u0645\u0627\u0644\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u067E\u06CC\u0634 \u0627\u0632
+        \u062D\u0631\u06A9\u062A \u062E\u0648\u062F\u0631\u0648 \u0645\u0633\u06CC\u0631\u0634
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646."
+    - key: mission.trust_under_fire.result.objectives
+      value: "\u0647\u062F\u0641\u200C\u0647\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.trust_under_fire.result.safe
+      value: "\u0647\u0645\u0647 \u0633\u0627\u0644\u0645"
+    - key: mission.trust_under_fire.result.secured
+      value: "\u0627\u0645\u0646 \u0634\u062F\u0646\u062F"
+    - key: mission.trust_under_fire.result.shelter_lost
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F. \u0647\u0631 \u062F\u0648 \u0645\u062D\u0648\u0637\u0647\u0654
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646."
+    - key: mission.trust_under_fire.result.source
+      value: "\u0645\u0646\u0628\u0639 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"
+    - key: mission.trust_under_fire.result.south_lost
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0646\u0648\u0628\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u067E\u06CC\u0634 \u0627\u0632
+        \u062D\u0631\u06A9\u062A \u062E\u0648\u062F\u0631\u0648 \u0645\u0633\u06CC\u0631\u0634
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646."
+    - key: mission.trust_under_fire.result.staff
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0633\u0627\u0644\u0645"
+    - key: mission.trust_under_fire.result.staff_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646"
+    - key: mission.trust_under_fire.result.staff_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0627\u0635\u0644\u06CC
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A\u0646. \u0647\u0631 \u062F\u0648 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646."
+    - key: mission.trust_under_fire.result.subtitle
+      value: "\u0627\u0639\u062A\u0645\u0627\u062F \u0632\u06CC\u0631 \u0622\u062A\u0634
+        \xB7 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.trust_under_fire.result.success
+      value: "\u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0628\u0647
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC \u0641\u0639\u0627\u0644
+        \u0631\u0633\u06CC\u062F\u0646. \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F\u0646 \u0648 \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u0633\u0627\u0644\u0645 \u06AF\u0632\u0627\u0631\u0634 \u0634\u0627\u0647\u062F
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0631\u062F."
+    - key: mission.trust_under_fire.result.success_short
+      value: "\u0647\u0631 \u062F\u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u062F\u0631\u06CC\u0627\u0641\u062A \u06A9\u0631\u062F\u0646. \u0645\u0646\u0628\u0639
+        \u067E\u06CC\u0627\u0645 \u062A\u0623\u06CC\u06CC\u062F \u0634\u062F."
+    - key: mission.trust_under_fire.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u062A\u062E\u0644\u06CC\u0647 \u062A\u0645\u0648\u0645 \u0634\u062F."
+    - key: mission.trust_under_fire.result.verified
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u0634\u062F"
+    - key: mission.trust_under_fire.result.victory
+      value: "\u0645\u0633\u06CC\u0631\u0647\u0627 \u0627\u0645\u0646 \u0634\u062F\u0646\u062F"
+    - key: mission.trust_under_fire.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u0628\u0627\u0632 \u0634\u062F\u0646
+        \u0627\u0631\u0633\u0627\u0644 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u067E\u0633 \u0627\u0632 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.trust_under_fire.reward.supply
+      value: "\u0627\u0631\u0633\u0627\u0644 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: mission.trust_under_fire.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.trust_under_fire.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647"
+    - key: mission.trust_under_fire.summary
+      value: "\u0627\u0632 \u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u062A\u062E\u0644\u06CC\u0647 \u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u060C \u0633\u067E\u0633
+        \u0645\u0646\u0628\u0639 \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u0633\u0627\u0644\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646."
+    - key: mission.trust_under_fire.tutorial.1.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0634\u0645\u0627\u0644\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0645\u0633\u062A\u0642\u0631
+        \u0634\u0648 \u0648 \u0628\u0647 \u06A9\u0645\u06CC\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646. \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0627\u0645\u062F\u0627\u062F \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.trust_under_fire.tutorial.1.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u0634\u0644\u06CC\u06A9
+        \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u062D\u0645\u0644\u0647 \u0647\u062F\u0641 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.trust_under_fire.tutorial.1.title
+      value: "\u0645\u0633\u06CC\u0631 \u0634\u0645\u0627\u0644\u06CC \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.2.body
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0634\u0645\u0627\u0644\u06CC
+        \u0631\u0648 \u0627\u0632 \u067E\u0644 \u0632\u0645\u06CC\u0646\u06CC \u0628\u0647
+        \u0646\u0634\u0627\u0646 \u0631\u0633\u06CC\u062F\u0646 \u0634\u0645\u0627\u0644
+        \u0628\u0628\u0631. \u0628\u0627 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0632\u0646\u062F\u0647\u060C
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.trust_under_fire.tutorial.2.title
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0634\u0645\u0627\u0644\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.3.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u062C\u0646\u0648\u0628\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0628\u0647
+        \u06A9\u0645\u06CC\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646 \u0648 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u062F\u0648\u0645 \u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.trust_under_fire.tutorial.3.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u0634\u0644\u06CC\u06A9
+        \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u062D\u0645\u0644\u0647 \u0647\u062F\u0641 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.trust_under_fire.tutorial.3.title
+      value: "\u0645\u0633\u06CC\u0631 \u062C\u0646\u0648\u0628\u06CC \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.4.body
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0646\u0648\u0628\u06CC
+        \u0631\u0648 \u0627\u0632 \u067E\u0644 \u0645\u0633\u062A\u0642\u0644 \u062C\u0646\u0648\u0628
+        \u0628\u0628\u0631. \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u06A9\u0646\u0627\u0631
+        \u0646\u0634\u0627\u0646 \u0631\u0633\u06CC\u062F\u0646\u0634 \u062B\u0627\u0628\u062A
+        \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.trust_under_fire.tutorial.4.title
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0646\u0648\u0628\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.5.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0645\u0633\u06CC\u0631 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0628\u0628\u0631. \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0648 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.trust_under_fire.tutorial.5.title
+      value: "\u0628\u0647 \u0645\u062D\u0648\u0637\u0647\u0654 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0646\u0632\u062F\u06CC\u06A9 \u0634\u0648"
+    - key: mission.trust_under_fire.tutorial.6.body
+      value: "\u0628\u0647 \u0633\u0647 \u0646\u06AF\u0647\u0628\u0627\u0646 \u0646\u0638\u0627\u0645\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0628\u0647 \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u0646\u06A9\u0646."
+    - key: mission.trust_under_fire.tutorial.6.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0645\u0648\u0642\u0639\u06CC\u062A \u0634\u0644\u06CC\u06A9
+        \u0628\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u062D\u0645\u0644\u0647 \u0647\u062F\u0641 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.trust_under_fire.tutorial.6.title
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u067E\u0627\u06A9 \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.7.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0633\u06CC\u06AF\u0646\u0627\u0644
+        \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u062A\u0623\u06CC\u06CC\u062F
+        \u0628\u06CC\u0631\u0648\u0646\u06CC \u0628\u0628\u0631. \u0628\u0627 \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u0633\u0627\u0644\u0645 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646
+        \u062F\u0634\u0645\u0646 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.trust_under_fire.tutorial.7.title
+      value: "\u0645\u0646\u0628\u0639 \u067E\u06CC\u0627\u0645 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646"
+    - key: mission.trust_under_fire.tutorial.8.body
+      value: "\u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0633\u06CC\u062F\u0647\u060C
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627 \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0632\u0646\u062F\u0647 \u0628\u0645\u0648\u0646\u0646. \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0648 \u0633\u0647\u0645
+        \u0633\u0648\u062E\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646 \u0648
+        \u067E\u0633 \u0627\u0632 \u0634\u06A9\u0633\u062A \u062A\u0647\u062F\u06CC\u062F\u0647\u0627
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.trust_under_fire.tutorial.8.title
+      value: "\u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062A\u062B\u0628\u06CC\u062A \u06A9\u0646"
     - key: narrative.air_corridor.brief-aria
       value: "\u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \u0627\u0632 \u063A\u0631\u0628 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646\u061B
@@ -16309,6 +16868,101 @@ MonoBehaviour:
         \u0645\u0633\u06CC\u0631 \u0645\u062A\u0631\u0648\u06A9\u06CC \u0631\u0641\u062A\u0646
         \u06A9\u0647 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
         \u067E\u06CC\u062F\u0627 \u06A9\u0631\u062F\u06CC\u0645."
+    - key: narrative.trust_under_fire.brief-01
+      value: "\u0628\u0639\u0636\u06CC \u0633\u0627\u06A9\u0646\u0627\u0646 \u0631\u0633\u06CC\u062F\u0646
+        \u06A9\u0645\u06A9 \u0631\u0648 \u0628\u0647 \u062E\u0627\u0637\u0631 \u062F\u0627\u0631\u0646.
+        \u0628\u0639\u0636\u06CC\u200C\u0647\u0627 \u062A\u0623\u062E\u06CC\u0631\u0647\u0627
+        \u0631\u0648 \u06CC\u0627\u062F\u0634\u0648\u0646\u0647 \u0648 \u062D\u0642
+        \u062F\u0627\u0631\u0646 \u0628\u062A\u0631\u0633\u0646. \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u062C\u0627 \u062F\u0627\u0631\u0646\u060C \u0648\u0644\u06CC \u0647\u0631
+        \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062F\u0631 \u062E\u0637\u0631\u0646.
+        \u0645\u062F\u0631\u06A9 \u0627\u0645\u0631\u0648\u0632 \u0645\u0627\u060C
+        \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0628\u0627\u0632 \u0648 \u0631\u0633\u06CC\u062F\u0646
+        \u0633\u0627\u0644\u0645 \u0645\u0631\u062F\u0645\u0647."
+    - key: narrative.trust_under_fire.brief-02
+      value: "\u067E\u06CC\u0627\u0645 \u0642\u0627\u0633\u0645 \u0645\u06CC\u200C\u06AF\u0647
+        \u0627\u06CC\u0646 \u0645\u062D\u0644\u0647\u200C\u0647\u0627 \u0631\u0648
+        \u0631\u0647\u0627 \u06A9\u0631\u062F\u06CC\u0645. \u062A\u062E\u0644\u06CC\u0647\u0654
+        \u0645\u0631\u062F\u0645 \u06CC\u06A9 \u0627\u0648\u0644\u0648\u06CC\u062A
+        \u0646\u0638\u0627\u0645\u06CC\u0647. \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u06CC
+        \u0647\u0631 \u0645\u0633\u06CC\u0631 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646\u06CC\u0646\u060C
+        \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0627\u0646\u062A\u0642\u0627\u0644
+        \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646
+        \u0648 \u06AF\u0631\u0648\u0647\u200C\u0647\u0627 \u0631\u0648 \u062A\u0627
+        \u0647\u0631 \u062F\u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0647\u0645\u0631\u0627\u0647\u06CC
+        \u06A9\u0646\u06CC\u0646. \u0628\u0631\u0627\u06CC \u0645\u06CC\u0627\u0646\u200C\u0628\u064F\u0631\u060C
+        \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u062D\u0644
+        \u062D\u0636\u0648\u0631 \u0645\u0631\u062F\u0645 \u0631\u0648 \u062A\u062E\u0631\u06CC\u0628
+        \u0646\u06A9\u0646\u06CC\u0646."
+    - key: narrative.trust_under_fire.brief-03
+      value: "\u062F\u0631 \u0647\u0631 \u062F\u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0622\u0645\u0627\u062F\u0647\u0654 \u067E\u0630\u06CC\u0631\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647 \u0647\u0633\u062A\u06CC\u0645.
+        \u0645\u0633\u06CC\u0631 \u0631\u0633\u06CC\u062F\u0646 \u0628\u0647 \u0627\u0648\u0646\u200C\u0647\u0627
+        \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646.
+        \u06CC\u06A9 \u0634\u0627\u0647\u062F \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u060C
+        \u0635\u062F\u0627\u06CC \u062A\u0639\u0645\u06CC\u0631\u0627\u062A \u067E\u0634\u062A
+        \u067E\u06CC\u0627\u0645\u200C\u0647\u0627\u06CC \u0642\u0627\u0633\u0645
+        \u0631\u0648 \u0634\u0646\u0627\u062E\u062A. \u0645\u062D\u0648\u0637\u0647\u0654
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A\u0634
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646 \u062A\u0627 \u0628\u062A\u0648\u0646\u06CC\u0645
+        \u06AF\u0632\u0627\u0631\u0634\u0634 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u0645."
+    - key: narrative.trust_under_fire.comms-01
+      value: "\u0634\u0627\u0647\u062F\u060C \u0645\u062D\u0648\u0637\u0647\u0654
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u06A9\u0631\u062F\u0647.
+        \u0622\u0631\u06CC\u0627 \u0633\u06CC\u06AF\u0646\u0627\u0644\u0634 \u0631\u0648
+        \u0628\u0627 \u0635\u062F\u0627\u06CC \u0636\u0628\u0637\u200C\u0634\u062F\u0647
+        \u062A\u0637\u0628\u06CC\u0642 \u062F\u0627\u062F\u0647. \u0645\u062D\u0644
+        \u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646\u06CC\u0646 \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646. \u067E\u0627\u0633\u062E
+        \u0645\u0627 \u0628\u0647 \u0627\u062F\u0639\u0627\u06CC \u0631\u0647\u0627
+        \u06A9\u0631\u062F\u0646 \u0645\u0631\u062F\u0645 \u0628\u0627\u06CC\u062F
+        \u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634 \u0635\u0627\u062F\u0642\u0627\u0646\u0647
+        \u0628\u0627\u0634\u0647\u060C \u0646\u0647 \u06CC\u06A9 \u0648\u0639\u062F\u0647\u0654
+        \u062F\u06CC\u06AF\u0647 \u06A9\u0647 \u0645\u0631\u062F\u0645 \u0646\u062A\u0648\u0646\u0646
+        \u0628\u0631\u0631\u0633\u06CC\u0634 \u06A9\u0646\u0646."
+    - key: narrative.trust_under_fire.debrief-01
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u062A\u062E\u0644\u06CC\u0647
+        \u0628\u0647 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u0631\u0633\u06CC\u062F\u0646 \u0648 \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0628\u0627\u0632 \u0645\u0648\u0646\u062F\u0646. \u0645\u0631\u062F\u0645
+        \u062F\u06CC\u062F\u0646 \u06A9\u0647 \u06A9\u0645\u06A9 \u0627\u0632 \u06A9\u062C\u0627
+        \u0645\u06CC\u200C\u0631\u0633\u0647. \u062A\u0623\u062E\u06CC\u0631\u0647\u0627
+        \u0648 \u062E\u0633\u0627\u0631\u062A\u200C\u0647\u0627 \u0631\u0648 \u0647\u0645
+        \u0635\u0627\u062F\u0642\u0627\u0646\u0647 \u062B\u0628\u062A \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645\u061B
+        \u06CC\u06A9 \u062C\u0627\u062F\u0647\u0654 \u0627\u0645\u0646\u060C \u0686\u06CC\u0632\u0647\u0627\u06CC\u06CC
+        \u0631\u0648 \u06A9\u0647 \u0647\u0646\u0648\u0632 \u0628\u0627\u06CC\u062F
+        \u062F\u0631\u0633\u062A \u0628\u0634\u0646 \u067E\u0627\u06A9 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: narrative.trust_under_fire.debrief-02
+      value: "\u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654 \u0627\u0645\u0646\u200C\u0634\u062F\u0647
+        \u0648 \u0635\u062F\u0627\u06CC \u0636\u0628\u0637\u200C\u0634\u062F\u0647\u0654
+        \u0634\u0627\u0647\u062F\u060C \u0647\u0631 \u062F\u0648 \u06CC\u06A9 \u0645\u0646\u0628\u0639
+        \u0631\u0648 \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u0646.
+        \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u0633\u06CC\u06AF\u0646\u0627\u0644
+        \u0648 \u0645\u0633\u06CC\u0631 \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC\u0634\u0648\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0631\u062F\u0645. \u0627\u06CC\u0646
+        \u0645\u062F\u0627\u0631\u06A9 \u0628\u0647 \u0634\u0628\u06A9\u0647\u0654
+        \u0646\u0647\u0627\u06CC\u06CC \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0642\u0627\u0633\u0645 \u0645\u06CC\u200C\u0631\u0633\u0646 \u0648 \u062F\u0631
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0646\u0638\u0627\u0631\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u0646\u0638\u0627\u0645\u06CC \u0645\u06CC\u200C\u0645\u0648\u0646\u0646."
+    - key: narrative.trust_under_fire.debrief-03
+      value: "\u062D\u0645\u0644\u0647\u0654 \u0628\u0639\u062F\u06CC \u0628\u0627\u06CC\u062F
+        \u0627\u06CC\u0646 \u0645\u062F\u0631\u06A9 \u0631\u0648 \u0633\u0627\u0644\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u0647. \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654 \u0634\u0628\u06A9\u0647
+        \u0631\u0648 \u062C\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645
+        \u0648 \u0627\u0632 \u0645\u0631\u062F\u0645 \u0648 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0627\u0637\u0631\u0627\u0641\u0634\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645. \u0627\u06AF\u0647 \u0645\u062F\u0631\u06A9
+        \u0627\u0648\u0646\u062C\u0627 \u0627\u0632 \u0628\u06CC\u0646 \u0628\u0631\u0647\u060C
+        \u0642\u0627\u0633\u0645 \u062A\u0628\u062F\u06CC\u0644 \u0645\u06CC\u200C\u0634\u0647
+        \u0628\u0647 \u06CC\u06A9 \u0635\u062F\u0627\u06CC \u062F\u06CC\u06AF\u0647
+        \u06A9\u0647 \u0645\u06CC\u200C\u06AF\u0647 \u062F\u0631\u0648\u063A \u06AF\u0641\u062A\u06CC\u0645."
     - key: not_enough_money
       value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC"
     - key: operations.conclude
@@ -18281,6 +18935,12 @@ MonoBehaviour:
       value: "\u0631\u0627\u062F\u06CC\u0648"
     - key: ui.home.archive.debrief
       value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646\u06CC"
+    - key: ui.home.archive.trust_under_fire.broadcast_source
+      value: "\u0645\u0646\u0628\u0639 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647"
+    - key: ui.home.archive.trust_under_fire.relay
+      value: "\u0645\u0646\u0628\u0639 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647"
     - key: ui.home.aria
       value: "\u062F\u0633\u062A\u06CC\u0627\u0631 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC"
     - key: ui.home.armory

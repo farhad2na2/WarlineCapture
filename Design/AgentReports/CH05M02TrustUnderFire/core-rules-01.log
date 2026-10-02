@@ -1,0 +1,71 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M02TrustUnderFireIntegration.ValidateCore
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireRoutes] result=Passed convoyRoutes=2x461x5 elevatedLandBridges=2 relayApproach3x177 buildLots=4 grid=600x400 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireConfigBuilder.cs:467)
+Game.Editor.CH05M02TrustUnderFireMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireMapValidation.cs:112)
+Game.Editor.CH05M02TrustUnderFireIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireIntegration.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireMap] result=Passed identities=2258 owners=195 renderOnly=2063 roots=3 grid=600x400 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireMapValidation.cs:113)
+Game.Editor.CH05M02TrustUnderFireIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireIntegration.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustRules] result=Passed originals=26 routes=independent crossing=required verification=actual settlement=idempotent supply=first-clear
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireRulesValidation.cs:62)
+Game.Editor.CH05M02TrustUnderFireIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireIntegration.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustObjectives] result=Passed writer=published routes=independent broadcast=verified protection=qualified
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireObjectiveValidation:Run () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireObjectiveValidation.cs:59)
+Game.Editor.CH05M02TrustUnderFireIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireIntegration.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFireCoreValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=PendingSeparateGate
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireIntegration:ValidateCore () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireIntegration.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M02TrustUnderFireIntegration.ValidateCore
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_0e2d1567/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

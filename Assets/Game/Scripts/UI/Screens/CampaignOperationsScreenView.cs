@@ -191,9 +191,11 @@ namespace Game.UI.Runtime
             ApplyMissionGoals(mission.MissionId);
             if(IsChapterFive)
             {
-                string[] goals={"clinic","utility","perimeter"};
+                bool trust=mission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire;
+                string prefix=trust?"mission.trust_under_fire.":"mission.citywide_alert.";
+                string[] goals=trust?new[]{"north","south","broadcast"}:new[]{"clinic","utility","perimeter"};
                 for(int i=0;i<3;i++)
-                {SetGoal(objectiveCards,i,UiShellRuntimeGateway.Localization.Get("mission.citywide_alert.objective."+goals[i]));SetGoal(starGoalLabels,i,UiShellRuntimeGateway.Localization.Get("mission.citywide_alert.star."+(i+1)));}
+                {SetGoal(objectiveCards,i,UiShellRuntimeGateway.Localization.Get(prefix+"objective."+goals[i]));SetGoal(starGoalLabels,i,UiShellRuntimeGateway.Localization.Get(prefix+"star."+(i+1)));}
             }
             if(mission.AccessState != UiContentAccessState.Allowed)
                 Set(missionBriefingText,UiShellRuntimeGateway.Localization.GetBySource(mission.AccessState switch

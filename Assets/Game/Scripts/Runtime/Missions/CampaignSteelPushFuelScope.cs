@@ -15,6 +15,12 @@ namespace Game.Runtime
             if(missions.CalculateEntityCount()!=1)return false;
             var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if(runtime.Phase==MissionPhaseKind.None)return false;
+            if(runtime.MissionId.ToString()==CampaignMissionSequence.TrustUnderFire)
+            {
+                if(em.HasComponent<CampaignMissionTrustUnderFireState>(root))
+                { var trust=em.GetComponentData<CampaignMissionTrustUnderFireState>(root); if(CampaignMissionTrustUnderFireRuleUtility.Matches(in trust,in runtime))reserve=trust.Reserve; }
+                return true;
+            }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.CitywideAlert)
             { CampaignCitywideFuelScope.TryGet(em,out reserve,out _);return true; }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.ArmorBreak)

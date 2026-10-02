@@ -1,0 +1,85 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M02TrustUnderFireContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'Game_UnitPrefabRegistry_Config' does not match filename 'UnitFixtureRegistry'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:95)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[TrustUnderFireUnitFixture] result=Passed uniquePrefabs=16 combinedArms=Armor+Infantry+ProtectedConvoys shelterOwners=2 broadcast=1 Fuel=RealStorage fixtureLoadedByMission=false
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:103)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,125): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(29,84): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(30,89): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(227,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AddressableAssets.Settings.AddressableAssetSettings:Create (string,string,bool,bool)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildAddressables () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:116)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:71)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TrustUnderFirePackedContent] result=Passed map=opmap.ch05.trust_under_fire entityScene=90992732d4aa74998b3ed7a132e27f5d fixture=445bcdf833754422783e0d3c168c49cf bytes=213854047 locator=GUID+CampaignAddress scope=ContentBuildOnly
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M02TrustUnderFireContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M02TrustUnderFireContentBuilder.cs:79)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M02TrustUnderFireContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ecccb53b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

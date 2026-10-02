@@ -102,6 +102,9 @@ namespace Game.Composition
                     rows.Add((parent,row)=>Button("CitywideRelayEvidence",parent,Local("ui.home.archive.citywide_alert.relay_timing","CIVIC RELAY ATTACK TIMING"),new Vector2(1050,78),Vector2.zero,
                         ()=>PlayRegistered("seq.ch05.m01.debrief", "CitywideAlert-debrief-1")));
                 }
+                if (IsMissionEarned(model.CompletedMissionMask, CampaignMissionSequence.IndexOf(CampaignMissionSequence.TrustUnderFire)))
+                    rows.Add((parent,row)=>Button("TrustRelayEvidence",parent,Local("ui.home.archive.trust_under_fire.relay","BROADCAST COMPOUND SIGNAL"),new Vector2(1050,78),Vector2.zero,
+                        ()=>PlayRegistered("seq.ch05.m02.debrief", "TrustUnderFire-debrief-1")));
                 if(model.FullCampaignRegistered && model.AllRequiredMissionsCompleted)
                     rows.Add((parent,row)=>Button("Epilogue",parent,Local("ui.home.complete","CAMPAIGN COMPLETE"),new Vector2(1050,78),Vector2.zero,()=>PlayBookend("seq.campaign.epilogue.canonical",5,true)));
             }
@@ -160,6 +163,7 @@ namespace Game.Composition
             {
                 "seq.ch04.close.protocol_fragment_04" => CampaignMissionSequence.IndexOf(CampaignMissionSequence.ArmorBreak),
                 "seq.ch05.open.citywide_command" or "seq.ch05.m01.debrief" => CampaignMissionSequence.IndexOf(CampaignMissionSequence.CitywideAlert),
+                "seq.ch05.m02.debrief" => CampaignMissionSequence.IndexOf(CampaignMissionSequence.TrustUnderFire),
                 _ => -1
             };
             if (requiredMission < 0 || !UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsMissionEarned(model.CompletedMissionMask, requiredMission)) return false;

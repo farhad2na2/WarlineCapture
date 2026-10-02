@@ -1,0 +1,219 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "missionId": "saga.ch05.m02.trust_under_fire",
+  "clipCount": 14,
+  "runtimeNetworkTts": false,
+  "clips": [
+    {
+      "id": "trust_under_fire-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "Some residents remember help reaching them. Others remember delays and have reason to be afraid. The shelters have room, but both routes are exposed. Today's proof is open routes and safe arrivals.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15200,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] بعضی ساکنان رسیدن کمک رو به خاطر دارن. بعضی‌ها تأخیرها رو یادشونه و حق دارن بترسن. پناهگاه‌ها جا دارن، ولی هر دو مسیر در خطرن. مدرک امروز ما، مسیرهای باز و رسیدن سالم مردمه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15201,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Qassem's broadcast says we abandoned these neighborhoods. Evacuation is a military priority. Clear the attackers on each protected route, keep the transports intact, and escort the groups to both shelters. Do not take a destructive shortcut through occupied buildings.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15202,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] پیام قاسم می‌گه این محله‌ها رو رها کردیم. تخلیهٔ مردم یک اولویت نظامیه. مهاجم‌های هر مسیر محافظت‌شده رو پاک‌سازی کنین، خودروهای انتقال رو سالم نگه دارین و گروه‌ها رو تا هر دو پناهگاه همراهی کنین. برای میان‌بُر، ساختمان‌های محل حضور مردم رو تخریب نکنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15203,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-brief-03",
+      "speaker": "LINA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "We are ready to receive the protected convoys at both shelters. Keep their approaches open. A civilian witness recognized the maintenance noise behind Qassem's broadcasts. Preserve the broadcast compound and its equipment so that report can be checked.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15204,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-brief-03",
+      "speaker": "LINA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] در هر دو پناهگاه آمادهٔ پذیرش کاروان‌های محافظت‌شده هستیم. مسیر رسیدن به اون‌ها رو باز نگه دارین. یک شاهد غیرنظامی، صدای تعمیرات پشت پیام‌های قاسم رو شناخت. محوطهٔ فرستنده و تجهیزاتش رو حفظ کنین تا بتونیم گزارشش رو بررسی کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15205,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "The witness has identified the marked broadcast compound. ARIA has matched its signal to the recording. Secure its external access point and preserve the equipment. Our answer to the abandonment claim must remain an honest record, not another promise people cannot check.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15206,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] شاهد، محوطهٔ فرستندهٔ مشخص‌شده رو شناسایی کرده. آریا سیگنالش رو با صدای ضبط‌شده تطبیق داده. محل دسترسی بیرونی رو امن کنین و تجهیزات رو حفظ کنین. پاسخ ما به ادعای رها کردن مردم باید یک گزارش صادقانه باشه، نه یک وعدهٔ دیگه که مردم نتونن بررسیش کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15207,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "The evacuation groups reached their shelters, and the routes remained open. People could see where help was arriving. We will also keep an honest record of delays and damage; a protected road does not erase what still needs repair.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15208,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] گروه‌های تخلیه به پناهگاه‌ها رسیدن و مسیرها باز موندن. مردم دیدن که کمک از کجا می‌رسه. تأخیرها و خسارت‌ها رو هم صادقانه ثبت می‌کنیم؛ یک جادهٔ امن، چیزهایی رو که هنوز باید درست بشن پاک نمی‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15209,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The secured transmitter and the witness recording identify the same source. I have preserved the signal records and their custody trail. They point to Qassem's final command network and remain available to civilian and military oversight.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15210,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] فرستندهٔ امن‌شده و صدای ضبط‌شدهٔ شاهد، هر دو یک منبع رو مشخص می‌کنن. داده‌های سیگنال و مسیر نگهداریشون رو حفظ کردم. این مدارک به شبکهٔ نهایی فرماندهی قاسم می‌رسن و در اختیار نظارت غیرنظامی و نظامی می‌مونن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15211,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "The next strike must leave that proof intact. We will isolate the verified network nodes and protect the people and structures around them. If the evidence dies there, Qassem becomes another voice claiming we lied.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15212,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "trust_under_fire-debrief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] حملهٔ بعدی باید این مدرک رو سالم نگه داره. گره‌های تأییدشدهٔ شبکه رو جدا می‌کنیم و از مردم و ساختمان‌های اطرافشون محافظت می‌کنیم. اگه مدرک اونجا از بین بره، قاسم تبدیل می‌شه به یک صدای دیگه که می‌گه دروغ گفتیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15213,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    }
+  ]
+}

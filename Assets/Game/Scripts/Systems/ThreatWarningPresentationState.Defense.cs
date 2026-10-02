@@ -45,7 +45,19 @@ namespace Game.Runtime
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if(runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert) && em.HasComponent<CampaignMissionCitywideAlertState>(root))
+            if(runtime.MissionId.Equals(CampaignMissionSequence.TrustUnderFire) && em.HasComponent<CampaignMissionTrustUnderFireState>(root))
+            {
+                var trust = em.GetComponentData<CampaignMissionTrustUnderFireState>(root);
+                int stage = CampaignMissionTrustUnderFireRuleUtility.Stage(in trust);
+                text = GameText.Get("mission.trust_under_fire.hud.stage." + stage);
+                if (stage == 2) text += "\n" + GameText.Format("mission.trust_under_fire.hud.north_hold", "North shelter: {0}/6 s", trust.NorthHoldMilliseconds / 1000);
+                if (stage == 4) text += "\n" + GameText.Format("mission.trust_under_fire.hud.south_hold", "South shelter: {0}/6 s", trust.SouthHoldMilliseconds / 1000);
+                if (stage == 7) text += "\n" + GameText.Format("mission.trust_under_fire.hud.verification", "Verify broadcast: {0}/6 s", trust.VerificationMilliseconds / 1000);
+                if (stage == 8) text += "\n" + GameText.Format("mission.trust_under_fire.hud.stable", "Protected routes: {0}/6 s", trust.StableMilliseconds / 1000);
+                int seconds = math.max(0, (CampaignMissionTrustUnderFireRuleUtility.DeadlineMilliseconds - trust.ElapsedMilliseconds + 999) / 1000);
+                text += "\n" + GameText.Format("mission.trust_under_fire.hud.time", "Evacuation window: {0}m {1}s", seconds / 60, seconds % 60);
+            }
+            else if(runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert) && em.HasComponent<CampaignMissionCitywideAlertState>(root))
             {
                 var city=em.GetComponentData<CampaignMissionCitywideAlertState>(root);
                 int stage=CampaignMissionCitywideAlertRuleUtility.Stage(in city);

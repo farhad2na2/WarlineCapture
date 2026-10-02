@@ -117,6 +117,25 @@ namespace Game.Editor
                         throw new InvalidOperationException("Citywide Alert production unit fixture missing; run CH05M01CitywideAlertContentBuilder.BuildPackedContent before building a player.");
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
+                }                var trust = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH05M02TrustUnderFireConfigBuilder.MapPath);
+                if (trust != null)
+                {
+                    string trustError = "Logical source binding is not permitted for this independent physical map.";
+                    if (trust.SourceBinding.IsConfigured ||
+                        !trust.TryValidateMetadata(out trustError) ||
+                        !trust.TryValidateLocalContentReferences(out trustError))
+                        throw new InvalidOperationException("Trust Under Fire production entity delivery requires a valid independent map: " + trustError);
+                    string mapPath = CH05M02TrustUnderFireConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, trust.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Trust Under Fire production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH05M02TrustUnderFireContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Trust Under Fire production unit fixture missing; run CH05M02TrustUnderFireContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
                 }
             }
             return scenes;

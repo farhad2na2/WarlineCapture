@@ -1,0 +1,1 @@
+[TrustUnderFireInput] result=Passed scope=PresentationOnly locale=fa-IR source=Validated guidance=Visible engage=10s gameplay=NotClaimed voices=Pending humanDeviceAcceptance=pending

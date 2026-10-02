@@ -24,6 +24,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes SafehouseSweep = "saga.ch03.m02.safehouse_sweep";
         private static readonly FixedString64Bytes FalseFront = "saga.ch03.m03.false_front";
         private static readonly FixedString64Bytes EvidenceChain = CampaignMissionSequence.EvidenceChain;
+        private static readonly FixedString64Bytes TrustUnderFire = CampaignMissionSequence.TrustUnderFire;
         private static readonly FixedString64Bytes CitywideAlert = CampaignMissionSequence.CitywideAlert;
         private static readonly FixedString64Bytes GroundedSignal = CampaignMissionSequence.GroundedSignal;
         private static readonly FixedString64Bytes SplitFront = CampaignMissionSequence.SplitFront;
@@ -37,6 +38,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes DamagedDebrief = "seq.ch01.m03.debrief.damaged";
         private static readonly FixedString64Bytes CleanDebrief = "seq.ch01.m03.debrief.clean";
         internal static bool UsesBlockingComms(in FixedString64Bytes missionId, in CampaignMissionAttemptFactsComponent facts) =>
+            missionId.Equals(TrustUnderFire) && facts.TrustCommsReady != 0 ||
             missionId.Equals(CitywideAlert) && facts.CitywideCommsReady != 0 ||
             missionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) && facts.ArmorBreakHeavyDisabled != 0 && facts.ArmorBreakCommandDisabled == 0 ||
             missionId.Equals(GroundedSignal) && facts.GroundedSignalInserted!=0 && facts.ExtractionDeparted==0 ||
@@ -53,7 +55,7 @@ namespace Game.Runtime
             missionId.Equals(RouteReopened) && facts.RouteRelayNodeActivated!=0 && facts.RouteRecordsPreserved==0 ||
             missionId.Equals(PowerRelay) && facts.PowerSafeRouteConfirmed==0;
         internal static bool UsesMissionSequences(in FixedString64Bytes missionId) =>
-            missionId.Equals(CitywideAlert) || missionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) || missionId.Equals(GroundedSignal) || missionId.Equals(SplitFront) || missionId.Equals(SteelPush) || missionId.Equals(AirCorridor) || missionId.Equals(NetworkBreak) || missionId.Equals(EvidenceChain) || missionId.Equals(FalseFront) || missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
+            missionId.Equals(TrustUnderFire) || missionId.Equals(CitywideAlert) || missionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) || missionId.Equals(GroundedSignal) || missionId.Equals(SplitFront) || missionId.Equals(SteelPush) || missionId.Equals(AirCorridor) || missionId.Equals(NetworkBreak) || missionId.Equals(EvidenceChain) || missionId.Equals(FalseFront) || missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
         internal static FixedString64Bytes ResolveDebrief(in FixedString64Bytes missionId,
             in CampaignMissionAttemptFactsComponent facts, in FixedString64Bytes fallback)
         {

@@ -9,6 +9,8 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionResultProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes TrustResultMissionId = CampaignMissionSequence.TrustUnderFire;
+        private static readonly FixedString64Bytes TrustNorthRole = "role.friendly.convoy.north", TrustSouthRole = "role.friendly.convoy.south", TrustRelayRole = "role.hostile.relay";
         private static readonly FixedString64Bytes CitywideResultMissionId = CampaignMissionSequence.CitywideAlert;
         private static readonly FixedString64Bytes CitywideResultResponseRole = "role.friendly.response.clinic";
         private static readonly FixedString64Bytes ArmorBreakMissionId = CampaignMissionSequence.ArmorBreak;
@@ -188,6 +190,7 @@ namespace Game.Runtime
             // combined-arms mastery and authority custody, not a forward-post defense.
             if (definition.MissionId.Equals(ArmorBreakMissionId))
                 return ArmorBreakFactsMatchOutcome(outcome, in facts, ref definition);
+            if (definition.MissionId.Equals(TrustResultMissionId)) return TrustFactsMatchOutcome(outcome, in facts, ref definition);
             if (definition.MissionId.Equals(CitywideResultMissionId))
                 return CitywideFactsMatchOutcome(outcome,in facts,ref definition);
             if (definition.Defense.Enabled != 0)
@@ -241,6 +244,18 @@ namespace Game.Runtime
                 : outcome == MissionOutcomeKind.Defeat && failureBroken;
         }
 
+        private static bool TrustFactsMatchOutcome(MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts, ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.Defense.Enabled == 0 || definition.Objectives.Length != 3 ||
+                definition.Objectives[0].Rule != MissionObjectiveRuleKind.ProtectTrustNorthRoute || definition.Objectives[0].RequiredCount != 1 || !definition.Objectives[0].MissionRoleId.Equals(TrustNorthRole) || !definition.Objectives[0].TargetConfigId.IsEmpty ||
+                definition.Objectives[1].Rule != MissionObjectiveRuleKind.ProtectTrustSouthRoute || definition.Objectives[1].RequiredCount != 1 || !definition.Objectives[1].MissionRoleId.Equals(TrustSouthRole) || !definition.Objectives[1].TargetConfigId.IsEmpty ||
+                definition.Objectives[2].Rule != MissionObjectiveRuleKind.VerifyTrustBroadcast || definition.Objectives[2].RequiredCount != 3 || !definition.Objectives[2].MissionRoleId.Equals(TrustRelayRole) || !definition.Objectives[2].TargetConfigId.IsEmpty ||
+                facts.HostileRosterIntegrityFault != 0 || facts.TrustFailure == TrustUnderFireFailure.Integrity) return false;
+            if (outcome == MissionOutcomeKind.Defeat) return facts.TrustFailure != TrustUnderFireFailure.None;
+            return outcome == MissionOutcomeKind.Victory && facts.TrustFailure == TrustUnderFireFailure.None && facts.TrustNorthCrossed != 0 && facts.TrustSouthCrossed != 0 &&
+                facts.TrustNorthArrived != 0 && facts.TrustSouthArrived != 0 && facts.TrustRelayVerified != 0 && facts.TrustMilitaryCleared != 0 && facts.TrustStableMilliseconds >= 6000 &&
+                facts.HostileTotalCount == 9 && facts.HostileDefeatedCount == 9 && facts.CivilianTotalCount == 4 && facts.CivilianLossCount == 0 && facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive != 0;
+        }
         private static bool CitywideFactsMatchOutcome(MissionOutcomeKind outcome,in CampaignMissionAttemptFactsComponent facts,ref CampaignMissionDefinitionBlob definition)
         {
             if (definition.Defense.Enabled==0 || definition.Objectives.Length!=3 ||

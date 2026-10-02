@@ -333,6 +333,194 @@ MonoBehaviour:
     - key: mission.air_corridor.warning.west
       value: "WESTERN APPROACH \xB7 Two drones and one jet. Keep the radar protected;
         launcher fire is automatic."
+    - key: mission.armor_break.deadline
+      value: Break the link and secure the package before time runs out
+    - key: mission.armor_break.enemy_intel
+      value: Heavy battery, armored command group and incoming aircraft. Keep combat
+        away from the relief corridor.
+    - key: mission.armor_break.forces
+      value: "G2A \xB7 G2G \xB7 radar \xB7 armor \xB7 attack helicopter \xB7 recovery
+        infantry"
+    - key: mission.armor_break.guide.diagram
+      value: COVER | STRIKE | RECOVER
+    - key: mission.armor_break.guide.example
+      value: "Cover air \u2192 confirmed long-range strike \u2192 helicopter \u2192
+        armor \u2192 authority."
+    - key: mission.armor_break.guide.mistake
+      value: Protect the relief corridor and civilian Fuel reserve. Optional Support
+        is never required.
+    - key: mission.armor_break.guide.title
+      value: "ARMOR BREAK \xB7 FIELD GUIDE"
+    - key: mission.armor_break.hud.approach
+      value: Move into range, then Attack the marked military target.
+    - key: mission.armor_break.hud.fuel
+      value: "Military Fuel: {0} \xB7 civilian reserve protected"
+    - key: mission.armor_break.hud.hold_time
+      value: "Hold: {0}/6 s \xB7 Time: {1}"
+    - key: mission.armor_break.hud.recovery
+      value: 'Authority recovery: {0}/6 s'
+    - key: mission.armor_break.hud.stage.1
+      value: "COVERAGE \xB7 G2A \u2192 Move \u2192 coverage"
+    - key: mission.armor_break.hud.stage.2
+      value: "AIR DEFENSE \xB7 Hold coverage and watch interception"
+    - key: mission.armor_break.hud.stage.3
+      value: "BATTERY \xB7 G2G \u2192 Attack \u2192 military battery"
+    - key: mission.armor_break.hud.stage.4
+      value: "AIR STRIKE \xB7 Helicopter \u2192 Attack \u2192 military armor"
+    - key: mission.armor_break.hud.stage.5
+      value: "APPROACH \xB7 Armored group \u2192 Move \u2192 approach"
+    - key: mission.armor_break.hud.stage.6
+      value: "COMMAND \xB7 Armored group \u2192 Attack \u2192 command targets"
+    - key: mission.armor_break.hud.stage.7
+      value: "AUTHORITY \xB7 Recovery infantry \u2192 Move \u2192 package"
+    - key: mission.armor_break.hud.time
+      value: 'Operation window: {0}'
+    - key: mission.armor_break.intel.air
+      value: AIR THREAT
+    - key: mission.armor_break.intel.heavy
+      value: HEAVY WEAPONS
+    - key: mission.armor_break.intel.incoming
+      value: INCOMING
+    - key: mission.armor_break.intel.present
+      value: PRESENT
+    - key: mission.armor_break.label.deadline
+      value: OPERATION WINDOW
+    - key: mission.armor_break.label.fuel
+      value: FUEL STAGING
+    - key: mission.armor_break.location
+      value: "Sahrin \xB7 refinery\u2013airfield military sector"
+    - key: mission.armor_break.marker.authority
+      value: AUTHORITY
+    - key: mission.armor_break.marker.coverage
+      value: COVERAGE
+    - key: mission.armor_break.marker.relief
+      value: RELIEF
+    - key: mission.armor_break.name
+      value: Armor Break
+    - key: mission.armor_break.objective.authority
+      value: Recover the authority package
+    - key: mission.armor_break.objective.command
+      value: Defeat the military command group
+    - key: mission.armor_break.objective.military
+      value: Defeat the military command group
+    - key: mission.armor_break.objective.relief
+      value: Protect the relief corridor and Fuel depot
+    - key: mission.armor_break.resources
+      value: "Fuel staged \xB7 civilian reserve protected \xB7 support optional"
+    - key: mission.armor_break.result.air_defense_lost
+      value: Air defense was lost before the air threats were stopped. Keep the G2A
+        covered and inside radar coverage.
+    - key: mission.armor_break.result.aircraft_lost
+      value: The attack helicopter was lost before its ordered strike. Protect it
+        and target the exposed military armor.
+    - key: mission.armor_break.result.armor_lost
+      value: The original armored group was lost before military command was defeated.
+        Protect at least one original armored vehicle for the assault.
+    - key: mission.armor_break.result.combat_losses
+      value: COMBAT LOSSES
+    - key: mission.armor_break.result.defeat
+      value: OPERATION FAILED
+    - key: mission.armor_break.result.fuel_lost
+      value: Fuel staging or its protected civilian reserve was lost. Protect the
+        depot and preserve the relief allocation.
+    - key: mission.armor_break.result.launcher_lost
+      value: The G2G launcher was lost before its military battery strike completed.
+        Protect the launcher until the battery is disabled.
+    - key: mission.armor_break.result.loss
+      value: The operation could not secure the authority package. Protect the recovery
+        team, air defense, launcher and Fuel staging, then retry.
+    - key: mission.armor_break.result.mastery_lost
+      value: The required combined-arms targets were destroyed before the launcher
+        or helicopter attack. Use the G2G against the battery and order a helicopter
+        strike before completing the ground assault.
+    - key: mission.armor_break.result.relief_losses
+      value: RELIEF STAFF LOSSES
+    - key: mission.armor_break.result.relief_lost
+      value: Relief staff were lost. Keep fighting and missile strikes outside the
+        protected corridor.
+    - key: mission.armor_break.result.star.authority
+      value: Command defeated and authority secured
+    - key: mission.armor_break.result.subtitle
+      value: "ARMOR BREAK \xB7 AUTHORITY PACKAGE"
+    - key: mission.armor_break.result.success
+      value: The command group is defeated and the authority package is secure. The
+        relief corridor and civilian Fuel reserve are protected. Protocol Fragment
+        Four reveals the two keys.
+    - key: mission.armor_break.result.success_short
+      value: Command group defeated. Authority package secured. Relief corridor protected.
+    - key: mission.armor_break.result.team_lost
+      value: The original recovery infantry were lost. Keep surviving team members
+        alive to recover the authority package.
+    - key: mission.armor_break.result.timeout
+      value: The operation window closed. Stop the air threats, break military command
+        and recover the package within fifteen minutes.
+    - key: mission.armor_break.result.victory
+      value: COMMAND GROUP BROKEN
+    - key: mission.armor_break.reward.card
+      value: "Commander XP \xB7 Credits \xB7 Protocol Fragment 4"
+    - key: mission.armor_break.star.1
+      value: Complete the mission
+    - key: mission.armor_break.star.2
+      value: No friendly combat losses
+    - key: mission.armor_break.star.3
+      value: Relief and Fuel protected
+    - key: mission.armor_break.summary
+      value: "Break Vanguard\u2019s command group and recover the authority package.
+        Coordinate air defense, long-range fire, aircraft and armor. Protect the
+        relief corridor."
+    - key: mission.armor_break.tutorial.1.body
+      value: Select the supplied G2A and Move to the coverage marker. Keep its radar
+        and Fuel staging safe. Show Me moves only the camera.
+    - key: mission.armor_break.tutorial.1.title
+      value: Cover the approach
+    - key: mission.armor_break.tutorial.2.body
+      value: Keep the G2A in coverage while it intercepts the incoming aircraft.
+        Protect it until the air threats are defeated.
+    - key: mission.armor_break.tutorial.2.title
+      value: Stop the air attack
+    - key: mission.armor_break.tutorial.3.body
+      value: Select the G2G launcher and use Attack on the military battery. This
+        target order authorizes the shot. Keep the protected relief corridor outside
+        the strike.
+    - key: mission.armor_break.tutorial.3.title
+      value: Disable the heavy battery
+    - key: mission.armor_break.tutorial.4.approach.body
+      value: Select the attack helicopter and Move into range of the marked military
+        target. Then use Attack.
+    - key: mission.armor_break.tutorial.4.approach.title
+      value: Position the attack helicopter
+    - key: mission.armor_break.tutorial.4.body
+      value: Select the attack helicopter. Move into range if needed, then Attack
+        each marked armored defender before advancing your armor.
+    - key: mission.armor_break.tutorial.4.title
+      value: Strike the exposed armor
+    - key: mission.armor_break.tutorial.5.body
+      value: Select the surviving original armored group together and Move through
+        the cleared approach. Keep the relief corridor clear of combat.
+    - key: mission.armor_break.tutorial.5.title
+      value: Advance the armored group
+    - key: mission.armor_break.tutorial.6.aircraft.body
+      value: Select the surviving attack helicopter and use Attack on the remaining
+        verified command targets. Protect the recovery infantry and Fuel depot.
+    - key: mission.armor_break.tutorial.6.body
+      value: "Use the armored group\u2019s Attack command on the remaining verified
+        command targets. Protect the recovery infantry and Fuel depot."
+    - key: mission.armor_break.tutorial.6.title
+      value: Break military command
+    - key: mission.armor_break.tutorial.7.body
+      value: Select the surviving original recovery infantry together and Move to
+        the package. Hold dismounted and uncontested for six seconds. Leaving or
+        boarding cancels recovery.
+    - key: mission.armor_break.tutorial.7.title
+      value: Secure the authority package
+    - key: mission.armor_break.warning.0
+      value: "Heavy battery \xB7 use the ground launcher"
+    - key: mission.armor_break.warning.1
+      value: "Hostile armor \xB7 keep combat away from relief"
+    - key: mission.armor_break.warning.2
+      value: "Command group \xB7 secure the authority package"
+    - key: mission.armor_break.warning.3
+      value: "Incoming aircraft \xB7 hold air-defense coverage"
     - key: mission.evidence_chain.deadline
       value: 11 active minutes
     - key: mission.evidence_chain.enemy_intel
@@ -3181,6 +3369,60 @@ MonoBehaviour:
       value: The medical cargo and evacuees are through. These pilots flew a coordinated
         military plan. Vanguard isn't just supplying Qassem anymore; it's moving
         to take the Relay.
+    - key: narrative.armor_break.brief-01
+      value: Vanguard's command group is preparing to link heavy weapons to the dormant
+        Relay nodes. Break their military position and protect the relief corridor.
+        We cannot trade the city's infrastructure for this victory.
+    - key: narrative.armor_break.brief-02
+      value: Keep our armor, air defense, and long-range weapons working together.
+        Fuel has been staged for this operation. Clear the military approach before
+        moving the recovery team into the command compound.
+    - key: narrative.armor_break.brief-03
+      value: The authority package is inside the command compound. Defeat the verified
+        military targets, then recover the package. Optional support requires your
+        confirmation for each action. I will mark targets without issuing orders.
+    - key: narrative.armor_break.close-01
+      value: This is the captured handshake. Vanguard hardware was trying to connect
+        to a dormant Civic Relay node. The authority package preserves the request
+        exactly as it was sent.
+    - key: narrative.armor_break.close-02
+      value: 'The first key is my restored archive: the system knowledge needed to
+        identify the Relay''s nodes and control paths. Recovering that archive does
+        not authorize me to use it against the city.'
+    - key: narrative.armor_break.close-03
+      value: The second key is the Commander's current emergency credential. The
+        request needs a living authority, not an old access list or a copied identity.
+    - key: narrative.armor_break.close-04
+      value: Knowledge and authority are separate. Neither key alone completes the
+        override. I have archived Protocol Fragment Four, the authority package,
+        and the two-key diagram so you can inspect the evidence.
+    - key: narrative.armor_break.close-05
+      value: Then let every district call at once. Fuel, medicine, power, and command
+        will lead you back to the center. I only need the two keys to arrive together.
+    - key: narrative.armor_break.close-06
+      value: Sahrin's warnings are spreading. We have the evidence and the choice
+        of our next route. Commander, the citywide response is yours to direct.
+    - key: narrative.armor_break.comms-01
+      value: The link has begun. Its handshake asks for two keys. Commander, do you
+        authorize one bounded support action? Use the existing Support controls if
+        you choose it. I will wait for your confirmation; we can continue without
+        it.
+    - key: narrative.armor_break.comms-02
+      value: You can break my command group, Commander. You cannot keep the whole
+        city apart. ARIA holds the system knowledge. You hold the emergency authority.
+        Sahrin will bring both of you to the same door.
+    - key: narrative.armor_break.debrief-01
+      value: Vanguard's command group is broken. The authority package is secured
+        and the relief corridor is intact. Keep the recovery team covered while we
+        verify what they were trying to connect.
+    - key: narrative.armor_break.debrief-02
+      value: Protocol Fragment Four is complete. Qassem needs my restored archive
+        as the knowledge key and your current emergency credential as the live authority
+        key. Neither key alone can complete his override.
+    - key: narrative.armor_break.debrief-03
+      value: Warnings are coming in from several districts at once. This was one
+        part of a synchronized attack. Take the evidence with us. The next operation
+        will have to protect the city's routes together.
     - key: narrative.evidence_chain.brief.01
       value: The archive custodian made it to my clinic. The witness has the physical
         record, and the roads outside are closing. They need a safe passage, not
@@ -5084,6 +5326,12 @@ MonoBehaviour:
       value: Supplies are reaching the people you protected.
     - key: ui.home.aftermath.watch
       value: Your team stands watch over the districts you secured.
+    - key: ui.home.archive.armor_break.authority
+      value: CAPTURED AUTHORITY PACKAGE
+    - key: ui.home.archive.armor_break.fragment4
+      value: PROTOCOL FRAGMENT IV
+    - key: ui.home.archive.armor_break.two_keys
+      value: TWO-KEY AUTHORIZATION DIAGRAM
     - key: ui.home.archive.brief
       value: BRIEFING
     - key: ui.home.archive.chapter_close
@@ -8314,6 +8562,358 @@ MonoBehaviour:
         \u0631\u0627\u062F\u0627\u0631 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u061B
         \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631
         \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.armor_break.deadline
+      value: "\u0642\u0628\u0644 \u0627\u0632 \u067E\u0627\u06CC\u0627\u0646 \u0641\u0631\u0635\u062A\u060C
+        \u0627\u062A\u0635\u0627\u0644 \u0631\u0648 \u0642\u0637\u0639 \u06A9\u0646
+        \u0648 \u0628\u0633\u062A\u0647 \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.armor_break.enemy_intel
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0633\u0646\u06AF\u06CC\u0646\u060C
+        \u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0632\u0631\u0647\u06CC \u0648 \u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC
+        \u062F\u0634\u0645\u0646. \u0646\u0628\u0631\u062F \u0631\u0648 \u0627\u0632
+        \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u062F\u0648\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.armor_break.forces
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \xB7 \u0645\u0648\u0634\u06A9
+        \u0632\u0645\u06CC\u0646\u200C\u0628\u0647\u200C\u0632\u0645\u06CC\u0646
+        \xB7 \u0631\u0627\u062F\u0627\u0631 \xB7 \u0632\u0631\u0647\u06CC \xB7 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0631\u0632\u0645\u06CC \xB7 \u062A\u06CC\u0645 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC"
+    - key: mission.armor_break.guide.diagram
+      value: "\u067E\u0648\u0634\u0634 | \u062D\u0645\u0644\u0647 | \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC"
+    - key: mission.armor_break.guide.example
+      value: "\u067E\u0648\u0634\u0634 \u0647\u0648\u0627\u06CC\u06CC \u2190 \u0634\u0644\u06CC\u06A9
+        \u062F\u0648\u0631\u0628\u0631\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190 \u0632\u0631\u0647\u06CC
+        \u2190 \u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.armor_break.guide.mistake
+      value: "\u0627\u0632 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F
+        \u0648 \u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646. \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC \u0627\u0644\u0632\u0627\u0645\u06CC
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.armor_break.guide.title
+      value: "\u0634\u06A9\u0633\u062A \u0632\u0631\u0647\u06CC \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC
+        \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.armor_break.hud.approach
+      value: "\u0628\u0647 \u0628\u0631\u062F \u0645\u0646\u0627\u0633\u0628 \u0628\u0631\u0633\u060C
+        \u0628\u0639\u062F \u0628\u0647 \u0647\u062F\u0641 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646."
+    - key: mission.armor_break.hud.fuel
+      value: "\u0633\u0648\u062E\u062A \u0646\u0638\u0627\u0645\u06CC: {0} \xB7 \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.armor_break.hud.hold_time
+      value: "\u062D\u0641\u0638: {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647
+        \xB7 \u0632\u0645\u0627\u0646: {1}"
+    - key: mission.armor_break.hud.recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.armor_break.hud.stage.1
+      value: "\u067E\u0648\u0634\u0634 \xB7 \u067E\u062F\u0627\u0641\u0646\u062F
+        \u2190 \u062D\u0631\u06A9\u062A \u2190 \u067E\u0648\u0634\u0634"
+    - key: mission.armor_break.hud.stage.2
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \u0647\u0648\u0627\u06CC\u06CC
+        \xB7 \u062D\u0641\u0638 \u067E\u0648\u0634\u0634 \u0648 \u0631\u0647\u06AF\u06CC\u0631\u06CC"
+    - key: mission.armor_break.hud.stage.3
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \xB7 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u2190 \u062D\u0645\u0644\u0647 \u2190 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.armor_break.hud.stage.4
+      value: "\u062D\u0645\u0644\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC \xB7
+        \u0628\u0627\u0644\u06AF\u0631\u062F \u2190 \u062D\u0645\u0644\u0647 \u2190
+        \u0632\u0631\u0647\u06CC \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.armor_break.hud.stage.5
+      value: "\u067E\u06CC\u0634\u0631\u0648\u06CC \xB7 \u06AF\u0631\u0648\u0647
+        \u0632\u0631\u0647\u06CC \u2190 \u062D\u0631\u06A9\u062A \u2190 \u0645\u0633\u06CC\u0631"
+    - key: mission.armor_break.hud.stage.6
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \xB7 \u06AF\u0631\u0648\u0647
+        \u0632\u0631\u0647\u06CC \u2190 \u062D\u0645\u0644\u0647 \u2190 \u0647\u062F\u0641\u200C\u0647\u0627\u06CC
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: mission.armor_break.hud.stage.7
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631 \xB7 \u062A\u06CC\u0645 \u067E\u06CC\u0627\u062F\u0647\u0654
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u2190 \u062D\u0631\u06A9\u062A
+        \u2190 \u0628\u0633\u062A\u0647"
+    - key: mission.armor_break.hud.time
+      value: "\u0641\u0631\u0635\u062A \u0639\u0645\u0644\u06CC\u0627\u062A: {0}"
+    - key: mission.armor_break.intel.air
+      value: "\u062A\u0647\u062F\u06CC\u062F \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.armor_break.intel.heavy
+      value: "\u0633\u0644\u0627\u062D\u200C\u0647\u0627\u06CC \u0633\u0646\u06AF\u06CC\u0646"
+    - key: mission.armor_break.intel.incoming
+      value: "\u062F\u0631 \u0631\u0627\u0647"
+    - key: mission.armor_break.intel.present
+      value: "\u0645\u0648\u062C\u0648\u062F"
+    - key: mission.armor_break.label.deadline
+      value: "\u0641\u0631\u0635\u062A \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: mission.armor_break.label.fuel
+      value: "\u0633\u0648\u062E\u062A \u0622\u0645\u0627\u062F\u0647"
+    - key: mission.armor_break.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0628\u062E\u0634 \u0646\u0638\u0627\u0645\u06CC
+        \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647 \u0648 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: mission.armor_break.marker.authority
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.armor_break.marker.coverage
+      value: "\u067E\u0648\u0634\u0634"
+    - key: mission.armor_break.marker.relief
+      value: "\u0627\u0645\u062F\u0627\u062F"
+    - key: mission.armor_break.name
+      value: "\u0634\u06A9\u0633\u062A \u0632\u0631\u0647\u06CC"
+    - key: mission.armor_break.objective.authority
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631"
+    - key: mission.armor_break.objective.command
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.armor_break.objective.military
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.armor_break.objective.relief
+      value: "\u0627\u0632 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F
+        \u0648 \u0627\u0646\u0628\u0627\u0631 \u0633\u0648\u062E\u062A \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646"
+    - key: mission.armor_break.resources
+      value: "\u0633\u0648\u062E\u062A \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u062A
+        \xB7 \u0630\u062E\u06CC\u0631\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0641\u0648\u0638 \xB7 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC"
+    - key: mission.armor_break.result.air_defense_lost
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \u0642\u0628\u0644 \u0627\u0632
+        \u062A\u0648\u0642\u0641 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A.
+        \u0627\u0632 \u067E\u062F\u0627\u0641\u0646\u062F \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646 \u0648 \u062F\u0631 \u067E\u0648\u0634\u0634 \u0631\u0627\u062F\u0627\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.armor_break.result.aircraft_lost
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0642\u0628\u0644 \u0627\u0632
+        \u062D\u0645\u0644\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u200C\u062F\u0627\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0627\u0632\u0634 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646 \u0648 \u0632\u0631\u0647\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u0628\u06CC\u200C\u067E\u0648\u0634\u0634 \u0631\u0648 \u0647\u062F\u0641
+        \u0628\u06AF\u06CC\u0631."
+    - key: mission.armor_break.result.armor_lost
+      value: "\u06AF\u0631\u0648\u0647 \u0632\u0631\u0647\u06CC \u0627\u0635\u0644\u06CC
+        \u0642\u0628\u0644 \u0627\u0632 \u0634\u06A9\u0633\u062A \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A.
+        \u062D\u062F\u0627\u0642\u0644 \u06CC\u06A9 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0632\u0631\u0647\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0631\u0627\u06CC
+        \u062D\u0645\u0644\u0647 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.armor_break.result.combat_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0631\u0632\u0645\u06CC"
+    - key: mission.armor_break.result.defeat
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.armor_break.result.fuel_lost
+      value: "\u0633\u0648\u062E\u062A \u0622\u0645\u0627\u062F\u0647 \u06CC\u0627
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0627\u0632 \u0627\u0646\u0628\u0627\u0631
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646 \u0648 \u0633\u0647\u0645
+        \u0627\u0645\u062F\u0627\u062F \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.armor_break.result.launcher_lost
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0642\u0628\u0644 \u0627\u0632
+        \u067E\u0627\u06CC\u0627\u0646 \u062D\u0645\u0644\u0647 \u0628\u0647 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u062A\u0627 \u0627\u0632
+        \u06A9\u0627\u0631 \u0627\u0641\u062A\u0627\u062F\u0646 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0627\u0632 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646."
+    - key: mission.armor_break.result.loss
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0627\u0645\u0646 \u0646\u0634\u062F. \u0627\u0632 \u062A\u06CC\u0645 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u060C
+        \u067E\u062F\u0627\u0641\u0646\u062F\u060C \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u0648 \u0633\u0648\u062E\u062A \u0622\u0645\u0627\u062F\u0647 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646 \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634
+        \u06A9\u0646."
+    - key: mission.armor_break.result.mastery_lost
+      value: "\u0647\u062F\u0641\u200C\u0647\u0627\u06CC \u0644\u0627\u0632\u0645
+        \u0642\u0628\u0644 \u0627\u0632 \u062D\u0645\u0644\u0647\u0654 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u06CC\u0627 \u0628\u0627\u0644\u06AF\u0631\u062F \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F\u0646. \u0622\u062A\u0634\u0628\u0627\u0631 \u0631\u0648 \u0628\u0627
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0632\u0645\u06CC\u0646\u200C\u0628\u0647\u200C\u0632\u0645\u06CC\u0646
+        \u0628\u0632\u0646 \u0648 \u0642\u0628\u0644 \u0627\u0632 \u067E\u0627\u06CC\u0627\u0646
+        \u062D\u0645\u0644\u0647\u0654 \u0632\u0645\u06CC\u0646\u06CC\u060C \u0628\u0647
+        \u0628\u0627\u0644\u06AF\u0631\u062F \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647
+        \u0628\u062F\u0647."
+    - key: mission.armor_break.result.relief_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0627\u0645\u062F\u0627\u062F"
+    - key: mission.armor_break.result.relief_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646. \u0646\u0628\u0631\u062F
+        \u0648 \u0634\u0644\u06CC\u06A9 \u0645\u0648\u0634\u06A9 \u0631\u0648 \u0628\u06CC\u0631\u0648\u0646
+        \u0645\u0633\u06CC\u0631 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.armor_break.result.star.authority
+      value: "\u0634\u06A9\u0633\u062A \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.armor_break.result.subtitle
+      value: "\u0634\u06A9\u0633\u062A \u0632\u0631\u0647\u06CC \xB7 \u0628\u0633\u062A\u0647\u0654
+        \u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.armor_break.result.success
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F \u0648 \u0628\u0633\u062A\u0647\u0654
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u0645\u0646\u0647. \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u062F\u0627\u062F \u0648 \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u0633\u0648\u062E\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0641\u0648\u0638 \u0645\u0648\u0646\u062F\u0646. \u0642\u0637\u0639\u0647\u0654
+        \u0686\u0647\u0627\u0631\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644\u060C
+        \u062F\u0648 \u06A9\u0644\u06CC\u062F \u0631\u0648 \u0622\u0634\u06A9\u0627\u0631
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.armor_break.result.success_short
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F. \u0628\u0633\u062A\u0647\u0654
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u0645\u0646 \u0634\u062F. \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u062F\u0627\u062F \u062D\u0641\u0638 \u0634\u062F."
+    - key: mission.armor_break.result.team_lost
+      value: "\u062A\u06CC\u0645 \u067E\u06CC\u0627\u062F\u0647\u0654 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0627\u0635\u0644\u06CC \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A.
+        \u0628\u0627\u0632\u0645\u0627\u0646\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u062A\u06CC\u0645 \u0631\u0648 \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631 \u062A\u0627 \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631\u0646."
+    - key: mission.armor_break.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u0639\u0645\u0644\u06CC\u0627\u062A \u062A\u0645\u0648\u0645
+        \u0634\u062F. \u062A\u0627 \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u0647\u0648\u0627\u06CC\u06CC
+        \u0631\u0648 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u060C \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647
+        \u0648 \u0628\u0633\u062A\u0647 \u0631\u0648 \u0628\u0631\u062F\u0627\u0631."
+    - key: mission.armor_break.result.victory
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062F\u0634\u0645\u0646
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.armor_break.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u0642\u0637\u0639\u0647\u0654
+        \u0686\u0647\u0627\u0631\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644"
+    - key: mission.armor_break.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.armor_break.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0631\u0632\u0645\u06CC"
+    - key: mission.armor_break.star.3
+      value: "\u0627\u0645\u062F\u0627\u062F \u0648 \u0633\u0648\u062E\u062A \u0645\u062D\u0641\u0648\u0638
+        \u0628\u0645\u0627\u0646\u0646\u062F"
+    - key: mission.armor_break.summary
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0631\u0648 \u0634\u06A9\u0633\u062A
+        \u0628\u062F\u0647 \u0648 \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631. \u067E\u062F\u0627\u0641\u0646\u062F
+        \u0647\u0648\u0627\u06CC\u06CC\u060C \u0622\u062A\u0634 \u062F\u0648\u0631\u0628\u0631\u062F\u060C
+        \u0647\u0648\u0627\u06AF\u0631\u062F \u0648 \u0632\u0631\u0647\u06CC \u0631\u0648
+        \u0647\u0645\u0627\u0647\u0646\u06AF \u06A9\u0646. \u0627\u0632 \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u062F\u0627\u062F \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.armor_break.tutorial.1.body
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \u0622\u0645\u0627\u062F\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627
+        \u062D\u0631\u06A9\u062A \u0628\u0647 \u0646\u0634\u0627\u0646 \u067E\u0648\u0634\u0634
+        \u0628\u0631\u0633\u0648\u0646. \u0631\u0627\u062F\u0627\u0631 \u0648 \u0633\u0648\u062E\u062A
+        \u0622\u0645\u0627\u062F\u0647 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062C\u0627\u0628\u0647\u200C\u062C\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.armor_break.tutorial.1.title
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0648 \u067E\u0648\u0634\u0634 \u0628\u062F\u0647"
+    - key: mission.armor_break.tutorial.2.body
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \u0631\u0648 \u062F\u0631 \u0645\u062D\u0644
+        \u067E\u0648\u0634\u0634 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627
+        \u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u0648\u0631\u0648\u062F\u06CC
+        \u0631\u0648 \u0631\u0647\u06AF\u06CC\u0631\u06CC \u06A9\u0646\u0647. \u062A\u0627
+        \u0634\u06A9\u0633\u062A \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC \u0627\u0632\u0634 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646."
+    - key: mission.armor_break.tutorial.2.title
+      value: "\u062D\u0645\u0644\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648
+        \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646"
+    - key: mission.armor_break.tutorial.3.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0632\u0645\u06CC\u0646\u200C\u0628\u0647\u200C\u0632\u0645\u06CC\u0646
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0628\u0627 \u062D\u0645\u0644\u0647
+        \u0647\u062F\u0641 \u0628\u06AF\u06CC\u0631. \u0647\u0645\u06CC\u0646 \u0641\u0631\u0645\u0627\u0646\u060C
+        \u0645\u062C\u0648\u0632 \u0634\u0644\u06CC\u06A9 \u0631\u0648 \u0645\u06CC\u200C\u062F\u0647.
+        \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u0628\u0627\u06CC\u062F
+        \u0628\u06CC\u0631\u0648\u0646 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u062D\u0645\u0644\u0647 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.armor_break.tutorial.3.title
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0633\u0646\u06AF\u06CC\u0646
+        \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.armor_break.tutorial.4.approach.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0632\u0645\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627 \u062D\u0631\u06A9\u062A
+        \u0628\u0647 \u0628\u0631\u062F \u0647\u062F\u0641 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0631\u0633\u0648\u0646.
+        \u0628\u0639\u062F \u062D\u0645\u0644\u0647 \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.armor_break.tutorial.4.approach.title
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0632\u0645\u06CC \u0631\u0648
+        \u0645\u0633\u062A\u0642\u0631 \u06A9\u0646"
+    - key: mission.armor_break.tutorial.4.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0632\u0645\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0627\u06AF\u0647 \u0644\u0627\u0632\u0645\u0647
+        \u0628\u0627 \u062D\u0631\u06A9\u062A \u0628\u0647 \u0628\u0631\u062F \u0645\u0646\u0627\u0633\u0628
+        \u0628\u0631\u0633\u060C \u0628\u0639\u062F \u067E\u06CC\u0634 \u0627\u0632
+        \u067E\u06CC\u0634\u0631\u0648\u06CC \u0632\u0631\u0647\u06CC \u062E\u0648\u062F\u06CC\u060C
+        \u0628\u0647 \u0647\u0631 \u0645\u062F\u0627\u0641\u0639 \u0632\u0631\u0647\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646."
+    - key: mission.armor_break.tutorial.4.title
+      value: "\u0628\u0647 \u0632\u0631\u0647\u06CC \u0628\u06CC\u200C\u067E\u0648\u0634\u0634
+        \u062D\u0645\u0644\u0647 \u06A9\u0646"
+    - key: mission.armor_break.tutorial.5.body
+      value: "\u0628\u0627\u0632\u0645\u0627\u0646\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u06AF\u0631\u0648\u0647 \u0632\u0631\u0647\u06CC \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0628\u0627 \u0647\u0645 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u067E\u0627\u06A9\u200C\u0634\u062F\u0647
+        \u067E\u06CC\u0634 \u0628\u0628\u0631. \u0646\u0628\u0631\u062F \u0631\u0648
+        \u0627\u0632 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u062F\u0648\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.armor_break.tutorial.5.title
+      value: "\u06AF\u0631\u0648\u0647 \u0632\u0631\u0647\u06CC \u0631\u0648 \u067E\u06CC\u0634
+        \u0628\u0628\u0631"
+    - key: mission.armor_break.tutorial.6.aircraft.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0632\u0645\u06CC \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627
+        \u062D\u0645\u0644\u0647\u060C \u0647\u062F\u0641\u200C\u0647\u0627\u06CC
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647 \u0631\u0648
+        \u0628\u0632\u0646. \u0627\u0632 \u062A\u06CC\u0645 \u067E\u06CC\u0627\u062F\u0647\u0654
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0648 \u0627\u0646\u0628\u0627\u0631
+        \u0633\u0648\u062E\u062A \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.armor_break.tutorial.6.body
+      value: "\u0628\u0627 \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647\u0654
+        \u06AF\u0631\u0648\u0647 \u0632\u0631\u0647\u06CC\u060C \u0647\u062F\u0641\u200C\u0647\u0627\u06CC
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647 \u0631\u0648
+        \u0628\u0632\u0646. \u0627\u0632 \u062A\u06CC\u0645 \u067E\u06CC\u0627\u062F\u0647\u0654
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0648 \u0627\u0646\u0628\u0627\u0631
+        \u0633\u0648\u062E\u062A \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.armor_break.tutorial.6.title
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.armor_break.tutorial.7.body
+      value: "\u0628\u0627\u0632\u0645\u0627\u0646\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u062A\u06CC\u0645 \u067E\u06CC\u0627\u062F\u0647\u0654 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0627 \u0647\u0645 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0628\u0647 \u0628\u0633\u062A\u0647 \u0628\u0631\u0633\u0648\u0646.
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u067E\u06CC\u0627\u062F\u0647
+        \u0648 \u0628\u062F\u0648\u0646 \u062F\u0634\u0645\u0646 \u0628\u0645\u0648\u0646\u0646.
+        \u062F\u0648\u0631 \u0634\u062F\u0646 \u06CC\u0627 \u0633\u0648\u0627\u0631
+        \u0634\u062F\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0631\u0648
+        \u0642\u0637\u0639 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.armor_break.tutorial.7.title
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.armor_break.warning.0
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0633\u0646\u06AF\u06CC\u0646
+        \xB7 \u0627\u0632 \u0645\u0648\u0634\u06A9 \u0632\u0645\u06CC\u0646\u200C\u0628\u0647\u200C\u0632\u0645\u06CC\u0646
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646"
+    - key: mission.armor_break.warning.1
+      value: "\u0632\u0631\u0647\u06CC \u062F\u0634\u0645\u0646 \xB7 \u0646\u0628\u0631\u062F
+        \u0631\u0648 \u0627\u0632 \u0627\u0645\u062F\u0627\u062F \u062F\u0648\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.armor_break.warning.2
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \xB7 \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.armor_break.warning.3
+      value: "\u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
+        \xB7 \u067E\u0648\u0634\u0634 \u067E\u062F\u0627\u0641\u0646\u062F \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
     - key: mission.evidence_chain.deadline
       value: "\u06F1\u06F1 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -13490,6 +14090,148 @@ MonoBehaviour:
         \u0628\u0647 \u0642\u0627\u0633\u0645 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
         \u0646\u0645\u06CC\u200C\u062F\u0647\u061B \u0627\u0648\u0645\u062F\u0647
         \u0631\u0644\u0647 \u0631\u0648 \u062A\u0635\u0631\u0641 \u06A9\u0646\u0647."
+    - key: narrative.armor_break.brief-01
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u062F\u0627\u0631\u0647 \u0633\u0644\u0627\u062D\u200C\u0647\u0627\u06CC
+        \u0633\u0646\u06AF\u06CC\u0646 \u0631\u0648 \u0628\u0647 \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u062E\u0627\u0645\u0648\u0634 \u0631\u0644\u0647 \u0648\u0635\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0645\u0648\u0636\u0639 \u0646\u0638\u0627\u0645\u06CC\u0634\u0648\u0646
+        \u0631\u0648 \u062F\u0631\u0647\u0645 \u0628\u0634\u06A9\u0646\u06CC\u0646
+        \u0648 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646. \u0627\u06CC\u0646 \u067E\u06CC\u0631\u0648\u0632\u06CC
+        \u0646\u0628\u0627\u06CC\u062F \u0628\u0647 \u0642\u06CC\u0645\u062A \u0632\u06CC\u0631\u0633\u0627\u062E\u062A
+        \u0634\u0647\u0631 \u062A\u0645\u0648\u0645 \u0628\u0634\u0647."
+    - key: narrative.armor_break.brief-02
+      value: "\u0632\u0631\u0647\u06CC\u060C \u067E\u062F\u0627\u0641\u0646\u062F
+        \u0647\u0648\u0627\u06CC\u06CC \u0648 \u0633\u0644\u0627\u062D\u200C\u0647\u0627\u06CC
+        \u062F\u0648\u0631\u0628\u0631\u062F\u0645\u0648\u0646 \u0628\u0627\u06CC\u062F
+        \u0647\u0645\u0627\u0647\u0646\u06AF \u06A9\u0627\u0631 \u06A9\u0646\u0646.
+        \u0633\u0648\u062E\u062A \u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0622\u0645\u0627\u062F\u0647 \u0634\u062F\u0647. \u0642\u0628\u0644 \u0627\u0632
+        \u0648\u0631\u0648\u062F \u062A\u06CC\u0645 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u0647 \u0645\u062D\u0648\u0637\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC\u060C
+        \u0645\u0633\u06CC\u0631 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u06A9\u0646\u06CC\u0646."
+    - key: narrative.armor_break.brief-03
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u062F\u0627\u062E\u0644 \u0645\u062D\u0648\u0637\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC\u0647.
+        \u0647\u062F\u0641\u200C\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0631\u0648 \u0627\u0632
+        \u0628\u06CC\u0646 \u0628\u0628\u0631\u060C \u0628\u0639\u062F \u0628\u0633\u062A\u0647
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631. \u0647\u0631 \u0627\u0642\u062F\u0627\u0645
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC
+        \u0628\u0647 \u062A\u0623\u06CC\u06CC\u062F \u0634\u0645\u0627 \u0646\u06CC\u0627\u0632
+        \u062F\u0627\u0631\u0647. \u0647\u062F\u0641\u200C\u0647\u0627 \u0631\u0648
+        \u0646\u0634\u0648\u0646 \u0645\u06CC\u200C\u062F\u0645\u060C \u0628\u062F\u0648\u0646
+        \u0627\u06CC\u0646\u06A9\u0647 \u0641\u0631\u0645\u0627\u0646 \u0628\u062F\u0645."
+    - key: narrative.armor_break.close-01
+      value: "\u0627\u06CC\u0646 \u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u062A\u0635\u0627\u0644\u06CC\u0647
+        \u06A9\u0647 \u06AF\u0631\u0641\u062A\u06CC\u0645. \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0645\u06CC\u200C\u062E\u0648\u0627\u0633\u062A
+        \u0628\u0647 \u06CC\u06A9\u06CC \u0627\u0632 \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u062E\u0627\u0645\u0648\u0634 \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC
+        \u0648\u0635\u0644 \u0628\u0634\u0647. \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631\u060C
+        \u0647\u0645\u0648\u0646 \u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0647."
+    - key: narrative.armor_break.close-02
+      value: "\u06A9\u0644\u06CC\u062F \u0627\u0648\u0644 \u0622\u0631\u0634\u06CC\u0648
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647\u0654
+        \u0645\u0646\u0647\u061B \u062F\u0627\u0646\u0634 \u0633\u0627\u0645\u0627\u0646\u0647
+        \u0628\u0631\u0627\u06CC \u0634\u0646\u0627\u062E\u062A \u06AF\u0631\u0647\u200C\u0647\u0627
+        \u0648 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u06A9\u0646\u062A\u0631\u0644
+        \u0631\u0644\u0647. \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0627\u06CC\u0646
+        \u0622\u0631\u0634\u06CC\u0648 \u0628\u0647 \u0645\u0646 \u0645\u062C\u0648\u0632
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0627\u0632 \u0627\u0648\u0646
+        \u0639\u0644\u06CC\u0647 \u0634\u0647\u0631 \u0631\u0648 \u0646\u0645\u06CC\u200C\u062F\u0647."
+    - key: narrative.armor_break.close-03
+      value: "\u06A9\u0644\u06CC\u062F \u062F\u0648\u0645\u060C \u0645\u062C\u0648\u0632
+        \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u0641\u0639\u0644\u06CC \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u200C\u0633\u062A.
+        \u0627\u06CC\u0646 \u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0632\u0646\u062F\u0647 \u0645\u06CC\u200C\u062E\u0648\u0627\u062F\u060C
+        \u0646\u0647 \u0641\u0647\u0631\u0633\u062A \u062F\u0633\u062A\u0631\u0633\u06CC
+        \u0642\u062F\u06CC\u0645\u06CC \u06CC\u0627 \u0647\u0648\u06CC\u062A \u06A9\u067E\u06CC\u200C\u0634\u062F\u0647."
+    - key: narrative.armor_break.close-04
+      value: "\u062F\u0627\u0646\u0634 \u0648 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0627\u0632 \u0647\u0645 \u062C\u062F\u0627 \u0647\u0633\u062A\u0646. \u0647\u06CC\u0686\u200C\u06A9\u062F\u0648\u0645
+        \u0628\u0647\u200C\u062A\u0646\u0647\u0627\u06CC\u06CC \u06A9\u0646\u062A\u0631\u0644
+        \u0631\u0648 \u06A9\u0627\u0645\u0644 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0642\u0637\u0639\u0647\u0654 \u0686\u0647\u0627\u0631\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644\u060C
+        \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0648
+        \u0646\u0645\u0648\u062F\u0627\u0631 \u062F\u0648 \u06A9\u0644\u06CC\u062F
+        \u0631\u0648 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u06A9\u0631\u062F\u0645
+        \u062A\u0627 \u0645\u062F\u0631\u06A9 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u0646."
+    - key: narrative.armor_break.close-05
+      value: "\u067E\u0633 \u0628\u0630\u0627\u0631 \u0647\u0645\u0647\u0654 \u0645\u0646\u0637\u0642\u0647\u200C\u0647\u0627
+        \u0647\u0645\u200C\u0632\u0645\u0627\u0646 \u06A9\u0645\u06A9 \u0628\u062E\u0648\u0627\u0646.
+        \u0633\u0648\u062E\u062A\u060C \u062F\u0627\u0631\u0648\u060C \u0628\u0631\u0642
+        \u0648 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0634\u0645\u0627
+        \u0631\u0648 \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0648\u0646\u0646.
+        \u0641\u0642\u0637 \u06A9\u0627\u0641\u06CC\u0647 \u062F\u0648 \u06A9\u0644\u06CC\u062F
+        \u0628\u0627 \u0647\u0645 \u0628\u0631\u0633\u0646."
+    - key: narrative.armor_break.close-06
+      value: "\u0647\u0634\u062F\u0627\u0631\u0647\u0627 \u062F\u0627\u0631\u0646
+        \u062A\u0648\u06CC \u0633\u0647\u0631\u06CC\u0646 \u067E\u062E\u0634 \u0645\u06CC\u200C\u0634\u0646.
+        \u0645\u062F\u0631\u06A9 \u062F\u0633\u062A \u0645\u0627\u0633\u062A \u0648
+        \u0645\u0633\u06CC\u0631 \u0628\u0639\u062F\u06CC \u0631\u0648 \u062E\u0648\u062F\u0645\u0648\u0646
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645.
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u0647\u062F\u0627\u06CC\u062A
+        \u067E\u0627\u0633\u062E \u0633\u0631\u0627\u0633\u0631\u06CC \u0634\u0647\u0631
+        \u0628\u0627 \u0634\u0645\u0627\u0633\u062A."
+    - key: narrative.armor_break.comms-01
+      value: "\u0627\u062A\u0635\u0627\u0644 \u0634\u0631\u0648\u0639 \u0634\u062F\u0647.
+        \u0628\u0631\u0627\u06CC \u0628\u0631\u0642\u0631\u0627\u0631\u06CC\u0634
+        \u062F\u0648 \u06A9\u0644\u06CC\u062F \u0645\u06CC\u200C\u062E\u0648\u0627\u0646.
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u06CC\u06A9 \u0627\u0642\u062F\u0627\u0645
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0645\u062D\u062F\u0648\u062F
+        \u0631\u0648 \u0645\u062C\u0627\u0632 \u0645\u06CC\u200C\u062F\u0648\u0646\u06CC\u0646\u061F
+        \u0627\u06AF\u0647 \u0627\u0646\u062A\u062E\u0627\u0628\u0634 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0646\u060C
+        \u0627\u0632 \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u0646. \u0645\u0646\u062A\u0638\u0631
+        \u062A\u0623\u06CC\u06CC\u062F\u062A\u0648\u0646 \u0645\u06CC\u200C\u0645\u0648\u0646\u0645\u061B
+        \u0628\u062F\u0648\u0646 \u0627\u0648\u0646 \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0646\u06CC\u0645
+        \u0627\u062F\u0627\u0645\u0647 \u0628\u062F\u06CC\u0645."
+    - key: narrative.armor_break.comms-02
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u0645\u06CC\u200C\u062A\u0648\u0646\u06CC
+        \u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0645\u0646 \u0631\u0648 \u0628\u0634\u06A9\u0646\u06CC. \u0648\u0644\u06CC
+        \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u06CC \u062A\u0645\u0627\u0645
+        \u0634\u0647\u0631 \u0631\u0648 \u062C\u062F\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC.
+        \u0622\u0631\u06CC\u0627 \u062F\u0627\u0646\u0634 \u0633\u0627\u0645\u0627\u0646\u0647
+        \u0631\u0648 \u062F\u0627\u0631\u0647\u060C \u062A\u0648 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u0631\u0648. \u0633\u0647\u0631\u06CC\u0646
+        \u0647\u0631 \u062F\u0648\u062A\u0648\u0646 \u0631\u0648 \u0628\u0647 \u06CC\u06A9
+        \u062F\u0631 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647."
+    - key: narrative.armor_break.debrief-01
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0627\u0632 \u0647\u0645 \u067E\u0627\u0634\u06CC\u062F.
+        \u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u0645\u0646\u0647
+        \u0648 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u0633\u0627\u0644\u0645
+        \u0645\u0648\u0646\u062F\u0647. \u062A\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u0645 \u0645\u06CC\u200C\u062E\u0648\u0627\u0633\u062A\u0646
+        \u0686\u06CC \u0631\u0648 \u0648\u0635\u0644 \u06A9\u0646\u0646\u060C \u067E\u0648\u0634\u0634
+        \u062A\u06CC\u0645 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646."
+    - key: narrative.armor_break.debrief-02
+      value: "\u0642\u0637\u0639\u0647\u0654 \u0686\u0647\u0627\u0631\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u06A9\u0627\u0645\u0644\u0647. \u0642\u0627\u0633\u0645 \u0622\u0631\u0634\u06CC\u0648
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647\u0654
+        \u0645\u0646 \u0631\u0648 \u0628\u0647 \u0639\u0646\u0648\u0627\u0646 \u06A9\u0644\u06CC\u062F
+        \u062F\u0627\u0646\u0634 \u0648 \u0645\u062C\u0648\u0632 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0641\u0639\u0644\u06CC \u0634\u0645\u0627 \u0631\u0648 \u0628\u0647 \u0639\u0646\u0648\u0627\u0646
+        \u06A9\u0644\u06CC\u062F \u0627\u062E\u062A\u06CC\u0627\u0631 \u0632\u0646\u062F\u0647
+        \u0645\u06CC\u200C\u062E\u0648\u0627\u062F. \u0647\u06CC\u0686\u200C\u06A9\u062F\u0648\u0645
+        \u0628\u0647\u200C\u062A\u0646\u0647\u0627\u06CC\u06CC \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u06A9\u0646\u062A\u0631\u0644 \u0631\u0648 \u0628\u0647\u0634 \u0628\u062F\u0647."
+    - key: narrative.armor_break.debrief-03
+      value: "\u0627\u0632 \u0686\u0646\u062F \u0645\u0646\u0637\u0642\u0647 \u0647\u0645\u200C\u0632\u0645\u0627\u0646
+        \u0647\u0634\u062F\u0627\u0631 \u0645\u06CC\u200C\u0631\u0633\u0647. \u0627\u06CC\u0646
+        \u0641\u0642\u0637 \u0628\u062E\u0634\u06CC \u0627\u0632 \u06CC\u06A9 \u062D\u0645\u0644\u0647\u0654
+        \u0647\u0645\u0627\u0647\u0646\u06AF \u0628\u0648\u062F. \u0645\u062F\u0631\u06A9
+        \u0631\u0648 \u0628\u0627 \u062E\u0648\u062F\u0645\u0648\u0646 \u0645\u06CC\u200C\u0628\u0631\u06CC\u0645.
+        \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC \u0628\u0627\u06CC\u062F
+        \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0634\u0647\u0631 \u0631\u0648
+        \u0628\u0627 \u0647\u0645 \u062D\u0641\u0638 \u06A9\u0646\u0647."
     - key: narrative.evidence_chain.brief.01
       value: "\u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
         \u062E\u0648\u062F\u0634 \u0631\u0648 \u0628\u0647 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
@@ -16731,6 +17473,13 @@ MonoBehaviour:
     - key: ui.home.aftermath.watch
       value: "\u06AF\u0631\u0648\u0647\u062A \u0645\u0631\u0627\u0642\u0628 \u0645\u062D\u0644\u0647\u200C\u0647\u0627\u06CC\u06CC\u0647
         \u06A9\u0647 \u0627\u0645\u0646 \u06A9\u0631\u062F\u06CC."
+    - key: ui.home.archive.armor_break.authority
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0627\u062E\u062A\u06CC\u0627\u0631\u0650
+        \u0636\u0628\u0637\u200C\u0634\u062F\u0647"
+    - key: ui.home.archive.armor_break.fragment4
+      value: "\u0642\u0637\u0639\u0647\u0654 \u0686\u0647\u0627\u0631\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644"
+    - key: ui.home.archive.armor_break.two_keys
+      value: "\u0646\u0645\u0648\u062F\u0627\u0631 \u0645\u062C\u0648\u0632 \u062F\u0648\u06A9\u0644\u06CC\u062F\u06CC"
     - key: ui.home.archive.brief
       value: "\u062A\u0648\u062C\u06CC\u0647 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
     - key: ui.home.archive.chapter_close

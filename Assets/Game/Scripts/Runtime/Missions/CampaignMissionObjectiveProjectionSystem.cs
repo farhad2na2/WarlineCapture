@@ -106,6 +106,13 @@ namespace Game.Runtime
 
                 switch (objective.Rule)
                 {
+                    case MissionObjectiveRuleKind.DefeatArmorBreakMilitary:
+                    case MissionObjectiveRuleKind.RecoverArmorBreakAuthority:
+                    case MissionObjectiveRuleKind.ProtectArmorBreakRelief:
+                        if(!definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) || definition.Defense.Enabled==0 ||
+                            !objective.TargetConfigId.IsEmpty || objective.RequiredCount!=(objective.Rule==MissionObjectiveRuleKind.DefeatArmorBreakMilitary?12:objective.Rule==MissionObjectiveRuleKind.RecoverArmorBreakAuthority?4:3) ||
+                            !objective.MissionRoleId.Equals(new FixedString64Bytes(objective.Rule==MissionObjectiveRuleKind.DefeatArmorBreakMilitary?"role.hostile.command":objective.Rule==MissionObjectiveRuleKind.RecoverArmorBreakAuthority?"role.friendly.command_squad":"role.civilian.protected")))return false;
+                        break;
                     case MissionObjectiveRuleKind.DestroyMissionRole:
                         if (objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty ||
                             facts.HostileTotalCount != objective.RequiredCount &&
@@ -256,7 +263,7 @@ namespace Game.Runtime
                 Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
-                    MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
+                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
             };
         }
 
@@ -279,6 +286,9 @@ namespace Game.Runtime
             }
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.DefeatArmorBreakMilitary => facts.HostileTotalCount==12&&facts.HostileDefeatedCount==12?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.RecoverArmorBreakAuthority => facts.ArmorBreakAuthorityRecovered!=0?MatchObjectiveState.Complete:facts.HostileDefeatedCount==12?MatchObjectiveState.Active:MatchObjectiveState.Blocked,
+                MissionObjectiveRuleKind.ProtectArmorBreakRelief => facts.ArmorBreakReliefLost!=0?MatchObjectiveState.Failed:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DestroyMissionRole =>
                     runtime.Phase >= MissionPhaseKind.SecureCorridor ||
                     facts.HostileDefeatedCount >= objective.RequiredCount
@@ -335,6 +345,14 @@ namespace Game.Runtime
                 if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay"))) return new FixedString64Bytes("anchor.ch04.m04.relay");
                 if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.protected.terminal"))) return new FixedString64Bytes("anchor.ch04.m04.civilian_terminal");
             }
+            if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)))
+                return objective.Rule switch
+                {
+                    MissionObjectiveRuleKind.DefeatArmorBreakMilitary => new FixedString64Bytes("anchor.ch04.m05.command"),
+                    MissionObjectiveRuleKind.RecoverArmorBreakAuthority => new FixedString64Bytes("anchor.ch04.m05.authority"),
+                    MissionObjectiveRuleKind.ProtectArmorBreakRelief => new FixedString64Bytes("anchor.ch04.m05.relief"),
+                    _ => default
+                };
             return objective.Rule switch
             {
                 MissionObjectiveRuleKind.TransferSupplyOil => definition.SupplyLine.OilAnchorId,
@@ -386,6 +404,9 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts)
         {
             string objectiveId=objective.ObjectiveId.ToString();
+            if(objectiveId.StartsWith("obj.ch04.m05.",System.StringComparison.Ordinal))
+                return new FixedString128Bytes(objective.Rule==MissionObjectiveRuleKind.DefeatArmorBreakMilitary?"mission.armor_break.objective.command":
+                    objective.Rule==MissionObjectiveRuleKind.RecoverArmorBreakAuthority?"mission.armor_break.tutorial.7.body":"mission.armor_break.objective.relief");
             if (objectiveId.StartsWith("obj.ch04.m04.", System.StringComparison.Ordinal))
                 return new FixedString128Bytes(objective.Rule == MissionObjectiveRuleKind.ExtractPassengers
                     ? "mission.grounded_signal.tutorial.5.body"

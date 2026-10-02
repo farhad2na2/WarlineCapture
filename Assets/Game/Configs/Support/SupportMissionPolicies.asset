@@ -92,7 +92,7 @@ MonoBehaviour:
   - MissionId: CH04-M05
     AllowedMask: 7
     LessonKind: 3
-    PopulationCeiling: 0
+    PopulationCeiling: 48
   - MissionId: CH05-M01
     AllowedMask: 7
     LessonKind: 0

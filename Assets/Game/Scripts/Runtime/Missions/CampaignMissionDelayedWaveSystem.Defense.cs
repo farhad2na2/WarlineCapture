@@ -40,6 +40,22 @@ namespace Game.Runtime
                     facts.ElapsedMilliseconds >= authored.ActivationAtMilliseconds)
                 {
                     bool ready = true;
+                    if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) &&
+                        authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.hostile_armor")))
+                        ready=em.HasComponent<CampaignMissionArmorBreakState>(root) &&
+                            em.GetComponentData<CampaignMissionArmorBreakState>(root).BatteryDisabled!=0 &&
+                            em.GetComponentData<CampaignMissionArmorBreakState>(root).LauncherShots>0;
+                    if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)))
+                    {
+                        if(!em.HasComponent<CampaignMissionArmorBreakState>(root))ready=false;
+                        else
+                        {
+                            var armorBreak=em.GetComponentData<CampaignMissionArmorBreakState>(root);
+                            if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.air")))ready&=armorBreak.CoverageReady!=0;
+                            if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.battery")))ready&=armorBreak.AirCleared!=0;
+                            if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.command")))ready&=armorBreak.ArmorApproached!=0;
+                        }
+                    }
                     for (int j = 0; j < members.Length; j++)
                         if (members[j].ElementIndex == i &&
                             (!em.Exists(members[j].Entity) || !em.HasComponent<UnitHealth>(members[j].Entity) ||
@@ -57,9 +73,14 @@ namespace Game.Runtime
                                 commands.SetComponent(entity, combat);
                             }
                             commands.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
-                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
-                                em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
-                                em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery"));
+                            bool fixedBattery = em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                                (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
+                                em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery")) ||
+                                runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) &&
+                                (em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery")) ||
+                                 em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.command")) ||
+                                 em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.armor")) &&
+                                 em.HasComponent<CampaignMissionArmorBreakState>(root) && em.GetComponentData<CampaignMissionArmorBreakState>(root).ArmoredThreatsCleared==0));
                             if (!fixedBattery) commands.RemoveComponent<CampaignMissionStationaryUnitTag>(entity);
                         }
                         element.Activated = 1;

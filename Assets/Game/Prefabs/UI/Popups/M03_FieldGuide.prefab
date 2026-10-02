@@ -3300,6 +3300,7 @@ MonoBehaviour:
   steelPushGuide: {fileID: 11400000, guid: a3743e972309340d58297e6d007081c7, type: 2}
   splitFrontGuide: {fileID: 11400000, guid: 471ae4d3cd1c845d39f2976f93853a5f, type: 2}
   groundedSignalGuide: {fileID: 11400000, guid: df095840c85ad4fb0914fd0d00bb47ce, type: 2}
+  armorBreakGuide: {fileID: 11400000, guid: 42c46bd0ee41347c693223a5507a69a8, type: 2}
   topicsButton: {fileID: 6178553223766020603}
   classesButton: {fileID: 2093645630736046819}
   previousButton: {fileID: 9033275931593746121}

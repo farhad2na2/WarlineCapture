@@ -222,6 +222,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.RestoreRouteLink:
                 case MissionObjectiveRuleKind.CaptureRouteHub:
                 case MissionObjectiveRuleKind.PreserveRouteRecords:
+                case MissionObjectiveRuleKind.DefeatArmorBreakMilitary:
+                case MissionObjectiveRuleKind.RecoverArmorBreakAuthority:
+                case MissionObjectiveRuleKind.ProtectArmorBreakRelief:
                     return hasRole && !hasConfig &&
                         IsValidScopedId(objective.MissionRoleId, "role", 2, 7);
                 case MissionObjectiveRuleKind.BuildStructure:

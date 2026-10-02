@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
             bool persian = UiShellRuntimeGateway.Localization.IsRightToLeft;
             EnableFutureChapterCard(ChapterFourButton, 3, selectedChapter == 4,
                 persian ? "هوا و زره" : "AIR AND ARMOR",
-                persian ? "مأموریت‌های ۱ و ۲ آماده‌اند" : "M01–M02 READY");
+                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
                 persian ? "پیش‌نمایش داستان" : "STORY PREVIEW");
@@ -23,6 +23,7 @@ namespace Game.UI.Runtime
             if(selectedChapter==4&&IsChapterFour)
                 for(int index=2;index<5;index++)
                 {
+                    if(15+index<Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount)continue;
                     bool available=FutureMissionComicCatalog.Find(4,index+1)!=null;
                     if(missionNodeButtons!=null&&index<missionNodeButtons.Length&&missionNodeButtons[index]!=null)missionNodeButtons[index].interactable=available;
                     if(missionLockIcons!=null&&index<missionLockIcons.Length&&missionLockIcons[index]!=null)missionLockIcons[index].SetActive(!available);

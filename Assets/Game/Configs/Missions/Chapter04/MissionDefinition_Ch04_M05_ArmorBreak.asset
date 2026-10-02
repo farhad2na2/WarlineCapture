@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch04_M05_ArmorBreak
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch04.m05.armor_break
+  schemaVersion: 1
+  displayNameKey: mission.armor_break.name
+  displaySummaryKey: mission.armor_break.summary
+  locationNameKey: mission.armor_break.location
+  scenarioId: scenario.ch04.m05.armor_break
+  operationMapId: opmap.ch04.armor_break
+  briefingSequenceId: seq.ch04.m05.brief
+  commsSequenceId: seq.ch04.m05.comms
+  debriefSequenceId: seq.ch04.m05.debrief
+  objectives:
+  - objectiveId: obj.ch04.m05.military
+    displayTextKey: mission.armor_break.objective.military
+    rule: 29
+    missionRoleId: role.hostile.command
+    targetConfigId: 
+    requiredCount: 12
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch04.m05.authority
+    displayTextKey: mission.armor_break.objective.authority
+    rule: 30
+    missionRoleId: role.friendly.command_squad
+    targetConfigId: 
+    requiredCount: 4
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch04.m05.relief
+    displayTextKey: mission.armor_break.objective.relief
+    rule: 31
+    missionRoleId: role.civilian.protected
+    targetConfigId: 
+    requiredCount: 3
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.armor_break.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.armor_break.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 4
+    displayTextKey: mission.armor_break.star.3
+    threshold: 0
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 2500
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 11000
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

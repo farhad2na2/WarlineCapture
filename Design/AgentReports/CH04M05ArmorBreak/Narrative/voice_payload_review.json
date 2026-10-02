@@ -1,0 +1,429 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "missionId": "saga.ch04.m05.armor_break",
+  "clipCount": 28,
+  "runtimeNetworkTts": false,
+  "clips": [
+    {
+      "id": "armor_break-brief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Vanguard's command group is preparing to link heavy weapons to the dormant Relay nodes. Break their military position and protect the relief corridor. We cannot trade the city's infrastructure for this victory.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14500,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-brief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] گروه فرماندهی ونگارد داره سلاح‌های سنگین رو به گره‌های خاموش رله وصل می‌کنه. موضع نظامیشون رو درهم بشکنین و مسیر امداد رو حفظ کنین. این پیروزی نباید به قیمت زیرساخت شهر تموم بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14501,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-brief-02",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "Keep our armor, air defense, and long-range weapons working together. Fuel has been staged for this operation. Clear the military approach before moving the recovery team into the command compound.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14502,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-brief-02",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] زرهی، پدافند هوایی و سلاح‌های دوربردمون باید هماهنگ کار کنن. سوخت این عملیات آماده شده. قبل از ورود تیم بازیابی به محوطهٔ فرماندهی، مسیر نظامی رو پاک‌سازی کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14503,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-brief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The authority package is inside the command compound. Defeat the verified military targets, then recover the package. Optional support requires your confirmation for each action. I will mark targets without issuing orders.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14504,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-brief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] بستهٔ اختیار داخل محوطهٔ فرماندهیه. هدف‌های نظامی تأییدشده رو از بین ببر، بعد بسته رو بردار. هر اقدام پشتیبانی اختیاری به تأیید شما نیاز داره. هدف‌ها رو نشون می‌دم، بدون اینکه فرمان بدم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14505,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The link has begun. Its handshake asks for two keys. Commander, do you authorize one bounded support action? Use the existing Support controls if you choose it. I will wait for your confirmation; we can continue without it.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14506,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] اتصال شروع شده. برای برقراریش دو کلید می‌خوان. فرمانده، یک اقدام پشتیبانی محدود رو مجاز می‌دونین؟ اگه انتخابش می‌کنین، از کنترل‌های پشتیبانی استفاده کنین. منتظر تأییدتون می‌مونم؛ بدون اون هم می‌تونیم ادامه بدیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14507,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-comms-02",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "You can break my command group, Commander. You cannot keep the whole city apart. ARIA holds the system knowledge. You hold the emergency authority. Sahrin will bring both of you to the same door.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14508,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-comms-02",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "[conversational tone] فرمانده، می‌تونی گروه فرماندهی من رو بشکنی. ولی نمی‌تونی تمام شهر رو جدا نگه داری. آریا دانش سامانه رو داره، تو اختیار اضطراری رو. سهرین هر دوتون رو به یک در می‌رسونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14509,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Vanguard's command group is broken. The authority package is secured and the relief corridor is intact. Keep the recovery team covered while we verify what they were trying to connect.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14510,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] گروه فرماندهی ونگارد از هم پاشید. بستهٔ اختیار امنه و مسیر امداد سالم مونده. تا بررسی کنیم می‌خواستن چی رو وصل کنن، پوشش تیم بازیابی رو حفظ کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14511,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Protocol Fragment Four is complete. Qassem needs my restored archive as the knowledge key and your current emergency credential as the live authority key. Neither key alone can complete his override.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14512,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] قطعهٔ چهارم پروتکل کامله. قاسم آرشیو بازیابی‌شدهٔ من رو به عنوان کلید دانش و مجوز اضطراری فعلی شما رو به عنوان کلید اختیار زنده می‌خواد. هیچ‌کدوم به‌تنهایی نمی‌تونه کنترل رو بهش بده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14513,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-debrief-03",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "Warnings are coming in from several districts at once. This was one part of a synchronized attack. Take the evidence with us. The next operation will have to protect the city's routes together.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14514,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-debrief-03",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] از چند منطقه هم‌زمان هشدار می‌رسه. این فقط بخشی از یک حملهٔ هماهنگ بود. مدرک رو با خودمون می‌بریم. عملیات بعدی باید مسیرهای شهر رو با هم حفظ کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14515,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "This is the captured handshake. Vanguard hardware was trying to connect to a dormant Civic Relay node. The authority package preserves the request exactly as it was sent.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14516,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] این درخواست اتصالیه که گرفتیم. تجهیزات ونگارد می‌خواست به یکی از گره‌های خاموش رلهٔ شهری وصل بشه. بستهٔ اختیار، همون درخواست اصلی رو نگه داشته.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14517,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The first key is my restored archive: the system knowledge needed to identify the Relay's nodes and control paths. Recovering that archive does not authorize me to use it against the city.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14518,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] کلید اول آرشیو بازیابی‌شدهٔ منه؛ دانش سامانه برای شناخت گره‌ها و مسیرهای کنترل رله. بازیابی این آرشیو به من مجوز استفاده از اون علیه شهر رو نمی‌ده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14519,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "The second key is the Commander's current emergency credential. The request needs a living authority, not an old access list or a copied identity.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14520,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] کلید دوم، مجوز اضطراری فعلی فرمانده‌ست. این درخواست اختیار زنده می‌خواد، نه فهرست دسترسی قدیمی یا هویت کپی‌شده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14521,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-04",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Knowledge and authority are separate. Neither key alone completes the override. I have archived Protocol Fragment Four, the authority package, and the two-key diagram so you can inspect the evidence.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14522,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] دانش و اختیار از هم جدا هستن. هیچ‌کدوم به‌تنهایی کنترل رو کامل نمی‌کنه. قطعهٔ چهارم پروتکل، بستهٔ اختیار و نمودار دو کلید رو بایگانی کردم تا مدرک رو بررسی کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14523,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-05",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "Then let every district call at once. Fuel, medicine, power, and command will lead you back to the center. I only need the two keys to arrive together.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14524,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-05",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "[conversational tone] پس بذار همهٔ منطقه‌ها هم‌زمان کمک بخوان. سوخت، دارو، برق و فرماندهی شما رو به مرکز برمی‌گردونن. فقط کافیه دو کلید با هم برسن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14525,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "armor_break-close-06",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "Sahrin's warnings are spreading. We have the evidence and the choice of our next route. Commander, the citywide response is yours to direct.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14526,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "armor_break-close-06",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] هشدارها دارن توی سهرین پخش می‌شن. مدرک دست ماست و مسیر بعدی رو خودمون انتخاب می‌کنیم. فرمانده، هدایت پاسخ سراسری شهر با شماست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14527,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Armor Break Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Armor Break Narrative
+  m_GUID: 45743de109f6a4aa68884d9fd2db7393
+  m_SerializeEntries:
+  - m_GUID: 174c91ef32bd481ab350b1f574ec3d73
+    m_Address: narrative.armor_break.ch04m05_armorbreak
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 205f31e783354570bc2737982442afaa
+    m_Address: narrative.armor_break.ch04m05_armorbreak_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 310f28318ef84b09bddd9217ae5af0eb
+    m_Address: narrative.armor_break.ch04m05_armorbreak_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb469210089b45eea0ec6ebd718b63d0
+    m_Address: narrative.armor_break.bookends/ch04_close
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 35729ef77fe1442fa9c2df61a26eecc1, type: 2}
+    - {fileID: 11400000, guid: 383271a30e97f42eea61bc94049389e9, type: 2}

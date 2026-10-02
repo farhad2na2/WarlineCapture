@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
+            if(UiShellRuntimeGateway.IsArmorBreakGuideContext()) {ShowArmorBreakNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==5)
             {
                 if(UiShellRuntimeGateway.IsGroundedSignalGuideContext()) ShowGroundedSignalNextAction(step);
@@ -99,6 +100,16 @@ namespace Game.UI.Runtime
             else if (step == 2) ShowCommandOrDestination(_commandControlsView?.MoveButton, TacticalCommandMode.Move);
             else if (step is 3 or 4) ShowEarlyMissionThreat();
             else WaitForTutorialArrival(); // The mission finale owns this transition.
+        }
+
+        private void ShowArmorBreakNextAction()
+        {
+            if(ShowMissingSelection(out var target))return;
+            if(target.Moving || target.ExecutingAttack || target.BattleAction==UiTutorialBattleAction.Watch)
+            {WaitForTutorialArrival();return;}
+            bool attack=target.BattleAction==UiTutorialBattleAction.Attack;
+            ShowCommandOrDestination(attack?_commandControlsView?.AttackButton:_commandControlsView?.MoveButton,
+                attack?TacticalCommandMode.Attack:TacticalCommandMode.Move);
         }
 
         private void ShowGroundedSignalNextAction(int step)
@@ -201,7 +212,7 @@ namespace Game.UI.Runtime
             {
                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
-                {_tutorialFocusPendingUntil=Time.unscaledTime+(UiShellRuntimeGateway.IsGroundedSignalGuideContext()?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
             else ShowTutorialWorld(target.Selection,true);
         }

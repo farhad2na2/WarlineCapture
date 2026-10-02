@@ -9,6 +9,10 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionResultProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes ArmorBreakMissionId = CampaignMissionSequence.ArmorBreak;
+        private static readonly FixedString64Bytes ArmorBreakMilitaryRole = "role.hostile.command";
+        private static readonly FixedString64Bytes ArmorBreakRecoveryRole = "role.friendly.command_squad";
+        private static readonly FixedString64Bytes ArmorBreakReliefRole = "role.civilian.protected";
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<CampaignMissionRootComponent>();
@@ -178,6 +182,10 @@ namespace Game.Runtime
                 return outcome == MissionOutcomeKind.Victory
                     ? CampaignMissionExtractionRuleUtility.IsVictory(in facts, definition.Extraction.RequiredPassengers)
                     : CampaignMissionExtractionRuleUtility.IsFailure(in facts);
+            // Armor Break uses the defense transport/roster contract, but its victory is
+            // combined-arms mastery and authority custody, not a forward-post defense.
+            if (definition.MissionId.Equals(ArmorBreakMissionId))
+                return ArmorBreakFactsMatchOutcome(outcome, in facts, ref definition);
             if (definition.Defense.Enabled != 0)
                 return outcome == MissionOutcomeKind.Victory
                     ? CampaignMissionDefenseRuleUtility.IsVictory(in facts)
@@ -227,6 +235,33 @@ namespace Game.Runtime
             return outcome == MissionOutcomeKind.Victory
                 ? allComplete
                 : outcome == MissionOutcomeKind.Defeat && failureBroken;
+        }
+
+        private static bool ArmorBreakFactsMatchOutcome(
+            MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts,
+            ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.Defense.Enabled == 0 || definition.Objectives.Length != 3 ||
+                definition.Objectives[0].Rule != MissionObjectiveRuleKind.DefeatArmorBreakMilitary ||
+                definition.Objectives[0].RequiredCount != 12 || !definition.Objectives[0].MissionRoleId.Equals(ArmorBreakMilitaryRole) ||
+                definition.Objectives[1].Rule != MissionObjectiveRuleKind.RecoverArmorBreakAuthority ||
+                definition.Objectives[1].RequiredCount != 4 || !definition.Objectives[1].MissionRoleId.Equals(ArmorBreakRecoveryRole) ||
+                definition.Objectives[2].Rule != MissionObjectiveRuleKind.ProtectArmorBreakRelief ||
+                definition.Objectives[2].RequiredCount != 3 || !definition.Objectives[2].MissionRoleId.Equals(ArmorBreakReliefRole) ||
+                facts.HostileRosterIntegrityFault != 0 || facts.ArmorBreakFailure == ArmorBreakFailure.Integrity)
+                return false;
+            if (outcome == MissionOutcomeKind.Defeat)
+                return facts.ArmorBreakFailure != ArmorBreakFailure.None;
+            return outcome == MissionOutcomeKind.Victory && facts.ArmorBreakFailure == ArmorBreakFailure.None &&
+                facts.ArmorBreakCoverageReady != 0 && facts.ArmorBreakAirCleared != 0 &&
+                facts.ArmorBreakHeavyDisabled != 0 && facts.ArmorBreakLauncherShots > 0 &&
+                facts.ArmorBreakAircraftUsed != 0 && facts.ArmorBreakArmoredThreatsCleared != 0 &&
+                facts.ArmorBreakArmorApproached != 0 && facts.ArmorBreakCommandDisabled != 0 &&
+                facts.ArmorBreakAuthorityRecovered != 0 &&
+                facts.ArmorBreakRecoveryMilliseconds >= CampaignMissionArmorBreakRuleUtility.HoldMilliseconds &&
+                facts.HostileTotalCount == 12 && facts.HostileDefeatedCount == 12 &&
+                facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive != 0 &&
+                facts.CivilianTotalCount == 3 && facts.CivilianLossCount == 0 && facts.ArmorBreakReliefLost == 0;
         }
 
         private static bool IsValidObjective(

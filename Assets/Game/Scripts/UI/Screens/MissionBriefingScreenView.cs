@@ -177,6 +177,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SteelPush) ApplySteelPush(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SplitFront) ApplySplitFront(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal) ApplyGroundedSignal(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak) ApplyArmorBreak(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak) ApplyNetworkBreak(in model);
             bool evidenceChain = model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;
             if (evidenceChainRoutePanel != null) evidenceChainRoutePanel.gameObject.SetActive(evidenceChain);
@@ -201,7 +202,12 @@ namespace Game.UI.Runtime
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.PowerRelay) ApplyPowerRelay(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline) ApplyMarketLifeline(in model);
             ApplyReadingOrder();
-            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal) FitGroundedBriefingObjectives();
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak)
+            {
+                FitArmorBreakIntelValue(enemyIntel?.Find("Row_LIGHT_VEHICLES/Value")?.GetComponent<TMP_Text>());
+                FitArmorBreakIntelValue(enemyIntel?.Find("Row_AIR_THREAT/Value")?.GetComponent<TMP_Text>());
+            }
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal || model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak) FitGroundedBriefingObjectives();
         }
 
         public void ApplyUnavailable()

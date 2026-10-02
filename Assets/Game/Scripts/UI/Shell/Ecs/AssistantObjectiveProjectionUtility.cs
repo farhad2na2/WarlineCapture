@@ -134,6 +134,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.ArmorBreakCoverage and <= CampaignMissionGuidancePromptKind.ArmorBreakAuthority => (byte)((int)prompt-91),
             >= CampaignMissionGuidancePromptKind.GroundedSignalUnload and <= CampaignMissionGuidancePromptKind.GroundedSignalExtract => (byte)((int)prompt-86),
             >= CampaignMissionGuidancePromptKind.SplitFrontPlan and <= CampaignMissionGuidancePromptKind.SplitFrontConfirm => (byte)((int)prompt-82),
             >= CampaignMissionGuidancePromptKind.SteelPushPlan and <= CampaignMissionGuidancePromptKind.SteelPushDefend => (byte)((int)prompt-78),
@@ -157,6 +158,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.ArmorBreakCoverage and <= CampaignMissionGuidancePromptKind.ArmorBreakAuthority ? (byte)7 :
             prompt is >= CampaignMissionGuidancePromptKind.GroundedSignalUnload and <= CampaignMissionGuidancePromptKind.GroundedSignalExtract ? (byte)5 :
             prompt is >= CampaignMissionGuidancePromptKind.SplitFrontPlan and <= CampaignMissionGuidancePromptKind.SplitFrontConfirm ? (byte)4 :
             prompt is >= CampaignMissionGuidancePromptKind.SteelPushPlan and <= CampaignMissionGuidancePromptKind.SteelPushDefend ? (byte)4 :

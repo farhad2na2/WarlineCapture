@@ -334,6 +334,9 @@ namespace Game.Editor
                 CH04M04GroundedSignalConfigBuilder.MapPath);
             if (groundedSignal != null && !maps.Contains(groundedSignal)) maps.Add(groundedSignal);
 
+            var armorBreak = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH04M05ArmorBreakConfigBuilder.MapPath);
+            if (armorBreak != null && !maps.Contains(armorBreak)) maps.Add(armorBreak);
+
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)
                 if (maps[i - 1].OperationMapId == maps[i].OperationMapId)

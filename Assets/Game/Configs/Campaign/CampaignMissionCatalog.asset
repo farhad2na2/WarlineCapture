@@ -70,3 +70,6 @@ MonoBehaviour:
   - missionId: saga.ch04.m04.grounded_signal
     definition: {fileID: 11400000, guid: 5e62253daa8d54a5bb902cbfab61ce97, type: 2}
     scenario: {fileID: 11400000, guid: 9462db31f350e4f50b5afc101db706fa, type: 2}
+  - missionId: saga.ch04.m05.armor_break
+    definition: {fileID: 11400000, guid: 4f8ed8fe62c1e4ff6a71bcc75a7f7d6f, type: 2}
+    scenario: {fileID: 11400000, guid: ebf0a0ecfc1aa43848b18f54bcea4449, type: 2}

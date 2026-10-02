@@ -215,6 +215,10 @@ namespace Game.UI.Runtime
 
         private bool TrySelectFutureMission(int number)
         {
+            if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==5)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak); return true; }
+            if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==4)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==3)
             { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SplitFront); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==2)

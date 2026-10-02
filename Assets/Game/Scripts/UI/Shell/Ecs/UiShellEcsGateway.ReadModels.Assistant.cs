@@ -23,6 +23,22 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
+            if(TryArmorBreak(out var armorEm,out var armorRoot,out var armor))
+            {
+                var checkedIcon=UiMatchHudObjectiveIconKind.Checked;var uncheckedIcon=UiMatchHudObjectiveIconKind.Unchecked;
+                int stage=Game.Runtime.CampaignMissionArmorBreakRuleUtility.Stage(in armor);
+                string status=GameText.Get("mission.armor_break.hud.stage."+stage);
+                if(armorEm.HasComponent<CampaignMissionGuidanceProjectionComponent>(armorRoot) && (stage is 4 or 6) && armorEm.GetComponentData<CampaignMissionGuidanceProjectionComponent>(armorRoot).RecommendationKind==AssistantRecommendationKind.Move)
+                    status+="\n"+GameText.Get("mission.armor_break.hud.approach");
+                status=AppendArmorBreakStatus(status);
+                statusSurfaces=new UiMatchHudStatusSurfacesModel(GameText.Get("mission.armor_break.name"),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.armor_break.objective.command"),armor.CommandDisabled!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.armor_break.objective.authority"),armor.AuthorityRecovered!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.armor_break.objective.relief"),uncheckedIcon),
+                    $"{armor.ElapsedMilliseconds/60000:00}:{armor.ElapsedMilliseconds/1000%60:00}",true,
+                    GameText.Get("mission.armor_break.name"),status,false,false,"",false,false,false,false);
+                return true;
+            }
             if(TryGroundedSignal(out var groundedEm,out var groundedRoot,out var grounded))
             {
                 var facts=groundedEm.GetComponentData<CampaignMissionAttemptFactsComponent>(groundedRoot);
@@ -171,12 +187,13 @@ namespace Game.UI.Shell.Ecs
             var breachStatusStamp=ReadBreachStatusStamp();
             var gridlockStamp=ReadGridlockStamp();
             var groundedSignalStatusStamp=ReadGroundedSignalStatusStamp();
+            var armorBreakStatusStamp=ReadArmorBreakStatusStamp();
             int supplyDelivery=Game.UI.Runtime.UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int currentDelivery)?UnityEngine.Mathf.Min(40,currentDelivery):-1;
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp && cachedSupplyDelivery==supplyDelivery &&
-                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp &&
+                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp && cachedArmorBreakStatusStamp==armorBreakStatusStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -207,7 +224,7 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount is 4 or 6 or 8 or 10 or 12 || topRecommendation.RecommendationId is >=66001 and <=66005 ||
+            if (topRecommendation.TutorialStepCount is 4 or 6 or 7 or 8 or 10 or 12 || topRecommendation.RecommendationId is >=66001 and <=66005 ||
                 topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005 or >= 79001 and <= 79206)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
@@ -224,6 +241,7 @@ namespace Game.UI.Shell.Ecs
                         ? GameText.Format("mission.evidence_chain.tutorial.selection_progress", "Protected people selected: {0}/2", extractionSelectionCount)
                         : GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
                 if(extractionHoldStatus!=int.MinValue) recommendationBody=ExtractionHoldCopy(extractionHoldStatus);
+                if(topRecommendation.RecommendationId is >=67001 and <=67007) recommendationBody=AppendArmorBreakStatus(recommendationBody);
                 if(topRecommendation.RecommendationId is >=66001 and <=66005) recommendationBody=AppendGroundedSignalStatus(recommendationBody);
                 tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
             }
@@ -336,6 +354,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;cachedSupplyDelivery=supplyDelivery;
             cachedGroundedSignalStatusStamp=groundedSignalStatusStamp;
+            cachedArmorBreakStatusStamp=armorBreakStatusStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

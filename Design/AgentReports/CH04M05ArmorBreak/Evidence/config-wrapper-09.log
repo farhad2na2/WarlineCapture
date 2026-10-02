@@ -1,0 +1,112 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH04M05ArmorBreakConfigBuilder.CompletePreparedConfiguration
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[ArmorBreakRoutes] result=Passed militaryHighway=471x7 G2GRange=280 reliefRadius=40 grid=1280x520 sourcePreserved=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:279)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.SceneManagement.EditorSceneManager:SaveScene (UnityEngine.SceneManagement.Scene)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildSupportContext () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs:47)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.SceneManagement.EditorSceneManager:SaveScene (UnityEngine.SceneManagement.Scene)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildSupportContext () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs:47)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.SceneManagement.EditorSceneManager:SaveScene (UnityEngine.SceneManagement.Scene)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildSupportContext () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs:47)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Assertion failed on expression: 'm_DisallowAutoRefresh >= 0'
+UnityEditor.SceneManagement.EditorSceneManager:SaveScene (UnityEngine.SceneManagement.Scene)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildSupportContext () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs:47)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[ArmorBreakSupportContext] result=Passed scope=mission,map,source finiteFuel=ownedReserve protected=relief route=authored allowed=existing-unlocked readiness=preserved
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildSupportContext () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs:50)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakConfig] result=Passed airDefense=1 groundLauncher=1 armor=3 infantry=4 aircraft=1 hostileAir=3 protectedRelief=3 finiteFuel=200 resumedPreparedMap=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:65)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH04M05ArmorBreakConfigBuilder.CompletePreparedConfiguration
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_8888e9b4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -134,6 +134,9 @@ namespace Game.Runtime
             ResetComponentIfPresent<CampaignMissionAttemptFactProjectionStateComponent>(entityManager, root);
             ResetComponentIfPresent<CampaignMissionDelayedWaveStateComponent>(entityManager, root);
             ResetComponentIfPresent<CampaignMissionGroundedSignalState>(entityManager, root);
+            ResetComponentIfPresent<SupportFuelScopeComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionArmorBreakState>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionArmorBreakMember>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionGroundedSignalSpecialist>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionGroundedSignalProtectedMember>(entityManager, root);
             ResetComponentIfPresent<CampaignMissionOpeningPresentationComponent>(entityManager, root);

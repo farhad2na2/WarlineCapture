@@ -22,7 +22,8 @@ namespace Game.Composition
             Comms = 2,
             Debrief = 3,
             ChapterOpening = 4,
-            ChapterReplay = 5
+            ChapterReplay = 5,
+            ChapterClose = 6
         }
 
         private static readonly FixedString64Bytes EstablishBaseMissionId =
@@ -254,6 +255,7 @@ namespace Game.Composition
             {
                 SequenceStage.Brief => definition.BriefingSequenceId,
                 SequenceStage.Comms => definition.CommsSequenceId,
+                SequenceStage.ChapterClose => new FixedString64Bytes("seq.ch04.close.protocol_fragment_04"),
                 SequenceStage.Debrief => CampaignMissionNarrativePolicy.ResolveDebrief(runtime.MissionId, facts, definition.DebriefSequenceId),
                 _ => default
             };
@@ -272,7 +274,8 @@ namespace Game.Composition
             if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId))
                 return SequenceStage.None;
             if (runtime.Phase == MissionPhaseKind.DebriefFirstClear)
-                return SequenceStage.Debrief;
+                return runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) && facts.ArmorBreakDebriefCompleted != 0 && facts.ArmorBreakCloseCompleted == 0
+                    ? SequenceStage.ChapterClose : SequenceStage.Debrief;
             if (runtime.Phase == MissionPhaseKind.InteractiveBrief && !briefConsumed)
                 return SequenceStage.Brief;
             if (runtime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
@@ -286,7 +289,7 @@ namespace Game.Composition
             stage is SequenceStage.Brief or SequenceStage.Comms or SequenceStage.ChapterOpening;
 
         internal static bool RequiresFinalResult(SequenceStage stage) =>
-            stage == SequenceStage.Debrief;
+            stage is SequenceStage.Debrief or SequenceStage.ChapterClose;
 
         private void BindWorld(EntityManager entityManager)
         {
@@ -336,6 +339,28 @@ namespace Game.Composition
         {
             playback.Unbind();
             handoffPending = false;
+            if (activeStage is SequenceStage.Debrief or SequenceStage.ChapterClose && missionRootQuery.CalculateEntityCount() == 1)
+            {
+                var root = missionRootQuery.GetSingletonEntity();
+                var current = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+                if (current.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)))
+                {
+                    if (!IsSameAttempt(current, activeSession, activeAttemptOrdinal) || current.Outcome != MissionOutcomeKind.Victory || current.Phase != MissionPhaseKind.DebriefFirstClear)
+                    { activeStage = SequenceStage.None; return; }
+                    var facts = entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                    if (activeStage == SequenceStage.Debrief)
+                    {
+                        facts.ArmorBreakDebriefCompleted = 1;
+                        entityManager.SetComponentData(root, facts);
+                        activeSession = default; activeAttemptOrdinal = -1; activeStage = SequenceStage.None;
+                        return;
+                    }
+                    facts.ArmorBreakCloseCompleted = 1;
+                    entityManager.SetComponentData(root, facts);
+                    if (entityManager.HasComponent<CampaignMissionArmorBreakState>(root))
+                    { var armor = entityManager.GetComponentData<CampaignMissionArmorBreakState>(root); armor.CloseCompleted = 1; entityManager.SetComponentData(root, armor); }
+                }
+            }
             if (RequiresFinalResult(activeStage))
             {
                 if (!CampaignMissionRuntimeProgressUtility.TryCompleteDebrief(
@@ -472,6 +497,8 @@ namespace Game.Composition
 
         private void HandleHandoff(NarrativeHandoffResult result)
         {
+            if (activeStage == SequenceStage.ChapterClose && result.Completion.PayloadId != "request.armor_break.close.complete")
+            { Debug.LogError("[ArmorBreakNarrative] Rejected chapter close without canonical completion receipt."); return; }
             presentation.Cancel();
             running = false;
             handoffPending = true;

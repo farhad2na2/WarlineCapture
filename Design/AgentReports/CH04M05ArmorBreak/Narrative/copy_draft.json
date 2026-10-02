@@ -1,0 +1,94 @@
+{
+  "Brief": [
+    [
+      "brief-01",
+      "Dalia",
+      "Vanguard's command group is preparing to link heavy weapons to the dormant Relay nodes. Break their military position and protect the relief corridor. We cannot trade the city's infrastructure for this victory.",
+      "گروه فرماندهی ونگارد داره سلاح‌های سنگین رو به گره‌های خاموش رله وصل می‌کنه. موضع نظامیشون رو درهم بشکنین و مسیر امداد رو حفظ کنین. این پیروزی نباید به قیمت زیرساخت شهر تموم بشه."
+    ],
+    [
+      "brief-02",
+      "Laila",
+      "Keep our armor, air defense, and long-range weapons working together. Fuel has been staged for this operation. Clear the military approach before moving the recovery team into the command compound.",
+      "زرهی، پدافند هوایی و سلاح‌های دوربردمون باید هماهنگ کار کنن. سوخت این عملیات آماده شده. قبل از ورود تیم بازیابی به محوطهٔ فرماندهی، مسیر نظامی رو پاک‌سازی کنین."
+    ],
+    [
+      "brief-03",
+      "Aria",
+      "The authority package is inside the command compound. Defeat the verified military targets, then recover the package. Optional support requires your confirmation for each action. I will mark targets without issuing orders.",
+      "بستهٔ اختیار داخل محوطهٔ فرماندهیه. هدف‌های نظامی تأییدشده رو از بین ببر، بعد بسته رو بردار. هر اقدام پشتیبانی اختیاری به تأیید شما نیاز داره. هدف‌ها رو نشون می‌دم، بدون اینکه فرمان بدم."
+    ]
+  ],
+  "Comms": [
+    [
+      "comms-01",
+      "Aria",
+      "The link has begun. Its handshake asks for two keys. Commander, do you authorize one bounded support action? Use the existing Support controls if you choose it. I will wait for your confirmation; we can continue without it.",
+      "اتصال شروع شده. برای برقراریش دو کلید می‌خوان. فرمانده، یک اقدام پشتیبانی محدود رو مجاز می‌دونین؟ اگه انتخابش می‌کنین، از کنترل‌های پشتیبانی استفاده کنین. منتظر تأییدتون می‌مونم؛ بدون اون هم می‌تونیم ادامه بدیم."
+    ],
+    [
+      "comms-02",
+      "Qassem",
+      "You can break my command group, Commander. You cannot keep the whole city apart. ARIA holds the system knowledge. You hold the emergency authority. Sahrin will bring both of you to the same door.",
+      "فرمانده، می‌تونی گروه فرماندهی من رو بشکنی. ولی نمی‌تونی تمام شهر رو جدا نگه داری. آریا دانش سامانه رو داره، تو اختیار اضطراری رو. سهرین هر دوتون رو به یک در می‌رسونه."
+    ]
+  ],
+  "Debrief": [
+    [
+      "debrief-01",
+      "Dalia",
+      "Vanguard's command group is broken. The authority package is secured and the relief corridor is intact. Keep the recovery team covered while we verify what they were trying to connect.",
+      "گروه فرماندهی ونگارد از هم پاشید. بستهٔ اختیار امنه و مسیر امداد سالم مونده. تا بررسی کنیم می‌خواستن چی رو وصل کنن، پوشش تیم بازیابی رو حفظ کنین."
+    ],
+    [
+      "debrief-02",
+      "Aria",
+      "Protocol Fragment Four is complete. Qassem needs my restored archive as the knowledge key and your current emergency credential as the live authority key. Neither key alone can complete his override.",
+      "قطعهٔ چهارم پروتکل کامله. قاسم آرشیو بازیابی‌شدهٔ من رو به عنوان کلید دانش و مجوز اضطراری فعلی شما رو به عنوان کلید اختیار زنده می‌خواد. هیچ‌کدوم به‌تنهایی نمی‌تونه کنترل رو بهش بده."
+    ],
+    [
+      "debrief-03",
+      "Laila",
+      "Warnings are coming in from several districts at once. This was one part of a synchronized attack. Take the evidence with us. The next operation will have to protect the city's routes together.",
+      "از چند منطقه هم‌زمان هشدار می‌رسه. این فقط بخشی از یک حملهٔ هماهنگ بود. مدرک رو با خودمون می‌بریم. عملیات بعدی باید مسیرهای شهر رو با هم حفظ کنه."
+    ]
+  ],
+  "Close": [
+    [
+      "close-01",
+      "Dalia",
+      "This is the captured handshake. Vanguard hardware was trying to connect to a dormant Civic Relay node. The authority package preserves the request exactly as it was sent.",
+      "این درخواست اتصالیه که گرفتیم. تجهیزات ونگارد می‌خواست به یکی از گره‌های خاموش رلهٔ شهری وصل بشه. بستهٔ اختیار، همون درخواست اصلی رو نگه داشته."
+    ],
+    [
+      "close-02",
+      "Aria",
+      "The first key is my restored archive: the system knowledge needed to identify the Relay's nodes and control paths. Recovering that archive does not authorize me to use it against the city.",
+      "کلید اول آرشیو بازیابی‌شدهٔ منه؛ دانش سامانه برای شناخت گره‌ها و مسیرهای کنترل رله. بازیابی این آرشیو به من مجوز استفاده از اون علیه شهر رو نمی‌ده."
+    ],
+    [
+      "close-03",
+      "Dalia",
+      "The second key is the Commander's current emergency credential. The request needs a living authority, not an old access list or a copied identity.",
+      "کلید دوم، مجوز اضطراری فعلی فرمانده‌ست. این درخواست اختیار زنده می‌خواد، نه فهرست دسترسی قدیمی یا هویت کپی‌شده."
+    ],
+    [
+      "close-04",
+      "Aria",
+      "Knowledge and authority are separate. Neither key alone completes the override. I have archived Protocol Fragment Four, the authority package, and the two-key diagram so you can inspect the evidence.",
+      "دانش و اختیار از هم جدا هستن. هیچ‌کدوم به‌تنهایی کنترل رو کامل نمی‌کنه. قطعهٔ چهارم پروتکل، بستهٔ اختیار و نمودار دو کلید رو بایگانی کردم تا مدرک رو بررسی کنین."
+    ],
+    [
+      "close-05",
+      "Qassem",
+      "Then let every district call at once. Fuel, medicine, power, and command will lead you back to the center. I only need the two keys to arrive together.",
+      "پس بذار همهٔ منطقه‌ها هم‌زمان کمک بخوان. سوخت، دارو، برق و فرماندهی شما رو به مرکز برمی‌گردونن. فقط کافیه دو کلید با هم برسن."
+    ],
+    [
+      "close-06",
+      "Laila",
+      "Sahrin's warnings are spreading. We have the evidence and the choice of our next route. Commander, the citywide response is yours to direct.",
+      "هشدارها دارن توی سهرین پخش می‌شن. مدرک دست ماست و مسیر بعدی رو خودمون انتخاب می‌کنیم. فرمانده، هدایت پاسخ سراسری شهر با شماست."
+    ]
+  ]
+}

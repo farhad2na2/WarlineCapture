@@ -10,10 +10,20 @@ namespace Game.Runtime
 {
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
+        private static readonly FixedString64Bytes GroundedSignalGuidanceMissionId = "saga.ch04.m04.grounded_signal";
+        private static readonly FixedString64Bytes GroundedSignalTerminalRole = "role.protected.terminal";
+        private static readonly FixedString64Bytes GroundedSignalTitlePrefix = "mission.grounded_signal.tutorial.";
+        private static readonly FixedString128Bytes GroundedSignalBodyPrefix = "mission.grounded_signal.tutorial.";
+        private static readonly FixedString64Bytes GroundedSignalRelayApproachTitle = "mission.grounded_signal.tutorial.2.approach.title";
+        private static readonly FixedString128Bytes GroundedSignalRelayApproachBody = "mission.grounded_signal.tutorial.2.approach.body";
+        private static readonly FixedString64Bytes GroundedSignalCarrierApproachTitle = "mission.grounded_signal.tutorial.2.apc_approach.title";
+        private static readonly FixedString128Bytes GroundedSignalCarrierApproachBody = "mission.grounded_signal.tutorial.2.apc_approach.body";
+        private static readonly FixedString64Bytes GroundedSignalCarrierAttackTitle = "mission.grounded_signal.tutorial.2.apc.title";
+        private static readonly FixedString128Bytes GroundedSignalCarrierAttackBody = "mission.grounded_signal.tutorial.2.apc.body";
         private bool TryUpdateGroundedSignalGuidance(ref SystemState system, Entity root, in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts, in AssistantSettingsComponent settings, in CampaignMissionGuidanceProjectionComponent current)
         {
-            if (!runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal))) return false;
+            if (!runtime.MissionId.Equals(GroundedSignalGuidanceMissionId)) return false;
             var em = system.EntityManager;
             if (runtime.Phase != MissionPhaseKind.Engage || runtime.Outcome != MissionOutcomeKind.None ||
                 !em.HasComponent<CampaignMissionGroundedSignalState>(root) || !em.HasComponent<CampaignMissionExtractionState>(root))
@@ -31,7 +41,7 @@ namespace Game.Runtime
                 Entity entity = roster[i].Entity;
                 if (roster[i].Dead != 0 || !em.Exists(entity)) continue;
                 if (step == 2 && roster[i].Kind == 0 && em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
-                    !em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.protected.terminal"))) actor = entity;
+                    !em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(GroundedSignalTerminalRole)) actor = entity;
                 if (step is 3 or 4 && roster[i].Kind == 1) actor = entity;
             }
             if (step == 2 && actor == Entity.Null && em.Exists(extraction.Carrier)) actor = extraction.Carrier;
@@ -51,17 +61,25 @@ namespace Game.Runtime
                 relayApproach = math.lengthsq(relayDelta) > (range + 5f) * (range + 5f) && math.lengthsq(approachDelta) > 25f;
                 if (relayApproach) { position = approach; target = Entity.Null; }
             }
-            FixedString64Bytes title = "mission.grounded_signal.tutorial."; title.Append(step); title.Append(new FixedString32Bytes(".title"));
-            FixedString128Bytes body = "mission.grounded_signal.tutorial."; body.Append(step); body.Append(new FixedString32Bytes(".body"));
+            FixedString64Bytes title = GroundedSignalTitlePrefix; title.Append(step); title.Append(ExtractionTitleSuffix);
+            FixedString128Bytes body = GroundedSignalBodyPrefix; body.Append(step); body.Append(ExtractionBodySuffix);
             if (relayApproach)
             {
-                title = "mission.grounded_signal.tutorial.2.approach.title";
-                body = "mission.grounded_signal.tutorial.2.approach.body";
+                title = GroundedSignalRelayApproachTitle;
+                body = GroundedSignalRelayApproachBody;
             }
             if (relayCarrier)
             {
-                title = relayApproach ? "mission.grounded_signal.tutorial.2.apc_approach.title" : "mission.grounded_signal.tutorial.2.apc.title";
-                body = relayApproach ? "mission.grounded_signal.tutorial.2.apc_approach.body" : "mission.grounded_signal.tutorial.2.apc.body";
+                if (relayApproach)
+                {
+                    title = GroundedSignalCarrierApproachTitle;
+                    body = GroundedSignalCarrierApproachBody;
+                }
+                else
+                {
+                    title = GroundedSignalCarrierAttackTitle;
+                    body = GroundedSignalCarrierAttackBody;
+                }
             }
             var next = new CampaignMissionGuidanceProjectionComponent {
                 GuidanceId = 66000 + step, Version = Next(current.Version), MissionSourceVersion = runtime.Version,

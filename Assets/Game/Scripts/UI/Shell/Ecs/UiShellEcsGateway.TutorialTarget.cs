@@ -66,6 +66,8 @@ namespace Game.UI.Shell.Ecs
                     areaRadius:5);
                 return true;
             }
+            if(runtime.MissionId.Equals(CampaignMissionSequence.ArmorBreak) && guidance.GuidanceId is >=67001 and <=67007)
+                return ResolveArmorBreakTarget(em,root,in guidance,out target);
             if(IsExtractionMission(runtime.MissionId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
             if(IsBreachMission(runtime.MissionId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))

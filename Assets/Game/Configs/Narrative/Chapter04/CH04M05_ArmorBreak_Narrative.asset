@@ -1,0 +1,848 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M05_ArmorBreak_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m05.brief
+  entryStateId: ArmorBreak-brief-0
+  defaultSkipDestinationId: ArmorBreak-brief-complete
+  states:
+  - stateId: ArmorBreak-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-brief-01
+      textKey: narrative.armor_break.brief-01
+      englishFallback: Vanguard's command group is preparing to link heavy weapons
+        to the dormant Relay nodes. Break their military position and protect the
+        relief corridor. We cannot trade the city's infrastructure for this victory.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15
+      essentialCaption: 1
+    continueStateId: ArmorBreak-brief-1
+    skipStateId: ArmorBreak-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-brief-02
+      textKey: narrative.armor_break.brief-02
+      englishFallback: Keep our armor, air defense, and long-range weapons working
+        together. Fuel has been staged for this operation. Clear the military approach
+        before moving the recovery team into the command compound.
+      speaker: 5
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.071428
+      essentialCaption: 1
+    continueStateId: ArmorBreak-brief-2
+    skipStateId: ArmorBreak-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 174c91ef32bd481ab350b1f574ec3d73
+      m_SubObjectName: CH04M05_ArmorBreak-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-brief-03
+      textKey: narrative.armor_break.brief-03
+      englishFallback: The authority package is inside the command compound. Defeat
+        the verified military targets, then recover the package. Optional support
+        requires your confirmation for each action. I will mark targets without issuing
+        orders.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.857142
+      essentialCaption: 1
+    continueStateId: ArmorBreak-brief-complete
+    skipStateId: ArmorBreak-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.857142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.armor_break.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &4197807349896811376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M05_ArmorBreak_close
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.close.protocol_fragment_04
+  entryStateId: ArmorBreak-close-0
+  defaultSkipDestinationId: ArmorBreak-close-complete
+  states:
+  - stateId: ArmorBreak-close-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-01
+      textKey: narrative.armor_break.close-01
+      englishFallback: This is the captured handshake. Vanguard hardware was trying
+        to connect to a dormant Civic Relay node. The authority package preserves
+        the request exactly as it was sent.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.142858
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-1
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-02
+      textKey: narrative.armor_break.close-02
+      englishFallback: 'The first key is my restored archive: the system knowledge
+        needed to identify the Relay''s nodes and control paths. Recovering that
+        archive does not authorize me to use it against the city.'
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.428572
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-2
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-03
+      textKey: narrative.armor_break.close-03
+      englishFallback: The second key is the Commander's current emergency credential.
+        The request needs a living authority, not an old access list or a copied
+        identity.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.428572
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-3
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-04
+      textKey: narrative.armor_break.close-04
+      englishFallback: Knowledge and authority are separate. Neither key alone completes
+        the override. I have archived Protocol Fragment Four, the authority package,
+        and the two-key diagram so you can inspect the evidence.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.214286
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-4
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-e-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-e-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-05
+      textKey: narrative.armor_break.close-05
+      englishFallback: Then let every district call at once. Fuel, medicine, power,
+        and command will lead you back to the center. I only need the two keys to
+        arrive together.
+      speaker: 9
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.785714
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-5
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-5
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-f-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: eb469210089b45eea0ec6ebd718b63d0
+      m_SubObjectName: CH04_Close-f-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-close-06
+      textKey: narrative.armor_break.close-06
+      englishFallback: Sahrin's warnings are spreading. We have the evidence and
+        the choice of our next route. Commander, the citywide response is yours to
+        direct.
+      speaker: 5
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10
+      essentialCaption: 1
+    continueStateId: ArmorBreak-close-complete
+    skipStateId: ArmorBreak-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-close-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.armor_break.close.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &6464924960338735268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M05_ArmorBreak_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m05.debrief
+  entryStateId: ArmorBreak-debrief-0
+  defaultSkipDestinationId: ArmorBreak-debrief-complete
+  states:
+  - stateId: ArmorBreak-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-debrief-01
+      textKey: narrative.armor_break.debrief-01
+      englishFallback: Vanguard's command group is broken. The authority package
+        is secured and the relief corridor is intact. Keep the recovery team covered
+        while we verify what they were trying to connect.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.142858
+      essentialCaption: 1
+    continueStateId: ArmorBreak-debrief-1
+    skipStateId: ArmorBreak-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-debrief-02
+      textKey: narrative.armor_break.debrief-02
+      englishFallback: Protocol Fragment Four is complete. Qassem needs my restored
+        archive as the knowledge key and your current emergency credential as the
+        live authority key. Neither key alone can complete his override.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.214286
+      essentialCaption: 1
+    continueStateId: ArmorBreak-debrief-2
+    skipStateId: ArmorBreak-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 205f31e783354570bc2737982442afaa
+      m_SubObjectName: CH04M05_ArmorBreak_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-debrief-03
+      textKey: narrative.armor_break.debrief-03
+      englishFallback: Warnings are coming in from several districts at once. This
+        was one part of a synchronized attack. Take the evidence with us. The next
+        operation will have to protect the city's routes together.
+      speaker: 5
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.785714
+      essentialCaption: 1
+    continueStateId: ArmorBreak-debrief-complete
+    skipStateId: ArmorBreak-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.armor_break.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &8933933825798015917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M05_ArmorBreak_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m05.comms
+  entryStateId: ArmorBreak-comms-0
+  defaultSkipDestinationId: ArmorBreak-comms-complete
+  states:
+  - stateId: ArmorBreak-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 310f28318ef84b09bddd9217ae5af0eb
+      m_SubObjectName: CH04M05_ArmorBreak_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 310f28318ef84b09bddd9217ae5af0eb
+      m_SubObjectName: CH04M05_ArmorBreak_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-comms-01
+      textKey: narrative.armor_break.comms-01
+      englishFallback: The link has begun. Its handshake asks for two keys. Commander,
+        do you authorize one bounded support action? Use the existing Support controls
+        if you choose it. I will wait for your confirmation; we can continue without
+        it.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.928572
+      essentialCaption: 1
+    continueStateId: ArmorBreak-comms-1
+    skipStateId: ArmorBreak-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.928572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 310f28318ef84b09bddd9217ae5af0eb
+      m_SubObjectName: CH04M05_ArmorBreak_Comms-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 310f28318ef84b09bddd9217ae5af0eb
+      m_SubObjectName: CH04M05_ArmorBreak_Comms-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: armor_break-comms-02
+      textKey: narrative.armor_break.comms-02
+      englishFallback: You can break my command group, Commander. You cannot keep
+        the whole city apart. ARIA holds the system knowledge. You hold the emergency
+        authority. Sahrin will bring both of you to the same door.
+      speaker: 9
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.928572
+      essentialCaption: 1
+    continueStateId: ArmorBreak-comms-complete
+    skipStateId: ArmorBreak-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.928572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: ArmorBreak-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.armor_break.comms.complete
+    evidenceIds: []
+    missionContextFlags: []

@@ -83,6 +83,18 @@ namespace Game.Composition
                     }
                     rows.Add((parent,row)=>Button("ChapterClose"+earnedChapter,parent,UiShellRuntimeGateway.Localization.Format("ui.home.archive.chapter_close","CHAPTER {0} • CONCLUSION",earnedChapter),new Vector2(1050,78),Vector2.zero,()=>PlayBookend(sequence,earnedChapter,false)));
                 }
+                if (IsMissionEarned(model.CompletedMissionMask, 19))
+                {
+                    string[] evidenceKeys = { "fragment4", "authority", "two_keys" };
+                    string[] evidenceTitles = { "PROTOCOL FRAGMENT IV", "CAPTURED AUTHORITY PACKAGE", "TWO-KEY AUTHORIZATION DIAGRAM" };
+                    int[] evidenceStates = { 0, 0, 3 };
+                    for (int e = 0; e < evidenceKeys.Length; e++)
+                    {
+                        string key = evidenceKeys[e], title = evidenceTitles[e]; int state = evidenceStates[e];
+                        rows.Add((parent,row)=>Button("ArmorEvidence"+key,parent,Local("ui.home.archive.armor_break."+key,title),new Vector2(1050,78),Vector2.zero,
+                            ()=>PlayRegistered("seq.ch04.close.protocol_fragment_04", "ArmorBreak-close-"+state)));
+                    }
+                }
                 if(model.FullCampaignRegistered && model.AllRequiredMissionsCompleted)
                     rows.Add((parent,row)=>Button("Epilogue",parent,Local("ui.home.complete","CAMPAIGN COMPLETE"),new Vector2(1050,78),Vector2.zero,()=>PlayBookend("seq.campaign.epilogue.canonical",5,true)));
             }
@@ -130,9 +142,27 @@ namespace Game.Composition
         private bool PlayBookend(string id,int chapter,bool final)
         {
             if(!UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsChapterEarned(model.CompletedMissionMask,chapter) || final && (!model.FullCampaignRegistered || !model.AllRequiredMissionsCompleted)) return false;
+            if (id == "seq.ch04.close.protocol_fragment_04") return PlayRegistered(id, null);
             bookends??=gameObject.AddComponent<FutureMissionComicPreviewController>();
             if(!bookends.PlaySequence(id,completed:ReturnToChooser))return false;
             playing=true;overlay?.SetActive(false);return true;
+        }
+        private bool PlayRegistered(string id, string stateId)
+        {
+            if (!UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsMissionEarned(model.CompletedMissionMask, 19)) return false;
+            var config = bootstrap?.CampaignMissionNarrativeConfigs?.FirstOrDefault(s=>s!=null && s.SequenceId==id)
+                ?? supplementalSequences?.FirstOrDefault(s=>s!=null && s.SequenceId==id);
+            if (config == null || narrative == null || bootstrap == null) return false;
+            var persian = UiShellRuntimeGateway.Localization.IsRightToLeft ? bootstrap.FirstLaunchPersianLocale : null;
+            var legacy = persian != null ? new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(FallbackGameTextResolver.Instance,persian) : (IGameTextResolver)FallbackGameTextResolver.Instance;
+            var resolver = new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacy);
+            if (!player.Initialize(config,bootstrap.FirstLaunchSpeakerCatalog,bootstrap.FirstLaunchPunctuationProfile,narrative,resolver,SettingsService.Load(),persian,storyOnly:true)) return false;
+            player.HandoffRequested-=EndPlayback; player.HandoffRequested+=EndPlayback;
+            if (!(string.IsNullOrEmpty(stateId) ? player.Start() : player.StartAt(stateId))) return false;
+            playing=true; overlay?.SetActive(false);
+            narrative.PlaybackControlsView.BindSkip(ReturnToChooser);
+            narrative.PlaybackControlsView.BindTransport(()=>{if(player.IsPaused)player.Resume();else player.Pause();},()=>player.SetSubtitlesEnabled(!player.SubtitlesEnabled));
+            return true;
         }
         private void EndPlayback(Game.Narrative.Contracts.NarrativeHandoffResult _) => ReturnToChooser();
         private void Update()

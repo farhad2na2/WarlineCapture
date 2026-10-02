@@ -69,6 +69,7 @@ namespace Game.UI.Shell.Ecs
                 if (!definition.MissionId.Equals(runtime.MissionId))
                     continue;
 
+                bool armorBreak = runtime.MissionId.Equals(CampaignMissionSequence.ArmorBreak);
                 bool grounded = runtime.MissionId.Equals(CampaignMissionSequence.GroundedSignal);
                 bool radar = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning"));
                 bool introductory = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"));
@@ -82,8 +83,8 @@ namespace Game.UI.Shell.Ecs
                     definition.TransportDisabled != 0,
                     definition.AirDisabled != 0,
                     cinematicInteractionLocked,
-                    grounded || definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush,
-                    grounded || definition.MissionRuntimeEnabled != 0 && !defensePreparation,
+                    grounded || definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush && !armorBreak,
+                    grounded || definition.MissionRuntimeEnabled != 0 && !defensePreparation && !armorBreak,
                     false,
                     defensePreparation ? 3 : ReadExtractionSquadMask(entityManager,root),
                     IsOpeningCinematicActive(entityManager,root,in runtime));

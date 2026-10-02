@@ -93,6 +93,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsRouteReopenedGuideContext() &&
                        !UiShellRuntimeGateway.IsExtractionGuideContext() &&
                        !UiShellRuntimeGateway.IsGroundedSignalGuideContext() &&
+                       !UiShellRuntimeGateway.IsArmorBreakGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
                        !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
@@ -165,7 +166,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
@@ -190,6 +191,16 @@ namespace Game.UI.Runtime
                 goalId=6600+stage+(stage>=3?1:0);
                 if(stage==2 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var groundedTarget) &&
                     groundedTarget.BattleAction==UiTutorialBattleAction.Attack)goalId=6603;
+            }
+            // A reached attack approach is real progress in the public aircraft/armor step.
+            if(UiShellRuntimeGateway.IsArmorBreakGuideContext())
+            {
+                int stage=_lastPanelModel.TutorialStep;
+                goalId=6700+stage*8;
+                if(stage==4 && UiShellRuntimeGateway.TryReadArmorBreak(out var armorProgress))
+                    goalId+=Mathf.Clamp(armorProgress.ArmoredDefendersCleared,0,3)*2;
+                if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var armorTarget) &&
+                    armorTarget.BattleAction==UiTutorialBattleAction.Attack)goalId++;
             }
             // A delivered load is visible reserve progress, even while the same
             // defend-storage instruction remains on screen.

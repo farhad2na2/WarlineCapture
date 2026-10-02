@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 5f2bb383e5f6d46a6835e133d0864f20
   m_SerializeEntries:
+  - m_GUID: 039421c6da35547c1a82a1dce0de37a4
+    m_Address: campaign/armor-break/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1df7b83e8dbcb483fb195a45fa9403c7
     m_Address: campaign/grounded-signal/source-scene
     m_ReadOnly: 0
@@ -25,8 +30,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d993162c8c844f27b6f7775e5324ef6
+    m_Address: campaign/armor-break/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f8ed8fe62c1e4ff6a71bcc75a7f7d6f
+    m_Address: campaign/armor-break/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e62253daa8d54a5bb902cbfab61ce97
     m_Address: campaign/grounded-signal/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 79f5a7d7eefb244c99222f8a7abe37dd
+    m_Address: campaign/armor-break/support-context
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -42,6 +62,26 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a678ffe9103f34b5099564bf1a3aa294
     m_Address: campaign/grounded-signal/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7c6bb84a6d0c4ed78be897c552f6ac1
+    m_Address: campaign/armor-break/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be0f1c8c7ae1940d6a679b258bf79f7b
+    m_Address: campaign/armor-break/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebf0a0ecfc1aa43848b18f54bcea4449
+    m_Address: campaign/armor-break/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc7aec0b10ed749b4a8d213cf65ba26c
+    m_Address: campaign/armor-break/minimap
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -243,7 +243,9 @@ namespace Game.Components
         SteelPushPlan = 79, SteelPushSelect = 80, SteelPushMove = 81, SteelPushDefend = 82,
         SplitFrontPlan = 83, SplitFrontSelect = 84, SplitFrontTarget = 85, SplitFrontConfirm = 86,
         GroundedSignalUnload = 87, GroundedSignalRelay = 88, GroundedSignalRecover = 89,
-        GroundedSignalBoard = 90, GroundedSignalExtract = 91
+        GroundedSignalBoard = 90, GroundedSignalExtract = 91,
+        ArmorBreakCoverage = 92, ArmorBreakAir = 93, ArmorBreakBattery = 94, ArmorBreakAircraft = 95,
+        ArmorBreakApproach = 96, ArmorBreakCommand = 97, ArmorBreakAuthority = 98
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

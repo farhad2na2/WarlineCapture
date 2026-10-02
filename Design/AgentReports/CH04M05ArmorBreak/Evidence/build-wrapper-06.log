@@ -1,0 +1,56 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH04M05ArmorBreakIntegration.CompletePrepared
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_484dd8dc/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ArmorBreakRoutes] result=Passed militaryHighway=471x7 G2GRange=280 reliefRadius=40 grid=1280x520 sourcePreserved=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:279)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+Game.Editor.CH04M05ArmorBreakIntegration:CompletePrepared () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_484dd8dc/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:Clone<Game.Configs.ScenarioSetupConfig> (string,string) (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:289)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:BuildScenario () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Scenario.cs:29)
+Game.Editor.CH04M05ArmorBreakConfigBuilder:CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+Game.Editor.CH04M05ArmorBreakIntegration:CompletePrepared () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_484dd8dc/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: Campaign scenario 'scenario.ch04.m05.armor_break' group 'group.ch04.m05.relief' has an invalid unit.
+Game.Editor.CH04M05ArmorBreakConfigBuilder.BuildScenario () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Scenario.cs:48)
+Game.Editor.CH04M05ArmorBreakConfigBuilder.CompletePreparedConfiguration () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.cs:64)
+Game.Editor.CH04M05ArmorBreakIntegration.CompletePrepared () (at Assets/Game/Scripts/Editor/CH04M05ArmorBreakIntegration.cs:23)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.<Run>d__9:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:113)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.CH04M05ArmorBreakIntegration.CompletePrepared
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:114)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_484dd8dc/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

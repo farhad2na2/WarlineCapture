@@ -83,6 +83,7 @@ namespace Game.Runtime
             var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
             var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
             var attackLookup = SystemAPI.GetComponentLookup<UnitAttack>(true);
+            var standoffLookup = SystemAPI.GetComponentLookup<CampaignMissionArmorBreakAircraftStandoff>(true);
             var airdropLookup = SystemAPI.GetComponentLookup<UnitTransportAirdropRequest>();
 
             foreach (var (transform, unitGrid, move, airMovement, airState, entity) in SystemAPI
@@ -344,12 +345,22 @@ namespace Game.Runtime
                     }
                     else
                     {
-                        FlyTowards(ref transform.ValueRW, ref unitGrid.ValueRW, grid, move.ValueRO.Speed, dt, cruiseY, engageTargetPosition, true);
+                        float3 hoverGoal=engageTargetPosition;
+                        if(standoffLookup.HasComponent(entity) && attackLookup.HasComponent(entity) && attackLookup[entity].Range>0f &&
+                            !state.EntityManager.HasComponent<UnitAirMovement>(engageTarget) &&
+                            state.EntityManager.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                            state.EntityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity).SessionToken.Equals(standoffLookup[entity].SessionToken))
+                            hoverGoal=CampaignMissionAircraftStandoffUtility.ResolveGroundAttackGoal(transform.ValueRO.Position,engageTargetPosition,
+                                attackLookup[entity].Range,standoffLookup[entity].Padding);
+                        FlyTowards(ref transform.ValueRW, ref unitGrid.ValueRW, grid, move.ValueRO.Speed, dt, cruiseY, hoverGoal, true);
                     }
 
                     continue;
                 }
 
+                bool missionStandoff=standoffLookup.HasComponent(entity) && stateRw.UsesRunway==0 &&
+                    state.EntityManager.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                    state.EntityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity).SessionToken.Equals(standoffLookup[entity].SessionToken);
                 bool hasActiveScanOrder = scanOrderLookup.HasComponent(entity);
                 bool holdingPosition = holdPositionLookup.HasComponent(entity);
 
@@ -362,6 +373,9 @@ namespace Game.Runtime
                 {
                     int2 goalCell = targetLookup[entity].Cell;
                     bool hasManualMove = state.EntityManager.HasComponent<ManualMoveOrderTag>(entity);
+                    // A new normal Move replaces an earlier automatic return for this
+                    // mission helicopter; FuelSafety removes the order when return is required.
+                    if(missionStandoff && hasManualMove)stateRw.ReturningHome=0;
                     if (!hasValidEngage &&
                         state.EntityManager.HasComponent<SelectedUnitTag>(entity) &&
                         hasManualMove)
@@ -541,7 +555,7 @@ namespace Game.Runtime
                         }
                         else if (stateRw.UsesRunway == 0)
                         {
-                            if (!hasActiveScanOrder)
+                            if (!hasActiveScanOrder && !missionStandoff)
                                 stateRw.ReturningHome = 1;
                         }
                     }
@@ -579,6 +593,16 @@ namespace Game.Runtime
                         stateRw.ReturnApproachInitialized = 0;
                         continue;
                     }
+                }
+
+                // Retain the completed Move/Attack position for the next normal order.
+                // Explicit return and FuelSafety both set ReturningHome and still use
+                // the existing return path below.
+                if(missionStandoff && stateRw.ReturningHome==0 && stateRw.TakeoffRolling==0 && stateRw.LandingRolling==0)
+                {
+                    stateRw.AttackRunActive=0;
+                    stateRw.ReturnApproachInitialized=0;
+                    continue;
                 }
 
                 if (stateRw.ReturningHome != 0 || stateRw.Airborne != 0 || stateRw.LandingRolling != 0 || stateRw.TakeoffRolling != 0)

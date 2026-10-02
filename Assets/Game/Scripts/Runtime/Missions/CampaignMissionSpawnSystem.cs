@@ -434,6 +434,11 @@ namespace Game.Runtime
 
         internal static bool HasRequiredRestrictions(ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak)))
+                return definition.Defense.Enabled != 0 && definition.MissionRuntimeEnabled != 0 &&
+                    definition.StartingCredits >= 0 && definition.StartingMaterials > 0 &&
+                    definition.BuildingDisabled == 0 && definition.ProductionDisabled == 0 &&
+                    definition.EconomyDisabled == 0 && definition.TransportDisabled == 0 && definition.AirDisabled == 0;
             if (definition.Breach.Enabled != 0)
                 return definition.MissionRuntimeEnabled == 0 && definition.EconomyDisabled != 0 && definition.AirDisabled != 0;
             if (definition.Extraction.Enabled != 0)

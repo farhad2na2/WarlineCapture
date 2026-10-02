@@ -1,0 +1,18 @@
+{
+    "schema": "warline.armor-break.packed-content.v1",
+    "result": "Passed",
+    "mapId": "opmap.ch04.armor_break",
+    "contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "cff37b7367eda4910ab737672c2fe51b",
+    "unitFixtureSceneGuid": "b216876e8b5a144d6b8750cabd8fb442",
+    "entityContentPath": "Library/ArmorBreakPreparedContent/Entities",
+    "entityCatalogPath": "Library/ArmorBreakPreparedContent/Entities/ContentArchives/archive_dependencies.bin",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/ArmorBreakPreparedContent/Addressables/catalog.bin",
+    "definitionGuid": "be0f1c8c7ae1940d6a679b258bf79f7b",
+    "bindingGuid": "b7c6bb84a6d0c4ed78be897c552f6ac1",
+    "entityCatalogHash": "80300472fbee5dc8bfb07df0a145d1e30ee4d983837b28a116cb8ee64b76a0ce",
+    "addressablesCatalogHash": "a30ac9ca57acf9b33419f3a2777e76dc24d5443b9aa0cd66fdc21de65822698e",
+    "status": "Native packed content built. Normal-input mission and real device acceptance are separate gates.",
+    "entityContentBytes": 277845389
+}

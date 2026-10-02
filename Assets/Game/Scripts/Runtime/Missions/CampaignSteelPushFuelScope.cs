@@ -14,7 +14,17 @@ namespace Game.Runtime
             using var missions=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent));
             if(missions.CalculateEntityCount()!=1)return false;
             var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if(runtime.Phase==MissionPhaseKind.None || runtime.MissionId.ToString()!=CampaignMissionSequence.SteelPush)return false;
+            if(runtime.Phase==MissionPhaseKind.None)return false;
+            if(runtime.MissionId.ToString()==CampaignMissionSequence.ArmorBreak)
+            {
+                if(em.HasComponent<CampaignMissionArmorBreakState>(root))
+                {
+                    var armor=em.GetComponentData<CampaignMissionArmorBreakState>(root);
+                    if(CampaignMissionArmorBreakRuleUtility.Matches(in armor,in runtime))reserve=armor.FuelReserve;
+                }
+                return true;
+            }
+            if(runtime.MissionId.ToString()!=CampaignMissionSequence.SteelPush)return false;
             if(em.HasComponent<CampaignMissionSteelPushState>(root))
             {
                 var state=em.GetComponentData<CampaignMissionSteelPushState>(root);

@@ -34,6 +34,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
   - {fileID: 11400000, guid: f88a7b632df304be88bde7709928ec6a, type: 2}
   - {fileID: 11400000, guid: 4f2ea70113325408aa8ae5a4366950b9, type: 2}
+  - {fileID: 11400000, guid: be0f1c8c7ae1940d6a679b258bf79f7b, type: 2}
   - {fileID: 11400000, guid: 24436ea782a07423ba0de9f14915ade7, type: 2}
   - {fileID: 11400000, guid: ad4954749229d4f8d81df237825cac50, type: 2}
   - {fileID: 11400000, guid: d727f71c45e144276906a5c5d0bd2fc5, type: 2}
@@ -166,6 +167,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe
+  - definition: {fileID: 11400000, guid: be0f1c8c7ae1940d6a679b258bf79f7b, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch04.armor_break
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86
   - definition: {fileID: 11400000, guid: 24436ea782a07423ba0de9f14915ade7, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch04.grounded_signal

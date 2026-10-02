@@ -28,7 +28,7 @@ namespace Game.UI.Runtime
         private bool _focusNextTutorialWorld;
         private float _tutorialFocusPendingUntil;
         private int _tutorialFocusPendingStep;
-        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 4 or 5 or 6 or 8 or 9 or 10 or 12;
+        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 4 or 5 or 6 or 7 or 8 or 9 or 10 or 12;
 
         private bool ShowNextTutorialAction()
         {
@@ -45,7 +45,7 @@ namespace Game.UI.Runtime
             else _highlightPresentationSystem.ShowTutorialWorld(position);
             if (_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(selection))
             {
-                _tutorialFocusPendingUntil=Time.unscaledTime+(UiShellRuntimeGateway.IsGroundedSignalGuideContext()?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
+                _tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext())?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
                 _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
             }
         }

@@ -78,6 +78,26 @@ namespace Game.Editor
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
                 }
+                var armor = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH04M05ArmorBreakConfigBuilder.MapPath);
+                if (armor != null)
+                {
+                    string armorError = "Logical source binding is not permitted for this independent physical map.";
+                    if (armor.SourceBinding.IsConfigured ||
+                        !armor.TryValidateMetadata(out armorError) ||
+                        !armor.TryValidateLocalContentReferences(out armorError))
+                        throw new InvalidOperationException("Armor Break production entity delivery requires a valid independent map: " + armorError);
+                    string mapPath = CH04M05ArmorBreakConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, armor.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Armor Break production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH04M05ArmorBreakContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Armor Break production unit fixture missing; run CH04M05ArmorBreakContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
             }
             return scenes;
         }

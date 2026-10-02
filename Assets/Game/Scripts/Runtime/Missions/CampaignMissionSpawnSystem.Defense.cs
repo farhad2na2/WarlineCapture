@@ -75,6 +75,8 @@ namespace Game.Runtime
                 fuel.Enabled = 0;
                 em.SetComponentData(instance, fuel);
             }
+            if(definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak)) && group.FactionId==FactionIdentity.PlayerFactionId)
+                CampaignMissionRuntimeSystem.ApplyArmorBreakSpawnPolicy(em,instance);
             if(definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SplitFront)))
             {
                 if(group.FactionId==1&&em.HasComponent<GroundMissileLauncherComponent>(instance))

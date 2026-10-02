@@ -43,8 +43,22 @@ namespace Game.Runtime
             bool splitFront=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront));
             bool steelPush=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SteelPush));
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
+            bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if (preparing)
+            if (armorBreak && em.HasComponent<CampaignMissionArmorBreakState>(root))
+            {
+                var armor=em.GetComponentData<CampaignMissionArmorBreakState>(root);
+                int stage=CampaignMissionArmorBreakRuleUtility.Stage(in armor);
+                text=GameText.Get("mission.armor_break.hud.stage."+stage);
+                int remaining=math.max(0,(CampaignMissionArmorBreakRuleUtility.DeadlineMilliseconds-armor.ElapsedMilliseconds+999)/1000);
+                string window=$"{remaining/60:00}:{remaining%60:00}";
+                if(stage==7)text+="\n"+GameText.Format("mission.armor_break.hud.hold_time","Hold: {0}/6 s · Time: {1}",armor.RecoveryMilliseconds/1000,window);
+                else
+                {
+                    text+="\n"+GameText.Format("mission.armor_break.hud.time","Operation window: {0}",window);
+                }
+            }
+            else if (preparing)
                 text = splitFront?GameText.Get("mission.split_front.warning.prepare"):steelPush?GameText.Get("mission.steel_push.warning.prepare"):airCorridor?GameText.Get("mission.air_corridor.warning.prepare"):GameText.Get("mission.m03.prepare.short") + "\n" + GameText.Get("mission.m03.prepare.progress");
             else
             {

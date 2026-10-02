@@ -79,7 +79,8 @@ namespace Game.Missions.Contracts
         TransferSupplyOil = 16, TransferSupplyFuel = 17, SecureSupplyReserve = 18,
         DeliverMarketRelief = 19, VerifyMarketManifest = 20, KeepMarketOpen = 21,
         EscortPowerRelayFamilies = 22, RestorePowerRelay = 23, SecurePowerRelay = 24,
-        SustainRouteLifelines = 25, RestoreRouteLink = 26, CaptureRouteHub = 27, PreserveRouteRecords = 28
+        SustainRouteLifelines = 25, RestoreRouteLink = 26, CaptureRouteHub = 27, PreserveRouteRecords = 28,
+        DefeatArmorBreakMilitary = 29, RecoverArmorBreakAuthority = 30, ProtectArmorBreakRelief = 31
     }
 
     public enum MissionStarRuleKind : byte

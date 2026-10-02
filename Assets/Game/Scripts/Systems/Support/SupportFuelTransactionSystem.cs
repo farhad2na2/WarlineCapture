@@ -13,6 +13,7 @@ namespace Game.Runtime
             ? math.max(0,s.StoredFuelBarrels-s.ReservedFuelOutboundBarrels-s.CivilianFuelReserveBarrels) : 0;
         public static float Available(EntityManager em, byte faction)
         {
+            if(CampaignCitywideFuelScope.TryGet(em,out _,out _))return faction==1?CampaignCitywideFuelScope.Total(em):0;
             if(TryScope(em,out var scope))return em.Exists(scope) && em.HasComponent<BuildingResourceStorageComponent>(scope)
                 ? Usable(em.GetComponentData<BuildingResourceStorageComponent>(scope),faction):0;
             using var query=em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
@@ -35,7 +36,7 @@ namespace Game.Runtime
             foreach(var chunk in chunks)
             {
                 var entities=chunk.GetNativeArray(entityType);var stores=chunk.GetNativeArray(ref storageType);
-                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope) && Usable(stores[i],faction)>0)plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
+                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
             }
             var prepared=plan;
             // Deterministic source order; no writes during preparation.
@@ -73,7 +74,7 @@ namespace Game.Runtime
             foreach(var chunk in chunks)
             {
                 var entities=chunk.GetNativeArray(entityType);var stores=chunk.GetNativeArray(ref storageType);
-                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope) && Usable(stores[i],faction)>0)
+                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)
                     plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
             }
             var prepared=plan;
@@ -134,6 +135,7 @@ namespace Game.Runtime
         private static bool TryScope(EntityManager em,out Entity storage)
         {
             storage=Entity.Null;
+            if(CampaignCitywideFuelScope.TryGet(em,out var citywideClinic,out _)){storage=citywideClinic;return true;}
             using var query=em.CreateEntityQuery(ComponentType.ReadOnly<SupportFuelScopeComponent>());
             int count=query.CalculateEntityCount();if(count==0)return false;
             if(count!=1)return true; // Ambiguous authored scope must never fall back to inherited stock.

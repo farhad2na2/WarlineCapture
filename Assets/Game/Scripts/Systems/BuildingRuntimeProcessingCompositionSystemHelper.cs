@@ -390,17 +390,23 @@ namespace Game.Runtime
                     // Apply authored road/water/sidewalk rules to every relocation candidate,
                     // even before the Build drawer has initialized its own cache.
                     var originalContext = runtimeSpawnContext;
+                    bool citywideDiagnostic=em.HasComponent<CampaignMissionRuntimeComponent>(request.PlanEntity)&&
+                        em.GetComponentData<CampaignMissionRuntimeComponent>(request.PlanEntity).MissionId.ToString()==Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert;
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
-                        if (_skirmishRoads.Overlaps(g, rect.position, rect.size) ||
-                            _skirmishRoads.OverlapsWater(g, rect.position, rect.size)) return false;
+                        bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
+                        if(authoredRoad||water)
+                        {if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
                         var sidewalks = _skirmishRoads.GetSidewalks();
                         for (int y = rect.yMin; y < rect.yMax; y++)
                             for (int x = rect.xMin; x < rect.xMax; x++)
                                 if (x < 0 || y < 0 || x >= g.Width || y >= g.Height ||
-                                    sidewalks != null && sidewalks[y * g.Width + x]) return false;
-                        return originalContext.IsPlacementValid(d, origin, footprint, rotated, g, roads, blockers);
+                                    sidewalks != null && sidewalks[y * g.Width + x])
+                                {if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
+                        bool valid=originalContext.IsPlacementValid(d,origin,footprint,rotated,g,roads,blockers);
+                        if(!valid&&citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=original-placement-context rect={rect}");
+                        return valid;
                     });
                 }
 

@@ -1,0 +1,21 @@
+{
+  "missionId": "saga.ch05.m01.citywide_alert",
+  "openingSequenceId": "seq.ch05.open.citywide_command",
+  "captionCount": 14,
+  "englishPersianClipCount": 28,
+  "commanderDecisions": "No voiced Commander lines; opening06 ARIA states retained player authority. Commander order/decision text remains text-only if root includes a literal order caption.",
+  "textOnlyCommanderDecision": {
+    "en": "Retain explicit approval. Assign the clinic and utility fronts; choose priorities from the confirmed situation.",
+    "fa": "تأیید صریح حفظ شود. جبهه‌های درمانگاه و مرکز خدمات مشخص شوند؛ اولویت‌ها بر اساس وضعیت تأییدشده انتخاب شوند."
+  },
+  "canonicalOpening": "Seven detailed beats from Design catalog, replacing abbreviated preview-only threepanel opening.",
+  "art": [
+    "Assets/Game/Resources/FutureMissionComics/CH05M01_CitywideAlert.png",
+    "Assets/Game/Resources/FutureMissionComics/CH05M01_CitywideAlert_Comms.png",
+    "Assets/Game/Resources/FutureMissionComics/CH05M01_CitywideAlert_Debrief.png"
+  ],
+  "artReview": "All three inspected: visible clinic/utility fronts, distinct civic functions, mixed military pressure and recovered service. Reuse approved visual direction; author opening7 +mission7 distinct16:9/20:9 crops.",
+  "providerRequests": 28,
+  "status": "All 28 exact-approved bilingual voice clips generated and file/caption/cast checks passed; Unity integration and native validation root-owned.",
+  "repositoryEdits": "Owned new Citywide source/report files and canonical seven-page Chapter5 preview opening."
+}

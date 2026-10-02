@@ -245,7 +245,9 @@ namespace Game.Components
         GroundedSignalUnload = 87, GroundedSignalRelay = 88, GroundedSignalRecover = 89,
         GroundedSignalBoard = 90, GroundedSignalExtract = 91,
         ArmorBreakCoverage = 92, ArmorBreakAir = 93, ArmorBreakBattery = 94, ArmorBreakAircraft = 95,
-        ArmorBreakApproach = 96, ArmorBreakCommand = 97, ArmorBreakAuthority = 98
+        ArmorBreakApproach = 96, ArmorBreakCommand = 97, ArmorBreakAuthority = 98,
+        CitywideRecruit = 101, CitywideCoverage = 102, CitywideClinicResponse = 103, CitywideClinicRecovery = 104,
+        CitywideUtilityResponse = 105, CitywideUtilityRecovery = 106, CitywidePerimeter = 107, CitywideStabilize = 108
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

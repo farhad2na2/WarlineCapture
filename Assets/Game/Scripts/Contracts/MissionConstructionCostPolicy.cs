@@ -9,7 +9,7 @@ namespace Game.Tactical.Contracts
         public static byte ForMission(string missionId) => missionId switch
         {
             "saga.ch01.m03.radar_warning" or "saga.ch04.m01.air_corridor" or
-                "saga.ch04.m02.steel_push" => DefenseMaterialsV1,
+                "saga.ch04.m02.steel_push" or "saga.ch05.m01.citywide_alert" => DefenseMaterialsV1,
             "saga.ch01.m02.establish_base" or "skirmish.base_assault" => MaterialsOnly,
             _ => Legacy
         };

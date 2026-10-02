@@ -1,0 +1,18 @@
+{
+    "schema": "warline.citywide-alert.packed-content.v1",
+    "result": "Passed",
+    "mapId": "opmap.ch05.citywide_alert",
+    "contentHash": "c4374956ee36e76b94dd391589af5e48ba4b3abeb222c49c3a6f83510e9f344f",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "a6ddd07d983ae4b01a2f4f65c6eafb02",
+    "unitFixtureSceneGuid": "2d550a175114341af90248407b221cf7",
+    "entityContentPath": "Library/CitywideAlertPreparedContent/Entities",
+    "entityCatalogPath": "Library/CitywideAlertPreparedContent/Entities/ContentArchives/archive_dependencies.bin",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/CitywideAlertPreparedContent/Addressables/catalog.bin",
+    "definitionGuid": "78813262332a14b309f1e5bf59e95d9d",
+    "bindingGuid": "9bef15c600f5d4f8da58222b9e8d08c0",
+    "entityCatalogHash": "5f24eebef8ae90b128abc4b4f8b4063a7a6db3dbbc7b13b2a7b6b3904bc74500",
+    "addressablesCatalogHash": "386c960a1ccd065426d44f8f9810fda36b6c82ef048fb9e2babdf9ea028a8521",
+    "status": "Native packed content built. Normal-input mission and real device acceptance are separate gates.",
+    "entityContentBytes": 369985976
+}

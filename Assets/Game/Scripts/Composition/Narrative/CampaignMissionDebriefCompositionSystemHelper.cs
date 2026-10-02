@@ -231,7 +231,9 @@ namespace Game.Composition
             bool commsConsumed = IsSameAttempt(
                 in runtime, in completedCommsSession, completedCommsAttemptOrdinal);
             stage = ResolveStage(in runtime, in facts, briefConsumed, commsConsumed);
-            if (stage == SequenceStage.Brief && runtime.MissionId.Equals(new FixedString64Bytes("saga.ch02.m01.gridlock")))
+            if (stage == SequenceStage.Brief &&
+                (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.Gridlock)) ||
+                 runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert))))
             {
                 if (!entityManager.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root)) return false;
                 var progress = entityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store;
@@ -239,7 +241,8 @@ namespace Game.Composition
                 if (!progress.HasSeenChapterOpening(runtime.MissionId.ToString()))
                 {
                     stage = SequenceStage.ChapterOpening;
-                    sequenceId = "seq.ch02.open.broken_grid";
+                    sequenceId = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert))
+                        ? "seq.ch05.open.citywide_command" : "seq.ch02.open.broken_grid";
                     return true;
                 }
             }
@@ -499,6 +502,13 @@ namespace Game.Composition
         {
             if (activeStage == SequenceStage.ChapterClose && result.Completion.PayloadId != "request.armor_break.close.complete")
             { Debug.LogError("[ArmorBreakNarrative] Rejected chapter close without canonical completion receipt."); return; }
+            if (activeStage == SequenceStage.ChapterOpening && queryWorld != null && queryWorld.IsCreated && hasMissionRootQuery && missionRootQuery.CalculateEntityCount() == 1)
+            {
+                var runtime = queryWorld.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(missionRootQuery.GetSingletonEntity());
+                if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert)) &&
+                    result.Completion.PayloadId != "request.citywide_alert.open.complete")
+                { Debug.LogError("[CitywideAlertNarrative] Rejected chapter opening without canonical completion receipt."); return; }
+            }
             presentation.Cancel();
             running = false;
             handoffPending = true;

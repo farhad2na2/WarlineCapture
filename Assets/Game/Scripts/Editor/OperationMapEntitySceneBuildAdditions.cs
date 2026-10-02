@@ -98,6 +98,26 @@ namespace Game.Editor
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
                 }
+                var citywide = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH05M01CitywideAlertConfigBuilder.MapPath);
+                if (citywide != null)
+                {
+                    string citywideError = "Logical source binding is not permitted for this independent physical map.";
+                    if (citywide.SourceBinding.IsConfigured ||
+                        !citywide.TryValidateMetadata(out citywideError) ||
+                        !citywide.TryValidateLocalContentReferences(out citywideError))
+                        throw new InvalidOperationException("Citywide Alert production entity delivery requires a valid independent map: " + citywideError);
+                    string mapPath = CH05M01CitywideAlertConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, citywide.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Citywide Alert production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH05M01CitywideAlertContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Citywide Alert production unit fixture missing; run CH05M01CitywideAlertContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
             }
             return scenes;
         }

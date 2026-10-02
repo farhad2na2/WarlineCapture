@@ -1,0 +1,48 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M01CitywideAlertContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5a6eced4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'Game_UnitPrefabRegistry_Config' does not match filename 'UnitFixtureRegistry'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.CH05M01CitywideAlertContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:95)
+Game.Editor.CH05M01CitywideAlertContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5a6eced4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CitywideAlertUnitFixture] result=Passed uniquePrefabs=16 combinedArms=G2A+Radar+Armor+Infantry civicServiceOwners=2 production=2 Fuel=RealStorage fixtureLoadedByMission=false
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:103)
+Game.Editor.CH05M01CitywideAlertContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5a6eced4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertPackedContent] result=Passed map=opmap.ch05.citywide_alert entityScene=a6ddd07d983ae4b01a2f4f65c6eafb02 fixture=2d550a175114341af90248407b221cf7 bytes=271523080 locator=GUID+CampaignAddress scope=ContentBuildOnly
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:79)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5a6eced4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M01CitywideAlertContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5a6eced4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

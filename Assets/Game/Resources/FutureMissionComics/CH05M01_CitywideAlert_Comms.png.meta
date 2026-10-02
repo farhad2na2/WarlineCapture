@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,161 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8dbd16ae5bd2d4884a683e3ce48cba80
+      internalID: 1281323687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02f09f364cc0f4e8bb24111db0096bc1
+      internalID: -926917528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 28
+        width: 1571
+        height: 884
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a6fc666d732043ad8699988a4107adf
+      internalID: -1744599084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 117
+        width: 1571
+        height: 707
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a09c81daf85e4b918053b7c4c71304a
+      internalID: -1479507191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 57
+        width: 1470
+        height: 827
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 334381af4654b4cc5b75bafdbf5353f9
+      internalID: -1072468863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert_Comms-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 139
+        width: 1471
+        height: 662
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49f28e094f91245b8a5b52e6177d3594
+      internalID: 72929097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M01_CitywideAlert_Comms-a-16x9: 1281323687
+      CH05M01_CitywideAlert_Comms-a-20x9: -926917528
+      CH05M01_CitywideAlert_Comms-b-16x9: -1744599084
+      CH05M01_CitywideAlert_Comms-b-20x9: -1479507191
+      CH05M01_CitywideAlert_Comms-c-16x9: -1072468863
+      CH05M01_CitywideAlert_Comms-c-20x9: 72929097
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

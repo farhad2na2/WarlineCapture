@@ -45,7 +45,17 @@ namespace Game.Runtime
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if (armorBreak && em.HasComponent<CampaignMissionArmorBreakState>(root))
+            if(runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert) && em.HasComponent<CampaignMissionCitywideAlertState>(root))
+            {
+                var city=em.GetComponentData<CampaignMissionCitywideAlertState>(root);
+                int stage=CampaignMissionCitywideAlertRuleUtility.Stage(in city);
+                text=GameText.Get("mission.citywide_alert.hud.stage."+stage);
+                if(city.ClinicObstructed!=0)text+="\n"+GameText.Format("mission.citywide_alert.hud.clinic_outage","Clinic service blocked · recover within {0}s",math.max(0,(60000-city.ClinicObstructionMilliseconds+999)/1000));
+                if(city.UtilityObstructed!=0)text+="\n"+GameText.Format("mission.citywide_alert.hud.utility_outage","Utility service blocked · recover within {0}s",math.max(0,(60000-city.UtilityObstructionMilliseconds+999)/1000));
+                int seconds=math.max(0,(CampaignMissionCitywideAlertRuleUtility.DeadlineMilliseconds-city.ElapsedMilliseconds+999)/1000);
+                text+="\n"+GameText.Format("mission.citywide_alert.hud.time","Operation window: {0}",$"{seconds/60:00}:{seconds%60:00}");
+            }
+            else if (armorBreak && em.HasComponent<CampaignMissionArmorBreakState>(root))
             {
                 var armor=em.GetComponentData<CampaignMissionArmorBreakState>(root);
                 int stage=CampaignMissionArmorBreakRuleUtility.Stage(in armor);

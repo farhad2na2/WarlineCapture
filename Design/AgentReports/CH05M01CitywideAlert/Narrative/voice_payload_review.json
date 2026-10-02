@@ -1,0 +1,429 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "missionId": "saga.ch05.m01.citywide_alert",
+  "clipCount": 28,
+  "runtimeNetworkTts": false,
+  "clips": [
+    {
+      "id": "citywide_alert-open-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Five districts carry the record of our decisions: trust earned or lost, evidence preserved, and infrastructure still functioning. I will carry those consequences forward without treating an unverified report as fact.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15100,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] پنج منطقه، اثر تصمیم‌های ما رو با خودشون دارن؛ اعتمادی که به دست اومده یا از دست رفته، مدارکی که حفظ شدن و زیرساختی که هنوز کار می‌کنه. این پیامدها رو در نظر می‌گیرم، بدون اینکه گزارش تأییدنشده رو واقعیت حساب کنم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15101,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Ash Line cells are striking local services while Vanguard pushes the main corridors. These attacks are coordinated. Keep forces on both civic fronts; sending everyone to one fight leaves the other exposed.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15102,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] گروه‌های خط خاکستر به خدمات محلی حمله می‌کنن و ونگارد مسیرهای اصلی رو زیر فشار گذاشته. این حمله‌ها هماهنگن. نیروها رو در هر دو جبههٔ شهری نگه دارین؛ فرستادن همه به یک نبرد، جبههٔ دیگه رو بی‌دفاع می‌ذاره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15103,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "The clinic must keep treating people, and the utility site must keep water and power moving. Our shelters, roads, and workers depend on both. Laila is tracking the air corridor while Dalia holds the military picture.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15104,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] درمانگاه باید به رسیدگی به مردم ادامه بده و مرکز خدمات باید آب و برق رو در جریان نگه داره. پناهگاه‌ها، جاده‌ها و نیروهای کارمون به هر دو وابسته‌ان. لیلا مسیر هوایی رو دنبال می‌کنه و دالیا وضعیت نظامی رو زیر نظر داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15105,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-04",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Confirmed threats are facts. Their likely next moves are predictions. My suggested responses are recommendations. I will keep those separate in the command picture, and no recommendation becomes an order without your approval.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15106,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] تهدیدهای تأییدشده واقعیتن. حرکت‌های احتمالی بعدیشون پیش‌بینی‌ان. پاسخ‌هایی که پیشنهاد می‌کنم توصیه‌ان. این‌ها رو در تصویر فرماندهی جدا نگه می‌دارم و هیچ پیشنهادی بدون تأیید شما به فرمان تبدیل نمی‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15107,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-05",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "Every district is calling, Commander. Temporary authority cannot answer a permanent crisis. Give the Relay one lasting command, and I can make the city obey.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15108,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-05",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "request": {
+        "text": "[conversational tone] همهٔ منطقه‌ها کمک می‌خوان، فرمانده. اختیار موقت جواب بحران دائمی رو نمی‌ده. یک فرمان ماندگار به رله بده تا شهر رو وادار به اطاعت کنم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15109,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-06",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "You retain approval over every action I propose. The first two fronts are the clinic and the utility site. Their priorities remain yours to direct; I will show the situation and wait for your decision.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15110,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-06",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] تأیید هر اقدامی که پیشنهاد می‌کنم با شما می‌مونه. دو جبههٔ اول، درمانگاه و مرکز خدمات هستن. تعیین اولویتشون همچنان با شماست؛ وضعیت رو نشون می‌دم و منتظر تصمیم شما می‌مونم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15111,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-open-07",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "We will protect these districts and keep command accountable. Hold both civic fronts, preserve the people keeping them alive, and prove that saving Sahrin does not require Qassem's permanent authority.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15112,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-open-07",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] از این منطقه‌ها محافظت می‌کنیم و فرماندهی رو پاسخ‌گو نگه می‌داریم. هر دو جبههٔ شهری رو حفظ کنین، از کسانی که خدمات رو سرپا نگه داشتن مراقبت کنین و نشون بدین نجات سهرین به اختیار دائمی قاسم نیاز نداره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15113,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "The clinic and utility site protect different needs. Keep both intact. Clear each front's attackers, then bring an original engineer to its marked recovery point and hold for six seconds to restore service.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15114,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] درمانگاه و مرکز خدمات، هر کدوم نیاز متفاوتی رو تأمین می‌کنن. هر دو رو سالم نگه دارین. مهاجم‌های هر جبهه رو پاک‌سازی کنین، بعد یکی از مهندس‌های اولیه رو به محل بازیابی مشخص‌شدهٔ همون جبهه برسونین و شش ثانیه اونجا نگه دارین تا خدمات برگرده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15115,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Mixed Ash Line and Vanguard groups are approaching on separate response lanes. Use radar to confirm the threats, split your defenders, and use the existing production controls for reinforcements. Allow time for units to reach the other front.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15116,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] گروه‌های ترکیبی خط خاکستر و ونگارد از مسیرهای جدا نزدیک می‌شن. با رادار تهدیدها رو تأیید کنین، مدافع‌ها رو تقسیم کنین و از کنترل‌های تولید برای نیروهای کمکی استفاده کنین. زمان رسیدن نیروها به جبههٔ دیگه رو هم حساب کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15117,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-brief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "I can request one Smoke screen on a marked lane. You decide whether to approve it. Approval covers that action alone; declining or continuing without it leaves command with you and consumes no Fuel.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15118,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-brief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] می‌تونم برای یک مسیر مشخص درخواست پردهٔ دود بدم. تصمیم تأییدش با شماست. تأیید فقط برای همون اقدامه؛ رد کردنش یا ادامه دادن بدون اون، فرماندهی رو در اختیار شما نگه می‌داره و سوختی مصرف نمی‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15119,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Both fronts are under pressure. Do you approve one Smoke action in the marked area? You may decline or continue without answering. I will wait; my guidance does not command your troops, and you can stop it immediately.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15120,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] هر دو جبهه زیر فشارن. یک اقدام دود در محدودهٔ مشخص رو تأیید می‌کنین؟ می‌تونین ردش کنین یا بدون پاسخ ادامه بدین. منتظر می‌مونم؛ راهنمایی من به نیروهاتون فرمان نمی‌ده و می‌تونین فوراً متوقفش کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15121,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "Both districts are stable. The clinic and utility site are intact, and the engineers have restored both services. Keeping forces on both fronts protected the people and workers relying on them.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15122,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] هر دو منطقه پایدارن. درمانگاه و مرکز خدمات سالم موندن و مهندس‌ها خدمات هر دو جبهه رو دوباره راه انداختن. نگه داشتن نیروها در هر دو جبهه، مردم و کارکنانی رو که به این خدمات وابسته‌ان حفظ کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15123,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The attack timings align with the last active Civic Relay nodes. Ash Line's local strikes and Vanguard's corridor pressure share the same schedule. I have preserved that connection as evidence.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15124,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] زمان‌بندی حمله‌ها با آخرین گره‌های فعال رلهٔ شهری هم‌خوانه. حمله‌های محلی خط خاکستر و فشار ونگارد روی مسیرها، برنامهٔ مشترکی دارن. این ارتباط رو به عنوان مدرک حفظ کردم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15125,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-03",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "Qassem is shifting pressure toward evacuation routes and public broadcasts. The routes are real; his claims need verification. Keep the district teams connected. The next response must get people to shelter and preserve the signal evidence.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 15126,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "citywide_alert-debrief-03",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] قاسم داره فشار رو به مسیرهای تخلیه و پیام‌های عمومی منتقل می‌کنه. مسیرها واقعی‌ان، ولی ادعاهاش باید تأیید بشن. ارتباط تیم‌های منطقه رو حفظ کنین. پاسخ بعدی باید مردم رو به پناهگاه برسونه و مدرک پیام رو نگه داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 15127,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    }
+  ]
+}

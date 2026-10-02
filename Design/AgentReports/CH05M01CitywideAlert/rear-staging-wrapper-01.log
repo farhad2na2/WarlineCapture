@@ -1,0 +1,82 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M01CitywideAlertConfigBuilder.RefreshPreparedScenarioAnchors
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertRoutes] result=Passed boulevard=401x7 independentInfantryEgress=2x75x3 buildLots=6 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:458)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:87)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=21 maps=28
+UnityEngine.Debug:Log (object)
+Game.Editor.M01FirstContactConfigBuilder:RefreshChapterCatalogs () (at Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs:75)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:91)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertContentRegistration] result=Passed ownAssets=8 added=0 GUIDLookup=Supported existingEntries=Preserved
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertContentBuilder:RegisterProductionEntries () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertContentBuilder.cs:53)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:91)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertRoutes] result=Passed boulevard=401x7 independentInfantryEgress=2x75x3 buildLots=6 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:458)
+Game.Editor.CH05M01CitywideAlertMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertMapValidation.cs:114)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:92)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertMap] result=Passed identities=2979 owners=325 renderOnly=2654 roots=3 grid=440x220 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertMapValidation.cs:115)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:92)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertAnchorRefresh] result=Passed revision=citywide-anchor-v2-rear-engineers-970-1130 clinic=970,426 utility=1130,426 physicalHashes=5 sourceHashes=6 walkable3x3=true recoveryMove=Required catalog=Refreshed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:RefreshPreparedScenarioAnchors () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:93)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M01CitywideAlertConfigBuilder.RefreshPreparedScenarioAnchors
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_96504923/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

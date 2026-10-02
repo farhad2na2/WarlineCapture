@@ -117,7 +117,7 @@ namespace Game.UI.Runtime
                     projectionApplied = true; appliedVersion = campaign.Version; appliedLocale = locale;
                     missionId = campaign.SelectedMission.MissionId;
                     campaignOperationsView.Apply(campaign);
-                    campaignOperationsView.EnableFutureComicChapters(campaignOperationsView.IsChapterFour ? 4 : futureChapter);
+                    campaignOperationsView.EnableFutureComicChapters(campaignOperationsView.IsChapterFive ? 5 : campaignOperationsView.IsChapterFour ? 4 : futureChapter);
                     if (futureChapter >= 4)
                         campaignOperationsView.ApplyFutureComicMission(futureChapter,
                             Mathf.Max(1, futureMissionNumber));
@@ -172,7 +172,7 @@ namespace Game.UI.Runtime
                 futureComicPreview.PlaySequence("seq.ch03.open.hidden_network");
         }
         private void SelectChapterFour(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor);campaignOperationsView.ShowMissionSelect();}
-        private void SelectChapterFive() => SelectFutureChapter(5);
+        private void SelectChapterFive(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert);campaignOperationsView.ShowMissionSelect();}
         private void SelectM02()
         {
             if (TrySelectFutureMission(2)) return;
@@ -215,6 +215,8 @@ namespace Game.UI.Runtime
 
         private bool TrySelectFutureMission(int number)
         {
+            if ((futureChapter==5 || campaignOperationsView.IsChapterFive) && number==1)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==5)
             { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==4)
@@ -226,6 +228,7 @@ namespace Game.UI.Runtime
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==1)
             { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor); return true; }
             if(campaignOperationsView.IsChapterFour)futureChapter=4;
+            if(campaignOperationsView.IsChapterFive)futureChapter=5;
             if (futureChapter < 4)
                 return false;
             futureMissionNumber = number;

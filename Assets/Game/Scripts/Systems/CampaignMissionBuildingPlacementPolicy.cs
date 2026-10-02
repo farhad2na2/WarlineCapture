@@ -199,6 +199,8 @@ namespace Game.Runtime
             BuildingDefinition building,
             RectInt placement)
         {
+            if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert)))
+                return IsAllowedCitywideStartingLot(entityManager,operationMapQuery,in runtime,building,placement);
             if (!TryResolveBuildZone(
                     entityManager,
                     operationMapQuery,
@@ -212,6 +214,37 @@ namespace Game.Runtime
 
             return placement.xMin >= zone.xMin && placement.yMin >= zone.yMin &&
                    placement.xMax <= zone.xMax && placement.yMax <= zone.yMax;
+        }
+
+        internal static bool IsAllowedCitywideStartingLot(EntityManager em,EntityQuery operationMapQuery,
+            in CampaignMissionRuntimeComponent runtime,BuildingDefinition building,RectInt placement)
+        {
+            if(building?.Prefab==null||operationMapQuery.CalculateEntityCount()!=1)return false;
+            using var roots=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(BuildingStartingGrantOwner));
+            if(roots.CalculateEntityCount()!=1)return false;
+            var owner=em.GetComponentData<CampaignMissionRuntimeComponent>(roots.GetSingletonEntity());
+            if(!owner.SessionToken.Equals(runtime.SessionToken)||owner.AttemptOrdinal!=runtime.AttemptOrdinal||owner.SourceVersion!=runtime.SourceVersion)return false;
+            var mapEntity=operationMapQuery.GetSingletonEntity();
+            var active=em.GetComponentData<ActiveOperationMapComponent>(mapEntity);var metadata=em.GetComponentData<OperationMapMetadataComponent>(mapEntity);
+            if(!active.MissionId.Equals(runtime.MissionId)||!active.ScenarioId.Equals(runtime.ScenarioId)||!active.OperationMapId.Equals(runtime.OperationMapId)||
+                metadata.Generation!=active.Generation||!metadata.Blob.IsCreated||!metadata.Blob.Value.OperationMapId.Equals(active.OperationMapId))return false;
+            ref var map=ref metadata.Blob.Value;
+            if(map.Grid.CellSize<=0||!math.isfinite(map.Grid.CellSize))return false;
+            string name=building.Prefab.name;
+            string[] anchors=name switch {
+                "Building_Citywide_Clinic"=>new[]{"clinic_service"},"Building_Citywide_Utility"=>new[]{"utility_service"},
+                "Building_Barrack"=>new[]{"producer_clinic","producer_utility"},
+                "Building_Citywide_ReserveDepot"=>new[]{"reserve_clinic","reserve_utility"},_=>System.Array.Empty<string>() };
+            var expected=name switch { "Building_Citywide_Clinic"=>new Vector2Int(14,12),"Building_Citywide_Utility"=>new Vector2Int(20,16),
+                "Building_Barrack"=>new Vector2Int(28,15),"Building_Citywide_ReserveDepot"=>new Vector2Int(26,25),_=>Vector2Int.zero };
+            if(placement.size!=expected)return false;
+            foreach(string suffix in anchors)
+                if(OperationMapMetadataUtility.TryFindAnchor(ref map,new FixedString64Bytes("anchor.ch05.m01."+suffix),out var anchor)&&anchor.Kind==OperationMapAnchorKind.Build)
+                {
+                    int2 origin=(int2)math.floor((anchor.Position.xz-map.Grid.Origin.xz)/map.Grid.CellSize);
+                    if(placement.position==new Vector2Int(origin.x,origin.y))return true;
+                }
+            return false;
         }
 
         private static bool TryResolveBuildZone(

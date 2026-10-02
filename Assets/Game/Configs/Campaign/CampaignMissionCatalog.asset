@@ -73,3 +73,6 @@ MonoBehaviour:
   - missionId: saga.ch04.m05.armor_break
     definition: {fileID: 11400000, guid: 4f8ed8fe62c1e4ff6a71bcc75a7f7d6f, type: 2}
     scenario: {fileID: 11400000, guid: ebf0a0ecfc1aa43848b18f54bcea4449, type: 2}
+  - missionId: saga.ch05.m01.citywide_alert
+    definition: {fileID: 11400000, guid: d24d1d7c6961340f3a74a4558152d580, type: 2}
+    scenario: {fileID: 11400000, guid: 4b3546f043e324077814d1d1dc76df92, type: 2}

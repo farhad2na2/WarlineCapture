@@ -337,6 +337,9 @@ namespace Game.Editor
             var armorBreak = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH04M05ArmorBreakConfigBuilder.MapPath);
             if (armorBreak != null && !maps.Contains(armorBreak)) maps.Add(armorBreak);
 
+            var citywide = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M01CitywideAlertConfigBuilder.MapPath);
+            if (citywide != null && !maps.Contains(citywide)) maps.Add(citywide);
+
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)
                 if (maps[i - 1].OperationMapId == maps[i].OperationMapId)
@@ -348,7 +351,7 @@ namespace Game.Editor
         private static string[] RegisteredChapterFolders(string category)
         {
             var folders = new List<string>();
-            foreach (string chapter in new[] { "Chapter01", "Chapter02", "Chapter03", "Chapter04" })
+            foreach (string chapter in new[] { "Chapter01", "Chapter02", "Chapter03", "Chapter04", "Chapter05" })
             {
                 string path = "Assets/Game/Configs/" + category + "/" + chapter;
                 if (AssetDatabase.IsValidFolder(path)) folders.Add(path);

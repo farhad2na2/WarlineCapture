@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed [CampaignMissionBootstrap] catalog=Content-pack version and hash must match its operation-map definition.

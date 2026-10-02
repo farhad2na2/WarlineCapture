@@ -331,13 +331,17 @@ namespace Game.Runtime
 
             GameObject instance = context.CreateBuildingVisualInstance?.Invoke(definition, context.BuildingRoot);
             if (instance == null)
+            {
+                if(requirePreferredOrigin&&IsCitywidePlacementDiagnostic())Debug.LogError($"[CitywidePlacement] reject=create-visual prefab={definition.Prefab.name}");
                 return false;
+            }
 
             context.PositionBuildingObject?.Invoke(instance, originCell, definition, grid, rotateVertical);
             Vector2Int footprint = context.GetPlacementFootprint != null
                 ? context.GetPlacementFootprint(definition, rotateVertical)
                 : definition.FootprintCells;
             building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap);
+            if(building==null&&requirePreferredOrigin&&IsCitywidePlacementDiagnostic())Debug.LogError($"[CitywidePlacement] reject=register-building prefab={definition.Prefab.name} origin={originCell} footprint={footprint}");
             return building != null;
         }
 

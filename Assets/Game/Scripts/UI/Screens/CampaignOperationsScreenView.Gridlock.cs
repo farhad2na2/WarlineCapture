@@ -19,8 +19,10 @@ namespace Game.UI.Runtime
         public bool IsChapterTwo {get;private set;}
         public bool IsChapterThree {get;private set;}
         public bool IsChapterFour {get;private set;}
+        public bool IsChapterFive {get;private set;}
         private void ApplyGridlockChapter(in UiCampaignOperationsModel model)
         {
+            IsChapterFive=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert;
             IsChapterFour=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.AirCorridor||model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SteelPush||model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SplitFront||model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal||model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak;
             IsChapterTwo=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.Gridlock || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.PowerRelay || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.RouteReopened;
             IsChapterThree=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SignalTrace || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.FalseFront || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak;
@@ -30,7 +32,7 @@ namespace Game.UI.Runtime
             if(chapterTwoLock!=null) chapterTwoLock.SetActive(!unlocked);
             GameObject railLock=ResolveChapterTwoRailLock();
             if(railLock!=null) railLock.SetActive(!unlocked);
-            ApplyChapterTabAppearance(chapterOneButton,!IsChapterTwo&&!IsChapterThree&&!IsChapterFour,true);
+            ApplyChapterTabAppearance(chapterOneButton,!IsChapterTwo&&!IsChapterThree&&!IsChapterFour&&!IsChapterFive,true);
             ApplyChapterTabAppearance(chapterTwoButton,IsChapterTwo,unlocked);
             bool chapterThreeUnlocked=(model.AvailableMissionMask&(1<<10))!=0;
             ApplyChapterTabAppearance(ChapterThreeButton,IsChapterThree,chapterThreeUnlocked);
@@ -44,6 +46,7 @@ namespace Game.UI.Runtime
                 string key=IsChapterThree?"chapter.hidden_network.mission."+(i+1):IsChapterTwo?"chapter.broken_grid.mission."+(i+1):"chapter.first_response.mission."+(i+1);
                 Set(chapterMissionNames[i],UiShellRuntimeGateway.Localization.Get(key));
             }
+            if(IsChapterFive){ApplyCitywideAlertCard();return;}
             if(IsChapterFour){if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal){ApplyGroundedSignalCard();return;}if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak){ApplyArmorBreakCard();return;}if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SplitFront){ApplySplitFrontCard();return;}if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SteelPush)ApplySteelPushCard();else ApplyAirCorridorCard();return;}
             if(IsChapterThree){if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak)ApplyNetworkBreakCard();else if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain)ApplyEvidenceChainCard();else if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.FalseFront)ApplyFalseFrontCard();else if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep)ApplySafehouseSweepCard();else ApplySignalTraceCard();return;}
             if(!IsChapterTwo) return;

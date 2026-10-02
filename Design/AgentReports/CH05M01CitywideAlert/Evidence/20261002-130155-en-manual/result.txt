@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed Native recruitment blocked: Soldiers tab disabled despite supplied Barracks. Full opening and briefing voices played; no production possible.

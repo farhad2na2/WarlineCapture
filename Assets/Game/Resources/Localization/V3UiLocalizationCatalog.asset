@@ -521,6 +521,206 @@ MonoBehaviour:
       value: "Command group \xB7 secure the authority package"
     - key: mission.armor_break.warning.3
       value: "Incoming aircraft \xB7 hold air-defense coverage"
+    - key: mission.citywide_alert.deadline
+      value: Stabilize both districts within fifteen minutes
+    - key: mission.citywide_alert.enemy_intel
+      value: Clinic saboteurs; utility armor and drones. Both attacks are warned.
+    - key: mission.citywide_alert.forces
+      value: "Two response groups \xB7 two engineers \xB7 G2A \xB7 radar \xB7 two
+        Barracks"
+    - key: mission.citywide_alert.guide.diagram
+      value: RECRUIT | RESPOND | RESTORE
+    - key: mission.citywide_alert.guide.example
+      value: "Recruit \u2192 cover air \u2192 respond \u2192 recover \u2192 perimeter."
+    - key: mission.citywide_alert.guide.mistake
+      value: Keep both original engineers alive. Clear hostile obstruction before
+        each six-second recovery. Show Me only moves the camera.
+    - key: mission.citywide_alert.guide.title
+      value: "CITYWIDE ALERT \xB7 FIELD GUIDE"
+    - key: mission.citywide_alert.hud.clinic_obstruction
+      value: 'Clinic obstruction: {0} s remaining'
+    - key: mission.citywide_alert.hud.clinic_outage
+      value: "Clinic service blocked \xB7 recover within {0}s"
+    - key: mission.citywide_alert.hud.clinic_recovery
+      value: 'Clinic recovery: {0}/6 s'
+    - key: mission.citywide_alert.hud.fuel
+      value: "Response Fuel: {0} \xB7 civic reserve protected"
+    - key: mission.citywide_alert.hud.hold_time
+      value: "Stabilize: {0}/6 s \xB7 Time: {1}"
+    - key: mission.citywide_alert.hud.materials
+      value: "Materials: {0} \xB7 recruit at either Barracks"
+    - key: mission.citywide_alert.hud.obstruction
+      value: 'Clear the obstruction: {0} s remaining'
+    - key: mission.citywide_alert.hud.recovery
+      value: 'Service recovery: {0}/6 s'
+    - key: mission.citywide_alert.hud.stable
+      value: 'Stable perimeter: {0}/6 s'
+    - key: mission.citywide_alert.hud.stage.1
+      value: Recruit reinforcements
+    - key: mission.citywide_alert.hud.stage.2
+      value: Cover the air approach
+    - key: mission.citywide_alert.hud.stage.3
+      value: Respond at the clinic
+    - key: mission.citywide_alert.hud.stage.4
+      value: Restore the clinic
+    - key: mission.citywide_alert.hud.stage.5
+      value: Respond at water and power
+    - key: mission.citywide_alert.hud.stage.6
+      value: Restore water and power
+    - key: mission.citywide_alert.hud.stage.7
+      value: Establish the perimeter
+    - key: mission.citywide_alert.hud.stage.8
+      value: Stabilize both districts
+    - key: mission.citywide_alert.hud.time
+      value: 'Response window: {0}'
+    - key: mission.citywide_alert.hud.utility_obstruction
+      value: 'Utility obstruction: {0} s remaining'
+    - key: mission.citywide_alert.hud.utility_outage
+      value: "Utility service blocked \xB7 recover within {0}s"
+    - key: mission.citywide_alert.hud.utility_recovery
+      value: 'Utility recovery: {0}/6 s'
+    - key: mission.citywide_alert.intel.air
+      value: AIR THREAT
+    - key: mission.citywide_alert.intel.heavy
+      value: GROUND THREAT
+    - key: mission.citywide_alert.intel.incoming
+      value: INCOMING
+    - key: mission.citywide_alert.intel.present
+      value: WARNED
+    - key: mission.citywide_alert.label.deadline
+      value: RESPONSE WINDOW
+    - key: mission.citywide_alert.label.fuel
+      value: CIVIC FUEL RESERVE
+    - key: mission.citywide_alert.location
+      value: "Sahrin \xB7 civic response districts"
+    - key: mission.citywide_alert.marker.clinic
+      value: CLINIC
+    - key: mission.citywide_alert.marker.coverage
+      value: COVERAGE
+    - key: mission.citywide_alert.marker.perimeter
+      value: PERIMETER
+    - key: mission.citywide_alert.marker.recovery
+      value: RECOVERY
+    - key: mission.citywide_alert.marker.utility
+      value: WATER / POWER
+    - key: mission.citywide_alert.name
+      value: Citywide Alert
+    - key: mission.citywide_alert.objective.clinic
+      value: Keep the clinic operational
+    - key: mission.citywide_alert.objective.perimeter
+      value: Establish the reinforcement perimeter
+    - key: mission.citywide_alert.objective.utility
+      value: Keep water and power operational
+    - key: mission.citywide_alert.resources
+      value: "180 Materials \xB7 200 Fuel \xB7 40 civic Fuel protected"
+    - key: mission.citywide_alert.result.clinic_lost
+      value: The clinic was destroyed. Protect its service compound.
+    - key: mission.citywide_alert.result.combat_losses
+      value: COMBAT LOSSES
+    - key: mission.citywide_alert.result.deadline
+      value: The fifteen-minute response window closed.
+    - key: mission.citywide_alert.result.defeat
+      value: CITY RESPONSE FAILED
+    - key: mission.citywide_alert.result.engineer_lost
+      value: An original engineer was lost. Both are required for recovery.
+    - key: mission.citywide_alert.result.fuel_lost
+      value: Emergency Fuel storage or the protected civic allocation was lost.
+    - key: mission.citywide_alert.result.fuel_reserve_lost
+      value: Emergency Fuel storage or the protected civic allocation was lost.
+    - key: mission.citywide_alert.result.integrity
+      value: The supplied roster or service ownership was lost. Retry from the campaign.
+    - key: mission.citywide_alert.result.loss
+      value: Protect both civic services, engineers, staff, producers and emergency
+        reserves, then retry.
+    - key: mission.citywide_alert.result.outage
+      value: A front remained blocked for sixty seconds. Clear hostiles and bring
+        its original engineer to the recovery marker.
+    - key: mission.citywide_alert.result.producer_lost
+      value: A supplied Barracks was lost. Protect both production lots.
+    - key: mission.citywide_alert.result.response_lost
+      value: A response group was lost before its front was secured.
+    - key: mission.citywide_alert.result.service_outage
+      value: A front remained blocked for sixty seconds. Clear hostiles and bring
+        its original engineer to the recovery marker.
+    - key: mission.citywide_alert.result.staff_losses
+      value: CIVIC STAFF LOSSES
+    - key: mission.citywide_alert.result.staff_lost
+      value: Civic staff were lost. Keep combat away from both staff groups.
+    - key: mission.citywide_alert.result.star.services
+      value: Both civic services and perimeter secured
+    - key: mission.citywide_alert.result.subtitle
+      value: "CITYWIDE ALERT \xB7 CIVIC PERIMETER"
+    - key: mission.citywide_alert.result.success
+      value: Both civic services remain operational. The original engineers and civic
+        staff are safe, and recruited reinforcements have secured the perimeter.
+    - key: mission.citywide_alert.result.success_short
+      value: Both civic fronts operational. Reinforcement perimeter established.
+    - key: mission.citywide_alert.result.timeout
+      value: The response window closed.
+    - key: mission.citywide_alert.result.utility_lost
+      value: Water and power were destroyed. Protect the service compound.
+    - key: mission.citywide_alert.result.victory
+      value: BOTH DISTRICTS SECURE
+    - key: mission.citywide_alert.reward.card
+      value: "Commander XP \xB7 Credits"
+    - key: mission.citywide_alert.star.1
+      value: Complete the mission
+    - key: mission.citywide_alert.star.2
+      value: No friendly combat losses
+    - key: mission.citywide_alert.star.3
+      value: No civic staff losses
+    - key: mission.citywide_alert.summary
+      value: Protect the clinic and water/power district. Recruit reinforcements,
+        respond to both attacks and restore blocked civic services.
+    - key: mission.citywide_alert.tutorial.1.body
+      value: Select either supplied Barracks. Recruit Rifleman Male IV using existing
+        production controls. A paid production request supplies four riflemen; Materials
+        are finite.
+    - key: mission.citywide_alert.tutorial.1.title
+      value: Recruit reinforcements
+    - key: mission.citywide_alert.tutorial.2.body
+      value: Select the G2A and Move to the coverage marker near the supplied radar.
+        Protect both Fuel reserves.
+    - key: mission.citywide_alert.tutorial.2.title
+      value: Cover the air approach
+    - key: mission.citywide_alert.tutorial.3.body
+      value: Move the clinic response group into position and Attack the verified
+        saboteurs and APC. Protect the staff and original engineer.
+    - key: mission.citywide_alert.tutorial.3.title
+      value: Respond at the clinic
+    - key: mission.citywide_alert.tutorial.4.body
+      value: Clear hostile obstruction. Move the original clinic engineer to the
+        recovery marker outside the building. Hold stationary and uncontested for
+        six seconds.
+    - key: mission.citywide_alert.tutorial.4.title
+      value: Restore the clinic
+    - key: mission.citywide_alert.tutorial.5.body
+      value: Attack the verified ground threats with the utility response group.
+        Keep the G2A covered while it intercepts the warned drones.
+    - key: mission.citywide_alert.tutorial.5.title
+      value: Respond at water and power
+    - key: mission.citywide_alert.tutorial.6.body
+      value: Clear hostile obstruction. Move the original utility engineer to the
+        recovery marker outside the compound. Hold for six uncontested seconds.
+    - key: mission.citywide_alert.tutorial.6.title
+      value: Restore water and power
+    - key: mission.citywide_alert.tutorial.7.body
+      value: Select an actually recruited rifleman and Move to the perimeter marker.
+        Keep the reinforcement there.
+    - key: mission.citywide_alert.tutorial.7.title
+      value: Establish the perimeter
+    - key: mission.citywide_alert.tutorial.8.body
+      value: Keep both services operational, both original engineers and all staff
+        alive, and a recruited reinforcement stationary at the perimeter. Hold six
+        seconds after all military threats are defeated.
+    - key: mission.citywide_alert.tutorial.8.title
+      value: Stabilize both districts
+    - key: mission.citywide_alert.warning.0
+      value: "Clinic sabotage \xB7 protect staff and the engineer"
+    - key: mission.citywide_alert.warning.1
+      value: "Utility armor \xB7 protect water and power"
+    - key: mission.citywide_alert.warning.2
+      value: "Incoming drones \xB7 maintain radar coverage"
     - key: mission.evidence_chain.deadline
       value: 11 active minutes
     - key: mission.evidence_chain.enemy_intel
@@ -3423,6 +3623,65 @@ MonoBehaviour:
       value: Warnings are coming in from several districts at once. This was one
         part of a synchronized attack. Take the evidence with us. The next operation
         will have to protect the city's routes together.
+    - key: narrative.citywide_alert.brief-01
+      value: The clinic and utility site protect different needs. Keep both intact.
+        Clear each front's attackers, then bring an original engineer to its marked
+        recovery point and hold for six seconds to restore service.
+    - key: narrative.citywide_alert.brief-02
+      value: Mixed Ash Line and Vanguard groups are approaching on separate response
+        lanes. Use radar to confirm the threats, split your defenders, and use the
+        existing production controls for reinforcements. Allow time for units to
+        reach the other front.
+    - key: narrative.citywide_alert.brief-03
+      value: I can request one Smoke screen on a marked lane. You decide whether
+        to approve it. Approval covers that action alone; declining or continuing
+        without it leaves command with you and consumes no Fuel.
+    - key: narrative.citywide_alert.comms-01
+      value: Both fronts are under pressure. Do you approve one Smoke action in the
+        marked area? You may decline or continue without answering. I will wait;
+        my guidance does not command your troops, and you can stop it immediately.
+    - key: narrative.citywide_alert.debrief-01
+      value: Both districts are stable. The clinic and utility site are intact, and
+        the engineers have restored both services. Keeping forces on both fronts
+        protected the people and workers relying on them.
+    - key: narrative.citywide_alert.debrief-02
+      value: The attack timings align with the last active Civic Relay nodes. Ash
+        Line's local strikes and Vanguard's corridor pressure share the same schedule.
+        I have preserved that connection as evidence.
+    - key: narrative.citywide_alert.debrief-03
+      value: Qassem is shifting pressure toward evacuation routes and public broadcasts.
+        The routes are real; his claims need verification. Keep the district teams
+        connected. The next response must get people to shelter and preserve the
+        signal evidence.
+    - key: narrative.citywide_alert.open-01
+      value: 'Five districts carry the record of our decisions: trust earned or lost,
+        evidence preserved, and infrastructure still functioning. I will carry those
+        consequences forward without treating an unverified report as fact.'
+    - key: narrative.citywide_alert.open-02
+      value: Ash Line cells are striking local services while Vanguard pushes the
+        main corridors. These attacks are coordinated. Keep forces on both civic
+        fronts; sending everyone to one fight leaves the other exposed.
+    - key: narrative.citywide_alert.open-03
+      value: The clinic must keep treating people, and the utility site must keep
+        water and power moving. Our shelters, roads, and workers depend on both.
+        Laila is tracking the air corridor while Dalia holds the military picture.
+    - key: narrative.citywide_alert.open-04
+      value: Confirmed threats are facts. Their likely next moves are predictions.
+        My suggested responses are recommendations. I will keep those separate in
+        the command picture, and no recommendation becomes an order without your
+        approval.
+    - key: narrative.citywide_alert.open-05
+      value: Every district is calling, Commander. Temporary authority cannot answer
+        a permanent crisis. Give the Relay one lasting command, and I can make the
+        city obey.
+    - key: narrative.citywide_alert.open-06
+      value: You retain approval over every action I propose. The first two fronts
+        are the clinic and the utility site. Their priorities remain yours to direct;
+        I will show the situation and wait for your decision.
+    - key: narrative.citywide_alert.open-07
+      value: We will protect these districts and keep command accountable. Hold both
+        civic fronts, preserve the people keeping them alive, and prove that saving
+        Sahrin does not require Qassem's permanent authority.
     - key: narrative.evidence_chain.brief.01
       value: The archive custodian made it to my clinic. The witness has the physical
         record, and the roads outside are closing. They need a safe passage, not
@@ -5338,6 +5597,8 @@ MonoBehaviour:
       value: "CHAPTER {0} \u2022 CONCLUSION"
     - key: ui.home.archive.chapter_open
       value: "CHAPTER {0} \u2022 OPENING"
+    - key: ui.home.archive.citywide_alert.relay_timing
+      value: ACTIVE RELAY TIMING
     - key: ui.home.archive.close
       value: CLOSE
     - key: ui.home.archive.comms
@@ -8913,6 +9174,354 @@ MonoBehaviour:
     - key: mission.armor_break.warning.3
       value: "\u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \xB7 \u067E\u0648\u0634\u0634 \u067E\u062F\u0627\u0641\u0646\u062F \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.citywide_alert.deadline
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062D\u0644\u0647 \u0631\u0648 \u062A\u0627
+        \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u062A\u062B\u0628\u06CC\u062A
+        \u06A9\u0646"
+    - key: mission.citywide_alert.enemy_intel
+      value: "\u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627\u06CC \u06A9\u0644\u06CC\u0646\u06CC\u06A9\u061B
+        \u0632\u0631\u0647\u06CC \u0648 \u067E\u0647\u067E\u0627\u062F\u0647\u0627\u06CC
+        \u062E\u062F\u0645\u0627\u062A. \u0647\u0631 \u062F\u0648 \u062D\u0645\u0644\u0647
+        \u0647\u0634\u062F\u0627\u0631 \u062F\u0627\u0631\u0646."
+    - key: mission.citywide_alert.forces
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u0648\u0627\u06A9\u0646\u0634
+        \xB7 \u062F\u0648 \u0645\u0647\u0646\u062F\u0633 \xB7 \u067E\u062F\u0627\u0641\u0646\u062F
+        \xB7 \u0631\u0627\u062F\u0627\u0631 \xB7 \u062F\u0648 \u067E\u0627\u062F\u06AF\u0627\u0646"
+    - key: mission.citywide_alert.guide.diagram
+      value: "\u062C\u0630\u0628 | \u0648\u0627\u06A9\u0646\u0634 | \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC"
+    - key: mission.citywide_alert.guide.example
+      value: "\u062C\u0630\u0628 \u0646\u06CC\u0631\u0648 \u2190 \u067E\u0648\u0634\u0634
+        \u0647\u0648\u0627\u06CC\u06CC \u2190 \u0648\u0627\u06A9\u0646\u0634 \u2190
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u2190 \u0645\u062D\u062F\u0648\u062F\u0647"
+    - key: mission.citywide_alert.guide.mistake
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631.
+        \u067E\u06CC\u0634 \u0627\u0632 \u0647\u0631 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0634\u0634\u200C\u062B\u0627\u0646\u06CC\u0647\u200C\u0627\u06CC\u060C
+        \u0645\u0627\u0646\u0639 \u062F\u0634\u0645\u0646 \u0631\u0648 \u067E\u0627\u06A9
+        \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0641\u0642\u0637
+        \u062F\u0648\u0631\u0628\u06CC\u0646 \u0631\u0648 \u062C\u0627\u0628\u0647\u200C\u062C\u0627
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.citywide_alert.guide.title
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0633\u0631\u0627\u0633\u0631\u06CC
+        \u0634\u0647\u0631 \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.citywide_alert.hud.clinic_obstruction
+      value: "\u0645\u0627\u0646\u0639 \u06A9\u0644\u06CC\u0646\u06CC\u06A9: {0}
+        \u062B\u0627\u0646\u06CC\u0647 \u0628\u0627\u0642\u06CC"
+    - key: mission.citywide_alert.hud.clinic_outage
+      value: "\u062E\u062F\u0645\u0627\u062A \u06A9\u0644\u06CC\u0646\u06CC\u06A9
+        \u0645\u0633\u062F\u0648\u062F\u0647 \xB7 \u062A\u0627 {0} \u062B\u0627\u0646\u06CC\u0647
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646"
+    - key: mission.citywide_alert.hud.clinic_recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0644\u06CC\u0646\u06CC\u06A9:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.citywide_alert.hud.fuel
+      value: "\u0633\u0648\u062E\u062A \u0648\u0627\u06A9\u0646\u0634: {0} \xB7 \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u062E\u062F\u0645\u0627\u062A \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.citywide_alert.hud.hold_time
+      value: "\u062A\u062B\u0628\u06CC\u062A: {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647
+        \xB7 \u0632\u0645\u0627\u0646: {1}"
+    - key: mission.citywide_alert.hud.materials
+      value: "\u0645\u0635\u0627\u0644\u062D: {0} \xB7 \u0627\u0632 \u06CC\u06A9\u06CC
+        \u0627\u0632 \u067E\u0627\u062F\u06AF\u0627\u0646\u200C\u0647\u0627 \u0646\u06CC\u0631\u0648
+        \u062C\u0630\u0628 \u06A9\u0646"
+    - key: mission.citywide_alert.hud.obstruction
+      value: "\u0645\u0627\u0646\u0639 \u0631\u0648 \u067E\u0627\u06A9 \u06A9\u0646:
+        {0} \u062B\u0627\u0646\u06CC\u0647 \u0628\u0627\u0642\u06CC"
+    - key: mission.citywide_alert.hud.recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062E\u062F\u0645\u0627\u062A:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.citywide_alert.hud.stable
+      value: "\u062A\u062B\u0628\u06CC\u062A \u0645\u062D\u062F\u0648\u062F\u0647:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.citywide_alert.hud.stage.1
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u062C\u0630\u0628
+        \u06A9\u0646"
+    - key: mission.citywide_alert.hud.stage.2
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648
+        \u067E\u0648\u0634\u0634 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.hud.stage.3
+      value: "\u0628\u0647 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0648\u0627\u06A9\u0646\u0634
+        \u0646\u0634\u0648\u0646 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.hud.stage.4
+      value: "\u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646"
+    - key: mission.citywide_alert.hud.stage.5
+      value: "\u0628\u0647 \u0622\u0628 \u0648 \u0628\u0631\u0642 \u0648\u0627\u06A9\u0646\u0634
+        \u0646\u0634\u0648\u0646 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.hud.stage.6
+      value: "\u0622\u0628 \u0648 \u0628\u0631\u0642 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646"
+    - key: mission.citywide_alert.hud.stage.7
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647 \u0631\u0648 \u0628\u0631\u0642\u0631\u0627\u0631
+        \u06A9\u0646"
+    - key: mission.citywide_alert.hud.stage.8
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062D\u0644\u0647 \u0631\u0648 \u062A\u062B\u0628\u06CC\u062A
+        \u06A9\u0646"
+    - key: mission.citywide_alert.hud.time
+      value: "\u0641\u0631\u0635\u062A \u0648\u0627\u06A9\u0646\u0634: {0}"
+    - key: mission.citywide_alert.hud.utility_obstruction
+      value: "\u0645\u0627\u0646\u0639 \u062E\u062F\u0645\u0627\u062A: {0} \u062B\u0627\u0646\u06CC\u0647
+        \u0628\u0627\u0642\u06CC"
+    - key: mission.citywide_alert.hud.utility_outage
+      value: "\u062E\u062F\u0645\u0627\u062A \u0622\u0628 \u0648 \u0628\u0631\u0642
+        \u0645\u0633\u062F\u0648\u062F\u0647 \xB7 \u062A\u0627 {0} \u062B\u0627\u0646\u06CC\u0647
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646"
+    - key: mission.citywide_alert.hud.utility_recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062E\u062F\u0645\u0627\u062A:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.citywide_alert.intel.air
+      value: "\u062A\u0647\u062F\u06CC\u062F \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.citywide_alert.intel.heavy
+      value: "\u062A\u0647\u062F\u06CC\u062F \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.citywide_alert.intel.incoming
+      value: "\u062F\u0631 \u0631\u0627\u0647"
+    - key: mission.citywide_alert.intel.present
+      value: "\u0647\u0634\u062F\u0627\u0631 \u062F\u0627\u062F\u0647 \u0634\u062F"
+    - key: mission.citywide_alert.label.deadline
+      value: "\u0641\u0631\u0635\u062A \u0648\u0627\u06A9\u0646\u0634"
+    - key: mission.citywide_alert.label.fuel
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A"
+    - key: mission.citywide_alert.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0645\u062D\u0644\u0647\u200C\u0647\u0627\u06CC
+        \u0627\u0645\u062F\u0627\u062F \u0634\u0647\u0631\u06CC"
+    - key: mission.citywide_alert.marker.clinic
+      value: "\u06A9\u0644\u06CC\u0646\u06CC\u06A9"
+    - key: mission.citywide_alert.marker.coverage
+      value: "\u067E\u0648\u0634\u0634"
+    - key: mission.citywide_alert.marker.perimeter
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647"
+    - key: mission.citywide_alert.marker.recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC"
+    - key: mission.citywide_alert.marker.utility
+      value: "\u0622\u0628 \u0648 \u0628\u0631\u0642"
+    - key: mission.citywide_alert.name
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0633\u0631\u0627\u0633\u0631\u06CC
+        \u0634\u0647\u0631"
+    - key: mission.citywide_alert.objective.clinic
+      value: "\u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0631\u0648 \u0641\u0639\u0627\u0644
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.citywide_alert.objective.perimeter
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0631\u0648 \u062A\u062B\u0628\u06CC\u062A \u06A9\u0646"
+    - key: mission.citywide_alert.objective.utility
+      value: "\u0622\u0628 \u0648 \u0628\u0631\u0642 \u0631\u0648 \u0641\u0639\u0627\u0644
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.citywide_alert.resources
+      value: "\u06F1\u06F8\u06F0 \u0645\u0635\u0627\u0644\u062D \xB7 \u06F2\u06F0\u06F0
+        \u0633\u0648\u062E\u062A \xB7 \u06F4\u06F0 \u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A
+        \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.citywide_alert.result.clinic_lost
+      value: "\u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F. \u0627\u0632 \u0645\u062D\u0648\u0637\u0647\u0654 \u062E\u062F\u0645\u0627\u062A
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.citywide_alert.result.combat_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0631\u0632\u0645\u06CC"
+    - key: mission.citywide_alert.result.deadline
+      value: "\u0641\u0631\u0635\u062A \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u062A\u0645\u0648\u0645 \u0634\u062F."
+    - key: mission.citywide_alert.result.defeat
+      value: "\u0648\u0627\u06A9\u0646\u0634 \u0634\u0647\u0631\u06CC \u0634\u06A9\u0633\u062A
+        \u062E\u0648\u0631\u062F"
+    - key: mission.citywide_alert.result.engineer_lost
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A. \u0628\u0631\u0627\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u0647 \u0647\u0631 \u062F\u0648 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u06CC."
+    - key: mission.citywide_alert.result.fuel_lost
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u06CC\u0627 \u0633\u0647\u0645 \u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.citywide_alert.result.fuel_reserve_lost
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u06CC\u0627 \u0633\u0647\u0645 \u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.citywide_alert.result.integrity
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0622\u0645\u0627\u062F\u0647
+        \u06CC\u0627 \u0645\u0627\u0644\u06A9\u06CC\u062A \u062E\u062F\u0645\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0627\u0632 \u0635\u0641\u062D\u0647\u0654
+        \u06A9\u0627\u0631\u0632\u0627\u0631 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646."
+    - key: mission.citywide_alert.result.loss
+      value: "\u0627\u0632 \u0647\u0631 \u062F\u0648 \u0645\u0631\u06A9\u0632 \u062E\u062F\u0645\u0627\u062A\u060C
+        \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u060C \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u060C
+        \u067E\u0627\u062F\u06AF\u0627\u0646\u200C\u0647\u0627 \u0648 \u0630\u062E\u06CC\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646 \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634
+        \u06A9\u0646."
+    - key: mission.citywide_alert.result.outage
+      value: "\u062C\u0628\u0647\u0647 \u0634\u0635\u062A \u062B\u0627\u0646\u06CC\u0647
+        \u0645\u0633\u062F\u0648\u062F \u0645\u0648\u0646\u062F. \u062F\u0634\u0645\u0646
+        \u0631\u0648 \u067E\u0627\u06A9 \u06A9\u0646 \u0648 \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0628\u0631\u0633\u0648\u0646."
+    - key: mission.citywide_alert.result.producer_lost
+      value: "\u067E\u0627\u062F\u06AF\u0627\u0646 \u0622\u0645\u0627\u062F\u0647
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0627\u0632 \u0647\u0631
+        \u062F\u0648 \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u0648\u0644\u06CC\u062F
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.citywide_alert.result.response_lost
+      value: "\u06AF\u0631\u0648\u0647 \u0648\u0627\u06A9\u0646\u0634 \u067E\u06CC\u0634
+        \u0627\u0632 \u0627\u0645\u0646 \u0634\u062F\u0646 \u062C\u0628\u0647\u0647
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.citywide_alert.result.service_outage
+      value: "\u062C\u0628\u0647\u0647 \u0634\u0635\u062A \u062B\u0627\u0646\u06CC\u0647
+        \u0645\u0633\u062F\u0648\u062F \u0645\u0648\u0646\u062F. \u062F\u0634\u0645\u0646
+        \u0631\u0648 \u067E\u0627\u06A9 \u06A9\u0646 \u0648 \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0628\u0631\u0633\u0648\u0646."
+    - key: mission.citywide_alert.result.staff_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u062E\u062F\u0645\u0627\u062A"
+    - key: mission.citywide_alert.result.staff_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u062E\u062F\u0645\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646. \u0646\u0628\u0631\u062F
+        \u0631\u0648 \u0627\u0632 \u0647\u0631 \u062F\u0648 \u06AF\u0631\u0648\u0647
+        \u062F\u0648\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.citywide_alert.result.star.services
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0631\u06A9\u0632 \u062E\u062F\u0645\u0627\u062A
+        \u0648 \u0645\u062D\u062F\u0648\u062F\u0647 \u0627\u0645\u0646 \u0634\u062F\u0646\u062F"
+    - key: mission.citywide_alert.result.subtitle
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0633\u0631\u0627\u0633\u0631\u06CC
+        \u0634\u0647\u0631 \xB7 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u062F\u0645\u0627\u062A"
+    - key: mission.citywide_alert.result.success
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0631\u06A9\u0632 \u062E\u062F\u0645\u0627\u062A
+        \u0641\u0639\u0627\u0644 \u0645\u0648\u0646\u062F\u0646. \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u06CC
+        \u0627\u0635\u0644\u06CC \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u062E\u062F\u0645\u0627\u062A \u0633\u0627\u0644\u0645\u200C\u0627\u0646\u062F
+        \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u062C\u0630\u0628\u200C\u0634\u062F\u0647
+        \u0645\u062D\u062F\u0648\u062F\u0647 \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0631\u062F\u0646."
+    - key: mission.citywide_alert.result.success_short
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647\u0654 \u062E\u062F\u0645\u0627\u062A
+        \u0641\u0639\u0627\u0644\u200C\u0627\u0646\u062F. \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC \u062A\u062B\u0628\u06CC\u062A
+        \u0634\u062F."
+    - key: mission.citywide_alert.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u0648\u0627\u06A9\u0646\u0634 \u062A\u0645\u0648\u0645
+        \u0634\u062F."
+    - key: mission.citywide_alert.result.utility_lost
+      value: "\u0622\u0628 \u0648 \u0628\u0631\u0642 \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F\u0646. \u0627\u0632 \u0645\u062D\u0648\u0637\u0647\u0654 \u062E\u062F\u0645\u0627\u062A
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.citywide_alert.result.victory
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062D\u0644\u0647 \u0627\u0645\u0646
+        \u0634\u062F\u0646\u062F"
+    - key: mission.citywide_alert.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.citywide_alert.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.citywide_alert.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0631\u0632\u0645\u06CC"
+    - key: mission.citywide_alert.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u062E\u062F\u0645\u0627\u062A"
+    - key: mission.citywide_alert.summary
+      value: "\u0627\u0632 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0648 \u0645\u062D\u0644\u0647\u0654
+        \u0622\u0628 \u0648 \u0628\u0631\u0642 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646. \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u062C\u0630\u0628
+        \u06A9\u0646\u060C \u0628\u0647 \u0647\u0631 \u062F\u0648 \u062D\u0645\u0644\u0647
+        \u0648\u0627\u06A9\u0646\u0634 \u0628\u062F\u0647 \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0645\u0633\u062F\u0648\u062F\u0634\u062F\u0647 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646."
+    - key: mission.citywide_alert.tutorial.1.body
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u067E\u0627\u062F\u06AF\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0622\u0645\u0627\u062F\u0647 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646. \u0628\u0627 \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC
+        \u062A\u0648\u0644\u06CC\u062F\u060C \u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632
+        \u0645\u0631\u062F \u0686\u0647\u0627\u0631 \u0631\u0648 \u062C\u0630\u0628
+        \u06A9\u0646. \u062A\u0648\u0644\u06CC\u062F \u067E\u0631\u062F\u0627\u062E\u062A\u200C\u0634\u062F\u0647
+        \u0686\u0647\u0627\u0631 \u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632
+        \u0645\u06CC\u200C\u062F\u0647\u061B \u0645\u0635\u0627\u0644\u062D \u0645\u062D\u062F\u0648\u062F\u0647."
+    - key: mission.citywide_alert.tutorial.1.title
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u062C\u0630\u0628
+        \u06A9\u0646"
+    - key: mission.citywide_alert.tutorial.2.body
+      value: "\u067E\u062F\u0627\u0641\u0646\u062F \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u067E\u0648\u0634\u0634
+        \u06A9\u0646\u0627\u0631 \u0631\u0627\u062F\u0627\u0631 \u062D\u0631\u06A9\u062A
+        \u0628\u062F\u0647. \u0647\u0631 \u062F\u0648 \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u0633\u0648\u062E\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.citywide_alert.tutorial.2.title
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648
+        \u067E\u0648\u0634\u0634 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.tutorial.3.body
+      value: "\u06AF\u0631\u0648\u0647 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0631\u0648
+        \u0645\u0633\u062A\u0642\u0631 \u06A9\u0646 \u0648 \u0628\u0647 \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627
+        \u0648 \u0646\u0641\u0631\u0628\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646. \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0648 \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.citywide_alert.tutorial.3.title
+      value: "\u0628\u0647 \u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0648\u0627\u06A9\u0646\u0634
+        \u0646\u0634\u0648\u0646 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.tutorial.4.body
+      value: "\u0645\u0627\u0646\u0639 \u062F\u0634\u0645\u0646 \u0631\u0648 \u067E\u0627\u06A9
+        \u06A9\u0646. \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u06A9\u0644\u06CC\u0646\u06CC\u06A9
+        \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u06CC\u0631\u0648\u0646 \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u062D\u0631\u06A9\u062A \u0628\u062F\u0647. \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u062B\u0627\u0628\u062A \u0648 \u0628\u062F\u0648\u0646 \u062F\u0634\u0645\u0646
+        \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.citywide_alert.tutorial.4.title
+      value: "\u06A9\u0644\u06CC\u0646\u06CC\u06A9 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646"
+    - key: mission.citywide_alert.tutorial.5.body
+      value: "\u0628\u0627 \u06AF\u0631\u0648\u0647 \u062E\u062F\u0645\u0627\u062A
+        \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u067E\u062F\u0627\u0641\u0646\u062F \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646 \u062A\u0627 \u067E\u0647\u067E\u0627\u062F\u0647\u0627\u06CC
+        \u0647\u0634\u062F\u0627\u0631 \u062F\u0627\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0631\u0647\u06AF\u06CC\u0631\u06CC \u06A9\u0646\u0647."
+    - key: mission.citywide_alert.tutorial.5.title
+      value: "\u0628\u0647 \u0622\u0628 \u0648 \u0628\u0631\u0642 \u0648\u0627\u06A9\u0646\u0634
+        \u0646\u0634\u0648\u0646 \u0628\u062F\u0647"
+    - key: mission.citywide_alert.tutorial.6.body
+      value: "\u0645\u0627\u0646\u0639 \u062F\u0634\u0645\u0646 \u0631\u0648 \u067E\u0627\u06A9
+        \u06A9\u0646. \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u062E\u062F\u0645\u0627\u062A
+        \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u06CC\u0631\u0648\u0646 \u0645\u062D\u0648\u0637\u0647 \u062D\u0631\u06A9\u062A
+        \u0628\u062F\u0647. \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646
+        \u062F\u0634\u0645\u0646 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.citywide_alert.tutorial.6.title
+      value: "\u0622\u0628 \u0648 \u0628\u0631\u0642 \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646"
+    - key: mission.citywide_alert.tutorial.7.body
+      value: "\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632 \u0648\u0627\u0642\u0639\u0627\u064B
+        \u062C\u0630\u0628\u200C\u0634\u062F\u0647 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u0645\u062D\u062F\u0648\u062F\u0647
+        \u062D\u0631\u06A9\u062A \u0628\u062F\u0647. \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.citywide_alert.tutorial.7.title
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647 \u0631\u0648 \u0628\u0631\u0642\u0631\u0627\u0631
+        \u06A9\u0646"
+    - key: mission.citywide_alert.tutorial.8.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0631\u06A9\u0632 \u0641\u0639\u0627\u0644\u060C
+        \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0632\u0646\u062F\u0647
+        \u0648 \u0646\u06CC\u0631\u0648\u06CC \u062C\u0630\u0628\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0645\u062D\u062F\u0648\u062F\u0647 \u062B\u0627\u0628\u062A
+        \u0628\u0645\u0648\u0646\u0646. \u067E\u0633 \u0627\u0632 \u0634\u06A9\u0633\u062A
+        \u0647\u0645\u0647\u0654 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.citywide_alert.tutorial.8.title
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062D\u0644\u0647 \u0631\u0648 \u062A\u062B\u0628\u06CC\u062A
+        \u06A9\u0646"
+    - key: mission.citywide_alert.warning.0
+      value: "\u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u06CC \u06A9\u0644\u06CC\u0646\u06CC\u06A9
+        \xB7 \u0627\u0632 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0648 \u0645\u0647\u0646\u062F\u0633
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.citywide_alert.warning.1
+      value: "\u0632\u0631\u0647\u06CC \u062F\u0631 \u062E\u062F\u0645\u0627\u062A
+        \xB7 \u0622\u0628 \u0648 \u0628\u0631\u0642 \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646"
+    - key: mission.citywide_alert.warning.2
+      value: "\u067E\u0647\u067E\u0627\u062F\u0647\u0627\u06CC \u0648\u0631\u0648\u062F\u06CC
+        \xB7 \u067E\u0648\u0634\u0634 \u0631\u0627\u062F\u0627\u0631 \u0631\u0648
         \u062D\u0641\u0638 \u06A9\u0646"
     - key: mission.evidence_chain.deadline
       value: "\u06F1\u06F1 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
@@ -14232,6 +14841,183 @@ MonoBehaviour:
         \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC \u0628\u0627\u06CC\u062F
         \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0634\u0647\u0631 \u0631\u0648
         \u0628\u0627 \u0647\u0645 \u062D\u0641\u0638 \u06A9\u0646\u0647."
+    - key: narrative.citywide_alert.brief-01
+      value: "\u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0648 \u0645\u0631\u06A9\u0632
+        \u062E\u062F\u0645\u0627\u062A\u060C \u0647\u0631 \u06A9\u062F\u0648\u0645
+        \u0646\u06CC\u0627\u0632 \u0645\u062A\u0641\u0627\u0648\u062A\u06CC \u0631\u0648
+        \u062A\u0623\u0645\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u0646. \u0647\u0631
+        \u062F\u0648 \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646.
+        \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u06CC \u0647\u0631 \u062C\u0628\u0647\u0647
+        \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646\u06CC\u0646\u060C
+        \u0628\u0639\u062F \u06CC\u06A9\u06CC \u0627\u0632 \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u06CC
+        \u0627\u0648\u0644\u06CC\u0647 \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u0647\u0645\u0648\u0646 \u062C\u0628\u0647\u0647 \u0628\u0631\u0633\u0648\u0646\u06CC\u0646
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0648\u0646\u062C\u0627
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646 \u062A\u0627 \u062E\u062F\u0645\u0627\u062A
+        \u0628\u0631\u06AF\u0631\u062F\u0647."
+    - key: narrative.citywide_alert.brief-02
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u062A\u0631\u06A9\u06CC\u0628\u06CC
+        \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0648 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0627\u0632 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u062C\u062F\u0627
+        \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646. \u0628\u0627
+        \u0631\u0627\u062F\u0627\u0631 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u0646\u060C
+        \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0631\u0648 \u062A\u0642\u0633\u06CC\u0645
+        \u06A9\u0646\u06CC\u0646 \u0648 \u0627\u0632 \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC
+        \u062A\u0648\u0644\u06CC\u062F \u0628\u0631\u0627\u06CC \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u0646.
+        \u0632\u0645\u0627\u0646 \u0631\u0633\u06CC\u062F\u0646 \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u0628\u0647 \u062C\u0628\u0647\u0647\u0654 \u062F\u06CC\u06AF\u0647 \u0631\u0648
+        \u0647\u0645 \u062D\u0633\u0627\u0628 \u06A9\u0646\u06CC\u0646."
+    - key: narrative.citywide_alert.brief-03
+      value: "\u0645\u06CC\u200C\u062A\u0648\u0646\u0645 \u0628\u0631\u0627\u06CC
+        \u06CC\u06A9 \u0645\u0633\u06CC\u0631 \u0645\u0634\u062E\u0635 \u062F\u0631\u062E\u0648\u0627\u0633\u062A
+        \u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u062F\u0645. \u062A\u0635\u0645\u06CC\u0645
+        \u062A\u0623\u06CC\u06CC\u062F\u0634 \u0628\u0627 \u0634\u0645\u0627\u0633\u062A.
+        \u062A\u0623\u06CC\u06CC\u062F \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC
+        \u0647\u0645\u0648\u0646 \u0627\u0642\u062F\u0627\u0645\u0647\u061B \u0631\u062F
+        \u06A9\u0631\u062F\u0646\u0634 \u06CC\u0627 \u0627\u062F\u0627\u0645\u0647
+        \u062F\u0627\u062F\u0646 \u0628\u062F\u0648\u0646 \u0627\u0648\u0646\u060C
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0631\u0648 \u062F\u0631
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0634\u0645\u0627 \u0646\u06AF\u0647
+        \u0645\u06CC\u200C\u062F\u0627\u0631\u0647 \u0648 \u0633\u0648\u062E\u062A\u06CC
+        \u0645\u0635\u0631\u0641 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: narrative.citywide_alert.comms-01
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0632\u06CC\u0631
+        \u0641\u0634\u0627\u0631\u0646. \u06CC\u06A9 \u0627\u0642\u062F\u0627\u0645
+        \u062F\u0648\u062F \u062F\u0631 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0646\u061F
+        \u0645\u06CC\u200C\u062A\u0648\u0646\u06CC\u0646 \u0631\u062F\u0634 \u06A9\u0646\u06CC\u0646
+        \u06CC\u0627 \u0628\u062F\u0648\u0646 \u067E\u0627\u0633\u062E \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u06CC\u0646. \u0645\u0646\u062A\u0638\u0631 \u0645\u06CC\u200C\u0645\u0648\u0646\u0645\u061B
+        \u0631\u0627\u0647\u0646\u0645\u0627\u06CC\u06CC \u0645\u0646 \u0628\u0647
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u062A\u0648\u0646 \u0641\u0631\u0645\u0627\u0646
+        \u0646\u0645\u06CC\u200C\u062F\u0647 \u0648 \u0645\u06CC\u200C\u062A\u0648\u0646\u06CC\u0646
+        \u0641\u0648\u0631\u0627\u064B \u0645\u062A\u0648\u0642\u0641\u0634 \u06A9\u0646\u06CC\u0646."
+    - key: narrative.citywide_alert.debrief-01
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0646\u0637\u0642\u0647 \u067E\u0627\u06CC\u062F\u0627\u0631\u0646.
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0648 \u0645\u0631\u06A9\u0632
+        \u062E\u062F\u0645\u0627\u062A \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F\u0646
+        \u0648 \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627 \u062E\u062F\u0645\u0627\u062A
+        \u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0631\u0627\u0647 \u0627\u0646\u062F\u0627\u062E\u062A\u0646. \u0646\u06AF\u0647
+        \u062F\u0627\u0634\u062A\u0646 \u0646\u06CC\u0631\u0648\u0647\u0627 \u062F\u0631
+        \u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647\u060C \u0645\u0631\u062F\u0645
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u06CC \u0631\u0648 \u06A9\u0647
+        \u0628\u0647 \u0627\u06CC\u0646 \u062E\u062F\u0645\u0627\u062A \u0648\u0627\u0628\u0633\u062A\u0647\u200C\u0627\u0646
+        \u062D\u0641\u0638 \u06A9\u0631\u062F."
+    - key: narrative.citywide_alert.debrief-02
+      value: "\u0632\u0645\u0627\u0646\u200C\u0628\u0646\u062F\u06CC \u062D\u0645\u0644\u0647\u200C\u0647\u0627
+        \u0628\u0627 \u0622\u062E\u0631\u06CC\u0646 \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0641\u0639\u0627\u0644 \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC
+        \u0647\u0645\u200C\u062E\u0648\u0627\u0646\u0647. \u062D\u0645\u0644\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u062D\u0644\u06CC \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631
+        \u0648 \u0641\u0634\u0627\u0631 \u0648\u0646\u06AF\u0627\u0631\u062F \u0631\u0648\u06CC
+        \u0645\u0633\u06CC\u0631\u0647\u0627\u060C \u0628\u0631\u0646\u0627\u0645\u0647\u0654
+        \u0645\u0634\u062A\u0631\u06A9\u06CC \u062F\u0627\u0631\u0646. \u0627\u06CC\u0646
+        \u0627\u0631\u062A\u0628\u0627\u0637 \u0631\u0648 \u0628\u0647 \u0639\u0646\u0648\u0627\u0646
+        \u0645\u062F\u0631\u06A9 \u062D\u0641\u0638 \u06A9\u0631\u062F\u0645."
+    - key: narrative.citywide_alert.debrief-03
+      value: "\u0642\u0627\u0633\u0645 \u062F\u0627\u0631\u0647 \u0641\u0634\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u062A\u062E\u0644\u06CC\u0647
+        \u0648 \u067E\u06CC\u0627\u0645\u200C\u0647\u0627\u06CC \u0639\u0645\u0648\u0645\u06CC
+        \u0645\u0646\u062A\u0642\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0648\u0627\u0642\u0639\u06CC\u200C\u0627\u0646\u060C \u0648\u0644\u06CC
+        \u0627\u062F\u0639\u0627\u0647\u0627\u0634 \u0628\u0627\u06CC\u062F \u062A\u0623\u06CC\u06CC\u062F
+        \u0628\u0634\u0646. \u0627\u0631\u062A\u0628\u0627\u0637 \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC
+        \u0645\u0646\u0637\u0642\u0647 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646.
+        \u067E\u0627\u0633\u062E \u0628\u0639\u062F\u06CC \u0628\u0627\u06CC\u062F
+        \u0645\u0631\u062F\u0645 \u0631\u0648 \u0628\u0647 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0628\u0631\u0633\u0648\u0646\u0647 \u0648 \u0645\u062F\u0631\u06A9 \u067E\u06CC\u0627\u0645
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631\u0647."
+    - key: narrative.citywide_alert.open-01
+      value: "\u067E\u0646\u062C \u0645\u0646\u0637\u0642\u0647\u060C \u0627\u062B\u0631
+        \u062A\u0635\u0645\u06CC\u0645\u200C\u0647\u0627\u06CC \u0645\u0627 \u0631\u0648
+        \u0628\u0627 \u062E\u0648\u062F\u0634\u0648\u0646 \u062F\u0627\u0631\u0646\u061B
+        \u0627\u0639\u062A\u0645\u0627\u062F\u06CC \u06A9\u0647 \u0628\u0647 \u062F\u0633\u062A
+        \u0627\u0648\u0645\u062F\u0647 \u06CC\u0627 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A\u0647\u060C \u0645\u062F\u0627\u0631\u06A9\u06CC \u06A9\u0647
+        \u062D\u0641\u0638 \u0634\u062F\u0646 \u0648 \u0632\u06CC\u0631\u0633\u0627\u062E\u062A\u06CC
+        \u06A9\u0647 \u0647\u0646\u0648\u0632 \u06A9\u0627\u0631 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0627\u06CC\u0646 \u067E\u06CC\u0627\u0645\u062F\u0647\u0627 \u0631\u0648
+        \u062F\u0631 \u0646\u0638\u0631 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0645\u060C
+        \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647 \u06AF\u0632\u0627\u0631\u0634
+        \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647 \u0631\u0648 \u0648\u0627\u0642\u0639\u06CC\u062A
+        \u062D\u0633\u0627\u0628 \u06A9\u0646\u0645."
+    - key: narrative.citywide_alert.open-02
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631
+        \u0628\u0647 \u062E\u062F\u0645\u0627\u062A \u0645\u062D\u0644\u06CC \u062D\u0645\u0644\u0647
+        \u0645\u06CC\u200C\u06A9\u0646\u0646 \u0648 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0632\u06CC\u0631 \u0641\u0634\u0627\u0631 \u06AF\u0630\u0627\u0634\u062A\u0647.
+        \u0627\u06CC\u0646 \u062D\u0645\u0644\u0647\u200C\u0647\u0627 \u0647\u0645\u0627\u0647\u0646\u06AF\u0646.
+        \u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0648 \u062F\u0631 \u0647\u0631
+        \u062F\u0648 \u062C\u0628\u0647\u0647\u0654 \u0634\u0647\u0631\u06CC \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u0646\u061B \u0641\u0631\u0633\u062A\u0627\u062F\u0646
+        \u0647\u0645\u0647 \u0628\u0647 \u06CC\u06A9 \u0646\u0628\u0631\u062F\u060C
+        \u062C\u0628\u0647\u0647\u0654 \u062F\u06CC\u06AF\u0647 \u0631\u0648 \u0628\u06CC\u200C\u062F\u0641\u0627\u0639
+        \u0645\u06CC\u200C\u0630\u0627\u0631\u0647."
+    - key: narrative.citywide_alert.open-03
+      value: "\u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0628\u0627\u06CC\u062F
+        \u0628\u0647 \u0631\u0633\u06CC\u062F\u06AF\u06CC \u0628\u0647 \u0645\u0631\u062F\u0645
+        \u0627\u062F\u0627\u0645\u0647 \u0628\u062F\u0647 \u0648 \u0645\u0631\u06A9\u0632
+        \u062E\u062F\u0645\u0627\u062A \u0628\u0627\u06CC\u062F \u0622\u0628 \u0648
+        \u0628\u0631\u0642 \u0631\u0648 \u062F\u0631 \u062C\u0631\u06CC\u0627\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u0647. \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u062C\u0627\u062F\u0647\u200C\u0647\u0627 \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0627\u0631\u0645\u0648\u0646 \u0628\u0647 \u0647\u0631 \u062F\u0648
+        \u0648\u0627\u0628\u0633\u062A\u0647\u200C\u0627\u0646. \u0644\u06CC\u0644\u0627
+        \u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648 \u062F\u0646\u0628\u0627\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u0647 \u0648 \u062F\u0627\u0644\u06CC\u0627
+        \u0648\u0636\u0639\u06CC\u062A \u0646\u0638\u0627\u0645\u06CC \u0631\u0648
+        \u0632\u06CC\u0631 \u0646\u0638\u0631 \u062F\u0627\u0631\u0647."
+    - key: narrative.citywide_alert.open-04
+      value: "\u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0648\u0627\u0642\u0639\u06CC\u062A\u0646. \u062D\u0631\u06A9\u062A\u200C\u0647\u0627\u06CC
+        \u0627\u062D\u062A\u0645\u0627\u0644\u06CC \u0628\u0639\u062F\u06CC\u0634\u0648\u0646
+        \u067E\u06CC\u0634\u200C\u0628\u06CC\u0646\u06CC\u200C\u0627\u0646. \u067E\u0627\u0633\u062E\u200C\u0647\u0627\u06CC\u06CC
+        \u06A9\u0647 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0645\u06CC\u200C\u06A9\u0646\u0645
+        \u062A\u0648\u0635\u06CC\u0647\u200C\u0627\u0646. \u0627\u06CC\u0646\u200C\u0647\u0627
+        \u0631\u0648 \u062F\u0631 \u062A\u0635\u0648\u06CC\u0631 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u062C\u062F\u0627 \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0645
+        \u0648 \u0647\u06CC\u0686 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC
+        \u0628\u062F\u0648\u0646 \u062A\u0623\u06CC\u06CC\u062F \u0634\u0645\u0627
+        \u0628\u0647 \u0641\u0631\u0645\u0627\u0646 \u062A\u0628\u062F\u06CC\u0644
+        \u0646\u0645\u06CC\u200C\u0634\u0647."
+    - key: narrative.citywide_alert.open-05
+      value: "\u0647\u0645\u0647\u0654 \u0645\u0646\u0637\u0642\u0647\u200C\u0647\u0627
+        \u06A9\u0645\u06A9 \u0645\u06CC\u200C\u062E\u0648\u0627\u0646\u060C \u0641\u0631\u0645\u0627\u0646\u062F\u0647.
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0645\u0648\u0642\u062A \u062C\u0648\u0627\u0628
+        \u0628\u062D\u0631\u0627\u0646 \u062F\u0627\u0626\u0645\u06CC \u0631\u0648
+        \u0646\u0645\u06CC\u200C\u062F\u0647. \u06CC\u06A9 \u0641\u0631\u0645\u0627\u0646
+        \u0645\u0627\u0646\u062F\u06AF\u0627\u0631 \u0628\u0647 \u0631\u0644\u0647
+        \u0628\u062F\u0647 \u062A\u0627 \u0634\u0647\u0631 \u0631\u0648 \u0648\u0627\u062F\u0627\u0631
+        \u0628\u0647 \u0627\u0637\u0627\u0639\u062A \u06A9\u0646\u0645."
+    - key: narrative.citywide_alert.open-06
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u0647\u0631 \u0627\u0642\u062F\u0627\u0645\u06CC
+        \u06A9\u0647 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0645\u06CC\u200C\u06A9\u0646\u0645
+        \u0628\u0627 \u0634\u0645\u0627 \u0645\u06CC\u200C\u0645\u0648\u0646\u0647.
+        \u062F\u0648 \u062C\u0628\u0647\u0647\u0654 \u0627\u0648\u0644\u060C \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0648 \u0645\u0631\u06A9\u0632 \u062E\u062F\u0645\u0627\u062A \u0647\u0633\u062A\u0646.
+        \u062A\u0639\u06CC\u06CC\u0646 \u0627\u0648\u0644\u0648\u06CC\u062A\u0634\u0648\u0646
+        \u0647\u0645\u0686\u0646\u0627\u0646 \u0628\u0627 \u0634\u0645\u0627\u0633\u062A\u061B
+        \u0648\u0636\u0639\u06CC\u062A \u0631\u0648 \u0646\u0634\u0648\u0646 \u0645\u06CC\u200C\u062F\u0645
+        \u0648 \u0645\u0646\u062A\u0638\u0631 \u062A\u0635\u0645\u06CC\u0645 \u0634\u0645\u0627
+        \u0645\u06CC\u200C\u0645\u0648\u0646\u0645."
+    - key: narrative.citywide_alert.open-07
+      value: "\u0627\u0632 \u0627\u06CC\u0646 \u0645\u0646\u0637\u0642\u0647\u200C\u0647\u0627
+        \u0645\u062D\u0627\u0641\u0638\u062A \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645
+        \u0648 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0631\u0648 \u067E\u0627\u0633\u062E\u200C\u06AF\u0648
+        \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u06CC\u0645. \u0647\u0631
+        \u062F\u0648 \u062C\u0628\u0647\u0647\u0654 \u0634\u0647\u0631\u06CC \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646\u060C \u0627\u0632 \u06A9\u0633\u0627\u0646\u06CC
+        \u06A9\u0647 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u0633\u0631\u067E\u0627
+        \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0646 \u0645\u0631\u0627\u0642\u0628\u062A
+        \u06A9\u0646\u06CC\u0646 \u0648 \u0646\u0634\u0648\u0646 \u0628\u062F\u06CC\u0646
+        \u0646\u062C\u0627\u062A \u0633\u0647\u0631\u06CC\u0646 \u0628\u0647 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u062F\u0627\u0626\u0645\u06CC \u0642\u0627\u0633\u0645 \u0646\u06CC\u0627\u0632
+        \u0646\u062F\u0627\u0631\u0647."
     - key: narrative.evidence_chain.brief.01
       value: "\u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
         \u062E\u0648\u062F\u0634 \u0631\u0648 \u0628\u0647 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
@@ -17486,6 +18272,9 @@ MonoBehaviour:
       value: "\u067E\u0627\u06CC\u0627\u0646 \u0641\u0635\u0644 {0}"
     - key: ui.home.archive.chapter_open
       value: "\u0622\u063A\u0627\u0632 \u0641\u0635\u0644 {0}"
+    - key: ui.home.archive.citywide_alert.relay_timing
+      value: "\u0632\u0645\u0627\u0646\u200C\u0628\u0646\u062F\u06CC \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0641\u0639\u0627\u0644 \u0631\u0644\u0647"
     - key: ui.home.archive.close
       value: "\u0628\u0633\u062A\u0646"
     - key: ui.home.archive.comms

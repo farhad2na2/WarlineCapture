@@ -5,6 +5,10 @@ namespace Game.Components
 {
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
+        public byte CitywideClinicRecovered, CitywideUtilityRecovered, CitywideReinforcementReady, CitywideCommsReady;
+        public byte CitywideCoverageReady, CitywideAirCleared, CitywideMilitaryCleared;
+        public int CitywideStableMilliseconds;
+        public CitywideAlertFailure CitywideFailure;
         public byte GroundedSignalInserted, GroundedSignalRelayDisabled, GroundedSignalTerminalLost;
         public byte ArmorBreakAirCleared, ArmorBreakHeavyDisabled, ArmorBreakCommandDisabled, ArmorBreakAuthorityRecovered, ArmorBreakReliefLost, ArmorBreakCloseCompleted, ArmorBreakDebriefCompleted;
         public byte ArmorBreakCoverageReady, ArmorBreakArmoredThreatsCleared, ArmorBreakAircraftUsed, ArmorBreakArmorApproached;

@@ -1,0 +1,476 @@
+{
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Five districts carry the record of our decisions: trust earned or lost, evidence preserved, and infrastructure still functioning. I will carry those consequences forward without treating an unverified report as fact.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-01.wav",
+      "durationSeconds": 14.72,
+      "sha256": "a27158fd2c9c15325c98d88b33ca1ef473e113fb789f54c9442dc7de91ae72c5",
+      "captionSha256": "1118b59ef7b73dbc072c978bec6e6debbd4308996a3cbb838a308bc393285682"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پنج منطقه، اثر تصمیم‌های ما رو با خودشون دارن؛ اعتمادی که به دست اومده یا از دست رفته، مدارکی که حفظ شدن و زیرساختی که هنوز کار می‌کنه. این پیامدها رو در نظر می‌گیرم، بدون اینکه گزارش تأییدنشده رو واقعیت حساب کنم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-01.wav",
+      "durationSeconds": 17.36,
+      "sha256": "927d0f913b20db40e4f2e2bd6f49b07edcf654051008b9ceafb847bf3cada0d4",
+      "captionSha256": "f796c88e989c9f00420f20cb9e1a46968cff7403026f7306ad6d4739b273564c"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Ash Line cells are striking local services while Vanguard pushes the main corridors. These attacks are coordinated. Keep forces on both civic fronts; sending everyone to one fight leaves the other exposed.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-02.wav",
+      "durationSeconds": 14.24,
+      "sha256": "d901af92d8476400007b5fae2be6a14a9cd45342f1001f0d1e117c68d3f050ae",
+      "captionSha256": "7dfca75bb8806bb0648f6a8275b9b3ad382854450f3a46ab5eac0ffb3984b84d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "گروه‌های خط خاکستر به خدمات محلی حمله می‌کنن و ونگارد مسیرهای اصلی رو زیر فشار گذاشته. این حمله‌ها هماهنگن. نیروها رو در هر دو جبههٔ شهری نگه دارین؛ فرستادن همه به یک نبرد، جبههٔ دیگه رو بی‌دفاع می‌ذاره.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-02.wav",
+      "durationSeconds": 17.28,
+      "sha256": "e5d0dc5efe247585f87ab209447bb0473d56d50c251b6ffcfeafd87af4068285",
+      "captionSha256": "b3cced2312e3cca03b1710ffa77eec5b84cde94e075961b3c64b87613751ba32"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The clinic must keep treating people, and the utility site must keep water and power moving. Our shelters, roads, and workers depend on both. Laila is tracking the air corridor while Dalia holds the military picture.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-03.wav",
+      "durationSeconds": 13.12,
+      "sha256": "141d5ab610540ebb4cff3b6224530cb60d17fc08465482e3c85317ad3e52ce11",
+      "captionSha256": "45291b339fc659440d6f5ba844b34b29c44a5478e0795d745297919ca2eebc9a"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "درمانگاه باید به رسیدگی به مردم ادامه بده و مرکز خدمات باید آب و برق رو در جریان نگه داره. پناهگاه‌ها، جاده‌ها و نیروهای کارمون به هر دو وابسته‌ان. لیلا مسیر هوایی رو دنبال می‌کنه و دالیا وضعیت نظامی رو زیر نظر داره.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-03.wav",
+      "durationSeconds": 17.28,
+      "sha256": "e50f6327c2d217ade6f8ae5de5740db612e59706da89302a4998f7af293309c5",
+      "captionSha256": "878603766accca29e5a23dd1f1a46f77af5faf592690c0cd1d78458515180a05"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-04",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Confirmed threats are facts. Their likely next moves are predictions. My suggested responses are recommendations. I will keep those separate in the command picture, and no recommendation becomes an order without your approval.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-04.wav",
+      "durationSeconds": 16.0,
+      "sha256": "246c32406d003ce0c4cce70a8b205b5bf3e31fbed9306e65da893ec8e0215b4f",
+      "captionSha256": "1eb5192e772dee966240e3f40471d0c33b6f6c11309af3f0f46382e1289d2c58"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "تهدیدهای تأییدشده واقعیتن. حرکت‌های احتمالی بعدیشون پیش‌بینی‌ان. پاسخ‌هایی که پیشنهاد می‌کنم توصیه‌ان. این‌ها رو در تصویر فرماندهی جدا نگه می‌دارم و هیچ پیشنهادی بدون تأیید شما به فرمان تبدیل نمی‌شه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-04.wav",
+      "durationSeconds": 15.12,
+      "sha256": "3e388b1065e9f7ec4ac5e3e403b8de200750be11cbb47f82b67c89f2af0fd3df",
+      "captionSha256": "29207c5d189dc87e9b717cfecd447a80b18b4cd95950b644c534390922f68fc1"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-05",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "Every district is calling, Commander. Temporary authority cannot answer a permanent crisis. Give the Relay one lasting command, and I can make the city obey.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-05.wav",
+      "durationSeconds": 10.24,
+      "sha256": "8535c6ae5f909fa52e51439ac079eaa851326bb586ba17d6836d29e82e123de6",
+      "captionSha256": "fa861084e2fd569738d4cf2b33aefdb3be67a279840296081f2e2801adb15c0e"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-05",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "همهٔ منطقه‌ها کمک می‌خوان، فرمانده. اختیار موقت جواب بحران دائمی رو نمی‌ده. یک فرمان ماندگار به رله بده تا شهر رو وادار به اطاعت کنم.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - Warm, Captivating Storyteller (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-05.wav",
+      "durationSeconds": 12.16,
+      "sha256": "6fb9f2521d75d85b0e93703d91f75eb6ac8e0843af502f6b98b1bf9a9702a593",
+      "captionSha256": "79367f3b2ec496af9cd31b69b7b60cdcc1ca426336e5fd00437b42c053beec1b"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-06",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "You retain approval over every action I propose. The first two fronts are the clinic and the utility site. Their priorities remain yours to direct; I will show the situation and wait for your decision.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-06.wav",
+      "durationSeconds": 14.4,
+      "sha256": "c00c100ef1c0d7129c78268f308b432b9ddb3783d0a8eb59830c34fbfd59f242",
+      "captionSha256": "02700212b7707b0aa89bf8d01e98449f29dc08a6ab74c9357c39d774ef2b8509"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-06",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "تأیید هر اقدامی که پیشنهاد می‌کنم با شما می‌مونه. دو جبههٔ اول، درمانگاه و مرکز خدمات هستن. تعیین اولویتشون همچنان با شماست؛ وضعیت رو نشون می‌دم و منتظر تصمیم شما می‌مونم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-06.wav",
+      "durationSeconds": 14.08,
+      "sha256": "a8bb8c848ae845062046ee82afe7fd5dc41d53dd51dd947cb11360990d2e8ecb",
+      "captionSha256": "f27d437bc011c5f296e99ef93232f01ed6e735cec91dc10ca833ca31fce08802"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-open-07",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "We will protect these districts and keep command accountable. Hold both civic fronts, preserve the people keeping them alive, and prove that saving Sahrin does not require Qassem's permanent authority.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-open-07.wav",
+      "durationSeconds": 13.12,
+      "sha256": "0bd0c76ed7ecc374365f0fbbc42f71a2047d0d1e43045012c25a3d5e4fd87bd5",
+      "captionSha256": "412c3c5ff5948d33b0885877c53abfb864e162b0a7ce3b128f8eb0e3f33fbec2"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-open-07",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "از این منطقه‌ها محافظت می‌کنیم و فرماندهی رو پاسخ‌گو نگه می‌داریم. هر دو جبههٔ شهری رو حفظ کنین، از کسانی که خدمات رو سرپا نگه داشتن مراقبت کنین و نشون بدین نجات سهرین به اختیار دائمی قاسم نیاز نداره.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-open-07.wav",
+      "durationSeconds": 15.68,
+      "sha256": "d9a762df526a7e82c46175088f926d972d7d64ef066ee4fa719a9f0cbd04c514",
+      "captionSha256": "4356ac941595d158e8f9288830219c62ff934366093f3a742f831c61943abf20"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The clinic and utility site protect different needs. Keep both intact. Clear each front's attackers, then bring an original engineer to its marked recovery point and hold for six seconds to restore service.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-brief-01.wav",
+      "durationSeconds": 12.48,
+      "sha256": "5f924bbf85876005a59075db158690c11ac0efbf39e0906dc94d74a1ba735e59",
+      "captionSha256": "174ffe77d7e7e759442f052023ed942148fdff0d9264efe8f55ca6f92032577b"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "درمانگاه و مرکز خدمات، هر کدوم نیاز متفاوتی رو تأمین می‌کنن. هر دو رو سالم نگه دارین. مهاجم‌های هر جبهه رو پاک‌سازی کنین، بعد یکی از مهندس‌های اولیه رو به محل بازیابی مشخص‌شدهٔ همون جبهه برسونین و شش ثانیه اونجا نگه دارین تا خدمات برگرده.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-brief-01.wav",
+      "durationSeconds": 19.04,
+      "sha256": "7fb36601141f0264266927717627d8c9a4f6e337bd28841f525bc4beb1cb357b",
+      "captionSha256": "485efbd2ad71031e5e831ddef211532d9c9423620e8158d7f89e4818905b96d4"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Mixed Ash Line and Vanguard groups are approaching on separate response lanes. Use radar to confirm the threats, split your defenders, and use the existing production controls for reinforcements. Allow time for units to reach the other front.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-brief-02.wav",
+      "durationSeconds": 16.08,
+      "sha256": "53dfba4da25879c5efb245cec5fab18b13a8fceb12be6f0b7c35dcf911209620",
+      "captionSha256": "79828bea07eccb5805bef5d4214191240fce4a874976e75354e0e29422e05faa"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "گروه‌های ترکیبی خط خاکستر و ونگارد از مسیرهای جدا نزدیک می‌شن. با رادار تهدیدها رو تأیید کنین، مدافع‌ها رو تقسیم کنین و از کنترل‌های تولید برای نیروهای کمکی استفاده کنین. زمان رسیدن نیروها به جبههٔ دیگه رو هم حساب کنین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-brief-02.wav",
+      "durationSeconds": 18.08,
+      "sha256": "b74bb87561524ba51a73b090285b707c6fbf42717c7ac1edb10b8c75e5ab48ad",
+      "captionSha256": "e9cd2b7b1e181b45471d03c727e48058eca9048cffd17811d108b930f94c1e0d"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-brief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "I can request one Smoke screen on a marked lane. You decide whether to approve it. Approval covers that action alone; declining or continuing without it leaves command with you and consumes no Fuel.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-brief-03.wav",
+      "durationSeconds": 13.76,
+      "sha256": "c84a7a1c7f831c8c4a1ac8a5826067a69dd82e94bb38fd1bd060c54e07fcbd56",
+      "captionSha256": "bb16bf59225a6b5f881822730d1d4342f97641b22a93b772c1c8bbe72d94d8ac"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-brief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "می‌تونم برای یک مسیر مشخص درخواست پردهٔ دود بدم. تصمیم تأییدش با شماست. تأیید فقط برای همون اقدامه؛ رد کردنش یا ادامه دادن بدون اون، فرماندهی رو در اختیار شما نگه می‌داره و سوختی مصرف نمی‌کنه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-brief-03.wav",
+      "durationSeconds": 16.24,
+      "sha256": "21e979cc4026eb41eddeed39b2aac6c23397091c91519571166fa69a85acfc72",
+      "captionSha256": "6de212e0efbb7de0c12c3fcbd85e21b311c8ef44f6016df0e04988e9f1489472"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Both fronts are under pressure. Do you approve one Smoke action in the marked area? You may decline or continue without answering. I will wait; my guidance does not command your troops, and you can stop it immediately.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-comms-01.wav",
+      "durationSeconds": 14.48,
+      "sha256": "69639bde76e3528a9214047cad37345470aeee8b196919a02fd4fd2277467bfb",
+      "captionSha256": "4a6803b6bbc834e3ef19071e0cfe73db6f2e33b6c970dcffd8ab4fc8502b1dcc"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هر دو جبهه زیر فشارن. یک اقدام دود در محدودهٔ مشخص رو تأیید می‌کنین؟ می‌تونین ردش کنین یا بدون پاسخ ادامه بدین. منتظر می‌مونم؛ راهنمایی من به نیروهاتون فرمان نمی‌ده و می‌تونین فوراً متوقفش کنین.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-comms-01.wav",
+      "durationSeconds": 15.76,
+      "sha256": "9e703c7e720b95f2a7c6782b7ed8097341013f4988563d89c83c58ca0533a9af",
+      "captionSha256": "75df4b03c6592c5eaa98548b1ec11bc410761c5433ec38b213280542b62cc491"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Both districts are stable. The clinic and utility site are intact, and the engineers have restored both services. Keeping forces on both fronts protected the people and workers relying on them.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-debrief-01.wav",
+      "durationSeconds": 12.4,
+      "sha256": "102436db9754b765cf1bf7d9f885a0ad92634fba68b9e0c52c605410c99604be",
+      "captionSha256": "b1dd01c00743781233c5f137a102db9235f8d2f1832f39f6a81441fa0a48b2e3"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "هر دو منطقه پایدارن. درمانگاه و مرکز خدمات سالم موندن و مهندس‌ها خدمات هر دو جبهه رو دوباره راه انداختن. نگه داشتن نیروها در هر دو جبهه، مردم و کارکنانی رو که به این خدمات وابسته‌ان حفظ کرد.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-debrief-01.wav",
+      "durationSeconds": 15.44,
+      "sha256": "ba7866f8a4eea2313f6ea92f97233bc32aebffab9e65c0eed6f34de6b7ff9dfb",
+      "captionSha256": "44da7e6484d468dff4003870d8107d3d48357ac87b9c01bd0902f3af49f6e7f7"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The attack timings align with the last active Civic Relay nodes. Ash Line's local strikes and Vanguard's corridor pressure share the same schedule. I have preserved that connection as evidence.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-debrief-02.wav",
+      "durationSeconds": 13.84,
+      "sha256": "be2dd01e670ac5ad5bd56e6ccb4287095223bf5f5984684cce3f00323bd9b143",
+      "captionSha256": "8f588c823e7220f5a7989f05aeb4949ab3005b30ae35aac65cb2785db1710834"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "زمان‌بندی حمله‌ها با آخرین گره‌های فعال رلهٔ شهری هم‌خوانه. حمله‌های محلی خط خاکستر و فشار ونگارد روی مسیرها، برنامهٔ مشترکی دارن. این ارتباط رو به عنوان مدرک حفظ کردم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-debrief-02.wav",
+      "durationSeconds": 15.68,
+      "sha256": "3ff44f65228071f63e40aee3780ca0c6acb48f097636aacb3807d4dded773d2b",
+      "captionSha256": "93347850febf4b67d49124f7dcfe7c719599d85f555933035a29d426eaa644b9"
+    },
+    {
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-03",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Qassem is shifting pressure toward evacuation routes and public broadcasts. The routes are real; his claims need verification. Keep the district teams connected. The next response must get people to shelter and preserve the signal evidence.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/en/citywide_alert-debrief-03.wav",
+      "durationSeconds": 14.56,
+      "sha256": "b34f66f8c73e8daf193ed132ba2d936207c56483c2edf72461ea0bdf03b376e5",
+      "captionSha256": "985e69685324ce08f1e32724fadf9f6e20309687e775ac1fdc3f777ffced863c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "citywide_alert-debrief-03",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "قاسم داره فشار رو به مسیرهای تخلیه و پیام‌های عمومی منتقل می‌کنه. مسیرها واقعی‌ان، ولی ادعاهاش باید تأیید بشن. ارتباط تیم‌های منطقه رو حفظ کنین. پاسخ بعدی باید مردم رو به پناهگاه برسونه و مدرک پیام رو نگه داره.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M01CitywideAlert/Voice/fa/citywide_alert-debrief-03.wav",
+      "durationSeconds": 17.36,
+      "sha256": "aab8b1abf0afa798dfdcd16a44be6782e9052e65cf4e561373c77431bdd3d810",
+      "captionSha256": "41d290e768e777dae1e80b3e1c0bdc485f5792e1d6577f2ba0531906e02f8b94"
+    }
+  ],
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "missionId": "saga.ch05.m01.citywide_alert",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "generatedAtUtc": "2026-10-02T11:04:49.279903+00:00",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "castAssignment": {
+    "Dalia": "Existing canonical project cast",
+    "Samira": "Existing canonical project cast",
+    "Laila": "Existing Sarah cast",
+    "ARIA": "Existing canonical project cast",
+    "Qassem": "Existing George cast"
+  }
+}

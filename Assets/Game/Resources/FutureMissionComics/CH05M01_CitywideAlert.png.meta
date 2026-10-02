@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,161 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6bacbb2db40f4ed6a4512c32f4ab895
+      internalID: -338701305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6706943a60f18472f83683d8a3ada519
+      internalID: 109648785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 28
+        width: 1571
+        height: 884
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1778987ce77e54c4698e2148f7b35edd
+      internalID: -1453204414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 117
+        width: 1571
+        height: 707
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6bf0280c9c8f4e3a84b122ae978382b
+      internalID: -1132537732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 57
+        width: 1470
+        height: 827
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59ba1185fec2a4baaa4985624cd10852
+      internalID: -1136720616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M01_CitywideAlert-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 139
+        width: 1471
+        height: 662
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cdd1d2dc2802d4f9e954db94bf84ab49
+      internalID: -264284845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M01_CitywideAlert-a-16x9: -338701305
+      CH05M01_CitywideAlert-a-20x9: 109648785
+      CH05M01_CitywideAlert-b-16x9: -1453204414
+      CH05M01_CitywideAlert-b-20x9: -1132537732
+      CH05M01_CitywideAlert-c-16x9: -1136720616
+      CH05M01_CitywideAlert-c-20x9: -264284845
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

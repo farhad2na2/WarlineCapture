@@ -7,6 +7,7 @@ namespace Game.Runtime
 {
     public partial struct CampaignMissionDelayedWaveSystem
     {
+        private static readonly FixedString64Bytes CitywideDelayedMissionId = Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert;
         private void AdvanceDefenseElements(ref SystemState state, Entity root,
             in CampaignMissionRuntimeComponent runtime, ref CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
@@ -54,6 +55,17 @@ namespace Game.Runtime
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.air")))ready&=armorBreak.CoverageReady!=0;
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.battery")))ready&=armorBreak.AirCleared!=0;
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.command")))ready&=armorBreak.ArmorApproached!=0;
+                        }
+                    }
+                    if (runtime.MissionId.Equals(CitywideDelayedMissionId))
+                    {
+                        ready &= em.HasComponent<CampaignMissionCitywideAlertState>(root);
+                        if (ready)
+                        {
+                            var citywide=em.GetComponentData<CampaignMissionCitywideAlertState>(root);
+                            ready=CampaignMissionCitywideAlertRuleUtility.Matches(in citywide,in runtime) && citywide.Ready!=0 &&
+                                citywide.CoverageReady!=0 && citywide.ReinforcementProduced!=0 &&
+                                facts.ElapsedMilliseconds >= authored.WarningAtMilliseconds + CampaignMissionCitywideAlertRuleUtility.WarningLeadMilliseconds;
                         }
                     }
                     for (int j = 0; j < members.Length; j++)

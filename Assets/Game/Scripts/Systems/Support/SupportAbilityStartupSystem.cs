@@ -8,6 +8,7 @@ namespace Game.Runtime
     [UpdateBefore(typeof(SupportAbilityRequestSystem))]
     public partial struct SupportAbilityStartupSystem : ISystem
     {
+        private static readonly Unity.Collections.FixedString64Bytes CitywideMissionId = CampaignMissionSequence.CitywideAlert;
         public void OnCreate(ref SystemState state) => state.RequireForUpdate<SupportSessionComponent>();
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
@@ -36,7 +37,7 @@ namespace Game.Runtime
                             ref var definitions=ref catalogRef.ValueRO.Blob.Value.Abilities;
                             var grant=em.GetComponentData<SupportMissionPolicyComponent>(entity).TestGrantMask;
                             for(int i=0;i<definitions.Length;i++) abilities.Add(new SupportAbilityStateElement
-                            { Kind=definitions[i].Kind, ChargesRemaining=definitions[i].Charges, StateVersion=1,
+                            { Kind=definitions[i].Kind, ChargesRemaining=runtime.MissionId.Equals(CitywideMissionId) && definitions[i].Kind==SupportAbilityKind.Smoke ? Unity.Mathematics.math.min(1,definitions[i].Charges) : definitions[i].Charges, StateVersion=1,
                               Enabled=(byte)(definitions[i].ProductionReady!=0 || session.TestEncounter!=0 && (grant & SupportTargetValidationUtilitySystemHelper.Mask(definitions[i].Kind))!=0 ? 1 : 0) });
                         }
                         em.GetBuffer<SupportRequestElement>(entity).Clear(); em.GetBuffer<SupportReceiptElement>(entity).Clear();

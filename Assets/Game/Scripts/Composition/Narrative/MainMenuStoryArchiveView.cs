@@ -76,7 +76,7 @@ namespace Game.Composition
                     string sequence=$"seq.ch{chapter:00}.close.protocol_fragment_{chapter:00}";
                     int earnedChapter=chapter;
                     string opening = chapter switch { 3=>"hidden_network",4=>"air_and_armor",5=>"citywide_command",_=>null };
-                    if(opening!=null)
+                    if(opening!=null && chapter != 5)
                     {
                         string openingSequence=$"seq.ch{chapter:00}.open.{opening}";
                         rows.Add((parent,row)=>Button("ChapterOpen"+earnedChapter,parent,UiShellRuntimeGateway.Localization.Format("ui.home.archive.chapter_open","CHAPTER {0} • OPENING",earnedChapter),new Vector2(1050,78),Vector2.zero,()=>PlayBookend(openingSequence,earnedChapter,false)));
@@ -94,6 +94,13 @@ namespace Game.Composition
                         rows.Add((parent,row)=>Button("ArmorEvidence"+key,parent,Local("ui.home.archive.armor_break."+key,title),new Vector2(1050,78),Vector2.zero,
                             ()=>PlayRegistered("seq.ch04.close.protocol_fragment_04", "ArmorBreak-close-"+state)));
                     }
+                }
+                if (IsMissionEarned(model.CompletedMissionMask, CampaignMissionSequence.IndexOf(CampaignMissionSequence.CitywideAlert)))
+                {
+                    rows.Add((parent,row)=>Button("ChapterOpen5",parent,UiShellRuntimeGateway.Localization.Format("ui.home.archive.chapter_open","CHAPTER {0} • OPENING",5),new Vector2(1050,78),Vector2.zero,
+                        ()=>PlayRegistered("seq.ch05.open.citywide_command", null)));
+                    rows.Add((parent,row)=>Button("CitywideRelayEvidence",parent,Local("ui.home.archive.citywide_alert.relay_timing","CIVIC RELAY ATTACK TIMING"),new Vector2(1050,78),Vector2.zero,
+                        ()=>PlayRegistered("seq.ch05.m01.debrief", "CitywideAlert-debrief-1")));
                 }
                 if(model.FullCampaignRegistered && model.AllRequiredMissionsCompleted)
                     rows.Add((parent,row)=>Button("Epilogue",parent,Local("ui.home.complete","CAMPAIGN COMPLETE"),new Vector2(1050,78),Vector2.zero,()=>PlayBookend("seq.campaign.epilogue.canonical",5,true)));
@@ -142,14 +149,20 @@ namespace Game.Composition
         private bool PlayBookend(string id,int chapter,bool final)
         {
             if(!UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsChapterEarned(model.CompletedMissionMask,chapter) || final && (!model.FullCampaignRegistered || !model.AllRequiredMissionsCompleted)) return false;
-            if (id == "seq.ch04.close.protocol_fragment_04") return PlayRegistered(id, null);
+            if (id == "seq.ch04.close.protocol_fragment_04" || id == "seq.ch05.open.citywide_command") return PlayRegistered(id, null);
             bookends??=gameObject.AddComponent<FutureMissionComicPreviewController>();
             if(!bookends.PlaySequence(id,completed:ReturnToChooser))return false;
             playing=true;overlay?.SetActive(false);return true;
         }
         private bool PlayRegistered(string id, string stateId)
         {
-            if (!UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsMissionEarned(model.CompletedMissionMask, 19)) return false;
+            int requiredMission = id switch
+            {
+                "seq.ch04.close.protocol_fragment_04" => CampaignMissionSequence.IndexOf(CampaignMissionSequence.ArmorBreak),
+                "seq.ch05.open.citywide_command" or "seq.ch05.m01.debrief" => CampaignMissionSequence.IndexOf(CampaignMissionSequence.CitywideAlert),
+                _ => -1
+            };
+            if (requiredMission < 0 || !UiShellRuntimeGateway.TryReadCampaignOperations(out var model) || !IsMissionEarned(model.CompletedMissionMask, requiredMission)) return false;
             var config = bootstrap?.CampaignMissionNarrativeConfigs?.FirstOrDefault(s=>s!=null && s.SequenceId==id)
                 ?? supplementalSequences?.FirstOrDefault(s=>s!=null && s.SequenceId==id);
             if (config == null || narrative == null || bootstrap == null) return false;

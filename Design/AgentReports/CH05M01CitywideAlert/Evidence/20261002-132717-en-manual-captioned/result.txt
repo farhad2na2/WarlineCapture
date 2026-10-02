@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed Actual four soldiers produced by Barracks3, faction1, canonical UnitSourceKey and entity prefab key unit_chr_soldier_male_02_alt_04; objective incorrectly expects uppercase key.

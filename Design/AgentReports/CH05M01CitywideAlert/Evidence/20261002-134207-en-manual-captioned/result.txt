@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Passed scope=RecruitmentOnly normalInput=Passed actualProducedReinforcement=Passed materialsDebit=30 fullJourney=Pending

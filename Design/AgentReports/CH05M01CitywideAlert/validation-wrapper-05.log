@@ -1,0 +1,82 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M01CitywideAlertIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertRoutes] result=Passed boulevard=401x7 independentInfantryEgress=2x75x3 buildLots=6 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertConfigBuilder.cs:440)
+Game.Editor.CH05M01CitywideAlertMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertMapValidation.cs:102)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertMap] result=Passed identities=2979 owners=325 renderOnly=2654 roots=3 grid=440x220 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertMapValidation.cs:103)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideRules] result=Passed services=independent originals=11 production=actual-producer fuel=two-reserves consent=bounded settlement=idempotent
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertRulesValidation.cs:40)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideObjectives] result=Passed writer=published services=independent perimeter=actual protection=qualified
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertObjectiveValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertObjectiveValidation.cs:59)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertComicVoiceInstall] result=Passed clips=28 lines=14 locales=2 preload=0 runtimeNetworkTts=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertNarrativeBuilder:InstallComicVoices () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertNarrativeBuilder.cs:72)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:23)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertIntegration.cs:24)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M01CitywideAlertIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_6dceace2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

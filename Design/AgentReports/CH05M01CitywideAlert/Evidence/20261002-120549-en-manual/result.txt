@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed Citywide Alert defeat: Integrity

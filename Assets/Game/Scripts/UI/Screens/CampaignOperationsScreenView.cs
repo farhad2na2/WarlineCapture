@@ -184,11 +184,17 @@ namespace Game.UI.Runtime
             launchMissionButton.interactable = mission.Available && mission.AccessState == UiContentAccessState.Allowed;
             ApplyGridlockChapter(in model);
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
-            ApplyDistrictAtlas(IsChapterFour ? 4 : IsChapterThree ? 3 : IsChapterTwo ? 2 : 1);
+            ApplyDistrictAtlas(IsChapterFive ? 5 : IsChapterFour ? 4 : IsChapterThree ? 3 : IsChapterTwo ? 2 : 1);
             ApplyAtlasChapterProgress(model.CompletedMissionMask, model.AvailableMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission); ApplyBreach(mission);
             ApplyMissionGoals(mission.MissionId);
+            if(IsChapterFive)
+            {
+                string[] goals={"clinic","utility","perimeter"};
+                for(int i=0;i<3;i++)
+                {SetGoal(objectiveCards,i,UiShellRuntimeGateway.Localization.Get("mission.citywide_alert.objective."+goals[i]));SetGoal(starGoalLabels,i,UiShellRuntimeGateway.Localization.Get("mission.citywide_alert.star."+(i+1)));}
+            }
             if(mission.AccessState != UiContentAccessState.Allowed)
                 Set(missionBriefingText,UiShellRuntimeGateway.Localization.GetBySource(mission.AccessState switch
                 {
@@ -221,11 +227,12 @@ namespace Game.UI.Runtime
 
         private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, uint availableMask, uint completedMask)
         {
+            latestCampaignAvailableMask=availableMask;latestCampaignCompletedMask=completedMask;
             selectedMissionNodeIndex = -1;
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
-                int contentIndex=IsChapterFour?index+15:IsChapterThree?index+10:IsChapterTwo?index+5:index;
-                bool available = !IsChapterTwo && !IsChapterThree && !IsChapterFour && (index == 0 || index == 1 && m02Revealed ||
+                int contentIndex=IsChapterFive?index+20:IsChapterFour?index+15:IsChapterThree?index+10:IsChapterTwo?index+5:index;
+                bool available = !IsChapterTwo && !IsChapterThree && !IsChapterFour && !IsChapterFive && (index == 0 || index == 1 && m02Revealed ||
                                  index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02);
                 if (availableMask != 0) available = contentIndex < Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount && (availableMask & (1u << contentIndex)) != 0;
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&

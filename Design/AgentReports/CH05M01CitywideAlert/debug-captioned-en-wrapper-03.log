@@ -1,0 +1,983 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M01CitywideAlertInputProbe.RunEnglishCaptioned
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_905d793d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideRules] result=Passed services=independent originals=11 production=actual-producer fuel=two-reserves consent=bounded settlement=idempotent
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertRulesValidation.cs:40)
+Game.Editor.CH05M01CitywideAlertInputProbe:Run (string,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:81)
+Game.Editor.CH05M01CitywideAlertInputProbe:RunEnglishCaptioned () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_905d793d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:427)
+Game.Editor.CH05M01CitywideAlertInputProbe:Run (string,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:87)
+Game.Editor.CH05M01CitywideAlertInputProbe:RunEnglishCaptioned () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_905d793d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[CitywideAlertInput] inputFixture=background-game-view-only nativeInputIsolated=3
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:ConfigureFixture () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:443)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:122)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 clinic=0 utility=0 produced=0 perimeter=0 military=0 clinicHold=0 utilityHold=0 stable=0 clinicObstructed=0 utilityObstructed=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:146)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+MCP client info: codex-mcp-client v0.159.2
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge/<ExecuteCommandAsync>d__75:MoveNext () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1707)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<Unity.AI.MCP.Editor.Bridge/<ExecuteCommandAsync>d__75> (Unity.AI.MCP.Editor.Bridge/<ExecuteCommandAsync>d__75&)
+Unity.AI.MCP.Editor.Bridge:ExecuteCommandAsync (Unity.AI.MCP.Editor.Models.Command,Unity.AI.MCP.Editor.Connection.IConnectionTransport,System.Threading.CancellationToken)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1537)
+Unity.AI.MCP.Editor.Bridge:<RequestDrainOnMainThread>b__69_0 (object) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1468)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+
+Accepted Unix socket connection: fd=246
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink/<>c__DisplayClass9_0:<Write>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:286)
+UnityEditor.EditorApplication:Internal_InvokeTickEvents () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:409)
+
+[CitywideAlertInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 clinic=0 utility=0 produced=0 perimeter=0 military=0 clinicHold=0 utilityHold=0 stable=0 clinicObstructed=0 utilityObstructed=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:146)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertInput] touch=ContinueButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:464)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:462)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:228)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Client connected: UnixSocket-7
+  at Unity.AI.MCP.Editor.Bridge.HandleClientAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token) [0x00129] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:635 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Bridge.HandleClientAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token) [0x00000] in <9217938491974134b56b2787b79de882>:0 
+  at Unity.AI.MCP.Editor.Bridge+<>c__DisplayClass60_1.<ListenerLoopAsync>b__0 () [0x00000] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:505 
+  at System.Threading.Tasks.Task`1[TResult].InnerInvoke () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecutionContextCallback (System.Object obj) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Sent handshake (unity-mcp protocol v2.0, tools=7)
+  at Unity.AI.MCP.Editor.Bridge.HandleClientAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token) [0x006db] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:802 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task`1[TResult].TrySetResult (TResult result) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetResult (TResult result) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetResult (System.Threading.Tasks.Task`1[TResult] completedTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.MessageProtocol.SendHandshakeAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Object[] tools, System.String toolsHash, System.Int32 timeoutMs) [0x000e8] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/MessageProtocol.cs:93 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task`1[TResult].TrySetResult (TResult result) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetResult (TResult result) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetResult (System.Threading.Tasks.Task`1[TResult] completedTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.WriteAsync (System.Byte[] data, System.Threading.CancellationToken cancellationToken) [0x001ff] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:121 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[TIMING] Validation took 440ms
+  at Unity.AI.MCP.Editor.Bridge.ValidateAndApproveAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token, System.Boolean isBatchMode) [0x0014d] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1052 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+=== Connection Info ===
+MCP Server:
+  PID: 35309
+  Name: relay_mac_arm64
+  Executable: /Users/farhad/.unity/relay/relay_mac_arm64.app/Contents/MacOS/relay_mac_arm64
+  Hash: 503e2659185f02de...
+  Signed: Yes
+  Publisher: 9QW8UQUTAA
+  Signature Valid: Yes
+  Validation: Pending
+  Reason: Awaiting user approval
+MCP Client:
+  Name: codex
+  PID: 13968
+  Executable: /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex
+  Chain depth: 1 (walked up 1 level)
+======================
+  at Unity.AI.MCP.Editor.Bridge.LogConnectionDecision (Unity.AI.MCP.Editor.Security.ValidationDecision decision) [0x002aa] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:2039 
+  at Unity.AI.MCP.Editor.Bridge.ValidateAndApproveAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token, System.Boolean isBatchMode) [0x0019b] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1058 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Client disconnected: codex-mcp-client v0.159.2
+  at Unity.AI.MCP.Editor.Bridge+<>c__DisplayClass66_0.<HandleClientAsync>b__0 () [0x0005c] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:627 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.HandleDisconnection () [0x00013] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:295 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.ReadUntilDelimiterAsync (System.Byte delimiter, System.Int32 maxBytes, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x00242] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:218 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Client disconnected: codex-mcp-client v0.159.2
+  at Unity.AI.MCP.Editor.Bridge+<>c__DisplayClass66_0.<HandleClientAsync>b__0 () [0x0005c] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:627 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.HandleDisconnection () [0x00013] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:295 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.ReadUntilDelimiterAsync (System.Byte delimiter, System.Int32 maxBytes, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x00447] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:270 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Client handler: Read error: Connection closed
+  at Unity.AI.MCP.Editor.Bridge.HandleClientAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token) [0x00cd2] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:961 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.TrySetException (System.Object exceptionObject) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetException (System.Exception exception) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.MessageProtocol.ReadMessageAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x000fd] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/MessageProtocol.cs:137 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.TrySetException (System.Object exceptionObject) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetException (System.Exception exception) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.ReadUntilDelimiterAsync (System.Byte delimiter, System.Int32 maxBytes, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x00472] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:159 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+HandleClientAsync exiting for transport UnixSocket-7 [isConnected=False]
+  at Unity.AI.MCP.Editor.Bridge.HandleClientAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Threading.CancellationToken token) [0x00da9] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:974 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.TrySetException (System.Object exceptionObject) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetException (System.Exception exception) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.MessageProtocol.ReadMessageAsync (Unity.AI.MCP.Editor.Connection.IConnectionTransport transport, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x000fd] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/MessageProtocol.cs:137 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.TrySetException (System.Object exceptionObject) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].SetException (System.Exception exception) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at Unity.AI.MCP.Editor.Connection.UnixSocketTransport.ReadUntilDelimiterAsync (System.Byte delimiter, System.Int32 maxBytes, System.Int32 timeoutMs, System.Threading.CancellationToken cancellationToken) [0x00472] in ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:159 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.InvokeMoveNext (System.Object stateMachine) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ExecutionContext.Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Runtime.CompilerServices.AsyncMethodBuilderCore+MoveNextRunner.Run () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction (System.Action action, System.Boolean allowInlining, System.Threading.Tasks.Task& currentTask) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishContinuations () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageThree () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.FinishStageTwo () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.Finish (System.Boolean bUserDelegateExecuted) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteWithThreadLocal (System.Threading.Tasks.Task& currentTaskSlot) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.ExecuteEntry (System.Boolean bPreventDoubleExecution) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.Tasks.Task.System.Threading.IThreadPoolWorkItem.ExecuteWorkItem () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Threading._ThreadPoolWaitCallback.PerformWaitCallback () [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog/<>c__DisplayClass8_0:<LogDelayed>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:74)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass21_0:<DelayCall>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:375)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+connection.state_change
+oldState=Connecting newState=Failed error=WebSocketException: Unable to connect to the remote server (after 10 attempts)
+UnityEngine.Debug:LogError (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:307)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.Trace:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/Trace.cs:79)
+Unity.Relay.Editor.RelayService:TransitionTo (Unity.Relay.Editor.RelayStatus,string) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Relay/RelayService.cs:1229)
+Unity.Relay.Editor.RelayService/<StartNewRelayWithPortRetry>d__96:MoveNext () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Editor/Assistant/Relay/RelayService.cs:638)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[CitywideAlertInput] touch=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:464)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:462)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:226)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[CitywideAlertInput] touch=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:464)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:462)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:220)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 clinic=0 utility=0 produced=0 perimeter=0 military=0 clinicHold=0 utilityHold=0 stable=0 clinicObstructed=0 utilityObstructed=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:146)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch05.m01.citywide_alert scenario=scenario.ch05.m01.citywide_alert operationMap=opmap.ch05.citywide_alert
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[CitywideAlertInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 clinic=0 utility=0 produced=0 perimeter=0 military=0 clinicHold=0 utilityHold=0 stable=0 clinicObstructed=0 utilityObstructed=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:146)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywideAlertInputState] phase=None outcome=None step=-1 clock=0 initialized=0 coverage=0 air=0 clinic=0 utility=0 produced=0 perimeter=0 military=0 clinicHold=0 utilityHold=0 stable=0 clinicObstructed=0 utilityObstructed=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:146)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=13999 size=440x220 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=85 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=86 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Update hitch frame=87 BuildingPlacement=932.3ms, GC=0/0/0, Total=1028.2ms
+[CitywidePlacement] begin prefab=Building_Citywide_Clinic configuredFootprint=(7, 9) modelFootprint=(7, 9) preferred=(39, 144) clamped=(39, 144) effectiveRect=(x:39, y:144, width:7, height:9) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Citywide_Clinic effectiveRect=(x:39, y:144, width:7, height:9) cachedCells=0 startupRoadCells=0 gridRoadCells=0 blockerCells=0 outsideCells=0 first=none
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] begin prefab=Building_Citywide_Utility configuredFootprint=(8, 7) modelFootprint=(8, 7) preferred=(336, 142) clamped=(336, 142) effectiveRect=(x:336, y:142, width:8, height:7) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Citywide_Utility effectiveRect=(x:336, y:142, width:8, height:7) cachedCells=0 startupRoadCells=0 gridRoadCells=0 blockerCells=0 outsideCells=0 first=none
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] begin prefab=Building_Barrack configuredFootprint=(28, 15) modelFootprint=(28, 15) preferred=(146, 30) clamped=(146, 30) effectiveRect=(x:146, y:30, width:28, height:15) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Barrack effectiveRect=(x:146, y:30, width:28, height:15) cachedCells=0 startupRoadCells=0 gridRoadCells=0 blockerCells=0 outsideCells=0 first=none
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] begin prefab=Building_Barrack configuredFootprint=(28, 15) modelFootprint=(28, 15) preferred=(306, 30) clamped=(306, 30) effectiveRect=(x:306, y:30, width:28, height:15) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Barrack effectiveRect=(x:306, y:30, width:28, height:15) cachedCells=0 startupRoadCells=0 gridRoadCells=0 blockerCells=0 outsideCells=0 first=none
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] begin prefab=Building_Citywide_ReserveDepot configuredFootprint=(24, 23) modelFootprint=(24, 23) preferred=(200, 52) clamped=(200, 52) effectiveRect=(x:200, y:52, width:24, height:23) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Citywide_ReserveDepot effectiveRect=(x:200, y:52, width:24, height:23) cachedCells=0 startupRoadCells=210 gridRoadCells=0 blockerCells=0 outsideCells=0 first=cell=(200, 52) cached=False startupRoad=True gridRoad=False blocked=False outside=False
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] begin prefab=Building_Citywide_ReserveDepot configuredFootprint=(24, 23) modelFootprint=(24, 23) preferred=(360, 52) clamped=(360, 52) effectiveRect=(x:360, y:52, width:24, height:23) gridOrigin=float3(860f, 0f, 300f) gridSize=440x220
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:33)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CitywidePlacement] reject=placement-validation prefab=Building_Citywide_ReserveDepot effectiveRect=(x:360, y:52, width:24, height:23) cachedCells=0 startupRoadCells=210 gridRoadCells=0 blockerCells=0 outsideCells=0 first=cell=(360, 52) cached=False startupRoad=True gridRoad=False blocked=False outside=False
+UnityEngine.Debug:LogError (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:LogCitywidePlacementCells (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.RectInt,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,string) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:121)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:89)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:472)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:163)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:113)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:68)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:614)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Update hitch frame=88 BuildingPlacement=808.3ms, GC=0/0/0, Total=810.5ms
+[CitywideIntegrity] session=campaign-m03-0000000000000001 attempt=1 source=1 binding=0 request=1 failed status=2 origin=int2(0, 0) footprint=int2(0, 0)
+UnityEngine.Debug:LogError (object)
+Game.Runtime.CampaignMissionRuntimeSystem:MarkCitywideIntegrity (Game.Components.CampaignMissionCitywideAlertState&,string) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CitywideAlert.cs:120)
+Game.Runtime.CampaignMissionRuntimeSystem:ProjectCitywideBuildings (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.OperationMapBlob&,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CitywideAlert.Buildings.cs:38)
+Game.Runtime.CampaignMissionRuntimeSystem:TryAdvanceCitywideAlert (Unity.Entities.SystemState&,Unity.Entities.Entity,Game.Components.CampaignMissionRuntimeComponent&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CitywideAlert.cs:33)
+Game.Runtime.CampaignMissionRuntimeSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs:51)
+Game.Runtime.CampaignMissionRuntimeSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[CitywideFailureSnapshot] failure=Integrity ready=0 baseline=0 clinic=Entity.Null utility=Entity.Null clinicReserve=Entity.Null utilityReserve=Entity.Null
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:289)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] grids=1 boundaries=1 surfaces=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:293)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] grid origin=float3(860f, 0f, 300f) dimensions=440x220 cellSize=1 roadLength=96800 walkLength=96800 blockersCreated=True surfaceOrigin=float3(860f, 0f, 300f) surfaceDimensions=int2(440, 220)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:298)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=0 bound=0 request=1 building=Building_Citywide_Clinic status=2 resultCode=2 preferred=int2(39, 144) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(14, 12) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=1 bound=0 request=2 building=Building_Citywide_Utility status=2 resultCode=2 preferred=int2(336, 142) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(20, 16) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=2 bound=0 request=3 building=Building_Barrack status=2 resultCode=2 preferred=int2(146, 30) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(28, 15) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=3 bound=0 request=4 building=Building_Barrack status=2 resultCode=2 preferred=int2(306, 30) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(28, 15) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=4 bound=0 request=5 building=Building_Citywide_ReserveDepot status=2 resultCode=2 preferred=int2(200, 52) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(26, 25) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideFailureSnapshot] binding=5 bound=0 request=6 building=Building_Citywide_ReserveDepot status=2 resultCode=2 preferred=int2(360, 52) actualOrigin=int2(0, 0) actualFootprint=int2(0, 0) expectedSize=(26, 25) runtimeBuilding=0 roadCells=0 blockedCells=0 unwalkableCells=0 surfaceRoadCells=0 first=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:SnapshotCitywideFailure (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionCitywideAlertState&) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:318)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:142)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: Citywide Alert failure before further input: Integrity
+Game.Editor.CH05M01CitywideAlertInputProbe.Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:143)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick() (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:230)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CitywideAlertInput] result=Failed Citywide Alert failure before further input: Integrity
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M01CitywideAlertInputProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:481)
+Game.Editor.CH05M01CitywideAlertInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs:230)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=ChapterOpening sequence=seq.ch05.open.citywide_command session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:168)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.CH05M01CitywideAlertInputProbe.RunEnglishCaptioned
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+

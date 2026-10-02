@@ -1,0 +1,547 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ea19a05fcb4fa5b6afe32e88bedc11, type: 3}
+  m_Name: ScenarioSetup_Ch05_M01_CitywideAlert
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
+  scenarioId: scenario.ch05.m01.citywide_alert
+  operationMapId: opmap.ch05.citywide_alert
+  requiredAnchors:
+  - anchorId: anchor.ch05.m01.forward_post
+    kind: 7
+  - anchorId: anchor.ch05.m01.inner_core
+    kind: 7
+  - anchorId: anchor.ch05.m01.reinforcement_perimeter
+    kind: 2
+  - anchorId: anchor.ch05.m01.clinic
+    kind: 2
+  - anchorId: anchor.ch05.m01.utility
+    kind: 2
+  - anchorId: anchor.ch05.m01.clinic_recovery
+    kind: 2
+  - anchorId: anchor.ch05.m01.utility_recovery
+    kind: 2
+  - anchorId: anchor.ch05.m01.clinic_service
+    kind: 4
+  - anchorId: anchor.ch05.m01.utility_service
+    kind: 4
+  - anchorId: anchor.ch05.m01.producer_clinic
+    kind: 4
+  - anchorId: anchor.ch05.m01.producer_utility
+    kind: 4
+  - anchorId: anchor.ch05.m01.initial_barracks
+    kind: 4
+  - anchorId: anchor.ch05.m01.reserve_clinic
+    kind: 4
+  - anchorId: anchor.ch05.m01.reserve_utility
+    kind: 4
+  - anchorId: anchor.ch05.m01.build_zone
+    kind: 4
+  - anchorId: anchor.ch05.m01.clinic_defense
+    kind: 3
+  - anchorId: anchor.ch05.m01.clinic_armor_b
+    kind: 3
+  - anchorId: anchor.ch05.m01.clinic_infantry
+    kind: 3
+  - anchorId: anchor.ch05.m01.utility_defense
+    kind: 3
+  - anchorId: anchor.ch05.m01.utility_armor_b
+    kind: 3
+  - anchorId: anchor.ch05.m01.utility_infantry
+    kind: 3
+  - anchorId: anchor.ch05.m01.clinic_engineer
+    kind: 3
+  - anchorId: anchor.ch05.m01.utility_engineer
+    kind: 3
+  - anchorId: anchor.ch05.m01.staff_clinic
+    kind: 5
+  - anchorId: anchor.ch05.m01.staff_utility
+    kind: 5
+  - anchorId: anchor.ch05.m01.radar
+    kind: 3
+  - anchorId: anchor.ch05.m01.g2a
+    kind: 3
+  - anchorId: anchor.ch05.m01.coverage
+    kind: 11
+  - anchorId: anchor.ch05.m01.hostile_clinic
+    kind: 1
+  - anchorId: anchor.ch05.m01.hostile_utility
+    kind: 1
+  - anchorId: anchor.ch05.m01.hostile_utility_b
+    kind: 1
+  - anchorId: anchor.ch05.m01.clinic_contact
+    kind: 6
+  - anchorId: anchor.ch05.m01.utility_contact
+    kind: 6
+  - anchorId: anchor.ch05.m01.air_approach
+    kind: 1
+  - anchorId: anchor.ch05.m01.air_contact
+    kind: 6
+  - anchorId: anchor.ch05.m01.producer_exit_clinic
+    kind: 11
+  - anchorId: anchor.ch05.m01.producer_exit_utility
+    kind: 11
+  - anchorId: anchor.ch05.m01.return_rts
+    kind: 12
+  deterministicSeed: 5001001
+  encounterStartMilliseconds: 5000
+  unitGroups:
+  - groupId: group.ch05.m01.response.clinic
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.clinic_defense
+      missionRoleId: role.friendly.response.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.clinic_armor_b
+      missionRoleId: role.friendly.response.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch05.m01.clinic_infantry
+      missionRoleId: role.friendly.response.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m01.clinic_infantry
+      missionRoleId: role.friendly.response.clinic
+      count: 1
+  - groupId: group.ch05.m01.response.utility
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.utility_defense
+      missionRoleId: role.friendly.response.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.utility_armor_b
+      missionRoleId: role.friendly.response.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch05.m01.utility_infantry
+      missionRoleId: role.friendly.response.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m01.utility_infantry
+      missionRoleId: role.friendly.response.utility
+      count: 1
+  - groupId: group.ch05.m01.engineer.clinic
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m01.clinic_engineer
+      missionRoleId: role.friendly.engineer.clinic
+      count: 1
+  - groupId: group.ch05.m01.engineer.utility
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch05.m01.utility_engineer
+      missionRoleId: role.friendly.engineer.utility
+      count: 1
+  - groupId: group.ch05.m01.g2a
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_missle_launcher_air
+      runtimePrefabSourceKey: Unit_Veh_Missle_Launcher_Air
+      expectedAssetGuid: 5e4e89101c0c44839a5c31ca449ce871
+      spawnAnchorId: anchor.ch05.m01.g2a
+      missionRoleId: role.friendly.g2a
+      count: 1
+  - groupId: group.ch05.m01.radar
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_radar_tank
+      runtimePrefabSourceKey: Unit_Veh_Radar_Tank
+      expectedAssetGuid: b7087e56a58614db08d7c66c8845747b
+      spawnAnchorId: anchor.ch05.m01.radar
+      missionRoleId: role.friendly.radar
+      count: 1
+  - groupId: group.ch05.m01.staff.clinic
+    factionIndex: 0
+    units:
+    - unitConfigKey: unit.ch05.m01.chr_civilian_female_01
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_01
+      expectedAssetGuid: a3873f0cb8f24494eb79c31a4c12ec31
+      spawnAnchorId: anchor.ch05.m01.staff_clinic
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_civilian_male_01
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_01
+      expectedAssetGuid: 7c722f33fbe75427289f93b6f35e7e04
+      spawnAnchorId: anchor.ch05.m01.staff_clinic
+      missionRoleId: role.civilian.protected
+      count: 1
+  - groupId: group.ch05.m01.staff.utility
+    factionIndex: 0
+    units:
+    - unitConfigKey: unit.ch05.m01.chr_civilian_female_02
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_02
+      expectedAssetGuid: e9380ca06e23346a48a8d1d09416e955
+      spawnAnchorId: anchor.ch05.m01.staff_utility
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_civilian_male_01
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_01
+      expectedAssetGuid: 7c722f33fbe75427289f93b6f35e7e04
+      spawnAnchorId: anchor.ch05.m01.staff_utility
+      missionRoleId: role.civilian.protected
+      count: 1
+  - groupId: group.ch05.m01.hostile.clinic
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m01.hostile_clinic
+      missionRoleId: role.hostile.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch05.m01.hostile_clinic
+      missionRoleId: role.hostile.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m01.hostile_clinic
+      missionRoleId: role.hostile.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch05.m01.hostile_clinic
+      missionRoleId: role.hostile.clinic
+      count: 1
+    - unitConfigKey: unit.ch05.m01.veh_apc_fast
+      runtimePrefabSourceKey: Unit_Veh_APC_Fast
+      expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
+      spawnAnchorId: anchor.ch05.m01.hostile_clinic
+      missionRoleId: role.hostile.clinic
+      count: 1
+  - groupId: group.ch05.m01.hostile.utility
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.hostile_utility
+      missionRoleId: role.hostile.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch05.m01.hostile_utility_b
+      missionRoleId: role.hostile.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch05.m01.hostile_utility
+      missionRoleId: role.hostile.utility
+      count: 1
+    - unitConfigKey: unit.ch05.m01.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch05.m01.hostile_utility
+      missionRoleId: role.hostile.utility
+      count: 1
+  - groupId: group.ch05.m01.hostile.air
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.ch05.m01.veh_drone
+      runtimePrefabSourceKey: Unit_Veh_Drone
+      expectedAssetGuid: 7ed73828b6ecd4cf8a690c35e7311a1d
+      spawnAnchorId: anchor.ch05.m01.air_approach
+      missionRoleId: role.hostile.air
+      count: 1
+    - unitConfigKey: unit.ch05.m01.veh_drone
+      runtimePrefabSourceKey: Unit_Veh_Drone
+      expectedAssetGuid: 7ed73828b6ecd4cf8a690c35e7311a1d
+      spawnAnchorId: anchor.ch05.m01.air_approach
+      missionRoleId: role.hostile.air
+      count: 1
+  patrolRoutes:
+  - routeId: route.ch05.m01.clinic
+    unitGroupId: group.ch05.m01.hostile.clinic
+    anchorIds:
+    - anchor.ch05.m01.hostile_clinic
+    - anchor.ch05.m01.clinic_contact
+    - anchor.ch05.m01.clinic
+    startDelayMilliseconds: 130000
+  - routeId: route.ch05.m01.utility
+    unitGroupId: group.ch05.m01.hostile.utility
+    anchorIds:
+    - anchor.ch05.m01.hostile_utility
+    - anchor.ch05.m01.utility_contact
+    - anchor.ch05.m01.utility
+    startDelayMilliseconds: 130000
+  - routeId: route.ch05.m01.air
+    unitGroupId: group.ch05.m01.hostile.air
+    anchorIds:
+    - anchor.ch05.m01.air_approach
+    - anchor.ch05.m01.air_contact
+    - anchor.ch05.m01.coverage
+    startDelayMilliseconds: 150000
+  restrictions:
+    buildingDisabled: 0
+    productionDisabled: 0
+    economyDisabled: 0
+    transportDisabled: 0
+    airDisabled: 0
+  ambientPresentations: []
+  missionRuntime:
+    enabled: 1
+    startingCredits: 0
+    startingMaterials: 180
+    buildCatalog:
+    - buildingConfigId: Building_Barrack
+      maxCount: 2
+    requiredProducerConfigId: Building_Barrack
+    requiredUnitConfigId: Unit_Chr_Soldier_Male_02_Alt_04
+    baseMissionRoleId: role.friendly.response.clinic
+    baseAnchorId: anchor.ch05.m01.forward_post
+    buildZone:
+      anchorId: anchor.ch05.m01.build_zone
+      halfWidthCells: 65
+      halfHeightCells: 25
+    delayedWave:
+      unitGroupId: 
+      routeId: 
+      targetMissionRoleId: 
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+  defense:
+    enabled: 1
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 1
+    forwardPostStableId: citywide_alert.clinic
+    innerCoreAnchorId: anchor.ch05.m01.inner_core
+    innerCoreRadius: 6
+    sensorMissionRoleId: 
+    initialProducerAnchorId: anchor.ch05.m01.initial_barracks
+    radarPingCharges: 0
+    radarPingCooldownMilliseconds: 60000
+    convoyElements:
+    - elementId: convoy.ch05.m01.clinic
+      unitGroupId: group.ch05.m01.hostile.clinic
+      routeId: route.ch05.m01.clinic
+      contactAnchorId: anchor.ch05.m01.clinic_contact
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 130000
+      contactAtMilliseconds: 145000
+    - elementId: convoy.ch05.m01.utility
+      unitGroupId: group.ch05.m01.hostile.utility
+      routeId: route.ch05.m01.utility
+      contactAnchorId: anchor.ch05.m01.utility_contact
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 130000
+      contactAtMilliseconds: 145000
+    - elementId: convoy.ch05.m01.air
+      unitGroupId: group.ch05.m01.hostile.air
+      routeId: route.ch05.m01.air
+      contactAnchorId: anchor.ch05.m01.air_contact
+      warningAtMilliseconds: 20000
+      activationAtMilliseconds: 150000
+      contactAtMilliseconds: 165000
+    guidanceSteps:
+    - stepId: tutorial.ch05.m01.1
+      titleKey: mission.citywide_alert.tutorial.1.title
+      bodyKey: mission.citywide_alert.tutorial.1.body
+      action: 1
+      completion: 1
+      optional: 0
+    - stepId: tutorial.ch05.m01.2
+      titleKey: mission.citywide_alert.tutorial.2.title
+      bodyKey: mission.citywide_alert.tutorial.2.body
+      action: 2
+      completion: 2
+      optional: 0
+    - stepId: tutorial.ch05.m01.3
+      titleKey: mission.citywide_alert.tutorial.3.title
+      bodyKey: mission.citywide_alert.tutorial.3.body
+      action: 4
+      completion: 4
+      optional: 0
+    - stepId: tutorial.ch05.m01.4
+      titleKey: mission.citywide_alert.tutorial.4.title
+      bodyKey: mission.citywide_alert.tutorial.4.body
+      action: 5
+      completion: 5
+      optional: 0
+    cameraTour:
+      StartHoldMilliseconds: 350
+      PostHoldMilliseconds: 600
+      ApproachHoldMilliseconds: 650
+      ReturnHoldMilliseconds: 300
+      SmoothTimeSeconds: 1.25
+      PostPerspective: {x: 55, y: 65, z: 0, w: 55}
+      ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}
+  extraction:
+    enabled: 0
+    passengerRoleId: 
+    carrierRoleId: 
+    aircraftRoleId: 
+    rescueAnchorId: 
+    landingAnchorId: 
+    departureAnchorId: 
+    requiredPassengers: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    landingRadius: 0
+    departureRadius: 0
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  breach:
+    enabled: 0
+    gateBuildingId: 
+    coreBuildingId: 
+    approachAnchorId: 
+    gateAnchorId: 
+    coreAnchorId: 
+    archiveAnchorId: 
+    supportRoleId: 
+    counterattackRoleId: 
+    gateHealth: 0
+    coreHealth: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    counterattackWarningMilliseconds: 0
+    archiveRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  gridlock:
+    enabled: 0
+    siteAAnchorId: 
+    siteBAnchorId: 
+    hospitalAnchorId: 
+    obstructionAAnchorId: 
+    obstructionBAnchorId: 
+    fadiRoleId: 
+    workerRoleId: 
+    vehicleRoleId: 
+    counterattackRoleId: 
+    obstructionBuildingId: 
+    workMilliseconds: 0
+    holdMilliseconds: 0
+    deadlineMilliseconds: 0
+    warningMilliseconds: 0
+    workRadius: 0
+    threatRadius: 0
+    hospitalRadius: 0
+  supplyLine:
+    enabled: 0
+    oilAnchorId: 
+    refineryAnchorId: 
+    storageAnchorId: 
+    alternateLaneAnchorId: 
+    oilBuildingId: 
+    refineryBuildingId: 
+    storageBuildingId: 
+    reserveBarrels: 0
+    civilianReserveBarrels: 0
+    holdMilliseconds: 0
+    deadlineMilliseconds: 0
+  marketLifeline:
+    enabled: 0
+    deliveryAnchorId: 
+    manifestAnchorId: 
+    corruptManifestAnchorId: 
+    requiredDeliveries: 0
+    manifestHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    manifestRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  powerRelay:
+    enabled: 0
+    shortRouteAnchorId: 
+    safeRouteAnchorId: 
+    shelterAnchorId: 
+    repairAnchorId: 
+    repairHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    routeRadius: 0
+    shelterRadius: 0
+    repairRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  routeReopened:
+    enabled: 0
+    reliefGoalAnchorId: 
+    fuelGoalAnchorId: 
+    disruptedLinkAnchorId: 
+    hubGateAnchorId: 
+    recordsAnchorId: 
+    linkRepairHoldMilliseconds: 0
+    recordsHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    repairRadius: 0
+    hubRadius: 0
+    recordsRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

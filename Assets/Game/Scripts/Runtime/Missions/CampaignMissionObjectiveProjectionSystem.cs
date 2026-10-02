@@ -106,6 +106,13 @@ namespace Game.Runtime
 
                 switch (objective.Rule)
                 {
+                    case MissionObjectiveRuleKind.StabilizeCitywideClinic:
+                    case MissionObjectiveRuleKind.StabilizeCitywideUtility:
+                    case MissionObjectiveRuleKind.EstablishCitywidePerimeter:
+                        if (!definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert)) || definition.Defense.Enabled==0 ||
+                            !objective.TargetConfigId.IsEmpty || objective.RequiredCount!=(objective.Rule==MissionObjectiveRuleKind.EstablishCitywidePerimeter?11:2) ||
+                            !objective.MissionRoleId.Equals(new FixedString64Bytes(objective.Rule==MissionObjectiveRuleKind.EstablishCitywidePerimeter?"role.friendly.response.clinic":"role.civilian.protected"))) return false;
+                        break;
                     case MissionObjectiveRuleKind.DefeatArmorBreakMilitary:
                     case MissionObjectiveRuleKind.RecoverArmorBreakAuthority:
                     case MissionObjectiveRuleKind.ProtectArmorBreakRelief:
@@ -263,7 +270,7 @@ namespace Game.Runtime
                 Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
-                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
+                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief ? (byte)1 : (byte)0
             };
         }
 
@@ -286,6 +293,9 @@ namespace Game.Runtime
             }
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.StabilizeCitywideClinic => facts.CitywideFailure is CitywideAlertFailure.ClinicLost or CitywideAlertFailure.StaffLost or CitywideAlertFailure.ServiceOutage ? MatchObjectiveState.Failed : facts.CitywideClinicRecovered!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.StabilizeCitywideUtility => facts.CitywideFailure is CitywideAlertFailure.UtilityLost or CitywideAlertFailure.StaffLost or CitywideAlertFailure.ServiceOutage ? MatchObjectiveState.Failed : facts.CitywideUtilityRecovered!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.EstablishCitywidePerimeter => facts.CitywideStableMilliseconds>=6000 && facts.CitywideReinforcementReady!=0 && facts.CitywideMilitaryCleared!=0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DefeatArmorBreakMilitary => facts.HostileTotalCount==12&&facts.HostileDefeatedCount==12?MatchObjectiveState.Complete:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RecoverArmorBreakAuthority => facts.ArmorBreakAuthorityRecovered!=0?MatchObjectiveState.Complete:facts.HostileDefeatedCount==12?MatchObjectiveState.Active:MatchObjectiveState.Blocked,
                 MissionObjectiveRuleKind.ProtectArmorBreakRelief => facts.ArmorBreakReliefLost!=0?MatchObjectiveState.Failed:MatchObjectiveState.Active,
@@ -345,6 +355,14 @@ namespace Game.Runtime
                 if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay"))) return new FixedString64Bytes("anchor.ch04.m04.relay");
                 if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.protected.terminal"))) return new FixedString64Bytes("anchor.ch04.m04.civilian_terminal");
             }
+            if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert)))
+                return objective.Rule switch
+                {
+                    MissionObjectiveRuleKind.StabilizeCitywideClinic => new FixedString64Bytes("anchor.ch05.m01.clinic"),
+                    MissionObjectiveRuleKind.StabilizeCitywideUtility => new FixedString64Bytes("anchor.ch05.m01.utility"),
+                    MissionObjectiveRuleKind.EstablishCitywidePerimeter => new FixedString64Bytes("anchor.ch05.m01.reinforcement_perimeter"),
+                    _ => default
+                };
             if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)))
                 return objective.Rule switch
                 {
@@ -404,6 +422,9 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts)
         {
             string objectiveId=objective.ObjectiveId.ToString();
+            if(objectiveId.StartsWith("obj.ch05.m01.",System.StringComparison.Ordinal))
+                return new FixedString128Bytes(objective.Rule==MissionObjectiveRuleKind.StabilizeCitywideClinic?"mission.citywide_alert.objective.clinic":
+                    objective.Rule==MissionObjectiveRuleKind.StabilizeCitywideUtility?"mission.citywide_alert.objective.utility":"mission.citywide_alert.objective.perimeter");
             if(objectiveId.StartsWith("obj.ch04.m05.",System.StringComparison.Ordinal))
                 return new FixedString128Bytes(objective.Rule==MissionObjectiveRuleKind.DefeatArmorBreakMilitary?"mission.armor_break.objective.command":
                     objective.Rule==MissionObjectiveRuleKind.RecoverArmorBreakAuthority?"mission.armor_break.tutorial.7.body":"mission.armor_break.objective.relief");

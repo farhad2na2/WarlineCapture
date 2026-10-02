@@ -222,6 +222,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.RestoreRouteLink:
                 case MissionObjectiveRuleKind.CaptureRouteHub:
                 case MissionObjectiveRuleKind.PreserveRouteRecords:
+                case MissionObjectiveRuleKind.StabilizeCitywideClinic:
+                case MissionObjectiveRuleKind.StabilizeCitywideUtility:
+                case MissionObjectiveRuleKind.EstablishCitywidePerimeter:
                 case MissionObjectiveRuleKind.DefeatArmorBreakMilitary:
                 case MissionObjectiveRuleKind.RecoverArmorBreakAuthority:
                 case MissionObjectiveRuleKind.ProtectArmorBreakRelief:

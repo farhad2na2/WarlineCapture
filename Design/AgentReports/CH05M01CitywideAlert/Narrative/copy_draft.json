@@ -1,0 +1,94 @@
+{
+  "Opening": [
+    [
+      "open-01",
+      "Aria",
+      "Five districts carry the record of our decisions: trust earned or lost, evidence preserved, and infrastructure still functioning. I will carry those consequences forward without treating an unverified report as fact.",
+      "پنج منطقه، اثر تصمیم‌های ما رو با خودشون دارن؛ اعتمادی که به دست اومده یا از دست رفته، مدارکی که حفظ شدن و زیرساختی که هنوز کار می‌کنه. این پیامدها رو در نظر می‌گیرم، بدون اینکه گزارش تأییدنشده رو واقعیت حساب کنم."
+    ],
+    [
+      "open-02",
+      "Dalia",
+      "Ash Line cells are striking local services while Vanguard pushes the main corridors. These attacks are coordinated. Keep forces on both civic fronts; sending everyone to one fight leaves the other exposed.",
+      "گروه‌های خط خاکستر به خدمات محلی حمله می‌کنن و ونگارد مسیرهای اصلی رو زیر فشار گذاشته. این حمله‌ها هماهنگن. نیروها رو در هر دو جبههٔ شهری نگه دارین؛ فرستادن همه به یک نبرد، جبههٔ دیگه رو بی‌دفاع می‌ذاره."
+    ],
+    [
+      "open-03",
+      "Samira",
+      "The clinic must keep treating people, and the utility site must keep water and power moving. Our shelters, roads, and workers depend on both. Laila is tracking the air corridor while Dalia holds the military picture.",
+      "درمانگاه باید به رسیدگی به مردم ادامه بده و مرکز خدمات باید آب و برق رو در جریان نگه داره. پناهگاه‌ها، جاده‌ها و نیروهای کارمون به هر دو وابسته‌ان. لیلا مسیر هوایی رو دنبال می‌کنه و دالیا وضعیت نظامی رو زیر نظر داره."
+    ],
+    [
+      "open-04",
+      "Aria",
+      "Confirmed threats are facts. Their likely next moves are predictions. My suggested responses are recommendations. I will keep those separate in the command picture, and no recommendation becomes an order without your approval.",
+      "تهدیدهای تأییدشده واقعیتن. حرکت‌های احتمالی بعدیشون پیش‌بینی‌ان. پاسخ‌هایی که پیشنهاد می‌کنم توصیه‌ان. این‌ها رو در تصویر فرماندهی جدا نگه می‌دارم و هیچ پیشنهادی بدون تأیید شما به فرمان تبدیل نمی‌شه."
+    ],
+    [
+      "open-05",
+      "Qassem",
+      "Every district is calling, Commander. Temporary authority cannot answer a permanent crisis. Give the Relay one lasting command, and I can make the city obey.",
+      "همهٔ منطقه‌ها کمک می‌خوان، فرمانده. اختیار موقت جواب بحران دائمی رو نمی‌ده. یک فرمان ماندگار به رله بده تا شهر رو وادار به اطاعت کنم."
+    ],
+    [
+      "open-06",
+      "Aria",
+      "You retain approval over every action I propose. The first two fronts are the clinic and the utility site. Their priorities remain yours to direct; I will show the situation and wait for your decision.",
+      "تأیید هر اقدامی که پیشنهاد می‌کنم با شما می‌مونه. دو جبههٔ اول، درمانگاه و مرکز خدمات هستن. تعیین اولویتشون همچنان با شماست؛ وضعیت رو نشون می‌دم و منتظر تصمیم شما می‌مونم."
+    ],
+    [
+      "open-07",
+      "Dalia",
+      "We will protect these districts and keep command accountable. Hold both civic fronts, preserve the people keeping them alive, and prove that saving Sahrin does not require Qassem's permanent authority.",
+      "از این منطقه‌ها محافظت می‌کنیم و فرماندهی رو پاسخ‌گو نگه می‌داریم. هر دو جبههٔ شهری رو حفظ کنین، از کسانی که خدمات رو سرپا نگه داشتن مراقبت کنین و نشون بدین نجات سهرین به اختیار دائمی قاسم نیاز نداره."
+    ]
+  ],
+  "Brief": [
+    [
+      "brief-01",
+      "Samira",
+      "The clinic and utility site protect different needs. Keep both intact. Clear each front's attackers, then bring an original engineer to its marked recovery point and hold for six seconds to restore service.",
+      "درمانگاه و مرکز خدمات، هر کدوم نیاز متفاوتی رو تأمین می‌کنن. هر دو رو سالم نگه دارین. مهاجم‌های هر جبهه رو پاک‌سازی کنین، بعد یکی از مهندس‌های اولیه رو به محل بازیابی مشخص‌شدهٔ همون جبهه برسونین و شش ثانیه اونجا نگه دارین تا خدمات برگرده."
+    ],
+    [
+      "brief-02",
+      "Dalia",
+      "Mixed Ash Line and Vanguard groups are approaching on separate response lanes. Use radar to confirm the threats, split your defenders, and use the existing production controls for reinforcements. Allow time for units to reach the other front.",
+      "گروه‌های ترکیبی خط خاکستر و ونگارد از مسیرهای جدا نزدیک می‌شن. با رادار تهدیدها رو تأیید کنین، مدافع‌ها رو تقسیم کنین و از کنترل‌های تولید برای نیروهای کمکی استفاده کنین. زمان رسیدن نیروها به جبههٔ دیگه رو هم حساب کنین."
+    ],
+    [
+      "brief-03",
+      "Aria",
+      "I can request one Smoke screen on a marked lane. You decide whether to approve it. Approval covers that action alone; declining or continuing without it leaves command with you and consumes no Fuel.",
+      "می‌تونم برای یک مسیر مشخص درخواست پردهٔ دود بدم. تصمیم تأییدش با شماست. تأیید فقط برای همون اقدامه؛ رد کردنش یا ادامه دادن بدون اون، فرماندهی رو در اختیار شما نگه می‌داره و سوختی مصرف نمی‌کنه."
+    ]
+  ],
+  "Comms": [
+    [
+      "comms-01",
+      "Aria",
+      "Both fronts are under pressure. Do you approve one Smoke action in the marked area? You may decline or continue without answering. I will wait; my guidance does not command your troops, and you can stop it immediately.",
+      "هر دو جبهه زیر فشارن. یک اقدام دود در محدودهٔ مشخص رو تأیید می‌کنین؟ می‌تونین ردش کنین یا بدون پاسخ ادامه بدین. منتظر می‌مونم؛ راهنمایی من به نیروهاتون فرمان نمی‌ده و می‌تونین فوراً متوقفش کنین."
+    ]
+  ],
+  "Debrief": [
+    [
+      "debrief-01",
+      "Samira",
+      "Both districts are stable. The clinic and utility site are intact, and the engineers have restored both services. Keeping forces on both fronts protected the people and workers relying on them.",
+      "هر دو منطقه پایدارن. درمانگاه و مرکز خدمات سالم موندن و مهندس‌ها خدمات هر دو جبهه رو دوباره راه انداختن. نگه داشتن نیروها در هر دو جبهه، مردم و کارکنانی رو که به این خدمات وابسته‌ان حفظ کرد."
+    ],
+    [
+      "debrief-02",
+      "Aria",
+      "The attack timings align with the last active Civic Relay nodes. Ash Line's local strikes and Vanguard's corridor pressure share the same schedule. I have preserved that connection as evidence.",
+      "زمان‌بندی حمله‌ها با آخرین گره‌های فعال رلهٔ شهری هم‌خوانه. حمله‌های محلی خط خاکستر و فشار ونگارد روی مسیرها، برنامهٔ مشترکی دارن. این ارتباط رو به عنوان مدرک حفظ کردم."
+    ],
+    [
+      "debrief-03",
+      "Laila",
+      "Qassem is shifting pressure toward evacuation routes and public broadcasts. The routes are real; his claims need verification. Keep the district teams connected. The next response must get people to shelter and preserve the signal evidence.",
+      "قاسم داره فشار رو به مسیرهای تخلیه و پیام‌های عمومی منتقل می‌کنه. مسیرها واقعی‌ان، ولی ادعاهاش باید تأیید بشن. ارتباط تیم‌های منطقه رو حفظ کنین. پاسخ بعدی باید مردم رو به پناهگاه برسونه و مدرک پیام رو نگه داره."
+    ]
+  ]
+}

@@ -23,6 +23,16 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
+            if(TryCitywideAlert(out var cityEm,out var cityRoot,out var city))
+            {
+                var checkedIcon=UiMatchHudObjectiveIconKind.Checked;var uncheckedIcon=UiMatchHudObjectiveIconKind.Unchecked;
+                int stage=CampaignMissionCitywideAlertRuleUtility.Stage(in city);
+                statusSurfaces=new UiMatchHudStatusSurfacesModel(GameText.Get("mission.citywide_alert.name"),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.citywide_alert.objective.clinic"),city.ClinicRecovered!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.citywide_alert.objective.utility"),city.UtilityRecovered!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.citywide_alert.objective.perimeter"),city.ReinforcementReady!=0&&city.StableMilliseconds>=6000?checkedIcon:uncheckedIcon),
+                    $"{city.ElapsedMilliseconds/60000:00}:{city.ElapsedMilliseconds/1000%60:00}",true,GameText.Get("mission.citywide_alert.name"),AppendCitywideAlertStatus(GameText.Get("mission.citywide_alert.hud.stage."+stage)),false,false,"",false,false,false,false);return true;
+            }
             if(TryArmorBreak(out var armorEm,out var armorRoot,out var armor))
             {
                 var checkedIcon=UiMatchHudObjectiveIconKind.Checked;var uncheckedIcon=UiMatchHudObjectiveIconKind.Unchecked;
@@ -187,13 +197,14 @@ namespace Game.UI.Shell.Ecs
             var breachStatusStamp=ReadBreachStatusStamp();
             var gridlockStamp=ReadGridlockStamp();
             var groundedSignalStatusStamp=ReadGroundedSignalStatusStamp();
+            var citywideAlertStatusStamp=ReadCitywideAlertStatusStamp();
             var armorBreakStatusStamp=ReadArmorBreakStatusStamp();
             int supplyDelivery=Game.UI.Runtime.UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int currentDelivery)?UnityEngine.Mathf.Min(40,currentDelivery):-1;
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp && cachedSupplyDelivery==supplyDelivery &&
-                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp && cachedArmorBreakStatusStamp==armorBreakStatusStamp &&
+                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp && cachedArmorBreakStatusStamp==armorBreakStatusStamp && cachedCitywideAlertStatusStamp==citywideAlertStatusStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -231,7 +242,8 @@ namespace Game.UI.Shell.Ecs
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
                 if(topRecommendation.TutorialStepCount==4 && supplyDelivery>=0)
                     recommendationBody+="\n"+GameText.Format("mission.supply_line.delivery_progress","New Fuel delivered: {0}/40 barrels",supplyDelivery);
-                if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
+                if(topRecommendation.TutorialStepCount==8 && !(topRecommendation.RecommendationId is >=68001 and <=68008)) recommendationBody=AppendBreachStatus(recommendationBody);
+                if(topRecommendation.RecommendationId is >=68001 and <=68008)recommendationBody=AppendCitywideAlertStatus(recommendationBody);
                 if(topRecommendation.TutorialStepCount==10) recommendationBody=AppendGridlockStatus(recommendationBody);
                 bool evidenceChain=TryGetMissionRoot(out var evidenceManager,out var evidenceRoot) &&
                     evidenceManager.GetComponentData<CampaignMissionRuntimeComponent>(evidenceRoot).MissionId.Equals(Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain);
@@ -354,7 +366,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;cachedSupplyDelivery=supplyDelivery;
             cachedGroundedSignalStatusStamp=groundedSignalStatusStamp;
-            cachedArmorBreakStatusStamp=armorBreakStatusStamp;
+            cachedArmorBreakStatusStamp=armorBreakStatusStamp;cachedCitywideAlertStatusStamp=citywideAlertStatusStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

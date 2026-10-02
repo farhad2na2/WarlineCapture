@@ -15,6 +15,8 @@ namespace Game.Runtime
             if(missions.CalculateEntityCount()!=1)return false;
             var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if(runtime.Phase==MissionPhaseKind.None)return false;
+            if(runtime.MissionId.ToString()==CampaignMissionSequence.CitywideAlert)
+            { CampaignCitywideFuelScope.TryGet(em,out reserve,out _);return true; }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.ArmorBreak)
             {
                 if(em.HasComponent<CampaignMissionArmorBreakState>(root))
@@ -35,12 +37,14 @@ namespace Game.Runtime
         }
         public static float Usable(EntityManager em, Entity reserve)
         {
+            if(CampaignCitywideFuelScope.TryGet(em,out _,out _))return CampaignCitywideFuelScope.Total(em);
             if(!em.Exists(reserve)||!em.HasComponent<BuildingResourceStorageComponent>(reserve))return 0;
             var storage=em.GetComponentData<BuildingResourceStorageComponent>(reserve);
             return math.max(0,storage.StoredFuelBarrels-storage.ReservedFuelOutboundBarrels-storage.CivilianFuelReserveBarrels);
         }
         public static void Drain(EntityManager em, Entity reserve, float requested)
         {
+            if(CampaignCitywideFuelScope.TryGet(em,out _,out _)){CampaignCitywideFuelScope.Drain(em,requested);return;}
             float amount=math.min(Usable(em,reserve),math.max(0,requested));
             if(amount<=0)return;
             var storage=em.GetComponentData<BuildingResourceStorageComponent>(reserve);

@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b3546f043e324077814d1d1dc76df92
+    m_Address: campaign/citywide-alert/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d993162c8c844f27b6f7775e5324ef6
     m_Address: campaign/armor-break/surface
     m_ReadOnly: 0
@@ -45,6 +50,21 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61d7b7f9c413a41bea1cb7267696c46c
+    m_Address: campaign/citywide-alert/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7762ffbf7e4ff4bebb073aa8023070fd
+    m_Address: campaign/citywide-alert/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78813262332a14b309f1e5bf59e95d9d
+    m_Address: campaign/citywide-alert/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 79f5a7d7eefb244c99222f8a7abe37dd
     m_Address: campaign/armor-break/support-context
     m_ReadOnly: 0
@@ -55,8 +75,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8eecd13ed06bd48568a590c9a259a73a
+    m_Address: campaign/citywide-alert/support-context
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9462db31f350e4f50b5afc101db706fa
     m_Address: campaign/grounded-signal/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bef15c600f5d4f8da58222b9e8d08c0
+    m_Address: campaign/citywide-alert/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a04245b024f1940dc829f8eb6675c6ce
+    m_Address: campaign/citywide-alert/surface
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -72,6 +107,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: be0f1c8c7ae1940d6a679b258bf79f7b
     m_Address: campaign/armor-break/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d24d1d7c6961340f3a74a4558152d580
+    m_Address: campaign/citywide-alert/mission
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

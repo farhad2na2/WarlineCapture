@@ -1,0 +1,851 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6300305631338174053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M01_CitywideAlert_open
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.open.citywide_command
+  entryStateId: CitywideAlert-open-0
+  defaultSkipDestinationId: CitywideAlert-open-complete
+  states:
+  - stateId: CitywideAlert-open-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-01
+      textKey: narrative.citywide_alert.open-01
+      englishFallback: 'Five districts carry the record of our decisions: trust earned
+        or lost, evidence preserved, and infrastructure still functioning. I will
+        carry those consequences forward without treating an unverified report as
+        fact.'
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: c5e21ab211cfd4e37abe58cbf5174609, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.86
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-1
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-02
+      textKey: narrative.citywide_alert.open-02
+      englishFallback: Ash Line cells are striking local services while Vanguard
+        pushes the main corridors. These attacks are coordinated. Keep forces on
+        both civic fronts; sending everyone to one fight leaves the other exposed.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: e6a652f4184464b7d9c9dbb71c16beba, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.78
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-2
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.78
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-03
+      textKey: narrative.citywide_alert.open-03
+      englishFallback: The clinic must keep treating people, and the utility site
+        must keep water and power moving. Our shelters, roads, and workers depend
+        on both. Laila is tracking the air corridor while Dalia holds the military
+        picture.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 62f1cf84d23314c99a4719b34ee05cad, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.78
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-3
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.78
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-04
+      textKey: narrative.citywide_alert.open-04
+      englishFallback: Confirmed threats are facts. Their likely next moves are predictions.
+        My suggested responses are recommendations. I will keep those separate in
+        the command picture, and no recommendation becomes an order without your
+        approval.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: a8c917cda4a7144feab3bea1ee22af9b, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.5
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-4
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.5
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-e-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-e-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-05
+      textKey: narrative.citywide_alert.open-05
+      englishFallback: Every district is calling, Commander. Temporary authority
+        cannot answer a permanent crisis. Give the Relay one lasting command, and
+        I can make the city obey.
+      speaker: 9
+      voiceClip: {fileID: 8300000, guid: 10c892f82990d4048abb502de8825095, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.66
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-5
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.66
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-5
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-f-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-f-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-06
+      textKey: narrative.citywide_alert.open-06
+      englishFallback: You retain approval over every action I propose. The first
+        two fronts are the clinic and the utility site. Their priorities remain yours
+        to direct; I will show the situation and wait for your decision.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 34d16eb4787824ce693e2c4722030a28, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.9
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-6
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.9
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-6
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-g-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 474d0cd9d99cb45309a834db1ebd90e3
+      m_SubObjectName: CH05M01_CitywideAlert_Opening-g-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-open-07
+      textKey: narrative.citywide_alert.open-07
+      englishFallback: We will protect these districts and keep command accountable.
+        Hold both civic fronts, preserve the people keeping them alive, and prove
+        that saving Sahrin does not require Qassem's permanent authority.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: dc5c04f51a41a466d86f236197a4e997, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.18
+      essentialCaption: 1
+    continueStateId: CitywideAlert-open-complete
+    skipStateId: CitywideAlert-open-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.18
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-open-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.citywide_alert.open.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-873785774725077915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M01_CitywideAlert_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m01.comms
+  entryStateId: CitywideAlert-comms-0
+  defaultSkipDestinationId: CitywideAlert-comms-complete
+  states:
+  - stateId: CitywideAlert-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8854f6f9ffc64856be6e2246474661a3
+      m_SubObjectName: CH05M01_CitywideAlert_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8854f6f9ffc64856be6e2246474661a3
+      m_SubObjectName: CH05M01_CitywideAlert_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-comms-01
+      textKey: narrative.citywide_alert.comms-01
+      englishFallback: Both fronts are under pressure. Do you approve one Smoke action
+        in the marked area? You may decline or continue without answering. I will
+        wait; my guidance does not command your troops, and you can stop it immediately.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 0047b3faa03164b4094054f288b3b2a7, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.26
+      essentialCaption: 1
+    continueStateId: CitywideAlert-comms-complete
+    skipStateId: CitywideAlert-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.26
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.citywide_alert.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M01_CitywideAlert_Narrative
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m01.brief
+  entryStateId: CitywideAlert-brief-0
+  defaultSkipDestinationId: CitywideAlert-brief-complete
+  states:
+  - stateId: CitywideAlert-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-brief-01
+      textKey: narrative.citywide_alert.brief-01
+      englishFallback: The clinic and utility site protect different needs. Keep
+        both intact. Clear each front's attackers, then bring an original engineer
+        to its marked recovery point and hold for six seconds to restore service.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 2b5ddcb5a63244067b37c96b074d932d, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 19.54
+      essentialCaption: 1
+    continueStateId: CitywideAlert-brief-1
+    skipStateId: CitywideAlert-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 19.54
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-brief-02
+      textKey: narrative.citywide_alert.brief-02
+      englishFallback: Mixed Ash Line and Vanguard groups are approaching on separate
+        response lanes. Use radar to confirm the threats, split your defenders, and
+        use the existing production controls for reinforcements. Allow time for units
+        to reach the other front.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 34fd80f246fa5403d8ca556f62f1570c, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 18.58
+      essentialCaption: 1
+    continueStateId: CitywideAlert-brief-2
+    skipStateId: CitywideAlert-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 18.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: fb277efad6ad4f00a51ad61512d6b727
+      m_SubObjectName: CH05M01_CitywideAlert-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-brief-03
+      textKey: narrative.citywide_alert.brief-03
+      englishFallback: I can request one Smoke screen on a marked lane. You decide
+        whether to approve it. Approval covers that action alone; declining or continuing
+        without it leaves command with you and consumes no Fuel.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: a7dcacf423d204df992fe804587ba066, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.74
+      essentialCaption: 1
+    continueStateId: CitywideAlert-brief-complete
+    skipStateId: CitywideAlert-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.74
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.citywide_alert.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &8323918829467292637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M01_CitywideAlert_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m01.debrief
+  entryStateId: CitywideAlert-debrief-0
+  defaultSkipDestinationId: CitywideAlert-debrief-complete
+  states:
+  - stateId: CitywideAlert-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-debrief-01
+      textKey: narrative.citywide_alert.debrief-01
+      englishFallback: Both districts are stable. The clinic and utility site are
+        intact, and the engineers have restored both services. Keeping forces on
+        both fronts protected the people and workers relying on them.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 809d16dface314bfbb19661c3b76e6c3, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.94
+      essentialCaption: 1
+    continueStateId: CitywideAlert-debrief-1
+    skipStateId: CitywideAlert-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.94
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-debrief-02
+      textKey: narrative.citywide_alert.debrief-02
+      englishFallback: The attack timings align with the last active Civic Relay
+        nodes. Ash Line's local strikes and Vanguard's corridor pressure share the
+        same schedule. I have preserved that connection as evidence.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 13c5d72fc8460484c9e21a1f7aca2744, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.18
+      essentialCaption: 1
+    continueStateId: CitywideAlert-debrief-2
+    skipStateId: CitywideAlert-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.18
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 02572ac697f74ac99381df87b85af018
+      m_SubObjectName: CH05M01_CitywideAlert_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: citywide_alert-debrief-03
+      textKey: narrative.citywide_alert.debrief-03
+      englishFallback: Qassem is shifting pressure toward evacuation routes and public
+        broadcasts. The routes are real; his claims need verification. Keep the district
+        teams connected. The next response must get people to shelter and preserve
+        the signal evidence.
+      speaker: 5
+      voiceClip: {fileID: 8300000, guid: 0102bd8be2a5d4b0bb4d1406696b5933, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.86
+      essentialCaption: 1
+    continueStateId: CitywideAlert-debrief-complete
+    skipStateId: CitywideAlert-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CitywideAlert-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.citywide_alert.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []

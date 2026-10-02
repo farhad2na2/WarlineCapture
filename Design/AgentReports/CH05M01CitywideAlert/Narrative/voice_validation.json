@@ -1,0 +1,37 @@
+{
+  "result": "Passed",
+  "missionId": "saga.ch05.m01.citywide_alert",
+  "validatedAtUtc": "2026-10-02T11:09:11.663284+00:00",
+  "clips": 28,
+  "lines": 14,
+  "locales": [
+    "en-US",
+    "fa-IR"
+  ],
+  "openingClips": 14,
+  "missionClips": 14,
+  "durationMinimumSeconds": 10.24,
+  "durationMaximumSeconds": 19.04,
+  "durationTotalSeconds": 420.0,
+  "wavBytes": 37046184,
+  "sampleRateHz": 44100,
+  "channels": 1,
+  "sampleWidthBytes": 2,
+  "checksumMatches": 28,
+  "captionHashMatches": 28,
+  "canonicalTextMatches": 28,
+  "castIdMatches": 28,
+  "runtimeNetworkTts": false,
+  "authorization": {
+    "exactHumanReply": "Approve these 28 Citywide Alert clips",
+    "provider": "api.elevenlabs.io",
+    "scope": "14 approved English/Persian lines: seven Chapter5 opening and seven mission; existing Dalia/Samira/Laila/ARIA/Qassem cast; configured account",
+    "automaticReview": "Exact approved generation command accepted"
+  },
+  "pendingGates": [
+    "Unity import/binding",
+    "natural EN/FA playback",
+    "normal-input mission and result/return",
+    "real player/device acceptance"
+  ]
+}

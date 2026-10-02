@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
     public sealed partial class CampaignOperationsScreenView
     {
         private int selectedMissionNodeIndex = -1;
+        private uint latestCampaignAvailableMask,latestCampaignCompletedMask;
         public Button ChapterFourButton => ResolveChapterCardButton(3);
         public Button ChapterFiveButton => ResolveChapterCardButton(4);
 
@@ -18,8 +19,14 @@ namespace Game.UI.Runtime
                 persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
-                persian ? "پیش‌نمایش داستان" : "STORY PREVIEW");
+                persian ? "مأموریت ۱ آماده است" : "M01 READY");
             // Keep previously available story previews reachable beside playable M01.
+            if(selectedChapter==5&&IsChapterFive)
+                for(int index=1;index<5;index++)
+                {bool available=FutureMissionComicCatalog.Find(5,index+1)!=null;
+                 if(missionNodeButtons!=null&&index<missionNodeButtons.Length&&missionNodeButtons[index]!=null)missionNodeButtons[index].interactable=available;
+                 if(missionLockIcons!=null&&index<missionLockIcons.Length&&missionLockIcons[index]!=null)missionLockIcons[index].SetActive(!available);
+                 ApplyNodeAppearance(index,available,false,index==selectedMissionNodeIndex);}
             if(selectedChapter==4&&IsChapterFour)
                 for(int index=2;index<5;index++)
                 {
@@ -52,6 +59,7 @@ namespace Game.UI.Runtime
             if (mission == null)
                 return;
             selectedMissionNodeIndex = number - 1;
+            IsChapterFive=chapter==5;IsChapterFour=chapter==4;IsChapterThree=chapter==3;IsChapterTwo=chapter==2;
             bool persian = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (chapter >= 4)
             {
@@ -64,13 +72,17 @@ namespace Game.UI.Runtime
                     FutureMissionComicMission nodeMission = FutureMissionComicCatalog.Find(chapter, index + 1);
                     if (chapterMissionNames != null && index < chapterMissionNames.Length)
                         Set(chapterMissionNames[index], nodeMission?.Title(persian) ?? string.Empty);
+                    int contentIndex=(chapter-1)*5+index;
+                    bool playable=contentIndex<Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount;
+                    bool available=playable?(latestCampaignAvailableMask&(1u<<contentIndex))!=0:nodeMission!=null;
+                    bool completed=playable&&(latestCampaignCompletedMask&(1u<<contentIndex))!=0;
                     if (missionNodeButtons != null && index < missionNodeButtons.Length &&
                         missionNodeButtons[index] != null)
-                        missionNodeButtons[index].interactable = nodeMission != null;
+                        missionNodeButtons[index].interactable = available;
                     if (missionLockIcons != null && index < missionLockIcons.Length &&
                         missionLockIcons[index] != null)
-                        missionLockIcons[index].SetActive(false);
-                    ApplyNodeAppearance(index, nodeMission != null, false, index + 1 == number);
+                        missionLockIcons[index].SetActive(!available);
+                    ApplyNodeAppearance(index, available, completed, index + 1 == number);
                 }
             }
             else
@@ -80,6 +92,9 @@ namespace Game.UI.Runtime
             Set(missionName, mission.Title(persian));
             Set(missionBriefingText, mission.Summary(persian));
             Set(primaryObjectiveText, mission.Objective(persian));
+            SetGoal(objectiveCards,0,mission.Objective(persian));
+            SetGoal(objectiveCards,1,persian?"پیش‌نمایش داستان":"STORY PREVIEW");SetGoal(objectiveCards,2,string.Empty);
+            for(int i=0;i<3;i++)SetGoal(starGoalLabels,i,string.Empty);
             Set(rewardSummaryText, persian ? "پیش‌نمایش داستان · بازی بعداً آماده می‌شود" :
                 "STORY PREVIEW · GAMEPLAY COMING LATER");
             Set(launchMissionLabel, persian ? "نمایش کمیک" : "PLAY COMIC");

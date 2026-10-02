@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene identity counts differ from the readiness contract: buildings=434/323 vehicles=22/0 renderOnly=9283/1123.

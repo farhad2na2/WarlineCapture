@@ -108,6 +108,7 @@ namespace Game.UI.Runtime
             ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model); ApplyAirCorridorOutcome(in model); ApplySteelPushOutcome(in model); ApplySplitFrontOutcome(in model); ApplyRouteReopenedOutcome(in model); ApplyInfrastructureOutcome(in model);
             ApplyGroundedSignalOutcome(in model);
             ApplyArmorBreakOutcome(in model);
+            ApplyCitywideAlertOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);

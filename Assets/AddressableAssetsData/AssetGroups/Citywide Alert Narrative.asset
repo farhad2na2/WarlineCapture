@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Citywide Alert Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Citywide Alert Narrative
+  m_GUID: 2f770592f021b4c78a97dec079441901
+  m_SerializeEntries:
+  - m_GUID: 02572ac697f74ac99381df87b85af018
+    m_Address: narrative.citywide_alert.ch05m01_citywidealert_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 474d0cd9d99cb45309a834db1ebd90e3
+    m_Address: narrative.citywide_alert.ch05m01_citywidealert_opening
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8854f6f9ffc64856be6e2246474661a3
+    m_Address: narrative.citywide_alert.ch05m01_citywidealert_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb277efad6ad4f00a51ad61512d6b727
+    m_Address: narrative.citywide_alert.ch05m01_citywidealert
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 10c29c2cf9f08411ea02dd5e8e5cddd1, type: 2}
+    - {fileID: 11400000, guid: 175d64eebd7d249f5be4dd08a9ff7237, type: 2}

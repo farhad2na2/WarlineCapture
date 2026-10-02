@@ -100,6 +100,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _Enable_Camera_Fade: 0
     - _Enable_Emission: 0
     - _Enable_Scene_Fog: 0
@@ -118,8 +119,12 @@ Material:
     - _Soft_Power: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
     - _Surface: 1
     - _UVSec: 0
+    - _Use_View_Edge_Compensation: 1
+    - _ViewEdgePower: 1
+    - _XRMotionVectorsPass: 1
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0

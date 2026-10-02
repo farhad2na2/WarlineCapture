@@ -1,0 +1,1 @@
+[CitywideAlertInput] result=Failed ObjectDisposedException: Attempted to access BufferTypeHandle<Game.Components.CampaignMissionCitywideAlertMember> which has been invalidated by a structural change.

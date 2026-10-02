@@ -58,7 +58,8 @@ namespace Game.UI.Shell.Ecs
             string locale=GameLocalization.CurrentLocaleCode;
             bool preparing=(em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)!=0x1FFu;
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
-            if(armorBreak) preparing=false;
+            bool citywide=runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert);
+            if(armorBreak || citywide) preparing=false;
             bool resume=guidance==45007 && em.GetComponentData<CampaignMissionDefenseStateComponent>(root).StopAccepted!=0;
             if(hasDefenseReadModel && defenseAttemptKey.Equals(attemptKey) && defenseReadKey.Equals(key) && defenseReadLocale==locale && defenseReadResume==resume && defenseReadPreparing==preparing && defenseReadLosses==facts.SquadLossCount)
             {model=defenseReadModel; return true;}
@@ -74,6 +75,7 @@ namespace Game.UI.Shell.Ecs
             for(int i=0;i<records.Length;i++)
                 if(ledger.Active!=0 && records[i].ElementIndex==ledger.FocusElementIndex && records[i].Resolved==0)
                 { warning=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront))?GameText.Get("mission.split_front.warning."+(i==0?"lead":"main")):steelPush?GameText.Get("mission.steel_push.warning."+(i==0?"lead":"main")):airCorridor?GameText.Get("mission.air_corridor.warning."+(i==0?"west":"north")):ThreatWarningDisplayText.Build(records[i]); hasWarning=true; focus=active && records[i].HasFocus!=0; attention=records[i].AttentionEscalated!=0 && records[i].ReadByPlayer==0; break; }
+            if(citywide && hasWarning) warning=GameText.Get("mission.citywide_alert.warning."+ledger.FocusElementIndex);
             if(armorBreak && hasWarning) warning=GameText.Get("mission.armor_break.warning."+ledger.FocusElementIndex);
             if(preparing) warning=GameText.Get(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront))?"mission.split_front.warning.prepare":steelPush?"mission.steel_push.warning.prepare":airCorridor?"mission.air_corridor.warning.prepare":"mission.m03.prepare")+"\n"+warning;
             if(facts.SquadLossCount>0) warning+= "\n"+GameText.Format("mission.m03.casualties","",facts.SquadLossCount);

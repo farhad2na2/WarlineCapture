@@ -9,6 +9,8 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionResultProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes CitywideResultMissionId = CampaignMissionSequence.CitywideAlert;
+        private static readonly FixedString64Bytes CitywideResultResponseRole = "role.friendly.response.clinic";
         private static readonly FixedString64Bytes ArmorBreakMissionId = CampaignMissionSequence.ArmorBreak;
         private static readonly FixedString64Bytes ArmorBreakMilitaryRole = "role.hostile.command";
         private static readonly FixedString64Bytes ArmorBreakRecoveryRole = "role.friendly.command_squad";
@@ -186,6 +188,8 @@ namespace Game.Runtime
             // combined-arms mastery and authority custody, not a forward-post defense.
             if (definition.MissionId.Equals(ArmorBreakMissionId))
                 return ArmorBreakFactsMatchOutcome(outcome, in facts, ref definition);
+            if (definition.MissionId.Equals(CitywideResultMissionId))
+                return CitywideFactsMatchOutcome(outcome,in facts,ref definition);
             if (definition.Defense.Enabled != 0)
                 return outcome == MissionOutcomeKind.Victory
                     ? CampaignMissionDefenseRuleUtility.IsVictory(in facts)
@@ -235,6 +239,24 @@ namespace Game.Runtime
             return outcome == MissionOutcomeKind.Victory
                 ? allComplete
                 : outcome == MissionOutcomeKind.Defeat && failureBroken;
+        }
+
+        private static bool CitywideFactsMatchOutcome(MissionOutcomeKind outcome,in CampaignMissionAttemptFactsComponent facts,ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.Defense.Enabled==0 || definition.Objectives.Length!=3 ||
+                definition.Objectives[0].Rule!=MissionObjectiveRuleKind.StabilizeCitywideClinic || definition.Objectives[0].RequiredCount!=2 ||
+                !definition.Objectives[0].MissionRoleId.Equals(ArmorBreakReliefRole) || !definition.Objectives[0].TargetConfigId.IsEmpty ||
+                definition.Objectives[1].Rule!=MissionObjectiveRuleKind.StabilizeCitywideUtility || definition.Objectives[1].RequiredCount!=2 ||
+                !definition.Objectives[1].MissionRoleId.Equals(ArmorBreakReliefRole) || !definition.Objectives[1].TargetConfigId.IsEmpty ||
+                definition.Objectives[2].Rule!=MissionObjectiveRuleKind.EstablishCitywidePerimeter || definition.Objectives[2].RequiredCount!=11 ||
+                !definition.Objectives[2].MissionRoleId.Equals(CitywideResultResponseRole) || !definition.Objectives[2].TargetConfigId.IsEmpty ||
+                facts.HostileRosterIntegrityFault!=0 || facts.CitywideFailure==CitywideAlertFailure.Integrity) return false;
+            if (outcome==MissionOutcomeKind.Defeat) return facts.CitywideFailure!=CitywideAlertFailure.None;
+            return outcome==MissionOutcomeKind.Victory && facts.CitywideFailure==CitywideAlertFailure.None && facts.CitywideClinicRecovered!=0 &&
+                facts.CitywideUtilityRecovered!=0 && facts.CitywideReinforcementReady!=0 && facts.CitywideCoverageReady!=0 && facts.CitywideAirCleared!=0 &&
+                facts.CitywideMilitaryCleared!=0 && facts.CitywideStableMilliseconds>=CampaignMissionCitywideAlertRuleUtility.HoldMilliseconds &&
+                facts.HostileTotalCount==11 && facts.HostileDefeatedCount==11 && facts.CommandSquadSpawned!=0 && facts.CommandSquadAlive!=0 &&
+                facts.CivilianTotalCount==4 && facts.CivilianLossCount==0;
         }
 
         private static bool ArmorBreakFactsMatchOutcome(

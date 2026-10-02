@@ -66,8 +66,15 @@ namespace Game.Editor
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Packed content generation requires edit mode.");
             Require(!AssetDatabase.IsValidFolder(Temp),"Inspect interrupted Network Collapse PackagingTemp before retry.");
             string compilerFailure=null;
-            Application.LogCallback observe=(message,stack,type)=>{if(type==LogType.Error||type==LogType.Exception||type==LogType.Assert)compilerFailure??=message;};
-            Application.logMessageReceived+=observe;
+            object compilerFailureLock=new object();
+            // Native compiler subprocess output can arrive as Log rather than Error.
+            Application.LogCallback observe=(message,stack,type)=>
+            {
+                if(type==LogType.Error||type==LogType.Exception||type==LogType.Assert||
+                    message.IndexOf("Burst internal compiler error",StringComparison.OrdinalIgnoreCase)>=0)
+                    lock(compilerFailureLock)compilerFailure??=message;
+            };
+            Application.logMessageReceivedThreaded+=observe;
             EditorApplication.LockReloadAssemblies();
             try
             {
@@ -81,7 +88,7 @@ namespace Game.Editor
                 RemoteContentCatalogBuildUtility.BuildContent(new HashSet<Hash128>{new(entityGuid),new(fixtureGuid)},player,BuildTarget.StandaloneOSX,Path.GetFullPath(entities));
                 string entityCatalog=entities+"/"+RuntimeContentManager.RelativeCatalogPath;Require(File.Exists(entityCatalog),"Own Entities catalog not produced.");
                 string addressablesCatalog=BuildAddressables();
-                Require(compilerFailure==null,"Native content compiler emitted an error: "+compilerFailure);
+                lock(compilerFailureLock)Require(compilerFailure==null,"Native content compiler emitted an error: "+compilerFailure);
                 Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
                 var report=new ContentReport {schema="warline.network-collapse.packed-content.v1",result="Passed",mapId=map.OperationMapId,contentHash=map.ContentHash,
                     target=BuildTarget.StandaloneOSX.ToString(),entitySceneGuid=entityGuid,unitFixtureSceneGuid=fixtureGuid,entityContentPath=entities,
@@ -91,7 +98,7 @@ namespace Game.Editor
                 File.WriteAllText(ReportPath,JsonUtility.ToJson(report,true));
                 Debug.Log("[NetworkCollapsePackedContent] result=Passed map="+map.OperationMapId+" entityScene="+entityGuid+" fixture="+fixtureGuid+" bytes="+report.entityContentBytes+" locator=GUID+CampaignAddress scope=ContentBuildOnly");
             }
-            finally {Application.logMessageReceived-=observe;EditorApplication.UnlockReloadAssemblies();}
+            finally {Application.logMessageReceivedThreaded-=observe;EditorApplication.UnlockReloadAssemblies();}
         }
         private static string BuildUnitFixture()
         {

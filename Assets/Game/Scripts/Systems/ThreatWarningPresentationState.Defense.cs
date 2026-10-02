@@ -45,7 +45,16 @@ namespace Game.Runtime
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if(runtime.MissionId.Equals(CampaignMissionSequence.NetworkCollapse)&&em.HasComponent<CampaignMissionNetworkCollapseState>(root))
+            if(runtime.MissionId.Equals(CampaignMissionSequence.LastCorridor)&&em.HasComponent<CampaignMissionLastCorridorState>(root))
+            {
+                var corridor=em.GetComponentData<CampaignMissionLastCorridorState>(root);
+                int stage=CampaignMissionLastCorridorRuleUtility.Stage(in corridor);
+                int delivered=(corridor.MedicineDelivered!=0?1:0)+(corridor.FuelDelivered!=0?1:0)+(corridor.ReinforcementsDelivered!=0?1:0)+(corridor.EngineerDelivered!=0?1:0)+(corridor.KeysDelivered!=0?1:0);
+                text=GameText.Get("mission.last_corridor.hud.stage."+stage)+"\n"+GameText.Format("mission.last_corridor.hud.delivered","Delivered: {0}/5",delivered);
+                int hold=stage switch{2=>corridor.RepairMilliseconds,3=>corridor.MedicineMilliseconds,4=>corridor.FuelMilliseconds,5=>corridor.ReinforcementMilliseconds,8=>corridor.KeyMilliseconds,_=>0};
+                if(stage is 2 or 3 or 4 or 5 or 8)text+="\n"+GameText.Format("mission.last_corridor.hud.hold","Hold position: {0}/6 s",hold/1000);
+            }
+            else if(runtime.MissionId.Equals(CampaignMissionSequence.NetworkCollapse)&&em.HasComponent<CampaignMissionNetworkCollapseState>(root))
             {
                 var network=em.GetComponentData<CampaignMissionNetworkCollapseState>(root);int stage=CampaignMissionNetworkCollapseRuleUtility.Stage(in network);text=GameText.Get("mission.network_collapse.hud.stage."+stage);
                 if(stage is 1 or 3 or 5)text+="\n"+GameText.Format("mission.network_collapse.hud.recon_hold","Verify node {0}: {1}/6 s",(stage+1)/2,network.VerificationMilliseconds/1000);

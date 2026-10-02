@@ -57,6 +57,8 @@ namespace Game.Runtime
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.command")))ready&=armorBreak.ArmorApproached!=0;
                         }
                     }
+                    if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.LastCorridor)))
+                        ready &= em.HasComponent<CampaignMissionLastCorridorState>(root) && em.GetComponentData<CampaignMissionLastCorridorState>(root).Ready != 0;
                     if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)))
                         ready &= em.HasComponent<CampaignMissionNetworkCollapseState>(root) && em.GetComponentData<CampaignMissionNetworkCollapseState>(root).Ready != 0;
                     if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)))
@@ -89,7 +91,7 @@ namespace Game.Runtime
                                 commands.SetComponent(entity, combat);
                             }
                             commands.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
-                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.LastCorridor)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
                                 (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
                                 em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery")) ||
                                 runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) &&

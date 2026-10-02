@@ -43121,6 +43121,7 @@ GameObject:
   - component: {fileID: 945054700938504488}
   - component: {fileID: 6100148669147972571}
   - component: {fileID: 980215155539141065}
+  - component: {fileID: 1090615161099051189}
   m_Layer: 0
   m_Name: SCN08_MatchHudContent
   m_TagString: Untagged
@@ -43241,6 +43242,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a217a4fc8b24244b01478157f918c40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.NetworkCollapseMarkersView
+--- !u!114 &1090615161099051189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032040054424849745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93ed16e2a99b94ef1a51e91e9b3505ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.LastCorridorMarkersView
 --- !u!1 &8060166736726619568
 GameObject:
   m_ObjectHideFlags: 0

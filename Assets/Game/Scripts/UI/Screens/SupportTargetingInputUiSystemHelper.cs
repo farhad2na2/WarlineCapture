@@ -11,6 +11,7 @@ namespace Game.UI.Runtime
     [RequireComponent(typeof(Canvas),typeof(GraphicRaycaster))]
     public sealed class SupportTargetingInputUiSystemHelper : MonoBehaviour
     {
+        private readonly System.Collections.Generic.List<RaycastResult> releaseUiHits=new();
         [SerializeField] private GameObject bar;
         [SerializeField] private TMP_Text status,executionStatus;
         private bool executionRendered;private byte lastExecutionKind,lastExecutionPhase;private int lastReserved,lastSeconds;private string lastExecutionReason,lastCollectionReason;
@@ -95,7 +96,16 @@ namespace Game.UI.Runtime
             if(!held && pressed)
             {
                 pressed=false;
-                bool over=EventSystem.current!=null && (EventSystem.current.IsPointerOverGameObject() || EventSystem.current.IsPointerOverGameObject(0));
+                // This helper runs before EventSystem.Update. Its pointer-over
+                // cache still describes the previous frame (and pointer IDs vary
+                // between mouse and touch). Check this release position instead.
+                bool over=false;
+                if(EventSystem.current!=null)
+                {
+                    releaseUiHits.Clear();
+                    EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=position},releaseUiHits);
+                    foreach(var uiHit in releaseUiHits)if(uiHit.module is GraphicRaycaster){over=true;break;}
+                }
                 if((down-position).sqrMagnitude>144 || over || model.Phase==UiSupportPhase.Pending)return;
                 Camera camera=Camera.main;if(camera==null)return;
                 Ray ray=camera.ScreenPointToRay(position);Vector3 target;

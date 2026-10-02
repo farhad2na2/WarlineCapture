@@ -1,0 +1,1 @@
+[LastCorridorInput] result=Failed The full native junction turn reaches 11.5 metres; calibrating the proof to the exclusive twelve-metre lane boundary

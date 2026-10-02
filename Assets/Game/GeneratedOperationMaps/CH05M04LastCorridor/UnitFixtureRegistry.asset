@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a79b0ab544445ebedc61b182157be7, type: 3}
+  m_Name: Game_UnitPrefabRegistry_Config
+  m_EditorClassIdentifier: 
+  unitSpawnPrefabs:
+  - {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+  - {fileID: 4198800268126367741, guid: 29a543ea57f3e4e51b6d4839024ab0e9, type: 3}
+  - {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
+  - {fileID: 8579631638336695248, guid: 3d3206505e16446ab8691d740853c31d, type: 3}
+  - {fileID: 3282182154612916099, guid: 44832a7f379be4c30b818e55ed7a45ce, type: 3}
+  - {fileID: 3282182154612916099, guid: 71e48079674fc47b79eb9b4c5fc12b89, type: 3}
+  - {fileID: 3282182154612916099, guid: 7ab678d235e72407b912caa746540808, type: 3}
+  - {fileID: 3282182154612916099, guid: 7c722f33fbe75427289f93b6f35e7e04, type: 3}
+  - {fileID: 3282182154612916099, guid: 8ec7389d67b7543d0ac6050c06d26187, type: 3}
+  - {fileID: 3282182154612916099, guid: 9d3494e0921d647798634354c12f2bf2, type: 3}
+  - {fileID: 3282182154612916099, guid: a3873f0cb8f24494eb79c31a4c12ec31, type: 3}
+  - {fileID: 2030249012219987927, guid: cd35ea6b91b1747b197ba1bb62907609, type: 3}
+  - {fileID: 1971532196453459038, guid: cf219c258fb564279a0741c680715197, type: 3}
+  - {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
+  - {fileID: 3282182154612916099, guid: e9380ca06e23346a48a8d1d09416e955, type: 3}
+  - {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+  impostorAtlases: []
+  unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  supportInfantryPrefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+  supportParachutePrefab: {fileID: 1232202967340700, guid: a567fd209adc22643bffbc9030f3005a, type: 3}
+  supportCratePrefab: {fileID: 1029301884381818, guid: 4a304209bbfe02249bd92db44aa22f94, type: 3}
+  supportInfantryCount: 4

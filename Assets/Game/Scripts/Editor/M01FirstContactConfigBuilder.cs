@@ -343,6 +343,8 @@ namespace Game.Editor
             if (trust != null && !maps.Contains(trust)) maps.Add(trust);
             var network = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M03NetworkCollapseConfigBuilder.MapPath);
             if (network != null && maps.TrueForAll(map => map.OperationMapId != network.OperationMapId)) maps.Add(network);
+            var corridor = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M04LastCorridorConfigBuilder.MapPath);
+            if (corridor != null && maps.TrueForAll(map => map.OperationMapId != corridor.OperationMapId)) maps.Add(corridor);
 
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)

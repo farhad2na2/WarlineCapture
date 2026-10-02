@@ -12,6 +12,14 @@ Apply the [future content map plan](../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) a
 | CH05-M04 | Prepared Frontier derivative: bounded logistics-to-city corridor; conditional on device qualification. | Add civic receiving point, two connected ground delivery choices, supply origins, key custody and certified optional air access. A smaller independently authored logistics/urban derivative is the fallback if Frontier cannot qualify; preserve delivery categories and deadlines. |
 | CH05-M05 | New Civic Relay complex in an urban source derivative. | Author recognizable perimeter/core, controlled breach lanes, protected city-service interfaces and specialist/evidence access. The four visual prototypes do not supply this finale complex as-is; no new finale mechanic. |
 
+#### Review checkpoint — 2026-10-03
+
+CH05-M04 Last Corridor is ready for player review in the primary project. Native core06, complete normal-input EN08/manual and FA02/ARIA journeys, seven caption panels per locale, actual five deliveries and custody, three-star result/rewards/return, and final packed-content03 passed. All six source hashes are preserved. Both ground lanes and optional Supply approval/collection/decline were exercised. Real player/device acceptance remains pending; voice generation is excluded by request. See the [current readiness record](../AgentReports/CH05M04LastCorridor/review-readiness.md).
+
+## Implementation checkpoint — 2026-10-02
+
+CH05-M04 now uses the approved independently versioned bounded Urban logistics fallback. Its two ground choices occupy separate certified lanes of one existing artery; all five delivery categories, finite Fuel, physical repair and key custody remain required. Native map/rules/objectives passed `core-validation-03`, with six source hashes unchanged. Complete normal-input journeys, packed content and player/device acceptance remain pending. See the [map audit](../AgentReports/CH05M04LastCorridor/map-preparation-audit.md) and [current readiness record](../AgentReports/CH05M04LastCorridor/review-readiness.md). The planned physical foundations above remain planning authority; this checkpoint does not qualify Frontier for devices.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.

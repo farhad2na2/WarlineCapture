@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,161 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c9aae3e0167d4cffbaf6c0cd77d3063
+      internalID: 772204486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46ebd8a3ab0c64e81ab7e6aa0ffe5da6
+      internalID: 710527611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 28
+        width: 1571
+        height: 884
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a949bb95d09214ca2a0b0f25cea961c9
+      internalID: 1815498193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 117
+        width: 1571
+        height: 707
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7ab818591c96444bad46c7ec334d9e8
+      internalID: 539250500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 57
+        width: 1470
+        height: 827
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bde04b3948a824673b5db5276556ee3b
+      internalID: 43224362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M04_LastCorridor_Comms-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 139
+        width: 1471
+        height: 662
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 447ef36604ef54fd9a6c343d06aa290d
+      internalID: -1031191991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M04_LastCorridor_Comms-a-16x9: 772204486
+      CH05M04_LastCorridor_Comms-a-20x9: 710527611
+      CH05M04_LastCorridor_Comms-b-16x9: 1815498193
+      CH05M04_LastCorridor_Comms-b-20x9: 539250500
+      CH05M04_LastCorridor_Comms-c-16x9: 43224362
+      CH05M04_LastCorridor_Comms-c-20x9: -1031191991
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

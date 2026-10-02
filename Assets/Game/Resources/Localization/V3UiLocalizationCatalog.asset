@@ -1368,6 +1368,234 @@ MonoBehaviour:
       value: Reach the guarded exit
     - key: mission.guide.lesson_count
       value: '{0} lessons'
+    - key: mission.last_corridor.air.unqualified
+      value: Air delivery is not qualified for this corridor. Use the marked ground
+        lanes.
+    - key: mission.last_corridor.deadline
+      value: Deliver before the fifteen-minute window closes
+    - key: mission.last_corridor.enemy_intel
+      value: Seven military threats guard the road link. Two marked delivery lanes
+        share the same artery; preserve the civic receiving site and staff.
+    - key: mission.last_corridor.forces
+      value: "Escort \xB7 two delivery trucks \xB7 four reinforcements \xB7 original
+        engineer \xB7 key APC"
+    - key: mission.last_corridor.guide.diagram
+      value: REPAIR | FIVE DELIVERIES | BOUNDED ACCESS
+    - key: mission.last_corridor.guide.example
+      value: "Clear \u2192 repair \u2192 medicine \u2192 Fuel \u2192 reinforcements
+        \u2192 engineer and keys."
+    - key: mission.last_corridor.guide.mistake
+      value: "Keep the original carriers alive. Follow each lane\u2019s entry, midpoint
+        and exit. Show Me moves only the camera."
+    - key: mission.last_corridor.guide.title
+      value: "LAST CORRIDOR \xB7 FIELD GUIDE"
+    - key: mission.last_corridor.hud.delivered
+      value: 'Delivered: {0}/5 categories'
+    - key: mission.last_corridor.hud.fuel
+      value: "Fuel reserve: {0} \xB7 civic allocation protected"
+    - key: mission.last_corridor.hud.hold
+      value: 'Hold position: {0}/6 s'
+    - key: mission.last_corridor.hud.stage.1
+      value: Clear the road blockade
+    - key: mission.last_corridor.hud.stage.2
+      value: Repair the broken link
+    - key: mission.last_corridor.hud.stage.3
+      value: Deliver medicine
+    - key: mission.last_corridor.hud.stage.4
+      value: Deliver forty Fuel
+    - key: mission.last_corridor.hud.stage.5
+      value: Receive the reinforcements
+    - key: mission.last_corridor.hud.stage.6
+      value: Return the engineer to the key APC
+    - key: mission.last_corridor.hud.stage.7
+      value: Board the engineer
+    - key: mission.last_corridor.hud.stage.8
+      value: Deliver engineer and authority keys
+    - key: mission.last_corridor.hud.time
+      value: 'Corridor window: {0}m {1}s'
+    - key: mission.last_corridor.intel.civilian
+      value: CIVIC RECEIVING
+    - key: mission.last_corridor.intel.confirmed
+      value: 7
+    - key: mission.last_corridor.intel.military
+      value: ROAD THREATS
+    - key: mission.last_corridor.intel.protected
+      value: SAFE
+    - key: mission.last_corridor.label.deadline
+      value: CORRIDOR WINDOW
+    - key: mission.last_corridor.label.fuel
+      value: FUEL / CARGO
+    - key: mission.last_corridor.location
+      value: "Sahrin \xB7 city-center receiving corridor"
+    - key: mission.last_corridor.marker.fuel
+      value: FUEL
+    - key: mission.last_corridor.marker.keys
+      value: AUTHORITY KEYS
+    - key: mission.last_corridor.marker.medical
+      value: MEDICINE
+    - key: mission.last_corridor.marker.reinforcements
+      value: REINFORCEMENTS
+    - key: mission.last_corridor.marker.repair
+      value: REPAIR
+    - key: mission.last_corridor.name
+      value: Last Corridor
+    - key: mission.last_corridor.objective.deliveries
+      value: Deliver all five categories
+    - key: mission.last_corridor.objective.keys
+      value: Deliver engineer and keys
+    - key: mission.last_corridor.objective.protection
+      value: Protect carriers and staff
+    - key: mission.last_corridor.objective.repair
+      value: Recover the road link
+    - key: mission.last_corridor.resources
+      value: "120 Fuel reserve \xB7 40 Fuel cargo \xB7 20 civic Fuel protected"
+    - key: mission.last_corridor.result.civic_lost
+      value: The protected civic receiving site was destroyed.
+    - key: mission.last_corridor.result.defeat
+      value: CORRIDOR DELIVERY FAILED
+    - key: mission.last_corridor.result.deliveries
+      value: Five delivery categories
+    - key: mission.last_corridor.result.engineer_lost
+      value: The original engineer was lost.
+    - key: mission.last_corridor.result.escort_losses
+      value: Escort losses
+    - key: mission.last_corridor.result.escort_lost
+      value: All escorts were lost while military threats remained.
+    - key: mission.last_corridor.result.fuel_cargo_lost
+      value: The original forty-Fuel cargo carrier was lost.
+    - key: mission.last_corridor.result.fuel_lost
+      value: The Fuel carrier, finite reserve or protected civic allocation was lost.
+    - key: mission.last_corridor.result.incomplete
+      value: INCOMPLETE
+    - key: mission.last_corridor.result.integrity
+      value: The original delivery custody chain could not be established.
+    - key: mission.last_corridor.result.keys
+      value: Engineer and authority keys
+    - key: mission.last_corridor.result.keys_lost
+      value: The original authority-key APC was lost.
+    - key: mission.last_corridor.result.loss
+      value: Preserve the original carriers, engineer, reinforcements, civic receiving
+        and staff. Repair the link, follow the marked lanes and hold at receiving.
+    - key: mission.last_corridor.result.losses
+      value: LOST
+    - key: mission.last_corridor.result.medicine_lost
+      value: The original medicine carrier was lost.
+    - key: mission.last_corridor.result.objectives
+      value: MISSION OBJECTIVES
+    - key: mission.last_corridor.result.receiver_lost
+      value: The actual receiving storage was lost.
+    - key: mission.last_corridor.result.reinforcements_lost
+      value: An original reinforcement was lost before delivery.
+    - key: mission.last_corridor.result.repair
+      value: Recovered road link
+    - key: mission.last_corridor.result.safe
+      value: RECEIVED
+    - key: mission.last_corridor.result.secured
+      value: RECOVERED
+    - key: mission.last_corridor.result.staff_losses
+      value: Staff losses
+    - key: mission.last_corridor.result.staff_lost
+      value: Original civic staff were lost.
+    - key: mission.last_corridor.result.subtitle
+      value: "LAST CORRIDOR \xB7 CITY-CENTER DELIVERY"
+    - key: mission.last_corridor.result.success
+      value: The original carriers delivered medicine, forty Fuel, four reinforcements,
+        the engineer and physical authority keys. Civic receiving and staff survived.
+    - key: mission.last_corridor.result.success_short
+      value: Five categories delivered. Engineer and authority keys received.
+    - key: mission.last_corridor.result.timeout
+      value: The fifteen-minute corridor window closed.
+    - key: mission.last_corridor.result.verified
+      value: DELIVERED
+    - key: mission.last_corridor.result.victory
+      value: ALL FIVE DELIVERIES RECEIVED
+    - key: mission.last_corridor.reward.card
+      value: "Commander XP \xB7 Credits \xB7 physical access keys"
+    - key: mission.last_corridor.star.1
+      value: Complete the mission
+    - key: mission.last_corridor.star.2
+      value: No escort losses
+    - key: mission.last_corridor.star.3
+      value: No civilian losses
+    - key: mission.last_corridor.summary
+      value: Recover the road link and deliver medicine, Fuel, reinforcements, the
+        original engineer and physical authority keys to the city center.
+    - key: mission.last_corridor.supply.optional
+      value: Supply is optional. Any approved crate costs 3 Fuel and carries 40 Materials;
+        collect it with a ground unit. Required deliveries work without it.
+    - key: mission.last_corridor.tutorial.1.body
+      value: Move the original escort into weapon range and Attack the confirmed
+        road threats. Defeat all seven before repairing the link.
+    - key: mission.last_corridor.tutorial.1.body.approach
+      value: Move the original escort to the approach marker within weapon range,
+        then Attack the confirmed threat.
+    - key: mission.last_corridor.tutorial.1.title
+      value: Clear the road blockade
+    - key: mission.last_corridor.tutorial.2.body
+      value: Move the original engineer to the repair marker. Hold stationary for
+        six seconds after the blockade is defeated.
+    - key: mission.last_corridor.tutorial.2.title
+      value: Repair the broken link
+    - key: mission.last_corridor.tutorial.3.body
+      value: "Select the original medicine truck. Follow the protected alternate
+        lane\u2019s entry, midpoint and exit, then hold at medicine receiving for
+        six seconds."
+    - key: mission.last_corridor.tutorial.3.body.route.entry
+      value: "Move this load\u2019s original carrier to the marked lane entry."
+    - key: mission.last_corridor.tutorial.3.body.route.exit
+      value: Move the original carrier through the selected lane exit, then to its
+        receiving marker and hold six seconds.
+    - key: mission.last_corridor.tutorial.3.body.route.mid
+      value: "Continue with the same original carrier through the selected lane\u2019s
+        midpoint."
+    - key: mission.last_corridor.tutorial.3.title
+      value: Deliver medicine
+    - key: mission.last_corridor.tutorial.4.body
+      value: Select the original Fuel truck. Choose the repaired main lane or the
+        alternate, follow its entry, midpoint and exit, then hold at Fuel receiving
+        for six seconds to transfer the actual forty Fuel.
+    - key: mission.last_corridor.tutorial.4.body.route.entry
+      value: "Move this load\u2019s original carrier to the marked lane entry."
+    - key: mission.last_corridor.tutorial.4.body.route.exit
+      value: Move the original carrier through the selected lane exit, then to its
+        receiving marker and hold six seconds.
+    - key: mission.last_corridor.tutorial.4.body.route.mid
+      value: "Continue with the same original carrier through the selected lane\u2019s
+        midpoint."
+    - key: mission.last_corridor.tutorial.4.title
+      value: Deliver forty Fuel
+    - key: mission.last_corridor.tutorial.5.body
+      value: Move all four original reinforcements to their receiving marker. Keep
+        all four alive and stationary there for six seconds.
+    - key: mission.last_corridor.tutorial.5.title
+      value: Receive the reinforcements
+    - key: mission.last_corridor.tutorial.6.body
+      value: Select the original engineer and Move to the marked pickup beside the
+        original authority-key APC.
+    - key: mission.last_corridor.tutorial.6.title
+      value: Return the engineer to the key APC
+    - key: mission.last_corridor.tutorial.7.body
+      value: Select the original engineer. Use the normal Board command on the original
+        key APC and wait until the engineer is aboard.
+    - key: mission.last_corridor.tutorial.7.title
+      value: Board the engineer
+    - key: mission.last_corridor.tutorial.8.body
+      value: Select the original key APC with the engineer aboard. Follow the repaired
+        main lane or alternate entry, midpoint and exit, then hold at key receiving
+        for six seconds.
+    - key: mission.last_corridor.tutorial.8.body.board
+      value: Select the original engineer. Use the normal Board command on the original
+        key APC and wait until the engineer is aboard.
+    - key: mission.last_corridor.tutorial.8.body.route.entry
+      value: "Move this load\u2019s original carrier to the marked lane entry."
+    - key: mission.last_corridor.tutorial.8.body.route.exit
+      value: Move the original carrier through the selected lane exit, then to its
+        receiving marker and hold six seconds.
+    - key: mission.last_corridor.tutorial.8.body.route.mid
+      value: "Continue with the same original carrier through the selected lane\u2019s
+        midpoint."
+    - key: mission.last_corridor.tutorial.8.title
+      value: Deliver engineer and authority keys
     - key: mission.m01.goal.civilians
       value: PROTECT CIVILIANS
     - key: mission.m01.goal.squad
@@ -4312,6 +4540,41 @@ MonoBehaviour:
       value: The recovered schedule identifies Vanguard's command group and its next
         link window. I can mark the approach for your review. You decide when we
         move.
+    - key: narrative.last_corridor.brief-01
+      value: 'Fuel, medicine, the engineer, reinforcements and the physical authority
+        keys must reach the city center. Samira and I set one plan: protect the relief
+        vehicles and the military escort together. Clear the blockade before moving
+        the column.'
+    - key: narrative.last_corridor.brief-02
+      value: "Hold the original engineer at the repair marker for six seconds. Medicine
+        takes the safer alternate lane. Fuel and the key APC may use the repaired
+        main lane or the alternate. Follow each route\u2019s marked entry, midpoint
+        and exit, then hold at receiving for six seconds."
+    - key: narrative.last_corridor.brief-03
+      value: Karim and I are tracking the air approaches, but we cannot certify an
+        air delivery through this threat picture. Keep every required load on the
+        marked ground routes. Preserve the original trucks and key APC; a replacement
+        cannot carry their custody record.
+    - key: narrative.last_corridor.comms-01
+      value: The main lane is obstructed. The original engineer can restore its marked
+        link with a six-second hold; the protected alternate remains connected. Keep
+        medicine on the safer lane and choose the confirmed route for Fuel and the
+        keys. This guidance does not move the convoy for you.
+    - key: narrative.last_corridor.debrief-01
+      value: Medicine, Fuel and the original reinforcements reached the receiving
+        points. The engineer and physical authority keys arrived in the original
+        APC. All five delivery categories are accounted for, and the column reached
+        the city center before the corridor closed.
+    - key: narrative.last_corridor.debrief-02
+      value: "The repaired link and the protected alternate served the same city.
+        Military and relief needs stayed in one plan. The medical teams, engineers,
+        pilots and soldiers can now take their final roles without leaving Sahrin\u2019s
+        recovery behind."
+    - key: narrative.last_corridor.debrief-03
+      value: The delivered keys preserve bounded access; they do not grant permanent
+        unilateral authority. The Relay complex is still connected to power, clinics,
+        shelters, transport and communications. Those city systems must survive the
+        final approach. I will keep your decisions explicit.
     - key: narrative.m01.brief.aria
       value: 'Threat profiles: Courier carries orders, Warden controls the crossing,
         and Broker coordinates supplies.'
@@ -6103,6 +6366,8 @@ MonoBehaviour:
       value: RADIO
     - key: ui.home.archive.debrief
       value: DEBRIEF
+    - key: ui.home.archive.last_corridor.keys
+      value: DELIVERED BOUNDED-ACCESS KEYS
     - key: ui.home.archive.network_collapse.audit
       value: VERIFIED COMPLETE AUDIT
     - key: ui.home.archive.trust_under_fire.broadcast_source
@@ -11212,6 +11477,400 @@ MonoBehaviour:
         \u0628\u0631\u0633"
     - key: mission.guide.lesson_count
       value: "{0} \u062F\u0631\u0633"
+    - key: mission.last_corridor.air.unqualified
+      value: "\u0627\u0646\u062A\u0642\u0627\u0644 \u0647\u0648\u0627\u06CC\u06CC
+        \u0628\u0631\u0627\u06CC \u0627\u06CC\u0646 \u0645\u0633\u06CC\u0631 \u062A\u0623\u06CC\u06CC\u062F
+        \u0646\u0634\u062F\u0647. \u0627\u0632 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0632\u0645\u06CC\u0646\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646."
+    - key: mission.last_corridor.deadline
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u067E\u0627\u06CC\u0627\u0646 \u0641\u0631\u0635\u062A
+        \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u062A\u062D\u0648\u06CC\u0644 \u0628\u062F\u0647"
+    - key: mission.last_corridor.enemy_intel
+      value: "\u06F7 \u062A\u0647\u062F\u06CC\u062F \u0646\u0638\u0627\u0645\u06CC\u061B
+        \u062F\u0648 \u0644\u0627\u06CC\u0646 \u062A\u062D\u0648\u06CC\u0644 \u0631\u0648\u06CC
+        \u06CC\u06A9 \u062C\u0627\u062F\u0647. \u0645\u0631\u06A9\u0632 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646."
+    - key: mission.last_corridor.forces
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \xB7 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u062A\u062D\u0648\u06CC\u0644 \xB7 \u0686\u0647\u0627\u0631 \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC \xB7 \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC
+        \xB7 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0644\u06CC\u062F\u0647\u0627"
+    - key: mission.last_corridor.guide.diagram
+      value: "\u062A\u0639\u0645\u06CC\u0631 | \u067E\u0646\u062C \u062A\u062D\u0648\u06CC\u0644
+        | \u062F\u0633\u062A\u0631\u0633\u06CC \u0645\u062D\u062F\u0648\u062F"
+    - key: mission.last_corridor.guide.example
+      value: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u2190 \u062A\u0639\u0645\u06CC\u0631
+        \u2190 \u062F\u0627\u0631\u0648 \u2190 \u0633\u0648\u062E\u062A \u2190 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC \u2190 \u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627"
+    - key: mission.last_corridor.guide.mistake
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631.
+        \u0648\u0631\u0648\u062F\u06CC\u060C \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC
+        \u0648 \u062E\u0631\u0648\u062C\u06CC \u0647\u0631 \u0645\u0633\u06CC\u0631
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646
+        \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.last_corridor.guide.title
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u0645\u0633\u06CC\u0631 \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC
+        \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.last_corridor.hud.delivered
+      value: "\u062A\u062D\u0648\u06CC\u0644\u200C\u0634\u062F\u0647: {0} \u0627\u0632
+        \u06F5 \u062F\u0633\u062A\u0647"
+    - key: mission.last_corridor.hud.fuel
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A: {0}
+        \xB7 \u0633\u0647\u0645 \u062E\u062F\u0645\u0627\u062A \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.last_corridor.hud.hold
+      value: "\u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646: {0} \u0627\u0632
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.last_corridor.hud.stage.1
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646 \u0631\u0648
+        \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646"
+    - key: mission.last_corridor.hud.stage.2
+      value: "\u0628\u062E\u0634 \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647
+        \u0631\u0648 \u062A\u0639\u0645\u06CC\u0631 \u06A9\u0646"
+    - key: mission.last_corridor.hud.stage.3
+      value: "\u062F\u0627\u0631\u0648 \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
+    - key: mission.last_corridor.hud.stage.4
+      value: "\u0686\u0647\u0644 \u0633\u0648\u062E\u062A \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
+    - key: mission.last_corridor.hud.stage.5
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.last_corridor.hud.stage.6
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0631\u0648 \u0628\u0647 \u0646\u0641\u0631\u0628\u0631
+        \u06A9\u0644\u06CC\u062F\u0647\u0627 \u0628\u0631\u06AF\u0631\u062F\u0648\u0646"
+    - key: mission.last_corridor.hud.stage.7
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0631\u0648 \u0633\u0648\u0627\u0631
+        \u06A9\u0646"
+    - key: mission.last_corridor.hud.stage.8
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
+    - key: mission.last_corridor.hud.time
+      value: "\u0641\u0631\u0635\u062A \u0645\u0633\u06CC\u0631: {0} \u062F\u0642\u06CC\u0642\u0647
+        \u0648 {1} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.last_corridor.intel.civilian
+      value: "\u062F\u0631\u06CC\u0627\u0641\u062A \u0634\u0647\u0631\u06CC"
+    - key: mission.last_corridor.intel.confirmed
+      value: "\u06F7"
+    - key: mission.last_corridor.intel.military
+      value: "\u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u062C\u0627\u062F\u0647"
+    - key: mission.last_corridor.intel.protected
+      value: "\u0627\u0645\u0646"
+    - key: mission.last_corridor.label.deadline
+      value: "\u0641\u0631\u0635\u062A \u0645\u0633\u06CC\u0631"
+    - key: mission.last_corridor.label.fuel
+      value: "\u0633\u0648\u062E\u062A / \u0645\u062D\u0645\u0648\u0644\u0647"
+    - key: mission.last_corridor.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0645\u0633\u06CC\u0631 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0645\u0631\u06A9\u0632 \u0634\u0647\u0631"
+    - key: mission.last_corridor.marker.fuel
+      value: "\u0633\u0648\u062E\u062A"
+    - key: mission.last_corridor.marker.keys
+      value: "\u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.last_corridor.marker.medical
+      value: "\u062F\u0627\u0631\u0648"
+    - key: mission.last_corridor.marker.reinforcements
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC"
+    - key: mission.last_corridor.marker.repair
+      value: "\u062A\u0639\u0645\u06CC\u0631"
+    - key: mission.last_corridor.name
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u0645\u0633\u06CC\u0631"
+    - key: mission.last_corridor.objective.deliveries
+      value: "\u0647\u0631 \u067E\u0646\u062C \u062F\u0633\u062A\u0647 \u0631\u0648
+        \u062A\u062D\u0648\u06CC\u0644 \u0628\u062F\u0647"
+    - key: mission.last_corridor.objective.keys
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.last_corridor.objective.protection
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627 \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.last_corridor.objective.repair
+      value: "\u0631\u0627\u0647 \u0631\u0648 \u0628\u0627\u0632\u0633\u0627\u0632\u06CC
+        \u06A9\u0646"
+    - key: mission.last_corridor.resources
+      value: "\u06F1\u06F2\u06F0 \u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A
+        \xB7 \u06F4\u06F0 \u0645\u062D\u0645\u0648\u0644\u0647\u0654 \u0633\u0648\u062E\u062A
+        \xB7 \u06F2\u06F0 \u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A
+        \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.last_corridor.result.civic_lost
+      value: "\u0645\u0631\u06A9\u0632 \u062F\u0631\u06CC\u0627\u0641\u062A \u0634\u0647\u0631\u06CC
+        \u0627\u0645\u0646 \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: mission.last_corridor.result.defeat
+      value: "\u062A\u062D\u0648\u06CC\u0644 \u0645\u0633\u06CC\u0631 \u0634\u06A9\u0633\u062A
+        \u062E\u0648\u0631\u062F"
+    - key: mission.last_corridor.result.deliveries
+      value: "\u067E\u0646\u062C \u062F\u0633\u062A\u0647\u0654 \u062A\u062D\u0648\u06CC\u0644"
+    - key: mission.last_corridor.result.engineer_lost
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.escort_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.last_corridor.result.escort_lost
+      value: "\u0647\u0645\u0647\u0654 \u0627\u0633\u06A9\u0648\u0631\u062A\u200C\u0647\u0627
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646 \u0648 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0628\u0627\u0642\u06CC \u0645\u0648\u0646\u062F\u0646."
+    - key: mission.last_corridor.result.fuel_cargo_lost
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0645\u062D\u0645\u0648\u0644\u0647\u0654
+        \u0686\u0647\u0644 \u0633\u0648\u062E\u062A \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.fuel_lost
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0633\u0648\u062E\u062A\u060C
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u062D\u062F\u0648\u062F \u06CC\u0627
+        \u0633\u0647\u0645 \u0645\u062D\u0641\u0648\u0638 \u062E\u062F\u0645\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.incomplete
+      value: "\u0646\u0627\u0642\u0635"
+    - key: mission.last_corridor.result.integrity
+      value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0627\u0635\u0644\u06CC
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0645\u062D\u0645\u0648\u0644\u0647
+        \u0628\u0631\u0642\u0631\u0627\u0631 \u0646\u0634\u062F."
+    - key: mission.last_corridor.result.keys
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631"
+    - key: mission.last_corridor.result.keys_lost
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0627\u0635\u0644\u06CC \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.loss
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC\u060C
+        \u0645\u0647\u0646\u062F\u0633\u060C \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC\u060C \u0645\u0631\u06A9\u0632 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0634\u0647\u0631\u06CC \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646. \u0628\u062E\u0634 \u062C\u0627\u062F\u0647
+        \u0631\u0648 \u062A\u0639\u0645\u06CC\u0631 \u06A9\u0646\u060C \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0648 \u062F\u0646\u0628\u0627\u0644
+        \u06A9\u0646 \u0648 \u062F\u0631 \u0645\u062D\u0644 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.result.losses
+      value: "\u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.last_corridor.result.medicine_lost
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u062F\u0627\u0631\u0648
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.objectives
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.last_corridor.result.receiver_lost
+      value: "\u0627\u0646\u0628\u0627\u0631 \u0648\u0627\u0642\u0639\u06CC \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.reinforcements_lost
+      value: "\u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC
+        \u0627\u0635\u0644\u06CC \u067E\u06CC\u0634 \u0627\u0632 \u062A\u062D\u0648\u06CC\u0644
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.last_corridor.result.repair
+      value: "\u0628\u062E\u0634 \u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647\u0654
+        \u062C\u0627\u062F\u0647"
+    - key: mission.last_corridor.result.safe
+      value: "\u062F\u0631\u06CC\u0627\u0641\u062A\u200C\u0634\u062F\u0647"
+    - key: mission.last_corridor.result.secured
+      value: "\u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647"
+    - key: mission.last_corridor.result.staff_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646"
+    - key: mission.last_corridor.result.staff_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u0627\u0635\u0644\u06CC
+        \u062E\u062F\u0645\u0627\u062A \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646."
+    - key: mission.last_corridor.result.subtitle
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u0645\u0633\u06CC\u0631 \xB7 \u062A\u062D\u0648\u06CC\u0644
+        \u0645\u0631\u06A9\u0632 \u0634\u0647\u0631"
+    - key: mission.last_corridor.result.success
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC\u060C
+        \u062F\u0627\u0631\u0648\u060C \u0686\u0647\u0644 \u0633\u0648\u062E\u062A\u060C
+        \u0686\u0647\u0627\u0631 \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC\u060C
+        \u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0646. \u0645\u0631\u06A9\u0632
+        \u062F\u0631\u06CC\u0627\u0641\u062A \u0634\u0647\u0631\u06CC \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F\u0646."
+    - key: mission.last_corridor.result.success_short
+      value: "\u067E\u0646\u062C \u062F\u0633\u062A\u0647 \u062A\u062D\u0648\u06CC\u0644
+        \u0634\u062F. \u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0634\u062F\u0646."
+    - key: mission.last_corridor.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u0645\u0633\u06CC\u0631 \u062A\u0645\u0648\u0645 \u0634\u062F."
+    - key: mission.last_corridor.result.verified
+      value: "\u062A\u062D\u0648\u06CC\u0644\u200C\u0634\u062F\u0647"
+    - key: mission.last_corridor.result.victory
+      value: "\u0647\u0631 \u067E\u0646\u062C \u062A\u062D\u0648\u06CC\u0644 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0634\u062F"
+    - key: mission.last_corridor.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC \u062F\u0633\u062A\u0631\u0633\u06CC"
+    - key: mission.last_corridor.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.last_corridor.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.last_corridor.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
+    - key: mission.last_corridor.summary
+      value: "\u0628\u062E\u0634 \u062C\u0627\u062F\u0647 \u0631\u0648 \u062A\u0639\u0645\u06CC\u0631
+        \u06A9\u0646 \u0648 \u062F\u0627\u0631\u0648\u060C \u0633\u0648\u062E\u062A\u060C
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC\u060C
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0634\u0647\u0631 \u0628\u0631\u0633\u0648\u0646."
+    - key: mission.last_corridor.supply.optional
+      value: "\u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u0647.
+        \u0647\u0631 \u0635\u0646\u062F\u0648\u0642 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u06F3 \u0633\u0648\u062E\u062A \u0647\u0632\u06CC\u0646\u0647 \u062F\u0627\u0631\u0647
+        \u0648 \u06F4\u06F0 \u0645\u0635\u0627\u0644\u062D \u062D\u0645\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647\u061B
+        \u0628\u0627 \u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u062C\u0645\u0639\u0634 \u06A9\u0646. \u062A\u062D\u0648\u06CC\u0644\u200C\u0647\u0627\u06CC
+        \u0636\u0631\u0648\u0631\u06CC \u0628\u062F\u0648\u0646\u0634 \u0647\u0645
+        \u0627\u0646\u062C\u0627\u0645 \u0645\u06CC\u200C\u0634\u0646."
+    - key: mission.last_corridor.tutorial.1.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631
+        \u0648 \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u062C\u0627\u062F\u0647 \u062D\u0645\u0644\u0647 \u06A9\u0646. \u067E\u06CC\u0634
+        \u0627\u0632 \u062A\u0639\u0645\u06CC\u0631\u060C \u0647\u0631 \u0647\u0641\u062A
+        \u062A\u0647\u062F\u06CC\u062F \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647."
+    - key: mission.last_corridor.tutorial.1.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u062F\u0631 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u061B
+        \u0633\u067E\u0633 \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.1.title
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646 \u0631\u0648
+        \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646"
+    - key: mission.last_corridor.tutorial.2.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u062A\u0639\u0645\u06CC\u0631 \u062D\u0631\u06A9\u062A
+        \u0628\u062F\u0647. \u067E\u0633 \u0627\u0632 \u0634\u06A9\u0633\u062A \u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646\u060C
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.last_corridor.tutorial.2.title
+      value: "\u0628\u062E\u0634 \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647
+        \u0631\u0648 \u062A\u0639\u0645\u06CC\u0631 \u06A9\u0646"
+    - key: mission.last_corridor.tutorial.3.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0635\u0644\u06CC \u062F\u0627\u0631\u0648
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0648\u0631\u0648\u062F\u06CC\u060C
+        \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC \u0648 \u062E\u0631\u0648\u062C\u06CC
+        \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0627\u0645\u0646
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646\u060C \u0628\u0639\u062F
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062F\u0631 \u0645\u062D\u0644
+        \u062F\u0631\u06CC\u0627\u0641\u062A \u062F\u0627\u0631\u0648 \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.3.body.route.entry
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0627\u06CC\u0646
+        \u0645\u062D\u0645\u0648\u0644\u0647 \u0631\u0648 \u0628\u0647 \u0648\u0631\u0648\u062F\u06CC
+        \u0645\u0633\u06CC\u0631 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631."
+    - key: mission.last_corridor.tutorial.3.body.route.exit
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0632 \u062E\u0631\u0648\u062C\u06CC \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0639\u0628\u0648\u0631 \u0628\u062F\u0647\u060C \u0628\u0639\u062F \u0628\u0647
+        \u0646\u0634\u0627\u0646 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0628\u0631
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.3.body.route.mid
+      value: "\u0628\u0627 \u0647\u0645\u0648\u0646 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0627\u0635\u0644\u06CC\u060C \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC
+        \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.3.title
+      value: "\u062F\u0627\u0631\u0648 \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
+    - key: mission.last_corridor.tutorial.4.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0635\u0644\u06CC \u0633\u0648\u062E\u062A
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0645\u0633\u06CC\u0631
+        \u0627\u0635\u0644\u06CC \u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647
+        \u06CC\u0627 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \u0648\u0631\u0648\u062F\u06CC\u060C \u0646\u0642\u0637\u0647\u0654
+        \u0645\u06CC\u0627\u0646\u06CC \u0648 \u062E\u0631\u0648\u062C\u06CC\u0634
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646\u060C \u0628\u0639\u062F
+        \u0628\u0631\u0627\u06CC \u0627\u0646\u062A\u0642\u0627\u0644 \u0648\u0627\u0642\u0639\u06CC
+        \u0686\u0647\u0644 \u0633\u0648\u062E\u062A\u060C \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u062F\u0631 \u0645\u062D\u0644 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.4.body.route.entry
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0627\u06CC\u0646
+        \u0645\u062D\u0645\u0648\u0644\u0647 \u0631\u0648 \u0628\u0647 \u0648\u0631\u0648\u062F\u06CC
+        \u0645\u0633\u06CC\u0631 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631."
+    - key: mission.last_corridor.tutorial.4.body.route.exit
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0632 \u062E\u0631\u0648\u062C\u06CC \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0639\u0628\u0648\u0631 \u0628\u062F\u0647\u060C \u0628\u0639\u062F \u0628\u0647
+        \u0646\u0634\u0627\u0646 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0628\u0631
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.4.body.route.mid
+      value: "\u0628\u0627 \u0647\u0645\u0648\u0646 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0627\u0635\u0644\u06CC\u060C \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC
+        \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.4.title
+      value: "\u0686\u0647\u0644 \u0633\u0648\u062E\u062A \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
+    - key: mission.last_corridor.tutorial.5.body
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647
+        \u0646\u0634\u0627\u0646 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0628\u0631.
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0632\u0646\u062F\u0647
+        \u0628\u0627\u0634\u0646 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u0627\u0648\u0646\u062C\u0627 \u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.last_corridor.tutorial.5.title
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.last_corridor.tutorial.6.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647 \u0645\u062D\u0644
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u06A9\u0646\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u0627\u0635\u0644\u06CC
+        \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u062D\u0631\u06A9\u062A \u0628\u062F\u0647."
+    - key: mission.last_corridor.tutorial.6.title
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0631\u0648 \u0628\u0647 \u0646\u0641\u0631\u0628\u0631
+        \u06A9\u0644\u06CC\u062F\u0647\u0627 \u0628\u0631\u06AF\u0631\u062F\u0648\u0646"
+    - key: mission.last_corridor.tutorial.7.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646\u060C \u0648\u0627\u0631\u062F
+        \u0646\u0641\u0631\u0628\u0631 \u0627\u0635\u0644\u06CC \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u06A9\u0646 \u0648 \u062A\u0627 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646\u0634
+        \u0635\u0628\u0631 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.7.title
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0631\u0648 \u0633\u0648\u0627\u0631
+        \u06A9\u0646"
+    - key: mission.last_corridor.tutorial.8.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0627\u0635\u0644\u06CC \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u0631\u0648 \u0628\u0627 \u0645\u0647\u0646\u062F\u0633 \u0633\u0648\u0627\u0631\u0634\u062F\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0648\u0631\u0648\u062F\u06CC\u060C
+        \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC \u0648 \u062E\u0631\u0648\u062C\u06CC
+        \u0645\u0633\u06CC\u0631 \u0627\u0635\u0644\u06CC \u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647
+        \u06CC\u0627 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0631\u0648 \u062F\u0646\u0628\u0627\u0644
+        \u06A9\u0646\u060C \u0628\u0639\u062F \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u062F\u0631 \u0645\u062D\u0644 \u062F\u0631\u06CC\u0627\u0641\u062A \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.8.body.board
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646\u060C \u0648\u0627\u0631\u062F
+        \u0646\u0641\u0631\u0628\u0631 \u0627\u0635\u0644\u06CC \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u06A9\u0646 \u0648 \u062A\u0627 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646\u0634
+        \u0635\u0628\u0631 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.8.body.route.entry
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0627\u06CC\u0646
+        \u0645\u062D\u0645\u0648\u0644\u0647 \u0631\u0648 \u0628\u0647 \u0648\u0631\u0648\u062F\u06CC
+        \u0645\u0633\u06CC\u0631 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631."
+    - key: mission.last_corridor.tutorial.8.body.route.exit
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0632 \u062E\u0631\u0648\u062C\u06CC \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0639\u0628\u0648\u0631 \u0628\u062F\u0647\u060C \u0628\u0639\u062F \u0628\u0647
+        \u0646\u0634\u0627\u0646 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0628\u0631
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646."
+    - key: mission.last_corridor.tutorial.8.body.route.mid
+      value: "\u0628\u0627 \u0647\u0645\u0648\u0646 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0627\u0635\u0644\u06CC\u060C \u0646\u0642\u0637\u0647\u0654 \u0645\u06CC\u0627\u0646\u06CC
+        \u0645\u0633\u06CC\u0631 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646."
+    - key: mission.last_corridor.tutorial.8.title
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0631\u0648 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u062F\u0647"
     - key: mission.m01.goal.civilians
       value: "\u0627\u0632 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
         \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
@@ -16613,6 +17272,108 @@ MonoBehaviour:
         \u0631\u0648 \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC \u0646\u0634\u0648\u0646
         \u0628\u062F\u0645. \u0632\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u0631\u0648
         \u0634\u0645\u0627 \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0646."
+    - key: narrative.last_corridor.brief-01
+      value: "\u0633\u0648\u062E\u062A\u060C \u062F\u0627\u0631\u0648\u060C \u0645\u0647\u0646\u062F\u0633\u060C
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u06A9\u0645\u06A9\u06CC \u0648
+        \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u0641\u06CC\u0632\u06CC\u06A9\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0628\u0627\u06CC\u062F \u0628\u0647
+        \u0645\u0631\u06A9\u0632 \u0634\u0647\u0631 \u0628\u0631\u0633\u0646. \u0633\u0645\u06CC\u0631\u0627
+        \u0648 \u0645\u0646 \u06CC\u06A9 \u0628\u0631\u0646\u0627\u0645\u0647\u0654
+        \u0645\u0634\u062A\u0631\u06A9 \u062F\u0627\u0631\u06CC\u0645\u061B \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+        \u0627\u0645\u062F\u0627\u062F \u0648 \u0627\u0633\u06A9\u0648\u0631\u062A
+        \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0628\u0627 \u0647\u0645 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u0646. \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0631\u06A9\u062A
+        \u0633\u062A\u0648\u0646\u060C \u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646
+        \u062F\u0634\u0645\u0646 \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u06A9\u0646\u06CC\u0646."
+    - key: narrative.last_corridor.brief-02
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0631\u0648\u06CC \u0646\u0634\u0627\u0646
+        \u062A\u0639\u0645\u06CC\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646.
+        \u062F\u0627\u0631\u0648 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u0627\u0645\u0646\u200C\u062A\u0631 \u0645\u06CC\u200C\u0631\u0647. \u0633\u0648\u062E\u062A
+        \u0648 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u0645\u06CC\u200C\u062A\u0648\u0646\u0646 \u0627\u0632 \u0645\u0633\u06CC\u0631
+        \u0627\u0635\u0644\u06CC \u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647
+        \u06CC\u0627 \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u0628\u0631\u0646. \u0648\u0631\u0648\u062F\u06CC\u060C \u0646\u0642\u0637\u0647\u0654
+        \u0645\u06CC\u0627\u0646\u06CC \u0648 \u062E\u0631\u0648\u062C\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u0647\u0631 \u0645\u0633\u06CC\u0631 \u0631\u0648 \u062F\u0646\u0628\u0627\u0644
+        \u06A9\u0646\u06CC\u0646\u060C \u0628\u0639\u062F \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u062F\u0631 \u0645\u062D\u0644 \u062F\u0631\u06CC\u0627\u0641\u062A \u0628\u0645\u0648\u0646\u06CC\u0646."
+    - key: narrative.last_corridor.brief-03
+      value: "\u06A9\u0631\u06CC\u0645 \u0648 \u0645\u0646 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648 \u0632\u06CC\u0631 \u0646\u0638\u0631
+        \u062F\u0627\u0631\u06CC\u0645\u060C \u0648\u0644\u06CC \u0628\u0627 \u0627\u06CC\u0646
+        \u0648\u0636\u0639\u06CC\u062A \u062A\u0647\u062F\u06CC\u062F \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u06CC\u0645
+        \u0627\u0646\u062A\u0642\u0627\u0644 \u0647\u0648\u0627\u06CC\u06CC \u0631\u0648
+        \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u0645. \u0647\u0645\u0647\u0654
+        \u0645\u062D\u0645\u0648\u0644\u0647\u200C\u0647\u0627\u06CC \u0636\u0631\u0648\u0631\u06CC
+        \u0631\u0648 \u062F\u0631 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646.
+        \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0644\u06CC\u062F\u0647\u0627
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646\u061B \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646\u060C \u0633\u0627\u0628\u0642\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0627\u0648\u0646\u200C\u0647\u0627
+        \u0631\u0648 \u062D\u0645\u0644 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: narrative.last_corridor.comms-01
+      value: "\u0645\u0633\u06CC\u0631 \u0627\u0635\u0644\u06CC \u0645\u0633\u062F\u0648\u062F\u0647.
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u0628\u0627 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062A\u0648\u0642\u0641\u060C
+        \u0628\u062E\u0634 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0648
+        \u062A\u0639\u0645\u06CC\u0631 \u06A9\u0646\u0647\u061B \u0645\u0633\u06CC\u0631
+        \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0647\u0645\u0686\u0646\u0627\u0646 \u0648\u0635\u0644\u0647. \u062F\u0627\u0631\u0648
+        \u0631\u0648 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0627\u0645\u0646\u200C\u062A\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646 \u0648 \u0628\u0631\u0627\u06CC
+        \u0633\u0648\u062E\u062A \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u0646.
+        \u0627\u06CC\u0646 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC\u06CC\u060C
+        \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0648 \u0628\u0647 \u062C\u0627\u06CC
+        \u0634\u0645\u0627 \u062D\u0631\u06A9\u062A \u0646\u0645\u06CC\u200C\u062F\u0647."
+    - key: narrative.last_corridor.debrief-01
+      value: "\u062F\u0627\u0631\u0648\u060C \u0633\u0648\u062E\u062A \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0627\u0635\u0644\u06CC \u0628\u0647 \u0645\u062D\u0644\u200C\u0647\u0627\u06CC
+        \u062F\u0631\u06CC\u0627\u0641\u062A \u0631\u0633\u06CC\u062F\u0646. \u0645\u0647\u0646\u062F\u0633
+        \u0648 \u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u0641\u06CC\u0632\u06CC\u06A9\u06CC
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631
+        \u0627\u0635\u0644\u06CC \u0631\u0633\u06CC\u062F\u0646. \u0647\u0631 \u067E\u0646\u062C
+        \u062F\u0633\u062A\u0647\u0654 \u062A\u062D\u0648\u06CC\u0644 \u062B\u0628\u062A
+        \u0634\u062F\u0646 \u0648 \u0633\u062A\u0648\u0646\u060C \u067E\u06CC\u0634
+        \u0627\u0632 \u0628\u0633\u062A\u0647 \u0634\u062F\u0646 \u0645\u0633\u06CC\u0631
+        \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0634\u0647\u0631 \u0631\u0633\u06CC\u062F."
+    - key: narrative.last_corridor.debrief-02
+      value: "\u0628\u062E\u0634 \u062A\u0639\u0645\u06CC\u0631\u0634\u062F\u0647
+        \u0648 \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647\u060C \u0647\u0631
+        \u062F\u0648 \u0628\u0647 \u06CC\u06A9 \u0634\u0647\u0631 \u062E\u062F\u0645\u062A
+        \u06A9\u0631\u062F\u0646. \u0646\u06CC\u0627\u0632\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u0627\u0645\u062F\u0627\u062F\u06CC \u062F\u0631 \u06CC\u06A9 \u0628\u0631\u0646\u0627\u0645\u0647
+        \u0645\u0648\u0646\u062F\u0646. \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC
+        \u067E\u0632\u0634\u06A9\u06CC\u060C \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u060C
+        \u062E\u0644\u0628\u0627\u0646\u200C\u0647\u0627 \u0648 \u0633\u0631\u0628\u0627\u0632\u0647\u0627
+        \u062D\u0627\u0644\u0627 \u0645\u06CC\u200C\u062A\u0648\u0646\u0646 \u0645\u0633\u0626\u0648\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC
+        \u0646\u0647\u0627\u06CC\u06CC\u0634\u0648\u0646 \u0631\u0648 \u0628\u06AF\u06CC\u0631\u0646\u060C
+        \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0633\u0647\u0631\u06CC\u0646 \u0631\u0648 \u06A9\u0646\u0627\u0631 \u0628\u0630\u0627\u0631\u0646."
+    - key: narrative.last_corridor.debrief-03
+      value: "\u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u062A\u062D\u0648\u06CC\u0644\u200C\u0634\u062F\u0647\u060C
+        \u062F\u0633\u062A\u0631\u0633\u06CC \u0645\u062D\u062F\u0648\u062F \u0631\u0648
+        \u062D\u0641\u0638 \u0645\u06CC\u200C\u06A9\u0646\u0646\u061B \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u062F\u0627\u0626\u0645\u06CC \u06CC\u06A9\u200C\u0637\u0631\u0641\u0647
+        \u0646\u0645\u06CC\u200C\u062F\u0646. \u0645\u062C\u0645\u0648\u0639\u0647\u0654
+        \u0631\u0644\u0647 \u0647\u0646\u0648\u0632 \u0628\u0647 \u0628\u0631\u0642\u060C
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u060C \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644
+        \u0648 \u0627\u0631\u062A\u0628\u0627\u0637\u0627\u062A \u0648\u0635\u0644\u0647.
+        \u0627\u06CC\u0646 \u0633\u0627\u0645\u0627\u0646\u0647\u200C\u0647\u0627\u06CC
+        \u0634\u0647\u0631\u06CC \u0628\u0627\u06CC\u062F \u0627\u0632 \u0646\u0632\u062F\u06CC\u06A9
+        \u0634\u062F\u0646 \u0646\u0647\u0627\u06CC\u06CC \u0633\u0627\u0644\u0645
+        \u0639\u0628\u0648\u0631 \u06A9\u0646\u0646. \u062A\u0635\u0645\u06CC\u0645\u200C\u0647\u0627\u06CC
+        \u0634\u0645\u0627 \u0631\u0648 \u0635\u0631\u06CC\u062D \u0646\u06AF\u0647
+        \u0645\u06CC\u200C\u062F\u0627\u0631\u0645."
     - key: narrative.m01.brief.aria
       value: "\u067E\u06CC\u06A9 \u062F\u0633\u062A\u0648\u0631\u0647\u0627 \u0631\u0648
         \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647\u060C \u0646\u06AF\u0647\u0628\u0627\u0646
@@ -19671,6 +20432,9 @@ MonoBehaviour:
       value: "\u0631\u0627\u062F\u06CC\u0648"
     - key: ui.home.archive.debrief
       value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646\u06CC"
+    - key: ui.home.archive.last_corridor.keys
+      value: "\u06A9\u0644\u06CC\u062F\u0647\u0627\u06CC \u062F\u0633\u062A\u0631\u0633\u06CC
+        \u0645\u062D\u062F\u0648\u062F \u062A\u062D\u0648\u06CC\u0644\u200C\u0634\u062F\u0647"
     - key: ui.home.archive.network_collapse.audit
       value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u06A9\u0627\u0645\u0644
         \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647"

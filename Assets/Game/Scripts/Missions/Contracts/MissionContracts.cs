@@ -82,7 +82,7 @@ namespace Game.Missions.Contracts
         SustainRouteLifelines = 25, RestoreRouteLink = 26, CaptureRouteHub = 27, PreserveRouteRecords = 28,
         DefeatArmorBreakMilitary = 29, RecoverArmorBreakAuthority = 30, ProtectArmorBreakRelief = 31,
         StabilizeCitywideClinic = 32, StabilizeCitywideUtility = 33, EstablishCitywidePerimeter = 34,
-        ProtectTrustNorthRoute = 35, ProtectTrustSouthRoute = 36, VerifyTrustBroadcast = 37, DisableVerifiedNetwork = 38, RecoverNetworkAudit = 39, ExtractNetworkEvidence = 40
+        ProtectTrustNorthRoute = 35, ProtectTrustSouthRoute = 36, VerifyTrustBroadcast = 37, DisableVerifiedNetwork = 38, RecoverNetworkAudit = 39, ExtractNetworkEvidence = 40, DeliverCorridorSupplies = 41, RestoreCorridorLink = 42, DeliverCorridorAuthority = 43
     }
 
     public enum MissionStarRuleKind : byte

@@ -1,0 +1,1 @@
+[LastCorridorInput] result=Failed Opening stalled: Last Corridor was absent from the mission narrative policy

@@ -11,6 +11,14 @@
 > For uncoded Campaign, Skirmish and Operations content, use
 > [FUTURE_CONTENT_MAP_PLAN.md](FUTURE_CONTENT_MAP_PLAN.md) and its updated mode/chapter packets.
 
+## Review checkpoint — 2026-10-03
+
+CH05-M04 Last Corridor is ready for player review in the primary project. Native core06, complete normal-input EN08/manual and FA02/ARIA journeys, seven caption panels per locale, actual five deliveries and custody, three-star result/rewards/return, and final packed-content03 passed. All six source hashes are preserved. Both ground lanes and optional Supply approval/collection/decline were exercised. Real player/device acceptance remains pending; voice generation is excluded by request. See the [current readiness record](../AgentReports/CH05M04LastCorridor/review-readiness.md).
+
+## Implementation checkpoint — 2026-10-02
+
+The prototype status below is historical. CH05-M04 Last Corridor now owns a separately generated bounded Urban logistics map under its approved Frontier fallback, with two certified delivery lanes on one artery. Native map, rules and objectives passed `core-validation-03`; all six source hashes are preserved. Full normal-input mission, packed content and player/device acceptance are pending at this checkpoint. Follow the [map preparation audit](../AgentReports/CH05M04LastCorridor/map-preparation-audit.md) and [current readiness record](../AgentReports/CH05M04LastCorridor/review-readiness.md) for exact source, ownership and later receipts. This does not promote Frontier or change the historical campaign migration assignment/counts.
+
 Status: **visual prototypes, not integrated.** No mission, catalog, Addressables group or test references these
 scenes yet. They were built to break the repetition of the 17 campaign missions, which all frame small windows of
 the same dense-city subscene (`opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity`).

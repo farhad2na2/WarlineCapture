@@ -1,0 +1,1 @@
+Native compile failed: SupportTargetingInputUiSystemHelper.cs107 CS0136 hit name collided with subsequent Physics.Raycast out variable. Renamed release UI loop variable to uiHit before validation.

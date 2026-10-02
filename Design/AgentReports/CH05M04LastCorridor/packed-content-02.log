@@ -1,0 +1,68 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M04LastCorridorContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'Game_UnitPrefabRegistry_Config' does not match filename 'UnitFixtureRegistry'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:115)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:81)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[LastCorridorUnitFixture] result=Passed uniquePrefabs=16 combinedArms=Armor+Infantry+FiveDeliveries civicOwners=1 storageOwners=2 Fuel=RealTransfer fixtureLoadedByMission=false
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildUnitFixture () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:123)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:81)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(29,84): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Runtime/Missions/OperationsReconStartupSystem.cs(30,89): warning CS0618: 'EntityQueryCaptureMode.AtRecord' is obsolete: 'The Capture-query-at-record feature will be removed in a future version of the Entities package. Use AtPlayback mode instead. If AtRecord semantics are required, use the query to generate a NativeArray of matching entities to process, and pass the array instead of the query. (RemovedAfter Entities 2.0)'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs(48,37): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AddressableAssets.Settings.AddressableAssetSettings:Create (string,string,bool,bool)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildAddressables () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:136)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:90)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorPackedContent] result=Passed map=opmap.ch05.last_corridor entityScene=ad1ab85b529464b5a802578b9f109869 fixture=3c7dcf8bcbdf649bcaa74c1153039949 bytes=105621633 locator=GUID+CampaignAddress scope=ContentBuildOnly
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorContentBuilder:BuildPackedContent () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorContentBuilder.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M04LastCorridorContentBuilder.BuildPackedContent
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_71dcb3a1/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

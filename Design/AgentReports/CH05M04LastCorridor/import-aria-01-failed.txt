@@ -1,0 +1,1 @@
+Initial ARIA milestone helper referenced Game.Runtime from the UI Screens assembly: CS0234. Helper moved to UI.Contracts; fresh compile and native regression required. finish-prepared-04.log dispatched against old assemblies while this error existed; it is not final-candidate evidence.

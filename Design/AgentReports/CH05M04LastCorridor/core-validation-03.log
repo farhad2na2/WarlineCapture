@@ -1,0 +1,71 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M04LastCorridorIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorRoutes] result=Passed deliveryLanes=2x301x5 laneGap=12m sameArtery=true rearCarrierLane=103x5 buildLots=3 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorConfigBuilder.cs:465)
+Game.Editor.CH05M04LastCorridorMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorMapValidation.cs:117)
+Game.Editor.CH05M04LastCorridorIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorIntegration.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorMap] result=Passed identities=2972 owners=317 renderOnly=2655 roots=3 grid=440x220 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorMapValidation.cs:118)
+Game.Editor.CH05M04LastCorridorIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorIntegration.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorRules] result=Passed fiveCategories=Actual route=Ordered Fuel=Inventory custody=Original settlement=Idempotent
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorRulesValidation.cs:39)
+Game.Editor.CH05M04LastCorridorIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorIntegration.cs:32)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorObjectives] result=Passed writer=Actual Fuel=Transferred recovery=Original custody=Both
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorObjectiveValidation:Run () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorObjectiveValidation.cs:62)
+Game.Editor.CH05M04LastCorridorIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorIntegration.cs:33)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[LastCorridorValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=ExcludedByRequest nativeJourney=SeparateGate
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M04LastCorridorIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M04LastCorridorIntegration.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M04LastCorridorIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_212f8d87/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

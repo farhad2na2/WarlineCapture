@@ -1,0 +1,1 @@
+[LastCorridorInput] result=Passed scope=CaptionedGameplay voices=NotRequested dialogue=7 normalInput=Passed result=Passed settlement=Passed return=Passed route=TwoCertifiedGroundLanes deliveries=AllFive repair=PhysicalLink keys=OriginalEngineerInCarrier Supply=Optional optionalSupport=decline humanDeviceAcceptance=pending

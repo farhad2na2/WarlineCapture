@@ -1,0 +1,34 @@
+{
+  "mission": "saga.ch05.m04.last_corridor",
+  "date": "2026-10-03",
+  "mapContentHash": "f2cb98c48c10370d47d65c0494dfd4051ef22f2738159ad62d2048c5adca536c",
+  "nativeChecks": [
+    {
+      "log": "core-validation-06.log",
+      "wrapperExit": 0,
+      "marker": "[LastCorridorValidation] result=Passed",
+      "sha256": "e95305f6193dcf2a9b40d68ed8c341710fbfbc923556b73745c81d1bfafc85fb"
+    },
+    {
+      "log": "input-en-08.log",
+      "wrapperExit": 0,
+      "marker": "[LastCorridorInput] result=Passed",
+      "sha256": "79377f1bd21d0cdcb6cd18320891b1e822aed052845ffed1e9176b24d1775ef2"
+    },
+    {
+      "log": "input-fa-02.log",
+      "wrapperExit": 0,
+      "marker": "[LastCorridorInput] result=Passed",
+      "sha256": "c9a18844adf9f888ad3d98e240617eeaaaacc26ba4c7d11df2366216bdb0bc9e"
+    },
+    {
+      "log": "packed-content-03.log",
+      "wrapperExit": 0,
+      "marker": "[LastCorridorPackedContent] result=Passed",
+      "sha256": "00fa2e0be8dce73d9d8bd93473bb8978f82b1f89c450ca34feb0e5704be2f8f7"
+    }
+  ],
+  "protectedSourceFiles": 6,
+  "humanDeviceAcceptance": "pending",
+  "voices": "excluded by request"
+}

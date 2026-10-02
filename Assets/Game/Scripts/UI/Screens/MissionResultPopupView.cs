@@ -111,6 +111,7 @@ namespace Game.UI.Runtime
             ApplyCitywideAlertOutcome(in model);
             ApplyTrustUnderFireOutcome(in model);
             ApplyNetworkCollapseOutcome(in model);
+            ApplyLastCorridorOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);

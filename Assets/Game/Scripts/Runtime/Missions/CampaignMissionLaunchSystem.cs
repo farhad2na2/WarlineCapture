@@ -135,6 +135,9 @@ namespace Game.Runtime
             ResetComponentIfPresent<CampaignMissionDelayedWaveStateComponent>(entityManager, root);
             ResetComponentIfPresent<CampaignMissionGroundedSignalState>(entityManager, root);
             ResetComponentIfPresent<SupportFuelScopeComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionLastCorridorState>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionLastCorridorMember>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionCorridorBuildingRequest>(entityManager, root);
             ResetComponentIfPresent<CampaignMissionNetworkCollapseState>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionNetworkCollapseMember>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionNetworkBuildingRequest>(entityManager, root);

@@ -361,7 +361,7 @@ namespace Game.Runtime
         }
 
         private static bool PreserveCitywideConfiguredFootprint(GameObject prefab) => prefab!=null &&
-            prefab.name is "Building_Citywide_Clinic" or "Building_Citywide_Utility" or "Building_Citywide_ReserveDepot" or "Building_Trust_Shelter" or "Building_Trust_Broadcast" or "Building_Trust_ReserveDepot" or "Building_Network_Civic" or "Building_Network_Audit" or "Building_Network_ReserveDepot";
+            prefab.name is "Building_Citywide_Clinic" or "Building_Citywide_Utility" or "Building_Citywide_ReserveDepot" or "Building_Trust_Shelter" or "Building_Trust_Broadcast" or "Building_Trust_ReserveDepot" or "Building_Network_Civic" or "Building_Network_Audit" or "Building_Network_ReserveDepot" or "Building_Corridor_Civic" or "Building_Corridor_ReserveDepot" or "Building_Corridor_ReceivingDepot";
 
         public BuildingDefinition CreateRuntimeBuildingDefinition(
             GameObject prefab,

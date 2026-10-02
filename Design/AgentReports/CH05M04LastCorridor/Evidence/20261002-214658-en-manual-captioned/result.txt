@@ -1,0 +1,1 @@
+[LastCorridorInput] result=Failed Normal truck route detours beyond the eight-metre proof tolerance at the junction; correcting bounded physical route qualification

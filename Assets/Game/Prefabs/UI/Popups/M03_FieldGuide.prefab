@@ -3283,6 +3283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d2ca9e24f2f043348231d8200689a59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionFieldGuideView
+  lastCorridorGuide: {fileID: 11400000, guid: 40c6dab7e03804e3c98fca234cb35032, type: 2}
   networkCollapseGuide: {fileID: 11400000, guid: b73e42df7c5fb4440b06bab1225ff8f6, type: 2}
   trustUnderFireGuide: {fileID: 11400000, guid: 194d329d87aaf4a039215da9cfb13924, type: 2}
   citywideAlertGuide: {fileID: 11400000, guid: 098e13e73ad794365854289c5ca1c9fe, type: 2}

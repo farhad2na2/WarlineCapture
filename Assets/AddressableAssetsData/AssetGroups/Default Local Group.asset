@@ -20,6 +20,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0532ec9c031e140d78dc788b2f63512a
+    m_Address: campaign/last-corridor/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 082dfad665dfb4bcd91544ea669e34bf
+    m_Address: campaign/last-corridor/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1df7b83e8dbcb483fb195a45fa9403c7
     m_Address: campaign/grounded-signal/source-scene
     m_ReadOnly: 0
@@ -45,6 +55,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 37602b67a12a74bc18357400efb2406a
+    m_Address: campaign/last-corridor/support-context
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3dc65cceb29954009b581d7e8cab37ff
     m_Address: campaign/trust-under-fire/mission
     m_ReadOnly: 0
@@ -65,6 +80,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52b3099f8e2fe4b4caa16edb58eb2925
+    m_Address: campaign/last-corridor/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55e166dea54754dabab66e8469269813
     m_Address: campaign/network-collapse/surface
     m_ReadOnly: 0
@@ -82,6 +102,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 62938adc569eb46f681215503cec88ba
     m_Address: campaign/network-collapse/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e6fe19d7eeb54b78b553dcd140e0a3e
+    m_Address: campaign/last-corridor/definition
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -155,8 +180,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb84060017ee341098af2709238d7d8c
+    m_Address: campaign/last-corridor/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb903f7ecfe794b1a9d837e946661e2e
+    m_Address: campaign/last-corridor/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: be0f1c8c7ae1940d6a679b258bf79f7b
     m_Address: campaign/armor-break/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0739b70a5d144957890e4015d12f221
+    m_Address: campaign/last-corridor/scenario
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

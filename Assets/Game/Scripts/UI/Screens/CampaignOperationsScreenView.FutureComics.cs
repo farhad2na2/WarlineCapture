@@ -19,7 +19,7 @@ namespace Game.UI.Runtime
                 persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
-                persian ? "مأموریت‌های ۱ تا ۲ آماده‌اند" : "M01–M02 READY");
+                persian ? "مأموریت‌های ۱ تا ۴ آماده‌اند" : "M01–M04 READY");
             // Keep previously available story previews reachable beside playable M01.
             if(selectedChapter==5&&IsChapterFive)
                 for(int index=1;index<5;index++)

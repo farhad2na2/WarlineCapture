@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Last Corridor Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Last Corridor Narrative
+  m_GUID: 2ea37ca52586f4f6ead0107511b3da5d
+  m_SerializeEntries:
+  - m_GUID: 4b6f740d733a46a6a59b6961951f52c3
+    m_Address: narrative.last_corridor.ch05m04_lastcorridor
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59bc09e4e09542dc9399c1ce405b3c10
+    m_Address: narrative.last_corridor.ch05m04_lastcorridor_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 916f6ec2b3d942d49fe05acb3e882c57
+    m_Address: narrative.last_corridor.ch05m04_lastcorridor_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 8364c607cd43948708b061897406b814, type: 2}
+    - {fileID: 11400000, guid: bdebd71ccb6ff4e4f92c3ffe1c494999, type: 2}

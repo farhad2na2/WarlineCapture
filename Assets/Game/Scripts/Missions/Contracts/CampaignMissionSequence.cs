@@ -19,14 +19,15 @@ namespace Game.Missions.Contracts
         public const string GroundedSignal="saga.ch04.m04.grounded_signal";
         public const string ArmorBreak="saga.ch04.m05.armor_break";
         public const string CitywideAlert="saga.ch05.m01.citywide_alert";
+        public const string LastCorridor="saga.ch05.m04.last_corridor";
         public const string NetworkCollapse="saga.ch05.m03.network_collapse";
         public const string TrustUnderFire="saga.ch05.m02.trust_under_fire";
-        public const int RegisteredMissionCount=23;
+        public const int RegisteredMissionCount=24;
         public static string IdAt(int index) => index switch
         {
             0=>"saga.ch01.m01.first_contact",1=>"saga.ch01.m02.establish_base",
             2=>"saga.ch01.m03.radar_warning",3=>"saga.ch01.m04.airlift",
-            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,10=>SignalTrace,11=>SafehouseSweep,12=>FalseFront,13=>EvidenceChain,14=>NetworkBreak,15=>AirCorridor,16=>SteelPush,17=>SplitFront,18=>GroundedSignal,19=>ArmorBreak,20=>CitywideAlert,21=>TrustUnderFire,22=>NetworkCollapse,_=>string.Empty
+            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,10=>SignalTrace,11=>SafehouseSweep,12=>FalseFront,13=>EvidenceChain,14=>NetworkBreak,15=>AirCorridor,16=>SteelPush,17=>SplitFront,18=>GroundedSignal,19=>ArmorBreak,20=>CitywideAlert,21=>TrustUnderFire,22=>NetworkCollapse,23=>LastCorridor,_=>string.Empty
         };
         public static int IndexOf(string id)
         {

@@ -192,9 +192,10 @@ namespace Game.UI.Runtime
             if(IsChapterFive)
             {
                 bool trust=mission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.TrustUnderFire;
+                bool corridor=mission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.LastCorridor;
                 bool network=mission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.NetworkCollapse;
-                string prefix=network?"mission.network_collapse.":trust?"mission.trust_under_fire.":"mission.citywide_alert.";
-                string[] goals=network?new[]{"nodes","audit","extraction"}:trust?new[]{"north","south","broadcast"}:new[]{"clinic","utility","perimeter"};
+                string prefix=corridor?"mission.last_corridor.":network?"mission.network_collapse.":trust?"mission.trust_under_fire.":"mission.citywide_alert.";
+                string[] goals=corridor?new[]{"repair","deliveries","keys"}:network?new[]{"nodes","audit","extraction"}:trust?new[]{"north","south","broadcast"}:new[]{"clinic","utility","perimeter"};
                 for(int i=0;i<3;i++)
                 {SetGoal(objectiveCards,i,UiShellRuntimeGateway.Localization.Get(prefix+"objective."+goals[i]));SetGoal(starGoalLabels,i,UiShellRuntimeGateway.Localization.Get(prefix+"star."+(i+1)));}
             }

@@ -1,0 +1,18 @@
+{
+    "schema": "warline.last-corridor.packed-content.v1",
+    "result": "Passed",
+    "mapId": "opmap.ch05.last_corridor",
+    "contentHash": "f2cb98c48c10370d47d65c0494dfd4051ef22f2738159ad62d2048c5adca536c",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "ad1ab85b529464b5a802578b9f109869",
+    "unitFixtureSceneGuid": "3c7dcf8bcbdf649bcaa74c1153039949",
+    "entityContentPath": "Library/LastCorridorPreparedContent/Entities",
+    "entityCatalogPath": "Library/LastCorridorPreparedContent/Entities/ContentArchives/archive_dependencies.bin",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/LastCorridorPreparedContent/Addressables/catalog.bin",
+    "definitionGuid": "6e6fe19d7eeb54b78b553dcd140e0a3e",
+    "bindingGuid": "082dfad665dfb4bcd91544ea669e34bf",
+    "entityCatalogHash": "fb5a253a39be5794b0bea7ef95d34131bce81d10453b8867087fbd0fcaccb9f1",
+    "addressablesCatalogHash": "549e83c72f6bf59db323d5b786f120942e369ba0de38fed5aeb4c8604e1c507f",
+    "status": "Native packed content built. Normal-input mission and real device acceptance are separate gates.",
+    "entityContentBytes": 105623837
+}

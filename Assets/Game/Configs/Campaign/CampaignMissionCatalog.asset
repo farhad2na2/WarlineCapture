@@ -82,3 +82,6 @@ MonoBehaviour:
   - missionId: saga.ch05.m03.network_collapse
     definition: {fileID: 11400000, guid: eb2efdf568bcb488fbf37c41a805dc0a, type: 2}
     scenario: {fileID: 11400000, guid: 62938adc569eb46f681215503cec88ba, type: 2}
+  - missionId: saga.ch05.m04.last_corridor
+    definition: {fileID: 11400000, guid: bb903f7ecfe794b1a9d837e946661e2e, type: 2}
+    scenario: {fileID: 11400000, guid: c0739b70a5d144957890e4015d12f221, type: 2}

@@ -304,7 +304,8 @@ namespace Game.Configs
                 }
                 foreach (ScenarioUnitEntryConfig unit in group.Units)
                 {
-                    if ((group.FactionIndex == 0 && unit.MissionRoleId != "role.civilian.protected") ||
+                    bool corridorWreck = scenarioId == "scenario.ch05.m04.last_corridor" && group.GroupId == "group.ch05.m04.broken_link" && unit.MissionRoleId == "role.infrastructure.broken_link" && unit.SpawnAnchorId == "anchor.ch05.m04.broken_link" && unit.RuntimePrefabSourceKey == "Unit_Veh_Truck_Canopy" && unit.Count == 1;
+                    if ((group.FactionIndex == 0 && unit.MissionRoleId != "role.civilian.protected" && !corridorWreck) ||
                         !IsScopedId(unit.UnitConfigKey, "unit") || string.IsNullOrWhiteSpace(unit.RuntimePrefabSourceKey) ||
                         unit.RuntimePrefabSourceKey.Length > 63 || !IsLowerHexGuid(unit.ExpectedAssetGuid) ||
                         !OperationMapIdentityRules.IsValidAnchorId(unit.SpawnAnchorId) ||

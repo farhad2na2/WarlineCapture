@@ -2,6 +2,16 @@
 
 Updated 2026-09-29 at the owner's request. **Adopted planning direction; no map or mission implementation, publication or acceptance is implied.**
 
+## Review checkpoint — 2026-10-03
+
+CH05-M04 Last Corridor is ready for player review in the primary project. Native core06, complete normal-input EN08/manual and FA02/ARIA journeys, seven caption panels per locale, actual five deliveries and custody, three-star result/rewards/return, and final packed-content03 passed. All six source hashes are preserved. Both ground lanes and optional Supply approval/collection/decline were exercised. Real player/device acceptance remains pending; voice generation is excluded by request. See the [current readiness record](../AgentReports/CH05M04LastCorridor/review-readiness.md).
+
+## Implementation checkpoint — 2026-10-02
+
+CH05-M04 Last Corridor now has an implemented independent bounded Urban logistics derivative under the approved Frontier fallback. Its two certified ground choices are separate lanes on the same existing artery, preserving five delivery categories, finite Fuel, physical repair and authority custody. Native map/rules/objectives passed `core-validation-03`; six source SHA256 values remain unchanged. Complete normal-input journeys, packed content and real player/device acceptance remain pending at this checkpoint. See the [map audit](../AgentReports/CH05M04LastCorridor/map-preparation-audit.md) and [current mission readiness](../AgentReports/CH05M04LastCorridor/review-readiness.md).
+
+The scope counts below describe the 2026-09-29 planning checkpoint and remain historical; they are not the current remaining-code count.
+
 ## Scope and dependencies
 
 This plan assigns physical-source candidates and required authoring work to content not yet coded at this checkpoint. Read [map preparation](HANDOFF_Map_Preparation.md) first. The separate [existing Campaign mission rework](HANDOFF_Existing_Mission_Rework.md) owns seven coded migrations and eleven retained-map regressions; do not apply this plan to those missions as a second assignment.

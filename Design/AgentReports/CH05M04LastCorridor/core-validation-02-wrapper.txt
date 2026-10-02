@@ -1,0 +1,1 @@
+Failed: wrapper exit 124; scheduled callback was cleared during script reload, no completion receipt. Existing Editor preserved. Rerun after compiling=False/failed=False passed in core-validation-03.log.

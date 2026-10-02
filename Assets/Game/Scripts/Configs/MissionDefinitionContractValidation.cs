@@ -225,6 +225,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.DisableVerifiedNetwork:
                 case MissionObjectiveRuleKind.RecoverNetworkAudit:
                 case MissionObjectiveRuleKind.ExtractNetworkEvidence:
+                case MissionObjectiveRuleKind.DeliverCorridorSupplies:
+                case MissionObjectiveRuleKind.RestoreCorridorLink:
+                case MissionObjectiveRuleKind.DeliverCorridorAuthority:
                 case MissionObjectiveRuleKind.ProtectTrustNorthRoute:
                 case MissionObjectiveRuleKind.ProtectTrustSouthRoute:
                 case MissionObjectiveRuleKind.VerifyTrustBroadcast:

@@ -13,6 +13,7 @@ namespace Game.Runtime
         private static readonly Unity.Collections.FixedString64Bytes RadarWarningResourceMissionId = "saga.ch01.m03.radar_warning";
         private static readonly Unity.Collections.FixedString64Bytes AirCorridorResourceMissionId = "saga.ch04.m01.air_corridor";
         private static readonly Unity.Collections.FixedString64Bytes SteelPushResourceMissionId = "saga.ch04.m02.steel_push";
+        private static readonly Unity.Collections.FixedString64Bytes CorridorResourceMissionId="saga.ch05.m04.last_corridor";
         private static readonly Unity.Collections.FixedString64Bytes NetworkResourceMissionId="saga.ch05.m03.network_collapse";
         private static readonly Unity.Collections.FixedString64Bytes CitywideResourceMissionId = "saga.ch05.m01.citywide_alert";
         [BurstCompile]
@@ -45,7 +46,7 @@ namespace Game.Runtime
                 return;
 
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
-            if (definition.MissionRuntimeEnabled == 0 && !runtime.MissionId.Equals(NetworkResourceMissionId))
+            if (definition.MissionRuntimeEnabled == 0 && !runtime.MissionId.Equals(NetworkResourceMissionId) && !runtime.MissionId.Equals(CorridorResourceMissionId))
             {
                 MarkApplied(entityManager, root, in runtime);
                 return;
@@ -97,7 +98,7 @@ namespace Game.Runtime
 
             // The normal totals helper intentionally caps other missions at their
             // starting budget. Supply requires room above Network's finite 80 stock.
-            if (runtime.MissionId.Equals(NetworkResourceMissionId)) nextMaterials.Capacity = 240;
+            if (runtime.MissionId.Equals(NetworkResourceMissionId) || runtime.MissionId.Equals(CorridorResourceMissionId)) nextMaterials.Capacity = 240;
 
             nextEconomy.MaterialsOnlyConstruction = runtime.MissionId.Equals(EstablishBaseResourceMissionId) ? (byte)1 :
                 runtime.MissionId.Equals(RadarWarningResourceMissionId) ||

@@ -157,6 +157,26 @@ namespace Game.Editor
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
                 }
+                var corridor = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH05M04LastCorridorConfigBuilder.MapPath);
+                if (corridor != null)
+                {
+                    string corridorError = "Logical source binding is not permitted for this independent physical map.";
+                    if (corridor.SourceBinding.IsConfigured ||
+                        !corridor.TryValidateMetadata(out corridorError) ||
+                        !corridor.TryValidateLocalContentReferences(out corridorError))
+                        throw new InvalidOperationException("Last Corridor production entity delivery requires a valid independent map: " + corridorError);
+                    string mapPath = CH05M04LastCorridorConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, corridor.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Last Corridor production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH05M04LastCorridorContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Last Corridor production unit fixture missing; run CH05M04LastCorridorContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
             }
             return scenes;
         }

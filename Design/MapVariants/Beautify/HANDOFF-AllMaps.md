@@ -20,6 +20,7 @@ The pilot is Supply Line on Refinery District; see `SupplyLine/HANDOFF.md`. This
 - **City-Edge Airfield:** mockup approved.
 - **Ash Line Port:** look approved, **keep the current container layout**. Render-only items only; do not regroup the containers.
 - **Frontier:** approved **including the container regrouping** into blocks with lanes. No missions use Frontier yet.
+- **Dense city:** street and outskirts mockups both approved. Render-only changes only.
 
 ## Map directions
 

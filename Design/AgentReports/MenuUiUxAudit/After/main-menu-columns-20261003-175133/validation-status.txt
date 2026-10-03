@@ -1,0 +1,6 @@
+Wrapper exit=0
+Required MainMenuColumnAlignment pass marker: present
+Expected native images: 6; present: 6
+Focused code whitespace check: passed
+Normal-input navigation: pending
+Real device acceptance: pending

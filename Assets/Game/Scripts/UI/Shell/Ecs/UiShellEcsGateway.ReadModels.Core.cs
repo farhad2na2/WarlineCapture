@@ -84,7 +84,9 @@ namespace Game.UI.Shell.Ecs
             profile = new UiShellCommanderProfileModel(
                 component.Name.ToString(),
                 component.Subtitle.ToString(),
-                component.PortraitClass.ToString());
+                component.PortraitClass.ToString(), component.Level, component.Xp,
+                component.Victories, component.Defeats, component.Missions, component.Stars,
+                component.Enemies, component.UnitsLost);
             return true;
         }
 

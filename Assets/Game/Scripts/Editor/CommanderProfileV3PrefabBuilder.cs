@@ -82,6 +82,7 @@ namespace Game.Editor
             });
 
             MenuAccountHeaderAuthoring.Apply(root);
+            MenuUiApprovedAuthoring.Apply(root, "commander");
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -121,7 +122,7 @@ namespace Game.Editor
                 throw new MissingReferenceException("Commander Profile runtime text bindings are incomplete.");
 
             Image portrait = FindDeepChild(prefab.transform, "CommanderScene")?.GetComponent<Image>();
-            if (portrait == null || AssetDatabase.GetAssetPath(portrait.sprite) != CommanderScenePath)
+            if (portrait == null || AssetDatabase.GetAssetPath(portrait.sprite) != MainMenuV3PrefabBuilder.CommanderPanelPath(0))
                 throw new MissingReferenceException("Commander Profile must reuse the canonical baked commander scene.");
 
             V3GradientGraphic[] gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true);

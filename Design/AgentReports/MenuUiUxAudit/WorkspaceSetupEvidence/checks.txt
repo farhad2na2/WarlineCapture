@@ -1,0 +1,16 @@
+SOURCE_COPY_INITIAL: exit=0, 26,742,457,444 bytes enumerated.
+SOURCE_CHECKSUM_COPY: PASS, 5,725 files, 0 mismatches (scripts, Packages, ProjectSettings, UI audit).
+SOURCE_REFRESH: exit=0, 14 files copied after source changed during the initial transfer.
+LIBRARY_INITIAL_COPY: FAILED exit=23; three source files vanished during copying:
+  UndoData.bin
+  UndoStack.bin
+  Artifacts/ce/ce7b8306aed587a958051af66e2af91e
+LIBRARY_RECONCILE: PASS exit=0; 40 files refreshed, 31,990,682,433 total bytes enumerated.
+  Session-only undo files excluded. Original cache and running Editors preserved.
+LIBRARY_DRY_RUN: PASS exit=0, no differences; same undo exclusions.
+CAPTURE_WHITESPACE: PASS; no whitespace diagnostics comparing original and edited file.
+GIT_DIFF_CHECK_SANDBOX: FAILED exit=128, Git LFS could not write shared .git/lfs/tmp; rerun with permitted access.
+UNITY_COMPILE_AND_CAPTURE: NOT RUN.
+NORMAL_INPUT_WALKTHROUGH: NOT RUN.
+REAL_DEVICE_ACCEPTANCE: PENDING.
+GIT_DIFF_CHECK_PERMITTED: inherited whitespace failures in SCN13_SkirmishSetupContent.prefab and SkirmishBattleCatalog.asset; stopped this Git-only check with SIGINT after recording failures (exit=130). Targeted capture edit check passed.

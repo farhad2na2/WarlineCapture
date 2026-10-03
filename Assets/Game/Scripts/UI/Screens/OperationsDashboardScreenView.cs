@@ -69,7 +69,7 @@ namespace Game.UI.Runtime
                 : UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_new_city", "NEW CITY"));
             SetValue(dailyBriefing != null ? dailyBriefing.Find("Time") : null, model.HasRun
                 ? string.Format(UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_ap", "AP {0}"), model.ActionPoints)
-                : "—");
+                : string.Empty);
             for (int i = 0; i < DistrictMarkerNames.Length; i++)
                 SetValue(districtMap != null ? districtMap.Find("MapClip/" + DistrictMarkerNames[i] + "Marker/Label") : null,
                     UiShellRuntimeGateway.Localization.Get("operations.o001.map_" + DistrictMarkerNames[i].ToLowerInvariant(), DistrictMarkerFallbacks[i]));
@@ -83,12 +83,14 @@ namespace Game.UI.Runtime
                             "operations.o001.dashboard_" + ReadinessKeys[i], ReadinessFallbacks[i]));
                     int value = model.Readiness != null && i < model.Readiness.Length ? Mathf.Clamp(model.Readiness[i], 0, 100) : -1;
                     var valueText = card.Find("Value")?.GetComponent<TMP_Text>();
-                    SetValue(valueText, value < 0 ? "—" : value + "%");
+                    SetValue(valueText, value < 0
+                        ? (Game.Configs.GameLocalization.CurrentLocaleCode == "fa-IR" ? "پس از اعزام" : "DEPLOY FIRST") : value + "%");
+                    if (valueText != null && value < 0) { valueText.rectTransform.sizeDelta = new Vector2(220,44); valueText.fontSize = 30; }
                     for (int segment = 0; segment < 6; segment++)
                     {
                         var bar = card.Find("Segment" + segment)?.GetComponent<Image>();
-                        if (bar != null) bar.color = value >= 0 && segment < Mathf.CeilToInt(value * .06f)
-                            ? valueText.color : new Color32(39, 45, 45, 255);
+                        if (bar != null) { bar.gameObject.SetActive(value >= 0); bar.color = value >= 0 && segment < Mathf.CeilToInt(value * .06f)
+                            ? valueText.color : new Color32(39, 45, 45, 255); }
                     }
                 }
             if (warningButtons == null) return;
@@ -101,6 +103,11 @@ namespace Game.UI.Runtime
                 button.gameObject.SetActive(show);
                 if (!show) continue;
                 button.interactable = false;
+                if(count==0)
+                {
+                    button.GetComponent<V3GradientGraphic>()?.Configure(new Color(.08f,.12f,.14f),new Color(.03f,.05f,.06f),new Color(.3f,.4f,.45f),2);
+                    foreach(var graphic in button.GetComponentsInChildren<Graphic>()) if(graphic is TMP_Text || graphic is Image)graphic.color=Color.white;
+                }
                 var label = button.transform.Find("Label")?.GetComponent<TMP_Text>();
                 SetValue(label, i < count ? model.Warnings[i] : UiShellRuntimeGateway.Localization.Get(
                     model.HasRun ? "operations.o001.dashboard_no_warnings" : "operations.o001.dashboard_start",

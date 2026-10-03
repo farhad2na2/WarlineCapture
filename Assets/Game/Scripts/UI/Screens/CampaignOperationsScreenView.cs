@@ -257,6 +257,16 @@ namespace Game.UI.Runtime
         {
             if (target == null)
                 return;
+            if(target.name=="MissionNumber" && !string.IsNullOrEmpty(value))
+            {
+                var match=System.Text.RegularExpressions.Regex.Match(value,@"(?:CH(\d+)\s*·\s*)?M(?:ISSION\s*)?(\d+)");
+                if(match.Success)
+                {
+                    string chapter=match.Groups[1].Value.TrimStart('0'), number=match.Groups[2].Value.TrimStart('0');
+                    bool fa=Game.Configs.GameLocalization.CurrentLocaleCode==Game.Configs.GameLocalization.PersianLocaleCode;
+                    value=string.IsNullOrEmpty(chapter)?(fa?"ماموریت ":"MISSION ")+number:(fa?"فصل "+chapter+" · ماموریت "+number:"CHAPTER "+chapter+" · MISSION "+number);
+                }
+            }
             UiLocalizedText.Set(target, value);
             if (target.name == "MissionNumber" && value != null && value.Length > 4)
             {

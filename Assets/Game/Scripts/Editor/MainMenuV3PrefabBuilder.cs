@@ -42,6 +42,10 @@ namespace Game.Editor
         private const string ArmoryIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_ArmoryCrate_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
+        private const float RightColumnX = 1296f;
+        private const float RightColumnWidth = 360f;
+        private const float PanelGap = 12f;
+        private const float SettingsWidth = 118f;
         private static readonly Vector2 ReferenceResolution = new(1672f, 941f);
         private static readonly Color Border = new Color32(62, 76, 82, 255);
         private static readonly Color TextPrimary = new Color32(244, 245, 242, 255);
@@ -111,6 +115,7 @@ namespace Game.Editor
 
             MissionUiSerializedBindingsAuthoring.Apply(root);
             MenuAccountHeaderAuthoring.Apply(root);
+            MenuUiApprovedAuthoring.Apply(root, "main-menu");
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -488,7 +493,7 @@ namespace Game.Editor
         private static void BuildHeader(Transform root)
         {
             BuildLogo(root);
-            BuildVisibleResource(root, "CreditsVisualPanel", 1215f, 10f, 310f, 86f, "CREDITS", "—", creditsIcon, Amber);
+            BuildVisibleResource(root, "CreditsVisualPanel", RightColumnX, 10f, RightColumnWidth, 86f, "CREDITS", "—", creditsIcon, Amber);
             var value = root.Find("CreditsVisualPanel/Value").GetComponent<TMP_Text>();
             value.enableAutoSizing = true; value.fontSizeMin = 24; value.fontSizeMax = 40;
             root.gameObject.AddComponent<MainMenuAccountHeaderView>().Configure(value);
@@ -539,7 +544,7 @@ namespace Game.Editor
 
         private static void BuildSettingsButton(Transform root)
         {
-            RectTransform rect = CreateTopLeftRect("SettingsButton", root, 1537f, 10f, 118f, 86f);
+            RectTransform rect = CreateTopLeftRect("SettingsButton", root, RightColumnX - PanelGap - SettingsWidth, 10f, SettingsWidth, 86f);
             V3GradientGraphic fill = rect.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(23, 35, 39, 255), new Color32(14, 26, 30, 255), new Color32(5, 12, 15, 255), new Color32(8, 17, 20, 255), Border, 3f);
             Button button = rect.gameObject.AddComponent<Button>();
@@ -734,7 +739,7 @@ namespace Game.Editor
 
         private static void BuildAriaPanel(Transform root)
         {
-            RectTransform panel = CreateTopLeftRect("AriaPanel", root, 1296f, 108f, 360f, 285f);
+            RectTransform panel = CreateTopLeftRect("AriaPanel", root, RightColumnX, 408f, RightColumnWidth, 285f);
             V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(2, 18, 28, 252), new Color32(2, 24, 36, 252), new Color32(0, 7, 12, 254), new Color32(1, 12, 18, 254), Cyan, 3f);
             Image backdrop = CreateImage("SceneBackground", panel, AssetDatabase.LoadAssetAtPath<Sprite>(AriaBackdropPath), Color.white, false);
@@ -753,7 +758,7 @@ namespace Game.Editor
 
         private static void BuildCommanderPanel(Transform root)
         {
-            RectTransform panel=CreateTopLeftRect("CommanderPanel", root, 1296,405,360,288);
+            RectTransform panel=CreateTopLeftRect("CommanderPanel", root, RightColumnX,108,RightColumnWidth,288);
             var fill=panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.Configure(GraphiteTop,GraphiteBottom,Border,3);
             Image portrait=CreateImage("CommanderSceneVariant",panel,null,Color.white,false);
@@ -786,7 +791,7 @@ namespace Game.Editor
         }
         private static void BuildSecondaryButton(Transform root,string name,float y,string title,Sprite iconSprite,UIRoute route)
         {
-            RectTransform rect=CreateTopLeftRect(name,root,1296,y,360,100);
+            RectTransform rect=CreateTopLeftRect(name,root,RightColumnX,y,RightColumnWidth,100);
             var fill=rect.gameObject.AddComponent<V3GradientGraphic>(); fill.Configure(new Color32(6,105,172,255),new Color32(4,38,89,255),Cyan,2);
             RectTransform icon=CreateTopLeftRect("Icon",rect,14,10,82,80);
             if(route == UIRoute.Armory) BuildArmoryEmblem(icon); else BuildContentCollectionEmblem(icon);
@@ -1262,6 +1267,7 @@ namespace Game.Editor
             RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 100f), Vector2.zero);
             V3GradientGraphic gradient = rect.gameObject.AddComponent<V3GradientGraphic>();
             gradient.Configure(top, bottom, border, width);
+            gradient.raycastTarget = false;
             return gradient;
         }
 

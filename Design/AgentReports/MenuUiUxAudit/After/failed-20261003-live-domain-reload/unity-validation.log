@@ -1,0 +1,350 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MenuUiApprovedBuild.BuildAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] validation=Passed gradients=26 images=42
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:227)
+Game.Editor.MainMenuV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:123)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:13)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] result=Passed v3=True Campaign-led home with native portraits, informational Credits, and independent mode routes.
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:124)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:13)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignOperationsV3PrefabBuilder] validation=Passed gradients=47 images=76
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignOperationsV3PrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/CampaignOperationsV3PrefabBuilder.cs:246)
+Game.Editor.CampaignOperationsV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/CampaignOperationsV3PrefabBuilder.cs:155)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:14)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignOperationsV3PrefabBuilder] result=Passed states=2 map=SCN05_SahrinMissionMap_V3 chrome=procedural-shared
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignOperationsV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/CampaignOperationsV3PrefabBuilder.cs:156)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:14)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishSetupV3Validation] result=Passed gradients=17 scenarios=3
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishSetupPrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/SkirmishSetupPrefabBuilder.cs:160)
+Game.Editor.SkirmishSetupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SkirmishSetupPrefabBuilder.cs:130)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:15)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishSetupPrefabBuilder] result=Passed v3=True reference=1672x941 responsive=True
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishSetupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SkirmishSetupPrefabBuilder.cs:131)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:15)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationsDashboardV3PrefabBuilder] validation=Passed gradients=27 polygons=5 images=68
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationsDashboardV3PrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/OperationsDashboardV3PrefabBuilder.cs:131)
+Game.Editor.OperationsDashboardV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/OperationsDashboardV3PrefabBuilder.cs:94)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:16)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationsDashboardV3PrefabBuilder] result=Passed layout=1672x941 gradients=procedural borders=3 map=aspect-preserved aria=aspect-preserved atlas=operations-shared
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationsDashboardV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/OperationsDashboardV3PrefabBuilder.cs:95)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:16)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommanderProfileV3PrefabBuilder] validation=Passed gradients=31 images=44
+UnityEngine.Debug:Log (object)
+Game.Editor.CommanderProfileV3PrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/CommanderProfileV3PrefabBuilder.cs:132)
+Game.Editor.CommanderProfileV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/CommanderProfileV3PrefabBuilder.cs:90)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:17)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommanderProfileV3PrefabBuilder] result=Passed prefab rebuilt from shared commander art and procedural V3 chrome.
+UnityEngine.Debug:Log (object)
+Game.Editor.CommanderProfileV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/CommanderProfileV3PrefabBuilder.cs:91)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:17)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplashLoadingV3PrefabBuilder] validation=Passed rasterSprites=2 gradients=9 images=42
+UnityEngine.Debug:Log (object)
+Game.Editor.SplashLoadingV3PrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/SplashLoadingV3PrefabBuilder.cs:104)
+Game.Editor.SplashLoadingV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SplashLoadingV3PrefabBuilder.cs:46)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:18)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplashLoadingV3PrefabBuilder] result=Passed v3=True prefab rebuilt with one unique background and shared procedural chrome.
+UnityEngine.Debug:Log (object)
+Game.Editor.SplashLoadingV3PrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SplashLoadingV3PrefabBuilder.cs:47)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:18)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MenuUiApprovedBuild] result=Passed nativeScreens=5 loading=rebuilt
+UnityEngine.Debug:Log (object)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:19)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:432)
+Game.Editor.MenuUiAuditCapture/<RunAsync>d__8:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs:68)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiAuditCapture/<RunAsync>d__8> (Game.Editor.MenuUiAuditCapture/<RunAsync>d__8&)
+Game.Editor.MenuUiAuditCapture:RunAsync (System.ValueTuple`3<int, int, string>[],bool)
+Game.Editor.MenuUiAuditCapture:RunAfterChecked () (at Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs:44)
+Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0:MoveNext () (at Assets/Game/Scripts/Editor/MenuUiApprovedBuild.cs:20)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<int>:Start<Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0> (Game.Editor.MenuUiApprovedBuild/<BuildAndCapture>d__0&)
+Game.Editor.MenuUiApprovedBuild:BuildAndCapture ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_20a94970/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Assets/Game/Scripts/Editor/CH02M01GridlockWatchProbe.cs(140,104): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M01GridlockWatchProbe.cs(140,31): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayConfigBuilder.cs(61,164): warning CS0728: Possibly incorrect assignment to local 'blob' which is the argument to a using or lock statement. The Dispose call or unlocking will happen on the original value of the local.
+Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs(178,106): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs(178,33): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs(196,127): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs(196,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M03MarketLifelineInputProbe.cs(244,111): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M03MarketLifelineInputProbe.cs(244,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M03MarketLifelineInputProbe.cs(303,146): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M03MarketLifelineInputProbe.cs(303,57): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(58,585): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(58,512): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(64,127): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(64,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(77,119): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(77,46): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(78,176): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M04PowerRelayInputProbe.cs(78,102): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH04M04GroundedSignalInputProbe.cs(187,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH04M04GroundedSignalInputProbe.cs(187,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH04M04GroundedSignalInputProbe.cs(215,100): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH04M04GroundedSignalInputProbe.cs(215,35): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M05RouteReopenedInputProbe.cs(92,301): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M05RouteReopenedInputProbe.cs(92,228): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH02M05RouteReopenedInputProbe.cs(97,127): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH02M05RouteReopenedInputProbe.cs(97,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs(194,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs(194,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs(197,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH04M05ArmorBreakInputProbe.cs(197,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(230,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(230,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(233,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(233,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(361,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(361,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs(242,106): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs(242,30): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(238,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(238,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(241,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(241,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(255,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(255,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(258,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(258,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(342,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(342,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(263,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(263,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(266,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(266,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(304,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseInputProbe.cs(304,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(243,131): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(243,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(249,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(249,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(252,147): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(252,74): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(330,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M04LastCorridorInputProbe.cs(330,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(436,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(436,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(315,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs(315,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Presentation.cs(20,86): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Presentation.cs(20,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs(74,74): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs(74,29): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs(114,83): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs(114,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs(51,111): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs(51,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs(168,115): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs(168,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/SettingsPopupPrefabBuilder.cs(896,13): warning CS0618: 'TMP_Text.enableWordWrapping' is obsolete: 'The enabledWordWrapping property is now obsolete. Please use the textWrappingMode property instead.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs(214,128): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs(214,41): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs(478,91): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs(478,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationMapRenderInfrastructureEligibilityPolicy.cs(75,68): warning CS0618: 'Projector' is obsolete: 'Projector component is deprecated now that the Built-In Render Pipeline is deprecated. To use an alternative, refer to the documentation in the component help icon. #from(6000.5)'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(303,118): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(303,44): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(349,145): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(349,50): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(397,135): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(397,40): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(456,140): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(456,45): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(551,142): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(551,47): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(887,137): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(887,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(898,129): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(898,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(915,133): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(915,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(920,110): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs(920,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,86): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(50,81): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(50,32): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(64,101): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(64,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(84,97): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(84,52): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(85,102): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(85,50): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(109,78): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiApprovedInputReview.cs(109,26): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs(192,81): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs(192,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs(207,81): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MenuUiAuditCapture.cs(207,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftMediaImporter.cs(47,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M03RadarWarningMediaImporter.cs(40,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(47,107): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(47,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(56,103): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(56,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(122,146): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(122,73): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(138,88): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(138,25): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M01ComicVoicePlaybackProbe.cs(50,78): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M01ComicVoicePlaybackProbe.cs(50,26): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(217,121): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftAirfieldInputProbe.cs(217,56): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,96): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,31): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,41): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/HudButtonIconNativeValidation.cs(159,89): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/HudButtonIconNativeValidation.cs(159,33): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(171,69): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(171,24): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(227,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(227,35): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,112): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,39): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,122): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,111): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/CH05M01CitywideAlertInputProbe.cs(30,95): warning CS0414: The field 'CH05M01CitywideAlertInputProbe.closeChecked' is assigned but its value is never used
+Assets/Game/Scripts/Editor/CH05M02TrustUnderFireInputProbe.cs(30,95): warning CS0414: The field 'CH05M02TrustUnderFireInputProbe.closeChecked' is assigned but its value is never used
+Assets/Game/Scripts/Editor/CH05M03NetworkCollapseRulesValidation.cs(43,13): warning EA0002: You should only construct new CampaignMissionDefinitionBlob
+[ExistingEditorValidation] result=Failed reason=domain-reload executeMethod=Game.Editor.MenuUiApprovedBuild.BuildAndCapture

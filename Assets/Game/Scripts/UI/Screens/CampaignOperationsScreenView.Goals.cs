@@ -52,7 +52,7 @@ namespace Game.UI.Runtime
         {
             if(labels == null || index >= labels.Length || labels[index] == null) return;
             labels[index].enableAutoSizing = true;
-            labels[index].fontSizeMin = 10; labels[index].fontSizeMax = 14;
+            labels[index].fontSizeMin = 30; labels[index].fontSizeMax = 30;
             labels[index].text = text;
         }
     }

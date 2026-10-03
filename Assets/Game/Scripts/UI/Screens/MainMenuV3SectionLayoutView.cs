@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Game.Configs;
 
 namespace Game.UI.Runtime
 {
@@ -25,6 +26,19 @@ namespace Game.UI.Runtime
         public float WidthFactor => widthFactor;
     }
 
+    [Serializable]
+    public struct MenuFrameTarget
+    {
+        public RectTransform Target;
+        public Vector2 Position, Size, PositionGrowth, SizeGrowth;
+        public bool Mirror;
+        public MenuFrameTarget(RectTransform target, Vector2 positionGrowth, Vector2 sizeGrowth, bool mirror = false)
+        {
+            Target = target; Position = target.anchoredPosition; Size = target.sizeDelta;
+            PositionGrowth = positionGrowth; SizeGrowth = sizeGrowth; Mirror = mirror;
+        }
+    }
+
     public enum MainMenuV3SectionAlignment : byte
     {
         TopLeft,
@@ -46,6 +60,53 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform[] widthExpandedTargets = Array.Empty<RectTransform>();
         [SerializeField] private MainMenuV3HorizontalResponsiveTarget[] horizontalResponsiveTargets =
             Array.Empty<MainMenuV3HorizontalResponsiveTarget>();
+
+        [SerializeField] private bool useMenuFrame;
+        [SerializeField] private MenuFrameTarget[] menuFrameTargets = Array.Empty<MenuFrameTarget>();
+        private Rect _lastSafeArea;
+        private string _lastLocale;
+        public void ConfigureMenuFrame(MenuFrameTarget[] targets)
+        {
+            useMenuFrame = true;
+            menuFrameTargets = targets;
+            RefreshLayout();
+        }
+        private void ApplyMenuFrame(RectTransform canvasRect)
+        {
+            Rect safe = Screen.width > 0 && Screen.height > 0 ? Screen.safeArea : new Rect(0, 0, 1, 1);
+            Vector2 screenSize = new Vector2(Mathf.Max(1, Screen.width), Mathf.Max(1, Screen.height));
+            Rect c = canvasRect.rect;
+            float left = c.xMin + c.width * safe.xMin / screenSize.x + 24f;
+            float top = c.yMin + c.height * safe.yMax / screenSize.y - 24f;
+            float width = c.width * safe.width / screenSize.x - 48f;
+            float height = c.height * safe.height / screenSize.y - 48f;
+            float scale = Mathf.Min(width / referenceResolution.x, height / referenceResolution.y);
+            if (scale <= 0) return;
+            Vector2 extra = new Vector2(width / scale, height / scale) - referenceResolution;
+            _rectTransform.anchorMin = _rectTransform.anchorMax = new Vector2(.5f, .5f);
+            _rectTransform.pivot = new Vector2(0, 1);
+            _rectTransform.sizeDelta = referenceResolution + extra;
+            float parentScale = transform.parent.lossyScale.x;
+            if (Mathf.Abs(parentScale) < .0001f) return;
+            _rectTransform.localScale = Vector3.one * scale * canvasRect.lossyScale.x / parentScale;
+            _rectTransform.localRotation = Quaternion.identity;
+            _rectTransform.position = canvasRect.TransformPoint(new Vector3(left, top, 0));
+            bool rtl = GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode;
+            foreach (var rule in menuFrameTargets)
+            {
+                if (rule.Target == null) continue;
+                Vector2 size = rule.Size + Vector2.Scale(extra, rule.SizeGrowth);
+                Vector2 position = rule.Position + new Vector2(extra.x * rule.PositionGrowth.x, -extra.y * rule.PositionGrowth.y);
+                rule.Target.sizeDelta = size;
+                if (rtl && rule.Mirror && rule.Target.parent is RectTransform parent)
+                    position.x = parent.rect.width - position.x - size.x;
+                rule.Target.anchoredPosition = position;
+            }
+            _lastSafeArea = safe; _lastLocale = GameLocalization.CurrentLocaleCode;
+            _lastCanvasSize = canvasRect.rect.size;
+            LastAppliedScale = scale; LastAppliedExtraWidth = extra.x;
+            LayoutApplied?.Invoke();
+        }
 
         private RectTransform _rectTransform;
         // These authored reference-space values must survive prefab serialization. The
@@ -137,6 +198,12 @@ namespace Game.UI.Runtime
             {
                 if (_rectTransform == null)
                     _rectTransform = (RectTransform)transform;
+                if (useMenuFrame)
+                {
+                    _previewTracker.Clear();
+                    ApplyMenuFrame(canvasRect);
+                    return;
+                }
                 TrackDrivenLayoutProperties();
                 if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
                     centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
@@ -206,7 +273,7 @@ namespace Game.UI.Runtime
         {
             // A fixed-size composition need not receive a dimensions callback when
             // CanvasScaler changes the root's logical size. Resolve that change before rendering.
-            if (_canvasRect != null && _canvasRect.rect.size != _lastCanvasSize)
+            if (_canvasRect != null && (useMenuFrame || _canvasRect.rect.size != _lastCanvasSize))
                 RefreshLayout();
         }
 

@@ -67,6 +67,7 @@ namespace Game.UI.Runtime
         {
             ExitCommanderRoute(contentView);
             GameObject prefab = contentView.MainMenuContentPrefab;
+            contentView.InstallSection(prefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
             GameObject left = contentView.InstallSection(prefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
             GameObject middle = contentView.InstallSection(prefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
             GameObject right = contentView.InstallSection(prefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);

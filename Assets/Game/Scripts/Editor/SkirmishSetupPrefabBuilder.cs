@@ -117,6 +117,7 @@ namespace Game.Editor
 
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             MenuAccountHeaderAuthoring.Apply(root);
+            MenuUiApprovedAuthoring.Apply(root, "skirmish");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -970,6 +971,7 @@ namespace Game.Editor
                 UIShellRouteButtonView route = target.GetComponent<UIShellRouteButtonView>() ?? target.AddComponent<UIShellRouteButtonView>();
                 route.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.QuickCustomSetup, true);
             MenuAccountHeaderAuthoring.Apply(root);
+
                 PrefabUtility.SaveAsPrefabAsset(root, MainMenuPrefabPath);
             }
             finally

@@ -1,0 +1,1 @@
+Failed validation: the native builders completed, but a script import triggered a domain reload before capture. The existing-Editor wrapper correctly rejected the run (exit 1). No screenshot or readiness pass claimed. Validation-owned temporary save/refresh state was inspected and cleaned before retrying.

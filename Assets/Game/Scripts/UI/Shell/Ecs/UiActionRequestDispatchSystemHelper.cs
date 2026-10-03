@@ -74,6 +74,15 @@ namespace Game.UI.Shell.Ecs
                 case UiActionKind.ClosePause:
                     EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
                     break;
+                case UiActionKind.SelectCommanderPortrait:
+                    if (request.PayloadId >= 0 && request.PayloadId < 6)
+                    {
+                        var saves = SaveService.CreateDefault();
+                        var profile = saves.LoadProfile();
+                        profile.firstLaunchCommanderPortraitIndex = request.PayloadId;
+                        saves.SaveProfile(profile);
+                    }
+                    break;
                 case UiActionKind.OpenSettings:
                     UiShellRuntimeGateway.CancelSupport();
                     EnqueuePopup(popupRequests, UiShellPopupKind.Settings, UiShellPopupIntent.Show, request.PayloadId);

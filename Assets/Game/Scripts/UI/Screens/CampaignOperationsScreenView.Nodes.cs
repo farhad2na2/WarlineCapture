@@ -64,7 +64,7 @@ namespace Game.UI.Runtime
         {
             if (rect == null || rect.pivot.x > 0.2f)
                 return;
-            float next = selected ? 86f : 66f;
+            float next = selected ? 118f : 110f;
             Vector2 center = rect.anchoredPosition + new Vector2(rect.sizeDelta.x * 0.5f, -rect.sizeDelta.y * 0.5f);
             rect.sizeDelta = new Vector2(next, next);
             rect.anchoredPosition = new Vector2(center.x - next * 0.5f, center.y + next * 0.5f);

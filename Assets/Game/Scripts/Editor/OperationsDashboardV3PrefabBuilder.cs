@@ -83,6 +83,7 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             MenuAccountHeaderAuthoring.Apply(root.gameObject);
+            MenuUiApprovedAuthoring.Apply(root.gameObject, "operations");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

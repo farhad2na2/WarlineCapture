@@ -104,7 +104,7 @@ namespace Game.UI.Contracts
         ResourceExchangeQueueRush,
         ResourceExchangeQueueCancel,
         ClosePause,
-        CloseSupport, SelectSupport, BeginSupportTargeting, ConfirmSupport, CancelSupport, ApproveSupport, DeclineSupport, CollectSupply
+        CloseSupport, SelectSupport, BeginSupportTargeting, ConfirmSupport, CancelSupport, ApproveSupport, DeclineSupport, CollectSupply, SelectCommanderPortrait
     }
 
     public enum UiBuildProductionActionKind : byte
@@ -276,12 +276,17 @@ namespace Game.UI.Contracts
         public readonly string Name;
         public readonly string Subtitle;
         public readonly string PortraitClass;
+        public readonly int Level, Xp, Victories, Defeats, Missions, Stars, Enemies, UnitsLost;
 
-        public UiShellCommanderProfileModel(string name, string subtitle, string portraitClass)
+        public UiShellCommanderProfileModel(string name, string subtitle, string portraitClass,
+            int level = 1, int xp = 0, int victories = 0, int defeats = 0, int missions = 0,
+            int stars = 0, int enemies = 0, int unitsLost = 0)
         {
             Name = name;
             Subtitle = subtitle;
             PortraitClass = portraitClass;
+            Level = level; Xp = xp; Victories = victories; Defeats = defeats;
+            Missions = missions; Stars = stars; Enemies = enemies; UnitsLost = unitsLost;
         }
     }
 

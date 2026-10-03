@@ -26,7 +26,7 @@ namespace Game.Composition
                 boundary,
                 progress01,
                 complete,
-                complete ? "Command shell ready" : "Loading command shell");
+                complete ? "Ready" : "Loading");
         }
 
         private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete, string status)

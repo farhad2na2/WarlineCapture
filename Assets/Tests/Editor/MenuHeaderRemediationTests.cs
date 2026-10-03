@@ -21,6 +21,75 @@ using TMPro;
 
 public sealed class MenuHeaderRemediationTests
 {
+    // Native prefab geometry/captures only; this fixture is not player-input acceptance.
+    public static void BuildAndCaptureColumnAlignment()
+    {
+        string output = "Design/AgentReports/MenuUiUxAudit/After/main-menu-columns-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+        Directory.CreateDirectory(output);
+        World previous = World.DefaultGameObjectInjectionWorld;
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
+        bool passed = false;
+        using var world = new World("main-menu-column-geometry-fixture");
+        try
+        {
+            MainMenuV3PrefabBuilder.Build();
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            CreatePresentation(world, CampaignMissionSequence.SteelPush, false, 0x1ffff);
+            foreach (string locale in new[] { "en", "fa-IR" })
+            {
+                GameLocalization.Initialize(catalog, locale, persist: false);
+                foreach (var size in new[] { (1920, 1080), (2400, 1080), (2048, 1536) })
+                {
+                    MainMenuV3PrefabBuilder.CaptureConfigured(
+                        output + "/main-menu-" + locale + "-" + size.Item1 + "x" + size.Item2 + ".png",
+                        size.Item1, size.Item2, instance =>
+                        {
+                            Canvas.ForceUpdateCanvases();
+                            foreach (var layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+                                layout.RefreshLayout();
+                            Canvas.ForceUpdateCanvases();
+                            string[] paths =
+                            {
+                                "HeaderContent/CreditsVisualPanel", "RightContent/CommanderPanel",
+                                "RightContent/AriaPanel", "FooterContent/StoreButton", "FooterContent/OpenArmoryButton"
+                            };
+                            var reference = new Vector3[4];
+                            ((RectTransform)instance.transform.Find(paths[0])).GetWorldCorners(reference);
+                            foreach (string path in paths)
+                            {
+                                var corners = new Vector3[4];
+                                ((RectTransform)instance.transform.Find(path)).GetWorldCorners(corners);
+                                Assert.That(corners[0].x, Is.EqualTo(reference[0].x).Within(0.5f), path + " left edge");
+                                Assert.That(corners[3].x, Is.EqualTo(reference[3].x).Within(0.5f), path + " right edge");
+                            }
+                            var gear = new Vector3[4];
+                            ((RectTransform)instance.transform.Find("HeaderContent/SettingsButton")).GetWorldCorners(gear);
+                            if (locale == "fa-IR")
+                                Assert.Greater(gear[0].x, reference[3].x, "RTL Settings must be right of Credits without overlap");
+                            else
+                                Assert.Less(gear[3].x, reference[0].x, "Settings must be left of Credits without overlap");
+                        });
+                }
+            }
+            passed = true;
+            Debug.Log("[MainMenuColumnAlignment] result=Passed nativeCaptures=6 alignedPanels=5 locales=en,fa-IR ratios=16:9,20:9,4:3 presentationFixture=True gameplayAcceptance=False output=" + output);
+        }
+        catch (Exception error)
+        {
+            Debug.LogException(error);
+            Debug.LogError("[MainMenuColumnAlignment] result=Failed output=" + output);
+        }
+        finally
+        {
+            GameLocalization.Initialize(catalog, previousLocale, persist: false);
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            ValidationExit.Exit(passed ? 0 : 1);
+        }
+    }
+
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     public static void RunM05GuidedJourney()
     {

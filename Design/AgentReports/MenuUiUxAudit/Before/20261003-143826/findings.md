@@ -1,0 +1,567 @@
+## main-menu-en-2400x1080
+- text-offscreen SafeArea/DevelopmentReviewerControls/PlayPauseButton/Label "PAUSE" rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- text-offscreen SafeArea/DevelopmentReviewerControls/PreviousButton/Label "PREV" rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SUBTITLES" rect=(x:2007.99, y:658.79, width:404.00, height:106.05)
+- tiny-text 10dp SafeArea/PlaybackControls/SubtitlesButton/Label "SUBTITLES"
+- tiny-text 10dp SafeArea/PlaybackControls/PauseButton/Label "PAUSE"
+- tiny-text 9dp NarrativeLayer/SafeArea/ComicTimeline/Page "4 / 26"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Language "ﻓﺎﺭﺳﯽ"
+- tiny-text 9dp NarrativeLayer/SafeArea/LocationIntroduction/DistrictAndTime "OLD MARKET / 10:00 LOCAL"
+- tiny-text 10dp NarrativeLayer/SafeArea/Dialogue/SpeakerRole "JRC FIELD COMMAND"
+- tiny-text 10dp SCN01_LoadingContent/SplashChromeReference/IntegratedLoadingFooter/TipText "Scout streets before committing armor."
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/StateIdLabel "FL-P01" rect=(x:-681.11, y:651.21, width:883.74, height:121.20)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SAFE AREA" rect=(x:2543.29, y:658.79, width:404.00, height:106.05)
+- tiny-text 10dp NarrativeLayer/SafeArea/ComicTimeline/State "FL-P04"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Sample "ﻣﺮﺩﻡ ﺑﻪ ﻣﺎ ﺍﻣﯿﺪ ﺩﺍﺭﻧﺪ. ﺁﻥﻫﺎ ﺭﺍ ﺍﯾﻤﻦ ﻧﮕﻪ …"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/ReducedMotionLabel "REDUCED MOTION" rect=(x:2283.21, y:893.61, width:580.74, height:121.20)
+- small-target 38dp ContentRoot/LeftContent/Card_Campaign/ContinueButton
+- small-target 39dp HeaderRegion/ContentRoot/HeaderContent/SettingsButton
+- small-target 37dp RightContent/CommanderPanel/ViewCommanderButton/CommanderPanelHotspot
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/NextButton rect=(x:-1.89, y:870.89, width:333.30, height:171.70)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PreviousButton rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PlayPauseButton rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- fonts: Oxanium-Bold SDFx44, Oxanium-Medium SDFx16, NotoSansArabic-Narrative SDFx2
+- text sizes dp: 9x2, 10x5, 11x8, 12x8, 13x2, 14x3, 15x3, 16x2, 17x1, 19x1, 20x5, 21x1, 22x4, 23x2, 24x3, 27x1, 29x1, 30x7, 31x1, 38x2
+- totals overflow=2 tiny=7 smallTargets=3 edge/offscreen=9
+
+## campaign-en-2400x1080
+- text-offscreen SafeArea/DevelopmentReviewerControls/PlayPauseButton/Label "PAUSE" rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- text-offscreen SafeArea/DevelopmentReviewerControls/PreviousButton/Label "PREV" rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- tiny-text 9dp CampaignComposition/MissionSelectState/MissionBriefing/GoalsTitle "MISSION GOALS"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SUBTITLES" rect=(x:2007.99, y:658.79, width:404.00, height:106.05)
+- tiny-text 10dp SafeArea/PlaybackControls/SubtitlesButton/Label "SUBTITLES"
+- tiny-text 7dp MapClip/MissionNode_4/MissionLabel/Name "Evidence Chain"
+- tiny-text 5dp MissionSelectState/MissionBriefing/Goal0/Copy "Complete the mission"
+- tiny-text 10dp SafeArea/PlaybackControls/PauseButton/Label "PAUSE"
+- tiny-text 9dp NarrativeLayer/SafeArea/ComicTimeline/Page "4 / 26"
+- tiny-text 7dp MapClip/MissionNode_1/MissionLabel/Name "Signal Trace"
+- tiny-text 7dp MissionSelectState/ChapterRail/ChapterCard_5/Subtitle "M01–M05 READY"
+- tiny-text 8dp MapClip/MissionNode_3/MissionLabel/Id "M03"
+- tiny-text 8dp MapClip/MissionNode_5/MissionLabel/Id "M05"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Language "ﻓﺎﺭﺳﯽ"
+- tiny-text 6dp MissionSelectState/MissionBriefing/Objective/Label "Verify both observation points"
+- tiny-text 9dp SCN05_CampaignOperationsContent/CampaignComposition/CreditsChip/Label "CREDITS"
+- tiny-text 9dp NarrativeLayer/SafeArea/LocationIntroduction/DistrictAndTime "OLD MARKET / 10:00 LOCAL"
+- tiny-text 7dp MapClip/MissionNode_2/MissionLabel/Name "Safehouse Sweep"
+- tiny-text 10dp CampaignComposition/MissionSelectState/MissionBriefing/RewardsTitle "REWARDS"
+- tiny-text 6dp CampaignComposition/MissionSelectState/MissionBriefing/MissionBriefingText "A sealed report points at an unconfirmed…"
+- tiny-text 10dp NarrativeLayer/SafeArea/Dialogue/SpeakerRole "JRC FIELD COMMAND"
+- tiny-text 7dp MissionSelectState/ChapterRail/ChapterCard_3/Subtitle "HIDDEN NETWORK"
+- tiny-text 8dp MapClip/MissionNode_2/MissionLabel/Id "M02"
+- tiny-text 10dp SCN01_LoadingContent/SplashChromeReference/IntegratedLoadingFooter/TipText "Scout streets before committing armor."
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/StateIdLabel "FL-P01" rect=(x:-681.11, y:651.21, width:883.74, height:121.20)
+- tiny-text 8dp MapClip/MissionNode_4/MissionLabel/Id "M04"
+- tiny-text 10dp CampaignComposition/MissionSelectState/MissionBriefing/ObjectivesTitle "OBJECTIVES"
+- tiny-text 8dp CampaignComposition/MissionSelectState/MissionBriefing/RewardSummaryText "1,300 Commander XP · 6,500 Credits"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SAFE AREA" rect=(x:2543.29, y:658.79, width:404.00, height:106.05)
+- tiny-text 7dp MissionSelectState/ChapterRail/ChapterCard_1/Subtitle "FIRST RESPONSE"
+- tiny-text 5dp MissionSelectState/MissionBriefing/Goal2/Copy "Finish within 7 minutes"
+- tiny-text 8dp MapClip/MissionNode_1/MissionLabel/Id "M01"
+- tiny-text 7dp MissionSelectState/ChapterRail/ChapterCard_2/Subtitle "BROKEN GRID"
+- tiny-text 6dp MissionSelectState/MissionBriefing/Objective/Label "Escort all three civilian vehicles"
+- tiny-text 10dp NarrativeLayer/SafeArea/ComicTimeline/State "FL-P04"
+- tiny-text 6dp MissionSelectState/MissionBriefing/Objective/Label "Defeat the confirmed ambush and hold the…"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Sample "ﻣﺮﺩﻡ ﺑﻪ ﻣﺎ ﺍﻣﯿﺪ ﺩﺍﺭﻧﺪ. ﺁﻥﻫﺎ ﺭﺍ ﺍﯾﻤﻦ ﻧﮕﻪ …"
+- tiny-text 7dp MapClip/MissionNode_5/MissionLabel/Name "Network Break"
+- tiny-text 7dp MissionSelectState/ChapterRail/ChapterCard_4/Subtitle "M01–M05 READY"
+- tiny-text 7dp MapClip/MissionNode_3/MissionLabel/Name "False Front"
+- tiny-text 5dp MissionSelectState/MissionBriefing/Goal1/Copy "All three civilian vehicles survive"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/ReducedMotionLabel "REDUCED MOTION" rect=(x:2283.21, y:893.61, width:580.74, height:121.20)
+- small-target 39dp HeaderRegion/ContentRoot/HeaderContent/SettingsButton
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/NextButton rect=(x:-1.89, y:870.89, width:333.30, height:171.70)
+- small-target 43dp ContentRoot/SCN05_CampaignOperationsContent/CampaignComposition/SettingsButton
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PreviousButton rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PlayPauseButton rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- fonts: Oxanium-Bold SDFx77, Oxanium-Medium SDFx12, NotoSansArabic-Narrative SDFx2
+- text sizes dp: 5x3, 6x4, 7x10, 8x6, 9x4, 10x7, 11x9, 12x7, 13x3, 14x5, 15x1, 16x3, 19x1, 20x6, 21x1, 22x2, 23x2, 24x7, 27x1, 29x1, 30x7, 31x1
+- totals overflow=2 tiny=34 smallTargets=2 edge/offscreen=9
+
+## skirmish-en-2400x1080
+- tiny-text 9dp Viewport/Content/ScenarioCard_S088/Label "S088  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S088/Label "S088  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-10026.44, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S008/Label "S008  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S008/Label "S008  Desert Base · Frontline Control · …" rect=(x:43.61, y:-537.13, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S059/Label "S059  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S059/Label "S059  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6620.02, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S001/Label "S001  DESERT BASE READY · SELECTED"
+- text-offscreen SafeArea/DevelopmentReviewerControls/PlayPauseButton/Label "PAUSE" rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S029/Label "S029  City Crossroads · Base Assault · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S029/Label "S029  City Crossroads · Base Assault · C…" rect=(x:43.61, y:-2970.29, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S113/Label "S113  Airfield Plains · Breakthrough · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S113/Label "S113  Airfield Plains · Breakthrough · C…" rect=(x:43.61, y:-13067.88, width:1665.46, height:101.00)
+- text-offscreen SafeArea/DevelopmentReviewerControls/PreviousButton/Label "PREV" rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S027/Label "S027  City Crossroads · Base Assault · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S027/Label "S027  City Crossroads · Base Assault · A…" rect=(x:43.61, y:-2726.97, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S061/Label "S061  Mountain Pass · Breakthrough · Gro…"
+- text-offscreen Viewport/Content/ScenarioCard_S061/Label "S061  Mountain Pass · Breakthrough · Gro…" rect=(x:43.61, y:-6863.34, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S109/Label "S109  Airfield Plains · Breakthrough · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S109/Label "S109  Airfield Plains · Breakthrough · G…" rect=(x:43.61, y:-12581.25, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S094/Label "S094  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S094/Label "S094  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10756.39, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S099/Label "S099  Airfield Plains · Base Assault · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S099/Label "S099  Airfield Plains · Base Assault · A…" rect=(x:43.61, y:-11364.68, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S057/Label "S057  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S057/Label "S057  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6376.71, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S085/Label "S085  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S085/Label "S085  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-9661.47, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S114/Label "S114  Airfield Plains · Breakthrough · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S114/Label "S114  Airfield Plains · Breakthrough · C…" rect=(x:43.61, y:-13189.54, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S025/Label "S025  CITY CROSSROADS READY · SELECT"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S066/Label "S066  Mountain Pass · Breakthrough · Com…"
+- text-offscreen Viewport/Content/ScenarioCard_S066/Label "S066  Mountain Pass · Breakthrough · Com…" rect=(x:43.61, y:-7471.63, width:1665.46, height:101.00)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SUBTITLES" rect=(x:2007.99, y:658.79, width:404.00, height:106.05)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S039/Label "S039  City Crossroads · Breakthrough · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S039/Label "S039  City Crossroads · Breakthrough · A…" rect=(x:43.61, y:-4186.87, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S047/Label "S047  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S047/Label "S047  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-5160.13, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S083/Label "S083  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S083/Label "S083  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-9418.15, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S079/Label "S079  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S079/Label "S079  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-8931.52, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S041/Label "S041  City Crossroads · Breakthrough · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S041/Label "S041  City Crossroads · Breakthrough · C…" rect=(x:43.61, y:-4430.18, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S065/Label "S065  Mountain Pass · Breakthrough · Com…"
+- text-offscreen Viewport/Content/ScenarioCard_S065/Label "S065  Mountain Pass · Breakthrough · Com…" rect=(x:43.61, y:-7349.97, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S072/Label "S072  Mountain Pass · Convoy Escort · Co…"
+- text-offscreen Viewport/Content/ScenarioCard_S072/Label "S072  Mountain Pass · Convoy Escort · Co…" rect=(x:43.61, y:-8201.57, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S017/Label "S017  Desert Base · Breakthrough · Combi…"
+- text-offscreen Viewport/Content/ScenarioCard_S017/Label "S017  Desert Base · Breakthrough · Combi…" rect=(x:43.61, y:-1632.05, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S112/Label "S112  Airfield Plains · Breakthrough · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S112/Label "S112  Airfield Plains · Breakthrough · A…" rect=(x:43.61, y:-12946.23, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S037/Label "S037  City Crossroads · Breakthrough · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S037/Label "S037  City Crossroads · Breakthrough · G…" rect=(x:43.61, y:-3943.55, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S074/Label "S074  Industrial Basin · Base Assault · …"
+- text-offscreen Viewport/Content/ScenarioCard_S074/Label "S074  Industrial Basin · Base Assault · …" rect=(x:43.61, y:-8323.23, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S038/Label "S038  City Crossroads · Breakthrough · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S038/Label "S038  City Crossroads · Breakthrough · G…" rect=(x:43.61, y:-4065.21, width:1665.46, height:101.00)
+- tiny-text 10dp SafeArea/PlaybackControls/SubtitlesButton/Label "SUBTITLES"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S004/Label "S004  Desert Base · Base Assault · Air M…"
+- text-offscreen Viewport/Content/ScenarioCard_S004/Label "S004  Desert Base · Base Assault · Air M…" rect=(x:43.61, y:-50.50, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S002/Label "S002  Desert Base · Base Assault · Estab…"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S052/Label "S052  Mountain Pass · Base Assault · Air…"
+- text-offscreen Viewport/Content/ScenarioCard_S052/Label "S052  Mountain Pass · Base Assault · Air…" rect=(x:43.61, y:-5768.42, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S068/Label "S068  Mountain Pass · Convoy Escort · Gr…"
+- text-offscreen Viewport/Content/ScenarioCard_S068/Label "S068  Mountain Pass · Convoy Escort · Gr…" rect=(x:43.61, y:-7714.94, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S106/Label "S106  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S106/Label "S106  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-12216.28, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S032/Label "S032  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S032/Label "S032  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3335.26, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S030/Label "S030  City Crossroads · Base Assault · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S030/Label "S030  City Crossroads · Base Assault · C…" rect=(x:43.61, y:-3091.95, width:1665.46, height:101.00)
+- tiny-text 10dp SafeArea/PlaybackControls/PauseButton/Label "PAUSE"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S105/Label "S105  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S105/Label "S105  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-12094.62, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_DB/Label "DESERT"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S060/Label "S060  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S060/Label "S060  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6741.68, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S036/Label "S036  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S036/Label "S036  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3821.89, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S111/Label "S111  Airfield Plains · Breakthrough · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S111/Label "S111  Airfield Plains · Breakthrough · A…" rect=(x:43.61, y:-12824.57, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S118/Label "S118  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S118/Label "S118  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13676.17, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S043/Label "S043  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S043/Label "S043  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-4673.50, width:1665.46, height:101.00)
+- tiny-text 9dp NarrativeLayer/SafeArea/ComicTimeline/Page "4 / 26"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S006/Label "S006  Desert Base · Base Assault · Combi…"
+- text-offscreen Viewport/Content/ScenarioCard_S006/Label "S006  Desert Base · Base Assault · Combi…" rect=(x:43.61, y:-293.82, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S082/Label "S082  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S082/Label "S082  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-9296.49, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S104/Label "S104  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S104/Label "S104  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-11972.96, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S097/Label "S097  Airfield Plains · Base Assault · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S097/Label "S097  Airfield Plains · Base Assault · G…" rect=(x:43.61, y:-11121.36, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S067/Label "S067  Mountain Pass · Convoy Escort · Gr…"
+- text-offscreen Viewport/Content/ScenarioCard_S067/Label "S067  Mountain Pass · Convoy Escort · Gr…" rect=(x:43.61, y:-7593.28, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S108/Label "S108  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S108/Label "S108  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-12459.59, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S023/Label "S023  Desert Base · Convoy Escort · Comb…"
+- text-offscreen Viewport/Content/ScenarioCard_S023/Label "S023  Desert Base · Convoy Escort · Comb…" rect=(x:43.61, y:-2362.00, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S069/Label "S069  Mountain Pass · Convoy Escort · Ai…"
+- text-offscreen Viewport/Content/ScenarioCard_S069/Label "S069  Mountain Pass · Convoy Escort · Ai…" rect=(x:43.61, y:-7836.60, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S020/Label "S020  Desert Base · Convoy Escort · Grou…"
+- text-offscreen Viewport/Content/ScenarioCard_S020/Label "S020  Desert Base · Convoy Escort · Grou…" rect=(x:43.61, y:-1997.02, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S096/Label "S096  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S096/Label "S096  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10999.70, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S116/Label "S116  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S116/Label "S116  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13432.86, width:1665.46, height:101.00)
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Language "ﻓﺎﺭﺳﯽ"
+- tiny-text 9dp SCN13_SkirmishSetupContent/SkirmishSetupComposition/OperationPreview/BattleLibraryCount "SHOWING 120 OF 120 BATTLES"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S026/Label "S026  City Crossroads · Base Assault · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S026/Label "S026  City Crossroads · Base Assault · G…" rect=(x:43.61, y:-2605.31, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S024/Label "S024  Desert Base · Convoy Escort · Comb…"
+- text-offscreen Viewport/Content/ScenarioCard_S024/Label "S024  Desert Base · Convoy Escort · Comb…" rect=(x:43.61, y:-2483.66, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S005/Label "S005  Desert Base · Base Assault · Combi…"
+- text-offscreen Viewport/Content/ScenarioCard_S005/Label "S005  Desert Base · Base Assault · Combi…" rect=(x:43.61, y:-172.16, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S022/Label "S022  Desert Base · Convoy Escort · Air …"
+- text-offscreen Viewport/Content/ScenarioCard_S022/Label "S022  Desert Base · Convoy Escort · Air …" rect=(x:43.61, y:-2240.34, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S087/Label "S087  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S087/Label "S087  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-9904.78, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S028/Label "S028  City Crossroads · Base Assault · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S028/Label "S028  City Crossroads · Base Assault · A…" rect=(x:43.61, y:-2848.63, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S119/Label "S119  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S119/Label "S119  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13797.83, width:1665.46, height:101.00)
+- tiny-text 9dp NarrativeLayer/SafeArea/LocationIntroduction/DistrictAndTime "OLD MARKET / 10:00 LOCAL"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S010/Label "S010  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S010/Label "S010  Desert Base · Frontline Control · …" rect=(x:43.61, y:-780.45, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S011/Label "S011  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S011/Label "S011  Desert Base · Frontline Control · …" rect=(x:43.61, y:-902.10, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_ALL/Label "ALL"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S046/Label "S046  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S046/Label "S046  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-5038.47, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S095/Label "S095  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S095/Label "S095  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10878.04, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S051/Label "S051  Mountain Pass · Base Assault · Air…"
+- text-offscreen Viewport/Content/ScenarioCard_S051/Label "S051  Mountain Pass · Base Assault · Air…" rect=(x:43.61, y:-5646.76, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S007/Label "S007  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S007/Label "S007  Desert Base · Frontline Control · …" rect=(x:43.61, y:-415.47, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S053/Label "S053  Mountain Pass · Base Assault · Com…"
+- text-offscreen Viewport/Content/ScenarioCard_S053/Label "S053  Mountain Pass · Base Assault · Com…" rect=(x:43.61, y:-5890.07, width:1665.46, height:101.00)
+- tiny-text 10dp NarrativeLayer/SafeArea/Dialogue/SpeakerRole "JRC FIELD COMMAND"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S100/Label "S100  Airfield Plains · Base Assault · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S100/Label "S100  Airfield Plains · Base Assault · A…" rect=(x:43.61, y:-11486.33, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S016/Label "S016  Desert Base · Breakthrough · Air M…"
+- text-offscreen Viewport/Content/ScenarioCard_S016/Label "S016  Desert Base · Breakthrough · Air M…" rect=(x:43.61, y:-1510.39, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S070/Label "S070  Mountain Pass · Convoy Escort · Ai…"
+- text-offscreen Viewport/Content/ScenarioCard_S070/Label "S070  Mountain Pass · Convoy Escort · Ai…" rect=(x:43.61, y:-7958.26, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S063/Label "S063  Mountain Pass · Breakthrough · Air…"
+- text-offscreen Viewport/Content/ScenarioCard_S063/Label "S063  Mountain Pass · Breakthrough · Air…" rect=(x:43.61, y:-7106.65, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S081/Label "S081  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S081/Label "S081  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-9174.84, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S013/Label "S013  Desert Base · Breakthrough · Groun…"
+- text-offscreen Viewport/Content/ScenarioCard_S013/Label "S013  Desert Base · Breakthrough · Groun…" rect=(x:43.61, y:-1145.42, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_IB/Label "BASIN"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S049/Label "S049  Mountain Pass · Base Assault · Gro…"
+- text-offscreen Viewport/Content/ScenarioCard_S049/Label "S049  Mountain Pass · Base Assault · Gro…" rect=(x:43.61, y:-5403.44, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S091/Label "S091  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S091/Label "S091  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10391.41, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S098/Label "S098  Airfield Plains · Base Assault · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S098/Label "S098  Airfield Plains · Base Assault · G…" rect=(x:43.61, y:-11243.02, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_CC/Label "CITY"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S120/Label "S120  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S120/Label "S120  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13919.49, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S042/Label "S042  City Crossroads · Breakthrough · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S042/Label "S042  City Crossroads · Breakthrough · C…" rect=(x:43.61, y:-4551.84, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S110/Label "S110  Airfield Plains · Breakthrough · G…"
+- text-offscreen Viewport/Content/ScenarioCard_S110/Label "S110  Airfield Plains · Breakthrough · G…" rect=(x:43.61, y:-12702.91, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S035/Label "S035  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S035/Label "S035  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3700.23, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S044/Label "S044  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S044/Label "S044  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-4795.15, width:1665.46, height:101.00)
+- tiny-text 10dp SCN01_LoadingContent/SplashChromeReference/IntegratedLoadingFooter/TipText "Scout streets before committing armor."
+- tiny-text 9dp Viewport/Content/ScenarioCard_S103/Label "S103  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S103/Label "S103  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-11851.31, width:1665.46, height:101.00)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/StateIdLabel "FL-P01" rect=(x:-681.11, y:651.21, width:883.74, height:121.20)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S080/Label "S080  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S080/Label "S080  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-9053.18, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S075/Label "S075  Industrial Basin · Base Assault · …"
+- text-offscreen Viewport/Content/ScenarioCard_S075/Label "S075  Industrial Basin · Base Assault · …" rect=(x:43.61, y:-8444.89, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S115/Label "S115  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S115/Label "S115  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13311.20, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S021/Label "S021  Desert Base · Convoy Escort · Air …"
+- text-offscreen Viewport/Content/ScenarioCard_S021/Label "S021  Desert Base · Convoy Escort · Air …" rect=(x:43.61, y:-2118.68, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S018/Label "S018  Desert Base · Breakthrough · Combi…"
+- text-offscreen Viewport/Content/ScenarioCard_S018/Label "S018  Desert Base · Breakthrough · Combi…" rect=(x:43.61, y:-1753.71, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S040/Label "S040  City Crossroads · Breakthrough · A…"
+- text-offscreen Viewport/Content/ScenarioCard_S040/Label "S040  City Crossroads · Breakthrough · A…" rect=(x:43.61, y:-4308.52, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S003/Label "S003  Desert Base · Base Assault · Air M…"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S093/Label "S093  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S093/Label "S093  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10634.73, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S102/Label "S102  Airfield Plains · Base Assault · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S102/Label "S102  Airfield Plains · Base Assault · C…" rect=(x:43.61, y:-11729.65, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S089/Label "S089  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S089/Label "S089  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-10148.10, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S084/Label "S084  Industrial Basin · Frontline Contr…"
+- text-offscreen Viewport/Content/ScenarioCard_S084/Label "S084  Industrial Basin · Frontline Contr…" rect=(x:43.61, y:-9539.81, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S064/Label "S064  Mountain Pass · Breakthrough · Air…"
+- text-offscreen Viewport/Content/ScenarioCard_S064/Label "S064  Mountain Pass · Breakthrough · Air…" rect=(x:43.61, y:-7228.31, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S062/Label "S062  Mountain Pass · Breakthrough · Gro…"
+- text-offscreen Viewport/Content/ScenarioCard_S062/Label "S062  Mountain Pass · Breakthrough · Gro…" rect=(x:43.61, y:-6985.00, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_AP/Label "AIR"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S055/Label "S055  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S055/Label "S055  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6133.39, width:1665.46, height:101.00)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SAFE AREA" rect=(x:2543.29, y:658.79, width:404.00, height:106.05)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S101/Label "S101  Airfield Plains · Base Assault · C…"
+- text-offscreen Viewport/Content/ScenarioCard_S101/Label "S101  Airfield Plains · Base Assault · C…" rect=(x:43.61, y:-11607.99, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S117/Label "S117  Airfield Plains · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S117/Label "S117  Airfield Plains · Convoy Escort · …" rect=(x:43.61, y:-13554.52, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S045/Label "S045  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S045/Label "S045  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-4916.81, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S031/Label "S031  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S031/Label "S031  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3213.60, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S077/Label "S077  Industrial Basin · Base Assault · …"
+- text-offscreen Viewport/Content/ScenarioCard_S077/Label "S077  Industrial Basin · Base Assault · …" rect=(x:43.61, y:-8688.20, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S056/Label "S056  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S056/Label "S056  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6255.05, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S058/Label "S058  Mountain Pass · Frontline Control …"
+- text-offscreen Viewport/Content/ScenarioCard_S058/Label "S058  Mountain Pass · Frontline Control …" rect=(x:43.61, y:-6498.36, width:1665.46, height:101.00)
+- tiny-text 10dp SCN13_SkirmishSetupContent/SkirmishSetupComposition/OperationPreview/SeedHelp "Advance from the western base. Fight thr…"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S076/Label "S076  Industrial Basin · Base Assault · …"
+- text-offscreen Viewport/Content/ScenarioCard_S076/Label "S076  Industrial Basin · Base Assault · …" rect=(x:43.61, y:-8566.55, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S015/Label "S015  Desert Base · Breakthrough · Air M…"
+- text-offscreen Viewport/Content/ScenarioCard_S015/Label "S015  Desert Base · Breakthrough · Air M…" rect=(x:43.61, y:-1388.74, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S034/Label "S034  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S034/Label "S034  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3578.58, width:1665.46, height:101.00)
+- tiny-text 10dp NarrativeLayer/SafeArea/ComicTimeline/State "FL-P04"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S033/Label "S033  City Crossroads · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S033/Label "S033  City Crossroads · Frontline Contro…" rect=(x:43.61, y:-3456.92, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S078/Label "S078  Industrial Basin · Base Assault · …"
+- text-offscreen Viewport/Content/ScenarioCard_S078/Label "S078  Industrial Basin · Base Assault · …" rect=(x:43.61, y:-8809.86, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S092/Label "S092  Industrial Basin · Convoy Escort ·…"
+- text-offscreen Viewport/Content/ScenarioCard_S092/Label "S092  Industrial Basin · Convoy Escort ·…" rect=(x:43.61, y:-10513.07, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S014/Label "S014  Desert Base · Breakthrough · Groun…"
+- text-offscreen Viewport/Content/ScenarioCard_S014/Label "S014  Desert Base · Breakthrough · Groun…" rect=(x:43.61, y:-1267.08, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S048/Label "S048  City Crossroads · Convoy Escort · …"
+- text-offscreen Viewport/Content/ScenarioCard_S048/Label "S048  City Crossroads · Convoy Escort · …" rect=(x:43.61, y:-5281.79, width:1665.46, height:101.00)
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Sample "ﻣﺮﺩﻡ ﺑﻪ ﻣﺎ ﺍﻣﯿﺪ ﺩﺍﺭﻧﺪ. ﺁﻥﻫﺎ ﺭﺍ ﺍﯾﻤﻦ ﻧﮕﻪ …"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S107/Label "S107  Airfield Plains · Frontline Contro…"
+- text-offscreen Viewport/Content/ScenarioCard_S107/Label "S107  Airfield Plains · Frontline Contro…" rect=(x:43.61, y:-12337.94, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S086/Label "S086  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S086/Label "S086  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-9783.12, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S054/Label "S054  Mountain Pass · Base Assault · Com…"
+- text-offscreen Viewport/Content/ScenarioCard_S054/Label "S054  Mountain Pass · Base Assault · Com…" rect=(x:43.61, y:-6011.73, width:1665.46, height:101.00)
+- text-overflow SCN13_SkirmishSetupContent/SkirmishSetupComposition/BaseAssaultRules/Roster "Each side starts with 2 rifle groups, 1 …"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S073/Label "S073  INDUSTRIAL BASIN READY · SELECT"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S090/Label "S090  Industrial Basin · Breakthrough · …"
+- text-offscreen Viewport/Content/ScenarioCard_S090/Label "S090  Industrial Basin · Breakthrough · …" rect=(x:43.61, y:-10269.75, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S019/Label "S019  Desert Base · Convoy Escort · Grou…"
+- text-offscreen Viewport/Content/ScenarioCard_S019/Label "S019  Desert Base · Convoy Escort · Grou…" rect=(x:43.61, y:-1875.37, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S009/Label "S009  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S009/Label "S009  Desert Base · Frontline Control · …" rect=(x:43.61, y:-658.79, width:1665.46, height:101.00)
+- tiny-text 9dp Viewport/Content/ScenarioCard_S071/Label "S071  Mountain Pass · Convoy Escort · Co…"
+- text-offscreen Viewport/Content/ScenarioCard_S071/Label "S071  Mountain Pass · Convoy Escort · Co…" rect=(x:43.61, y:-8079.92, width:1665.46, height:101.00)
+- text-overflow SCN13_SkirmishSetupContent/SkirmishSetupComposition/BaseAssaultRules/Objective "Destroy the enemy's main Barracks and pr…"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S050/Label "S050  Mountain Pass · Base Assault · Gro…"
+- text-offscreen Viewport/Content/ScenarioCard_S050/Label "S050  Mountain Pass · Base Assault · Gro…" rect=(x:43.61, y:-5525.10, width:1665.46, height:101.00)
+- tiny-text 10dp OperationPreview/BattleLibraryMapTabs/MapTab_MP/Label "PASS"
+- tiny-text 9dp Viewport/Content/ScenarioCard_S012/Label "S012  Desert Base · Frontline Control · …"
+- text-offscreen Viewport/Content/ScenarioCard_S012/Label "S012  Desert Base · Frontline Control · …" rect=(x:43.61, y:-1023.76, width:1665.46, height:101.00)
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/ReducedMotionLabel "REDUCED MOTION" rect=(x:2283.21, y:893.61, width:580.74, height:121.20)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S062 rect=(x:32.14, y:-6991.88, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S018 rect=(x:32.14, y:-1760.60, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S012 rect=(x:32.14, y:-1030.65, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S120 rect=(x:32.14, y:-13926.38, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S068 rect=(x:32.14, y:-7721.83, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S077 rect=(x:32.14, y:-8695.09, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S081 rect=(x:32.14, y:-9181.72, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S082 rect=(x:32.14, y:-9303.38, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S104 rect=(x:32.14, y:-11979.85, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S106 rect=(x:32.14, y:-12223.17, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S063 rect=(x:32.14, y:-7113.54, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S008 rect=(x:32.14, y:-544.02, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S021 rect=(x:32.14, y:-2125.57, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S093 rect=(x:32.14, y:-10641.61, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S079 rect=(x:32.14, y:-8938.41, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S027 rect=(x:32.14, y:-2733.86, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S040 rect=(x:32.14, y:-4315.41, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S043 rect=(x:32.14, y:-4680.38, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S111 rect=(x:32.14, y:-12831.46, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S084 rect=(x:32.14, y:-9546.70, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S090 rect=(x:32.14, y:-10276.64, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S010 rect=(x:32.14, y:-787.33, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S045 rect=(x:32.14, y:-4923.70, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S035 rect=(x:32.14, y:-3707.12, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S023 rect=(x:32.14, y:-2368.88, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S051 rect=(x:32.14, y:-5653.65, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S085 rect=(x:32.14, y:-9668.35, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S007 rect=(x:32.14, y:-422.36, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S004 rect=(x:32.14, y:-57.39, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S020 rect=(x:32.14, y:-2003.91, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S107 rect=(x:32.14, y:-12344.82, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S013 rect=(x:32.14, y:-1152.31, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S014 rect=(x:32.14, y:-1273.96, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S116 rect=(x:32.14, y:-13439.75, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S017 rect=(x:32.14, y:-1638.94, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S037 rect=(x:32.14, y:-3950.44, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S024 rect=(x:32.14, y:-2490.54, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S057 rect=(x:32.14, y:-6383.59, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S112 rect=(x:32.14, y:-12953.11, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S029 rect=(x:32.14, y:-2977.17, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S053 rect=(x:32.14, y:-5896.96, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_AP
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S019 rect=(x:32.14, y:-1882.25, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_IB
+- small-target 39dp HeaderRegion/ContentRoot/HeaderContent/SettingsButton
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S050 rect=(x:32.14, y:-5531.99, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S058 rect=(x:32.14, y:-6505.25, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S015 rect=(x:32.14, y:-1395.62, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S088 rect=(x:32.14, y:-10033.33, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S033 rect=(x:32.14, y:-3463.80, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S070 rect=(x:32.14, y:-7965.14, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_ALL
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S072 rect=(x:32.14, y:-8208.46, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S022 rect=(x:32.14, y:-2247.23, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S100 rect=(x:32.14, y:-11493.22, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S091 rect=(x:32.14, y:-10398.30, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S049 rect=(x:32.14, y:-5410.33, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S101 rect=(x:32.14, y:-11614.88, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S039 rect=(x:32.14, y:-4193.75, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S083 rect=(x:32.14, y:-9425.04, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S064 rect=(x:32.14, y:-7235.20, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S113 rect=(x:32.14, y:-13074.77, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S046 rect=(x:32.14, y:-5045.36, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S096 rect=(x:32.14, y:-11006.59, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_CC
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S103 rect=(x:32.14, y:-11858.19, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S069 rect=(x:32.14, y:-7843.49, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S048 rect=(x:32.14, y:-5288.67, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S102 rect=(x:32.14, y:-11736.54, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S006 rect=(x:32.14, y:-300.70, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S115 rect=(x:32.14, y:-13318.09, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S094 rect=(x:32.14, y:-10763.27, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S117 rect=(x:32.14, y:-13561.40, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S074 rect=(x:32.14, y:-8330.12, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S097 rect=(x:32.14, y:-11128.25, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S005 rect=(x:32.14, y:-179.04, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S098 rect=(x:32.14, y:-11249.90, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S031 rect=(x:32.14, y:-3220.49, width:1688.42, height:114.77)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/NextButton rect=(x:-1.89, y:870.89, width:333.30, height:171.70)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S105 rect=(x:32.14, y:-12101.51, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S030 rect=(x:32.14, y:-3098.83, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_DB
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S071 rect=(x:32.14, y:-8086.80, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S118 rect=(x:32.14, y:-13683.06, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S076 rect=(x:32.14, y:-8573.43, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S055 rect=(x:32.14, y:-6140.28, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S061 rect=(x:32.14, y:-6870.22, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S028 rect=(x:32.14, y:-2855.52, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S092 rect=(x:32.14, y:-10519.96, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S066 rect=(x:32.14, y:-7478.51, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S009 rect=(x:32.14, y:-665.67, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S038 rect=(x:32.14, y:-4072.09, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S095 rect=(x:32.14, y:-10884.93, width:1688.42, height:114.77)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PreviousButton rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S016 rect=(x:32.14, y:-1517.28, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S075 rect=(x:32.14, y:-8451.77, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S047 rect=(x:32.14, y:-5167.01, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S011 rect=(x:32.14, y:-908.99, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S036 rect=(x:32.14, y:-3828.78, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S109 rect=(x:32.14, y:-12588.14, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S054 rect=(x:32.14, y:-6018.62, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S108 rect=(x:32.14, y:-12466.48, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S067 rect=(x:32.14, y:-7600.17, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S080 rect=(x:32.14, y:-9060.06, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S099 rect=(x:32.14, y:-11371.56, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S078 rect=(x:32.14, y:-8816.75, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S110 rect=(x:32.14, y:-12709.80, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S119 rect=(x:32.14, y:-13804.72, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S060 rect=(x:32.14, y:-6748.57, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S087 rect=(x:32.14, y:-9911.67, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S086 rect=(x:32.14, y:-9790.01, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S114 rect=(x:32.14, y:-13196.43, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S032 rect=(x:32.14, y:-3342.15, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S059 rect=(x:32.14, y:-6626.91, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S089 rect=(x:32.14, y:-10154.98, width:1688.42, height:114.77)
+- small-target 35dp SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs/MapTab_MP
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S034 rect=(x:32.14, y:-3585.46, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S042 rect=(x:32.14, y:-4558.73, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S056 rect=(x:32.14, y:-6261.93, width:1688.42, height:114.77)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PlayPauseButton rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S052 rect=(x:32.14, y:-5775.30, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S065 rect=(x:32.14, y:-7356.85, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S044 rect=(x:32.14, y:-4802.04, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S041 rect=(x:32.14, y:-4437.07, width:1688.42, height:114.77)
+- target-touches-edge BattleLibrary/Viewport/Content/ScenarioCard_S026 rect=(x:32.14, y:-2612.20, width:1688.42, height:114.77)
+- fonts: Oxanium-Bold SDFx166, Oxanium-Medium SDFx18, NotoSansArabic-Narrative SDFx2
+- text sizes dp: 9x123, 10x12, 11x7, 12x6, 13x7, 14x2, 15x1, 16x2, 17x1, 18x1, 19x1, 20x4, 21x2, 22x3, 23x2, 24x2, 27x1, 29x1, 30x7, 31x1
+- totals overflow=4 tiny=135 smallTargets=7 edge/offscreen=239
+
+## operations-en-2400x1080
+- text-offscreen SafeArea/DevelopmentReviewerControls/PlayPauseButton/Label "PAUSE" rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- text-offscreen SafeArea/DevelopmentReviewerControls/PreviousButton/Label "PREV" rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- text-overflow DailyBriefing/StreetSignalsMissionCard/MissionCard/Label "STREET SIGNALS — OLD QUARTER"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SUBTITLES" rect=(x:2007.99, y:658.79, width:404.00, height:106.05)
+- tiny-text 9dp OperationsDashboardComposition/ReadinessRail/REGIONSTABILITY/Label "CITY SECURITY"
+- tiny-text 10dp SafeArea/PlaybackControls/SubtitlesButton/Label "SUBTITLES"
+- tiny-text 10dp SafeArea/PlaybackControls/PauseButton/Label "PAUSE"
+- tiny-text 9dp NarrativeLayer/SafeArea/ComicTimeline/Page "4 / 26"
+- tiny-text 9dp OperationsDashboardComposition/ReadinessRail/FORCEREADINESS/Label "SUPPLY READINESS"
+- tiny-text 10dp DistrictMap/MapClip/ForwardPostMarker/Label "FORWARD POST"
+- tiny-text 9dp MissionCard/Row/DEPLOY/Label "DEPLOY"
+- tiny-text 10dp DistrictMap/MapClip/OldMarketMarker/Label "OLD MARKET"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Language "ﻓﺎﺭﺳﯽ"
+- tiny-text 9dp OperationsDashboardComposition/ReadinessRail/HEATLEVEL/Label "HEAT LEVEL"
+- tiny-text 9dp NarrativeLayer/SafeArea/LocationIntroduction/DistrictAndTime "OLD MARKET / 10:00 LOCAL"
+- tiny-text 10dp NarrativeLayer/SafeArea/Dialogue/SpeakerRole "JRC FIELD COMMAND"
+- tiny-text 8dp DailyBriefing/StreetSignalsMissionCard/MissionCard/Label "A new city operation will begin on deplo…"
+- text-overflow DailyBriefing/StreetSignalsMissionCard/MissionCard/Label "A new city operation will begin on deplo…"
+- tiny-text 9dp SCN11_OperationsDashboardContent/OperationsDashboardComposition/Credits/Label "CREDITS"
+- tiny-text 10dp SCN01_LoadingContent/SplashChromeReference/IntegratedLoadingFooter/TipText "Scout streets before committing armor."
+- tiny-text 9dp OperationsDashboardComposition/ReadinessRail/THREATLEVEL/Label "THREAT LEVEL"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/StateIdLabel "FL-P01" rect=(x:-681.11, y:651.21, width:883.74, height:121.20)
+- tiny-text 10dp DistrictMap/MapClip/NorthgateMarker/Label "NORTHGATE"
+- tiny-text 9dp DailyBriefing/StreetSignalsMissionCard/MissionCard/Label "Scan 3 courtyards • recover relay eviden…"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SAFE AREA" rect=(x:2543.29, y:658.79, width:404.00, height:106.05)
+- tiny-text 9dp OperationsDashboardComposition/ReadinessRail/CIVILIANTRUST/Label "CIVILIAN TRUST"
+- tiny-text 10dp DistrictMap/MapClip/SouthQuarterMarker/Label "SOUTH QUARTER"
+- tiny-text 10dp OperationsDashboardComposition/ActiveWarnings/WarningRow0/Label "DEPLOY TO BEGIN"
+- tiny-text 10dp DistrictMap/MapClip/EastridgeMarker/Label "EASTRIDGE"
+- tiny-text 10dp NarrativeLayer/SafeArea/ComicTimeline/State "FL-P04"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Sample "ﻣﺮﺩﻡ ﺑﻪ ﻣﺎ ﺍﻣﯿﺪ ﺩﺍﺭﻧﺪ. ﺁﻥﻫﺎ ﺭﺍ ﺍﯾﻤﻦ ﻧﮕﻪ …"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/ReducedMotionLabel "REDUCED MOTION" rect=(x:2283.21, y:893.61, width:580.74, height:121.20)
+- small-target 36dp OperationsDashboardComposition/DistrictMap/MapClip/SouthQuarterMarker
+- small-target 39dp HeaderRegion/ContentRoot/HeaderContent/SettingsButton
+- target-touches-edge SCN11_OperationsDashboardContent/OperationsDashboardComposition/CommandBar/EndDayButton rect=(x:1911.07, y:20.66, width:604.54, height:135.43)
+- small-target 36dp OperationsDashboardComposition/DistrictMap/MapClip/EastridgeMarker
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/NextButton rect=(x:-1.89, y:870.89, width:333.30, height:171.70)
+- small-target 25dp StreetSignalsMissionCard/MissionCard/Row/DEPLOY
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PreviousButton rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- small-target 36dp OperationsDashboardComposition/DistrictMap/MapClip/NorthgateMarker
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PlayPauseButton rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- small-target 36dp OperationsDashboardComposition/DistrictMap/MapClip/OldMarketMarker
+- small-target 36dp OperationsDashboardComposition/DistrictMap/MapClip/ForwardPostMarker
+- fonts: Oxanium-Bold SDFx65, Oxanium-Medium SDFx11, NotoSansArabic-Narrative SDFx2
+- text sizes dp: 8x1, 9x10, 10x11, 11x8, 12x6, 13x4, 14x11, 16x3, 17x1, 19x1, 20x4, 21x1, 22x2, 23x3, 24x2, 27x1, 29x1, 30x7, 31x1
+- totals overflow=4 tiny=22 smallTargets=7 edge/offscreen=10
+
+## commander-en-2400x1080
+- tiny-text 7dp ContentRoot/RightContent/RecentHistory/Time "1h ago"
+- text-offscreen SafeArea/DevelopmentReviewerControls/PlayPauseButton/Label "PAUSE" rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- tiny-text 7dp ContentRoot/RightContent/RecentHistory/Time "3h ago"
+- text-offscreen SafeArea/DevelopmentReviewerControls/PreviousButton/Label "PREV" rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- tiny-text 7dp ContentRoot/RightContent/RecentHistory/Time "5h ago"
+- tiny-text 9dp ContentRoot/HeaderContent/CreditsChip/Label "CREDITS"
+- tiny-text 9dp ContentRoot/RightContent/RecentHistory/Title "HOSTILE PATROL"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SUBTITLES" rect=(x:2007.99, y:658.79, width:404.00, height:106.05)
+- tiny-text 8dp ContentRoot/RightContent/RecentHistory/Outcome "DEFEAT"
+- tiny-text 7dp ContentRoot/MiddleContent/CommanderStatsPanel/Label "VICTORIES"
+- tiny-text 6dp ContentRoot/RightContent/RecentHistory/Mode "OPERATIONS"
+- tiny-text 7dp ContentRoot/MiddleContent/CommanderStatsPanel/Label "WIN RATE"
+- tiny-text 7dp ContentRoot/MiddleContent/CommanderStatsPanel/Label "UNITS LOST"
+- tiny-text 10dp SafeArea/PlaybackControls/SubtitlesButton/Label "SUBTITLES"
+- tiny-text 10dp SafeArea/PlaybackControls/PauseButton/Label "PAUSE"
+- tiny-text 9dp NarrativeLayer/SafeArea/ComicTimeline/Page "4 / 26"
+- tiny-text 10dp ContentRoot/MiddleContent/CommanderIdentityPanel/CommanderSubtitle "FIELD COMMANDER"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Language "ﻓﺎﺭﺳﯽ"
+- tiny-text 6dp ContentRoot/RightContent/RecentHistory/Mode "OPERATIONS"
+- tiny-text 8dp ContentRoot/RightContent/RecentHistory/Outcome "VICTORY"
+- tiny-text 7dp ContentRoot/MiddleContent/CommanderStatsPanel/Label "CIVILIANS"
+- tiny-text 8dp ContentRoot/RightContent/RecentHistory/Outcome "VICTORY"
+- tiny-text 9dp NarrativeLayer/SafeArea/LocationIntroduction/DistrictAndTime "OLD MARKET / 10:00 LOCAL"
+- tiny-text 9dp ContentRoot/RightContent/RecentHistory/Title "CONVOY ESCORT"
+- tiny-text 8dp RightContent/RecentHistory/ViewAll/Label "VIEW ALL"
+- tiny-text 10dp NarrativeLayer/SafeArea/Dialogue/SpeakerRole "JRC FIELD COMMAND"
+- tiny-text 7dp ContentRoot/MiddleContent/CommanderStatsPanel/Label "MISSIONS"
+- tiny-text 10dp ContentRoot/MiddleContent/CommanderIdentityPanel/Xp "15,680 / 24,000 XP"
+- tiny-text 6dp ContentRoot/RightContent/RecentHistory/Mode "CAMPAIGN"
+- tiny-text 10dp SCN01_LoadingContent/SplashChromeReference/IntegratedLoadingFooter/TipText "Scout streets before committing armor."
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/StateIdLabel "FL-P01" rect=(x:-681.11, y:651.21, width:883.74, height:121.20)
+- tiny-text 8dp ContentRoot/MiddleContent/CommanderIdentityPanel/Milestone "NEXT MILESTONE:  LEVEL 39"
+- tiny-text 8dp ContentRoot/MiddleContent/CommanderIdentityPanel/XpLabel "COMMANDER XP"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/Label "SAFE AREA" rect=(x:2543.29, y:658.79, width:404.00, height:106.05)
+- tiny-text 9dp ContentRoot/RightContent/RecentHistory/Title "SUPPLY RUN"
+- tiny-text 10dp NarrativeLayer/SafeArea/ComicTimeline/State "FL-P04"
+- text-overflow FirstLaunchLanguageLayer/Composition/PersianButton/Sample "ﻣﺮﺩﻡ ﺑﻪ ﻣﺎ ﺍﻣﯿﺪ ﺩﺍﺭﻧﺪ. ﺁﻥﻫﺎ ﺭﺍ ﺍﯾﻤﻦ ﻧﮕﻪ …"
+- tiny-text 10dp ContentRoot/MiddleContent/CommanderIdentityPanel/Rank "FIELD COMMANDER"
+- tiny-text 9dp ContentRoot/MiddleContent/CommanderIdentityPanel/LevelLabel "LEVEL"
+- text-offscreen NarrativeLayer/SafeArea/DevelopmentReviewerControls/ReducedMotionLabel "REDUCED MOTION" rect=(x:2283.21, y:893.61, width:580.74, height:121.20)
+- small-target 20dp ContentRoot/RightContent/RecentHistory/ViewAll
+- small-target 41dp HeaderRegion/ContentRoot/HeaderContent/SettingsButton
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/NextButton rect=(x:-1.89, y:870.89, width:333.30, height:171.70)
+- small-target 21dp ContentRoot/MiddleContent/CommanderIdentityPanel/EditCommanderButton
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PreviousButton rect=(x:-718.98, y:870.89, width:333.30, height:171.70)
+- target-touches-edge NarrativeLayer/SafeArea/DevelopmentReviewerControls/PlayPauseButton rect=(x:-360.43, y:870.89, width:333.30, height:171.70)
+- fonts: Oxanium-Medium SDFx17, Oxanium-Bold SDFx72, NotoSansArabic-Narrative SDFx2
+- text sizes dp: 6x3, 7x8, 8x6, 9x7, 10x8, 11x15, 12x5, 13x2, 14x4, 15x6, 16x4, 17x1, 19x1, 20x3, 21x1, 22x2, 23x2, 24x2, 25x1, 27x1, 29x1, 30x7, 31x1
+- totals overflow=2 tiny=32 smallTargets=3 edge/offscreen=9
+

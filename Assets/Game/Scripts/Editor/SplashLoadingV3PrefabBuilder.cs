@@ -140,10 +140,12 @@ namespace Game.Editor
             SetRect(topReadability.rectTransform, new Vector2(0f, 0.72f), Vector2.one, Vector2.zero, Vector2.zero);
 
             BuildLogoPlate(chromeReference);
-            BuildStatusChip("CommandSystemChip", chromeReference, 18f, 209f, 361f, 70f, "COMMAND SYSTEM", theme.Amber, CreateSignalIcon);
-            BuildStatusChip("AndroidBuildChip", chromeReference, 960f, 21f, 283f, 70f, "ANDROID BUILD", new Color32(132, 202, 38, 255), CreateAndroidIcon);
-            BuildStatusChip("SecureLinkChip", chromeReference, 1254f, 21f, 282f, 70f, "SECURE LINK", new Color32(132, 202, 38, 255), CreateLockIcon);
+            BuildStatusChip("CommandSystemChip", chromeReference, 18f, 209f, 361f, 70f, "WARLINE CAPTURE", theme.Amber, CreateSignalIcon);
+            BuildStatusChip("AndroidBuildChip", chromeReference, 960f, 21f, 283f, 70f, "PREPARING", new Color32(132, 202, 38, 255), CreateAndroidIcon);
+            BuildStatusChip("SecureLinkChip", chromeReference, 1254f, 21f, 282f, 70f, "LOADING", new Color32(132, 202, 38, 255), CreateLockIcon);
             BuildSignalOnlyChip(chromeReference);
+            foreach(string name in new[]{"CommandSystemChip","AndroidBuildChip","SecureLinkChip","SignalStrengthChip"})
+                FindDeepChild(chromeReference,name)?.gameObject.SetActive(false);
             BuildFooter(chromeReference, progressView);
 
             Transform footer = FindDeepChild(chromeReference, "IntegratedLoadingFooter");

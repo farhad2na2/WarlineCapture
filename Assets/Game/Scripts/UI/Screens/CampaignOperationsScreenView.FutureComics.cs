@@ -16,10 +16,10 @@ namespace Game.UI.Runtime
             bool persian = UiShellRuntimeGateway.Localization.IsRightToLeft;
             EnableFutureChapterCard(ChapterFourButton, 3, selectedChapter == 4,
                 persian ? "هوا و زره" : "AIR AND ARMOR",
-                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
+                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "5 MISSIONS");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
-                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
+                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "5 MISSIONS");
             // Keep previously available story previews reachable beside playable M01.
             if(selectedChapter==5&&IsChapterFive)
                 for(int index=1;index<5;index++)
@@ -124,9 +124,9 @@ namespace Game.UI.Runtime
             TMP_Text title = card.Find("Title")?.GetComponent<TMP_Text>();
             TMP_Text subtitle = card.Find("Subtitle")?.GetComponent<TMP_Text>();
             if (title != null)
-                title.text = englishTitle;
+                UiLocalizedText.Set(title, englishTitle);
             if (subtitle != null)
-                subtitle.text = englishSubtitle;
+                UiLocalizedText.Set(subtitle, englishSubtitle);
         }
     }
 }

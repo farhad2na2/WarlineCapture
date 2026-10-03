@@ -2932,6 +2932,8 @@ MonoBehaviour:
   centerAnchoredTargets: []
   widthExpandedTargets: []
   horizontalResponsiveTargets: []
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []

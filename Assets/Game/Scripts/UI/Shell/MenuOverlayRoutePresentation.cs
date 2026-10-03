@@ -147,6 +147,8 @@ namespace Game.UI.Runtime
         private static GameObject InstallBody(UIShellContentView contentView, GameObject prefab)
         {
             contentView.UnbindMatchHudThreatWarningHeader();
+            if(prefab == contentView.CampaignContentPrefab || prefab == contentView.SkirmishSetupContentPrefab || prefab == contentView.OperationsContentPrefab)
+                contentView.ClearRegion(UIShellRegionId.HeaderRegion);
             CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(contentView);
             contentView.ClearRegion(UIShellRegionId.LeftRegion);
             contentView.ClearRegion(UIShellRegionId.MiddleRegion);

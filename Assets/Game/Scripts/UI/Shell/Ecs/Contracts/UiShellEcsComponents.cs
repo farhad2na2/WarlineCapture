@@ -72,6 +72,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString128Bytes Name;
         public FixedString64Bytes Subtitle;
         public FixedString64Bytes PortraitClass;
+        public int Level, Xp, Victories, Defeats, Missions, Stars, Enemies, UnitsLost;
     }
 
     public struct UiShellMainMenuResourcesComponent : IComponentData

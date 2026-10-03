@@ -428,7 +428,7 @@ namespace Game.Composition
                 return;
             }
 
-            SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
+            SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Ready");
         }
 
         private void UpdateStaticMapPresentation(EntityManager entityManager, UiShellStateComponent shellState)

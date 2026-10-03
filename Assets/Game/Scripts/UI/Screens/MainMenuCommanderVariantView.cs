@@ -83,13 +83,15 @@ namespace Game.UI.Runtime
                 // Shape the player's raw name independently of the UI language.
                 var binding=identityName.GetComponent<V3LocalizedTextBindingView>();
                 if(binding!=null) binding.enabled=false;
+                string displayName=profile.Name;
+                if(string.Equals(displayName,"Commander",StringComparison.OrdinalIgnoreCase) && GameLocalization.CurrentLocaleCode=="fa-IR")displayName="فرمانده";
                 bool arabic=false;
-                foreach(char letter in profile.Name) arabic |= letter is >= '\u0600' and <= '\u06ff';
+                foreach(char letter in displayName) arabic |= letter is >= '\u0600' and <= '\u06ff';
                 var font=arabic?identityPersianFont:identityFont;
                 if(font!=null && identityName.font!=font) { identityName.font=font; identityName.fontSharedMaterial=font.material; }
                 identityName.isRightToLeftText=arabic;
                 identityName.alignment=arabic?TextAlignmentOptions.MidlineRight:TextAlignmentOptions.MidlineLeft;
-                string rendered=arabic?V3LocalizedTextBindingView.ShapeForRendering(profile.Name):profile.Name;
+                string rendered=arabic?V3LocalizedTextBindingView.ShapeForRendering(displayName):displayName;
                 if(identityName.text!=rendered) identityName.text=rendered;
             }
         }

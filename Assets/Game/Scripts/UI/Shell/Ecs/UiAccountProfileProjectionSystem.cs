@@ -14,6 +14,7 @@ namespace Game.UI.Shell.Ecs
         private long observedVersion = -1;
         private string credits = "—", name = "Commander", portrait = "0";
         private SaveService saves;
+        private int level = 1, xp, victories, defeats, missions, stars, enemies, unitsLost;
         protected override void OnUpdate()
         {
             long version = JsonSaveRepository.ChangeVersion;
@@ -24,6 +25,10 @@ namespace Game.UI.Shell.Ecs
                 {
                     if (saves.TryReadAccountProfile(out var profile))
                     {
+                        level = profile.commanderLevel; xp = profile.commanderXp;
+                        victories = profile.victories; defeats = profile.defeats;
+                        missions = profile.missionsCompleted; stars = profile.starsEarned;
+                        enemies = profile.enemiesDefeated; unitsLost = profile.unitsLost;
                         credits = profile.credits.ToString("N0", CultureInfo.InvariantCulture);
                         name = profile.firstLaunchCommanderDisplayName;
                         portrait = profile.firstLaunchCommanderPortraitIndex.ToString(CultureInfo.InvariantCulture);
@@ -47,7 +52,9 @@ namespace Game.UI.Shell.Ecs
                 {
                     Name = displayName,
                     Subtitle = new FixedString64Bytes("FIELD COMMANDER"),
-                    PortraitClass = new FixedString64Bytes(portrait)
+                    PortraitClass = new FixedString64Bytes(portrait),
+                    Level = level, Xp = xp, Victories = victories, Defeats = defeats,
+                    Missions = missions, Stars = stars, Enemies = enemies, UnitsLost = unitsLost
                 };
         }
     }

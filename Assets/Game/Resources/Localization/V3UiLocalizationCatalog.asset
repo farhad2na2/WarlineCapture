@@ -6870,8 +6870,6 @@ MonoBehaviour:
       value: Command shell ready
     - key: ui.loading.focusing_camera
       value: Focusing camera
-    - key: ui.loading.loading
-      value: Loading
     - key: ui.loading.loading_command_shell
       value: Loading command shell
     - key: ui.loading.loading_map_presentation
@@ -7967,14 +7965,10 @@ MonoBehaviour:
       value: END DAY
     - key: ui.v3.end_of_day_report.ba7c95c1ae
       value: END OF DAY REPORT
-    - key: ui.v3.enemies.fa671011b4
-      value: ENEMIES
     - key: ui.v3.enemies_defeated.35e228242b
       value: 'ENEMIES
 
         DEFEATED'
-    - key: ui.v3.enemies_defeated.6eb58898a8
-      value: ENEMIES DEFEATED
     - key: ui.v3.enemy_activity.acbd968cdb
       value: ENEMY ACTIVITY
     - key: ui.v3.enemy_convoy_approaching.3671c6d32d
@@ -9492,6 +9486,38 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
+    - key: menu.approved.defaulttactics
+      value: DEFAULT TACTICS
+    - key: ui.v3.enemies_defeated.6eb58898a8
+      value: ENEMIES DEFEATED
+    - key: menu.approved.yourcommander
+      value: YOUR COMMANDER
+    - key: menu.approved.viewlog
+      value: VIEW LOG
+    - key: menu.approved.searchbattles
+      value: Search battles
+    - key: menu.approved.defaults
+      value: DEFAULTS
+    - key: menu.approved.shuffletactics
+      value: SHUFFLE TACTICS
+    - key: menu.approved.missionprogress
+      value: MISSION PROGRESS
+    - key: menu.approved.campaignrecord
+      value: CAMPAIGN RECORD
+    - key: ui.v3.enemies.fa671011b4
+      value: ENEMIES
+    - key: menu.approved.commandlog
+      value: COMMAND LOG
+    - key: menu.approved.yourprogressissavedaftereachmission
+      value: Your progress is saved after each mission.
+    - key: menu.approved.preparing
+      value: PREPARING
+    - key: menu.approved.loading
+      value: LOADING
+    - key: menu.approved.ready
+      value: Ready
+    - key: ui.loading.loading
+      value: Loading
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -21726,8 +21752,6 @@ MonoBehaviour:
         \u0622\u0645\u0627\u062F\u0647 \u0627\u0633\u062A"
     - key: ui.loading.focusing_camera
       value: "\u062A\u0646\u0638\u06CC\u0645 \u062F\u0648\u0631\u0628\u06CC\u0646"
-    - key: ui.loading.loading
-      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
     - key: ui.loading.loading_command_shell
       value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0645\u062D\u06CC\u0637
         \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
@@ -23101,11 +23125,7 @@ MonoBehaviour:
       value: "\u067E\u0627\u06CC\u0627\u0646 \u0631\u0648\u0632"
     - key: ui.v3.end_of_day_report.ba7c95c1ae
       value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646 \u0631\u0648\u0632"
-    - key: ui.v3.enemies.fa671011b4
-      value: "\u062F\u0634\u0645\u0646\u0627\u0646"
     - key: ui.v3.enemies_defeated.35e228242b
-      value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
-    - key: ui.v3.enemies_defeated.6eb58898a8
       value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
     - key: ui.v3.enemy_activity.acbd968cdb
       value: "\u0641\u0639\u0627\u0644\u06CC\u062A \u062F\u0634\u0645\u0646"
@@ -24910,3 +24930,37 @@ MonoBehaviour:
     - key: warning_ground_attack_type
       value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \u062F\u0627\u0631\u0646 \u062D\u0645\u0644\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646"
+    - key: menu.approved.defaulttactics
+      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
+    - key: ui.v3.enemies_defeated.6eb58898a8
+      value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
+    - key: menu.approved.yourcommander
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u0634\u0645\u0627"
+    - key: menu.approved.viewlog
+      value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u06AF\u0632\u0627\u0631\u0634"
+    - key: menu.approved.searchbattles
+      value: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0646\u0628\u0631\u062F\u0647\u0627"
+    - key: menu.approved.defaults
+      value: "\u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
+    - key: menu.approved.shuffletactics
+      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u062A\u0635\u0627\u062F\u0641\u06CC"
+    - key: menu.approved.missionprogress
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
+    - key: menu.approved.campaignrecord
+      value: "\u06A9\u0627\u0631\u0646\u0627\u0645\u0647 \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: ui.v3.enemies.fa671011b4
+      value: "\u062F\u0634\u0645\u0646\u0627\u0646"
+    - key: menu.approved.commandlog
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: menu.approved.yourprogressissavedaftereachmission
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0634\u0645\u0627 \u067E\u0633
+        \u0627\u0632 \u0647\u0631 \u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0630\u062E\u06CC\u0631\u0647
+        \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: menu.approved.preparing
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: menu.approved.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
+    - key: menu.approved.ready
+      value: "\u0622\u0645\u0627\u062F\u0647"
+    - key: ui.loading.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"

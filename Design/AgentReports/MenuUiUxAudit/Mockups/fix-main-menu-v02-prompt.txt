@@ -1,0 +1,4 @@
+Built-in ImageGen edit of fix-main-menu-v01.jpg.
+Approved revision: Credits, Commander, ARIA, Store, Armory share the column width and left/right edges. Settings moves to the left of Credits. Preserve all other art, text, styles and layout.
+Final correction prompt: move only the Credits left border right to match the panels beneath, retain its right border, shift icon/text to preserve inset, change nothing else.
+Generated bitmap alignment is an approximate design reference; native geometry uses a single shared width and x-position.

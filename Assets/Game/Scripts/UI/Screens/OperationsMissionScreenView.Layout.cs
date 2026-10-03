@@ -46,11 +46,11 @@ namespace Game.UI.Runtime
         }
         private Button Button(Transform parent,string label,Action action,Color accent)
         {
-            var rect = Surface(label,parent); Height(rect,hud ? 76 : 54);
+            var rect = Surface(label,parent); Height(rect,hud ? 76 : 102);
             Color upper = accent*.65f, lower = accent*.25f; upper.a=lower.a=1;
             rect.GetComponent<V3GradientGraphic>().Configure(upper,lower,accent,3);
             var button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = rect.GetComponent<V3GradientGraphic>(); button.onClick.AddListener(() => action());
-            var text = Label(rect,label,hud ? 28 : 20,0,TextAlignmentOptions.Center); Stretch(text.rectTransform,14); return button;
+            var text = Label(rect,label,hud ? 28 : 30,0,TextAlignmentOptions.Center); Stretch(text.rectTransform,14); return button;
         }
         private void Portrait(Transform parent,float width,float height)
         {

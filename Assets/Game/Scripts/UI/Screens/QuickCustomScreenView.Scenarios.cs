@@ -11,9 +11,9 @@ namespace Game.UI.Runtime
     public sealed partial class QuickCustomScreenView
     {
         private const string LastScenarioIdPrefsKey = "Warline.Skirmish.LastScenarioId";
-        private const float LibraryCardHeight = 80f;
+        private const float LibraryCardHeight = 92f;
         private const float MapTabMinWidth = 120f;
-        private const float MapTabHeight = 72f;
+        private const float MapTabHeight = 104f;
         private static readonly string[] MapCollectionIds = { "", "DB", "CC", "MP", "IB", "AP" };
         private static readonly string[] MapCollectionLabelsEn =
             { "ALL", "DESERT", "CITY", "PASS", "BASIN", "AIR" };
@@ -113,14 +113,14 @@ namespace Game.UI.Runtime
                 bool isSelected = string.Equals(entry.ScenarioId, _selectedScenarioId, StringComparison.Ordinal);
                 string status = entry.IsPlayable
                     ? (isSelected
-                        ? (fa ? "آماده · انتخاب‌شده" : "READY · SELECTED")
-                        : (fa ? "آماده · انتخاب" : "READY · SELECT"))
+                        ? (fa ? "آماده · انتخاب‌شده" : "SELECTED")
+                        : (fa ? "آماده · انتخاب" : "AVAILABLE"))
                     : SkirmishExpandedCopyProjection.IsExpandedS002(entry.ScenarioId)
-                        ? (fa ? "در حال پیشرفت" : "IN PROGRESS")
-                        : (fa ? "در حال ساخت" : "PLANNED");
+                        ? (fa ? "در حال پیشرفت" : "COMING SOON")
+                        : (fa ? "در حال ساخت" : "COMING SOON");
                 UiLocalizedText.Set(
                     button.GetComponentInChildren<TMP_Text>(),
-                    entry.ScenarioId + "  " + ResolveCardTitle(entry) + "\n" + status);
+                    ResolveCardTitle(entry) + "\n" + status);
 
                 if (button.targetGraphic is V3GradientGraphic gradient)
                 {
@@ -148,8 +148,8 @@ namespace Game.UI.Runtime
                 UiLocalizedText.Set(
                     battleLibraryCountLabel,
                     fa
-                        ? $"نمایش {_visibleEntries.Count} از {_catalogEntries.Count} نبرد"
-                        : $"SHOWING {_visibleEntries.Count} OF {_catalogEntries.Count} BATTLES");
+                        ? $"{_visibleEntries.Count} نبرد"
+                        : $"{_visibleEntries.Count} BATTLES");
             }
 
             if (scenarioDescription != null)
@@ -207,7 +207,7 @@ namespace Game.UI.Runtime
             string[] values = { copy.Summary, copy.Objective, copy.Roster, copy.Economy, copy.Intel };
             for (int i = 0; i < names.Length; i++)
             {
-                var label = transform.Find("SkirmishSetupComposition/BaseAssaultRules/" + names[i])?.GetComponent<TMP_Text>();
+                var label = transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content/" + names[i])?.GetComponent<TMP_Text>();
                 if (label == null) continue;
                 var binding = label.GetComponent<V3LocalizedTextBindingView>();
                 if (binding == null) continue;
@@ -313,7 +313,7 @@ namespace Game.UI.Runtime
                 var tabLabel = button.GetComponentInChildren<TMP_Text>();
                 if (tabLabel != null)
                 {
-                    tabLabel.fontSize = 22f;
+                    tabLabel.fontSize = 30f;
                     tabLabel.textWrappingMode = TextWrappingModes.NoWrap;
                     tabLabel.overflowMode = TextOverflowModes.Ellipsis;
                 }
@@ -413,7 +413,7 @@ namespace Game.UI.Runtime
                     .GetComponent<TextMeshProUGUI>();
                 label.transform.SetParent(rect, false);
                 label.font = _libraryLabelFont;
-                label.fontSize = 20f;
+                label.fontSize = 30f;
                 label.alignment = TextAlignmentOptions.MidlineLeft;
                 label.raycastTarget = false;
                 label.textWrappingMode = TextWrappingModes.Normal;

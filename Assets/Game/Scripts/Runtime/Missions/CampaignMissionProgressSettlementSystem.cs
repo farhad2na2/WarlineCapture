@@ -52,7 +52,13 @@ namespace Game.Runtime
             {
                 CampaignMissionSettlementRequestElement request = requests[0];
                 requests.RemoveAt(0);
-                responses.Add(Settle(store, in request, in runtime, in result, ref definition));
+                var response=Settle(store,in request,in runtime,in result,ref definition);
+                if(response.Accepted!=0 && entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root))
+                {
+                    try {var facts=entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);store.RecordRecoveryEvidence(request.MissionId.ToString(),request.SessionToken.ToString(),request.AttemptOrdinal,in facts);}
+                    catch(Exception error){UnityEngine.Debug.LogException(error);} // Receipt failure never blocks rewards or the ordinary ending.
+                }
+                responses.Add(response);
             }
         }
 

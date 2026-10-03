@@ -1,0 +1,25 @@
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,156): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,258): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,65): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,191): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,71): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,197): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,156): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,258): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,65): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,191): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,71): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,197): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,156): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(393,258): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,65): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(394,191): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,71): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs(395,197): error CS0103: The name 'facts' does not exist in the current context
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.CommandNode.cs(91,125): error CS1503: Argument 4: cannot convert from 'in Game.Components.OperationMapGridBlob' to 'in Game.Components.GridConfig'
+Fresh Editor: compiling=False scriptCompilationFailed=True; no native builder dispatched.

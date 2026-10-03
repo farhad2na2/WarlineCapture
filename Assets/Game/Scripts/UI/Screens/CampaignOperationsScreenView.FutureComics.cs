@@ -19,11 +19,12 @@ namespace Game.UI.Runtime
                 persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
-                persian ? "مأموریت‌های ۱ تا ۴ آماده‌اند" : "M01–M04 READY");
+                persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "M01–M05 READY");
             // Keep previously available story previews reachable beside playable M01.
             if(selectedChapter==5&&IsChapterFive)
                 for(int index=1;index<5;index++)
-                {bool available=FutureMissionComicCatalog.Find(5,index+1)!=null;
+                {if(20+index<Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount)continue;
+                 bool available=FutureMissionComicCatalog.Find(5,index+1)!=null;
                  if(missionNodeButtons!=null&&index<missionNodeButtons.Length&&missionNodeButtons[index]!=null)missionNodeButtons[index].interactable=available;
                  if(missionLockIcons!=null&&index<missionLockIcons.Length&&missionLockIcons[index]!=null)missionLockIcons[index].SetActive(!available);
                  ApplyNodeAppearance(index,available,false,index==selectedMissionNodeIndex);}

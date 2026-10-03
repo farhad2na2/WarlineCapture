@@ -14,7 +14,8 @@ namespace Game.Configs
                 scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
             bool networkRaid = scenario.ScenarioId == "scenario.ch05.m03.network_collapse" && !scenario.MissionRuntime.Enabled && scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled && !scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
             bool lastCorridor = scenario.ScenarioId == "scenario.ch05.m04.last_corridor" && !scenario.MissionRuntime.Enabled && scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled && !scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
-            if ((!scenario.MissionRuntime.Enabled && !trustConvoy && !networkRaid && !lastCorridor) || !defense.Enabled ||
+            bool commandNode = scenario.ScenarioId == "scenario.ch05.m05.command_node" && !scenario.MissionRuntime.Enabled && scenario.Restrictions.BuildingDisabled && scenario.Restrictions.ProductionDisabled && scenario.Restrictions.EconomyDisabled && scenario.Restrictions.TransportDisabled && scenario.Restrictions.AirDisabled;
+            if ((!scenario.MissionRuntime.Enabled && !trustConvoy && !networkRaid && !lastCorridor && !commandNode) || !defense.Enabled ||
                 defense.ConvoyElements.Length is < 1 or > 4 ||
                 string.IsNullOrWhiteSpace(defense.ForwardPostStableId) || defense.ForwardPostStableId.Length > 125 ||
                 !HasAnchor(scenario, defense.InnerCoreAnchorId) ||

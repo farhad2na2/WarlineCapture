@@ -23,6 +23,14 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
+            if(TryCommandNode(out _,out _,out var command))
+            {
+                var yes=UiMatchHudObjectiveIconKind.Checked;var no=UiMatchHudObjectiveIconKind.Unchecked;int stage=CampaignMissionCommandNodeRuleUtility.Stage(in command);
+                statusSurfaces=new UiMatchHudStatusSurfacesModel(GameText.Get("mission.command_node.name"),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.command_node.objective.network"),command.ClinicIsolated!=0&&command.UtilityIsolated!=0&&command.NodeDisabled!=0?yes:no),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.command_node.objective.audit"),command.AuditReleased!=0?yes:no),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.command_node.objective.safe"),command.SpecialistsSafe!=0?yes:no),GameText.Format("mission.command_node.hud.time","Operation window: {0}m {1}s",Unity.Mathematics.math.max(0,(900000-command.ElapsedMilliseconds+999)/1000)/60,Unity.Mathematics.math.max(0,(900000-command.ElapsedMilliseconds+999)/1000)%60),true,GameText.Get("mission.command_node.name"),AppendCommandNodeStatus(GameText.Get("mission.command_node.hud.stage."+stage)),false,false,"",false,false,false,false);return true;
+            }
             if(TryLastCorridor(out _,out _,out var corridor))
             {
                 var yes=UiMatchHudObjectiveIconKind.Checked;var no=UiMatchHudObjectiveIconKind.Unchecked;int stage=CampaignMissionLastCorridorRuleUtility.Stage(in corridor);
@@ -224,6 +232,7 @@ namespace Game.UI.Shell.Ecs
             var gridlockStamp=ReadGridlockStamp();
             var groundedSignalStatusStamp=ReadGroundedSignalStatusStamp();
             var citywideAlertStatusStamp=ReadCitywideAlertStatusStamp();
+            var commandNodeStatusStamp=ReadCommandNodeStatusStamp();
             var lastCorridorStatusStamp=ReadLastCorridorStatusStamp();
             var networkCollapseStatusStamp=ReadNetworkCollapseStatusStamp();
             var trustUnderFireStatusStamp=ReadTrustUnderFireStatusStamp();
@@ -233,7 +242,7 @@ namespace Game.UI.Shell.Ecs
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp && cachedSupplyDelivery==supplyDelivery &&
-                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp && cachedArmorBreakStatusStamp==armorBreakStatusStamp && cachedCitywideAlertStatusStamp==citywideAlertStatusStamp && cachedTrustUnderFireStatusStamp==trustUnderFireStatusStamp && cachedNetworkCollapseStatusStamp==networkCollapseStatusStamp && cachedLastCorridorStatusStamp==lastCorridorStatusStamp &&
+                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp && cachedArmorBreakStatusStamp==armorBreakStatusStamp && cachedCitywideAlertStatusStamp==citywideAlertStatusStamp && cachedTrustUnderFireStatusStamp==trustUnderFireStatusStamp && cachedNetworkCollapseStatusStamp==networkCollapseStatusStamp && cachedLastCorridorStatusStamp==lastCorridorStatusStamp && cachedCommandNodeStatusStamp==commandNodeStatusStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -273,6 +282,7 @@ namespace Game.UI.Shell.Ecs
                     recommendationBody+="\n"+GameText.Format("mission.supply_line.delivery_progress","New Fuel delivered: {0}/40 barrels",supplyDelivery);
                 if(topRecommendation.TutorialStepCount==8 && !(topRecommendation.RecommendationId is >=68001 and <=68008 or >=69001 and <=69008 or >=70001 and <=70008 or >=71001 and <=71008)) recommendationBody=AppendBreachStatus(recommendationBody);
                 if(topRecommendation.RecommendationId is >=68001 and <=68008)recommendationBody=AppendCitywideAlertStatus(recommendationBody);
+                if(topRecommendation.RecommendationId is >=72001 and <=72008)recommendationBody=AppendCommandNodeStatus(recommendationBody);
                 if(topRecommendation.RecommendationId is >=71001 and <=71008)recommendationBody=AppendLastCorridorStatus(recommendationBody);
                 if(topRecommendation.RecommendationId is >=70001 and <=70008)recommendationBody=AppendNetworkCollapseStatus(recommendationBody);
                 if(topRecommendation.RecommendationId is >=69001 and <=69008)recommendationBody=AppendTrustUnderFireStatus(recommendationBody);
@@ -398,7 +408,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;cachedSupplyDelivery=supplyDelivery;
             cachedGroundedSignalStatusStamp=groundedSignalStatusStamp;
-            cachedArmorBreakStatusStamp=armorBreakStatusStamp;cachedCitywideAlertStatusStamp=citywideAlertStatusStamp;cachedTrustUnderFireStatusStamp=trustUnderFireStatusStamp;cachedNetworkCollapseStatusStamp=networkCollapseStatusStamp;cachedLastCorridorStatusStamp=lastCorridorStatusStamp;
+            cachedArmorBreakStatusStamp=armorBreakStatusStamp;cachedCitywideAlertStatusStamp=citywideAlertStatusStamp;cachedTrustUnderFireStatusStamp=trustUnderFireStatusStamp;cachedNetworkCollapseStatusStamp=networkCollapseStatusStamp;cachedLastCorridorStatusStamp=lastCorridorStatusStamp;cachedCommandNodeStatusStamp=commandNodeStatusStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

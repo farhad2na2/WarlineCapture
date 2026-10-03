@@ -10,6 +10,8 @@ namespace Game.Components
         public byte CorridorSuppliesDelivered, CorridorLinkRecovered, CorridorEngineerDelivered, CorridorKeysDelivered, CorridorCommsReady;
         public int CorridorFuelReceived;
         public LastCorridorFailure CorridorFailure;
+        public byte CommandNodeNetworkSeparated, CommandNodeAuditReleased, CommandNodeSpecialistsSafe, CommandNodeServicesIntact, CommandNodeCommsReady;
+        public CommandNodeFailure CommandNodeFailure;
         public byte TrustNorthArrived, TrustSouthArrived, TrustRelayVerified, TrustCommsReady, TrustMilitaryCleared, TrustNorthCrossed, TrustSouthCrossed;
         public int TrustStableMilliseconds;
         public TrustUnderFireFailure TrustFailure;

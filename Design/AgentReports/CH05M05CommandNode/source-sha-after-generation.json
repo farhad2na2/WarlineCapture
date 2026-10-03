@@ -1,0 +1,28 @@
+{
+    "files": [
+        {
+            "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+            "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8"
+        },
+        {
+            "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "sha256": "9ce9f7d1c3bfaf2f3da879a27bfb78732957c46d756ea8cf71a0c704d9e09038"
+        },
+        {
+            "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+            "sha256": "6fe0dd7084d323112cbfa2118126ca1d3605a59c67ccdffd3f5281855ea0f984"
+        },
+        {
+            "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "sha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d"
+        },
+        {
+            "path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+            "sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb"
+        },
+        {
+            "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png",
+            "sha256": "420d9f07fec2418fad279d5d104a2c3caa248ee5481c3658fb9b2b65b9afcc3f"
+        }
+    ]
+}

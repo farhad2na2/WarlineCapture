@@ -1,0 +1,554 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M05CommandNodeInputProbe.RunEnglishCaptioned
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_60239c5b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeRules] result=Passed release=AcceptedNormalMove stale=Rejected holds=Continuous progress=Unique
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeRulesValidation.cs:34)
+Game.Editor.CH05M05CommandNodeInputProbe:Run (string,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:87)
+Game.Editor.CH05M05CommandNodeInputProbe:RunEnglishCaptioned () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:72)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_60239c5b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:427)
+Game.Editor.CH05M05CommandNodeInputProbe:Run (string,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:93)
+Game.Editor.CH05M05CommandNodeInputProbe:RunEnglishCaptioned () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:72)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_60239c5b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[CommandNodeInput] inputFixture=background-game-view-only nativeInputIsolated=3
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:ConfigureFixture () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:455)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:128)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInput] touch=ContinueButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:257)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[CommandNodeInput] touch=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:255)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[CommandNodeInput] touch=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:249)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch05.m05.command_node scenario=scenario.ch05.m05.command_node operationMap=opmap.ch05.command_node
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=26.4 avgFrame=37.8ms updateAvg=1.1ms updateMax=1.1ms cpuFrame=31.1ms cpuMain=8.9ms cpuRender=2.5ms gpu=14.6ms drawCalls=14 batches=0 setPass=39 tris=2153 verts=6011 units=278 models=0 sourceKeys=278 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=PC_RPAsset,scale=1.00,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23783MB reserved=25644MB mono=12264MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.5ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=641 source=profilerCounters drawCalls=14 batches=0 setPass=39 tris=2153 verts=6011 topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[CommandNodeInputState] phase=None outcome=None step=-1 clock=0 initialized=0 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PerfDiag:PreGame] slowUpdate frame=643 total=37.6ms gc=0/0/0 cpuFrame=30.2ms cpuMain=6.7ms cpuRender=2.2ms gpu=13.0ms steps=MainMenu=37.1ms units=278 models=0 sourceKeys=278 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=264 batches=0 setPass=46 tris=592240 verts=1086548 memory=alloc=23653MB reserved=25629MB mono=12265MB uiToolkit=0 gameplayInitialized=0 playRequested=0 simulationActive=0 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=12467 size=440x220 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FrameRateDiag:PreGame] fps=1.1 avgFrame=892.2ms updateAvg=12.7ms updateMax=37.6ms cpuFrame=37.6ms cpuMain=6.8ms cpuRender=0.7ms gpu=0.5ms drawCalls=264 batches=0 setPass=46 tris=592240 verts=1086548 units=278 models=0 sourceKeys=278 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23743MB reserved=25627MB mono=12266MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.3ms stepStats=none topSystems=disabled markers=disabled
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=651 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=652 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Frame gap frame=653 Gap=492.9ms GC=0/0/0 LastSteps=BuildingStartup=0.2ms, MainMenu=10.0ms
+[FreezeDetect] Update hitch frame=653 BuildingPlacement=740.3ms, GC=0/0/0, Total=825.0ms
+[PerfDiag] slowUpdate frame=653 total=825.0ms gc=0/0/0 cpuFrame=40.5ms cpuMain=26.1ms cpuRender=4.1ms gpu=9.5ms steps=RoadBuild=16.3ms, BuildingPlacement=740.3ms, Selection=60.6ms, DayNight=0.1ms, CitizenPopulation=0.1ms, MainMenu=7.2ms units=301 models=23 sourceKeys=301 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=376 batches=0 setPass=53 tris=1105841 verts=2200332 memory=alloc=23693MB reserved=25632MB mono=12267MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=2.7 avgFrame=366.1ms updateAvg=93.6ms updateMax=825.0ms cpuFrame=40.5ms cpuMain=26.1ms cpuRender=4.1ms gpu=9.5ms drawCalls=376 batches=0 setPass=53 tris=1105841 verts=2200332 units=301 models=23 sourceKeys=301 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23693MB reserved=25632MB mono=12267MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=654 Gap=1132.7ms GC=0/0/0 LastSteps=RoadBuild=16.3ms, BuildingPlacement=740.3ms, Selection=60.6ms, DayNight=0.1ms, CitizenPopulation=0.1ms, MainMenu=7.2ms
+[FreezeDetect] Update hitch frame=654 BuildingPlacement=751.6ms, GC=0/0/0, Total=753.3ms
+[PerfDiag] slowUpdate frame=654 total=753.3ms gc=0/0/0 cpuFrame=276.9ms cpuMain=252.9ms cpuRender=1.4ms gpu=2.7ms steps=RoadBuild=0.2ms, BuildingPlacement=751.6ms, Selection=1.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.3ms units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=228 batches=0 setPass=51 tris=461763 verts=895114 memory=alloc=23698MB reserved=25634MB mono=12268MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch05.m05.brief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:180)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[PerfDiag:PreGame] slowUpdate frame=655 total=45.4ms gc=0/0/0 cpuFrame=133.9ms cpuMain=102.8ms cpuRender=1.0ms gpu=11.8ms steps=BuildingStartup=0.2ms, MainMenu=45.2ms units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=233 batches=0 setPass=54 tris=464187 verts=899183 memory=alloc=23727MB reserved=25635MB mono=12273MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=0 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=0.9 avgFrame=1075.1ms updateAvg=399.4ms updateMax=753.3ms cpuFrame=133.9ms cpuMain=102.8ms cpuRender=1.0ms gpu=11.8ms drawCalls=233 batches=0 setPass=54 tris=464187 verts=899183 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23727MB reserved=25635MB mono=12273MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=45.2ms stepStats=none topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[PerfDiag:PreGame] slowUpdate frame=668 total=25.1ms gc=0/0/0 cpuFrame=19.3ms cpuMain=11.8ms cpuRender=0.6ms gpu=12.4ms steps=BuildingStartup=0.6ms, MainMenu=24.4ms units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=291 batches=0 setPass=69 tris=460505 verts=877950 memory=alloc=23728MB reserved=25636MB mono=12273MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=0 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=12.5 avgFrame=80.2ms updateAvg=6.5ms updateMax=52.1ms cpuFrame=35.1ms cpuMain=21.2ms cpuRender=1.5ms gpu=0.3ms drawCalls=291 batches=0 setPass=69 tris=460505 verts=877950 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23731MB reserved=25635MB mono=12274MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.3ms, MainMenu=10.1ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=703 source=profilerCounters drawCalls=291 batches=0 setPass=69 tris=460505 verts=877950 topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=16.9 avgFrame=59.3ms updateAvg=7.7ms updateMax=16.5ms cpuFrame=46.2ms cpuMain=32.1ms cpuRender=1.5ms gpu=0.3ms drawCalls=292 batches=0 setPass=70 tris=460507 verts=877954 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23732MB reserved=25634MB mono=12274MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=6.0ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=25.5 avgFrame=39.3ms updateAvg=6.3ms updateMax=14.6ms cpuFrame=42.4ms cpuMain=29.2ms cpuRender=4.4ms gpu=5.2ms drawCalls=291 batches=0 setPass=69 tris=460505 verts=877950 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23732MB reserved=25632MB mono=12274MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.3ms, MainMenu=5.5ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=16.4 avgFrame=60.9ms updateAvg=6.9ms updateMax=14.1ms cpuFrame=31.4ms cpuMain=21.8ms cpuRender=4.1ms gpu=8.5ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23735MB reserved=25630MB mono=12274MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=1.6ms, MainMenu=5.5ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=22.4 avgFrame=44.6ms updateAvg=6.5ms updateMax=12.2ms cpuFrame=39.7ms cpuMain=27.2ms cpuRender=4.0ms gpu=15.1ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23735MB reserved=25630MB mono=12275MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.3ms, MainMenu=11.8ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=24.2 avgFrame=41.2ms updateAvg=6.0ms updateMax=13.1ms cpuFrame=46.8ms cpuMain=25.7ms cpuRender=1.4ms gpu=16.6ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23735MB reserved=25626MB mono=12275MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=6.3ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=915 source=profilerCounters drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=13.7 avgFrame=72.7ms updateAvg=8.6ms updateMax=20.7ms cpuFrame=38.6ms cpuMain=28.0ms cpuRender=0.9ms gpu=0.6ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23744MB reserved=25625MB mono=12275MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=3.9ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=20.1 avgFrame=49.7ms updateAvg=7.1ms updateMax=16.0ms cpuFrame=47.2ms cpuMain=29.8ms cpuRender=10.5ms gpu=11.3ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25623MB mono=12276MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=1.0ms, MainMenu=5.8ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=20.5 avgFrame=48.9ms updateAvg=7.4ms updateMax=16.8ms cpuFrame=37.0ms cpuMain=26.5ms cpuRender=4.3ms gpu=14.9ms drawCalls=291 batches=0 setPass=69 tris=460547 verts=878034 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23739MB reserved=25622MB mono=12276MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.8ms, MainMenu=4.6ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=20.1 avgFrame=49.9ms updateAvg=7.6ms updateMax=15.1ms cpuFrame=40.6ms cpuMain=28.9ms cpuRender=4.8ms gpu=3.7ms drawCalls=292 batches=0 setPass=69 tris=460549 verts=878038 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25621MB mono=12276MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=9.5ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=17.7 avgFrame=56.6ms updateAvg=7.0ms updateMax=13.1ms cpuFrame=49.6ms cpuMain=29.9ms cpuRender=1.3ms gpu=14.0ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25620MB mono=12276MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=9.1ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1110 source=profilerCounters drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=23.4 avgFrame=42.8ms updateAvg=8.2ms updateMax=22.9ms cpuFrame=51.0ms cpuMain=34.5ms cpuRender=1.4ms gpu=12.7ms drawCalls=292 batches=0 setPass=70 tris=460581 verts=878102 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25617MB mono=12277MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.3ms, MainMenu=5.2ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=21.7 avgFrame=46.0ms updateAvg=7.2ms updateMax=15.4ms cpuFrame=53.6ms cpuMain=29.4ms cpuRender=1.1ms gpu=20.3ms drawCalls=292 batches=0 setPass=69 tris=460581 verts=878102 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23737MB reserved=25616MB mono=12277MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=1.5ms, MainMenu=13.7ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=16.9 avgFrame=59.3ms updateAvg=8.0ms updateMax=21.6ms cpuFrame=46.5ms cpuMain=29.5ms cpuRender=1.1ms gpu=0.2ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25614MB mono=12277MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=3.7ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=27.1 avgFrame=36.9ms updateAvg=6.3ms updateMax=13.2ms cpuFrame=26.8ms cpuMain=18.4ms cpuRender=3.7ms gpu=19.2ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25613MB mono=12277MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.1ms, MainMenu=6.7ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=17.4 avgFrame=57.5ms updateAvg=7.8ms updateMax=18.8ms cpuFrame=124.1ms cpuMain=87.9ms cpuRender=1.3ms gpu=3.8ms drawCalls=293 batches=0 setPass=69 tris=468887 verts=892614 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25612MB mono=12278MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.1ms, MainMenu=14.8ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1334 source=profilerCounters drawCalls=293 batches=0 setPass=69 tris=468887 verts=892614 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=19.7 avgFrame=50.7ms updateAvg=7.4ms updateMax=19.6ms cpuFrame=223.4ms cpuMain=19.9ms cpuRender=1.0ms gpu=1.0ms drawCalls=292 batches=0 setPass=69 tris=468885 verts=892610 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23739MB reserved=25610MB mono=12278MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=7.1ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=29.7 avgFrame=33.6ms updateAvg=5.8ms updateMax=11.6ms cpuFrame=34.4ms cpuMain=24.5ms cpuRender=1.5ms gpu=2.5ms drawCalls=292 batches=0 setPass=69 tris=468885 verts=892610 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23738MB reserved=25608MB mono=12278MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=6.7ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=21.8 avgFrame=46.0ms updateAvg=7.0ms updateMax=17.7ms cpuFrame=40.1ms cpuMain=25.4ms cpuRender=1.4ms gpu=20.9ms drawCalls=292 batches=0 setPass=69 tris=468885 verts=892610 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23740MB reserved=25607MB mono=12279MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=3.5ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=20.5 avgFrame=48.7ms updateAvg=6.9ms updateMax=13.5ms cpuFrame=48.0ms cpuMain=31.9ms cpuRender=2.0ms gpu=0.4ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23740MB reserved=25605MB mono=12279MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.7ms, MainMenu=12.7ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=13.7 avgFrame=73.0ms updateAvg=9.6ms updateMax=23.9ms cpuFrame=37.9ms cpuMain=25.2ms cpuRender=1.3ms gpu=1.1ms drawCalls=292 batches=0 setPass=70 tris=460581 verts=878102 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23742MB reserved=25603MB mono=12280MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.5ms, MainMenu=6.5ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1547 source=profilerCounters drawCalls=292 batches=0 setPass=70 tris=460581 verts=878102 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=23.1 avgFrame=43.2ms updateAvg=8.1ms updateMax=23.9ms cpuFrame=40.1ms cpuMain=31.3ms cpuRender=3.9ms gpu=15.4ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23745MB reserved=25601MB mono=12280MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.6ms, MainMenu=3.3ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FrameRateDiag:PreGame] fps=18.6 avgFrame=53.6ms updateAvg=7.9ms updateMax=17.4ms cpuFrame=53.3ms cpuMain=40.8ms cpuRender=4.5ms gpu=54.6ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23749MB reserved=25600MB mono=12281MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.3ms, MainMenu=7.8ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=14.3 avgFrame=69.9ms updateAvg=9.2ms updateMax=17.6ms cpuFrame=49.0ms cpuMain=30.8ms cpuRender=4.6ms gpu=22.2ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23749MB reserved=25599MB mono=12281MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=1.0ms, MainMenu=8.1ms stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=24.0 avgFrame=41.7ms updateAvg=7.0ms updateMax=21.9ms cpuFrame=31.1ms cpuMain=18.3ms cpuRender=4.3ms gpu=16.9ms drawCalls=291 batches=0 setPass=69 tris=460579 verts=878098 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23749MB reserved=25598MB mono=12282MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.6ms, MainMenu=8.6ms stepStats=none topSystems=disabled markers=disabled
+[CommandNodeInputState] phase=InteractiveBrief outcome=None step=-1 clock=0 initialized=1 exterior=0 isolated=0/0 node=0 breach=0 military=0 audit=0 order=0 released=0 safe=0 failure=None
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:149)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeInput] touch=InputSurface
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Gesture (UnityEngine.Vector2,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:476)
+Game.Editor.CH05M05CommandNodeInputProbe:Tap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:474)
+Game.Editor.CH05M05CommandNodeInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=1743 Gap=245.6ms GC=0/0/0 LastSteps=BuildingStartup=0.2ms, MainMenu=16.6ms
+[FreezeDetect] Update hitch frame=1743 Selection=212.1ms, GC=0/0/0, Total=248.3ms
+[PerfDiag] slowUpdate frame=1743 total=248.3ms gc=0/0/0 cpuFrame=51.8ms cpuMain=35.9ms cpuRender=4.9ms gpu=7.6ms steps=RoadBuild=5.1ms, BuildingPlacement=7.3ms, Selection=212.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.7ms units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=292 batches=0 setPass=69 tris=460581 verts=878102 memory=alloc=23755MB reserved=25598MB mono=12282MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=16.2 avgFrame=61.8ms updateAvg=16.1ms updateMax=248.3ms cpuFrame=51.8ms cpuMain=35.9ms cpuRender=4.9ms gpu=7.6ms drawCalls=292 batches=0 setPass=69 tris=460581 verts=878102 units=305 models=23 sourceKeys=305 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23755MB reserved=25598MB mono=12282MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1743 source=profilerCounters drawCalls=292 batches=0 setPass=69 tris=460581 verts=878102 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=1744 Gap=392.8ms GC=0/0/0 LastSteps=RoadBuild=5.1ms, BuildingPlacement=7.3ms, Selection=212.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.7ms
+[FreezeDetect] Frame gap frame=1745 Gap=327.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=114.8ms, Selection=0.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.4ms
+[PerfDiag] slowUpdate frame=1747 total=43.5ms gc=0/0/0 cpuFrame=572.9ms cpuMain=512.1ms cpuRender=1.6ms gpu=0.5ms steps=RoadBuild=0.0ms, BuildingPlacement=0.2ms, Selection=10.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.3ms units=306 models=23 sourceKeys=306 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=285 batches=0 setPass=63 tris=459743 verts=876426 memory=alloc=23746MB reserved=25598MB mono=12282MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[CommandNodeInput] result=Failed Known input fixture defect: lowercase comms panel names; restarting after correction
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeInputProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:493)
+Game.Editor.CH05M05CommandNodeInputProbe:StopFailed (string) (at Assets/Game/Scripts/Editor/CH05M05CommandNodeInputProbe.cs:478)
+PipelineEvaluation.PipelineEval_5bafd5e5:Execute ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.Compilation.EvalCodeCompiler:ExecuteCompiledAssembly (System.Reflection.Assembly) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:190)
+Unity.Pipeline.Compilation.EvalCodeCompiler:CompileAndExecuteOnMainThread (string,int,System.Diagnostics.Stopwatch) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:54)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateSource (string,int,string) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:112)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateCode (string,int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:24)
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.BasePipelineServer:ExecuteCommandDirect (Unity.Pipeline.Commands.CommandInfo,object[]) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2632)
+Unity.Pipeline.BasePipelineServer/<>c__DisplayClass134_0:<ExecuteCommand>b__1 () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2508)
+Unity.Pipeline.Threading.Dispatcher/WorkItem`1<object>:ExecuteCore () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:284)
+Unity.Pipeline.Threading.Dispatcher/WorkItem:Execute () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:229)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue (int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:195)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:210)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=1761 Gap=2263.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=0.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=12.0ms
+[PerfDiag] slowUpdate frame=1761 total=41.5ms gc=0/0/0 cpuFrame=56.7ms cpuMain=31.5ms cpuRender=1.6ms gpu=0.3ms steps=RoadBuild=1.0ms, BuildingPlacement=4.9ms, Selection=3.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.4ms units=306 models=23 sourceKeys=306 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=262 batches=0 setPass=60 tris=440071 verts=846323 memory=alloc=23743MB reserved=25597MB mono=12285MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=4.3 avgFrame=231.0ms updateAvg=23.6ms updateMax=141.9ms cpuFrame=56.7ms cpuMain=31.5ms cpuRender=1.6ms gpu=0.3ms drawCalls=262 batches=0 setPass=60 tris=440071 verts=846323 units=306 models=23 sourceKeys=306 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=14 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=23743MB reserved=25597MB mono=12285MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+Failed to handle /api/exec request: Main thread operation timed out after 5000ms
+UnityEngine.Debug:LogError (object)
+Unity.Pipeline.BasePipelineServer/<HandleExecRequest>d__115:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2071)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteGated>d__105:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:1403)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<>c__DisplayClass115_0/<<HandleExecRequest>b__0>d:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2032)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteCommandByName>d__133:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2478)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)
+Unity.Pipeline.BasePipelineServer/<ExecuteCommand>d__134:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2517)
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.CH05M05CommandNodeInputProbe.RunEnglishCaptioned
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+

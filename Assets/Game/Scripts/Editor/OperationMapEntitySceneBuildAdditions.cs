@@ -177,6 +177,26 @@ namespace Game.Editor
                     scenes.Add(new Hash128(mapGuid));
                     scenes.Add(new Hash128(fixtureGuid));
                 }
+                var commandNode = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH05M05CommandNodeConfigBuilder.MapPath);
+                if (commandNode != null)
+                {
+                    string commandNodeError = "Logical source binding is not permitted for this independent physical map.";
+                    if (commandNode.SourceBinding.IsConfigured ||
+                        !commandNode.TryValidateMetadata(out commandNodeError) ||
+                        !commandNode.TryValidateLocalContentReferences(out commandNodeError))
+                        throw new InvalidOperationException("Command Node production entity delivery requires a valid independent map: " + commandNodeError);
+                    string mapPath = CH05M05CommandNodeConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, commandNode.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Command Node production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH05M05CommandNodeContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Command Node production unit fixture missing; run CH05M05CommandNodeContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
             }
             return scenes;
         }

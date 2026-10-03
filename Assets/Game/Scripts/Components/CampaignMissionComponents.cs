@@ -250,7 +250,7 @@ namespace Game.Components
         CitywideUtilityResponse = 105, CitywideUtilityRecovery = 106, CitywidePerimeter = 107, CitywideStabilize = 108,
         TrustNorthResponse = 109, TrustNorthConvoy = 110, TrustSouthResponse = 111, TrustSouthConvoy = 112,
         TrustRelayApproach = 113, TrustRelayResponse = 114, TrustVerify = 115, TrustStabilize = 116,
-        NetworkVerifyOne = 117, NetworkDisableOne = 118, NetworkVerifyTwo = 119, NetworkDisableTwo = 120, NetworkVerifyThree = 121, NetworkDisableThree = 122, NetworkAudit = 123, NetworkExtract = 124, CorridorClear = 125, CorridorRepair = 126, CorridorMedicine = 127, CorridorFuel = 128, CorridorReinforcements = 129, CorridorPickup = 130, CorridorBoard = 131, CorridorReceive = 132
+        NetworkVerifyOne = 117, NetworkDisableOne = 118, NetworkVerifyTwo = 119, NetworkDisableTwo = 120, NetworkVerifyThree = 121, NetworkDisableThree = 122, NetworkAudit = 123, NetworkExtract = 124, CorridorClear = 125, CorridorRepair = 126, CorridorMedicine = 127, CorridorFuel = 128, CorridorReinforcements = 129, CorridorPickup = 130, CorridorBoard = 131, CorridorReceive = 132, CommandNodeClear = 133, CommandNodeIsolate = 134, CommandNodeDisable = 135, CommandNodeBreach = 136, CommandNodeCore = 137, CommandNodeAudit = 138, CommandNodeRelease = 139, CommandNodeSafe = 140
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

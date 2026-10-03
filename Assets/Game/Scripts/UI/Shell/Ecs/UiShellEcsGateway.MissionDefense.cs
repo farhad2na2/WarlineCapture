@@ -59,7 +59,7 @@ namespace Game.UI.Shell.Ecs
             bool preparing=(em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)!=0x1FFu;
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             bool citywide=runtime.MissionId.Equals(CampaignMissionSequence.CitywideAlert);
-            if(armorBreak || citywide || runtime.MissionId.Equals(CampaignMissionSequence.LastCorridor)) preparing=false;
+            if(runtime.MissionId.Equals(CampaignMissionSequence.CommandNode) || armorBreak || citywide || runtime.MissionId.Equals(CampaignMissionSequence.LastCorridor)) preparing=false;
             bool resume=guidance==45007 && em.GetComponentData<CampaignMissionDefenseStateComponent>(root).StopAccepted!=0;
             if(hasDefenseReadModel && defenseAttemptKey.Equals(attemptKey) && defenseReadKey.Equals(key) && defenseReadLocale==locale && defenseReadResume==resume && defenseReadPreparing==preparing && defenseReadLosses==facts.SquadLossCount)
             {model=defenseReadModel; return true;}

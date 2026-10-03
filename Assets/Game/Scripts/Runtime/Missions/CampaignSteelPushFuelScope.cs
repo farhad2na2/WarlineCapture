@@ -15,6 +15,8 @@ namespace Game.Runtime
             if(missions.CalculateEntityCount()!=1)return false;
             var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if(runtime.Phase==MissionPhaseKind.None)return false;
+            if(runtime.MissionId.ToString()==CampaignMissionSequence.CommandNode)
+            { if(em.HasComponent<CampaignMissionCommandNodeState>(root)){var mission=em.GetComponentData<CampaignMissionCommandNodeState>(root);if(CampaignMissionCommandNodeRuleUtility.Matches(in mission,in runtime))reserve=mission.Reserve;}return true; }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.LastCorridor)
             { if(em.HasComponent<CampaignMissionLastCorridorState>(root)){var mission=em.GetComponentData<CampaignMissionLastCorridorState>(root);if(CampaignMissionLastCorridorRuleUtility.Matches(in mission,in runtime))reserve=mission.Reserve;}return true; }
             if(runtime.MissionId.ToString()==CampaignMissionSequence.NetworkCollapse)

@@ -23,7 +23,8 @@ namespace Game.Composition
             Debrief = 3,
             ChapterOpening = 4,
             ChapterReplay = 5,
-            ChapterClose = 6
+            ChapterClose = 6,
+            CampaignFinale = 7
         }
 
         private static readonly FixedString64Bytes EstablishBaseMissionId =
@@ -51,6 +52,17 @@ namespace Game.Composition
         private int completedCommsAttemptOrdinal = -1;
         private bool running, handoffPending, pauseOwned, configurationFailureLogged;
         private readonly PlaybackPresentationSystemHelper playback = new();
+        private FixedString64Bytes finaleSession;
+        private int finaleAttempt = -1, finaleQueueIndex, finaleEmphasis;
+        internal static string CommandNodeFinaleSequence(int index,int emphasis) => index switch {
+            0=>"seq.ch05.m05.debrief",1=>"seq.ch05.close.protocol_fragment_05",2=>"seq.campaign.epilogue.canonical",
+            3=>"seq.campaign.epilogue.trust_emphasis."+((emphasis&1)!=0?"high":"low"),
+            4=>"seq.campaign.epilogue.evidence_emphasis."+((emphasis&2)!=0?"high":"low"),
+            5=>"seq.campaign.epilogue.infrastructure_emphasis."+((emphasis&4)!=0?"high":"low"),
+            6=>"seq.campaign.postscript.recovery_watch",_=>string.Empty};
+        internal static string CommandNodeFinalePayload(int index,int emphasis) => "request.command_node."+(index switch {
+            0=>"debrief",1=>"close",2=>"epilogue",3=>(emphasis&1)!=0?"trust_high":"trust_low",
+            4=>(emphasis&2)!=0?"evidence_high":"evidence_low",5=>(emphasis&4)!=0?"infrastructure_high":"infrastructure_low",_=>"postscript"})+".complete";
 
         public void Initialize(MenuBootstrapView menuView, IGameTextResolver textResolver)
         {
@@ -231,6 +243,14 @@ namespace Game.Composition
             bool commsConsumed = IsSameAttempt(
                 in runtime, in completedCommsSession, completedCommsAttemptOrdinal);
             stage = ResolveStage(in runtime, in facts, briefConsumed, commsConsumed);
+            if(runtime.MissionId.Equals(CampaignMissionSequence.CommandNode) && runtime.Phase==MissionPhaseKind.DebriefFirstClear)
+            {
+                if(finaleSession!=runtime.SessionToken || finaleAttempt!=runtime.AttemptOrdinal)
+                { finaleSession=runtime.SessionToken;finaleAttempt=runtime.AttemptOrdinal;finaleQueueIndex=0;finaleEmphasis=entityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store.ResolveRecordedRecoveryEmphasis(); }
+                stage=finaleQueueIndex==0?SequenceStage.Debrief:SequenceStage.CampaignFinale;
+                sequenceId=new FixedString64Bytes(CommandNodeFinaleSequence(finaleQueueIndex,finaleEmphasis));
+                return !sequenceId.IsEmpty;
+            }
             if (stage == SequenceStage.Brief &&
                 (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.Gridlock)) ||
                  runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CitywideAlert))))
@@ -292,7 +312,7 @@ namespace Game.Composition
             stage is SequenceStage.Brief or SequenceStage.Comms or SequenceStage.ChapterOpening;
 
         internal static bool RequiresFinalResult(SequenceStage stage) =>
-            stage is SequenceStage.Debrief or SequenceStage.ChapterClose;
+            stage is SequenceStage.Debrief or SequenceStage.ChapterClose or SequenceStage.CampaignFinale;
 
         private void BindWorld(EntityManager entityManager)
         {
@@ -342,6 +362,20 @@ namespace Game.Composition
         {
             playback.Unbind();
             handoffPending = false;
+            if((activeStage==SequenceStage.Debrief || activeStage==SequenceStage.CampaignFinale) && missionRootQuery.CalculateEntityCount()==1)
+            {
+                var finaleRoot=missionRootQuery.GetSingletonEntity();var finaleRuntime=entityManager.GetComponentData<CampaignMissionRuntimeComponent>(finaleRoot);
+                if(finaleRuntime.MissionId.Equals(CampaignMissionSequence.CommandNode))
+                {
+                    if(!IsSameAttempt(finaleRuntime,activeSession,activeAttemptOrdinal)||finaleRuntime.Outcome!=MissionOutcomeKind.Victory||finaleRuntime.Phase!=MissionPhaseKind.DebriefFirstClear)
+                    {activeStage=SequenceStage.None;return;}
+                    if(finaleQueueIndex<6)
+                    {finaleQueueIndex++;activeSession=default;activeAttemptOrdinal=-1;activeStage=SequenceStage.None;return;}
+                    // Persist before allowing the ordinary completion transition; a save failure keeps the finale gate closed.
+                    try {entityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(finaleRoot).Store.RecordCommandNodeFinale(finaleRuntime.SessionToken.ToString(),finaleRuntime.AttemptOrdinal,finaleEmphasis);}
+                    catch(Exception error){Debug.LogException(error);activeStage=SequenceStage.None;return;}
+                }
+            }
             if (activeStage is SequenceStage.Debrief or SequenceStage.ChapterClose && missionRootQuery.CalculateEntityCount() == 1)
             {
                 var root = missionRootQuery.GetSingletonEntity();
@@ -500,6 +534,12 @@ namespace Game.Composition
 
         private void HandleHandoff(NarrativeHandoffResult result)
         {
+            if(activeStage==SequenceStage.CampaignFinale || activeStage==SequenceStage.Debrief && activeSession==finaleSession && activeAttemptOrdinal==finaleAttempt)
+            {
+                if(result.Completion.PayloadId!=CommandNodeFinalePayload(finaleQueueIndex,finaleEmphasis))
+                {Debug.LogError("[CommandNodeFinale] Rejected mismatched canonical queue receipt.");return;}
+                Debug.Log($"[CommandNodeFinale] receipt=Passed queue={finaleQueueIndex} sequence={CommandNodeFinaleSequence(finaleQueueIndex,finaleEmphasis)} emphasis={finaleEmphasis}");
+            }
             if (activeStage == SequenceStage.ChapterClose && result.Completion.PayloadId != "request.armor_break.close.complete")
             { Debug.LogError("[ArmorBreakNarrative] Rejected chapter close without canonical completion receipt."); return; }
             if (activeStage == SequenceStage.ChapterOpening && queryWorld != null && queryWorld.IsCreated && hasMissionRootQuery && missionRootQuery.CalculateEntityCount() == 1)

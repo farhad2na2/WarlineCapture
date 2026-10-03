@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c01fa0867f8e4a99ba743dca698d07a
+    m_Address: campaign/command-node/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1df7b83e8dbcb483fb195a45fa9403c7
     m_Address: campaign/grounded-signal/source-scene
     m_ReadOnly: 0
@@ -80,6 +85,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51be1b0e7e0f942aab707ca00632e2b4
+    m_Address: campaign/command-node/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 52b3099f8e2fe4b4caa16edb58eb2925
     m_Address: campaign/last-corridor/surface
     m_ReadOnly: 0
@@ -87,6 +97,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55e166dea54754dabab66e8469269813
     m_Address: campaign/network-collapse/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56e00e2d8aa834d39b7b38d55ded789c
+    m_Address: campaign/command-node/grid
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -102,6 +117,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 62938adc569eb46f681215503cec88ba
     m_Address: campaign/network-collapse/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bb4f21cd9119417996c72cc162cd5b3
+    m_Address: campaign/command-node/support-context
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -132,6 +152,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8eecd13ed06bd48568a590c9a259a73a
     m_Address: campaign/citywide-alert/support-context
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90d737ea6739f418f999651511bc2e13
+    m_Address: campaign/command-node/surface
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -180,6 +205,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8811c6b85890490584ba66c43c6eb91
+    m_Address: campaign/command-node/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba9198f62e3364717a1b8cc6a43b84d2
+    m_Address: campaign/command-node/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bb84060017ee341098af2709238d7d8c
     m_Address: campaign/last-corridor/minimap
     m_ReadOnly: 0
@@ -197,6 +232,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c0739b70a5d144957890e4015d12f221
     m_Address: campaign/last-corridor/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7d59de60709049f9a8b3e1db4e25dfc
+    m_Address: campaign/command-node/definition
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

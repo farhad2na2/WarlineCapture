@@ -1,0 +1,34 @@
+{
+  "mode": "caption-only",
+  "external_requests": 0,
+  "generated_clips": 0,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "authored_sequences": 12,
+  "authored_panels": 41,
+  "selected_panels": 38,
+  "sequence_counts": {
+    "brief": 8,
+    "comms": 3,
+    "debrief": 4,
+    "close": 8,
+    "epilogue": 9,
+    "trust_high": 1,
+    "trust_low": 1,
+    "evidence_high": 1,
+    "evidence_low": 1,
+    "infrastructure_high": 1,
+    "infrastructure_low": 1,
+    "postscript": 3
+  },
+  "canonical_close_panels": 8,
+  "canonical_epilogue_panels": 9,
+  "high_low_masks_audited": 8,
+  "legacy_unset_mask": 0,
+  "source_audit": "Passed",
+  "unity_compile": "Pending root wrapper",
+  "native_journey": "Pending root",
+  "audio": "Not requested"
+}

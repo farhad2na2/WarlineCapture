@@ -1,0 +1,19 @@
+{
+  "mission": "saga.ch05.m05.command_node",
+  "map": "opmap.ch05.command_node",
+  "contentHash": "f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a",
+  "normalInput": {
+    "englishManual": "input-en-05.log",
+    "persianAria": "input-fa-01.log",
+    "selectedPanelsEach": 38,
+    "settlement": "Passed",
+    "return": "Passed",
+    "finale": "Canonical"
+  },
+  "postJourneyCompilerCorrection": "Equivalent ASCII fixed-string tank-key comparison; no gameplay/UI/map changes.",
+  "finalFocusedRules": "focused-validation-05.log",
+  "finalPackedContent": "packed-content-05.log",
+  "voices": "NotRequested",
+  "visualReview": "Native HUD/markers/result/return reviewed in both locales",
+  "humanDeviceAcceptance": "Pending user review"
+}

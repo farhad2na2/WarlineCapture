@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,851 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08563309a71cb4f4e9590c186d9ce545
+      internalID: -971861526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d960e0caee7042e4a6206327f8de558
+      internalID: 1952049378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 5.5
+        y: 21.875
+        width: 1628
+        height: 916
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 277bd76cf36ca47cf908aca36d6d769a
+      internalID: 1399945280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 5.5
+        y: 182
+        width: 1628
+        height: 733
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d15b50e601c848b2a39fb19782f9679
+      internalID: -580007659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 21.25
+        y: 36
+        width: 1587
+        height: 893
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60837574c83a34606a580c867c0a955e
+      internalID: -225720437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 21.5
+        y: 170.25
+        width: 1586
+        height: 714
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a975a9ebaa68641d9b744c7cd843d799
+      internalID: -1182298336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-d-16x9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 45
+        width: 1544
+        height: 869
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3cc665b52e044803b5849b3aae5c6bc
+      internalID: 1877451588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-d-20x9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 153.75
+        width: 1544
+        height: 695
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd18ccbbf57a947f0b1dab4895c0e511
+      internalID: -366891041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-e-16x9
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 47.5
+        width: 1504
+        height: 846
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c453f490ba6894fe0b6e6ed1248f3a86
+      internalID: -870516419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-e-20x9
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 132
+        width: 1504
+        height: 677
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee961818f22214e928d055a3359a3c9f
+      internalID: -480347544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-f-16x9
+      rect:
+        serializedVersion: 2
+        x: 131.875
+        y: 44.625
+        width: 1461
+        height: 822
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6f45cf0680e847ba8928a1c64bcbfcb
+      internalID: -1571729131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-f-20x9
+      rect:
+        serializedVersion: 2
+        x: 131.25
+        y: 106.125
+        width: 1462
+        height: 658
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea7f037b089dc4714866c5bd226b2709
+      internalID: 1609941040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-g-16x9
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 35.5
+        width: 1420
+        height: 799
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4d8e36b290b84ae3b4ef7e1e69bbf5c
+      internalID: 945123186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-g-20x9
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 75.5
+        width: 1420
+        height: 639
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4124b55858204ae1942726cb40277b2
+      internalID: -1881030659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-h-16x9
+      rect:
+        serializedVersion: 2
+        x: 258.125
+        y: 20.75
+        width: 1377
+        height: 775
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 582f031a3d2e043ce920858e1d9aea09
+      internalID: 478196149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-h-20x9
+      rect:
+        serializedVersion: 2
+        x: 258.125
+        y: 40.125
+        width: 1377
+        height: 620
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 611645c5a797b4f0b9b8f295964a4552
+      internalID: 932438954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-i-16x9
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 0
+        width: 1336
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b15271cdfd3e4f6882dc3d1b05b69b4
+      internalID: -1348840267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-epilogue-i-20x9
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 0
+        width: 1335
+        height: 601
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95ab4bbcec4314ba5a0f90b0f6477d3c
+      internalID: -629704179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-trust_high-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 236bfc3c82f204b1f8aa2affa65f9935
+      internalID: 1471139035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-trust_high-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 278aac75d0e63458da8e2f0345f63fa2
+      internalID: -1533613334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-trust_low-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ac2fe37faf97456d9cb819fd0f9238a
+      internalID: 1336942283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-trust_low-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3bbc526c1faa4ec79e5e0f871134970
+      internalID: -1996821049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-evidence_high-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6762bc75f7b374a11b88dc2eb8113639
+      internalID: -1460516089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-evidence_high-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e8b2647d66704edca20a5f916dc71ec
+      internalID: -1933887611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-evidence_low-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 458948f6b067e4a7f8742dc90ac63ee4
+      internalID: 2047017788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-evidence_low-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6af282bb5461349f6a886d0a6e5efcca
+      internalID: 874423315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-infrastructure_high-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea5d86830375d4857b57d5ea34bfcd3e
+      internalID: 2070976902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-infrastructure_high-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e48e2d94e6de402fb42d23dc835646e
+      internalID: 1092570709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-infrastructure_low-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 0.5
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3eb58449fed184035896d1ed24603e47
+      internalID: 1197857067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-infrastructure_low-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0.5
+        y: 94.5
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c79f545d1edbd4b6cb20041bf1b175b2
+      internalID: -833400082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe9212a11646442d2a6472063fb25d00
+      internalID: -854687509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 527bd17015c9441a8b4ed722bbd3095a
+      internalID: -363210349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 12.5
+        width: 1628
+        height: 916
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b738dc334c52d4b0ab189389babcd164
+      internalID: -1818971798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 104
+        width: 1628
+        height: 733
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d39ced9775134fbc8bbaf588c7bd866
+      internalID: 673903127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 0
+        width: 1587
+        height: 893
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5b1f2095c0b5446387bbfd3300c98b4
+      internalID: 539705693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-postscript-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 0
+        width: 1586
+        height: 714
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e6df71fa44374d4c926f8c02372a1e8
+      internalID: 1523614298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M05_CommandNode-epilogue-a-16x9: -971861526
+      CH05M05_CommandNode-epilogue-a-20x9: 1952049378
+      CH05M05_CommandNode-epilogue-b-16x9: 1399945280
+      CH05M05_CommandNode-epilogue-b-20x9: -580007659
+      CH05M05_CommandNode-epilogue-c-16x9: -225720437
+      CH05M05_CommandNode-epilogue-c-20x9: -1182298336
+      CH05M05_CommandNode-epilogue-d-16x9: 1877451588
+      CH05M05_CommandNode-epilogue-d-20x9: -366891041
+      CH05M05_CommandNode-epilogue-e-16x9: -870516419
+      CH05M05_CommandNode-epilogue-e-20x9: -480347544
+      CH05M05_CommandNode-epilogue-f-16x9: -1571729131
+      CH05M05_CommandNode-epilogue-f-20x9: 1609941040
+      CH05M05_CommandNode-epilogue-g-16x9: 945123186
+      CH05M05_CommandNode-epilogue-g-20x9: -1881030659
+      CH05M05_CommandNode-epilogue-h-16x9: 478196149
+      CH05M05_CommandNode-epilogue-h-20x9: 932438954
+      CH05M05_CommandNode-epilogue-i-16x9: -1348840267
+      CH05M05_CommandNode-epilogue-i-20x9: -629704179
+      CH05M05_CommandNode-evidence_high-a-16x9: -1460516089
+      CH05M05_CommandNode-evidence_high-a-20x9: -1933887611
+      CH05M05_CommandNode-evidence_low-a-16x9: 2047017788
+      CH05M05_CommandNode-evidence_low-a-20x9: 874423315
+      CH05M05_CommandNode-infrastructure_high-a-16x9: 2070976902
+      CH05M05_CommandNode-infrastructure_high-a-20x9: 1092570709
+      CH05M05_CommandNode-infrastructure_low-a-16x9: 1197857067
+      CH05M05_CommandNode-infrastructure_low-a-20x9: -833400082
+      CH05M05_CommandNode-postscript-a-16x9: -854687509
+      CH05M05_CommandNode-postscript-a-20x9: -363210349
+      CH05M05_CommandNode-postscript-b-16x9: -1818971798
+      CH05M05_CommandNode-postscript-b-20x9: 673903127
+      CH05M05_CommandNode-postscript-c-16x9: 539705693
+      CH05M05_CommandNode-postscript-c-20x9: 1523614298
+      CH05M05_CommandNode-trust_high-a-16x9: 1471139035
+      CH05M05_CommandNode-trust_high-a-20x9: -1533613334
+      CH05M05_CommandNode-trust_low-a-16x9: 1336942283
+      CH05M05_CommandNode-trust_low-a-20x9: -1996821049
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

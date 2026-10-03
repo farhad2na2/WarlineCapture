@@ -98,7 +98,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsArmorBreakGuideContext() &&
                        !UiShellRuntimeGateway.IsCitywideAlertGuideContext() &&
                        !UiShellRuntimeGateway.IsNetworkCollapseGuideContext() &&
-                       !UiShellRuntimeGateway.IsLastCorridorGuideContext() &&
+                       !UiShellRuntimeGateway.IsCommandNodeGuideContext() && !UiShellRuntimeGateway.IsLastCorridorGuideContext() &&
                        !UiShellRuntimeGateway.IsTrustUnderFireGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
@@ -172,7 +172,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
@@ -208,6 +208,8 @@ namespace Game.UI.Runtime
                 if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var armorTarget) &&
                     armorTarget.BattleAction==UiTutorialBattleAction.Attack)goalId++;
             }
+            if(UiShellRuntimeGateway.IsCommandNodeGuideContext()&&UiShellRuntimeGateway.TryReadCommandNode(out var commandProgress))
+                goalId=UiCommandNodeProgress.WatchGoal(commandProgress.Stage,commandProgress.HostilesDefeated,commandProgress.IsolationStep,commandProgress.ReleaseOrdered,commandProgress.CoverReady);
             if(UiShellRuntimeGateway.IsLastCorridorGuideContext()&&UiShellRuntimeGateway.TryReadLastCorridor(out var corridorProgress))
                 goalId=UiLastCorridorProgress.WatchGoal(corridorProgress.Stage,corridorProgress.HostilesDefeated,corridorProgress.RouteStep,corridorProgress.EngineerAboard);
             if(UiShellRuntimeGateway.IsNetworkCollapseGuideContext()&&UiShellRuntimeGateway.TryReadNetworkCollapse(out var networkProgress))goalId=7000+networkProgress.Stage*8+Mathf.Clamp(networkProgress.HostilesDefeated,0,9)*2+(networkProgress.EngineerAboard?1:0);

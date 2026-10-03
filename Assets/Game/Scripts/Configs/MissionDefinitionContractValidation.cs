@@ -227,6 +227,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.ExtractNetworkEvidence:
                 case MissionObjectiveRuleKind.DeliverCorridorSupplies:
                 case MissionObjectiveRuleKind.RestoreCorridorLink:
+                case MissionObjectiveRuleKind.SeparateCommandNetwork:
+                case MissionObjectiveRuleKind.ReleaseCommandAudit:
+                case MissionObjectiveRuleKind.ProtectCommandSpecialists:
                 case MissionObjectiveRuleKind.DeliverCorridorAuthority:
                 case MissionObjectiveRuleKind.ProtectTrustNorthRoute:
                 case MissionObjectiveRuleKind.ProtectTrustSouthRoute:

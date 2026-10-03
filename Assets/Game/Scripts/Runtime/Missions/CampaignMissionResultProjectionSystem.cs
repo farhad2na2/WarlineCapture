@@ -9,6 +9,7 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionResultProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes CommandResultId = CampaignMissionSequence.CommandNode, CommandResultNodeRole = "role.hostile.node", CommandResultEngineerRole = "role.friendly.engineer", CommandResultSpecialistRole = "role.friendly.specialist";
         private static readonly FixedString64Bytes CorridorResultMissionId = CampaignMissionSequence.LastCorridor, CorridorResultMedicineRole = "role.friendly.medicine", CorridorResultEngineerRole = "role.friendly.engineer", CorridorResultKeyRole = "role.friendly.key_carrier";
         private static readonly FixedString64Bytes NetworkResultMissionId=CampaignMissionSequence.NetworkCollapse, NetworkNodeRole="role.hostile.node.1", NetworkEngineerRole="role.friendly.engineer";
         private static readonly FixedString64Bytes TrustResultMissionId = CampaignMissionSequence.TrustUnderFire;
@@ -192,6 +193,7 @@ namespace Game.Runtime
             // combined-arms mastery and authority custody, not a forward-post defense.
             if (definition.MissionId.Equals(ArmorBreakMissionId))
                 return ArmorBreakFactsMatchOutcome(outcome, in facts, ref definition);
+            if (definition.MissionId.Equals(CommandResultId)) return CommandFactsMatchOutcome(outcome, in facts, ref definition);
             if (definition.MissionId.Equals(CorridorResultMissionId)) return CorridorFactsMatchOutcome(outcome, in facts, ref definition);
             if(definition.MissionId.Equals(NetworkResultMissionId))return NetworkFactsMatchOutcome(outcome,in facts,ref definition);
             if (definition.MissionId.Equals(TrustResultMissionId)) return TrustFactsMatchOutcome(outcome, in facts, ref definition);
@@ -248,6 +250,13 @@ namespace Game.Runtime
                 : outcome == MissionOutcomeKind.Defeat && failureBroken;
         }
 
+        private static bool CommandFactsMatchOutcome(MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts, ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.Defense.Enabled == 0 || definition.Objectives.Length != 3 || facts.HostileRosterIntegrityFault != 0 || facts.CommandNodeFailure == CommandNodeFailure.Integrity) return false;
+            for (int i = 0; i < 3; i++) if (definition.Objectives[i].Rule != (MissionObjectiveRuleKind)(44 + i) || definition.Objectives[i].RequiredCount != (i == 2 ? 2 : 3) || !definition.Objectives[i].MissionRoleId.Equals(i == 0 ? CommandResultNodeRole : i == 1 ? CommandResultEngineerRole : CommandResultSpecialistRole) || !definition.Objectives[i].TargetConfigId.IsEmpty) return false;
+            if (outcome == MissionOutcomeKind.Defeat) return facts.CommandNodeFailure != CommandNodeFailure.None;
+            return outcome == MissionOutcomeKind.Victory && facts.CommandNodeFailure == CommandNodeFailure.None && facts.CommandNodeNetworkSeparated != 0 && facts.CommandNodeAuditReleased != 0 && facts.CommandNodeSpecialistsSafe != 0 && facts.CommandNodeServicesIntact != 0 && facts.HostileTotalCount == 10 && facts.HostileDefeatedCount == 10 && facts.CivilianTotalCount == 4 && facts.CivilianLossCount == 0 && facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive != 0;
+        }
         private static bool CorridorFactsMatchOutcome(MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts, ref CampaignMissionDefinitionBlob definition)
         {
             if (definition.Defense.Enabled == 0 || definition.Objectives.Length != 3 || facts.HostileRosterIntegrityFault != 0 || facts.CorridorFailure == LastCorridorFailure.Integrity) return false;

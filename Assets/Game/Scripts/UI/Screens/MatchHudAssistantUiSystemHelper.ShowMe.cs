@@ -45,7 +45,7 @@ namespace Game.UI.Runtime
             else _highlightPresentationSystem.ShowTutorialWorld(position);
             if (_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(selection))
             {
-                _tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
+                _tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
                 _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
             }
         }

@@ -1,0 +1,325 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f935472054514bc4baed4554d4d90758, type: 3}
+  m_Name: Definition
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
+  operationMapId: opmap.ch05.command_node
+  schemaVersion: 1
+  contentVersion: 4
+  sourceIdentityHash: b046b0d010e64ebbc5fc0d0f8cd7d333bd79874aae8ab83dc240f1eb2a54fa2e
+  contentHash: f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a
+  generatedMetadataHash: f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a
+  sourceBinding:
+    sourceOperationMapId: 
+    sourceIdentityHash: 
+    sourceContentHash: 
+  bounds:
+    worldMin: {x: 860, y: -20, z: 300}
+    worldMax: {x: 1300, y: 1000, z: 520}
+    playableMin: {x: 868, y: -20, z: 308}
+    playableMax: {x: 1292, y: 980, z: 512}
+    cameraMin: {x: 860, y: -20, z: 300}
+    cameraMax: {x: 1300, y: 980, z: 520}
+  gridMetadata:
+    assetGuid: 56e00e2d8aa834d39b7b38d55ded789c
+    contentHash: cc36cf8df3236eb82a439a801e091e2bdb05ec0d19b8e1e3c677fe7e49683ae3
+    origin: {x: 860, y: 0, z: 300}
+    dimensions: {x: 440, y: 220}
+    cellSize: 1
+    authoredBlockedCellCount: 13118
+  surfaceMetadata:
+    assetGuid: 90d737ea6739f418f999651511bc2e13
+    contentHash: bc8a3e45e714b15937969b83294f52300ab1f9990f2bb377cefd328376c82c7e
+    runtimeBlobHash: d5475e94aeb1461bdf9e25056efc1b84
+    surfaceCount: 96800
+    payloadVersion: 3
+    payloadEncoding: 1
+    minimumHeight: -5.31082
+    maximumHeight: 17.199179
+  navigationMetadata:
+    authoredSubSceneGuid: aec8badb49d19458991cf59c1d0103e1
+    gridAuthoringLocalId: 146043441
+    staticGridBlockerCount: 283
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
+  cameras:
+  - cameraId: camera.ch05.m05.planning
+    position: {x: 1080, y: 155, z: 330}
+    eulerAngles: {x: 59.858624, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 58
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  - cameraId: camera.ch05.m05.battle
+    position: {x: 1080, y: 90, z: 355}
+    eulerAngles: {x: 54.16235, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 58
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  planningCameraId: camera.ch05.m05.planning
+  battleCameraId: camera.ch05.m05.battle
+  minimap:
+    minimapId: minimap.ch05.m05.command_node
+    projectionOrigin: {x: 860, y: 0, z: 300}
+    projectionSize: {x: 440, y: 220}
+    orientationDegrees: 0
+  anchors:
+  - anchorId: anchor.ch05.m05.forward_post
+    kind: 7
+    position: {x: 1006, y: 0.009179777, z: 426}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 8
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.inner_core
+    kind: 7
+    position: {x: 1130, y: 0.009179777, z: 465}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 8
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.initial_barracks
+    kind: 4
+    position: {x: 1234, y: 0.009179777, z: 356}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.fuel_reserve
+    kind: 4
+    position: {x: 1234, y: 0.009179777, z: 356}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.clinic_origin
+    kind: 4
+    position: {x: 899, y: 0.009179777, z: 444}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.utility_origin
+    kind: 4
+    position: {x: 1233, y: 0.009179777, z: 444}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.audit_origin
+    kind: 4
+    position: {x: 1135, y: 0.009179777, z: 474}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.clinic
+    kind: 5
+    position: {x: 906, y: 0.009179777, z: 450}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 12
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.utility
+    kind: 5
+    position: {x: 1240, y: 0.009179777, z: 450}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 12
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.audit
+    kind: 5
+    position: {x: 1142, y: 0.77917975, z: 480}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 12
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.isolate_clinic
+    kind: 2
+    position: {x: 906, y: 0.009179777, z: 438}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.isolate_utility
+    kind: 2
+    position: {x: 1240, y: 0.009179777, z: 438}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.perimeter_node
+    kind: 1
+    position: {x: 1066, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 3
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.breach
+    kind: 2
+    position: {x: 1100, y: 0.009179777, z: 440}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.core_audit
+    kind: 2
+    position: {x: 1130, y: 0.009179777, z: 465}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.audit_release
+    kind: 2
+    position: {x: 1130, y: 0.51917976, z: 476}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.safe_receiving
+    kind: 2
+    position: {x: 1006, y: 0.009179777, z: 438}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.engineer_start
+    kind: 3
+    position: {x: 1006, y: 0.009179777, z: 330}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.specialist_start
+    kind: 3
+    position: {x: 1000, y: -0.14082022, z: 342}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.escort_tanks
+    kind: 3
+    position: {x: 970, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.escort_tank_b
+    kind: 3
+    position: {x: 982, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.escort_infantry
+    kind: 3
+    position: {x: 978, y: 0.009179777, z: 418}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.exterior
+    kind: 1
+    position: {x: 1140, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.exterior_apc
+    kind: 1
+    position: {x: 1152, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.core
+    kind: 1
+    position: {x: 1130, y: 0.009179777, z: 460}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.qassem
+    kind: 1
+    position: {x: 1152, y: 0.009179777, z: 480}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 3
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.staff_clinic
+    kind: 5
+    position: {x: 906, y: 0.009179777, z: 470}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.staff_utility
+    kind: 5
+    position: {x: 1240, y: 0.009179777, z: 470}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch05.m05.return_rts
+    kind: 12
+    position: {x: 1006, y: 0.009179777, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 2
+    factionId: 1
+    laneIndex: 0
+  presentationKind: 1
+  renderResidencyMode: 0
+  sourceSceneReference:
+    m_AssetGUID: 1c01fa0867f8e4a99ba743dca698d07a
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  optionalHeavyMetadataReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  staticPresentationManifestReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  mapSurfaceDataReference:
+    m_AssetGUID: 90d737ea6739f418f999651511bc2e13
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  minimapRasterReference:
+    m_AssetGUID: 51be1b0e7e0f942aab707ca00632e2b4
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  buildingPlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  vehiclePlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  additionalBuildingPlacements: {fileID: 0}

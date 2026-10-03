@@ -3785,6 +3785,14 @@ MonoBehaviour:
   firstLaunchLanguageChoiceView: {fileID: 2033509978}
   firstLaunchPersianLocale: {fileID: 11400000, guid: ce5d2d1e7043e9b4a9af776495d80673, type: 2}
   campaignMissionNarrativeConfigs:
+  - {fileID: 9097637512009085108, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: 4263512685001357100, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: 2901090786992614276, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: -6761464840316134325, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: -2340636056265250978, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: -9030030640451768444, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: 689122841878194160, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: -1504692297276117081, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
   - {fileID: 11400000, guid: 79361ff445b354fce88aecce41740e5b, type: 2}
   - {fileID: 5308583931186362541, guid: 79361ff445b354fce88aecce41740e5b, type: 2}
   - {fileID: 3354434649429157923, guid: 79361ff445b354fce88aecce41740e5b, type: 2}
@@ -3848,6 +3856,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 89bdc0172dfb440af80c15d2ba92dbd7, type: 2}
   - {fileID: 8933933825798015917, guid: 89bdc0172dfb440af80c15d2ba92dbd7, type: 2}
   - {fileID: 6464924960338735268, guid: 89bdc0172dfb440af80c15d2ba92dbd7, type: 2}
+  - {fileID: 1445907649818400845, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
   - {fileID: 11400000, guid: 542982bd8147f4ab3868a37aaa38dd8d, type: 2}
   - {fileID: -873785774725077915, guid: 542982bd8147f4ab3868a37aaa38dd8d, type: 2}
   - {fileID: 8323918829467292637, guid: 542982bd8147f4ab3868a37aaa38dd8d, type: 2}
@@ -3860,6 +3869,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9876589d1856c4d0a9f65a43fb20dad1, type: 2}
   - {fileID: -817886919595041855, guid: 9876589d1856c4d0a9f65a43fb20dad1, type: 2}
   - {fileID: 6270058529356326442, guid: 9876589d1856c4d0a9f65a43fb20dad1, type: 2}
+  - {fileID: 11400000, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: 1637698203403257134, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
+  - {fileID: -8855767163510490822, guid: 97be396d654224aadbba0c0ae106da49, type: 2}
   - {fileID: -6300305631338174053, guid: 542982bd8147f4ab3868a37aaa38dd8d, type: 2}
   campaignMissionCatalog: {fileID: 11400000, guid: cb1a7fecce22b2f4b9182d8feebcaed0, type: 2}
   campaignMissionDefinition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619, type: 2}

@@ -57,6 +57,17 @@ namespace Game.Runtime
                             if(authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch04.m05.command")))ready&=armorBreak.ArmorApproached!=0;
                         }
                     }
+                    if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CommandNode)))
+                    {
+                        ready &= em.HasComponent<CampaignMissionCommandNodeState>(root);
+                        if (ready)
+                        {
+                            var command = em.GetComponentData<CampaignMissionCommandNodeState>(root);
+                            ready = CampaignMissionCommandNodeRuleUtility.Matches(in command, in runtime) && command.Ready != 0;
+                            if (authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch05.m05.node"))) ready &= command.ClinicIsolated != 0 && command.UtilityIsolated != 0;
+                            if (authored.UnitGroupId.Equals(new FixedString64Bytes("group.ch05.m05.core"))) ready &= command.Breached != 0;
+                        }
+                    }
                     if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.LastCorridor)))
                         ready &= em.HasComponent<CampaignMissionLastCorridorState>(root) && em.GetComponentData<CampaignMissionLastCorridorState>(root).Ready != 0;
                     if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)))
@@ -91,7 +102,7 @@ namespace Game.Runtime
                                 commands.SetComponent(entity, combat);
                             }
                             commands.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
-                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.LastCorridor)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.CommandNode)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.LastCorridor)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.NetworkCollapse)) || runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)) || em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
                                 (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
                                 em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery")) ||
                                 runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak)) &&

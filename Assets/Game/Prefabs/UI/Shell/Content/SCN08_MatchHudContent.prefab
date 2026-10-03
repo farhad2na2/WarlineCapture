@@ -6042,6 +6042,7 @@ GameObject:
   - component: {fileID: 4572686492642878818}
   - component: {fileID: 4821892996233109795}
   - component: {fileID: 8430307333075179042}
+  - component: {fileID: 4446274540695966153}
   m_Layer: 0
   m_Name: HeaderContent
   m_TagString: Untagged
@@ -6239,6 +6240,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3efbdc820f7794262930bf96bfe23a85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.SplitFrontLauncherHudView
+--- !u!114 &4446274540695966153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116400741511091209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03a3b53b0556e447a9d45599ebac0c01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.CommandNodeMarkersView
 --- !u!1 &1134626251888356840
 GameObject:
   m_ObjectHideFlags: 0

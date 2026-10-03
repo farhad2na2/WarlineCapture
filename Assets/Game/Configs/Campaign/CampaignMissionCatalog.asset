@@ -85,3 +85,6 @@ MonoBehaviour:
   - missionId: saga.ch05.m04.last_corridor
     definition: {fileID: 11400000, guid: bb903f7ecfe794b1a9d837e946661e2e, type: 2}
     scenario: {fileID: 11400000, guid: c0739b70a5d144957890e4015d12f221, type: 2}
+  - missionId: saga.ch05.m05.command_node
+    definition: {fileID: 11400000, guid: b8811c6b85890490584ba66c43c6eb91, type: 2}
+    scenario: {fileID: 11400000, guid: ba9198f62e3364717a1b8cc6a43b84d2, type: 2}

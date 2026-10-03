@@ -346,6 +346,9 @@ namespace Game.Editor
             var corridor = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M04LastCorridorConfigBuilder.MapPath);
             if (corridor != null && maps.TrueForAll(map => map.OperationMapId != corridor.OperationMapId)) maps.Add(corridor);
 
+            var commandNode = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH05M05CommandNodeConfigBuilder.MapPath);
+            if (commandNode != null && maps.TrueForAll(map => map.OperationMapId != commandNode.OperationMapId)) maps.Add(commandNode);
+
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)
                 if (maps[i - 1].OperationMapId == maps[i].OperationMapId)

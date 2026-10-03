@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,207 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3fa25cd054964b38baf68a6150addf6
+      internalID: 847314552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e0da8854f765426db948750c0e35116
+      internalID: 1552511285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 14.666667
+        y: 16.666666
+        width: 1628
+        height: 916
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dbf8915c26264a97ace8bb30e4aa083
+      internalID: -1005230283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 14.666667
+        y: 138.66667
+        width: 1628
+        height: 733
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 976e611b224ac4381a09f51d61e905e7
+      internalID: -661111900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 56.666668
+        y: 15.999999
+        width: 1587
+        height: 893
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 809f4160a077b4556b07cd1020ff6706
+      internalID: 49330654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 57.333336
+        y: 75.666664
+        width: 1586
+        height: 714
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f0f9b403605d4e0883741168a3ba777
+      internalID: 1225007697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-d-16x9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 1544
+        height: 869
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 379e882760fd74c0097a74239f0f9885
+      internalID: -1312207152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-debrief-d-20x9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 1544
+        height: 695
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0560684276064802a69e129dbae6ba9
+      internalID: 864404900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M05_CommandNode-debrief-a-16x9: 847314552
+      CH05M05_CommandNode-debrief-a-20x9: 1552511285
+      CH05M05_CommandNode-debrief-b-16x9: -1005230283
+      CH05M05_CommandNode-debrief-b-20x9: -661111900
+      CH05M05_CommandNode-debrief-c-16x9: 49330654
+      CH05M05_CommandNode-debrief-c-20x9: 1225007697
+      CH05M05_CommandNode-debrief-d-16x9: -1312207152
+      CH05M05_CommandNode-debrief-d-20x9: 864404900
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

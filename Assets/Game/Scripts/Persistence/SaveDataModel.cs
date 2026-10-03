@@ -81,6 +81,14 @@ namespace Game.Runtime
         public bool available;
         public bool firstClearCompleted;
         public bool chapterOpeningSeen;
+        // Finale-local recorded operational emphasis; absent legacy data uses recovery variants.
+        public bool recoveryEvidenceRecorded;
+        public int recoveryCivilianLosses, recoverySquadLosses;
+        public bool recoveryAuditCustody, recoveryInfrastructurePreserved;
+        public string recoveryEvidenceReceipt = string.Empty;
+        public bool commandNodeEmphasisRecorded;
+        public int commandNodeEmphasisMask;
+        public string commandNodeFinaleReceipt = string.Empty;
         public int bestStars;
         public int bestCompletionMilliseconds;
         public bool firstClearRewardSettled;

@@ -45,7 +45,18 @@ namespace Game.Runtime
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             bool armorBreak=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.ArmorBreak));
             string text;
-            if(runtime.MissionId.Equals(CampaignMissionSequence.LastCorridor)&&em.HasComponent<CampaignMissionLastCorridorState>(root))
+            if(runtime.MissionId.Equals(CampaignMissionSequence.CommandNode)&&em.HasComponent<CampaignMissionCommandNodeState>(root))
+            {
+                var command=em.GetComponentData<CampaignMissionCommandNodeState>(root);
+                int stage=CampaignMissionCommandNodeRuleUtility.Stage(in command);
+                int hold=stage switch{2=>command.IsolationMilliseconds,4=>command.BreachMilliseconds,6=>command.AuditMilliseconds,7=>command.ReleaseMilliseconds,8=>command.ReceivingMilliseconds,_=>0};
+                int isolated=(command.ClinicIsolated!=0?1:0)+(command.UtilityIsolated!=0?1:0);
+                int remaining=math.max(0,(CampaignMissionCommandNodeRuleUtility.DeadlineMilliseconds-command.ElapsedMilliseconds+999)/1000);
+                text=GameText.Get("mission.command_node.hud.stage."+stage)+"\n"+
+                    (stage is 1 or 3 or 5?GameText.Format("mission.command_node.hud.combat","{0}/2 isolated · {1}/10 threats cleared",isolated,facts.HostileDefeatedCount):GameText.Format("mission.command_node.hud.status","{0}/2 isolated · {1}/6 s",isolated,math.clamp(hold/1000,0,6)))+"\n"+
+                    GameText.Format("mission.command_node.hud.clock","Time left: {0}:{1}",(remaining/60).ToString("00"),(remaining%60).ToString("00"));
+            }
+            else if(runtime.MissionId.Equals(CampaignMissionSequence.LastCorridor)&&em.HasComponent<CampaignMissionLastCorridorState>(root))
             {
                 var corridor=em.GetComponentData<CampaignMissionLastCorridorState>(root);
                 int stage=CampaignMissionLastCorridorRuleUtility.Stage(in corridor);

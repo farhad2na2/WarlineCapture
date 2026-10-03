@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
@@ -121,23 +121,391 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-a-16x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 1671
+        height: 940
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8dc692535cbf54d078d2ca864d1c1de1
+      internalID: -770773678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-a-20x9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 189
+        width: 1671
+        height: 752
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89d16ca131cd940bd9719bde88443f4f
+      internalID: -993667454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-b-16x9
+      rect:
+        serializedVersion: 2
+        x: 6.2857146
+        y: 21.428572
+        width: 1628
+        height: 916
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94f4d908a3e2f4d2293b32259ba34df2
+      internalID: -828560220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-b-20x9
+      rect:
+        serializedVersion: 2
+        x: 6.2857146
+        y: 178.2857
+        width: 1628
+        height: 733
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1df9501c4d3ca47128ffb49c90f526d6
+      internalID: 20911682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-c-16x9
+      rect:
+        serializedVersion: 2
+        x: 24.285715
+        y: 34.285713
+        width: 1587
+        height: 893
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7f045b67f8ed4df48dbbdb0592ad7e7
+      internalID: 1431942757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-c-20x9
+      rect:
+        serializedVersion: 2
+        x: 24.57143
+        y: 162.14285
+        width: 1586
+        height: 714
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c885873258034962b02f070b5a09904
+      internalID: 894280611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-d-16x9
+      rect:
+        serializedVersion: 2
+        x: 54.857143
+        y: 41.142857
+        width: 1544
+        height: 869
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23c724786ecf2459490fcd101387b78c
+      internalID: 1638451193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-d-20x9
+      rect:
+        serializedVersion: 2
+        x: 54.857143
+        y: 140.57143
+        width: 1544
+        height: 695
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea1251ce688e749138c3568e0c62cd5c
+      internalID: -1867115721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-e-16x9
+      rect:
+        serializedVersion: 2
+        x: 96.00001
+        y: 40.714283
+        width: 1504
+        height: 846
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b457272cc2824e719f507830456bb28
+      internalID: 1445102312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-e-20x9
+      rect:
+        serializedVersion: 2
+        x: 96.00001
+        y: 113.14285
+        width: 1504
+        height: 677
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95efa372f67664af8a5ae883affa343b
+      internalID: 1885844664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-f-16x9
+      rect:
+        serializedVersion: 2
+        x: 150.7143
+        y: 33.999996
+        width: 1461
+        height: 822
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40ad7cfae55084130a903f64b7f25f69
+      internalID: -691363935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-f-20x9
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 80.85714
+        width: 1462
+        height: 658
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7105a0920bf9d433d89776c01deb29d6
+      internalID: -258812421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-g-16x9
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 20.285713
+        width: 1420
+        height: 799
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b737099e311924879a58fdde49ff9542
+      internalID: -1778032635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-g-20x9
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 43.142853
+        width: 1420
+        height: 639
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 773c98282f16145d2ae649a35258854b
+      internalID: -420542210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-h-16x9
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 0
+        width: 1377
+        height: 775
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ebd4213549b6c41adbd27f39f47d2679
+      internalID: -434215420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CH05M05_CommandNode-close-h-20x9
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 0
+        width: 1377
+        height: 620
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5eecd9b71f404ca38f34e1b14f22109
+      internalID: 682596398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
-  mipmapLimitGroupName:
+    nameFileIdTable:
+      CH05M05_CommandNode-close-a-16x9: -770773678
+      CH05M05_CommandNode-close-a-20x9: -993667454
+      CH05M05_CommandNode-close-b-16x9: -828560220
+      CH05M05_CommandNode-close-b-20x9: 20911682
+      CH05M05_CommandNode-close-c-16x9: 1431942757
+      CH05M05_CommandNode-close-c-20x9: 894280611
+      CH05M05_CommandNode-close-d-16x9: 1638451193
+      CH05M05_CommandNode-close-d-20x9: -1867115721
+      CH05M05_CommandNode-close-e-16x9: 1445102312
+      CH05M05_CommandNode-close-e-20x9: 1885844664
+      CH05M05_CommandNode-close-f-16x9: -691363935
+      CH05M05_CommandNode-close-f-20x9: -258812421
+      CH05M05_CommandNode-close-g-16x9: -1778032635
+      CH05M05_CommandNode-close-g-20x9: -420542210
+      CH05M05_CommandNode-close-h-16x9: -434215420
+      CH05M05_CommandNode-close-h-20x9: 682596398
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

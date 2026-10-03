@@ -10,6 +10,7 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionObjectiveProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes CommandObjectiveId = CampaignMissionSequence.CommandNode, CommandObjectiveNodeRole = "role.hostile.node", CommandObjectiveEngineerRole = "role.friendly.engineer", CommandObjectiveSpecialistRole = "role.friendly.specialist";
         private static readonly FixedString64Bytes CorridorObjectiveMissionId = CampaignMissionSequence.LastCorridor, CorridorMedicineRole = "role.friendly.medicine", CorridorEngineerRole = "role.friendly.engineer", CorridorKeyRole = "role.friendly.key_carrier";
         private static readonly FixedString64Bytes NetworkObjectiveMissionId=CampaignMissionSequence.NetworkCollapse, NetworkObjectiveNodeRole="role.hostile.node.1", NetworkObjectiveEngineerRole="role.friendly.engineer";
         private EntityQuery _boundaryQuery;
@@ -108,6 +109,11 @@ namespace Game.Runtime
 
                 switch (objective.Rule)
                 {
+                    case MissionObjectiveRuleKind.SeparateCommandNetwork:
+                    case MissionObjectiveRuleKind.ReleaseCommandAudit:
+                    case MissionObjectiveRuleKind.ProtectCommandSpecialists:
+                        if (!definition.MissionId.Equals(CommandObjectiveId) || definition.Defense.Enabled == 0 || !objective.TargetConfigId.IsEmpty || objective.RequiredCount != (objective.Rule == MissionObjectiveRuleKind.ProtectCommandSpecialists ? 2 : 3) || !objective.MissionRoleId.Equals(objective.Rule == MissionObjectiveRuleKind.SeparateCommandNetwork ? CommandObjectiveNodeRole : objective.Rule == MissionObjectiveRuleKind.ReleaseCommandAudit ? CommandObjectiveEngineerRole : CommandObjectiveSpecialistRole)) return false;
+                        break;
                     case MissionObjectiveRuleKind.DeliverCorridorSupplies:
                     case MissionObjectiveRuleKind.RestoreCorridorLink:
                     case MissionObjectiveRuleKind.DeliverCorridorAuthority:
@@ -291,7 +297,7 @@ namespace Game.Runtime
                 Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
-                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectTrustNorthRoute or MissionObjectiveRuleKind.ProtectTrustSouthRoute or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief or MissionObjectiveRuleKind.RecoverNetworkAudit or MissionObjectiveRuleKind.ExtractNetworkEvidence or MissionObjectiveRuleKind.DeliverCorridorAuthority ? (byte)1 : (byte)0
+                    MissionObjectiveRuleKind.DefendMissionRole or MissionObjectiveRuleKind.ProtectTrustNorthRoute or MissionObjectiveRuleKind.ProtectTrustSouthRoute or MissionObjectiveRuleKind.StabilizeCitywideClinic or MissionObjectiveRuleKind.StabilizeCitywideUtility or MissionObjectiveRuleKind.ProtectArmorBreakRelief or MissionObjectiveRuleKind.RecoverNetworkAudit or MissionObjectiveRuleKind.ExtractNetworkEvidence or MissionObjectiveRuleKind.DeliverCorridorAuthority or MissionObjectiveRuleKind.ProtectCommandSpecialists or MissionObjectiveRuleKind.ReleaseCommandAudit ? (byte)1 : (byte)0
             };
         }
 
@@ -314,6 +320,9 @@ namespace Game.Runtime
             }
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.SeparateCommandNetwork => facts.CommandNodeFailure == CommandNodeFailure.UnisolatedNodeDestroyed ? MatchObjectiveState.Failed : facts.CommandNodeNetworkSeparated != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ReleaseCommandAudit => facts.CommandNodeFailure is CommandNodeFailure.EngineerLost or CommandNodeFailure.ServicesLost ? MatchObjectiveState.Failed : facts.CommandNodeAuditReleased != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ProtectCommandSpecialists => facts.CommandNodeFailure is CommandNodeFailure.SpecialistsLost or CommandNodeFailure.StaffLost ? MatchObjectiveState.Failed : facts.CommandNodeSpecialistsSafe != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DeliverCorridorSupplies => facts.CorridorFailure is LastCorridorFailure.MedicineLost or LastCorridorFailure.FuelCargoLost or LastCorridorFailure.ReinforcementsLost ? MatchObjectiveState.Failed : facts.CorridorSuppliesDelivered == 3 && facts.CorridorFuelReceived == 40 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestoreCorridorLink => facts.CorridorFailure == LastCorridorFailure.EngineerLost ? MatchObjectiveState.Failed : facts.CorridorLinkRecovered != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DeliverCorridorAuthority => facts.CorridorFailure is LastCorridorFailure.EngineerLost or LastCorridorFailure.KeysLost ? MatchObjectiveState.Failed : facts.CorridorEngineerDelivered != 0 && facts.CorridorKeysDelivered != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
@@ -380,6 +389,7 @@ namespace Game.Runtime
             ref CampaignMissionDefinitionBlob definition,
             in CampaignMissionObjectiveBlob objective)
         {
+            if (definition.MissionId.Equals(CommandObjectiveId)) return objective.Rule switch { MissionObjectiveRuleKind.SeparateCommandNetwork => new FixedString64Bytes("anchor.ch05.m05.perimeter_node"), MissionObjectiveRuleKind.ReleaseCommandAudit => new FixedString64Bytes("anchor.ch05.m05.audit_release"), MissionObjectiveRuleKind.ProtectCommandSpecialists => new FixedString64Bytes("anchor.ch05.m05.safe_receiving"), _ => default };
             if (definition.MissionId.Equals(CorridorObjectiveMissionId)) return objective.Rule switch { MissionObjectiveRuleKind.DeliverCorridorSupplies => new FixedString64Bytes("anchor.ch05.m04.receiving_gate"), MissionObjectiveRuleKind.RestoreCorridorLink => new FixedString64Bytes("anchor.ch05.m04.repair"), MissionObjectiveRuleKind.DeliverCorridorAuthority => new FixedString64Bytes("anchor.ch05.m04.key_receiver"), _ => default };
             if(definition.MissionId.Equals(NetworkObjectiveMissionId))return objective.Rule switch {MissionObjectiveRuleKind.DisableVerifiedNetwork=>new FixedString64Bytes("anchor.ch05.m03.node_2"),MissionObjectiveRuleKind.RecoverNetworkAudit=>new FixedString64Bytes("anchor.ch05.m03.audit_gate"),MissionObjectiveRuleKind.ExtractNetworkEvidence=>new FixedString64Bytes("anchor.ch05.m03.extraction"),_=>default};
             if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.TrustUnderFire)))

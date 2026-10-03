@@ -721,6 +721,229 @@ MonoBehaviour:
       value: "Utility armor \xB7 protect water and power"
     - key: mission.citywide_alert.warning.2
       value: "Incoming drones \xB7 maintain radar coverage"
+    - key: mission.command_node.deadline
+      value: Complete within the fifteen-minute operation window
+    - key: mission.command_node.enemy_intel
+      value: Ten military threats. Isolate both links before attacking the perimeter
+        node. Preserve civic services and staff.
+    - key: mission.command_node.forces
+      value: "Escort \xB7 original engineer \xB7 two specialists"
+    - key: mission.command_node.guide.diagram
+      value: SERVICES | AUDIT | BOUNDED AUTHORITY
+    - key: mission.command_node.guide.example
+      value: "Clear \u2192 isolate \u2192 breach \u2192 preserve audit \u2192 release
+        \u2192 safe reception."
+    - key: mission.command_node.guide.mistake
+      value: Keep original teams and civic services alive. Show Me moves only the
+        camera. Authority covers this release alone.
+    - key: mission.command_node.guide.title
+      value: "COMMAND NODE \xB7 FIELD GUIDE"
+    - key: mission.command_node.hud.clock
+      value: 'Time left: {0}:{1}'
+    - key: mission.command_node.hud.combat
+      value: "{0}/2 isolated \xB7 {1}/10 cleared"
+    - key: mission.command_node.hud.elapsed
+      value: 'Mission time: {0}m {1}s'
+    - key: mission.command_node.hud.hold
+      value: 'Hold position: {0}/6 s'
+    - key: mission.command_node.hud.isolation
+      value: 'Service links isolated: {0}/2'
+    - key: mission.command_node.hud.stage.1
+      value: Clear outer guards
+    - key: mission.command_node.hud.stage.2
+      value: Isolate both service links
+    - key: mission.command_node.hud.stage.3
+      value: Disable the perimeter node
+    - key: mission.command_node.hud.stage.4
+      value: Cover the breach, then open
+    - key: mission.command_node.hud.stage.5
+      value: Defeat the core force
+    - key: mission.command_node.hud.stage.6
+      value: Preserve the complete audit
+    - key: mission.command_node.hud.stage.7
+      value: Authorize bounded release
+    - key: mission.command_node.hud.stage.8
+      value: Receive both specialists
+    - key: mission.command_node.hud.status
+      value: "{0}/2 isolated \xB7 {1}/6 s"
+    - key: mission.command_node.hud.time
+      value: 'Operation window: {0}m {1}s'
+    - key: mission.command_node.intel.civilian
+      value: CIVIC SERVICES
+    - key: mission.command_node.intel.confirmed
+      value: 10
+    - key: mission.command_node.intel.military
+      value: MILITARY THREATS
+    - key: mission.command_node.intel.protected
+      value: SAFE
+    - key: mission.command_node.label.deadline
+      value: OPERATION WINDOW
+    - key: mission.command_node.label.fuel
+      value: FUEL RESERVE
+    - key: mission.command_node.location
+      value: "Sahrin \xB7 Civic Relay complex"
+    - key: mission.command_node.marker.stage.2
+      value: Isolate both service links
+    - key: mission.command_node.marker.stage.4
+      value: Open the protected breach
+    - key: mission.command_node.marker.stage.6
+      value: Preserve the complete audit
+    - key: mission.command_node.marker.stage.7
+      value: Authorize bounded release
+    - key: mission.command_node.marker.stage.8
+      value: Receive both specialists
+    - key: mission.command_node.name
+      value: Command Node
+    - key: mission.command_node.objective.audit
+      value: Release the complete audit
+    - key: mission.command_node.objective.network
+      value: Isolate the military network
+    - key: mission.command_node.objective.protection
+      value: Protect services and staff
+    - key: mission.command_node.objective.safe
+      value: Receive both specialists
+    - key: mission.command_node.objective.specialists
+      value: Receive both specialists
+    - key: mission.command_node.resources
+      value: "Finite Fuel \xB7 civic reserve protected"
+    - key: mission.command_node.result.audit
+      value: Public audit released
+    - key: mission.command_node.result.audit_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.civic_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.defeat
+      value: COMMAND NODE OPERATION FAILED
+    - key: mission.command_node.result.engineer_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.escort_losses
+      value: Escort losses
+    - key: mission.command_node.result.escort_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.fuel_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.incomplete
+      value: INCOMPLETE
+    - key: mission.command_node.result.integrity
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.loss
+      value: Preserve original teams and services. Isolate the network, secure the
+        audit and authorize its bounded release.
+    - key: mission.command_node.result.losses
+      value: LOST
+    - key: mission.command_node.result.network
+      value: Military network isolated
+    - key: mission.command_node.result.objectives
+      value: MISSION OBJECTIVES
+    - key: mission.command_node.result.received
+      value: RECEIVED
+    - key: mission.command_node.result.safe
+      value: Specialists received
+    - key: mission.command_node.result.safe_status
+      value: SAFE
+    - key: mission.command_node.result.secured
+      value: ISOLATED
+    - key: mission.command_node.result.services_lost
+      value: Preserve original teams and services. Isolate the network, secure the
+        audit and authorize its bounded release.
+    - key: mission.command_node.result.specialist_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.specialists_lost
+      value: Preserve original teams and services. Isolate the network, secure the
+        audit and authorize its bounded release.
+    - key: mission.command_node.result.staff_losses
+      value: Staff losses
+    - key: mission.command_node.result.staff_lost
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.subtitle
+      value: "COMMAND NODE \xB7 CIVIC RELAY"
+    - key: mission.command_node.result.success
+      value: Military controls isolated. Complete audit released. Original specialists
+        and civic services safe.
+    - key: mission.command_node.result.success_short
+      value: Audit public. Specialists safe. Shared authority restored.
+    - key: mission.command_node.result.timeout
+      value: An original team or protected operation requirement was lost. Preserve
+        the custody chain and civic services.
+    - key: mission.command_node.result.unsafe_node
+      value: Preserve original teams and services. Isolate the network, secure the
+        audit and authorize its bounded release.
+    - key: mission.command_node.result.verified
+      value: RELEASED
+    - key: mission.command_node.result.victory
+      value: OVERRIDE STOPPED
+    - key: mission.command_node.reward.card
+      value: "Commander XP \xB7 Credits \xB7 public audit"
+    - key: mission.command_node.star.1
+      value: Complete the mission
+    - key: mission.command_node.star.2
+      value: No escort losses
+    - key: mission.command_node.star.3
+      value: No civilian losses
+    - key: mission.command_node.summary
+      value: Isolate the military network, release the audit and preserve civic services.
+    - key: mission.command_node.tutorial.1.body
+      value: Move the original escort into range and Attack all four exterior military
+        threats.
+    - key: mission.command_node.tutorial.1.body.approach
+      value: Move the original escort to the approach marker within range, then Attack
+        the confirmed threat.
+    - key: mission.command_node.tutorial.1.title
+      value: Clear outer guards
+    - key: mission.command_node.tutorial.2.body
+      value: Move the original engineer to clinic isolation and hold six seconds,
+        then repeat at utility isolation.
+    - key: mission.command_node.tutorial.2.body.clinic
+      value: Move the original engineer to clinic isolation and hold six seconds.
+    - key: mission.command_node.tutorial.2.body.utility
+      value: Move the same engineer to utility isolation and hold six seconds.
+    - key: mission.command_node.tutorial.2.title
+      value: Isolate both service links
+    - key: mission.command_node.tutorial.3.body
+      value: After both links are isolated, Attack the military perimeter node with
+        the original escort.
+    - key: mission.command_node.tutorial.3.body.approach
+      value: Move the original escort to the approach marker within range, then Attack
+        the confirmed threat.
+    - key: mission.command_node.tutorial.3.title
+      value: Disable the perimeter node
+    - key: mission.command_node.tutorial.4.body
+      value: Move the original engineer to the breach marker and hold six seconds.
+    - key: mission.command_node.tutorial.4.body.cover
+      value: Move the original escort through the breach opening to the cover marker.
+        An original tank must stop there before the engineer opens the breach.
+    - key: mission.command_node.tutorial.4.title
+      value: Open the protected breach
+    - key: mission.command_node.tutorial.5.body
+      value: "Attack the four core guards and Qassem\u2019s tank. Preserve civic
+        services and the original teams."
+    - key: mission.command_node.tutorial.5.body.approach
+      value: Move the original escort to the approach marker within range, then Attack
+        the confirmed threat.
+    - key: mission.command_node.tutorial.5.title
+      value: Defeat the core force
+    - key: mission.command_node.tutorial.6.body
+      value: Move both original specialists to the audit marker. Both must hold there
+        for six seconds.
+    - key: mission.command_node.tutorial.6.title
+      value: Preserve the complete audit
+    - key: mission.command_node.tutorial.7.body
+      value: Move the original engineer to the release marker and hold six seconds.
+        This authorizes only the public audit release.
+    - key: mission.command_node.tutorial.7.title
+      value: Authorize bounded release
+    - key: mission.command_node.tutorial.8.body
+      value: Move both original specialists to safe receiving and hold six seconds.
+    - key: mission.command_node.tutorial.8.title
+      value: Receive both specialists
     - key: mission.evidence_chain.deadline
       value: 11 active minutes
     - key: mission.evidence_chain.enemy_intel
@@ -4340,6 +4563,156 @@ MonoBehaviour:
       value: We will protect these districts and keep command accountable. Hold both
         civic fronts, preserve the people keeping them alive, and prove that saving
         Sahrin does not require Qassem's permanent authority.
+    - key: narrative.command_node.brief-01
+      value: The Civic Relay joins power, communications, clinics and transport.
+        Isolate its outer military controls before entering the core. The city must
+        survive the assault.
+    - key: narrative.command_node.brief-02
+      value: My engineers will preserve the civic connections. Keep the protected
+        service sites and their staff intact; losing them defeats the purpose of
+        this operation.
+    - key: narrative.command_node.brief-03
+      value: I will supervise the hazardous-control checks. Bring the original engineer
+        to each marked isolation point after its guards are defeated, and let the
+        full verification finish.
+    - key: narrative.command_node.brief-04
+      value: Karim and I will coordinate relief access beyond the complex. The approach
+        here remains with your ground teams; do not sacrifice the services to shorten
+        the fight.
+    - key: narrative.command_node.brief-05
+      value: You centralized force and made this city obey. The only difference is
+        that you still pretend you will give the power back. I am beginning the override.
+    - key: narrative.command_node.brief-06
+      value: The two keys are my preserved archive and your live emergency credential.
+        Together they can stop his override without granting permanent rule. I will
+        wait for explicit authority.
+    - key: narrative.command_node.brief-07
+      value: Dalia controls the military breach; I coordinate civic continuity. Neither
+        mandate replaces the other. Keep the specialists alive through the final
+        release.
+    - key: narrative.command_node.brief-08
+      value: "Isolate the weapons, preserve the services, release the audit. Use
+        emergency authority only to stop the override. We are not taking Qassem\u2019s
+        place."
+    - key: narrative.command_node.close-01
+      value: "Protocol Fragment Five is complete. Qassem\u2019s original override,
+        his attempted erasure and my self-partition now align in one surviving audit."
+    - key: narrative.command_node.close-02
+      value: Bombings, false reports, Fuel diversions, Relay activations and Vanguard
+        hardware follow the same operation record. These attacks were built to manufacture
+        necessity.
+    - key: narrative.command_node.close-03
+      value: Qassem caused the shutdown, built Ash Line and invited Vanguard into
+        this crisis. The public record breaks his claim that terror made him necessary.
+    - key: narrative.command_node.close-04
+      value: No permanent unilateral control. Return emergency authority to a shared
+        structure that can explain its decisions and be stopped.
+    - key: narrative.command_node.close-05
+      value: 'The military mandate is bounded: protect the city, secure dangerous
+        controls and stand down under accountable authority. It is not a claim to
+        govern everyone.'
+    - key: narrative.command_node.close-06
+      value: District representatives, workers, utilities and clinics share civilian
+        oversight. Disagreement stays part of command instead of becoming its enemy.
+    - key: narrative.command_node.close-07
+      value: I remain active with visible permissions, explicit consent and an audit
+        trail. My recommendations can be challenged; my actions can be overridden.
+    - key: narrative.command_node.close-08
+      value: "Sahrin\u2019s map now coordinates recovery instead of hostile override.
+        Fragment Five, the complete audit and the governance resolution belong in
+        the public archive."
+    - key: narrative.command_node.comms-01
+      value: Activate the Relay without limits. I can end the argument, the uncertainty
+        and the disorder. One command is enough.
+    - key: narrative.command_node.comms-02
+      value: The audit identifies his original shutdown, the attempted erasure and
+        my self-partition. The bounded path preserves civic services and sends that
+        record beyond any single office. It does not authorize later actions.
+    - key: narrative.command_node.comms-03
+      value: I am awaiting authority. Bring the original engineer to the marked release
+        point and complete the six-second hold to authorize this release. Your orders
+        remain the decision; this message issues none.
+    - key: narrative.command_node.debrief-01
+      value: "The override failed. Qassem\u2019s force is defeated, and the Civic
+        Relay is separated from his command. Our teams will secure the complex without
+        shutting down its essential services."
+    - key: narrative.command_node.debrief-02
+      value: The complete audit has reached district councils, clinic networks, military
+        commands and independent civic archives. No single office can bury the record
+        again.
+    - key: narrative.command_node.debrief-03
+      value: Dalia and I secure military and civilian authority together. The two
+        keys protected this emergency action; they do not appoint a permanent ruler.
+    - key: narrative.command_node.debrief-04
+      value: Emergency command is ending. What follows must be visible, auditable
+        and open to challenge. I can support that work, but I cannot choose its governors.
+    - key: narrative.command_node.epilogue-01
+      value: "The Civic Relay is secured and disconnected from Qassem\u2019s override.
+        Essential services remain connected to the people they serve."
+    - key: narrative.command_node.epilogue-02
+      value: Ash Line command has collapsed. The remaining Vanguard forces withdraw
+        or surrender; protection continues while the weapons fall silent.
+    - key: narrative.command_node.epilogue-03
+      value: "The complete audit is public. It is not retained as secret command
+        evidence, and Qassem\u2019s responsibility does not depend on a reward or
+        a perfect operation."
+    - key: narrative.command_node.epilogue-04
+      value: I am supervising a disciplined stand-down. Enough protection remains
+        for clinics, roads and recovery teams; emergency force is not becoming permanent
+        authority.
+    - key: narrative.command_node.epilogue-05
+      value: "Civil representatives and workers restore power, communications and
+        transport together. Fadi\u2019s crews reopen the hospital corridor, and Yasin
+        organizes market deliveries."
+    - key: narrative.command_node.epilogue-06
+      value: The relief air corridor is reopening. Karim returns transport aircraft
+        to relief duty, and Dr. Lina receives medicine while clinics and markets
+        resume work.
+    - key: narrative.command_node.epilogue-07
+      value: My permissions and audit trail are visible. I mark what I know, what
+        I infer and what I cannot see. The Commander can override me, and the city
+        can audit us both.
+    - key: narrative.command_node.epilogue-08
+      value: Return the last emergency authority to the shared council. No one person
+        receives the master control Qassem wanted. Emergency powers carry an end
+        date.
+    - key: narrative.command_node.epilogue-09
+      value: 'Sahrin is alive again: damaged roads, waiting families, busy clinics,
+        workers and vendors. Survival begins the repair; it does not erase what the
+        city endured.'
+    - key: narrative.command_node.evidence_high-01
+      value: "The released critical-path audit proves Qassem\u2019s role and preserves
+        the verified links gathered in this operation. External financiers and Vanguard
+        connections remain subject to investigation."
+    - key: narrative.command_node.evidence_low-01
+      value: "The complete critical-path audit proves Qassem\u2019s guilt. Parts
+        of the wider support network remain disputed or hidden; that uncertainty
+        does not undo the ending."
+    - key: narrative.command_node.infrastructure_high-01
+      value: The recorded operations preserved essential services without losing
+        their teams. Roads, power, Fuel, clinics, shelters and trade can resume with
+        a stronger base for repairs.
+    - key: narrative.command_node.infrastructure_low-01
+      value: Sahrin survived, but shortages, displacement and repairs extend the
+        transition. Recovery begins under shared authority while the damaged systems
+        are restored.
+    - key: narrative.command_node.postscript-01
+      value: The Story Archive now holds all five reconstructed Protocol Fragments,
+        the complete audit and the recovery emphasis. The Campaign is complete.
+    - key: narrative.command_node.postscript-02
+      value: External Vanguard links remain under review. No immediate threat is
+        confirmed. These are future investigations, not an unfinished ending.
+    - key: narrative.command_node.postscript-03
+      value: Then we do not invent a threat. Open the restored operations map for
+        replay. This city has work ahead, and room to live.
+    - key: narrative.command_node.trust_high-01
+      value: The recorded relief operations protected civilians and civic staff.
+        Their participation has a safer starting point; oversight must still earn
+        trust by listening and explaining.
+    - key: narrative.command_node.trust_low-01
+      value: People enter recovery with questions and justified skepticism. Shared
+        civilian oversight remains, with a longer work of listening and repairing
+        legitimacy.
     - key: narrative.evidence_chain.brief.01
       value: The archive custodian made it to my clinic. The witness has the physical
         record, and the roads outside are closing. They need a safe passage, not
@@ -6362,6 +6735,16 @@ MonoBehaviour:
       value: ACTIVE RELAY TIMING
     - key: ui.home.archive.close
       value: CLOSE
+    - key: ui.home.archive.command_node.audit
+      value: COMPLETE QASSEM AUDIT
+    - key: ui.home.archive.command_node.emphasis
+      value: RECORDED RECOVERY EMPHASIS
+    - key: ui.home.archive.command_node.fragment5
+      value: PROTOCOL FRAGMENT V
+    - key: ui.home.archive.command_node.governance
+      value: SHARED BOUNDED GOVERNANCE
+    - key: ui.home.archive.command_node.postscript
+      value: RECOVERY WATCH
     - key: ui.home.archive.comms
       value: RADIO
     - key: ui.home.archive.debrief
@@ -10292,6 +10675,372 @@ MonoBehaviour:
       value: "\u067E\u0647\u067E\u0627\u062F\u0647\u0627\u06CC \u0648\u0631\u0648\u062F\u06CC
         \xB7 \u067E\u0648\u0634\u0634 \u0631\u0627\u062F\u0627\u0631 \u0631\u0648
         \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.command_node.deadline
+      value: "\u062F\u0631 \u0641\u0631\u0635\u062A \u067E\u0627\u0646\u0632\u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u0639\u0645\u0644\u06CC\u0627\u062A \u06A9\u0627\u0645\u0644 \u06A9\u0646"
+    - key: mission.command_node.enemy_intel
+      value: "\u06F1\u06F0 \u062A\u0647\u062F\u06CC\u062F \u0646\u0638\u0627\u0645\u06CC\u061B
+        \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0645\u0644\u0647 \u0628\u0647 \u06AF\u0631\u0647\u060C
+        \u0647\u0631 \u062F\u0648 \u0627\u062A\u0635\u0627\u0644 \u0631\u0648 \u062C\u062F\u0627
+        \u06A9\u0646. \u062E\u062F\u0645\u0627\u062A \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.forces
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \xB7 \u0645\u0647\u0646\u062F\u0633
+        \u0627\u0635\u0644\u06CC \xB7 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635"
+    - key: mission.command_node.guide.diagram
+      value: "\u062E\u062F\u0645\u0627\u062A | \u06AF\u0632\u0627\u0631\u0634 | \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F"
+    - key: mission.command_node.guide.example
+      value: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u2190 \u062C\u062F\u0627\u0633\u0627\u0632\u06CC
+        \u2190 \u0631\u062E\u0646\u0647 \u2190 \u062D\u0641\u0638 \u06AF\u0632\u0627\u0631\u0634
+        \u2190 \u0627\u0646\u062A\u0634\u0627\u0631 \u2190 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0627\u0645\u0646"
+    - key: mission.command_node.guide.mistake
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u062F\u0647. \u0627\u062C\u0627\u0632\u0647
+        \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0647\u0645\u06CC\u0646 \u0627\u0646\u062A\u0634\u0627\u0631\u0647."
+    - key: mission.command_node.guide.title
+      value: "\u0645\u0631\u06A9\u0632 \u0641\u0631\u0645\u0627\u0646 \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC
+        \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.command_node.hud.clock
+      value: "\u0632\u0645\u0627\u0646 \u0628\u0627\u0642\u06CC: {0}:{1}"
+    - key: mission.command_node.hud.combat
+      value: "{0}/\u06F2 \u062C\u062F\u0627 \xB7 {1}/\u06F1\u06F0 \u067E\u0627\u06A9\u200C\u0634\u062F\u0647"
+    - key: mission.command_node.hud.elapsed
+      value: "\u0632\u0645\u0627\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A:
+        {0} \u062F\u0642\u06CC\u0642\u0647 \u0648 {1} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.command_node.hud.hold
+      value: "\u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646: {0} \u0627\u0632
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.command_node.hud.isolation
+      value: "\u0627\u062A\u0635\u0627\u0644 \u062C\u062F\u0627\u0634\u062F\u0647:
+        {0} \u0627\u0632 \u06F2"
+    - key: mission.command_node.hud.stage.1
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.command_node.hud.stage.2
+      value: "\u0647\u0631 \u062F\u0648 \u0627\u062A\u0635\u0627\u0644 \u0631\u0648
+        \u062C\u062F\u0627 \u06A9\u0646"
+    - key: mission.command_node.hud.stage.3
+      value: "\u06AF\u0631\u0647 \u0628\u06CC\u0631\u0648\u0646\u06CC \u0631\u0648
+        \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.command_node.hud.stage.4
+      value: "\u0631\u062E\u0646\u0647 \u0631\u0648 \u067E\u0648\u0634\u0634 \u0628\u062F\u0647\u060C
+        \u0628\u0639\u062F \u0628\u0627\u0632\u0634 \u06A9\u0646"
+    - key: mission.command_node.hud.stage.5
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0631\u06A9\u0632
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.command_node.hud.stage.6
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.command_node.hud.stage.7
+      value: "\u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F \u0628\u062F\u0647"
+    - key: mission.command_node.hud.stage.8
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0645\u0646 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.command_node.hud.status
+      value: "{0}/\u06F2 \u062C\u062F\u0627 \xB7 {1}/\u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.command_node.hud.time
+      value: "\u0641\u0631\u0635\u062A \u0639\u0645\u0644\u06CC\u0627\u062A: {0}
+        \u062F\u0642\u06CC\u0642\u0647 \u0648 {1} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.command_node.intel.civilian
+      value: "\u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC"
+    - key: mission.command_node.intel.confirmed
+      value: "\u06F1\u06F0"
+    - key: mission.command_node.intel.military
+      value: "\u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.command_node.intel.protected
+      value: "\u0627\u0645\u0646"
+    - key: mission.command_node.label.deadline
+      value: "\u0641\u0631\u0635\u062A \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: mission.command_node.label.fuel
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0633\u0648\u062E\u062A"
+    - key: mission.command_node.location
+      value: "\u0633\u0647\u0631\u06CC\u0646 \xB7 \u0645\u062C\u0645\u0648\u0639\u0647\u0654
+        \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC"
+    - key: mission.command_node.marker.stage.2
+      value: "\u0647\u0631 \u062F\u0648 \u0627\u062A\u0635\u0627\u0644 \u0631\u0648
+        \u062C\u062F\u0627 \u06A9\u0646"
+    - key: mission.command_node.marker.stage.4
+      value: "\u0631\u062E\u0646\u0647\u0654 \u0627\u0645\u0646 \u0631\u0648 \u0628\u0627\u0632
+        \u06A9\u0646"
+    - key: mission.command_node.marker.stage.6
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.command_node.marker.stage.7
+      value: "\u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F \u0628\u062F\u0647"
+    - key: mission.command_node.marker.stage.8
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0645\u0646 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.command_node.name
+      value: "\u0645\u0631\u06A9\u0632 \u0641\u0631\u0645\u0627\u0646"
+    - key: mission.command_node.objective.audit
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0631\u0648
+        \u0645\u0646\u062A\u0634\u0631 \u06A9\u0646"
+    - key: mission.command_node.objective.network
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648
+        \u062C\u062F\u0627 \u06A9\u0646"
+    - key: mission.command_node.objective.protection
+      value: "\u062E\u062F\u0645\u0627\u062A \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.command_node.objective.safe
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0645\u0646 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.command_node.objective.specialists
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0645\u0646 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.command_node.resources
+      value: "\u0633\u0648\u062E\u062A \u0645\u062D\u062F\u0648\u062F \xB7 \u0633\u0647\u0645
+        \u062E\u062F\u0645\u0627\u062A \u0645\u062D\u0641\u0648\u0638"
+    - key: mission.command_node.result.audit
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0639\u0645\u0648\u0645\u06CC \u0645\u0646\u062A\u0634\u0631\u0634\u062F\u0647"
+    - key: mission.command_node.result.audit_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.civic_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.defeat
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A \u0645\u0631\u06A9\u0632 \u0641\u0631\u0645\u0627\u0646
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.command_node.result.engineer_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.escort_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.command_node.result.escort_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.fuel_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.incomplete
+      value: "\u0646\u0627\u0642\u0635"
+    - key: mission.command_node.result.integrity
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.loss
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \u0634\u0628\u06A9\u0647 \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646
+        \u0648 \u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F\u0634 \u0631\u0648 \u0628\u062F\u0647."
+    - key: mission.command_node.result.losses
+      value: "\u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.command_node.result.network
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u062C\u062F\u0627\u0634\u062F\u0647"
+    - key: mission.command_node.result.objectives
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.command_node.result.received
+      value: "\u062F\u0631\u06CC\u0627\u0641\u062A\u200C\u0634\u062F\u0647"
+    - key: mission.command_node.result.safe
+      value: "\u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u0634\u062F\u0646"
+    - key: mission.command_node.result.safe_status
+      value: "\u0627\u0645\u0646"
+    - key: mission.command_node.result.secured
+      value: "\u062C\u062F\u0627\u0634\u062F\u0647"
+    - key: mission.command_node.result.services_lost
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \u0634\u0628\u06A9\u0647 \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646
+        \u0648 \u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F\u0634 \u0631\u0648 \u0628\u062F\u0647."
+    - key: mission.command_node.result.specialist_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.specialists_lost
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \u0634\u0628\u06A9\u0647 \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646
+        \u0648 \u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F\u0634 \u0631\u0648 \u0628\u062F\u0647."
+    - key: mission.command_node.result.staff_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646"
+    - key: mission.command_node.result.staff_lost
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.subtitle
+      value: "\u0645\u0631\u06A9\u0632 \u0641\u0631\u0645\u0627\u0646 \xB7 \u0631\u0644\u0647\u0654
+        \u0634\u0647\u0631\u06CC"
+    - key: mission.command_node.result.success
+      value: "\u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u062C\u062F\u0627 \u0634\u062F\u0646. \u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644
+        \u0645\u0646\u062A\u0634\u0631 \u0634\u062F. \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627\u06CC
+        \u0627\u0635\u0644\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F\u0646."
+    - key: mission.command_node.result.success_short
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0639\u0645\u0648\u0645\u06CC\u0647.
+        \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627 \u0627\u0645\u0646 \u0631\u0633\u06CC\u062F\u0646.
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u0645\u0634\u062A\u0631\u06A9 \u0628\u0631\u0642\u0631\u0627\u0631
+        \u0634\u062F."
+    - key: mission.command_node.result.timeout
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u06CC\u0627 \u06CC\u06A9
+        \u0646\u06CC\u0627\u0632 \u0636\u0631\u0648\u0631\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0646\u06AF\u0647\u062F\u0627\u0631\u06CC \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.result.unsafe_node
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC
+        \u0648 \u062E\u062F\u0645\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646.
+        \u0634\u0628\u06A9\u0647 \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646
+        \u0648 \u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F\u0634 \u0631\u0648 \u0628\u062F\u0647."
+    - key: mission.command_node.result.verified
+      value: "\u0645\u0646\u062A\u0634\u0631\u0634\u062F\u0647"
+    - key: mission.command_node.result.victory
+      value: "\u062A\u0635\u0627\u062D\u0628 \u0645\u062A\u0648\u0642\u0641 \u0634\u062F"
+    - key: mission.command_node.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u06AF\u0632\u0627\u0631\u0634
+        \u0639\u0645\u0648\u0645\u06CC"
+    - key: mission.command_node.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.command_node.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0627\u0633\u06A9\u0648\u0631\u062A"
+    - key: mission.command_node.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
+    - key: mission.command_node.summary
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648
+        \u062C\u062F\u0627 \u06A9\u0646\u060C \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648
+        \u0645\u0646\u062A\u0634\u0631 \u06A9\u0646 \u0648 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.tutorial.1.body
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631
+        \u0648 \u0628\u0647 \u0647\u0631 \u0686\u0647\u0627\u0631 \u062A\u0647\u062F\u06CC\u062F
+        \u0628\u06CC\u0631\u0648\u0646\u06CC \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.command_node.tutorial.1.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u062F\u0631 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u061B
+        \u0628\u0639\u062F \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.command_node.tutorial.1.title
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.command_node.tutorial.2.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u062C\u062F\u0627\u0633\u0627\u0632\u06CC
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0628\u0628\u0631 \u0648
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646\u061B
+        \u0628\u0639\u062F \u062F\u0631 \u0646\u0634\u0627\u0646 \u062E\u062F\u0645\u0627\u062A
+        \u062A\u06A9\u0631\u0627\u0631 \u06A9\u0646."
+    - key: mission.command_node.tutorial.2.body.clinic
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062B\u0627\u0628\u062A
+        \u0628\u0645\u0648\u0646."
+    - key: mission.command_node.tutorial.2.body.utility
+      value: "\u0628\u0627 \u0647\u0645\u0648\u0646 \u0645\u0647\u0646\u062F\u0633
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u062E\u062F\u0645\u0627\u062A \u0628\u0631\u0648
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646."
+    - key: mission.command_node.tutorial.2.title
+      value: "\u0647\u0631 \u062F\u0648 \u0627\u062A\u0635\u0627\u0644 \u0631\u0648
+        \u062C\u062F\u0627 \u06A9\u0646"
+    - key: mission.command_node.tutorial.3.body
+      value: "\u067E\u0633 \u0627\u0632 \u062C\u062F\u0627\u0633\u0627\u0632\u06CC
+        \u0647\u0631 \u062F\u0648 \u0627\u062A\u0635\u0627\u0644\u060C \u0628\u0627
+        \u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0628\u0647
+        \u06AF\u0631\u0647 \u0646\u0638\u0627\u0645\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.command_node.tutorial.3.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u062F\u0631 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u061B
+        \u0628\u0639\u062F \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.command_node.tutorial.3.title
+      value: "\u06AF\u0631\u0647 \u0628\u06CC\u0631\u0648\u0646\u06CC \u0631\u0648
+        \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.command_node.tutorial.4.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0631\u062E\u0646\u0647 \u0628\u0628\u0631
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062B\u0627\u0628\u062A
+        \u0628\u0645\u0648\u0646."
+    - key: mission.command_node.tutorial.4.body.cover
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0627\u0632 \u062F\u0647\u0627\u0646\u0647\u0654 \u0631\u062E\u0646\u0647
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u067E\u0648\u0634\u0634 \u0628\u0628\u0631.
+        \u067E\u06CC\u0634 \u0627\u0632 \u0627\u06CC\u0646\u06A9\u0647 \u0645\u0647\u0646\u062F\u0633
+        \u0631\u062E\u0646\u0647 \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646\u0647\u060C
+        \u06CC\u06A9 \u062A\u0627\u0646\u06A9 \u0627\u0635\u0644\u06CC \u0628\u0627\u06CC\u062F
+        \u0627\u0648\u0646\u062C\u0627 \u0645\u062A\u0648\u0642\u0641 \u0628\u0634\u0647."
+    - key: mission.command_node.tutorial.4.title
+      value: "\u0631\u062E\u0646\u0647\u0654 \u0627\u0645\u0646 \u0631\u0648 \u0628\u0627\u0632
+        \u06A9\u0646"
+    - key: mission.command_node.tutorial.5.body
+      value: "\u0628\u0647 \u0686\u0647\u0627\u0631 \u0646\u06AF\u0647\u0628\u0627\u0646
+        \u0645\u0631\u06A9\u0632 \u0648 \u062A\u0627\u0646\u06A9 \u0642\u0627\u0633\u0645
+        \u062D\u0645\u0644\u0647 \u06A9\u0646. \u062E\u062F\u0645\u0627\u062A \u0648
+        \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.command_node.tutorial.5.body.approach
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u062F\u0631 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0628\u0628\u0631\u061B
+        \u0628\u0639\u062F \u0628\u0647 \u062A\u0647\u062F\u06CC\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646."
+    - key: mission.command_node.tutorial.5.title
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0631\u06A9\u0632
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647"
+    - key: mission.command_node.tutorial.6.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646 \u06AF\u0632\u0627\u0631\u0634
+        \u0628\u0628\u0631. \u0647\u0631 \u062F\u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u0627\u0648\u0646\u062C\u0627 \u062B\u0627\u0628\u062A \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.command_node.tutorial.6.title
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.command_node.tutorial.7.body
+      value: "\u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648
+        \u0628\u0647 \u0646\u0634\u0627\u0646 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646.
+        \u0627\u062C\u0627\u0632\u0647 \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC
+        \u0627\u0646\u062A\u0634\u0627\u0631 \u0639\u0645\u0648\u0645\u06CC \u06AF\u0632\u0627\u0631\u0634\u0647."
+    - key: mission.command_node.tutorial.7.title
+      value: "\u0627\u062C\u0627\u0632\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631
+        \u0645\u062D\u062F\u0648\u062F \u0628\u062F\u0647"
+    - key: mission.command_node.tutorial.8.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0627\u0635\u0644\u06CC
+        \u0631\u0648 \u0628\u0647 \u062F\u0631\u06CC\u0627\u0641\u062A \u0627\u0645\u0646
+        \u0628\u0628\u0631 \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0645\u0648\u0646."
+    - key: mission.command_node.tutorial.8.title
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0645\u0646 \u0628\u0631\u0633\u0648\u0646"
     - key: mission.evidence_chain.deadline
       value: "\u06F1\u06F1 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -16873,6 +17622,386 @@ MonoBehaviour:
         \u0646\u062C\u0627\u062A \u0633\u0647\u0631\u06CC\u0646 \u0628\u0647 \u0627\u062E\u062A\u06CC\u0627\u0631
         \u062F\u0627\u0626\u0645\u06CC \u0642\u0627\u0633\u0645 \u0646\u06CC\u0627\u0632
         \u0646\u062F\u0627\u0631\u0647."
+    - key: narrative.command_node.brief-01
+      value: "\u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC\u060C \u0628\u0631\u0642\u060C
+        \u0627\u0631\u062A\u0628\u0627\u0637\u0627\u062A\u060C \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u0648 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644 \u0631\u0648 \u0628\u0647
+        \u0647\u0645 \u0648\u0635\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647. \u067E\u06CC\u0634
+        \u0627\u0632 \u0648\u0631\u0648\u062F \u0628\u0647 \u0645\u0631\u06A9\u0632\u060C
+        \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC \u0646\u0638\u0627\u0645\u06CC
+        \u0628\u06CC\u0631\u0648\u0646\u06CC \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u06CC\u0646.
+        \u0634\u0647\u0631 \u0628\u0627\u06CC\u062F \u0627\u0632 \u0627\u06CC\u0646
+        \u062D\u0645\u0644\u0647 \u0633\u0627\u0644\u0645 \u0639\u0628\u0648\u0631
+        \u06A9\u0646\u0647."
+    - key: narrative.command_node.brief-02
+      value: "\u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u06CC \u0645\u0646
+        \u0627\u062A\u0635\u0627\u0644\u200C\u0647\u0627\u06CC \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u0645\u06CC\u200C\u06A9\u0646\u0646.
+        \u0645\u0631\u06A9\u0632\u0647\u0627\u06CC \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647 \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u0634\u0648\u0646
+        \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646\u061B
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646 \u0627\u0648\u0646\u200C\u0647\u0627
+        \u0647\u062F\u0641 \u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0645\u06CC\u200C\u0628\u0631\u0647."
+    - key: narrative.command_node.brief-03
+      value: "\u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC
+        \u062E\u0637\u0631\u0646\u0627\u06A9 \u0628\u0627 \u0645\u0646\u0647. \u0628\u0639\u062F
+        \u0627\u0632 \u0634\u06A9\u0633\u062A \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647
+        \u0647\u0631 \u0646\u0642\u0637\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u062C\u062F\u0627\u0633\u0627\u0632\u06CC \u0628\u0631\u0633\u0648\u0646\u06CC\u0646
+        \u0648 \u0627\u062C\u0627\u0632\u0647 \u0628\u062F\u06CC\u0646 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0627\u0645\u0644 \u0628\u0634\u0647."
+    - key: narrative.command_node.brief-04
+      value: "\u06A9\u0631\u06CC\u0645 \u0648 \u0645\u0646 \u062F\u0633\u062A\u0631\u0633\u06CC
+        \u0627\u0645\u062F\u0627\u062F \u0628\u06CC\u0631\u0648\u0646 \u0645\u062C\u0645\u0648\u0639\u0647
+        \u0631\u0648 \u0647\u0645\u0627\u0647\u0646\u06AF \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645.
+        \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646 \u062F\u0631 \u0627\u06CC\u0646\u062C\u0627
+        \u0628\u0627 \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u0634\u0645\u0627\u0633\u062A\u061B \u0628\u0631\u0627\u06CC \u06A9\u0648\u062A\u0627\u0647
+        \u06A9\u0631\u062F\u0646 \u0646\u0628\u0631\u062F\u060C \u062E\u062F\u0645\u0627\u062A
+        \u0631\u0648 \u0642\u0631\u0628\u0627\u0646\u06CC \u0646\u06A9\u0646\u06CC\u0646."
+    - key: narrative.command_node.brief-05
+      value: "\u0646\u06CC\u0631\u0648 \u0631\u0648 \u0645\u062A\u0645\u0631\u06A9\u0632
+        \u06A9\u0631\u062F\u06CC \u0648 \u0634\u0647\u0631 \u0631\u0648 \u0628\u0647
+        \u0627\u0637\u0627\u0639\u062A \u0648\u0627\u062F\u0627\u0634\u062A\u06CC.
+        \u062A\u0646\u0647\u0627 \u0641\u0631\u0642 \u0627\u06CC\u0646\u0647 \u06A9\u0647
+        \u0647\u0646\u0648\u0632 \u0648\u0627\u0646\u0645\u0648\u062F \u0645\u06CC\u200C\u06A9\u0646\u06CC
+        \u0642\u062F\u0631\u062A \u0631\u0648 \u067E\u0633 \u0645\u06CC\u200C\u062F\u06CC.
+        \u062F\u0627\u0631\u0645 \u0641\u0631\u0645\u0627\u0646 \u062A\u0635\u0627\u062D\u0628
+        \u0631\u0648 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u0645."
+    - key: narrative.command_node.brief-06
+      value: "\u062F\u0648 \u06A9\u0644\u06CC\u062F\u060C \u0622\u0631\u0634\u06CC\u0648
+        \u062D\u0641\u0638\u200C\u0634\u062F\u0647\u0654 \u0645\u0646 \u0648 \u0645\u062C\u0648\u0632
+        \u0632\u0646\u062F\u0647\u0654 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0634\u0645\u0627 \u0647\u0633\u062A\u0646. \u0628\u0627 \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0646\u0646
+        \u062A\u0635\u0627\u062D\u0628 \u0627\u0648 \u0631\u0648 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646\u0646\u060C \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647
+        \u0627\u062E\u062A\u06CC\u0627\u0631 \u062F\u0627\u0626\u0645\u06CC \u0628\u062F\u0646.
+        \u0645\u0646\u062A\u0638\u0631 \u0627\u062C\u0627\u0632\u0647\u0654 \u0635\u0631\u06CC\u062D
+        \u0645\u06CC\u200C\u0645\u0648\u0646\u0645."
+    - key: narrative.command_node.brief-07
+      value: "\u062F\u0627\u0644\u06CC\u0627 \u0631\u062E\u0646\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0645\u06CC\u200C\u06A9\u0646\u0647
+        \u0648 \u0645\u0646 \u062A\u062F\u0627\u0648\u0645 \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u0647\u0645\u0627\u0647\u0646\u06AF
+        \u0645\u06CC\u200C\u06A9\u0646\u0645. \u0647\u06CC\u0686\u200C\u06A9\u062F\u0648\u0645
+        \u062C\u0627\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631 \u062F\u06CC\u06AF\u0631\u06CC
+        \u0631\u0648 \u0646\u0645\u06CC\u200C\u06AF\u06CC\u0631\u0647. \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0631\u0648 \u062A\u0627 \u0627\u0646\u062A\u0634\u0627\u0631 \u0646\u0647\u0627\u06CC\u06CC
+        \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646."
+    - key: narrative.command_node.brief-08
+      value: "\u0633\u0644\u0627\u062D\u200C\u0647\u0627 \u0631\u0648 \u062C\u062F\u0627
+        \u06A9\u0646\u06CC\u0646\u060C \u062E\u062F\u0645\u0627\u062A \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646\u06CC\u0646\u060C \u06AF\u0632\u0627\u0631\u0634
+        \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0631\u0648 \u0645\u0646\u062A\u0634\u0631
+        \u06A9\u0646\u06CC\u0646. \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u062A\u0648\u0642\u0641 \u062A\u0635\u0627\u062D\u0628
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0628\u0634\u0647. \u0645\u0627
+        \u062C\u0627\u06CC \u0642\u0627\u0633\u0645 \u0631\u0648 \u0646\u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC\u0645."
+    - key: narrative.command_node.close-01
+      value: "\u0642\u0637\u0639\u0647\u0654 \u067E\u0646\u062C\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u06A9\u0627\u0645\u0644 \u0634\u062F. \u062A\u0635\u0627\u062D\u0628 \u0627\u0648\u0644\u06CC\u0647\u0654
+        \u0642\u0627\u0633\u0645\u060C \u062A\u0644\u0627\u0634\u0634 \u0628\u0631\u0627\u06CC
+        \u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646 \u0645\u062F\u0631\u06A9 \u0648
+        \u0628\u062E\u0634\u200C\u0628\u0646\u062F\u06CC \u0645\u0646 \u062D\u0627\u0644\u0627
+        \u062F\u0631 \u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634 \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647
+        \u06A9\u0646\u0627\u0631 \u0647\u0645 \u0642\u0631\u0627\u0631 \u06AF\u0631\u0641\u062A\u0646."
+    - key: narrative.command_node.close-02
+      value: "\u0628\u0645\u0628\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0647\u0627\u060C
+        \u06AF\u0632\u0627\u0631\u0634\u200C\u0647\u0627\u06CC \u062F\u0631\u0648\u063A\u060C
+        \u0627\u0646\u062D\u0631\u0627\u0641 \u0633\u0648\u062E\u062A\u060C \u0641\u0639\u0627\u0644
+        \u0634\u062F\u0646 \u0631\u0644\u0647 \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u062F\u0631 \u06CC\u06A9 \u0633\u0627\u0628\u0642\u0647\u0654
+        \u0639\u0645\u0644\u06CC\u0627\u062A\u06CC \u062C\u0645\u0639 \u0634\u062F\u0646.
+        \u0627\u06CC\u0646 \u062D\u0645\u0644\u0647\u200C\u0647\u0627 \u0628\u0631\u0627\u06CC
+        \u0633\u0627\u062E\u062A\u0646 \u062D\u0633 \u0636\u0631\u0648\u0631\u062A
+        \u0637\u0631\u0627\u062D\u06CC \u0634\u062F\u0646."
+    - key: narrative.command_node.close-03
+      value: "\u0642\u0627\u0633\u0645 \u062E\u0627\u0645\u0648\u0634\u06CC \u0631\u0648
+        \u0627\u06CC\u062C\u0627\u062F \u06A9\u0631\u062F\u060C \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631
+        \u0631\u0648 \u0633\u0627\u062E\u062A \u0648 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0631\u0648 \u0648\u0627\u0631\u062F \u0627\u06CC\u0646 \u0628\u062D\u0631\u0627\u0646
+        \u06A9\u0631\u062F. \u06AF\u0632\u0627\u0631\u0634 \u0639\u0645\u0648\u0645\u06CC\u060C
+        \u0627\u062F\u0639\u0627\u06CC \u0627\u0648 \u0631\u0648 \u06A9\u0647 \u0648\u062D\u0634\u062A
+        \u0648\u062C\u0648\u062F\u0634 \u0631\u0648 \u0636\u0631\u0648\u0631\u06CC
+        \u06A9\u0631\u062F\u0647 \u0628\u0648\u062F \u0645\u06CC\u200C\u0634\u06A9\u0646\u0647."
+    - key: narrative.command_node.close-04
+      value: "\u0647\u06CC\u0686 \u0627\u062E\u062A\u06CC\u0627\u0631 \u062F\u0627\u0626\u0645\u06CC
+        \u06CC\u06A9\u200C\u0637\u0631\u0641\u0647\u200C\u0627\u06CC \u062F\u0631
+        \u06A9\u0627\u0631 \u0646\u06CC\u0633\u062A. \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u0628\u0647 \u0633\u0627\u062E\u062A\u0627\u0631\u06CC
+        \u0645\u0634\u062A\u0631\u06A9 \u0628\u0631\u06AF\u0631\u062F\u0647 \u06A9\u0647
+        \u062A\u0635\u0645\u06CC\u0645\u200C\u0647\u0627\u0634 \u0631\u0648 \u062A\u0648\u0636\u06CC\u062D
+        \u0628\u062F\u0647 \u0648 \u0628\u0634\u0647 \u0645\u062A\u0648\u0642\u0641\u0634
+        \u06A9\u0631\u062F."
+    - key: narrative.command_node.close-05
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631 \u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u062F\u0648\u062F\u0647\u061B \u062D\u0641\u0638 \u0634\u0647\u0631\u060C
+        \u0627\u0645\u0646 \u06A9\u0631\u062F\u0646 \u06A9\u0646\u062A\u0631\u0644\u200C\u0647\u0627\u06CC
+        \u062E\u0637\u0631\u0646\u0627\u06A9 \u0648 \u067E\u0627\u06CC\u0627\u0646
+        \u062F\u0627\u062F\u0646 \u0628\u0647 \u0622\u0645\u0627\u062F\u0647\u200C\u0628\u0627\u0634
+        \u0632\u06CC\u0631 \u0646\u0638\u0631 \u0645\u0633\u0626\u0648\u0644\u0627\u0646\u0647.
+        \u0627\u06CC\u0646 \u0627\u062F\u0639\u0627\u06CC \u062D\u06A9\u0648\u0645\u062A
+        \u0628\u0631 \u0647\u0645\u0647 \u0646\u06CC\u0633\u062A."
+    - key: narrative.command_node.close-06
+      value: "\u0646\u0645\u0627\u06CC\u0646\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u062D\u0644\u0647\u060C \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627\u060C
+        \u062E\u062F\u0645\u0627\u062A \u0648 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u062F\u0631 \u0646\u0638\u0627\u0631\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0634\u0631\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646. \u0627\u062E\u062A\u0644\u0627\u0641
+        \u0646\u0638\u0631 \u0628\u062E\u0634\u06CC \u0627\u0632 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0645\u06CC\u200C\u0645\u0648\u0646\u0647\u060C \u0646\u0647 \u062F\u0634\u0645\u0646
+        \u0627\u0648\u0646."
+    - key: narrative.command_node.close-07
+      value: "\u0628\u0627 \u0627\u062C\u0627\u0632\u0647\u200C\u0647\u0627\u06CC
+        \u0642\u0627\u0628\u0644 \u062F\u06CC\u062F\u0646\u060C \u0631\u0636\u0627\u06CC\u062A
+        \u0635\u0631\u06CC\u062D \u0648 \u0633\u0627\u0628\u0642\u0647\u0654 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u0641\u0639\u0627\u0644 \u0645\u06CC\u200C\u0645\u0648\u0646\u0645. \u0645\u06CC\u200C\u0634\u0647
+        \u062A\u0648\u0635\u06CC\u0647\u200C\u0647\u0627\u0645 \u0631\u0648 \u0632\u06CC\u0631
+        \u0633\u0624\u0627\u0644 \u0628\u0631\u062F \u0648 \u0627\u0642\u062F\u0627\u0645\u200C\u0647\u0627\u0645
+        \u0631\u0648 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0631\u062F."
+    - key: narrative.command_node.close-08
+      value: "\u0646\u0642\u0634\u0647\u0654 \u0633\u0647\u0631\u06CC\u0646 \u062D\u0627\u0644\u0627
+        \u0628\u0647 \u062C\u0627\u06CC \u062A\u0635\u0627\u062D\u0628 \u062F\u0634\u0645\u0646\u060C
+        \u0628\u0627\u0632\u0633\u0627\u0632\u06CC \u0631\u0648 \u0647\u0645\u0627\u0647\u0646\u06AF
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0642\u0637\u0639\u0647\u0654 \u067E\u0646\u062C\u0645\u060C
+        \u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0648 \u062A\u0635\u0645\u06CC\u0645
+        \u062F\u0631\u0628\u0627\u0631\u0647\u0654 \u0627\u062F\u0627\u0631\u0647\u0654
+        \u0634\u0647\u0631 \u062F\u0631 \u0622\u0631\u0634\u06CC\u0648 \u0639\u0645\u0648\u0645\u06CC
+        \u062B\u0628\u062A \u0645\u06CC\u200C\u0634\u0646."
+    - key: narrative.command_node.comms-01
+      value: "\u0631\u0644\u0647 \u0631\u0648 \u0628\u062F\u0648\u0646 \u0645\u062D\u062F\u0648\u062F\u06CC\u062A
+        \u0641\u0639\u0627\u0644 \u06A9\u0646. \u0645\u06CC\u200C\u062A\u0648\u0646\u0645
+        \u0628\u062D\u062B\u060C \u062A\u0631\u062F\u06CC\u062F \u0648 \u0628\u06CC\u200C\u0646\u0638\u0645\u06CC
+        \u0631\u0648 \u062A\u0645\u0648\u0645 \u06A9\u0646\u0645. \u06CC\u06A9 \u0641\u0631\u0645\u0627\u0646
+        \u06A9\u0627\u0641\u06CC\u0647."
+    - key: narrative.command_node.comms-02
+      value: "\u06AF\u0632\u0627\u0631\u0634\u060C \u062E\u0627\u0645\u0648\u0634\u06CC
+        \u0627\u0648\u0644\u06CC\u0647\u0654 \u0627\u0648\u060C \u062A\u0644\u0627\u0634
+        \u0628\u0631\u0627\u06CC \u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646 \u0645\u062F\u0631\u06A9
+        \u0648 \u0628\u062E\u0634\u200C\u0628\u0646\u062F\u06CC \u062E\u0648\u062F\u0645
+        \u0631\u0648 \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0645\u0633\u06CC\u0631 \u0645\u062D\u062F\u0648\u062F\u060C \u062E\u062F\u0645\u0627\u062A
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062D\u0641\u0638 \u0645\u06CC\u200C\u06A9\u0646\u0647
+        \u0648 \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u0627\u0632 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0647\u0631 \u0627\u062F\u0627\u0631\u0647\u0654 \u062A\u0646\u0647\u0627
+        \u0628\u06CC\u0631\u0648\u0646 \u0645\u06CC\u200C\u0628\u0631\u0647. \u0627\u06CC\u0646
+        \u0627\u062C\u0627\u0632\u0647\u200C\u0627\u06CC \u0628\u0631\u0627\u06CC
+        \u06A9\u0627\u0631\u0647\u0627\u06CC \u0628\u0639\u062F\u06CC \u0646\u06CC\u0633\u062A."
+    - key: narrative.command_node.comms-03
+      value: "\u0645\u0646\u062A\u0638\u0631 \u0627\u062C\u0627\u0632\u0647\u200C\u0627\u0645.
+        \u0645\u0647\u0646\u062F\u0633 \u0627\u0635\u0644\u06CC \u0631\u0648 \u0628\u0647
+        \u0646\u0642\u0637\u0647\u0654 \u0627\u0646\u062A\u0634\u0627\u0631 \u0628\u0631\u0633\u0648\u0646\u06CC\u0646
+        \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u062A\u0648\u0642\u0641
+        \u0631\u0648 \u06A9\u0627\u0645\u0644 \u06A9\u0646\u06CC\u0646 \u062A\u0627
+        \u0647\u0645\u06CC\u0646 \u0627\u0646\u062A\u0634\u0627\u0631 \u0645\u062C\u0627\u0632
+        \u0628\u0634\u0647. \u062A\u0635\u0645\u06CC\u0645 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0634\u0645\u0627\u0633\u062A\u061B \u0627\u06CC\u0646 \u067E\u06CC\u0627\u0645
+        \u0647\u06CC\u0686 \u0641\u0631\u0645\u0627\u0646\u06CC \u0635\u0627\u062F\u0631
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: narrative.command_node.debrief-01
+      value: "\u062A\u0635\u0627\u062D\u0628 \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F.
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0642\u0627\u0633\u0645 \u0634\u06A9\u0633\u062A
+        \u062E\u0648\u0631\u062F\u0646 \u0648 \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC
+        \u0627\u0632 \u0641\u0631\u0645\u0627\u0646 \u0627\u0648 \u062C\u062F\u0627
+        \u0634\u062F\u0647. \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0645\u0627
+        \u0645\u062C\u0645\u0648\u0639\u0647 \u0631\u0648 \u0627\u0645\u0646 \u0645\u06CC\u200C\u06A9\u0646\u0646\u060C
+        \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647 \u062E\u062F\u0645\u0627\u062A
+        \u0636\u0631\u0648\u0631\u06CC \u0631\u0648 \u062E\u0627\u0645\u0648\u0634
+        \u06A9\u0646\u0646."
+    - key: narrative.command_node.debrief-02
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0628\u0647
+        \u0634\u0648\u0631\u0627\u0647\u0627\u06CC \u0645\u062D\u0644\u0647\u060C
+        \u0634\u0628\u06A9\u0647\u0654 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC\u200C\u0647\u0627\u06CC
+        \u0646\u0638\u0627\u0645\u06CC \u0648 \u0622\u0631\u0634\u06CC\u0648\u0647\u0627\u06CC
+        \u0645\u0633\u062A\u0642\u0644 \u0634\u0647\u0631\u06CC \u0631\u0633\u06CC\u062F\u0647.
+        \u0647\u06CC\u0686 \u0627\u062F\u0627\u0631\u0647\u200C\u0627\u06CC \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0647\u200C\u062A\u0646\u0647\u0627\u06CC\u06CC
+        \u067E\u0646\u0647\u0627\u0646\u0634 \u06A9\u0646\u0647."
+    - key: narrative.command_node.debrief-03
+      value: "\u062F\u0627\u0644\u06CC\u0627 \u0648 \u0645\u0646 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0646\u0638\u0627\u0645\u06CC \u0648 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0628\u0627 \u0647\u0645 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u0645\u06CC\u200C\u062F\u0627\u0631\u06CC\u0645. \u062F\u0648 \u06A9\u0644\u06CC\u062F
+        \u0627\u0632 \u0627\u06CC\u0646 \u0627\u0642\u062F\u0627\u0645 \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0631\u062F\u0646\u061B \u062D\u0627\u06A9\u0645
+        \u062F\u0627\u0626\u0645\u06CC \u062A\u0639\u06CC\u06CC\u0646 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0646."
+    - key: narrative.command_node.debrief-04
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u062F\u0627\u0631\u0647 \u067E\u0627\u06CC\u0627\u0646 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0647.
+        \u0686\u06CC\u0632\u06CC \u06A9\u0647 \u062C\u0627\u0634 \u0645\u06CC\u0627\u062F
+        \u0628\u0627\u06CC\u062F \u0642\u0627\u0628\u0644 \u062F\u06CC\u062F\u0646\u060C
+        \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0648 \u0627\u0639\u062A\u0631\u0627\u0636
+        \u0628\u0627\u0634\u0647. \u0645\u06CC\u200C\u062A\u0648\u0646\u0645 \u06A9\u0645\u06A9
+        \u06A9\u0646\u0645\u060C \u0648\u0644\u06CC \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u0645
+        \u062D\u0627\u06A9\u0645\u0627\u0646\u0634 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u0645."
+    - key: narrative.command_node.epilogue-01
+      value: "\u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC \u0627\u0645\u0646
+        \u0634\u062F\u0647 \u0648 \u0627\u0632 \u062A\u0635\u0627\u062D\u0628 \u0642\u0627\u0633\u0645
+        \u062C\u062F\u0627\u0633\u062A. \u062E\u062F\u0645\u0627\u062A \u0636\u0631\u0648\u0631\u06CC
+        \u0647\u0645\u0686\u0646\u0627\u0646 \u0628\u0647 \u0645\u0631\u062F\u0645\u06CC
+        \u06A9\u0647 \u0628\u0647\u0634\u0648\u0646 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646
+        \u0648\u0635\u0644\u0647."
+    - key: narrative.command_node.epilogue-02
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631
+        \u0641\u0631\u0648\u067E\u0627\u0634\u06CC\u062F\u0647. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647\u0654 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0639\u0642\u0628 \u0645\u06CC\u200C\u06A9\u0634\u0646 \u06CC\u0627 \u062A\u0633\u0644\u06CC\u0645
+        \u0645\u06CC\u200C\u0634\u0646\u061B \u0628\u0627 \u062E\u0627\u0645\u0648\u0634
+        \u0634\u062F\u0646 \u0633\u0644\u0627\u062D\u200C\u0647\u0627\u060C \u062D\u0641\u0627\u0638\u062A
+        \u0627\u062F\u0627\u0645\u0647 \u062F\u0627\u0631\u0647."
+    - key: narrative.command_node.epilogue-03
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0639\u0645\u0648\u0645\u06CC\u0647.
+        \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u0645\u062F\u0631\u06A9
+        \u0645\u062D\u0631\u0645\u0627\u0646\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0647 \u0646\u0645\u06CC\u200C\u0634\u0647
+        \u0648 \u0645\u0633\u0626\u0648\u0644\u06CC\u062A \u0642\u0627\u0633\u0645
+        \u0628\u0647 \u067E\u0627\u062F\u0627\u0634 \u06CC\u0627 \u0639\u0645\u0644\u06CC\u0627\u062A\u06CC
+        \u0628\u06CC\u200C\u0646\u0642\u0635 \u0628\u0633\u062A\u06AF\u06CC \u0646\u062F\u0627\u0631\u0647."
+    - key: narrative.command_node.epilogue-04
+      value: "\u067E\u0627\u06CC\u0627\u0646 \u0645\u0646\u0638\u0645 \u0622\u0645\u0627\u062F\u0647\u200C\u0628\u0627\u0634
+        \u0631\u0648 \u0632\u06CC\u0631 \u0646\u0638\u0631 \u062F\u0627\u0631\u0645.
+        \u062D\u0641\u0627\u0638\u062A \u06A9\u0627\u0641\u06CC \u0628\u0631\u0627\u06CC
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u0631\u0627\u0647\u200C\u0647\u0627 \u0648 \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u0633\u0627\u0632\u06CC \u0628\u0627\u0642\u06CC \u0645\u06CC\u200C\u0645\u0648\u0646\u0647\u061B
+        \u0646\u06CC\u0631\u0648\u06CC \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0628\u0647 \u0627\u062E\u062A\u06CC\u0627\u0631 \u062F\u0627\u0626\u0645\u06CC
+        \u062A\u0628\u062F\u06CC\u0644 \u0646\u0645\u06CC\u200C\u0634\u0647."
+    - key: narrative.command_node.epilogue-05
+      value: "\u0646\u0645\u0627\u06CC\u0646\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0628\u0627 \u0647\u0645 \u0628\u0631\u0642\u060C \u0627\u0631\u062A\u0628\u0627\u0637\u0627\u062A
+        \u0648 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644 \u0631\u0648 \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0648\u0646\u0646.
+        \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0641\u0627\u062F\u06CC \u0645\u0633\u06CC\u0631
+        \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646 \u0631\u0648 \u0628\u0627\u0632
+        \u0645\u06CC\u200C\u06A9\u0646\u0646 \u0648 \u06CC\u0627\u0633\u06CC\u0646
+        \u062A\u062D\u0648\u06CC\u0644\u200C\u0647\u0627\u06CC \u0628\u0627\u0632\u0627\u0631
+        \u0631\u0648 \u0633\u0627\u0645\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647."
+    - key: narrative.command_node.epilogue-06
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u062F\u0627\u062F
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0627\u0632 \u0645\u06CC\u200C\u0634\u0647.
+        \u06A9\u0631\u06CC\u0645 \u0647\u0648\u0627\u067E\u06CC\u0645\u0627\u0647\u0627\u06CC
+        \u062A\u0631\u0627\u0628\u0631\u06CC \u0631\u0648 \u0628\u0647 \u06A9\u0627\u0631
+        \u0627\u0645\u062F\u0627\u062F \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0648\u0646\u0647
+        \u0648 \u062F\u06A9\u062A\u0631 \u0644\u06CC\u0646\u0627 \u062F\u0627\u0631\u0648
+        \u062F\u0631\u06CC\u0627\u0641\u062A \u0645\u06CC\u200C\u06A9\u0646\u0647\u060C
+        \u062F\u0631 \u062D\u0627\u0644\u06CC \u06A9\u0647 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u0648 \u0628\u0627\u0632\u0627\u0631 \u06A9\u0627\u0631\u0634\u0648\u0646
+        \u0631\u0648 \u0627\u0632 \u0633\u0631 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0646."
+    - key: narrative.command_node.epilogue-07
+      value: "\u0627\u062C\u0627\u0632\u0647\u200C\u0647\u0627 \u0648 \u0633\u0627\u0628\u0642\u0647\u0654
+        \u062D\u0633\u0627\u0628\u0631\u0633\u06CC \u0645\u0646 \u0642\u0627\u0628\u0644
+        \u062F\u06CC\u062F\u0646\u0647. \u062F\u0627\u0646\u0633\u062A\u0647\u200C\u0647\u0627\u060C
+        \u0628\u0631\u062F\u0627\u0634\u062A\u200C\u0647\u0627 \u0648 \u0686\u06CC\u0632\u0647\u0627\u06CC\u06CC
+        \u06A9\u0647 \u0646\u0645\u06CC\u200C\u0628\u06CC\u0646\u0645 \u0631\u0648
+        \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u0645. \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \u0645\u06CC\u200C\u062A\u0648\u0646\u0647 \u0645\u0646 \u0631\u0648 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646\u0647 \u0648 \u0634\u0647\u0631 \u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u0647\u0631 \u062F\u0648\u0645\u0648\u0646 \u0631\u0648 \u062D\u0633\u0627\u0628\u0631\u0633\u06CC
+        \u06A9\u0646\u0647."
+    - key: narrative.command_node.epilogue-08
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u0628\u0647 \u0634\u0648\u0631\u0627\u06CC
+        \u0645\u0634\u062A\u0631\u06A9 \u0628\u0631\u06AF\u0631\u062F\u0647. \u0647\u06CC\u0686\u200C\u06A9\u0633
+        \u06A9\u0646\u062A\u0631\u0644 \u0627\u0635\u0644\u06CC\u200C\u0627\u06CC
+        \u0631\u0648 \u06A9\u0647 \u0642\u0627\u0633\u0645 \u0645\u06CC\u200C\u062E\u0648\u0627\u0633\u062A
+        \u0628\u0647\u200C\u062A\u0646\u0647\u0627\u06CC\u06CC \u0646\u0645\u06CC\u200C\u06AF\u06CC\u0631\u0647.
+        \u0642\u062F\u0631\u062A \u0627\u0636\u0637\u0631\u0627\u0631\u06CC \u062A\u0627\u0631\u06CC\u062E
+        \u067E\u0627\u06CC\u0627\u0646 \u062F\u0627\u0631\u0647."
+    - key: narrative.command_node.epilogue-09
+      value: "\u0633\u0647\u0631\u06CC\u0646 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0632\u0646\u062F\u0647\u200C\u0633\u062A\u061B \u0631\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647\u060C \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u0646\u062A\u0638\u0631\u060C \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0634\u0644\u0648\u063A\u060C \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0648 \u0641\u0631\u0648\u0634\u0646\u062F\u0647\u200C\u0647\u0627. \u0632\u0646\u062F\u0647
+        \u0645\u0648\u0646\u062F\u0646 \u0622\u063A\u0627\u0632 \u062A\u0639\u0645\u06CC\u0631\u0647\u061B
+        \u0631\u0646\u062C \u0634\u0647\u0631 \u0631\u0648 \u067E\u0627\u06A9 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: narrative.command_node.evidence_high-01
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0636\u0631\u0648\u0631\u06CC \u0645\u0646\u062A\u0634\u0631\u0634\u062F\u0647\u060C
+        \u0646\u0642\u0634 \u0642\u0627\u0633\u0645 \u0631\u0648 \u062B\u0627\u0628\u062A
+        \u0645\u06CC\u200C\u06A9\u0646\u0647 \u0648 \u0627\u0631\u062A\u0628\u0627\u0637\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654 \u0627\u06CC\u0646
+        \u0639\u0645\u0644\u06CC\u0627\u062A \u0631\u0648 \u062D\u0641\u0638 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0633\u0631\u0645\u0627\u06CC\u0647\u200C\u06AF\u0630\u0627\u0631\u0647\u0627\u06CC
+        \u0628\u06CC\u0631\u0648\u0646\u06CC \u0648 \u0627\u0631\u062A\u0628\u0627\u0637\u200C\u0647\u0627\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0647\u0645\u0686\u0646\u0627\u0646
+        \u0646\u06CC\u0627\u0632 \u0628\u0647 \u0628\u0631\u0631\u0633\u06CC \u062F\u0627\u0631\u0646."
+    - key: narrative.command_node.evidence_low-01
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0648 \u0636\u0631\u0648\u0631\u06CC\u060C
+        \u06AF\u0646\u0627\u0647 \u0642\u0627\u0633\u0645 \u0631\u0648 \u062B\u0627\u0628\u062A
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0628\u062E\u0634\u200C\u0647\u0627\u06CC\u06CC
+        \u0627\u0632 \u0634\u0628\u06A9\u0647\u0654 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0628\u0632\u0631\u06AF\u200C\u062A\u0631 \u067E\u0646\u0647\u0627\u0646
+        \u06CC\u0627 \u0645\u0648\u0631\u062F \u0627\u062E\u062A\u0644\u0627\u0641\u0647\u061B
+        \u0627\u06CC\u0646 \u0627\u0628\u0647\u0627\u0645 \u067E\u0627\u06CC\u0627\u0646
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0646\u0645\u06CC\u200C\u0628\u0631\u0647."
+    - key: narrative.command_node.infrastructure_high-01
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A\u200C\u0647\u0627\u06CC \u062B\u0628\u062A\u200C\u0634\u062F\u0647
+        \u062E\u062F\u0645\u0627\u062A \u0636\u0631\u0648\u0631\u06CC \u0648 \u062A\u06CC\u0645\u200C\u0647\u0627\u0634\u0648\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0631\u062F\u0646. \u0631\u0627\u0647\u200C\u0647\u0627\u060C
+        \u0628\u0631\u0642\u060C \u0633\u0648\u062E\u062A\u060C \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627 \u0648 \u062A\u062C\u0627\u0631\u062A
+        \u0628\u0627 \u067E\u0627\u06CC\u0647\u0654 \u0633\u0627\u0644\u0645\u200C\u062A\u0631\u06CC
+        \u0628\u0631\u0627\u06CC \u062A\u0639\u0645\u06CC\u0631\u0647\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0631\u0627\u0647 \u0645\u06CC\u200C\u0627\u0641\u062A\u0646."
+    - key: narrative.command_node.infrastructure_low-01
+      value: "\u0633\u0647\u0631\u06CC\u0646 \u0632\u0646\u062F\u0647 \u0645\u0648\u0646\u062F\u060C
+        \u0648\u0644\u06CC \u06A9\u0645\u0628\u0648\u062F\u0647\u0627\u060C \u0622\u0648\u0627\u0631\u06AF\u06CC
+        \u0648 \u062A\u0639\u0645\u06CC\u0631\u0647\u0627 \u062F\u0648\u0631\u0647\u0654
+        \u06AF\u0630\u0627\u0631 \u0631\u0648 \u0637\u0648\u0644\u0627\u0646\u06CC
+        \u0645\u06CC\u200C\u06A9\u0646\u0646. \u0628\u0627\u0632\u0633\u0627\u0632\u06CC
+        \u0632\u06CC\u0631 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0645\u0634\u062A\u0631\u06A9
+        \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u0634\u0647 \u0648 \u0633\u0627\u0645\u0627\u0646\u0647\u200C\u0647\u0627\u06CC
+        \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647 \u062A\u0631\u0645\u06CC\u0645
+        \u0645\u06CC\u200C\u0634\u0646."
+    - key: narrative.command_node.postscript-01
+      value: "\u0622\u0631\u0634\u06CC\u0648 \u062F\u0627\u0633\u062A\u0627\u0646
+        \u062D\u0627\u0644\u0627 \u0647\u0631 \u067E\u0646\u062C \u0642\u0637\u0639\u0647\u0654
+        \u0628\u0627\u0632\u0633\u0627\u0632\u06CC\u200C\u0634\u062F\u0647\u0654
+        \u067E\u0631\u0648\u062A\u06A9\u0644\u060C \u06AF\u0632\u0627\u0631\u0634
+        \u06A9\u0627\u0645\u0644 \u0648 \u062A\u0623\u06A9\u06CC\u062F \u0628\u0627\u0632\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0647.
+        \u06A9\u0627\u0631\u0632\u0627\u0631 \u06A9\u0627\u0645\u0644 \u0634\u062F\u0647."
+    - key: narrative.command_node.postscript-02
+      value: "\u0627\u0631\u062A\u0628\u0627\u0637\u200C\u0647\u0627\u06CC \u0628\u06CC\u0631\u0648\u0646\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0647\u0645\u0686\u0646\u0627\u0646
+        \u062F\u0631 \u062F\u0633\u062A \u0628\u0631\u0631\u0633\u06CC\u0647. \u062A\u0647\u062F\u06CC\u062F
+        \u0641\u0648\u0631\u06CC \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0647.
+        \u0627\u06CC\u0646\u200C\u0647\u0627 \u0628\u0631\u0631\u0633\u06CC\u200C\u0647\u0627\u06CC
+        \u0622\u06CC\u0646\u062F\u0647\u200C\u0627\u0646\u060C \u0646\u0647 \u067E\u0627\u06CC\u0627\u0646\u06CC
+        \u0646\u0627\u062A\u0645\u0627\u0645."
+    - key: narrative.command_node.postscript-03
+      value: "\u067E\u0633 \u062A\u0647\u062F\u06CC\u062F\u06CC \u0627\u062E\u062A\u0631\u0627\u0639
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645. \u0646\u0642\u0634\u0647\u0654
+        \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0631\u0627\u06CC \u0645\u0631\u0648\u0631 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0628\u0627\u0632 \u06A9\u0646\u06CC\u0646. \u0627\u06CC\u0646 \u0634\u0647\u0631
+        \u06A9\u0627\u0631 \u067E\u06CC\u0634 \u0631\u0648 \u062F\u0627\u0631\u0647
+        \u0648 \u062C\u0627\u06CC\u06CC \u0628\u0631\u0627\u06CC \u0632\u0646\u062F\u06AF\u06CC."
+    - key: narrative.command_node.trust_high-01
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A\u200C\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u062B\u0628\u062A\u200C\u0634\u062F\u0647\u060C \u0645\u0631\u062F\u0645
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u062E\u062F\u0645\u0627\u062A
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0631\u062F\u0646. \u0645\u0634\u0627\u0631\u06A9\u062A\u0634\u0648\u0646
+        \u0634\u0631\u0648\u0639 \u0627\u0645\u0646\u200C\u062A\u0631\u06CC \u062F\u0627\u0631\u0647\u061B
+        \u0646\u0638\u0627\u0631\u062A \u0647\u0646\u0648\u0632 \u0628\u0627\u06CC\u062F
+        \u0628\u0627 \u0634\u0646\u06CC\u062F\u0646 \u0648 \u062A\u0648\u0636\u06CC\u062D
+        \u062F\u0627\u062F\u0646\u060C \u0627\u0639\u062A\u0645\u0627\u062F \u0628\u0647
+        \u062F\u0633\u062A \u0628\u06CC\u0627\u0631\u0647."
+    - key: narrative.command_node.trust_low-01
+      value: "\u0645\u0631\u062F\u0645 \u0628\u0627 \u0633\u0624\u0627\u0644 \u0648
+        \u062A\u0631\u062F\u06CC\u062F \u0645\u0648\u062C\u0647 \u0648\u0627\u0631\u062F
+        \u0628\u0627\u0632\u0633\u0627\u0632\u06CC \u0645\u06CC\u200C\u0634\u0646.
+        \u0646\u0638\u0627\u0631\u062A \u0645\u0634\u062A\u0631\u06A9 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0628\u0627\u0642\u06CC \u0645\u06CC\u200C\u0645\u0648\u0646\u0647\u060C
+        \u0628\u0627 \u06A9\u0627\u0631 \u0637\u0648\u0644\u0627\u0646\u06CC\u200C\u062A\u0631
+        \u0628\u0631\u0627\u06CC \u0634\u0646\u06CC\u062F\u0646 \u0648 \u0628\u0627\u0632\u0633\u0627\u0632\u06CC
+        \u0627\u0639\u062A\u0628\u0627\u0631."
     - key: narrative.evidence_chain.brief.01
       value: "\u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
         \u062E\u0648\u062F\u0634 \u0631\u0648 \u0628\u0647 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
@@ -20428,6 +21557,18 @@ MonoBehaviour:
         \u0641\u0639\u0627\u0644 \u0631\u0644\u0647"
     - key: ui.home.archive.close
       value: "\u0628\u0633\u062A\u0646"
+    - key: ui.home.archive.command_node.audit
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u06A9\u0627\u0645\u0644 \u0642\u0627\u0633\u0645"
+    - key: ui.home.archive.command_node.emphasis
+      value: "\u0648\u0636\u0639\u06CC\u062A \u062B\u0628\u062A\u200C\u0634\u062F\u0647\u0654
+        \u0628\u0627\u0632\u0633\u0627\u0632\u06CC"
+    - key: ui.home.archive.command_node.fragment5
+      value: "\u0642\u0637\u0639\u0647\u0654 \u067E\u0646\u062C\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644"
+    - key: ui.home.archive.command_node.governance
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631 \u0645\u0634\u062A\u0631\u06A9
+        \u0648 \u0645\u062D\u062F\u0648\u062F"
+    - key: ui.home.archive.command_node.postscript
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u06CC \u0628\u0627\u0632\u0633\u0627\u0632\u06CC"
     - key: ui.home.archive.comms
       value: "\u0631\u0627\u062F\u06CC\u0648"
     - key: ui.home.archive.debrief

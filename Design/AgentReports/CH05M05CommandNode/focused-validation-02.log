@@ -1,0 +1,93 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH05M05CommandNodeIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeRoutes] result=Passed approach=381x5 breach=40x5 audit=31x3 release=12x3 buildLots=4 grid=440x220 combinedOwnerSurfaceMask=true
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeConfigBuilder:ValidateRoutes () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeConfigBuilder.cs:549)
+Game.Editor.CH05M05CommandNodeMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeMapValidation.cs:125)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeMap] result=Passed identities=2701 owners=284 renderOnly=2417 roots=3 grid=440x220 sourceHashes=6 sourcePreserved=true binding=OwnExplicitLoader rebasedFootprints=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeMapValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeMapValidation.cs:126)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeRules] result=Passed release=AcceptedNormalMove stale=Rejected holds=Continuous progress=Unique
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeRulesValidation.cs:34)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:32)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeObjectives] result=Passed writer=Actual isolation=Separate release=Bounded specialists=Original
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeObjectiveValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeObjectiveValidation.cs:59)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:33)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeCaptionedFinale] result=Passed sequences=12 panels=41 selectedPanels=38 chapterClosePanels=8 canonicalPanels=9 voices=0 endingGates=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeNarrativeBuilder:ValidateCaptionedFinale () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeNarrativeBuilder.cs:246)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeRecoveryValidation] result=Passed masks=8 legacyUnknown=Low exactSettledTokens=Required unrelated=Rejected stale=Rejected corrupt=Rejected duplicate=Stable firstFinale=Stable canonicalClose=8 canonicalEpilogue=9 postscript=3 starsProxy=0 endingGates=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeRecoveryValidation:Run () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeRecoveryValidation.cs:25)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:35)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=ExcludedByRequest nativeJourney=SeparateGate
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeIntegration:Validate () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeIntegration.cs:36)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH05M05CommandNodeIntegration.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3302373b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

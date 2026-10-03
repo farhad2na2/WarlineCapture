@@ -1,0 +1,2483 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9030030640451768444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_trust_high
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.trust_emphasis.high
+  entryStateId: CommandNode-trust_high-0
+  defaultSkipDestinationId: CommandNode-trust_high-complete
+  states:
+  - stateId: CommandNode-trust_high-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-trust_high-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-trust_high-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-trust_high-01
+      textKey: narrative.command_node.trust_high-01
+      englishFallback: The recorded relief operations protected civilians and civic
+        staff. Their participation has a safer starting point; oversight must still
+        earn trust by listening and explaining.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.571428
+      essentialCaption: 1
+    continueStateId: CommandNode-trust_high-complete
+    skipStateId: CommandNode-trust_high-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.571428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-trust_high-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.trust_high.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-8855767163510490822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m05.debrief
+  entryStateId: CommandNode-debrief-0
+  defaultSkipDestinationId: CommandNode-debrief-complete
+  states:
+  - stateId: CommandNode-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-debrief-01
+      textKey: narrative.command_node.debrief-01
+      englishFallback: "The override failed. Qassem\u2019s force is defeated, and
+        the Civic Relay is separated from his command. Our teams will secure the
+        complex without shutting down its essential services."
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.785714
+      essentialCaption: 1
+    continueStateId: CommandNode-debrief-1
+    skipStateId: CommandNode-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-debrief-02
+      textKey: narrative.command_node.debrief-02
+      englishFallback: The complete audit has reached district councils, clinic networks,
+        military commands and independent civic archives. No single office can bury
+        the record again.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-debrief-2
+    skipStateId: CommandNode-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-debrief-03
+      textKey: narrative.command_node.debrief-03
+      englishFallback: Dalia and I secure military and civilian authority together.
+        The two keys protected this emergency action; they do not appoint a permanent
+        ruler.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-debrief-3
+    skipStateId: CommandNode-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-debrief-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b887896b586f4f4090eba924dda98670
+      m_SubObjectName: CH05M05_CommandNode-debrief-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-debrief-04
+      textKey: narrative.command_node.debrief-04
+      englishFallback: Emergency command is ending. What follows must be visible,
+        auditable and open to challenge. I can support that work, but I cannot choose
+        its governors.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.785714
+      essentialCaption: 1
+    continueStateId: CommandNode-debrief-complete
+    skipStateId: CommandNode-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.command_node.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-6761464840316134325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_infrastructure_high
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.infrastructure_emphasis.high
+  entryStateId: CommandNode-infrastructure_high-0
+  defaultSkipDestinationId: CommandNode-infrastructure_high-complete
+  states:
+  - stateId: CommandNode-infrastructure_high-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-infrastructure_high-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-infrastructure_high-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-infrastructure_high-01
+      textKey: narrative.command_node.infrastructure_high-01
+      englishFallback: The recorded operations preserved essential services without
+        losing their teams. Roads, power, Fuel, clinics, shelters and trade can resume
+        with a stronger base for repairs.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-infrastructure_high-complete
+    skipStateId: CommandNode-infrastructure_high-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-infrastructure_high-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.infrastructure_high.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-2340636056265250978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_infrastructure_low
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.infrastructure_emphasis.low
+  entryStateId: CommandNode-infrastructure_low-0
+  defaultSkipDestinationId: CommandNode-infrastructure_low-complete
+  states:
+  - stateId: CommandNode-infrastructure_low-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-infrastructure_low-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-infrastructure_low-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-infrastructure_low-01
+      textKey: narrative.command_node.infrastructure_low-01
+      englishFallback: Sahrin survived, but shortages, displacement and repairs extend
+        the transition. Recovery begins under shared authority while the damaged
+        systems are restored.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.285714
+      essentialCaption: 1
+    continueStateId: CommandNode-infrastructure_low-complete
+    skipStateId: CommandNode-infrastructure_low-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-infrastructure_low-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.infrastructure_low.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-1504692297276117081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_postscript
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.postscript.recovery_watch
+  entryStateId: CommandNode-postscript-0
+  defaultSkipDestinationId: CommandNode-postscript-complete
+  states:
+  - stateId: CommandNode-postscript-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-postscript-01
+      textKey: narrative.command_node.postscript-01
+      englishFallback: The Story Archive now holds all five reconstructed Protocol
+        Fragments, the complete audit and the recovery emphasis. The Campaign is
+        complete.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.142858
+      essentialCaption: 1
+    continueStateId: CommandNode-postscript-1
+    skipStateId: CommandNode-postscript-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-postscript-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-postscript-02
+      textKey: narrative.command_node.postscript-02
+      englishFallback: External Vanguard links remain under review. No immediate
+        threat is confirmed. These are future investigations, not an unfinished ending.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.785714
+      essentialCaption: 1
+    continueStateId: CommandNode-postscript-2
+    skipStateId: CommandNode-postscript-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-postscript-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-postscript-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-postscript-03
+      textKey: narrative.command_node.postscript-03
+      englishFallback: Then we do not invent a threat. Open the restored operations
+        map for replay. This city has work ahead, and room to live.
+      speaker: 4
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 8.857142
+      essentialCaption: 1
+    continueStateId: CommandNode-postscript-complete
+    skipStateId: CommandNode-postscript-complete
+    reducedMotionSupported: 1
+    durationSeconds: 8.857142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-postscript-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.postscript.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_Narrative
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m05.brief
+  entryStateId: CommandNode-brief-0
+  defaultSkipDestinationId: CommandNode-brief-complete
+  states:
+  - stateId: CommandNode-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-01
+      textKey: narrative.command_node.brief-01
+      englishFallback: The Civic Relay joins power, communications, clinics and transport.
+        Isolate its outer military controls before entering the core. The city must
+        survive the assault.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.714286
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-1
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-02
+      textKey: narrative.command_node.brief-02
+      englishFallback: My engineers will preserve the civic connections. Keep the
+        protected service sites and their staff intact; losing them defeats the purpose
+        of this operation.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.285714
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-2
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-03
+      textKey: narrative.command_node.brief-03
+      englishFallback: I will supervise the hazardous-control checks. Bring the original
+        engineer to each marked isolation point after its guards are defeated, and
+        let the full verification finish.
+      speaker: 11
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-3
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-04
+      textKey: narrative.command_node.brief-04
+      englishFallback: Karim and I will coordinate relief access beyond the complex.
+        The approach here remains with your ground teams; do not sacrifice the services
+        to shorten the fight.
+      speaker: 5
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.642858
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-4
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.642858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-e-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-e-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-05
+      textKey: narrative.command_node.brief-05
+      englishFallback: You centralized force and made this city obey. The only difference
+        is that you still pretend you will give the power back. I am beginning the
+        override.
+      speaker: 9
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.785714
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-5
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-5
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-f-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-f-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-06
+      textKey: narrative.command_node.brief-06
+      englishFallback: The two keys are my preserved archive and your live emergency
+        credential. Together they can stop his override without granting permanent
+        rule. I will wait for explicit authority.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.714286
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-6
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-6
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-g-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-g-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-07
+      textKey: narrative.command_node.brief-07
+      englishFallback: Dalia controls the military breach; I coordinate civic continuity.
+        Neither mandate replaces the other. Keep the specialists alive through the
+        final release.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-7
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-7
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-h-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bbc76708a945098a0afc9b05f18ef5
+      m_SubObjectName: CH05M05_CommandNode-brief-h-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-brief-08
+      textKey: narrative.command_node.brief-08
+      englishFallback: "Isolate the weapons, preserve the services, release the audit.
+        Use emergency authority only to stop the override. We are not taking Qassem\u2019s
+        place."
+      speaker: 4
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.5
+      essentialCaption: 1
+    continueStateId: CommandNode-brief-complete
+    skipStateId: CommandNode-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.5
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &689122841878194160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_trust_low
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.trust_emphasis.low
+  entryStateId: CommandNode-trust_low-0
+  defaultSkipDestinationId: CommandNode-trust_low-complete
+  states:
+  - stateId: CommandNode-trust_low-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-trust_low-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-trust_low-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-trust_low-01
+      textKey: narrative.command_node.trust_low-01
+      englishFallback: People enter recovery with questions and justified skepticism.
+        Shared civilian oversight remains, with a longer work of listening and repairing
+        legitimacy.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.071428
+      essentialCaption: 1
+    continueStateId: CommandNode-trust_low-complete
+    skipStateId: CommandNode-trust_low-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-trust_low-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.trust_low.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &1445907649818400845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_close
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.close.protocol_fragment_05
+  entryStateId: CommandNode-close-0
+  defaultSkipDestinationId: CommandNode-close-complete
+  states:
+  - stateId: CommandNode-close-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-01
+      textKey: narrative.command_node.close-01
+      englishFallback: "Protocol Fragment Five is complete. Qassem\u2019s original
+        override, his attempted erasure and my self-partition now align in one surviving
+        audit."
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.071428
+      essentialCaption: 1
+    continueStateId: CommandNode-close-1
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-02
+      textKey: narrative.command_node.close-02
+      englishFallback: Bombings, false reports, Fuel diversions, Relay activations
+        and Vanguard hardware follow the same operation record. These attacks were
+        built to manufacture necessity.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.857142
+      essentialCaption: 1
+    continueStateId: CommandNode-close-2
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.857142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-03
+      textKey: narrative.command_node.close-03
+      englishFallback: Qassem caused the shutdown, built Ash Line and invited Vanguard
+        into this crisis. The public record breaks his claim that terror made him
+        necessary.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.571428
+      essentialCaption: 1
+    continueStateId: CommandNode-close-3
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.571428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-04
+      textKey: narrative.command_node.close-04
+      englishFallback: No permanent unilateral control. Return emergency authority
+        to a shared structure that can explain its decisions and be stopped.
+      speaker: 4
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.142858
+      essentialCaption: 1
+    continueStateId: CommandNode-close-4
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-e-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-e-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-05
+      textKey: narrative.command_node.close-05
+      englishFallback: 'The military mandate is bounded: protect the city, secure
+        dangerous controls and stand down under accountable authority. It is not
+        a claim to govern everyone.'
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.285714
+      essentialCaption: 1
+    continueStateId: CommandNode-close-5
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-5
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-f-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-f-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-06
+      textKey: narrative.command_node.close-06
+      englishFallback: District representatives, workers, utilities and clinics share
+        civilian oversight. Disagreement stays part of command instead of becoming
+        its enemy.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.571428
+      essentialCaption: 1
+    continueStateId: CommandNode-close-6
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.571428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-6
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-g-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-g-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-07
+      textKey: narrative.command_node.close-07
+      englishFallback: I remain active with visible permissions, explicit consent
+        and an audit trail. My recommendations can be challenged; my actions can
+        be overridden.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-close-7
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-7
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-h-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ccf7e41f973e45f3ad904a552b45ab6a
+      m_SubObjectName: CH05M05_CommandNode-close-h-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-close-08
+      textKey: narrative.command_node.close-08
+      englishFallback: "Sahrin\u2019s map now coordinates recovery instead of hostile
+        override. Fragment Five, the complete audit and the governance resolution
+        belong in the public archive."
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-close-complete
+    skipStateId: CommandNode-close-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-close-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.close.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &1637698203403257134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch05.m05.comms
+  entryStateId: CommandNode-comms-0
+  defaultSkipDestinationId: CommandNode-comms-complete
+  states:
+  - stateId: CommandNode-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-comms-01
+      textKey: narrative.command_node.comms-01
+      englishFallback: Activate the Relay without limits. I can end the argument,
+        the uncertainty and the disorder. One command is enough.
+      speaker: 9
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 8.214286
+      essentialCaption: 1
+    continueStateId: CommandNode-comms-1
+    skipStateId: CommandNode-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 8.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-comms-02
+      textKey: narrative.command_node.comms-02
+      englishFallback: The audit identifies his original shutdown, the attempted
+        erasure and my self-partition. The bounded path preserves civic services
+        and sends that record beyond any single office. It does not authorize later
+        actions.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-comms-2
+    skipStateId: CommandNode-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-comms-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 41ba28b0c126476aa01493f9ee5d8453
+      m_SubObjectName: CH05M05_CommandNode-comms-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-comms-03
+      textKey: narrative.command_node.comms-03
+      englishFallback: I am awaiting authority. Bring the original engineer to the
+        marked release point and complete the six-second hold to authorize this release.
+        Your orders remain the decision; this message issues none.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.214286
+      essentialCaption: 1
+    continueStateId: CommandNode-comms-complete
+    skipStateId: CommandNode-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &2901090786992614276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_evidence_low
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.evidence_emphasis.low
+  entryStateId: CommandNode-evidence_low-0
+  defaultSkipDestinationId: CommandNode-evidence_low-complete
+  states:
+  - stateId: CommandNode-evidence_low-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-evidence_low-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-evidence_low-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-evidence_low-01
+      textKey: narrative.command_node.evidence_low-01
+      englishFallback: "The complete critical-path audit proves Qassem\u2019s guilt.
+        Parts of the wider support network remain disputed or hidden; that uncertainty
+        does not undo the ending."
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-evidence_low-complete
+    skipStateId: CommandNode-evidence_low-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-evidence_low-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.evidence_low.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &4263512685001357100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_evidence_high
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.evidence_emphasis.high
+  entryStateId: CommandNode-evidence_high-0
+  defaultSkipDestinationId: CommandNode-evidence_high-complete
+  states:
+  - stateId: CommandNode-evidence_high-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-evidence_high-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-evidence_high-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-evidence_high-01
+      textKey: narrative.command_node.evidence_high-01
+      englishFallback: "The released critical-path audit proves Qassem\u2019s role
+        and preserves the verified links gathered in this operation. External financiers
+        and Vanguard connections remain subject to investigation."
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.714286
+      essentialCaption: 1
+    continueStateId: CommandNode-evidence_high-complete
+    skipStateId: CommandNode-evidence_high-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-evidence_high-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.evidence_high.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &9097637512009085108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH05M05_CommandNode_epilogue
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.campaign.epilogue.canonical
+  entryStateId: CommandNode-epilogue-0
+  defaultSkipDestinationId: CommandNode-epilogue-complete
+  states:
+  - stateId: CommandNode-epilogue-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-01
+      textKey: narrative.command_node.epilogue-01
+      englishFallback: "The Civic Relay is secured and disconnected from Qassem\u2019s
+        override. Essential services remain connected to the people they serve."
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.214286
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-1
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-02
+      textKey: narrative.command_node.epilogue-02
+      englishFallback: Ash Line command has collapsed. The remaining Vanguard forces
+        withdraw or surrender; protection continues while the weapons fall silent.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.714286
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-2
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-03
+      textKey: narrative.command_node.epilogue-03
+      englishFallback: "The complete audit is public. It is not retained as secret
+        command evidence, and Qassem\u2019s responsibility does not depend on a reward
+        or a perfect operation."
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.142858
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-3
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-d-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-d-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-04
+      textKey: narrative.command_node.epilogue-04
+      englishFallback: I am supervising a disciplined stand-down. Enough protection
+        remains for clinics, roads and recovery teams; emergency force is not becoming
+        permanent authority.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.428572
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-4
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-e-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-e-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-05
+      textKey: narrative.command_node.epilogue-05
+      englishFallback: "Civil representatives and workers restore power, communications
+        and transport together. Fadi\u2019s crews reopen the hospital corridor, and
+        Yasin organizes market deliveries."
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.071428
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-5
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-5
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-f-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-f-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-06
+      textKey: narrative.command_node.epilogue-06
+      englishFallback: The relief air corridor is reopening. Karim returns transport
+        aircraft to relief duty, and Dr. Lina receives medicine while clinics and
+        markets resume work.
+      speaker: 5
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-6
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-6
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-g-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-g-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-07
+      textKey: narrative.command_node.epilogue-07
+      englishFallback: My permissions and audit trail are visible. I mark what I
+        know, what I infer and what I cannot see. The Commander can override me,
+        and the city can audit us both.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.142858
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-7
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-7
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-h-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-h-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-08
+      textKey: narrative.command_node.epilogue-08
+      englishFallback: Return the last emergency authority to the shared council.
+        No one person receives the master control Qassem wanted. Emergency powers
+        carry an end date.
+      speaker: 4
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.785714
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-8
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-8
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-i-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a077618261894f5f8c1c52829c0cf104
+      m_SubObjectName: CH05M05_CommandNode-epilogue-i-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: command_node-epilogue-09
+      textKey: narrative.command_node.epilogue-09
+      englishFallback: 'Sahrin is alive again: damaged roads, waiting families, busy
+        clinics, workers and vendors. Survival begins the repair; it does not erase
+        what the city endured.'
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.357142
+      essentialCaption: 1
+    continueStateId: CommandNode-epilogue-complete
+    skipStateId: CommandNode-epilogue-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: CommandNode-epilogue-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.command_node.epilogue.complete
+    evidenceIds: []
+    missionContextFlags: []

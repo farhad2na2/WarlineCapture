@@ -16,7 +16,12 @@ The pilot is Supply Line on Refinery District; see `SupplyLine/HANDOFF.md`. This
   5. The regenerated scene and binding are uncommitted. Commit them only after the visuals pass review.
 - Pending gates: normal-input playthrough and device/mobile performance.
 
-## Map directions (mockups awaiting user approval)
+## User decisions (2026-10-03)
+- **City-Edge Airfield:** mockup approved.
+- **Ash Line Port:** look approved, **keep the current container layout**. Render-only items only; do not regroup the containers.
+- **Frontier:** approved **including the container regrouping** into blocks with lanes. No missions use Frontier yet.
+
+## Map directions
 
 | Map | Missions | Mockup |
 |---|---|---|

@@ -43,6 +43,13 @@ The Refinery District map (missions CH02M02 Supply Line, CH02M04, CH04 Split Fro
 | Normal-input Supply Line playthrough (ARIA, result, return) | Pending |
 | Device / mobile performance | Pending. `Mobile_RPAsset` shadow distance 16 is a recommendation only; not changed. |
 
+**Uncommitted, unreviewed worktree changes.** These appeared after Editor opens and the failed rebuild start:
+- the Refinery `Definition.asset`, `Minimap.png`, `PreparedEntities.unity` and `RuntimeBinding.unity`;
+- `PreparationUnitFixture.unity`;
+- the TMP fallback font.
+
+They are not intended edits. Discard them (`git checkout -- <files>`) before the rebuild unless the diff shows otherwise.
+
 ## Next steps
 1. Open the worktree Editor only via the wrapper (no `-batchmode`):
    `Tools/CI/invoke_unity_macos.sh --project <worktree> --log /private/tmp/<new>.log --`

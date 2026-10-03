@@ -10,6 +10,7 @@ namespace Game.UI.Runtime
         private Button watchButton, watchConfirm, watchCancel;
         private RectTransform watchActions;
         private TMP_Text watchLabel, confirmLabel, cancelLabel;
+        private TMP_Text watchExplanation;
         private string watchLocale;
         internal Button WatchButton => watchButton;
         private bool watchConfirming, watchStartFailed;
@@ -27,6 +28,14 @@ namespace Game.UI.Runtime
                 watchLabel = watchButton.GetComponentInChildren<TMP_Text>(true);
                 confirmLabel = watchConfirm.GetComponentInChildren<TMP_Text>(true);
                 cancelLabel = watchCancel.GetComponentInChildren<TMP_Text>(true);
+                var copy = new GameObject("AriaPlayExplanation", typeof(RectTransform), typeof(TextMeshProUGUI));
+                copy.transform.SetParent(transform, false);
+                watchExplanation = copy.GetComponent<TMP_Text>();
+                watchExplanation.font = bodyText.font;
+                watchExplanation.fontSize = 24;
+                watchExplanation.enableAutoSizing = false;
+                watchExplanation.color = Color.white;
+                watchExplanation.raycastTarget = false;
             }
             string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             bool fa = locale.StartsWith("fa");
@@ -34,30 +43,37 @@ namespace Game.UI.Runtime
             if (!available && !model.Active) watchConfirming = false;
             watchButton.gameObject.SetActive(available || model.Active || model.Phase == AriaPlayPhase.Blocked);
             watchButton.interactable = !watchConfirming;
-            string caption = model.Active ? (fa ? "کنترل رو پس بگیر" : "Stop ARIA") :
-                watchConfirming && watchStartFailed ? (fa ? "آریا نتونست شروع کنه. دوباره امتحان کن یا لغو رو بزن." : "ARIA couldn't start. Try again or cancel.") :
-                watchConfirming ? (fa ? "آریا با نیروها و منابع همین بازی ادامه بده؟" : "Let ARIA play using your match resources?") :
-                model.Phase == AriaPlayPhase.Blocked ? (fa ? "آریا نتونست ادامه بده — دوباره امتحان کن" : "ARIA couldn't continue — try again") :
+            string caption = model.Active ? (fa ? "توقف آریا" : "STOP ARIA") :
+                model.Phase == AriaPlayPhase.Blocked ? (fa ? "تلاش دوباره" : "RETRY ARIA") :
                 UiShellRuntimeGateway.ReadAriaPlayCapability() == AriaPlayCapability.BaseAssault
-                    ? (fa ? "بازی آریا" : "ARIA Play")
-                    : (fa ? "ببین آریا چطور بازی می‌کنه" : "Watch ARIA play");
+                    ? (fa ? "بازی آریا" : "ARIA PLAY")
+                    : (fa ? "تماشای آریا" : "WATCH ARIA");
+            string explanation = watchConfirming && watchStartFailed
+                ? (fa ? "آریا نتونست شروع کنه. دوباره امتحان کن یا لغو رو بزن." : "ARIA couldn't start. Try again or cancel.")
+                : watchConfirming
+                    ? (fa ? "آریا با نیروها و منابع همین بازی ادامه بده؟ هر وقت خواستی کنترل رو پس بگیر." : "Let ARIA play using your match resources? Take control anytime.")
+                    : model.Phase == AriaPlayPhase.Blocked
+                        ? (fa ? "آریا نتونست ادامه بده. دوباره امتحان کن." : "ARIA couldn't continue. Try again.")
+                        : string.Empty;
+            watchExplanation.gameObject.SetActive(watchActions.gameObject.activeSelf && explanation.Length > 0);
+            UiLocalizedText.Set(watchExplanation, explanation);
+            watchExplanation.font = bodyText.font;
             if (caption != watchCaption)
             {
                 watchCaption = caption; UiLocalizedText.Set(watchLabel, caption);
-                var colors = watchButton.colors; colors.normalColor = Color.white; watchButton.colors = colors;
-                if (watchButton.targetGraphic is V3GradientGraphic gradient)
-                    gradient.Configure(model.Active ? new Color(.65f,.12f,.06f) : new Color(0,.38f,.52f),
-                        model.Active ? new Color(.2f,.025f,.01f) : new Color(0,.12f,.19f),
-                        model.Active ? new Color(1,.35f,.15f) : new Color(0,.78f,.94f), 3);
             }
             watchConfirm.gameObject.SetActive(watchConfirming);
             watchCancel.gameObject.SetActive(watchConfirming);
             if (watchLocale != locale)
             {
             watchLocale = locale;
-            UiLocalizedText.Set(confirmLabel, fa ? "شروع — هر وقت خواستی کنترل رو پس بگیر" : "Start — take control anytime");
-            UiLocalizedText.Set(cancelLabel, fa ? "لغو" : "Cancel");
+            UiLocalizedText.Set(confirmLabel, fa ? "شروع" : "START");
+            UiLocalizedText.Set(cancelLabel, fa ? "لغو" : "CANCEL");
             }
+            HudIconButtonView.Apply(watchButton, model.Active ? HudButtonIcon.Stop : HudButtonIcon.Play,
+                model.Active ? HudButtonRole.Stop : HudButtonRole.Play);
+            HudIconButtonView.Apply(watchConfirm, HudButtonIcon.Play, HudButtonRole.Play, "START", "شروع");
+            HudIconButtonView.Apply(watchCancel, HudButtonIcon.Cancel, HudButtonRole.Neutral, "CANCEL", "لغو");
         }
         private string SkirmishWatchInstruction(string fallback)
         {
@@ -95,10 +111,10 @@ namespace Game.UI.Runtime
             UiDisabledMaterialUtility.SetSelectableDisabled(button, UiDisabledVisualReason.CinematicInteractionLock, false);
             button.interactable = true;
             var label = button.GetComponentInChildren<TMP_Text>(true);
-            label.textWrappingMode = TextWrappingModes.Normal;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
             label.overflowMode = TextOverflowModes.Overflow;
-            label.enableAutoSizing = true;
-            label.fontSizeMin = 18; label.fontSizeMax = 22;
+            label.enableAutoSizing = false;
+            label.fontSize = label.fontSizeMin = label.fontSizeMax = HudIconButtonView.LabelSize;
             button.onClick = new Button.ButtonClickedEvent(); button.onClick.AddListener(action);
             return button;
         }

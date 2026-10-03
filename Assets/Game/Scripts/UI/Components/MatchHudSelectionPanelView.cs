@@ -105,6 +105,8 @@ namespace Game.UI.Runtime
         private void Awake()
         {
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(selectedSquadPanel, needsRaycaster: true);
+            HudIconButtonView.Apply(commandWheelOpenButton, HudButtonIcon.Commands, HudButtonRole.Navigation,
+                "COMMANDS", "فرمان‌ها");
             BindUnityEvents();
             CacheBoardActionNormalSprite();
             CacheCameraActionNormalSprite();

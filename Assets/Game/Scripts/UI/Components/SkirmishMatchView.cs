@@ -48,10 +48,14 @@ namespace Game.UI.Runtime
             player=Button(strip,"YOUR MAIN BASE",()=>Send(UiSkirmishAction.FocusPlayer));
             player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;player.fontSize=28;
             playerHealth=HealthLabel(player);
+            HudIconButtonView.Apply(PlayerFocusButton, HudButtonIcon.YourBase, HudButtonRole.Play,
+                "YOUR BASE", "پایگاه شما", player, true);
             clock=Label(strip,"TIME LEFT",30);clock.gameObject.AddComponent<LayoutElement>().preferredWidth=240;
             enemy=Button(strip,"ENEMY MAIN BASE",()=>Send(UiSkirmishAction.FocusEnemy));
             enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.fontSize=28;
             enemyHealth=HealthLabel(enemy);
+            HudIconButtonView.Apply(EnemyFocusButton, HudButtonIcon.EnemyBase, HudButtonRole.Stop,
+                "ENEMY BASE", "پایگاه دشمن", enemy, true);
             var shade=Panel("SkirmishResult",transform,false);modal=shade.gameObject;Stretch(shade);
             shade.gameObject.AddComponent<Image>().color=new Color(0,0,0,.72f);
             resultCard=CampaignStyleResultCard.Mount(shade, interfaceFont);
@@ -87,6 +91,7 @@ namespace Game.UI.Runtime
             hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
             if (hud.activeSelf) PositionBelowWarning();
             SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);UiLocalizedText.Set(clock,model.Clock);
+            AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
             clock.color=(model.Clock??string.Empty).Contains("  0:")?new Color(1,.65f,.1f):Color.white;
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
@@ -201,7 +206,7 @@ namespace Game.UI.Runtime
         private static TMP_Text HealthLabel(TMP_Text heading)
         {
             heading.rectTransform.anchorMin=new Vector2(0,.5f);
-            var health=Label(heading.transform.parent,"",28);
+            var health=Label(heading.transform.parent,"",HudIconButtonView.LabelSize);
             Stretch(health.rectTransform);
             health.rectTransform.anchorMax=new Vector2(1,.5f);
             health.rectTransform.offsetMin=new Vector2(8,5);
@@ -213,6 +218,14 @@ namespace Game.UI.Runtime
             var lines=(source??string.Empty).Split('\n');
             UiLocalizedText.Set(heading,lines[0]);
             UiLocalizedText.Set(health,lines.Length>1?lines[1]:string.Empty);
+        }
+        private static void AlignBaseHealth(TMP_Text health)
+        {
+            bool rtl=UiShellRuntimeGateway.Localization.IsRightToLeft;
+            health.rectTransform.offsetMin=new Vector2(rtl?12:76,4);
+            health.rectTransform.offsetMax=new Vector2(rtl?-76:-12,-4);
+            health.enableAutoSizing=false;
+            health.fontSize=HudIconButtonView.LabelSize;
         }
         private void PositionBelowWarning()
         {

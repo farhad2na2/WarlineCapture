@@ -46,6 +46,70 @@ namespace Game.Editor.MapVariants
             Debug.Log($"[MapBeautify] rebuild result=Passed semanticHash={hash}");
         }
 
+        public static void CaptureDenseCityBefore() => CaptureMissionCameras("opmap.skirmish.desert_base_01", "DenseCity", "before");
+
+        // Renders each mission's battle camera on a shared source map, using the mission's own scenes.
+        public static void CaptureMissionCameras(string sourceMapId, string folderName, string label)
+        {
+            string folder = "Design/MapVariants/Beautify/" + folderName;
+            Directory.CreateDirectory(folder);
+            var missions = AssetDatabase.FindAssets("t:OperationMapDefinition", new[] { "Assets/Game/Configs/OperationMaps" })
+                .Select(g => new SerializedObject(AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(g))))
+                .Where(s => s.FindProperty("sourceBinding.sourceOperationMapId")?.stringValue == sourceMapId)
+                .OrderBy(s => s.targetObject.name).ToList();
+            if (missions.Count == 0) throw new InvalidOperationException("[MapBeautify] No missions on " + sourceMapId);
+            string authored = AssetDatabase.GUIDToAssetPath(missions[0].FindProperty("navigationMetadata.authoredSubSceneGuid").stringValue);
+            string binding = AssetDatabase.GUIDToAssetPath(missions[0].FindProperty("sourceSceneReference.m_AssetGUID").stringValue);
+            var prepared = EditorSceneManager.OpenScene(authored, OpenSceneMode.Single);
+            var bind = string.IsNullOrEmpty(binding) ? prepared : EditorSceneManager.OpenScene(binding, OpenSceneMode.Additive);
+            SceneManager.SetActiveScene(bind);
+            foreach (var owner in prepared.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<OperationMapBuildingAuthoring>(true)))
+                if (owner.DestroyedVisualRoot != null) owner.DestroyedVisualRoot.SetActive(false);
+
+            var go = new GameObject("BeautifyCaptureCamera");
+            SceneManager.MoveGameObjectToScene(go, bind);
+            var camera = go.AddComponent<Camera>();
+            camera.nearClipPlane = 0.5f;
+            camera.farClipPlane = 3000f;
+            EnablePostProcessing(go);
+            const int width = 1600, height = 900;
+            var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
+            var image = new Texture2D(width, height, TextureFormat.RGB24, false);
+            try
+            {
+                camera.targetTexture = target;
+                foreach (var mission in missions)
+                {
+                    string battleId = mission.FindProperty("battleCameraId").stringValue;
+                    var cameras = mission.FindProperty("cameras");
+                    for (int i = 0; i < cameras.arraySize; i++)
+                    {
+                        var c = cameras.GetArrayElementAtIndex(i);
+                        if (c.FindPropertyRelative("cameraId").stringValue != battleId) continue;
+                        go.transform.SetPositionAndRotation(c.FindPropertyRelative("position").vector3Value,
+                            Quaternion.Euler(c.FindPropertyRelative("eulerAngles").vector3Value));
+                        camera.fieldOfView = c.FindPropertyRelative("fieldOfView").floatValue;
+                        camera.Render();
+                        RenderTexture.active = target;
+                        image.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                        image.Apply();
+                        RenderTexture.active = null;
+                        string path = $"{folder}/{label}-{mission.targetObject.name.Replace("OperationMap_", "")}.png";
+                        File.WriteAllBytes(path, image.EncodeToPNG());
+                        Debug.Log("[MapBeautify] capture " + path);
+                    }
+                }
+            }
+            finally
+            {
+                camera.targetTexture = null;
+                UnityEngine.Object.DestroyImmediate(target);
+                UnityEngine.Object.DestroyImmediate(image);
+                EditorSceneManager.OpenScene(HostScene, OpenSceneMode.Single);
+            }
+            Debug.Log($"[MapBeautify] capture map={folderName} missions={missions.Count} label={label} result=Passed");
+        }
+
         public static void Capture(string label)
         {
             Directory.CreateDirectory(CaptureFolder);

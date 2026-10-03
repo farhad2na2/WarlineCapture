@@ -52,6 +52,20 @@ The central apron must stay open.
 - Same treatment as the port: concrete slabs, lane markings, a sandbag checkpoint, canal quay dressing, a burning stack.
 - The mockup's main fix is breaking the endless container field into blocks with lanes. That is a layout change too, but Frontier has no missions yet, so it is cheap to do now.
 
+## Dense city map (`opmap.skirmish.desert_base_01`, 18 missions in Ch01–Ch04)
+- **Scenes:**
+  - prepared: `Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity` (225 MB);
+  - binding: `Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity`.
+- **Captures:** `MapVariantBeautifyPipeline.CaptureDenseCityBefore` renders every mission's battle camera to `DenseCity/before-*.png`; it passed for 18 missions.
+  - Several Ch01 definitions share an internal object name, so their files overwrote each other. Name the files by asset file name.
+  - Some missions share the same battle camera (Old Market and Signal Trace are identical).
+- **Unconfirmed lighting:** the captures render dark and blue-grey. The binding probably lacks the sun and ambient lighting the game applies. Confirm against a real in-game screenshot before judging lighting.
+- **Clear regardless of lighting:** flat olive ground, stamped grey blobs, featureless grey roads and sparse outskirts dressing.
+- **Mockups:**
+  - `DenseCity/densecity-street-beautify-mockup-v01.jpg` (Ch01 District Edge street): worn asphalt with lane paint, paved kerbs, dusty earth with rubble and weeds, a market awning with produce, laundry and wires, a sandbag barricade, wrecks, a smoking alley vignette, warm low sun.
+  - `DenseCity/densecity-outskirts-beautify-mockup-v01.jpg` (shared outskirts highway and compound): two-tone sand with ripples and scrub, rock outcrops instead of grey blobs, tyre tracks to the compound, compound walls and a water tank, cracked highway with sand drift and a guard rail, a burning wreck vignette.
+- **Mission safety:** this map backs 18 missions. Keep every change render-only (`RecordPlacements = false`, paint after classification) and verify that each mission's pinned source hashes are unchanged.
+
 ## How to extend to a map
 1. After approval, generalise `MapVariantBeautify.Supports` and the per-map palettes and densities. Mission clearance is already derived from every `OperationMapDefinition` whose source is the prepared map.
 2. Add `Rebuild<Map>` / `Capture` views to `MapVariantBeautifyPipeline`, using each mission's own camera focus and offsets.

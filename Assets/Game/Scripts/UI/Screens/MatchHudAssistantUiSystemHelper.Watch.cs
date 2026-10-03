@@ -329,6 +329,7 @@ namespace Game.UI.Runtime
                 watchStop.onClick.AddListener(UiShellRuntimeGateway.StopAriaPlay);
                 watchStop.gameObject.SetActive(true);
                 watchStop.interactable = true;
+                HudIconButtonView.Apply(watchStop,HudButtonIcon.Stop,HudButtonRole.Stop,"STOP ARIA","توقف آریا");
                 var hand = new GameObject("HolographicFinger", typeof(RectTransform), typeof(CanvasRenderer), typeof(AriaHolographicFingerGraphic));
                 hand.transform.SetParent(watchOverlay.transform, false);
                 watchFinger = hand.GetComponent<AriaHolographicFingerGraphic>();
@@ -373,11 +374,11 @@ namespace Game.UI.Runtime
             var safe = Screen.safeArea;
             var stopRect = (RectTransform)watchStop.transform;
             stopRect.anchorMin = stopRect.anchorMax = stopRect.pivot = new Vector2(.5f, 1f);
-            stopRect.sizeDelta = new Vector2(Mathf.Max(180, Screen.width * .14f), Mathf.Max(60, Screen.height * .065f));
+            stopRect.sizeDelta = new Vector2(Mathf.Max(240, Screen.width * .14f), Mathf.Max(72, Screen.height * .065f));
             stopRect.position = new Vector3(safe.center.x, safe.yMax - Mathf.Max(84, Screen.height * .13f));
             if (watchBuild != null && watchBuild.TryGetAriaStopBounds(out Rect headerStop))
             {
-                stopRect.sizeDelta = headerStop.size;
+                stopRect.sizeDelta = new Vector2(Mathf.Max(240,headerStop.width),Mathf.Max(72,headerStop.height));
                 stopRect.position = new Vector3(headerStop.center.x, headerStop.yMax);
             }
             watchFinger.Present(state);

@@ -11,6 +11,7 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text alertCopy;
         private TMP_Text openingCopy;
         private string measuredTitle, measuredBody, measuredAlert, measuredOpening;
+        private string measuredWatchExplanation;
         private float measuredWidth;
         private int measuredState=-1;
         private TMP_FontAsset measuredFont;
@@ -33,6 +34,7 @@ namespace Game.UI.Runtime
         {
             // The standalone briefing popup owns a different layout; this is the HUD rail.
             if(missionPortraitClip==null || missionPortraitStage==null || !TryBindHierarchy()) return;
+            ApplyHudButtonIcons();
             var rail=(RectTransform)transform;
             if(contentActions==null) contentActions=(RectTransform)showMeButton.transform.parent;
             if(openingCopy==null && openingLayout!=null) openingCopy=openingLayout.GetComponentInChildren<TMP_Text>(true);
@@ -55,7 +57,8 @@ namespace Game.UI.Runtime
             int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
                 (watchCount<<20)|(utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0)|(selectionActive?128:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
-                measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
+                measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text &&
+                measuredWatchExplanation==(watchExplanation != null && watchExplanation.gameObject.activeSelf ? watchExplanation.text : null)) return;
             bool newInstruction=measuredTitle!=titleText.text;
             // A fitting ScrollRect can report zero even though the reader never scrolled.
             // When the dock settles and the copy starts overflowing, open at the first line.
@@ -64,10 +67,13 @@ namespace Game.UI.Runtime
             if(!preserveScroll && bodyScroll!=null) bodyScroll.StopMovement();
             _layoutDirty=false; measuredAvailable=available; measuredState=state; measuredWidth=rail.rect.width; measuredFont=bodyText.font;
             measuredTitle=titleText.text; measuredBody=bodyText.text; measuredAlert=alertCopy?.text; measuredOpening=openingCopy?.text;
+            measuredWatchExplanation=watchExplanation != null && watchExplanation.gameObject.activeSelf ? watchExplanation.text : null;
             float width=rail.rect.width-40;
             float titleHeight=tutorial ? Measure(titleText,width,26) : 0;
             float bodyHeight=tutorial ? Measure(bodyText,width,24) : 0;
-            float utilityHeight=(utilityCount+extractionCount+watchCount)*84;
+            float watchExplanationHeight = HasText(watchExplanation) && watchExplanation.gameObject.activeSelf
+                ? Measure(watchExplanation,width,24)+12 : 0;
+            float utilityHeight=(utilityCount+extractionCount+watchCount)*84+watchExplanationHeight;
             float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
             missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
@@ -110,7 +116,14 @@ namespace Game.UI.Runtime
             if(extractionActions!=null && extractionActions.gameObject.activeSelf)
             {PlaceUtilityRow(extractionActions,y,width);y+=extractionCount*84;}
             if(watchActions!=null && watchActions.gameObject.activeSelf)
-            {PlaceUtilityRow(watchActions,y,width);y+=watchCount*84;}
+            {
+                if(watchExplanationHeight>0)
+                {
+                    Place(watchExplanation.rectTransform,20,y,width,watchExplanationHeight-12);
+                    y+=watchExplanationHeight;
+                }
+                PlaceUtilityRow(watchActions,y,width);y+=watchCount*84;
+            }
             rail.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,y);
         }
 

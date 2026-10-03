@@ -1,0 +1,10 @@
+Use case: stylized-concept
+Asset type: production game HUD icon atlas, one transparent PNG, square 2048x2048.
+Create EXACTLY SIXTEEN separate silver metallic bevelled UI pictograms on a genuinely transparent background. Use the approved reference ONLY for icon style: clean strong silver faces, dark thin outline, understated bevel, simple familiar silhouette. NO text, NO labels, NO panels, NO borders, NO shadows extending into neighboring cells. Each icon must read at 44 pixels.
+Layout is an EXACT 4-column by 4-row equally spaced square grid. Each cell is 512x512 in a 2048x2048 image. Icon centers are exactly at x=256,768,1280,1792 and y=256,768,1280,1792 measured from TOP LEFT. Every icon fits inside 300x300 pixels centered within its cell, leaving at least 106 transparent pixels on every side. The transparent grid itself is invisible.
+Subjects in exact row-major order:
+Row 1: (1) open field manual BOOK with visible pages, (2) PLAY triangle pointing right, (3) STOP square, (4) CAMERA with four viewfinder focus brackets.
+Row 2: (5) CONTINUE straight right arrow, (6) ALERT warning triangle with exclamation mark, (7) SKIP double right chevrons, (8) BACK curved left return arrow.
+Row 3: (9) TEAM group of three people, (10) LANDING map pin over circular landing pad, (11) DEPARTURE right arrow exiting a door, (12) CANCEL X.
+Row 4: (13) YOUR BASE compact barracks building with small shield emblem, (14) ENEMY BASE same barracks building with target focus brackets emblem, (15) CONFIRM check mark, (16) SELECT mouse pointer.
+All icons monochrome silver/white/dark charcoal except warning exclamation triangle may be silver too. Colors will come from native button backgrounds. No teal background, no checkerboard painted into the image, no watermark. Grid accuracy and transparent padding are essential for automatic sprite slicing.

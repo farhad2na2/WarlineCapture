@@ -74,6 +74,7 @@ namespace Game.Editor
         public static void RunEnglishWatchCaptioned()=>Run("en",true,false,true);
         public static void RunPersianWatchCaptioned()=>Run("fa-IR",true,false,true);
         public static void RunGameplay()=>Run("en",false,false,true,false,true);
+        public static void RunEnglishWatchGameplay()=>Run("en",true,false,true,false,true);
         public static void RunPersianWatchGameplay()=>Run("fa-IR",true,false,true,false,true);
         public static void RunPersianPresentation()=>Run("fa-IR",false,false,true,false,true,true);
         private static void Run(string locale,bool watch,bool live,bool captioned=true,bool recruitmentOnly=false,bool gameplayOnly=false,bool presentationOnly=false)

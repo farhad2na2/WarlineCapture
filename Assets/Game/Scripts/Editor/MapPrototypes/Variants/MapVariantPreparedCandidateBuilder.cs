@@ -335,7 +335,16 @@ namespace Game.Editor.MapVariants
                 string path = folder + "/Ground/" + f.name + ".asset";
                 Mesh old = AssetDatabase.LoadAssetAtPath<Mesh>(path);
                 if (old == null) AssetDatabase.CreateAsset(f.sharedMesh, path);
-                else { Mesh temporary = f.sharedMesh; EditorUtility.CopySerialized(temporary, old); f.sharedMesh = old; EditorUtility.SetDirty(old); UnityEngine.Object.DestroyImmediate(temporary); }
+                else { Mesh temporary = f.sharedMesh; EditorUtility.CopySerialized(temporary, old);
+                    // Set the native vertex/index buffers too: a serialized copy can leave the old
+                    // uploaded mesh in the Editor until its next import, hiding new paint in captures.
+                    old.vertices = temporary.vertices;
+                    old.normals = temporary.normals;
+                    old.uv = temporary.uv;
+                    old.subMeshCount = temporary.subMeshCount;
+                    for (int sub = 0; sub < temporary.subMeshCount; sub++) old.SetTriangles(temporary.GetTriangles(sub), sub);
+                    old.RecalculateBounds(); old.RecalculateTangents(); old.UploadMeshData(false);
+                    f.sharedMesh = old; EditorUtility.SetDirty(old); UnityEngine.Object.DestroyImmediate(temporary); }
             }
         }
 

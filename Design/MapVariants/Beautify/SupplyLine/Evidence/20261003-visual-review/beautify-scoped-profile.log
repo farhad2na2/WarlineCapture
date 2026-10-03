@@ -1,0 +1,105 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture-Beautify/Assets executeMethod=Game.Editor.MapVariants.MapVariantBeautifyPipeline.CaptureAfter
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] captureProfile=PC_Premium_RPAsset scope=VisualReview
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline/VisualPreviewProfile:.ctor () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:212)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:149)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-battle.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-overview.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-zoom-yard.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-zoom-gate.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-zoom-pumpgate.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/SupplyLine/after-zoom-refinery.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:190)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture label=after result=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:201)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:CaptureAfter () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:45)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.MapVariantBeautifyPipeline.CaptureAfter
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_9f3a7fd9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

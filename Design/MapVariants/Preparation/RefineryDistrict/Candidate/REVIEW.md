@@ -8,7 +8,7 @@ Status: In progress. Authoring and surface artifacts only; runtime packing, actu
 - Unsupported industrial/civic destruction pairs explicitly become non-destructible scenery. No unrelated rubble substitution.
 - Rotated static footprints include partial boundary intersections. Gameplay owners use the existing conservative AABB runtime blocker contract.
 - Surface build exclusion is separate from movement exclusion. Dynamic building footprints are blocked by owners, not duplicated as grid static blockers.
-- Semantic hash: `2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778`; regeneration: `Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder.BuildRefinery`; replay: InputsChanged.
+- Semantic hash: `2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778`; regeneration: `Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder.BuildRefinery`; replay: Passed.
 
 ## Bounds decisions
 

@@ -1,0 +1,61 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture-Beautify/Assets executeMethod=Game.Editor.CH02M04PowerRelayRulesValidation.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PowerRelayComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M04PowerRelayMediaImporter:ConfigureArt () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayMediaImporter.cs:36)
+Game.Editor.CH02M04PowerRelayMediaImporter:ValidateStableArtImports () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayMediaImporter.cs:39)
+Game.Editor.CH02M04PowerRelayRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayRulesValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PowerRelayComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M04PowerRelayMediaImporter:ConfigureArt () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayMediaImporter.cs:36)
+Game.Editor.CH02M04PowerRelayMediaImporter:ValidateStableArtImports () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayMediaImporter.cs:39)
+Game.Editor.CH02M04PowerRelayRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayRulesValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PowerRelayComicArtStability] result=Passed sources=7 stableSpriteIds=14
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M04PowerRelayMediaImporter:ValidateStableArtImports () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayMediaImporter.cs:39)
+Game.Editor.CH02M04PowerRelayRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayRulesValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PowerRelayRules] result=Passed groups=7 protectedRoute=required comicSources=7 comicCrops=14 buttons=existing-only
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M04PowerRelayRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M04PowerRelayRulesValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH02M04PowerRelayRulesValidation.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_91d1df0d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

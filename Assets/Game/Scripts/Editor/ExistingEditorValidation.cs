@@ -78,6 +78,7 @@ namespace Game.Editor
             Application.logMessageReceivedThreaded+=capture;
             try
             {
+                if(EditorUtility.scriptCompilationFailed)throw new InvalidOperationException("Editor script compilation failed; refusing stale assemblies.");
                 if(EditorApplication.isCompiling || EditorApplication.isUpdating)throw new InvalidOperationException("Editor is still importing or compiling.");
                 int separator=executeMethod.LastIndexOf('.');
                 if(separator<=0)throw new ArgumentException("A fully qualified static executeMethod is required.");
@@ -102,7 +103,7 @@ namespace Game.Editor
                     else
                     {
                     object result=exit?.GetProperty("LastExitCode",BindingFlags.Public|BindingFlags.Static)?.GetValue(null);
-                    status=result is int code?code:0;
+                    status=MissionEditorValidationExit.LastCompletion ?? (result is int code?code:0);
                     }
                 }
                 if (run.Aborted) status = 1;

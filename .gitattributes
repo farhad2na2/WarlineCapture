@@ -14,3 +14,7 @@ Design/MapVariants/Preparation/*/inventory.json filter=lfs diff=lfs merge=lfs -t
 Assets/Game/GeneratedOperationMaps/Variants/**/*.asset filter=lfs diff=lfs merge=lfs -text
 Design/MapVariants/Preparation/*/Candidate/output-manifest.json filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/Variants/**/*.png filter=lfs diff=lfs merge=lfs -text
+
+Assets/Game/Art/MapBeautify/**/*.asset filter=lfs diff=lfs merge=lfs -text
+
+Assets/Game/GeneratedOperationMaps/RuntimeBinding/**/*.unity filter=lfs diff=lfs merge=lfs -text

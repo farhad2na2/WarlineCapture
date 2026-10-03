@@ -95,7 +95,7 @@ public sealed class CH02M02SupplyLineRegressionTests
             var runtime=new CampaignMissionRuntimeComponent {MissionId=d.MissionId,ScenarioId=d.ScenarioId,OperationMapId=d.OperationMapId,SessionToken="supply-loss",Phase=MissionPhaseKind.Engage,DeterministicSeed=2002001,Version=1,SourceVersion=1,AttemptOrdinal=1};
             em.SetComponentData(root,runtime);
             em.SetComponentData(root,new CampaignMissionAttemptFactsComponent {CommandSquadSpawned=1,CommandSquadAlive=1,HostileTotalCount=6});
-            var state=new CampaignMissionSupplyLineState {SessionToken=runtime.SessionToken,SourceVersion=1,AttemptOrdinal=1,Ready=1,OilTransferred=1,FuelTransferred=1,RouteRecovered=1,AllocatedCivilianBarrels=20,StoredFuel=40,HoldMilliseconds=19000,ElapsedMilliseconds=failure==SupplyLineFailure.Deadline?719500:100000};
+            var state=new CampaignMissionSupplyLineState {SessionToken=runtime.SessionToken,SourceVersion=1,AttemptOrdinal=1,Ready=1,OilTransferred=1,FuelTransferred=1,RouteRecovered=1,AllocatedCivilianBarrels=20,StoredFuel=40,HoldMilliseconds=19000,ElapsedMilliseconds=failure==SupplyLineFailure.Deadline?d.SupplyLine.DeadlineMilliseconds-500:100000};
             if(!em.HasComponent<CampaignMissionSupplyLineState>(root))em.AddComponentData(root,state);else em.SetComponentData(root,state);
             if(!em.HasComponent<CampaignMissionOpeningPresentationComponent>(root))em.AddComponentData(root,new CampaignMissionOpeningPresentationComponent {Stage=7});else em.SetComponentData(root,new CampaignMissionOpeningPresentationComponent {Stage=7});
             if(!em.HasBuffer<CampaignMissionSupplyLineMember>(root))em.AddBuffer<CampaignMissionSupplyLineMember>(root);

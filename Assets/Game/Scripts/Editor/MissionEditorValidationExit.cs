@@ -21,9 +21,14 @@ namespace Game.Editor
 
         internal static void Complete(bool passed)
         {
-            SessionState.SetInt(Status, passed ? 0 : 1);
+            // Publish synchronous validation results before the wrapper method returns.
+            LastCompletion = passed ? 0 : 1;
+            SessionState.SetInt(Status, LastCompletion.Value);
             SessionState.SetBool(Pending, true);
-            SessionState.SetBool(ResumeRefresh, true);
+            // Normal-input probes suspend refresh before entering Play mode;
+            // synchronous checks never acquire that suspension.
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                SessionState.SetBool(ResumeRefresh, true);
             readyAt = EditorApplication.timeSinceStartup + 3;
             EditorApplication.ExitPlaymode();
         }

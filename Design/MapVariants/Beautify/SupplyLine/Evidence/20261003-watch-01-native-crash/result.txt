@@ -1,0 +1,1 @@
+Failed: native Unity Editor crash during normal-input ARIA run. Missing mission pass marker and completion receipt. Native stack: profiling::ThreadDeserializer::ExtractCounterData(). No completed outcome, debrief, result or return. The waiting Python runner and shell wrapper were stopped after verifying the Editor had exited.

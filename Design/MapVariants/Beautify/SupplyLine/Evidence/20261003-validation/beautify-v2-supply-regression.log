@@ -1,0 +1,56 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture-Beautify/Assets executeMethod=CH02M02SupplyLineRegressionTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_f158e4b8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupplyLineRules] result=Passed groups=14 rerouteOrder=Passed reserveRegression=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineRulesValidation.cs:32)
+CH02M02SupplyLineRegressionTests:RunTests () (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:139)
+CH02M02SupplyLineRegressionTests:RunFocusedValidation () (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:134)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_f158e4b8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Expected: Deadline
+  But was:  None
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+CH02M02SupplyLineRegressionTests.RuntimeLossesAndPauseCannotSettleVictory () (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:78)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+CH02M02SupplyLineRegressionTests:RunTests() (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:152)
+CH02M02SupplyLineRegressionTests:RunFocusedValidation() (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:134)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.<Run>d__9:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupplyLineRegression] result=Failed
+UnityEngine.Debug:LogError (object)
+CH02M02SupplyLineRegressionTests:RunTests () (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:152)
+CH02M02SupplyLineRegressionTests:RunFocusedValidation () (at Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs:134)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_f158e4b8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=CH02M02SupplyLineRegressionTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_f158e4b8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

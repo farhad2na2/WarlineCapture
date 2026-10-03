@@ -1,0 +1,128 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture-Beautify/Assets executeMethod=Game.Editor.MapVariants.MapVariantBeautifyPipeline.RebuildFrontierVisuals
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] result=Applied map=Frontier {"version":"map-beautify-v7","missionDefinitions":0,"clearanceCircles":0,"reachableCells":1852646,"deadPocketCells":9266,"paintMeshes":9,"paintTriangles":379336,"slabs":31490,"sandySlabs":0,"lines":12117,"stains":731,"patches":3904,"tracks":67,"drifts":294,"props":1157,"propRejectedNearUnits":7712,"vegetation":9087,"edgeDressing":6927,"cracks":1952,"vergeClusters":767,"vignettes":744,"maxLowPropHeight":0.8999213576316834,"missionUnion":"176,176,2224,1200"}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautify:Apply (Game.Editor.MapVariants.MapVariantBuilder,string,bool[],UnityEngine.Vector3) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautify.cs:157)
+Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder:Build (string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedCandidateBuilder.cs:144)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:68)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapPreparedCandidate] result=Passed map=Frontier owners=3487 staticBlockCells=235240 duplicateOriginals=0 semanticHash=f719b0b55cde5cabbff5413a4910522962e96276eba3cb8738ed4eabb47c22bf replay=Passed scope=AuthoringAndSurfaceData
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder:Build (string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedCandidateBuilder.cs:199)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:68)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] captureProfile=PC_Premium_RPAsset scope=VisualReview
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline/VisualPreviewProfile:.ctor () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:246)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:183)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] atmosphere map=Frontier effects=19 stacks=8
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantAtmosphere:Build (UnityEngine.SceneManagement.Scene,UnityEngine.SceneManagement.Scene,string,UnityEngine.Rect) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantAtmosphere.cs:81)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:192)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/Frontier/after-port-blocks.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:224)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/Frontier/after-port-close.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:224)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/Frontier/after-canal.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:224)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture Design/MapVariants/Beautify/Frontier/after-overview.png
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:224)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] capture label=after result=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:Capture (string,bool,string,string,System.ValueTuple`3<string, UnityEngine.Vector3, UnityEngine.Vector3>[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:235)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:70)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapBeautify] visuals map=Frontier result=Passed scope=ApprovedLayoutPreview
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.MapVariantBeautifyPipeline:RebuildFrontierVisuals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBeautifyPipeline.cs:77)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.MapVariantBeautifyPipeline.RebuildFrontierVisuals
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:110)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_ad0e2eff/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

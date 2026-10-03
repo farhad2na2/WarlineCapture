@@ -40,27 +40,28 @@ namespace Game.Editor.MapVariants
                 Vector3 top = stacks[i].top.Value;
                 if (i % 3 == 0)
                 {
-                    count += Spawn(root, Fire, "FlareFire", top, 3.2f);
-                    count += Spawn(root, SmokeLarge, "FlareSmoke", top + Vector3.up * 4f, 2.6f);
+                    count += Spawn(root, Fire, "FlareFire", top, 1.8f);
+                    count += Spawn(root, SmokeLarge, "FlareSmoke", top + Vector3.up * 2f, 1.6f);
                 }
                 else if (i % 3 == 1)
-                    count += Spawn(root, SmokeMedium, "StackSmoke", top, 2.4f);
+                    count += Spawn(root, SmokeMedium, "StackSmoke", top, 1.5f);
             }
 
-            foreach (Transform t in transforms.Where(t => t.name.StartsWith("SM_Prop_Pipeline_SmokeStack_Background", StringComparison.Ordinal)))
+            foreach (Transform t in transforms.Where(t => t.name.StartsWith("SM_Prop_Pipeline_SmokeStack_Background", StringComparison.Ordinal)).OrderBy(t => t.position.x).ThenBy(t => t.position.z).Take(2))
             {
                 Vector3? top = Top(t);
-                if (top.HasValue) count += Spawn(root, SmokeHuge, "HorizonPlume", top.Value, 5f);
+                if (top.HasValue) count += Spawn(root, SmokeHuge, "HorizonPlume", top.Value, 2.5f);
             }
 
-            int wrecks = 0;
+            int wrecks = 0, burningWrecks = 0;
             foreach (Transform t in transforms.Where(t => t.name.StartsWith("SM_Prop_Vehicle_Debris", StringComparison.Ordinal)))
             {
                 Vector3? top = Top(t);
-                if (!top.HasValue || !focus.Contains(new Vector2(top.Value.x, top.Value.z)) || wrecks % 4 != 0) { wrecks++; continue; }
+                if (!top.HasValue || !focus.Contains(new Vector2(top.Value.x, top.Value.z)) || wrecks % 4 != 0 || burningWrecks >= 4) { wrecks++; continue; }
                 wrecks++;
-                count += Spawn(root, FireSmall, "WreckFire", top.Value, 1.6f);
-                count += Spawn(root, SmokeMedium, "WreckSmoke", top.Value + Vector3.up, 1.6f);
+                burningWrecks++;
+                count += Spawn(root, FireSmall, "WreckFire", top.Value, .8f);
+                count += Spawn(root, SmokeMedium, "WreckSmoke", top.Value + Vector3.up, 1f);
             }
 
             var grounds = transforms.Where(t => t.name.StartsWith("Ground_", StringComparison.Ordinal) && t.GetComponent<MeshFilter>() != null).ToList();
@@ -112,32 +113,32 @@ namespace Game.Editor.MapVariants
             foreach (ParticleSystemRenderer renderer in instance.GetComponentsInChildren<ParticleSystemRenderer>(true))
             {
                 renderer.shadowCastingMode = ShadowCastingMode.Off;
-                renderer.sharedMaterials = renderer.sharedMaterials.Select(Convert).ToArray();
-                if (renderer.trailMaterial != null) renderer.trailMaterial = Convert(renderer.trailMaterial);
+                renderer.sharedMaterials = renderer.sharedMaterials.Select(m => Convert(m, name == "BlowingDust")).ToArray();
+                if (renderer.trailMaterial != null) renderer.trailMaterial = Convert(renderer.trailMaterial, name == "BlowingDust");
             }
             return 1;
         }
 
         // Synty ships these effects with built-in legacy particle shaders, which URP renders pink.
-        private static readonly Dictionary<Material, Material> Converted = new();
+        private static readonly Dictionary<(Material source, bool dust), Material> Converted = new();
 
-        private static Material Convert(Material source)
+        private static Material Convert(Material source, bool dust)
         {
             if (source == null || source.shader == null) return source;
             string shader = source.shader.name;
             if (!shader.StartsWith("Legacy Shaders/Particles", StringComparison.Ordinal) && !shader.StartsWith("Particles/", StringComparison.Ordinal) &&
                 shader != "Hidden/InternalErrorShader")
                 return source;
-            if (Converted.TryGetValue(source, out Material cached) && cached != null) return cached;
+            if (Converted.TryGetValue((source, dust), out Material cached) && cached != null) return cached;
             MapVariantBuilder.EnsureFolder(MaterialFolder);
-            string path = $"{MaterialFolder}/{source.name}_URP.mat";
+            string path = $"{MaterialFolder}/{source.name}{(dust ? "_Dust" : "")}_URP.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             bool isNew = material == null;
             if (isNew) material = new Material(Shader.Find(ParticlesUnlit) ?? throw new InvalidOperationException("[MapBeautify] Missing " + ParticlesUnlit));
-            bool additive = shader.Contains("Additive");
+            bool additive = !dust && shader.Contains("Additive");
             bool dark = shader.Contains("Multiply");
             material.SetTexture("_BaseMap", source.mainTexture);
-            material.SetColor("_BaseColor", dark ? new Color(0.24f, 0.22f, 0.21f, 0.8f) : additive ? Color.white : new Color(1f, 1f, 1f, 0.9f));
+            material.SetColor("_BaseColor", dust ? new Color(.65f, .58f, .45f, .12f) : dark ? new Color(0.24f, 0.22f, 0.21f, 0.8f) : additive ? new Color(.55f, .38f, .2f, .45f) : new Color(1f, 1f, 1f, 0.9f));
             material.SetFloat("_Surface", 1f);
             material.SetFloat("_Blend", additive ? 2f : 0f);
             material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
@@ -149,7 +150,7 @@ namespace Game.Editor.MapVariants
             material.renderQueue = (int)RenderQueue.Transparent;
             if (isNew) AssetDatabase.CreateAsset(material, path);
             else EditorUtility.SetDirty(material);
-            Converted[source] = material;
+            Converted[(source, dust)] = material;
             return material;
         }
     }

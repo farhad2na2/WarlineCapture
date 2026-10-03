@@ -286,7 +286,7 @@ namespace Game.Editor.MapVariants
             for (float x = PortHub.xMin + 6f; x < PortHub.xMax - 20f; x += 7.5f)
             for (float z = PortHub.yMin + 6f; z < PortHub.yMax - 44f; z += 3.2f)
             {
-                if (Mathf.Abs(z - 860f) < 6f || Mathf.Abs(z - 960f) < 6f || b.Chance(0.12f))
+                if (Mathf.Repeat(x - PortHub.xMin - 6f, 45f) > 29f || Mathf.Repeat(z - PortHub.yMin - 6f, 28.8f) > 16.1f || Mathf.Abs(z - 860f) < 6f || Mathf.Abs(z - 960f) < 6f || b.Chance(0.08f))
                     continue;
                 b.Place(b.Pick(stacks), MapVariantLayer.Props, new Vector2(x, z), 90f, PlaceOptions.Prop.WithPadding(0.2f));
             }
@@ -318,7 +318,7 @@ namespace Game.Editor.MapVariants
             for (float x = PortSupply.xMin + 8f; x < PortSupply.xMax - 8f; x += 7.5f)
             for (float z = PortSupply.yMin + 190f; z < PortSupply.yMax - 62f; z += 3.2f)
             {
-                if (Mathf.Abs(x - PortSupply.center.x) < 9f || b.Chance(0.3f))
+                if (Mathf.Repeat(x - PortSupply.xMin - 8f, 45f) > 29f || Mathf.Repeat(z - PortSupply.yMin - 190f, 28.8f) > 16.1f || Mathf.Abs(x - PortSupply.center.x) < 9f || b.Chance(0.12f))
                     continue;
                 b.Place(b.Pick(stacks), MapVariantLayer.Props, new Vector2(x, z), 90f, PlaceOptions.Prop.WithPadding(0.2f));
             }
@@ -332,7 +332,7 @@ namespace Game.Editor.MapVariants
                 for (float x = yard.xMin + 6f; x < yard.xMax - 6f; x += 7.5f)
                 for (float z = yard.yMin + 34f; z < yard.yMax - 6f; z += 3.2f)
                 {
-                    if (Mathf.Abs(z - (yard.yMin + 100f)) < 6f || b.Chance(0.25f))
+                    if (Mathf.Repeat(x - yard.xMin - 6f, 45f) > 29f || Mathf.Repeat(z - yard.yMin - 34f, 28.8f) > 16.1f || Mathf.Abs(z - (yard.yMin + 100f)) < 6f || b.Chance(0.08f))
                         continue;
                     b.Place(b.Pick(stacks), MapVariantLayer.Props, new Vector2(x, z), 90f, PlaceOptions.Prop.WithPadding(0.2f));
                 }

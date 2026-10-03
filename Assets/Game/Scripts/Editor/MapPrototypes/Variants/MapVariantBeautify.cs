@@ -15,7 +15,7 @@ namespace Game.Editor.MapVariants
     // in any campaign mission bound to this map (static blockers, unreachable pockets, outside bounds).
     internal static class MapVariantBeautify
     {
-        internal const string Version = "map-beautify-v1";
+        internal const string Version = "map-beautify-v8";
         private const string MissionConfigRoot = "Assets/Game/Configs/OperationMaps";
         private const string AtlasProperty = "_BaseMap";
         private const int GridWidth = 2048, GridHeight = 1024;
@@ -23,7 +23,7 @@ namespace Game.Editor.MapVariants
         private const float SlabSize = 4f;
         private const float MaxLowPropHeight = 0.9f;
 
-        internal static bool Supports(string map) => map == "RefineryDistrict";
+        internal static bool Supports(string map) => map is "RefineryDistrict" or "CityEdgeAirfield" or "AshLinePort" or "Frontier";
 
         [Serializable]
         internal sealed class Report
@@ -31,7 +31,7 @@ namespace Game.Editor.MapVariants
             public string version = Version;
             public int missionDefinitions, clearanceCircles, reachableCells, deadPocketCells;
             public int paintMeshes, paintTriangles, slabs, sandySlabs, lines, stains, patches, tracks;
-            public int drifts, props, propRejectedNearUnits, vegetation, edgeDressing;
+            public int drifts, props, propRejectedNearUnits, vegetation, edgeDressing, cracks, vergeClusters, vignettes;
             public float maxLowPropHeight;
             public string missionUnion;
         }
@@ -83,7 +83,50 @@ namespace Game.Editor.MapVariants
             var material = AssetDatabase.LoadAssetAtPath<Material>(MapVariantBuilder.GroundMaterialPath) ??
                            throw new InvalidOperationException("[MapBeautify] Missing ground material.");
             var palette = new AtlasPalette(material.GetTexture(AtlasProperty) as Texture2D, MapVariantBuilder.ResolveGroundUv());
+            var groundDetail = new Material(material) { name = "DetailedDesertGround" };
+            string groundPath = "Assets/Game/Art/MapBeautify/DetailedDesertGround.mat";
+            var oldGround = AssetDatabase.LoadAssetAtPath<Material>(groundPath);
+            if (oldGround == null) AssetDatabase.CreateAsset(groundDetail, groundPath);
+            else { UnityEngine.Object.DestroyImmediate(groundDetail); groundDetail = oldGround; }
+            ConfigureGroundDetail(groundDetail, .8f);
+            foreach (var renderer in b.Layer(MapVariantLayer.Ground).GetComponentsInChildren<MeshRenderer>())
+                if (renderer.name.StartsWith("Ground_")) renderer.sharedMaterial = groundDetail;
             var paint = new PaintSink(b.Layer(MapVariantLayer.Ground), material, report);
+            string concretePath = "Assets/Game/Art/MapBeautify/" + (b.MapId == "AshLinePort" ? "PortAsphalt" : "Concrete") + ".mat";
+            var concreteMaterial = AssetDatabase.LoadAssetAtPath<Material>(concretePath);
+            if (concreteMaterial == null)
+            {
+                System.IO.Directory.CreateDirectory("Assets/Game/Art/MapBeautify");
+                concreteMaterial = new Material(material);
+                AssetDatabase.CreateAsset(concreteMaterial, concretePath);
+            }
+            concreteMaterial.shader = Shader.Find("Universal Render Pipeline/Lit");
+            const string texturePath = "Assets/Game/Art/MapBeautify/WeatheredConcreteV5.asset";
+            var concreteTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            if (concreteTexture == null)
+            {
+                concreteTexture = new Texture2D(512, 512, TextureFormat.RGB24, true) { name = "WeatheredConcrete", wrapMode = TextureWrapMode.Repeat };
+                var pixels = new Color[512 * 512];
+                for (int y = 0; y < 512; y++)
+                for (int x = 0; x < 512; x++)
+                {
+                    float broad = Mathf.PerlinNoise(x / 93f, y / 93f);
+                    float grain = Mathf.PerlinNoise(x / 3.2f, y / 3.2f);
+                    float wear = Mathf.PerlinNoise(x / 22f + 51f, y / 22f + 23f);
+                    float value = .38f + broad * .065f + grain * .012f + wear * .012f;
+                    pixels[y * 512 + x] = new Color(value * .97f, value, value * 1.015f);
+                }
+                concreteTexture.SetPixels(pixels); concreteTexture.Apply(true, false);
+                AssetDatabase.CreateAsset(concreteTexture, texturePath);
+            }
+            concreteMaterial.SetTexture("_BaseMap", concreteTexture);
+            concreteMaterial.SetTexture("_BumpMap", null);
+            concreteMaterial.DisableKeyword("_NORMALMAP");
+            concreteMaterial.SetColor("_BaseColor", b.MapId == "AshLinePort" ? new Color(.64f, .66f, .68f, 1f) : new Color(.85f,.82f,.75f,1f));
+            concreteMaterial.SetFloat("_Smoothness", .12f);
+            EditorUtility.SetDirty(concreteMaterial);
+            var sandPaint = new PaintSink(b.Layer(MapVariantLayer.Ground), groundDetail, report, "SandWear");
+            var concretePaint = new PaintSink(b.Layer(MapVariantLayer.Ground), concreteMaterial, report, "Concrete");
             var random = new System.Random(b.Seed ^ 0x5eed);
             float Range(float min, float max) => min + (float)random.NextDouble() * (max - min);
 
@@ -92,10 +135,13 @@ namespace Game.Editor.MapVariants
             bool OnPad(Vector2 p, float margin) => padRects.Any(r => MapVariantBuilder.Inset(r, -margin).Contains(p));
             var solid = new StructureMask(b);
 
-            PaintPads(b, pads, palette, paint, Range, report);
-            PaintGroundPatches(b, palette, paint, Range, OnPad, solid, report);
-            PaintTracks(b, palette, paint, Range, OnPad, solid, report);
+            PaintPads(b, pads, palette, paint, concretePaint, Range, report);
+            PaintWearAndVerge(b, pads, palette, paint, sandPaint, Range, report);
+            // World-projected macro/detail textures supply the sand variation without stamped polygon islands.
+            PaintTracks(b, palette, sandPaint, Range, OnPad, solid, report);
             paint.Flush();
+            concretePaint.Flush();
+            sandPaint.Flush();
 
             bool previous = b.RecordPlacements;
             b.RecordPlacements = false;
@@ -105,10 +151,26 @@ namespace Game.Editor.MapVariants
                 EdgeDressing(b, padRects, OnPad, g, report);
                 DeadSpaceProps(b, g, solid, Range, report);
                 Groves(b, g, Range, OnPad, report);
+                DetailClusters(b, g, pads, Range, report);
             }
             finally { b.RecordPlacements = previous; }
             Debug.Log("[MapBeautify] result=Applied map=" + b.MapId + " " + JsonUtility.ToJson(report));
             return report;
+        }
+
+        internal static void ConfigureGroundDetail(Material material, float strength)
+        {
+            material.shader = Shader.Find("Game/Environment/GroundMacroVariation");
+            material.SetTexture("_DesertDetailMap", AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Game/Rendering/Textures/T_GroundDetail_Desert_Albedo.png"));
+            material.SetTexture("_GreenDetailMap", AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Game/Rendering/Textures/T_GroundDetail_Desert_Albedo.png"));
+            material.SetTexture("_DesertDetailNormal", AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Game/Rendering/Textures/T_GroundDetail_Desert_Normal.png"));
+            material.SetFloat("_DetailFadeStart", 180f); material.SetFloat("_DetailFadeEnd", 650f);
+            material.SetFloat("_GroundDetailTiling", .13f); material.SetFloat("_GroundDetailStrength", strength);
+            material.SetFloat("_GroundDetailNormalStrength", .65f); material.SetFloat("_DetailStrength", .12f);
+            material.SetFloat("_MacroScale", .045f); material.SetFloat("_MacroStrength", .8f);
+            material.SetFloat("_MacroContrastLow", .1f); material.SetFloat("_MacroContrastHigh", .8f);
+            material.SetColor("_MacroTintA", new Color(.82f,.73f,.57f)); material.SetColor("_MacroTintB", new Color(1.06f,1.02f,.9f));
+            material.SetFloat("_Smoothness", .04f); EditorUtility.SetDirty(material);
         }
 
         private static Gameplay ResolveGameplay(MapVariantBuilder b, string preparedMapId, bool[] staticMovement, Vector3 offset, Report report)
@@ -192,16 +254,16 @@ namespace Game.Editor.MapVariants
 
         // ------------------------------------------------------------------ paint
 
-        private static void PaintPads(MapVariantBuilder b, List<MapVariantPlacement> pads, AtlasPalette palette, PaintSink paint,
+        private static void PaintPads(MapVariantBuilder b, List<MapVariantPlacement> pads, AtlasPalette palette, PaintSink paint, PaintSink concretePaint,
             Func<float, float, float> range, Report report)
         {
             Vector2 sand = palette.GroundUv;
             Vector2 patched = palette.Nearest(new Color(0.47f, 0.46f, 0.44f));
-            Vector2 oil = palette.Nearest(new Color(0.16f, 0.14f, 0.12f));
+            Vector2 oil = palette.Nearest(new Color(0.34f, 0.32f, 0.28f));
             Vector2 yellow = palette.Nearest(new Color(0.88f, 0.70f, 0.22f));
             Vector2 white = palette.Nearest(new Color(0.88f, 0.87f, 0.82f));
-            var concrete = Rect.MinMaxRect(0.006f, 0.756f, 0.244f, 0.994f);
-            const float window = 0.075f;
+            var concrete = Rect.MinMaxRect(0f, 0f, 1f, 1f);
+            const float window = .65f;
 
             foreach (MapVariantPlacement pad in pads)
             {
@@ -209,27 +271,16 @@ namespace Game.Editor.MapVariants
                 if (!paved || Mathf.Abs(pad.Yaw) > 0.01f) continue;
                 float top = pad.Instance.GetComponent<Renderer>().bounds.max.y;
                 Rect area = new(pad.Center - pad.HalfSize, pad.HalfSize * 2f);
+                // A neutral undercoat prevents the original brown pad showing through the joints.
+                concretePaint.TexturedQuad(area, top + .008f, new Rect(0f, 0f, 1f, 1f), 0);
                 int nx = Mathf.Max(1, Mathf.RoundToInt(area.width / SlabSize)), nz = Mathf.Max(1, Mathf.RoundToInt(area.height / SlabSize));
                 float sx = area.width / nx, sz = area.height / nz;
                 for (int z = 0; z < nz; z++)
                 for (int x = 0; x < nx; x++)
                 {
-                    Rect slab = Rect.MinMaxRect(area.xMin + x * sx + .06f, area.yMin + z * sz + .06f, area.xMin + (x + 1) * sx - .06f, area.yMin + (z + 1) * sz - .06f);
-                    int edge = Mathf.Min(Mathf.Min(x, nx - 1 - x), Mathf.Min(z, nz - 1 - z));
-                    float wind = Mathf.PerlinNoise(slab.center.x * 0.035f + 17f, slab.center.y * 0.035f + 5f);
-                    float sandy = 0.55f * Mathf.Exp(-edge * 0.85f) + (wind > 0.68f ? (wind - 0.68f) * 2.4f : 0f) + 0.015f;
-                    float roll = range(0f, 1f);
-                    if (roll < sandy)
-                    {
-                        paint.Quad(slab, top + .012f, sand);
-                        report.sandySlabs++;
-                    }
-                    else if (roll < sandy + 0.04f) paint.Quad(slab, top + .012f, patched);
-                    else
-                    {
-                        float u = range(concrete.xMin, concrete.xMax - window), v = range(concrete.yMin, concrete.yMax - window);
-                        paint.TexturedQuad(slab, top + .012f, new Rect(u, v, window, window), random90: (int)range(0f, 3.999f));
-                    }
+                    Rect slab = Rect.MinMaxRect(area.xMin + x * sx + .025f, area.yMin + z * sz + .025f, area.xMin + (x + 1) * sx - .025f, area.yMin + (z + 1) * sz - .025f);
+                    float u = range(concrete.xMin, concrete.xMax - window), v = range(concrete.yMin, concrete.yMax - window);
+                    concretePaint.TexturedQuad(slab, top + .012f, new Rect(u, v, window, window), random90: (int)range(0f, 3.999f));
                     report.slabs++;
                 }
 
@@ -260,16 +311,123 @@ namespace Game.Editor.MapVariants
                     }
                     if (range(0f, 1f) < 0.75f)
                     {
-                        paint.Blob(b, vehicle.Center + forward * range(-halfLength * .6f, halfLength * .6f), range(.8f, 1.6f), top + .022f, oil, range, flat: true);
+                        paint.Blob(b, vehicle.Center + forward * range(-halfLength * .6f, halfLength * .6f), range(.35f, .8f), top + .022f, oil, range, flat: true);
                         report.stains++;
                     }
                 }
-                int stains = Mathf.RoundToInt(area.width * area.height / 260f);
+                int stains = Mathf.RoundToInt(area.width * area.height / 850f);
                 for (int i = 0; i < stains; i++)
                 {
                     Vector2 c = new(range(area.xMin + 3f, area.xMax - 3f), range(area.yMin + 3f, area.yMax - 3f));
-                    paint.Blob(b, c, range(.5f, 2.2f), top + .02f, oil, range, flat: true);
+                    paint.Blob(b, c, range(.3f, .9f), top + .02f, oil, range, flat: true);
                     report.stains++;
+                }
+            }
+        }
+
+        // Flat erosion and wear follow each compound boundary; no gameplay geometry is added.
+        private static void PaintWearAndVerge(MapVariantBuilder b, List<MapVariantPlacement> pads, AtlasPalette palette,
+            PaintSink paint, PaintSink sandPaint, Func<float, float, float> range, Report report)
+        {
+            Vector2 sand = palette.GroundUv;
+            Vector2 dust = palette.Nearest(new Color(.49f, .43f, .32f));
+            Vector2 crack = palette.Nearest(new Color(.29f, .28f, .26f));
+            Vector2 yellow = palette.Nearest(new Color(.88f, .7f, .22f));
+            foreach (var pad in pads.Where(p => p.PrefabPath == MapVariantKits.ConcretePad || p.PrefabPath == MapVariantKits.AsphaltPad))
+            {
+                Rect r = new(pad.Center - pad.HalfSize, pad.HalfSize * 2f);
+                float y = pad.Instance.GetComponent<Renderer>().bounds.max.y;
+                for (float t = 0; t < 2f * (r.width + r.height); t += range(3f, 7f))
+                {
+                    Vector2 c = PointOnPerimeter(r, t);
+                    float radius = range(1.2f, 3.8f);
+                    sandPaint.Blob(b, c, radius, y + .045f, sand, range, true);
+                    report.patches++;
+                }
+                for (int i = 0; i < r.width * r.height / 260f; i++)
+                {
+                    Vector2 p = new(range(r.xMin + 2f, r.xMax - 2f), range(r.yMin + 2f, r.yMax - 2f));
+                    float angle = range(0, Mathf.PI * 2f);
+                    for (int j = 0; j < 5; j++)
+                    {
+                        angle += range(-.55f, .55f);
+                        Vector2 next = p + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * range(.6f, 1.8f);
+                        if (!r.Contains(next)) break;
+                        paint.Strip(p, next, range(.04f, .09f), y + .026f, crack);
+                        if (j == 2) paint.Strip(p, p + new Vector2(Mathf.Sin(angle), -Mathf.Cos(angle)) * range(.8f, 1.8f), .04f, y + .026f, crack);
+                        p = next;
+                    }
+                    report.cracks++;
+                }
+                // Dashed service lanes break the broad paved spaces into readable work areas.
+                if (r.width > 50f && r.height > 35f)
+                    for (float x = r.xMin + 8f; x < r.xMax - 8f; x += 6f)
+                    {
+                        Vector2 a = new(x, r.yMin + 7f);
+                        paint.Strip(a, a + Vector2.right * 3f, .16f, y + .03f, yellow);
+                        report.lines++;
+                    }
+            }
+            if (b.MapId == "CityEdgeAirfield")
+            {
+                foreach (var pad in b.Placements.Where(p => p.PrefabPath == MapVariantCityAirfield.Helipad && p.Instance != null))
+                {
+                    float y = pad.Instance.GetComponentsInChildren<Renderer>().Max(r => r.bounds.max.y) + .035f;
+                    for (int i = 0; i < 32; i++)
+                    {
+                        float a = i * Mathf.PI / 16f, next = (i + 1) * Mathf.PI / 16f;
+                        paint.Strip(pad.Center + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 12f,
+                            pad.Center + new Vector2(Mathf.Cos(next), Mathf.Sin(next)) * 12f, .24f, y, yellow);
+                    }
+                    report.lines += 32;
+                }
+            }
+            if (b.MapId == "Frontier" || b.MapId == "AshLinePort")
+            foreach (var cargo in b.Placements.Where(p => p.PrefabPath.Contains("Container") && p.Instance != null))
+            {
+                var slab=pads.FirstOrDefault(p => new Rect(p.Center-p.HalfSize,p.HalfSize*2f).Contains(cargo.Center));
+                if(slab?.Instance == null) continue;
+                float y=slab.Instance.GetComponent<Renderer>().bounds.max.y+.032f;
+                Vector2 h=cargo.HalfSize+Vector2.one*.65f, c=cargo.Center;
+                var corners=new[]{c+new Vector2(-h.x,-h.y),c+new Vector2(h.x,-h.y),c+h,c+new Vector2(-h.x,h.y)};
+                for(int i=0;i<4;i++) paint.Strip(corners[i],corners[(i+1)%4],.12f,y,yellow);
+                report.lines+=4;
+            }
+        }
+
+        // Dense, low ground cover is safe along verges; tall cargo only fits verified dead space.
+        private static void DetailClusters(MapVariantBuilder b, Gameplay g, List<MapVariantPlacement> pads,
+            Func<float, float, float> range, Report report)
+        {
+            foreach (var pad in pads.Where(p => p.PrefabPath == MapVariantKits.ConcretePad || p.PrefabPath == MapVariantKits.AsphaltPad))
+            {
+                Rect r = new(pad.Center - pad.HalfSize, pad.HalfSize * 2f);
+                for (float t = range(0f, 5f); t < 2f * (r.width + r.height); t += range(7f, 13f))
+                {
+                    Vector2 c = PointOnPerimeter(r, t);
+                    if (g.NearUnits(c, 3f) || b.DistanceToRoad(c) < 3f) continue;
+                    int placed = 0;
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 p = c + new Vector2(range(-2.3f, 2.3f), range(-2.3f, 2.3f));
+                        if (!b.World.Contains(p) || g.NearUnits(p, .8f) || b.DistanceToRoad(p) < 2f) continue;
+                        string prefab = b.Pick(i % 4 == 0 ? MapVariantKits.Pebbles : MapVariantKits.GrassClumps);
+                        float scale = Mathf.Min(range(.85f, 1.45f), .72f / Mathf.Max(.1f, b.Info(prefab).LocalBounds.size.y));
+                        var options = PlaceOptions.Vegetation.WithScale(scale).WithSink(.04f).WithPadding(0f);
+                        options.IgnoreOccupancy = true; options.Reserve = false;
+                        if (b.Place(prefab, MapVariantLayer.Vegetation, p, range(0, 360f), options) != null) { placed++; report.vegetation++; }
+                    }
+                    if (placed > 0) report.vergeClusters++;
+                    // A small pallet, broken crate and rubble make a single maintenance vignette.
+                    foreach (string prefab in new[] { MapVariantKits.YardCargo[1], MapVariantKits.YardCargo[2], DeadSpaceKit[6] })
+                    {
+                        Vector2 p = c + new Vector2(range(-2f, 2f), range(-2f, 2f));
+                        float height = b.Info(prefab).LocalBounds.size.y;
+                        if (height > MaxLowPropHeight) continue;
+                        if (g.NearUnits(p, 1f) || b.DistanceToRoad(p) < 3f) continue;
+                        if (b.Place(prefab, MapVariantLayer.Props, p, range(0, 360f), PlaceOptions.Prop.WithPadding(.08f)) != null)
+                        { report.props++; report.vignettes++; }
+                    }
                 }
             }
         }
@@ -372,14 +530,15 @@ namespace Game.Editor.MapVariants
             {
                 Rect ring = MapVariantBuilder.Inset(pad, -2.2f);
                 float perimeter = 2f * (ring.width + ring.height);
-                for (float t = 0f; t < perimeter; t += b.Range(1.6f, 3.4f))
+                for (float t = 0f; t < perimeter; t += b.Range(.8f, 1.7f))
                 {
                     Vector2 p = PointOnPerimeter(ring, t) + new Vector2(b.Range(-.8f, .8f), b.Range(-.8f, .8f));
                     if (onPad(p, 0.3f) || b.DistanceToRoad(p) < 3f || g.NearUnits(p, 1f)) continue;
                     bool grass = b.Chance(.7f);
                     string prefab = b.Pick(grass ? MapVariantKits.GrassClumps : MapVariantKits.Pebbles);
                     var options = PlaceOptions.Vegetation.WithPadding(.05f).WithSink(.05f).WithScale(b.Range(.8f, 1.5f));
-                    if (b.Info(prefab).LocalBounds.size.y * options.Scale > MaxLowPropHeight) continue;
+                    options.Scale = Mathf.Min(options.Scale, .72f / Mathf.Max(.1f, b.Info(prefab).LocalBounds.size.y));
+                    options.IgnoreOccupancy = true; options.Reserve = false;
                     if (b.Place(prefab, MapVariantLayer.Vegetation, p, b.Range(0f, 360f), options) != null) report.edgeDressing++;
                 }
             }
@@ -579,8 +738,9 @@ namespace Game.Editor.MapVariants
             private readonly List<Vector2> _uvs = new();
             private readonly List<int> _triangles = new();
             private int _index;
+            private readonly string _name;
 
-            public PaintSink(Transform parent, Material material, Report report) { _parent = parent; _material = material; _report = report; }
+            public PaintSink(Transform parent, Material material, Report report, string name = "Paint") { _parent = parent; _material = material; _report = report; _name = name; }
 
             private int Vertex(Vector3 p, Vector3 n, Vector2 uv) { _vertices.Add(p); _normals.Add(n); _uvs.Add(uv); return _vertices.Count - 1; }
 
@@ -675,7 +835,7 @@ namespace Game.Editor.MapVariants
             public void Flush()
             {
                 if (_vertices.Count == 0) return;
-                var mesh = new Mesh { name = $"Beautify_Paint_{_index++:00}", indexFormat = IndexFormat.UInt32 };
+                var mesh = new Mesh { name = $"Beautify_{Version}_{_name}_{_index++:00}", indexFormat = IndexFormat.UInt32 };
                 mesh.SetVertices(_vertices);
                 mesh.SetNormals(_normals);
                 mesh.SetUVs(0, _uvs);

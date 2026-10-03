@@ -1,5 +1,8 @@
 # Supply Line map beautify pilot — handoff
 
+> Continuation update 2026-10-03: all five detailed visual maps and 35 native captures are now built. See [current visual review](../VISUAL-REVIEW-20261003.md). Bound pins are preserved; Frontier regrouping is approved. Native visual acceptance is pending; playtesting is deferred by the user. The old status and cleanup instructions below are historical: current generated scene/art changes are intentional and must not be discarded blindly.
+
+
 ## Goal
 The Refinery District map (missions CH02M02 Supply Line, CH02M04, CH04 Split Front, CH04 Steel Push) looks flat: dark-brown slab pads, light-brown constant ground and sparse dressing. The user approved the visual direction in `supplyline-beautify-mockup-v01.jpg`. Pilot scope covers eight items:
 - textured concrete pads;

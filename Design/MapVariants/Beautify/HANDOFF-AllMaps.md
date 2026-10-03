@@ -1,5 +1,8 @@
 # Map beautify — visual direction and handoff for all maps
 
+> Continuation update 2026-10-03: all five detailed visual maps and 35 native captures are now built. See [current visual review](VISUAL-REVIEW-20261003.md). Bound pins are preserved; Frontier regrouping is approved. Native visual acceptance is pending; playtesting is deferred by the user. The old status and cleanup instructions below are historical: current generated scene/art changes are intentional and must not be discarded blindly.
+
+
 The pilot is Supply Line on Refinery District; see `SupplyLine/HANDOFF.md`. This file covers the other three maps and the tuning still needed on the pilot. The pipeline itself (`MapVariantBeautify`, `MapVariantAtmosphere`, `MapVariantBeautifyPipeline`) is shared, and each map is enabled through `MapVariantBeautify.Supports(map)`.
 
 ## Pilot result (Refinery / Supply Line)

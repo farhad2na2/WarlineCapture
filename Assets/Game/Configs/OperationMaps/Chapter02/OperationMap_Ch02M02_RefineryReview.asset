@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
-  contentHash: bc6497811db55fee93ea0d1e573857349bc08700b2236ea41d02742fc39c3731
-  generatedMetadataHash: bc6497811db55fee93ea0d1e573857349bc08700b2236ea41d02742fc39c3731
+  contentHash: 03bac33d1658075a087045a19a2dd7ce1458a90d6f5e3130ad2230d473b456b1
+  generatedMetadataHash: 03bac33d1658075a087045a19a2dd7ce1458a90d6f5e3130ad2230d473b456b1
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.refinerydistrict_prepared
     sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
@@ -47,7 +47,7 @@ MonoBehaviour:
     maximumHeight: 9
   navigationMetadata:
     authoredSubSceneGuid: 4f2791431607a46dba63d71c60633f71
-    gridAuthoringLocalId: 805044683
+    gridAuthoringLocalId: 1734793978
     staticGridBlockerCount: 221
     usesSurfaceMovementMetadata: 1
     supportsDynamicBlockers: 1

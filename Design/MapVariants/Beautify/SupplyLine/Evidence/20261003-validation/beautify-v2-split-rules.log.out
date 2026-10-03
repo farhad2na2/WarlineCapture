@@ -1,0 +1,26 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture-Beautify
+[UnityInvokeMac] Existing executeMethod: Game.Editor.CH04M03SplitFrontRulesValidation.Run; LogFile: /private/tmp/beautify-v2-split-rules.log; TimeoutSeconds: 1200
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run(\"Game.Editor.CH04M03SplitFrontRulesValidation.Run\",\"/private/tmp/beautify-v2-split-rules.log\"); }; UnityEditor.EditorApplication.update += callback; return \"scheduled\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture-Beautify"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

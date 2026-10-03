@@ -139,6 +139,9 @@ namespace Game.Editor.MapVariants
                     if (row.buildExcluded) Rasterize(row.runtimeFootprint, buildExcluded, inventory);
                     output.classifications.Add(row);
                 }
+                // Render-only art added after classification; it never reaches the semantic hash or grid.
+                if (MapVariantBeautify.Supports(map))
+                    output.presentation = MapVariantBeautify.Apply(b, output.mapId, staticMovement, output.sourceToRuntimeTranslation);
                 PersistGround(b, folder);
                 StripPhysics(b.Root.gameObject);
                 ConfigureReadiness(b, hierarchy, output);
@@ -559,6 +562,7 @@ namespace Game.Editor.MapVariants
         public int generatedIdentityCount, renderOnlyIdentityCount;
         public int duplicateOriginals, staticAlternativesRemoved, staticBlockCells, waterAndStaticBlockedCells, bridgeSurfaceCells, rendererCount;
         public float generationSeconds;
+        public MapVariantBeautify.Report presentation;
         public List<PreparedOwner> owners = new();
         public List<MapPreparationPlacement> classifications = new();
         public List<MapPreparationZone> zones = new();

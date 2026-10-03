@@ -12,7 +12,7 @@ namespace Game.Editor.MapVariants
         // Inventory uses transient geometry and may only read pre-existing shared art.
         // Set/reset by the preparation transaction in a finally block.
         internal static bool InventoryOnly { get; set; }
-        private const string GroundMaterialPath = "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
+        internal const string GroundMaterialPath = "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
         private const string GroundUvSourcePrefab = "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Square_01.prefab";
         private const string VolumeProfilePath = "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
         private const int GroundChunkCells = 128;

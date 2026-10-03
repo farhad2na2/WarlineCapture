@@ -480,6 +480,7 @@ namespace Game.Editor.MapVariants
             Set(view, "mapSurfaceAuthoring", surfaceAuthoring); Set(view, "gridAuthoringConfig", grid); Set(view, "mapSubScene", sub);
             Set(view, "canonicalPresentationMode", OperationMapCanonicalPresentationMode.EntityScene);
             Set(view, "presentationSourceSceneGuid", o.sceneGuid); Set(view, "presentationSourceScenePath", o.scenePath);
+            MapVariantAtmosphere.Build(binding, source, o.variant, new Rect(o.runtimePlayableMin, o.playableSize));
         }
         private static void CreateMinimap(Scene source, PreparedCandidateOutput o, string path)
         {

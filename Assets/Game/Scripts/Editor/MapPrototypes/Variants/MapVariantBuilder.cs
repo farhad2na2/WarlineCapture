@@ -131,6 +131,8 @@ namespace Game.Editor.MapVariants
         public Transform Root { get; }
         public List<MapVariantPlacement> Placements { get; } = new();
         public int Rejected { get; private set; }
+        // Presentation passes place art that must stay out of the placement inventory and its hashes.
+        public bool RecordPlacements { get; set; } = true;
 
         public Transform Layer(MapVariantLayer layer) => _layers[layer];
 
@@ -295,7 +297,8 @@ namespace Game.Editor.MapVariants
                 FoundationDepth = Mathf.Max(0f, -localMin) + (groundMax - groundMin) + options.Sink,
                 Group = options.Group
             };
-            Placements.Add(placement);
+            if (RecordPlacements)
+                Placements.Add(placement);
             return placement;
         }
 

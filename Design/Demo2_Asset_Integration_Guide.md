@@ -1,5 +1,9 @@
 # Demo 2 asset integration guide
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 Updated: 2026-09-21. Status: **Implementation instructions; assets not yet integrated or certified by this work.**
 Owners: environment art for variants/materials; map owner for placement/surfaces; gameplay owner for interactive objects; mode owner for publication and evidence.
 

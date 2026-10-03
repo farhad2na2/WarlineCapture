@@ -1,5 +1,9 @@
 # Persistent city and action rules
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). The six-district rules below describe full scope. Add `operations.sahrin.intro.v1` with O001–O003 only, scoped D01 consequences/offers/incident/day logic and local completion after all three Victories. Inaccessible districts cannot exert pressure or become completion requirements. Free retry/reoffer and player-driven End Day remain available; after completion retain recap and replay. No global stability claim is made by the introduction. Full scope preserves all six finales and both qualifying End Days.

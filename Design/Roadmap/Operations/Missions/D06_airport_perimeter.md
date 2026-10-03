@@ -1,10 +1,10 @@
 # D06 — Airport Perimeter: ten mission implementation briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign map assignment — 2026-10-03
 
-Scope: **O051–O060**. Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads.
+Scope: **O051–O060**. Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance.
 
-Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Keep the district logical ID below; pin the existing physical definition/scene/hash and bind every graph role/route to it. Old landscape, compass and landmark descriptions are semantic candidates to adapt to existing geography, not map-building instructions. Preserve graphs, distinct route choices, numerical budgets, acceptance and publication. Do not import Campaign garrisons/resources or mutate shared geometry. If no existing source fits, record the unresolved gate; new physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -12,15 +12,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **All ten entries are Planned, including ARIA certification.** Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
-Planned map: `opmap.operations.airport_perimeter`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
+Planned logical map: `opmap.operations.airport_perimeter`. Retain this district identity and reference the selected existing Campaign physical source separately; do not mint a new physical identity or rewrite catalog IDs merely because geometry is shared. No map/mission readiness is claimed from these briefs.
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
-## Planned environment implementation — Demo 2
+## Scenario facility binding — existing assets
 
-Assigned kit: **Perimeter, Logistics and Utilities**. Use warehouse/container yards, radio equipment, barriers and fences around existing runway/hangar infrastructure. Protect perimeter loop, both LZs, ground evacuation and flight/vehicle clearances. A demo plane wreck is optional scenery and supplies no operational aircraft behavior.
-
-Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+Use the current Campaign environment and existing certified assets for scenario-owned functional sites on legal pads. Earlier Demo 2 kit selections are asset references only; they do not authorize scenery compounds, crossings, terrain or district environment generation. Record actual source hashes, typed role bindings and authoritative owners. Preserve every mission graph and finite budget; no source/capability acceptance is implied.
 
 ## O051 — Perimeter Radar Check
 
@@ -37,7 +35,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1152`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(radar_north,radar_south,terminal_relay) -> INTERACT(radar_log,15) -> EXTRACT(squad,exit.ground). Three recon sites; no automatic global radar reveal.
 
@@ -68,7 +66,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1153`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(terminal_entry,30) -> RESCUE(terminal_staff,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve staff; PROTECT(terminal_service,alive).
 
@@ -99,7 +97,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1154`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(service_guards) -> (REPAIR(runway_service) AND REPAIR(hangar_service)) -> HOLD(service_road,60). Both sites alive; 80 Materials. These are repairable service props, not runway mesh construction.
 
@@ -130,7 +128,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1155`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(perimeter_junction) -> ESCORT(equipment_trucks,2,route.main OR route.safe) -> HOLD(hangar_apron,45). Three trucks; PROTECT(hangar_service,alive).
 
@@ -161,7 +159,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1156`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(control_office) -> CLEAR(office_guards) -> INTERACT(access_records,20) -> EXTRACT(squad,exit.ground). PROTECT(navigation_service,alive).
 
@@ -192,7 +190,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1157`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(hangar_target) -> BREACH(hangar_gate) -> CLEAR(strongpoint_guards) -> INTERACT(airfield_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(hangar_service,alive).
 
@@ -223,7 +221,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1158`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(aa_teams) -> (HOLD(lz_north,75) AND HOLD(lz_south,75)) -> CLEAR(counterattack). All four aa_teams infantry spawn initially as an explicit EP_AIRFIELD subset, not an additional budget. Remaining EP entities bind counterattack; its initial guards and later reserves all count.
 
@@ -254,7 +252,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1159`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(lz_threats) -> HOLD(apron_lz,30) -> AIRLIFT(evacuees,8,apron_lz,exit.air). Twelve passengers; PROTECT(terminal_service,alive).
 
@@ -285,7 +283,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1160`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(runway_service_zone,240) AND CLEAR(assault_groups). PROTECT(runway_service,alive); PROTECT(terminal_service,alive). A arrives at 90 s via perimeter road, B at 180 s via service lane with 30/45 s warnings.
 
@@ -316,7 +314,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1161`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry. Bind service, hangar, landing, boarding and exit roles to existing legal areas. O053 repairs service entities; no new runway, airfield derivative or deletion of scenery to create clearance. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(apron_guards) -> (REPAIR(backup_service) AND AIRLIFT(final_passengers,8,apron_lz,exit.air)) -> HOLD(public_access,90) -> EXTRACT(squad,exit.ground). Twelve passengers; PROTECT(terminal_service,alive); secure apron_lz with HOLD(apron_lz,30) before boarding.
 

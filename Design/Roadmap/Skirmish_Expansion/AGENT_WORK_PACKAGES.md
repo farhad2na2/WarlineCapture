@@ -1,10 +1,8 @@
 # Skirmish implementation work packages
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
-
-SK-11 owns mode-specific geometry after source preparation; SK-13 retains per-entry acceptance. IB/AP prototypes are only 600×400 playable metres and require actual expanded connected layouts, two bases and air infrastructure under the existing map briefs. Retain the first DB gameplay-slice priority and current coded work. Do not mutate the shared dense-city source to implement future layouts.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -108,15 +106,14 @@ Repair is a shared ground-vehicle command with the exact range/cost/duration/thr
 - Persist results exactly once per session/definition/version/difficulty/size; replay creates a new session and exact selected fresh start. Custom/Sandbox and legacy results cannot satisfy standard expanded completion. No account-resource reward system is added here.
 - Evidence: round-trip every objective mid-progress and near terminal; airborne passengers; queues in flight; partial repair/research; OS interruption and interrupted file write; incompatible version; repeated callbacks; replay after both loss and victory. War/Large War stay gated until accepted recovery.
 
-## SK-11 — maps and objective layouts
+## SK-11 — existing Campaign sources and logical objective layouts
 
-- Include D2-A01/A02 from the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md): resolve the verified shortlist, create project-owned variants/materials and qualify one isolated IB logistics/utility yard. Record source/output GUIDs, scope, ownership and same-load desert comparison. This art pilot does not replace expanded DB as the first gameplay slice.
-- Apply accepted kits with D2-A03/A04 to the five maps as specified in MAP_IMPLEMENTATION. Treat crossing geometry, interactive objects and any future playable vehicle as separate capability work; retain vendor assets, shared Campaign anchors, current production bindings and frozen rollback output. Require D2-V1–V6 alongside SK-11/SK-13 evidence for changed content.
-- Implement `SkirmishMapLayoutBuilder`/validator and typed anchors/routes in [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md). Produce five map definitions and twenty objective layout definitions; each packet consumes the matching map/objective variant.
-- Reuse DB/CC/IB identities; MP/AP are new authored layouts. Start from the documented normalized candidates, fit actual ground geometry and measure routes. Store final world transforms in assets, not policy code. Preserve Campaign anchors in shared regions.
-- Author deployment grids, all producer exits, both base/expansion/air pads, FC polygons, BT corridors/muster/exit, CE three start bays/destination/holding pockets and service pads. Defender BT/CE groups follow the 40/40/20 allocation rule, with exactly two disclosed extra towers.
-- Fix each map's listed geometry/path defect. Validate all size footprints, largest allowed vehicles, two independent truck routes, landing/runway clearances, safe camera bounds and complete ground-only approaches. No claim of coverage from a map screenshot alone.
-- Evidence: path probes and real movement for each role class and objective layout, dense combat/wreck blockage, placement preview vs actual spawn, EN/FA camera/UI captures, measured transit times and target-device performance.
+- Read the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and current source inventory. Pin existing definition/scene/hash and record current dirty-source ownership; preserve coded bindings.
+- Implement `SkirmishMapLayoutBuilder`/validator and typed anchors/routes in [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md). Produce five logical map bindings and twenty objective overlays referencing existing physical maps, not five newly generated environments.
+- Resolve all groups, including MP/AP, to an existing Campaign source. Fit normalized role candidates to existing geometry and save measured world transforms in assets. Adapt landscape/compass labels to the selected source; no per-S-ID gameplay/ARIA switches.
+- Configure deployment arrays, legal functional producer pads/exits, FC polygons, BT corridors/muster/exit, CE start/destination/holding areas and existing air infrastructure. Keep BT/CE's 40/40/20 defender allocation and exactly two disclosed extra towers as legal gameplay placements.
+- Validate all enabled sizes/roles, heaviest footprints, two independent truck routes, aircraft clearance, ground completion and camera bounds. Select another existing source when fit fails; otherwise record the unresolved gate. Do not repair terrain, remove scenery, build roads/runways, author a Demo 2 environment pilot or create physical derivatives under this ticket.
+- Evidence: existing source hashes unchanged; path probes and real movement per role/objective, dense combat/wreck blockage, placement preview/spawn agreement, EN/FA camera/UI, travel times and target-device performance. SK-13 retains per-entry publication/acceptance.
 
 ## SK-12 — library, localization and publication
 

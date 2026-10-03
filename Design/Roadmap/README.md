@@ -1,5 +1,9 @@
 # Warline development roadmap
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 ## Support rollout — 2026-09-28
 
 The owner approved Smoke Screen, Precision Strike, Paratroopers and Supply Drop with a full-screen Build-style popup using existing game assets. Build the [shared implementation plan](../AgentReports/SupportSystem/AGENT_START.md), then follow the [cross-mode roadmap](Support/PLAN.md): approved Campaign unlocks and future-mission rules, [120 Skirmish policies](Support/SKIRMISH_SUPPORT.csv) and [60 Operations policies](Support/OPERATIONS_SUPPORT.csv). Use T00–T12 for the shared Campaign slice and X01–X05 for mode integration and coverage. Support is optional, finite per attempt and subject to separate runtime, native input, player and device gates. These are planned additions, not newly accepted missions. Existing content counts, identities and no-Support completion paths remain intact.

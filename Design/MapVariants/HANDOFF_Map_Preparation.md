@@ -1,5 +1,9 @@
 # Agent handoff: prepare map variants for gameplay
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 Date: 2026-09-29
 
 Status: **the RefineryDistrict candidate was revised for the CH02-M02 pump service gate on 2026-09-30. Candidate generation and packed content build passed at the new hash; earlier packed native route and switching evidence applies to the previous hash and must be rerun. The other three prepared candidates retain their earlier evidence. Native overview contrast, target-device performance and player acceptance remain open; no map foundation is qualified yet. Current candidate hashes are tracked in [Preparation/STATUS.md](Preparation/STATUS.md), the per-map Candidate manifests, and [Preparation/prepared-source-manifest.json](Preparation/prepared-source-manifest.json).**
@@ -18,7 +22,7 @@ This handoff supersedes the simplified preparation recipe in [HANDOFF_Integratio
 
 The subsequent mission assignment is [HANDOFF_Existing_Mission_Rework.md](HANDOFF_Existing_Mission_Rework.md): seven migrations, eleven retained-map regression entries, and candidate-specific mission acceptance. Supply it with the prepared-source manifest; this preparation assignment does not change mission bindings.
 
-Future uncoded content consumes the same foundations through [FUTURE_CONTENT_MAP_PLAN.md](FUTURE_CONTENT_MAP_PLAN.md). Skirmish requires larger two-base derivatives; Operations requires district-specific roles/routes. Those mode-specific expansions are subsequent authoring work, not evidence that the prototype's initial preparation already satisfies them.
+Future uncoded content consumes the same foundations through [FUTURE_CONTENT_MAP_PLAN.md](FUTURE_CONTENT_MAP_PLAN.md). Skirmish and Operations configure scenario-owned roles/routes on current Campaign geometry under the reuse policy. Larger two-base derivatives are no longer part of these mission assignments; existing source capability still needs per-mission qualification.
 
 ## Read first and preserve
 

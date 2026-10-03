@@ -1,5 +1,9 @@
 # WarlineCapture Level And Mission Content Plan
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 ## Future-map planning amendment — 2026-09-29
 
 Use the [future content map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) for the seven uncoded Campaign missions, 114 uncoded Skirmish combinations and O004–O060. Its physical-source assignments supplement the existing logical identities and mission contracts; maps must pass [preparation](MapVariants/HANDOFF_Map_Preparation.md) before content qualification. Existing Campaign rework has a [separate handoff](MapVariants/HANDOFF_Existing_Mission_Rework.md). Preserve catalog counts, gameplay and readiness evidence.

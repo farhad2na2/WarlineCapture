@@ -19,27 +19,29 @@ REPO = ROOT.parents[2]
 PROTOTYPES = {'S001': (1, 0), 'S025': (2, 1), 'S073': (3, 3)}
 # September 29 source checkpoint. This is a planning scope exclusion, not readiness.
 CODED_MAP_EXCLUSIONS = set(PROTOTYPES) | {'S002', 'S003', 'S004'}
+MAP_REUSE_POLICY = '[Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md)'
 FUTURE_MAP_SOURCES = {
- 'DB': 'Existing desert source with an independent expanded layout/derivative; preserve open highway, two bases and three approaches without changing S001–S004.',
- 'CC': 'Existing urban source with an independent north/south layout/derivative; repair the floating shelf and vehicle turns without changing S025.',
- 'MP': 'Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient.',
- 'IB': 'Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area.',
- 'AP': 'Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target.',
+ 'DB': 'Reuse the existing Campaign desert/dense-city world. Bind bases and assault choices to current legal pads/routes; preserve S001–S004, including S004\'s current airfield source. No expanded physical derivative.',
+ 'CC': 'Reuse an existing Campaign city sector. Preserve S025; use valid existing ground and record the floating-shelf defect without changing terrain as part of a mission assignment.',
+ 'MP': 'Assess the existing Campaign Armor Break approach sector or another current Campaign source with independent ground routes. Retain the internal MP ID; adapt valley/ridge/pass prose to actual geography. No new mountain terrain.',
+ 'IB': 'Reuse current Campaign RefineryDistrict geometry, or an existing Armor Break sector if more capacity is needed. Preserve S073. Bind industrial roles to current yards/routes; no new ring road, runway or expanded derivative.',
+ 'AP': 'Reuse current Campaign CityEdgeAirfield or Grounded Signal geometry and existing air infrastructure. Measure actual pads/routes and aircraft capacity; no second runway compound or enlarged airfield derivative.',
 }
 FUTURE_OBJECTIVE_GEOMETRY = {
  'BA': 'Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base.',
- 'FC': 'Author three distinct ground-infantry capture areas and measure both-side travel and rotations.',
- 'BT': 'Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery.',
- 'CE': 'Author two truck routes with holding, turning, repair and dwell clearance; neither alternative may depend on the same sole choke.',
+ 'FC': 'Bind three distinct capture zones on existing ground and measure both-side travel and rotations.',
+ 'BT': 'Bind two independent existing ground corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery.',
+ 'CE': 'Bind two existing truck routes with holding, turning, repair and dwell clearance; neither alternative may depend on the same sole choke.',
 }
 
 def future_map_plan(mid, objective, sid):
     link = '[Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md)'
     if sid in CODED_MAP_EXCLUSIONS:
-        return ('Existing coded entry excluded from this future-map update; preserve its current source/version and publication evidence. '
-                'Any expansion or relocation needs a separate current-candidate re-audit. '+link+'.')
+        return ('Preserve this coded entry\'s current source/version and publication evidence. '
+                'Re-audit before any logical relocation; a mission task does not authorize physical expansion. '+MAP_REUSE_POLICY+'.')
     return (FUTURE_MAP_SOURCES[mid]+' '+FUTURE_OBJECTIVE_GEOMETRY[objective]+
-            ' Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. '+link+'.')
+            ' Pin the existing Campaign definition/scene/hash, retain logical identity/setup budgets and certify each exposed size. '
+            'Select another existing Campaign source or record a source-fit gate if capacity fails; do not design a new map. '+MAP_REUSE_POLICY+'. '+link+'.')
 
 MAPS = {
  'DB': dict(name='Desert Base', map_id='opmap.skirmish.desert_base_01', main='highway',
@@ -47,13 +49,13 @@ MAPS = {
             zones='central crossroads; north ruins; south supply junction',
             corridors='north gate; south checkpoint', exit='east rear exit',
             origin='west depot', destination='east evacuation pad',
-            defect='Preserve shared Campaign anchors; correct berm/road joins; prove no decoration in producer exits.'),
+            defect='Preserve shared Campaign anchors and geometry; record terrain defects and choose valid existing pads; prove producer exit clearance.'),
  'CC': dict(name='City Crossroads', map_id='opmap.skirmish.city_crossroads', main='central boulevard',
             a='east service lane', b='west courtyards', convoy_a='boulevard', convoy_b='east ring road',
             zones='market crossing; east depot entrance; west civic square',
             corridors='boulevard barricade; east service checkpoint', exit='south rear exit',
             origin='north supply yard', destination='south supply yard',
-            defect='Fix the reported northern-base floating ground shelf; verify height/collision/shadow together and actual vehicle corner clearance.'),
+            defect='Record the northern-base floating-shelf defect; use valid existing ground or another Campaign source. Verify height/collision/shadow and vehicle corner clearance without mission-owned terrain repair.'),
  'MP': dict(name='Mountain Pass', map_id='opmap.skirmish.mountain_pass', main='central pass',
             a='west vehicle bypass', b='east infantry trail', convoy_a='central pass', convoy_b='west bypass',
             zones='pass junction; west turnout; east lookout',
@@ -237,11 +239,11 @@ def build(include_roster_audit=True):
       'and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). '
       'ARIA is included; forces/resources/research remain scenario-owned. Later paid collections add to these 120. '
       'Membership does not promote any implementation or acceptance status.','',
-      '## Future-map amendment — 2026-09-29','',
+      '## Existing Campaign maps only — 2026-10-03','',
       'Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to the 114 uncoded combinations: '
       'S005–S024, S026–S072 and S074–S120. Preserve coded S001/S002/S003/S004/S025/S073 bindings and evidence. '
       'The historical 117-row work queue includes S002–S004; it is not the current uncoded count. '
-      'IB derives from prepared RefineryDistrict; AP from prepared CityEdgeAirfield; DB/CC retain their setting and MP needs new mountain geometry. '
+      'All groups reuse current Campaign physical sources under the '+MAP_REUSE_POLICY+'. No new mountain terrain, expanded physical derivatives or runway compounds. '
       'Five map identities and all catalog/setup/publication data remain unchanged.','',
       '| Map | Base Assault | Frontline Control | Breakthrough | Convoy Escort |','|---|---|---|---|---|']
     for mid,m in MAPS.items():
@@ -261,12 +263,11 @@ def build(include_roster_audit=True):
               'paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, '
               'counter availability and normal tactical research. Historical prototype/Playable evidence '
               'does not certify the expanded acceptance matrix.','',
-              '## Future-map amendment — 2026-09-29','',
+              '## Existing Campaign maps only — 2026-10-03','',
               FUTURE_MAP_SOURCES[mid]+' '+FUTURE_OBJECTIVE_GEOMETRY[obj], '',
-              'Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and '
-              '[preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). '
+              'Apply the '+MAP_REUSE_POLICY+' and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). '
               'This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. '
-              'Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; '
+              'Old compass/landmark labels are semantic route aliases to adapt to existing geography; they do not authorize new roads or terrain. Old numeric map envelopes and paired-runway silhouettes are superseded. Source reuse is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; '
               'record actual source hashes and ground/air capacity for every exposed size.','',
               '## Shared packet implementation','',
               f'- Map: `{m["map_id"]}`; layout `layout.skirmish.{mid.lower()}.{obj.lower()}`. '+packet_roles(m,obj),
@@ -274,7 +275,7 @@ def build(include_roster_audit=True):
               f'- Win: {o["success"]}',f'- Loss: {o["failure"]}',
               '- All sizes preserve the objective rule; Standard/War/Large War deadlines and force values are printed per entry below. Difficulty never changes resources/stats. Default first visit: Regular/Standard.',
               '- Startup/roster/production/army/visibility/AI/UI/save use the shared types in TECHNICAL_ARCHITECTURE; no per-entry controller or ARIA solution script.',
-              '- Build shared map assets once. Per entry, build `SkirmishScenario_SNNN.asset` and `ScenarioSetup_SNNN.asset` in `Assets/Game/Configs/SkirmishExpansion/Scenarios/SNNN/`; bind the shared objective/army/start/size assets and resolved initial placement arrays. Use `SkirmishDefinitionBuilder` (proposed), not hand-written Unity YAML.',
+              '- Create shared logical layout/overlay assets referencing existing Campaign geometry; do not generate physical maps. Per entry, build `SkirmishScenario_SNNN.asset` and `ScenarioSetup_SNNN.asset` in `Assets/Game/Configs/SkirmishExpansion/Scenarios/SNNN/`; bind the shared objective/army/start/size assets and resolved initial placement arrays. Use `SkirmishDefinitionBuilder` (proposed), not hand-written Unity YAML.',
               f'- Map-specific acceptance: {m["defect"]}',
               f'- Mandatory objective fixtures for every entry: {o["tests"]}',
               '- Shared class dependencies: `SkirmishSessionInitializationSystem`, `SkirmishScenarioSpawnSystem`, `SkirmishRosterProjectionSystem`, `SkirmishCapacityReservationSystem`, `SkirmishCapacityLifecycleSystem`, `SkirmishArmyGroupSystem`, `SkirmishResearchSystem`, `SkirmishEnemyStrategySystem`, `SkirmishCheckpointSystem`, `SkirmishResultSettlementSystem`, `SkirmishSessionCleanupSystem`, UI projections and extended `AriaSkirmishPlanSystem`.',
@@ -413,7 +414,7 @@ def main():
         drift=[name for name,text in outputs.items() if not (ROOT/name).exists() or (ROOT/name).read_text()!=text]
         if drift: raise SystemExit('Planning artifact drift; review inputs then regenerate: '+', '.join(drift))
     if args.packets_only:
-        print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 futureMapPlans=114 codedMapExclusions=6 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
+        print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 campaignReusePlans=120 futureMapPlans=114 codedMapExclusions=6 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
     else:
         print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=74 mode='+('write' if args.write else 'check'))
     print('Documentation generation/consistency only; no Unity, gameplay, ARIA or device acceptance was executed.')

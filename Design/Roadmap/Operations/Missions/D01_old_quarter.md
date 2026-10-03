@@ -1,10 +1,10 @@
 # D01 — Old Quarter: ten mission implementation briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign map assignment — 2026-10-03
 
-Scope: **O004–O010 only; O001–O003 keep existing bindings**. Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit.
+Scope: **O004–O010 only; O001–O003 keep existing bindings**. Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction.
 
-Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Keep the district logical ID below; pin the existing physical definition/scene/hash and bind every graph role/route to it. Old landscape, compass and landmark descriptions are semantic candidates to adapt to existing geography, not map-building instructions. Preserve graphs, distinct route choices, numerical budgets, acceptance and publication. Do not import Campaign garrisons/resources or mutate shared geometry. If no existing source fits, record the unresolved gate; new physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -12,15 +12,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **Historical slice status:** O001–O003 were Authored prototypes with Regular EN model/capture evidence. O001 subsequently gained native shipping-flow ARIA wins and save/resume evidence; its [latest report](../../../AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/README.md) still leaves full human Victory and player/device acceptance pending. O002/O003 prototype captures do not certify those gates. The catalog's existing `AriaWon` values refer to that capture milestone, not the complete ACCEPTANCE contract. [P4R](../O001_PLAYER_READY_IMPLEMENTATION.md) defines the O001 integration work and evidence still required. O004–O010 stay Planned, including ARIA certification. Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
-Planned map: `opmap.operations.old_quarter`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
+Planned logical map: `opmap.operations.old_quarter`. Retain this district identity and reference the selected existing Campaign physical source separately; do not mint a new physical identity or rewrite catalog IDs merely because geometry is shared. No map/mission readiness is claimed from these briefs.
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
-## Planned environment implementation — Demo 2
+## Scenario facility binding — existing assets
 
-Assigned kit: **Logistics; restrained Perimeter**. Retain established desert houses/lanes. Add only sparse medical crates or checkpoint props after readability review; preserve clinic/courtyard routes and civilian boundaries.
-
-Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+Use the current Campaign environment and existing certified assets for scenario-owned functional sites on legal pads. Earlier Demo 2 kit selections are asset references only; they do not authorize scenery compounds, crossings, terrain or district environment generation. Record actual source hashes, typed role bindings and authoritative owners. Preserve every mission graph and finite budget; no source/capability acceptance is implied.
 
 ## O001 — Street Signals
 
@@ -124,7 +122,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1105`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(archive) -> CLEAR(archive_guards) -> INTERACT(archive_evidence,20) -> EXTRACT(squad,exit.ground). PROTECT(archive,alive); evidence pickup requires the building to survive.
 
@@ -155,7 +153,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1106`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(rescue_court,30) -> RESCUE(residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve civilian identities at rescue_court; route.safe is walkable and vehicle-compatible.
 
@@ -186,7 +184,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1107`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(yard) -> BREACH(yard_gate) -> CLEAR(cell_hq_guards) -> INTERACT(cell_roster,20) -> EXTRACT(squad,exit.ground). PROTECT(market_service,alive).
 
@@ -217,7 +215,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1108`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(patrol_start,clinic_corner,relay_corner,patrol_end) -> CLEAR(route_patrol) -> HOLD(patrol_end,45). route.main and route.flank reach the same ordered points by different approaches.
 
@@ -248,7 +246,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1109`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(cargo_approach) -> STOP(courier_trucks,2) -> INTERACT(dispatch_case,15) -> EXTRACT(squad,exit.ground). Three hostile cargo trucks on route.enemy_cargo; dispatch_case drops from the first stopped truck.
 
@@ -279,7 +277,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1110`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(clinic,180) AND CLEAR(assault_groups). PROTECT(clinic,alive). A warns at elapsed 30 s and arrives at 60 s via route.main; B warns at 90 s and arrives at 135 s via route.flank. All EP combat units belong to assault_groups.
 
@@ -310,7 +308,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1111`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the existing Old Quarter/shared Campaign city source. Bind archive, market, cargo, rescue and exit roles to existing connected sectors; preserve the coded introduction. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** BREACH(roadblock_gate) -> (REPAIR(service_backup) AND ESCORT(reopening_trucks,2,route.safe)) -> HOLD(market_square,90) -> EXTRACT(squad,exit.ground). Three friendly cargo trucks; PROTECT(clinic,alive).
 

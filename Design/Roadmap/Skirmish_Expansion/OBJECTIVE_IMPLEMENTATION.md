@@ -1,5 +1,9 @@
 # Four Skirmish objective implementations
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 2026-09-21 proposed technical contracts. These implement the established rules in [BATTLE_CATALOG](BATTLE_CATALOG.md); they are not four new mission engines. Each of the 20 [map/objective packets](Scenarios/README.md) binds these systems to six army/start combinations.
 
 ## Common session and terminal rules

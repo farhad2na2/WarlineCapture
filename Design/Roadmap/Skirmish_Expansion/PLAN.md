@@ -1,10 +1,8 @@
 # Skirmish expansion: combined arms and large battles
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
-
-SK-11 owns mode-specific geometry after source preparation; SK-13 retains per-entry acceptance. IB/AP prototypes are only 600×400 playable metres and require actual expanded connected layouts, two bases and air infrastructure under the existing map briefs. Retain the first DB gameplay-slice priority and current coded work. Do not mutate the shared dense-city source to implement future layouts.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -29,7 +27,7 @@ The unlock/upgrade direction was accepted for documentation on 2026-09-18. Later
 
 ## Catalog target clarified with the owner
 
-Environment sourcing amendment (2026-09-21): follow the [Demo 2 asset reuse plan](../../Demo2_Asset_Reuse_Plan.md). Pilot a warehouse/logistics/utility module in an isolated Industrial Basin candidate, then consider perimeter/service accents for the other four maps. This fits the existing five-map scope and does not change S001–S120, roster commitments or the gameplay delivery order. Models are not new unit roles; geometry and presentation changes must earn the existing map and scenario acceptance.
+Environment source direction (2026-10-03): use current Campaign physical maps under the [reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). Earlier Demo 2 pilot/scenery assignments are superseded for mission work. Existing certified functional assets may be placed on legal pads; no new environment or physical derivative. Preserve S001–S120, roster commitments and delivery order.
 
 The requested scale is **100–200 selectable battles on a few maps**, not twelve battles and not merely hundreds of units. Target **120 accepted scenarios on five maps**, with a planned extension to 200. The initial matrix is five maps × four objectives × three army configurations × two starting packages. Seeds, four difficulty levels and army sizes are replay options, not extra scenarios. Each combination must earn acceptance through distinct tactical decisions and complete systems; the matrix alone does not make content playable.
 

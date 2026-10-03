@@ -1,10 +1,8 @@
 # Coding packages and agent handoff
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
-
-P6 consumes the [prepared-source manifest](../../MapVariants/HANDOFF_Map_Preparation.md) and owns district role/route layouts. Reuse modules without waiting for every Skirmish scenario to be accepted and without inheriting Campaign resource or production state. Preserve one authoritative owner per functional structure. New physical geometry receives an independent source identity; retain existing logical district IDs and protect active sources. No naval, bridge-collapse or arbitrary rooftop mechanic is added.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -27,14 +25,14 @@ flowchart LR
   P3 --> P4["P4: three-mission vertical slice"]
   P4 --> P4R["P4R: O001 shared runtime, input, saves and player acceptance"]
   P4R --> P5["P5: full objective/transport/ARIA set"]
-  P5 --> P6["P6: six district layouts and builders"]
+  P5 --> P6["P6: six logical district layouts on Campaign sources"]
   P6 --> B12["B12: first 12 published entries"]
   B12 --> B30["B30: first 30 published entries"]
   B30 --> B60["B60: all 60 published entries"]
   B60 --> P7["P7: city-run and release acceptance"]
 ```
 
-Map greyboxes for D01 and one second district begin during P2 so the rules are not designed around one layout. P4R completes O001's actual D01 environment and player path; P6 completes all six district maps. Shipping input, ARIA and durable checkpoint support must pass for O001 during P4R, not be deferred to the last package. Packages are dependency slices, not estimated calendar weeks.
+Logical mission fixtures on existing Campaign sources for D01 and a second district begin during P2. P4R completes O001's player path on its current source; P6 binds all six district role/route layouts without new environment geometry. Shipping input, ARIA and durable checkpoint support must pass for O001 during P4R, not be deferred to the last package. Packages are dependency slices, not estimated calendar weeks.
 
 | Package | Concrete implementation | Exit evidence / responsibility |
 |---|---|---|
@@ -53,11 +51,9 @@ Map greyboxes for D01 and one second district begin during P2 so the rules are n
 
 B12 is **O001/O002/O003, O011/O012, O021/O022, O031/O032, O041/O042, O051**. This intentionally includes the vertical-slice repair mission and defers O052 to B30. B30 is O001–O005, O011–O015, O021–O025, O031–O035, O041–O045, O051–O055. B60 adds every remaining catalog row. These are cumulative **published** counts; isolated engineering fixtures/prototypes are not released missions. All six district finales and city completion are unavailable until their dependencies are certified; early builds clearly label themselves a development slice.
 
-## Demo 2 environment tasks within P2/P6
+## Existing-source tasks within P2/P6
 
-Use [D2-A01–A04](../../Demo2_Asset_Integration_Guide.md#7-delivery-packages-and-handoff). During P2 greyboxing, identify module needs and resolve source/GUID/ownership without waiting for all 120 Skirmish battles. P6 authors project-owned variants or reuses already qualified shared ones, then places district-specific Logistics/Utilities in D03 and Crossing in D04, with smaller D02/D05/D06 accents. A shared IB art pilot may supply qualified assets; an entire Skirmish gameplay package is not an art prerequisite. Existing desert assets remain the fallback while qualification is pending.
-
-The map owner records typed roles, material overrides, surface/clearance and scoped bake/hash changes. Integration/QA closes D2-V1–V6 with each affected B12/B30/B60 mission's own gameplay/ARIA evidence. Perimeter meshes cannot increase enemy budgets; utility art cannot create new production/electrical mechanics. This work leaves P0–P7 order, O001–O060 and the first D01 three-mission slice intact.
+P2/P6 consumes current Campaign geometry and existing certified functional assets. Pin source definition/scene/hash and bind district roles, routes, protected areas and legal gameplay placements. Earlier Demo 2 art pilots and district scenery-generation assignments are superseded for these missions. Do not wait for the entire Skirmish catalog; do not import another mode's resources/session state. If source fit fails, select another current Campaign source or retain an explicit unresolved gate.
 
 ## Work ownership for multiple assigned agents
 

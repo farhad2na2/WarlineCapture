@@ -1,0 +1,26 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-04",
+  "prompts": [
+    {
+      "name": "fractured-glass",
+      "prompt": "Use case: stylized-concept. Asset type: production grayscale UI material texture for a premium mobile military strategy game. Generate one square orthographic flat surface filling the entire image, no perspective or surrounding environment. Fractured armored glass: large irregular polygonal glass facets, sharp branching impact fractures biased toward corners and edges, fine secondary cracks, subtle reflective bevels. Center kept calm but texture still visible. No bullet hole, no stars, no debris, no frame. Grayscale neutral only, primarily light silver gray with white highlights and medium/dark gray material detail; no color. This texture will be multiplied by existing green/red/blue/gold UI gradients so avoid broad black areas. Material detail must remain recognizable on a small button. Edge to edge opaque square surface; seamless-looking boundaries; no text, no watermark, no button shape, no border, no symbols."
+    },
+    {
+      "name": "ballistic-weave",
+      "prompt": "Use case: stylized-concept. Asset type: production grayscale UI material texture for a premium mobile military strategy game. Generate one square orthographic flat surface filling the entire image, no perspective or surrounding environment. Ballistic woven carbon/aramid composite under satin resin: convincing interlocking diagonal woven fiber bundles with varied reflected light, slightly distressed laminated surface, small scuffs. Premium military equipment. No checkerboard graphic, no camo blobs. Grayscale neutral only, primarily light silver gray with white highlights and medium/dark gray material detail; no color. This texture will be multiplied by existing green/red/blue/gold UI gradients so avoid broad black areas. Material detail must remain recognizable on a small button. Edge to edge opaque square surface; seamless-looking boundaries; no text, no watermark, no button shape, no border, no symbols."
+    },
+    {
+      "name": "tactical-glass",
+      "prompt": "Use case: stylized-concept. Asset type: production grayscale UI material texture for a premium mobile military strategy game. Generate one square orthographic flat surface filling the entire image, no perspective or surrounding environment. Smoked tactical glass: subtle broad angular reflected light, delicate precision etched circuit traces concentrated on edges, small technical engraved lines, faint surface scratches. Center uncluttered. No labels, no icons, no numbers, no bright glowing sci-fi graphics. Grayscale neutral only, primarily light silver gray with white highlights and medium/dark gray material detail; no color. This texture will be multiplied by existing green/red/blue/gold UI gradients so avoid broad black areas. Material detail must remain recognizable on a small button. Edge to edge opaque square surface; seamless-looking boundaries; no text, no watermark, no button shape, no border, no symbols."
+    },
+    {
+      "name": "anodized-metal",
+      "prompt": "Use case: stylized-concept. Asset type: production grayscale UI material texture for a premium mobile military strategy game. Generate one square orthographic flat surface filling the entire image, no perspective or surrounding environment. Anodized aircraft aluminum: fine horizontal brushed metal grooves, a few precision machined shallow channels and subtle wear marks near the edges, premium warm-metal structure but rendered grayscale. No screws, no frame, no caution stripes. Grayscale neutral only, primarily light silver gray with white highlights and medium/dark gray material detail; no color. This texture will be multiplied by existing green/red/blue/gold UI gradients so avoid broad black areas. Material detail must remain recognizable on a small button. Edge to edge opaque square surface; seamless-looking boundaries; no text, no watermark, no button shape, no border, no symbols."
+    },
+    {
+      "name": "ceramic-armor",
+      "prompt": "Use case: stylized-concept. Asset type: production grayscale UI material texture for a premium mobile military strategy game. Generate one square orthographic flat surface filling the entire image, no perspective or surrounding environment. Ceramic armored equipment panel: large asymmetric fitted ceramic plates with a few inset beveled seam joints near edges, satin micrograin, gentle weathering and sparse scratched machining details, broad calm center. No bolts, no frame, no camo. Grayscale neutral only, primarily light silver gray with white highlights and medium/dark gray material detail; no color. This texture will be multiplied by existing green/red/blue/gold UI gradients so avoid broad black areas. Material detail must remain recognizable on a small button. Edge to edge opaque square surface; seamless-looking boundaries; no text, no watermark, no button shape, no border, no symbols."
+    }
+  ]
+}

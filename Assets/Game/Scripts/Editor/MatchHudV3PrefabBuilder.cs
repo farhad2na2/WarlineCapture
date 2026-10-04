@@ -91,6 +91,7 @@ namespace Game.Editor
                 ConfigureResponsiveLayouts(composition, header, left, right, footer);
                 StyleTypography(root.transform);
 
+                MilitaryUiMaterialAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

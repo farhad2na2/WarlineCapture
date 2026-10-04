@@ -139,6 +139,7 @@ namespace Game.UI.Runtime
                     border = new Color(.48f, .6f, .64f); break;
             }
             surface.Configure(top, bottom, border, 2);
+            surface.SetMilitaryMaterial(MilitaryUiMaterialKind.Automatic);
         }
 
         private void LateUpdate() => Refresh();

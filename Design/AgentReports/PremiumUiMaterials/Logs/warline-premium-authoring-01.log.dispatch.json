@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Pipeline server returned 503 Service Unavailable: Server Busy. The Editor is still settling after startup (importing assets / compiling scripts), so main-thread commands are not serviceable yet. Retry shortly, or poll /api/status until it reports 'ready'."
+    }
+  ],
+  "warnings": []
+}

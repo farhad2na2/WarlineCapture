@@ -974,6 +974,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -1514,6 +1515,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -1887,6 +1889,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -3989,6 +3992,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -4263,6 +4267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -9245,6 +9250,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.26666668, g: 0.70980394, b: 0.27058825, a: 1}
   topRightColor: {r: 0.26666668, g: 0.70980394, b: 0.27058825, a: 1}
   bottomLeftColor: {r: 0.03137255, g: 0.29803923, b: 0.11372549, a: 1}
@@ -9529,6 +9535,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -9936,6 +9943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -10032,6 +10040,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.11764706, g: 0.13725491, b: 0.14509805, a: 1}
   topRightColor: {r: 0.11764706, g: 0.13725491, b: 0.14509805, a: 1}
   bottomLeftColor: {r: 0.039215688, g: 0.050980393, b: 0.05882353, a: 1}
@@ -10524,6 +10533,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -11991,6 +12001,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.07058824, b: 0.039215688, a: 1}
   topRightColor: {r: 0.20784314, g: 0.07058824, b: 0.039215688, a: 1}
   bottomLeftColor: {r: 0.047058824, g: 0.019607844, b: 0.011764706, a: 1}
@@ -12068,6 +12079,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -13306,6 +13318,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.0627451, g: 0.17254902, b: 0.21176471, a: 1}
   topRightColor: {r: 0.0627451, g: 0.17254902, b: 0.21176471, a: 1}
   bottomLeftColor: {r: 0.011764706, g: 0.050980393, b: 0.07058824, a: 1}
@@ -13932,6 +13945,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -15076,6 +15090,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.27450982, g: 0.21960784, b: 0.06666667, a: 1}
   topRightColor: {r: 0.27450982, g: 0.21960784, b: 0.06666667, a: 1}
   bottomLeftColor: {r: 0.07450981, g: 0.0627451, b: 0.019607844, a: 1}
@@ -15273,6 +15288,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -16102,6 +16118,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -18021,6 +18038,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.38431373, g: 0.28235295, b: 0.047058824, a: 1}
   topRightColor: {r: 0.38431373, g: 0.28235295, b: 0.047058824, a: 1}
   bottomLeftColor: {r: 0.10980392, g: 0.07450981, b: 0.011764706, a: 1}
@@ -18325,6 +18343,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.011764706, g: 0.03137255, b: 0.039215688, a: 0.99607843}
@@ -20719,6 +20738,8 @@ MonoBehaviour:
   centerAnchoredTargets: []
   widthExpandedTargets: []
   horizontalResponsiveTargets: []
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []

@@ -116,6 +116,7 @@ namespace Game.Editor
             MissionUiSerializedBindingsAuthoring.Apply(root);
             MenuAccountHeaderAuthoring.Apply(root);
             MenuUiApprovedAuthoring.Apply(root, "main-menu");
+            MilitaryUiMaterialAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();

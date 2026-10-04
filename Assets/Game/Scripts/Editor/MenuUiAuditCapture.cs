@@ -46,7 +46,11 @@ namespace Game.Editor
             (1920,1080,"fa-IR"), (2400,1080,"fa-IR"), (2048,1536,"fa-IR") }, true);
         public static void RunPhone() => _ = RunAsync(new[] { (2400, 1080, "en") });
 
-        private static async Task<int> RunAsync((int width, int height, string locale)[] views, bool after = false)
+        public static Task<int> RunMaterialReviewChecked() => RunAsync(new[] {
+            (1920,1080,"en"), (1280,720,"en"), (2400,1080,"en"),
+            (1920,1080,"fa-IR"), (1280,720,"fa-IR"), (2400,1080,"fa-IR") }, true, true);
+
+        private static async Task<int> RunAsync((int width, int height, string locale)[] views, bool after = false, bool homeOnly = false)
         {
             string output = "Design/AgentReports/MenuUiUxAudit/" + (after ? "After/" : "Before/") + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
             Directory.CreateDirectory(output);
@@ -58,6 +62,7 @@ namespace Game.Editor
             var playOptions = EditorSettings.enterPlayModeOptions;
             bool allScreensCaptured = true;
             int capturedScreens = 0;
+            var screens = homeOnly ? new[] { Screens[0] } : Screens;
             try
             {
                 if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Requires Edit mode");
@@ -78,7 +83,7 @@ namespace Game.Editor
                 {
                     GameLocalization.SetLocale(view.locale, false);
                     MainMenuV3PrefabBuilder.SetGameViewResolution(view.width, view.height);
-                    foreach (var screen in Screens)
+                    foreach (var screen in screens)
                     {
                         if (!await Open(screen.route))
                         {
@@ -107,7 +112,7 @@ namespace Game.Editor
                         report.AppendLine();
                     }
                 }
-                int expectedScreens = views.Length * Screens.Length;
+                int expectedScreens = views.Length * screens.Length;
                 passed = allScreensCaptured && capturedScreens == expectedScreens;
                 report.AppendLine("## Capture completeness");
                 report.AppendLine("- Screenshots: " + capturedScreens + "/" + expectedScreens);

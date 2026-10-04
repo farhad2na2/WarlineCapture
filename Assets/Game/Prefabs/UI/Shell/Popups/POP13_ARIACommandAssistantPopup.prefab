@@ -1191,6 +1191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0, g: 0.77254903, b: 0.9372549, a: 1}
   topRightColor: {r: 0, g: 0.77254903, b: 0.9372549, a: 1}
   bottomLeftColor: {r: 0, g: 0.77254903, b: 0.9372549, a: 1}
@@ -1406,6 +1407,8 @@ MonoBehaviour:
   localizationKey: ui.v3.show_me.1460e98c65
   englishFallback: SHOW ME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &986171834041055716
 GameObject:
   m_ObjectHideFlags: 0
@@ -1475,6 +1478,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.003921569, g: 0.09019608, b: 0.11764706, a: 0.9882353}
   topRightColor: {r: 0.003921569, g: 0.09019608, b: 0.11764706, a: 0.9882353}
   bottomLeftColor: {r: 0, g: 0.023529412, b: 0.039215688, a: 1}
@@ -1627,6 +1631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.13333334, g: 0.14901961, b: 0.15294118, a: 1}
   topRightColor: {r: 0.13333334, g: 0.14901961, b: 0.15294118, a: 1}
   bottomLeftColor: {r: 0.047058824, g: 0.05882353, b: 0.0627451, a: 1}
@@ -2534,6 +2539,8 @@ MonoBehaviour:
   localizationKey: ui.v3.target.3dc0db8893
   englishFallback: TARGET
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1623438241987513361
 GameObject:
   m_ObjectHideFlags: 0
@@ -3747,6 +3754,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0, g: 0.047058824, b: 0.06666667, a: 1}
   topRightColor: {r: 0, g: 0.047058824, b: 0.06666667, a: 1}
   bottomLeftColor: {r: 0, g: 0.019607844, b: 0.03137255, a: 1}
@@ -3856,6 +3864,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   topRightColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   bottomLeftColor: {r: 0, g: 0.03137255, b: 0.047058824, a: 1}
@@ -4090,6 +4099,8 @@ MonoBehaviour:
   localizationKey: ui.v3.move_rifle_squad_to_cover.43d211def7
   englishFallback: MOVE RIFLE SQUAD TO COVER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2589803724643878502
 GameObject:
   m_ObjectHideFlags: 0
@@ -4158,6 +4169,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   topRightColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   bottomLeftColor: {r: 0, g: 0.03137255, b: 0.047058824, a: 1}
@@ -4806,6 +4818,8 @@ MonoBehaviour:
   - {fileID: 4239018783429248220}
   widthExpandedTargets: []
   horizontalResponsiveTargets: []
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions:
   - {x: 1150, y: -10}
   centerTargetBasePositions:
@@ -5132,6 +5146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.050980393, g: 0.12156863, b: 0.14509805, a: 0.9882353}
   topRightColor: {r: 0.050980393, g: 0.12156863, b: 0.14509805, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.043137256, a: 1}
@@ -5454,6 +5469,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.007843138, g: 0.078431375, b: 0.105882354, a: 0.9607843}
   topRightColor: {r: 0.007843138, g: 0.078431375, b: 0.105882354, a: 0.9607843}
   bottomLeftColor: {r: 0, g: 0.023529412, b: 0.039215688, a: 1}
@@ -5900,6 +5916,8 @@ MonoBehaviour:
   localizationKey: ui.v3.tactical_reports.b3f077c67d
   englishFallback: TACTICAL REPORTS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3771656425002669186
 GameObject:
   m_ObjectHideFlags: 0
@@ -6128,6 +6146,8 @@ MonoBehaviour:
   localizationKey: ui.v3.move_order_confirmed.3b48ac2cb2
   englishFallback: MOVE ORDER CONFIRMED.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3879794352376133628
 GameObject:
   m_ObjectHideFlags: 0
@@ -6453,6 +6473,8 @@ MonoBehaviour:
   localizationKey: ui.v3.high.b43e72eed0
   englishFallback: HIGH
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3941486866853242368
 GameObject:
   m_ObjectHideFlags: 0
@@ -6520,6 +6542,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.03137255, g: 0.45490196, b: 0.68235296, a: 1}
   topRightColor: {r: 0.03137255, g: 0.45490196, b: 0.68235296, a: 1}
   bottomLeftColor: {r: 0.007843138, g: 0.1764706, b: 0.30980393, a: 1}
@@ -6723,6 +6746,8 @@ MonoBehaviour:
   localizationKey: ui.v3.range.69da9691cb
   englishFallback: RANGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4005282796639031219
 GameObject:
   m_ObjectHideFlags: 0
@@ -7306,6 +7331,8 @@ MonoBehaviour:
     They
     are moving between cover positions.'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4102650396570746085
 GameObject:
   m_ObjectHideFlags: 0
@@ -7739,6 +7766,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.03137255, g: 0.39215687, b: 0.54509807, a: 1}
   topRightColor: {r: 0.03137255, g: 0.39215687, b: 0.54509807, a: 1}
   bottomLeftColor: {r: 0.007843138, g: 0.18039216, b: 0.27450982, a: 1}
@@ -7851,6 +7879,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.13333334, g: 0.14901961, b: 0.15294118, a: 1}
   topRightColor: {r: 0.13333334, g: 0.14901961, b: 0.15294118, a: 1}
   bottomLeftColor: {r: 0.047058824, g: 0.05882353, b: 0.0627451, a: 1}
@@ -7922,6 +7951,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0, g: 0.03, b: 0.05, a: 0}
   topRightColor: {r: 0, g: 0.03, b: 0.05, a: 0}
   bottomLeftColor: {r: 0, g: 0.025, b: 0.04, a: 0.86}
@@ -7995,6 +8025,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.68235296, g: 0.1882353, b: 0.14509805, a: 1}
   topRightColor: {r: 0.68235296, g: 0.1882353, b: 0.14509805, a: 1}
   bottomLeftColor: {r: 0.2901961, g: 0.047058824, b: 0.047058824, a: 1}
@@ -8684,6 +8715,8 @@ MonoBehaviour:
   localizationKey: ui.v3.aria_voice.a5fe1d076c
   englishFallback: ARIA VOICE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4669962993940214084
 GameObject:
   m_ObjectHideFlags: 0
@@ -9097,6 +9130,8 @@ MonoBehaviour:
   localizationKey: ui.v3.current_intent.9d40ad1960
   englishFallback: CURRENT INTENT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4778820776952812318
 GameObject:
   m_ObjectHideFlags: 0
@@ -9536,6 +9571,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.019607844, g: 0.09803922, b: 0.12941177, a: 0.98039216}
   topRightColor: {r: 0.019607844, g: 0.09803922, b: 0.12941177, a: 0.98039216}
   bottomLeftColor: {r: 0.003921569, g: 0.043137256, b: 0.0627451, a: 1}
@@ -9695,6 +9731,8 @@ MonoBehaviour:
   localizationKey: ui.aria.controlling
   englishFallback: ARIA CONTROLLING
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5017500075486269187
 GameObject:
   m_ObjectHideFlags: 0
@@ -10718,6 +10756,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.078431375, g: 0.18431373, b: 0.22745098, a: 1}
   topRightColor: {r: 0.078431375, g: 0.18431373, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.007843138, g: 0.05490196, b: 0.08235294, a: 1}
@@ -10921,6 +10960,8 @@ MonoBehaviour:
   localizationKey: ui.v3.aria_command_assistant.2cc174c265
   englishFallback: ARIA COMMAND ASSISTANT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5828544894459588255
 GameObject:
   m_ObjectHideFlags: 0
@@ -11633,6 +11674,8 @@ MonoBehaviour:
   localizationKey: ui.v3.hold_position.0e2bdbba12
   englishFallback: Hold position
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6204754187447244208
 GameObject:
   m_ObjectHideFlags: 0
@@ -12095,6 +12138,8 @@ MonoBehaviour:
   localizationKey: ui.aria.stop_aria
   englishFallback: STOP ARIA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6341885376470480691
 GameObject:
   m_ObjectHideFlags: 0
@@ -12385,6 +12430,8 @@ MonoBehaviour:
   localizationKey: ui.v3.in_progress.6a506b74c4
   englishFallback: IN PROGRESS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6508989830052122122
 GameObject:
   m_ObjectHideFlags: 0
@@ -12683,6 +12730,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   topRightColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   bottomLeftColor: {r: 0, g: 0.023529412, b: 0.039215688, a: 1}
@@ -12968,6 +13016,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   topRightColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   bottomLeftColor: {r: 0, g: 0.023529412, b: 0.039215688, a: 1}
@@ -13570,6 +13619,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0, g: 0.03, b: 0.05, a: 0}
   topRightColor: {r: 0, g: 0.03, b: 0.05, a: 0}
   bottomLeftColor: {r: 0, g: 0.025, b: 0.04, a: 0.92}
@@ -14059,6 +14109,8 @@ MonoBehaviour:
   localizationKey: ui.v3.140m.02337792ae
   englishFallback: 140m
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7489291309292125774
 GameObject:
   m_ObjectHideFlags: 0
@@ -14353,6 +14405,8 @@ MonoBehaviour:
   localizationKey: ui.v3.enemy_infantry_squad.980430343e
   englishFallback: ENEMY INFANTRY SQUAD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7669629467050301344
 GameObject:
   m_ObjectHideFlags: 0
@@ -14506,6 +14560,8 @@ MonoBehaviour:
   localizationKey: ui.v3.temporary_assistance_in_progress.d2c0fd21bc
   englishFallback: Temporary assistance in progress
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7703642436547846480
 GameObject:
   m_ObjectHideFlags: 0
@@ -14734,6 +14790,8 @@ MonoBehaviour:
   localizationKey: ui.v3.scan_patrol_route.0c74211a50
   englishFallback: Scan patrol route
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7782537691184943325
 GameObject:
   m_ObjectHideFlags: 0
@@ -14801,6 +14859,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   topRightColor: {r: 0.02745098, g: 0.101960786, b: 0.13333334, a: 0.99215686}
   bottomLeftColor: {r: 0, g: 0.023529412, b: 0.039215688, a: 1}
@@ -15252,6 +15311,8 @@ MonoBehaviour:
   localizationKey: ui.v3.move_to_cover.49a1329aa5
   englishFallback: Move to cover
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8061357461996087018
 GameObject:
   m_ObjectHideFlags: 0
@@ -15405,6 +15466,8 @@ MonoBehaviour:
   localizationKey: ui.v3.integrity.b00ea51a81
   englishFallback: INTEGRITY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8162091280467040836
 GameObject:
   m_ObjectHideFlags: 0
@@ -15473,6 +15536,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   topRightColor: {r: 0.011764706, g: 0.07058824, b: 0.09019608, a: 1}
   bottomLeftColor: {r: 0, g: 0.03137255, b: 0.047058824, a: 1}
@@ -15707,6 +15771,8 @@ MonoBehaviour:
   localizationKey: ui.v3.resume_command.12532f4b18
   englishFallback: RESUME COMMAND
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8437208300652065765
 GameObject:
   m_ObjectHideFlags: 0
@@ -16754,6 +16820,8 @@ MonoBehaviour:
   localizationKey: ui.v3.you_can_resume_command_at_any_ti.ec7c19ce72
   englishFallback: You can resume command at any time.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8968434575867293867
 GameObject:
   m_ObjectHideFlags: 0
@@ -17108,6 +17176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.02745098, g: 0.6117647, b: 0.84705883, a: 1}
   topRightColor: {r: 0.02745098, g: 0.6117647, b: 0.84705883, a: 1}
   bottomLeftColor: {r: 0, g: 0.3254902, b: 0.5019608, a: 1}
@@ -17441,6 +17510,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.03137255, g: 0.45490196, b: 0.68235296, a: 1}
   topRightColor: {r: 0.03137255, g: 0.45490196, b: 0.68235296, a: 1}
   bottomLeftColor: {r: 0.007843138, g: 0.1764706, b: 0.30980393, a: 1}

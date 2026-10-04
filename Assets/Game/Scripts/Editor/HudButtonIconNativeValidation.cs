@@ -21,6 +21,7 @@ namespace Game.Editor
         private const string Output="Design/AgentReports/AriaHudButtonIcons/Native";
         public static Task<int> RunSkirmishScreens() => RunScreens(false);
         public static Task<int> RunIconAlignmentScreens() => RunScreens(true);
+        public static Task<int> RunTextureScreens() => RunScreens(true, MilitaryUiMaterialAuthoring.ValidateLive);
         public static Task<int> RunPlacementProbe() => RunScreens(true, SkirmishBuildingPlacementProbe.Inspect);
         private static async Task<int> RunScreens(bool alignmentOnly, Action inspect = null)
         {

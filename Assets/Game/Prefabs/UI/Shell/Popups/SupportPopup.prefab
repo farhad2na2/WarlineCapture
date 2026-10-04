@@ -195,6 +195,8 @@ MonoBehaviour:
   localizationKey: support.name.1
   englishFallback: SMOKE SCREEN
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &189866946154843483
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +355,8 @@ MonoBehaviour:
   localizationKey: support.reason.0
   englishFallback: "Ready \xB7 Confirm to deploy"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &242444941828388338
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +772,8 @@ MonoBehaviour:
   englishFallback: Protect ground units inside a fixed 12 m area for 15 seconds.
     Incoming direct ranged damage is reduced by 35%. Smoke protects either side.
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &379559486601135272
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,6 +896,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -1731,6 +1738,8 @@ MonoBehaviour:
   localizationKey: support.ui.remaining
   englishFallback: CHARGES LEFT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &979773064208233974
 GameObject:
   m_ObjectHideFlags: 0
@@ -1979,6 +1988,8 @@ MonoBehaviour:
   localizationKey: support.ui.cost_per_use
   englishFallback: COST PER USE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1068664277803462395
 GameObject:
   m_ObjectHideFlags: 0
@@ -2676,6 +2687,8 @@ MonoBehaviour:
   localizationKey: support.name.3
   englishFallback: PARATROOPERS
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1446958288282707939
 GameObject:
   m_ObjectHideFlags: 0
@@ -3131,6 +3144,8 @@ MonoBehaviour:
   localizationKey: support.ui.fuel
   englishFallback: FUEL
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1558257794959379272
 GameObject:
   m_ObjectHideFlags: 0
@@ -3431,6 +3446,8 @@ MonoBehaviour:
   localizationKey: support.ui.remaining
   englishFallback: CHARGES LEFT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1832108699209286694
 GameObject:
   m_ObjectHideFlags: 0
@@ -3644,6 +3661,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -3784,6 +3802,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -4011,6 +4030,8 @@ MonoBehaviour:
   localizationKey: support.stop_aria
   englishFallback: Stop ARIA
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2080843871233996775
 GameObject:
   m_ObjectHideFlags: 0
@@ -4434,6 +4455,8 @@ MonoBehaviour:
   localizationKey: support.optional
   englishFallback: "Optional support \xB7 Keep your mission objective in view"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2945202176938692328
 GameObject:
   m_ObjectHideFlags: 0
@@ -5096,6 +5119,8 @@ MonoBehaviour:
   localizationKey: support.ui.cost_per_use
   englishFallback: COST PER USE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3260826691298412610
 GameObject:
   m_ObjectHideFlags: 0
@@ -5254,6 +5279,8 @@ MonoBehaviour:
   localizationKey: support.ui.remaining
   englishFallback: CHARGES LEFT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3262423073940242671
 GameObject:
   m_ObjectHideFlags: 0
@@ -6000,6 +6027,8 @@ MonoBehaviour:
   centerAnchoredTargets: []
   widthExpandedTargets: []
   horizontalResponsiveTargets: []
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
@@ -6146,6 +6175,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -6961,6 +6991,8 @@ MonoBehaviour:
   localizationKey: support.ui.remaining
   englishFallback: CHARGES LEFT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4938808838628089020
 GameObject:
   m_ObjectHideFlags: 0
@@ -7981,6 +8013,8 @@ MonoBehaviour:
   localizationKey: support.ui.cost_per_use
   englishFallback: COST PER USE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5565183733005293377
 GameObject:
   m_ObjectHideFlags: 0
@@ -8263,6 +8297,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -8661,6 +8696,8 @@ MonoBehaviour:
   localizationKey: support.title
   englishFallback: SUPPORT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6207313722019355063
 GameObject:
   m_ObjectHideFlags: 0
@@ -8819,6 +8856,8 @@ MonoBehaviour:
   localizationKey: support.ui.role.1
   englishFallback: GROUND PROTECTION
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6258973914259798155
 GameObject:
   m_ObjectHideFlags: 0
@@ -8888,6 +8927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -9793,6 +9833,8 @@ MonoBehaviour:
   localizationKey: support.name.2
   englishFallback: PRECISION STRIKE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7002806527108657908
 GameObject:
   m_ObjectHideFlags: 0
@@ -9951,6 +9993,8 @@ MonoBehaviour:
   localizationKey: support.ui.cost_per_use
   englishFallback: COST PER USE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7127192613313742248
 GameObject:
   m_ObjectHideFlags: 0
@@ -10393,6 +10437,8 @@ MonoBehaviour:
   localizationKey: support.name.1
   englishFallback: SMOKE SCREEN
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7363717068629059124
 GameObject:
   m_ObjectHideFlags: 0
@@ -10467,6 +10513,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -10541,6 +10588,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   topRightColor: {r: 0.20784314, g: 0.25490198, b: 0.27450982, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -10989,6 +11037,8 @@ MonoBehaviour:
   localizationKey: support.instruction
   englishFallback: Choose support, then select a target on the battlefield.
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7667530078971138565
 GameObject:
   m_ObjectHideFlags: 0
@@ -11056,6 +11106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.26666668, g: 0.70980394, b: 0.27058825, a: 1}
   topRightColor: {r: 0.26666668, g: 0.70980394, b: 0.27058825, a: 1}
   bottomLeftColor: {r: 0.03137255, g: 0.29803923, b: 0.11372549, a: 1}
@@ -11376,6 +11427,8 @@ MonoBehaviour:
   localizationKey: support.ui.remaining
   englishFallback: CHARGES LEFT
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8150432392149178678
 GameObject:
   m_ObjectHideFlags: 0
@@ -11447,6 +11500,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   topRightColor: {r: 0.10980392, g: 0.14901961, b: 0.16862746, a: 0.9882353}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -11625,6 +11679,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.0627451, g: 0.30588236, b: 0.38039216, a: 1}
   topRightColor: {r: 0.0627451, g: 0.30588236, b: 0.38039216, a: 1}
   bottomLeftColor: {r: 0.011764706, g: 0.050980393, b: 0.07058824, a: 1}
@@ -11817,6 +11872,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 1
   topLeftColor: {r: 0.0627451, g: 0.17254902, b: 0.21176471, a: 1}
   topRightColor: {r: 0.0627451, g: 0.17254902, b: 0.21176471, a: 1}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.047058824, a: 1}
@@ -12018,6 +12074,8 @@ MonoBehaviour:
   localizationKey: support.choose.area
   englishFallback: CHOOSE AREA
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8438782194464123962
 GameObject:
   m_ObjectHideFlags: 0
@@ -12318,6 +12376,8 @@ MonoBehaviour:
   localizationKey: support.ui.cost_per_use
   englishFallback: COST PER USE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8516488101245974424
 GameObject:
   m_ObjectHideFlags: 0
@@ -12840,6 +12900,8 @@ MonoBehaviour:
   localizationKey: support.name.4
   englishFallback: SUPPLY DROP
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8973733629424962567
 GameObject:
   m_ObjectHideFlags: 0

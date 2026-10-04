@@ -9,7 +9,7 @@ namespace Game.UI.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CanvasRenderer))]
-    public sealed class V3GradientGraphic : MaskableGraphic
+    public sealed partial class V3GradientGraphic : MaskableGraphic
     {
         [SerializeField] private Color topLeftColor = Color.white;
         [SerializeField] private Color topRightColor = Color.white;
@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
             borderColor = border;
             borderWidth = Mathf.Max(0f, width);
             SetVerticesDirty();
+            SetMaterialDirty();
         }
 
         public void ConfigureCorners(
@@ -44,6 +45,7 @@ namespace Game.UI.Runtime
             borderColor = border;
             borderWidth = Mathf.Max(0f, width);
             SetVerticesDirty();
+            SetMaterialDirty();
         }
 
         public void SetGradient(Color top, Color bottom)
@@ -53,6 +55,7 @@ namespace Game.UI.Runtime
             bottomLeftColor = bottom;
             bottomRightColor = bottom;
             SetVerticesDirty();
+            SetMaterialDirty();
         }
 
         public void SetGradientCorners(Color topLeft, Color topRight, Color bottomLeft, Color bottomRight)
@@ -62,6 +65,7 @@ namespace Game.UI.Runtime
             bottomLeftColor = bottomLeft;
             bottomRightColor = bottomRight;
             SetVerticesDirty();
+            SetMaterialDirty();
         }
 
         public void SetBorder(Color border, float width)
@@ -69,6 +73,7 @@ namespace Game.UI.Runtime
             borderColor = border;
             borderWidth = Mathf.Max(0f, width);
             SetVerticesDirty();
+            SetMaterialDirty();
         }
 
         protected override void OnPopulateMesh(VertexHelper vertexHelper)
@@ -83,7 +88,7 @@ namespace Game.UI.Runtime
             Color32 bottomRight = Multiply(bottomRightColor, color);
             Color32 border = Multiply(borderColor, color);
 
-            AddFourCornerQuad(
+            AddMaterialFill(
                 vertexHelper,
                 rect.xMin + stroke,
                 rect.yMin + stroke,
@@ -131,6 +136,7 @@ namespace Game.UI.Runtime
             int start = helper.currentVertCount;
             UIVertex vertex = UIVertex.simpleVert;
             vertex.position = new Vector3(xMin, yMin);
+            vertex.uv0 = new Vector4(-1, -1, 0, 0);
             vertex.color = bottomLeft;
             helper.AddVert(vertex);
             vertex.position = new Vector3(xMin, yMax);

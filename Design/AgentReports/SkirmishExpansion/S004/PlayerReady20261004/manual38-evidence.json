@@ -1,0 +1,15 @@
+{
+  "locale": "en",
+  "seed": 104733,
+  "elapsed": 208.3957,
+  "outcome": "Victory",
+  "input": "Touch",
+  "ariaStarted": false,
+  "completedGestures": 160,
+  "interventions": 0,
+  "unexpected": 0,
+  "attackReceipts": 30,
+  "terminalReturn": "MainMenu",
+  "trace": "Design/AgentReports/SkirmishExpansion/S004/_Evidence/s004-aria-live-104733-en-2275a62d89f64a82979998c286657d76.jsonl",
+  "wrapperExit": 0
+}

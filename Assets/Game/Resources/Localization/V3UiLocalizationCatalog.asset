@@ -230,6 +230,32 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: menu.approved.campaignrecord
+      value: CAMPAIGN RECORD
+    - key: menu.approved.commandlog
+      value: COMMAND LOG
+    - key: menu.approved.defaults
+      value: DEFAULTS
+    - key: menu.approved.defaulttactics
+      value: DEFAULT TACTICS
+    - key: menu.approved.loading
+      value: LOADING
+    - key: menu.approved.missionprogress
+      value: MISSION PROGRESS
+    - key: menu.approved.preparing
+      value: PREPARING
+    - key: menu.approved.ready
+      value: Ready
+    - key: menu.approved.searchbattles
+      value: Search battles
+    - key: menu.approved.shuffletactics
+      value: SHUFFLE TACTICS
+    - key: menu.approved.viewlog
+      value: VIEW LOG
+    - key: menu.approved.yourcommander
+      value: YOUR COMMANDER
+    - key: menu.approved.yourprogressissavedaftereachmission
+      value: Your progress is saved after each mission.
     - key: mission.air_corridor.deadline
       value: Clear both waves within 4 minutes
     - key: mission.air_corridor.defense.complete
@@ -6870,6 +6896,8 @@ MonoBehaviour:
       value: Command shell ready
     - key: ui.loading.focusing_camera
       value: Focusing camera
+    - key: ui.loading.loading
+      value: Loading
     - key: ui.loading.loading_command_shell
       value: Loading command shell
     - key: ui.loading.loading_map_presentation
@@ -7145,10 +7173,40 @@ MonoBehaviour:
       value: Restart this skirmish with the same setup?
     - key: ui.skirmish.restart_match
       value: RESTART MATCH
+    - key: ui.skirmish.result.base_lost
+      value: Your main base was lost.
+    - key: ui.skirmish.result.base_standing
+      value: Your main base is still standing.
+    - key: ui.skirmish.result.buildings
+      value: BUILDINGS LOST / DESTROYED
+    - key: ui.skirmish.result.complete
+      value: Complete
     - key: ui.skirmish.result.defeat
       value: DEFEAT
+    - key: ui.skirmish.result.destroy_base
+      value: Destroy the enemy main base
     - key: ui.skirmish.result.draw
       value: DRAW
+    - key: ui.skirmish.result.enemy_destroyed
+      value: Enemy main base destroyed.
+    - key: ui.skirmish.result.failed
+      value: Failed
+    - key: ui.skirmish.result.held
+      value: Held
+    - key: ui.skirmish.result.low_losses
+      value: Keep squad losses low
+    - key: ui.skirmish.result.match_complete
+      value: MATCH COMPLETE
+    - key: ui.skirmish.result.mode
+      value: SKIRMISH
+    - key: ui.skirmish.result.protect_base
+      value: Protect your main base
+    - key: ui.skirmish.result.startup_failed
+      value: MATCH DID NOT START
+    - key: ui.skirmish.result.units_defeated
+      value: UNITS DEFEATED
+    - key: ui.skirmish.result.units_lost
+      value: UNITS LOST
     - key: ui.skirmish.result.victory
       value: VICTORY
     - key: ui.skirmish.retry
@@ -7682,6 +7740,8 @@ MonoBehaviour:
       value: Coming soon.
     - key: ui.v3.command.395c9840d9
       value: COMMAND
+    - key: ui.v3.command_feed.68cd2caada
+      value: COMMAND FEED
     - key: ui.v3.command_i.b399d430d8
       value: COMMAND I
     - key: ui.v3.command_inbox.f88ee7b1b4
@@ -7961,10 +8021,14 @@ MonoBehaviour:
       value: END DAY
     - key: ui.v3.end_of_day_report.ba7c95c1ae
       value: END OF DAY REPORT
+    - key: ui.v3.enemies.fa671011b4
+      value: ENEMIES
     - key: ui.v3.enemies_defeated.35e228242b
       value: 'ENEMIES
 
         DEFEATED'
+    - key: ui.v3.enemies_defeated.6eb58898a8
+      value: ENEMIES DEFEATED
     - key: ui.v3.enemy_activity.acbd968cdb
       value: ENEMY ACTIVITY
     - key: ui.v3.enemy_convoy_approaching.3671c6d32d
@@ -7976,6 +8040,8 @@ MonoBehaviour:
         protect civilians, and survive the counterattacks.
     - key: ui.v3.enemy_infantry_squad.980430343e
       value: ENEMY INFANTRY SQUAD
+    - key: ui.v3.enemy_intel.9b9ee76a13
+      value: ENEMY INTEL
     - key: ui.v3.enemy_patrol_spotted.55b73ec092
       value: Enemy Patrol Spotted
     - key: ui.v3.enemy_position.f2a1d5b606
@@ -8454,6 +8520,8 @@ MonoBehaviour:
       value: MILITARY STRUCTURE
     - key: ui.v3.minimal.2bbc362944
       value: MINIMAL
+    - key: ui.v3.mission_briefing.48b3356714
+      value: MISSION BRIEFING
     - key: ui.v3.mission_complete.769817202f
       value: MISSION COMPLETE
     - key: ui.v3.mission_does_not_allow_construct.831cf20018
@@ -8705,6 +8773,8 @@ MonoBehaviour:
       value: Preserve reserves
     - key: ui.v3.primary_objective.68ce221e1d
       value: Primary Objective
+    - key: ui.v3.primary_objectives.81e956daf2
+      value: PRIMARY OBJECTIVES
     - key: ui.v3.pro.7821a03e83
       value: PRO
     - key: ui.v3.proceed_with_caution.cb77de1eda
@@ -9072,6 +9142,8 @@ MonoBehaviour:
       value: Stable
     - key: ui.v3.standard.335fd665f2
       value: STANDARD
+    - key: ui.v3.star_goals.02b14dde06
+      value: STAR GOALS
     - key: ui.v3.starter_catalog.d12d78bbd3
       value: STARTER CATALOG
     - key: ui.v3.starter_offer.bb19b35de0
@@ -9297,6 +9369,8 @@ MonoBehaviour:
       value: VIEW INTEL
     - key: ui.v3.view_operation.84c882fa83
       value: VIEW OPERATION
+    - key: ui.v3.view_operations.a3a1116d9a
+      value: VIEW OPERATIONS
     - key: ui.v3.view_rates.7029cb8995
       value: VIEW RATES
     - key: ui.v3.view_rewards.e471e90b0e
@@ -9472,30 +9546,8 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
-    - key: menu.approved.defaulttactics
-      value: DEFAULT TACTICS
-    - key: ui.v3.enemies_defeated.6eb58898a8
-      value: ENEMIES DEFEATED
-    - key: menu.approved.yourcommander
-      value: YOUR COMMANDER
-    - key: menu.approved.viewlog
-      value: VIEW LOG
-    - key: menu.approved.searchbattles
-      value: Search battles
-    - key: menu.approved.defaults
-      value: DEFAULTS
-    - key: menu.approved.shuffletactics
-      value: SHUFFLE TACTICS
-    - key: menu.approved.missionprogress
-      value: MISSION PROGRESS
-    - key: menu.approved.campaignrecord
-      value: CAMPAIGN RECORD
-    - key: ui.v3.enemies.fa671011b4
-      value: ENEMIES
-    - key: menu.approved.commandlog
-      value: COMMAND LOG
-    - key: menu.approved.yourprogressissavedaftereachmission
-      value: Your progress is saved after each mission.
+    - key: ui.skirmish.squad
+      value: SQUAD PREPARATION
     - key: menu.approved.character
       value: CHARACTER
     - key: menu.approved.commandrecord
@@ -9510,43 +9562,21 @@ MonoBehaviour:
       value: NO DISTRICT REPORT
     - key: menu.approved.districtreport
       value: DISTRICT REPORT
-    - key: ui.v3.view_operations.a3a1116d9a
-      value: VIEW OPERATIONS
     - key: menu.approved.nodistrictreportisavailableopenoperationstoreviewcurrentobjectivesandavailablemissions
       value: No district report is available. Open Operations to review current objectives
         and available missions.
-    - key: ui.skirmish.squad
-      value: SQUAD PREPARATION
-    - key: ui.v3.mission_briefing.48b3356714
-      value: MISSION BRIEFING
     - key: menu.approved.missionforce
       value: MISSION FORCE
     - key: menu.approved.missionplan
       value: MISSION PLAN
     - key: menu.approved.missionconditions
       value: MISSION CONDITIONS
-    - key: ui.v3.primary_objectives.81e956daf2
-      value: PRIMARY OBJECTIVES
-    - key: ui.v3.enemy_intel.9b9ee76a13
-      value: ENEMY INTEL
-    - key: ui.v3.star_goals.02b14dde06
-      value: STAR GOALS
     - key: menu.approved.viewarmory
       value: VIEW ARMORY
     - key: menu.approved.reviewthemissionobjectivesbeforedeployment
       value: Review the mission objectives before deployment.
     - key: menu.approved.districtdetail
       value: DISTRICT DETAIL
-    - key: ui.v3.command_feed.68cd2caada
-      value: COMMAND FEED
-    - key: menu.approved.preparing
-      value: PREPARING
-    - key: menu.approved.loading
-      value: LOADING
-    - key: menu.approved.ready
-      value: Ready
-    - key: ui.loading.loading
-      value: Loading
     - key: narrative.speaker.qassem.name
       value: Nadir Qassem
     - key: narrative.speaker.qassem.role
@@ -9856,6 +9886,34 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647\u0654 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0647\u0646\u0648\u0632 \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: menu.approved.campaignrecord
+      value: "\u06A9\u0627\u0631\u0646\u0627\u0645\u0647 \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: menu.approved.commandlog
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: menu.approved.defaults
+      value: "\u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
+    - key: menu.approved.defaulttactics
+      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
+    - key: menu.approved.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
+    - key: menu.approved.missionprogress
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
+    - key: menu.approved.preparing
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: menu.approved.ready
+      value: "\u0622\u0645\u0627\u062F\u0647"
+    - key: menu.approved.searchbattles
+      value: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0646\u0628\u0631\u062F\u0647\u0627"
+    - key: menu.approved.shuffletactics
+      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u062A\u0635\u0627\u062F\u0641\u06CC"
+    - key: menu.approved.viewlog
+      value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u06AF\u0632\u0627\u0631\u0634"
+    - key: menu.approved.yourcommander
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u0634\u0645\u0627"
+    - key: menu.approved.yourprogressissavedaftereachmission
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0634\u0645\u0627 \u067E\u0633
+        \u0627\u0632 \u0647\u0631 \u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0630\u062E\u06CC\u0631\u0647
+        \u0645\u06CC\u200C\u0634\u0648\u062F."
     - key: mission.air_corridor.deadline
       value: "\u0647\u0631 \u062F\u0648 \u0645\u0648\u062C \u0631\u0648 \u062A\u0627
         \u06F4 \u062F\u0642\u06CC\u0642\u0647 \u067E\u0627\u06A9 \u06A9\u0646"
@@ -12087,7 +12145,7 @@ MonoBehaviour:
     - key: mission.grounded_signal.marker.apron
       value: "\u067E\u06CC\u0627\u062F\u0647 \u0634\u062F\u0646"
     - key: mission.grounded_signal.marker.exit
-      value: "\u062E\u0631\u0648\u062C"
+      value: "\u062E\u0631\u0648\u062C\u06CC"
     - key: mission.grounded_signal.marker.hardware
       value: "\u062A\u062C\u0647\u06CC\u0632\u0627\u062A"
     - key: mission.grounded_signal.name
@@ -13627,7 +13685,8 @@ MonoBehaviour:
         \u0645\u0631\u062F\u0645 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0633\u062A\u0627\u0631\u0647\u0654
         \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u062F."
     - key: mission.m03.result.retry
-      value: "\u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647"
+      value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646"
     - key: mission.m03.result.rewards
       value: "\u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627"
     - key: mission.m03.result.safe
@@ -14835,7 +14894,7 @@ MonoBehaviour:
       value: "\u0627\u0633\u0646\u0627\u062F \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
         \u06A9\u0646"
     - key: mission.marker.clear
-      value: "\u0627\u0645\u0646"
+      value: "\u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646"
     - key: mission.marker.contested
       value: "\u0632\u06CC\u0631 \u062A\u0647\u062F\u06CC\u062F"
     - key: mission.marker.departure
@@ -15146,7 +15205,7 @@ MonoBehaviour:
         \u06AF\u0631\u0648\u0647 \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u067E\u0627\u06A9
         \u06A9\u0631\u062F."
     - key: mission.network_break.result.unit_losses
-      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632 \u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
     - key: mission.network_break.result.victory
       value: "\u06AF\u0632\u0627\u0631\u0634 \u062D\u0641\u0638 \u0634\u062F"
     - key: mission.network_break.reward.card
@@ -15325,7 +15384,7 @@ MonoBehaviour:
     - key: mission.network_collapse.marker.audit
       value: "\u062D\u0633\u0627\u0628\u0631\u0633\u06CC"
     - key: mission.network_collapse.marker.extraction
-      value: "\u062E\u0631\u0648\u062C"
+      value: "\u0645\u062D\u0644 \u062E\u0631\u0648\u062C"
     - key: mission.network_collapse.marker.node1
       value: "\u06AF\u0631\u0647 1"
     - key: mission.network_collapse.marker.node2
@@ -20413,7 +20472,7 @@ MonoBehaviour:
     - key: support.close
       value: "\u0628\u0633\u062A\u0646"
     - key: support.confirm
-      value: "\u0627\u062C\u0631\u0627"
+      value: "\u0627\u0639\u0632\u0627\u0645"
     - key: support.confirm.smoke
       value: "\u0627\u062C\u0631\u0627\u06CC \u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F"
     - key: support.consent
@@ -21795,6 +21854,8 @@ MonoBehaviour:
         \u0622\u0645\u0627\u062F\u0647 \u0627\u0633\u062A"
     - key: ui.loading.focusing_camera
       value: "\u062A\u0646\u0638\u06CC\u0645 \u062F\u0648\u0631\u0628\u06CC\u0646"
+    - key: ui.loading.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
     - key: ui.loading.loading_command_shell
       value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0645\u062D\u06CC\u0637
         \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
@@ -22232,10 +22293,48 @@ MonoBehaviour:
     - key: ui.skirmish.restart_match
       value: "\u0634\u0631\u0648\u0639 \u062F\u0648\u0628\u0627\u0631\u0647\u0654
         \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.result.base_lost
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: ui.skirmish.result.base_standing
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
+        \u0647\u0645\u0686\u0646\u0627\u0646 \u0633\u0627\u0644\u0645 \u0627\u0633\u062A."
+    - key: ui.skirmish.result.buildings
+      value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647 / \u0646\u0627\u0628\u0648\u062F\u0634\u062F\u0647"
+    - key: ui.skirmish.result.complete
+      value: "\u062A\u06A9\u0645\u06CC\u0644 \u0634\u062F"
     - key: ui.skirmish.result.defeat
       value: "\u0634\u06A9\u0633\u062A"
+    - key: ui.skirmish.result.destroy_base
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646
+        \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646"
     - key: ui.skirmish.result.draw
       value: "\u0645\u0633\u0627\u0648\u06CC"
+    - key: ui.skirmish.result.enemy_destroyed
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: ui.skirmish.result.failed
+      value: "\u0646\u0627\u0645\u0648\u0641\u0642"
+    - key: ui.skirmish.result.held
+      value: "\u062D\u0641\u0638 \u0634\u062F"
+    - key: ui.skirmish.result.low_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u0631\u0627 \u06A9\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: ui.skirmish.result.match_complete
+      value: "\u0646\u0628\u0631\u062F \u067E\u0627\u06CC\u0627\u0646 \u06CC\u0627\u0641\u062A"
+    - key: ui.skirmish.result.mode
+      value: "\u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.result.protect_base
+      value: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC
+        \u062E\u0648\u062F \u062F\u0641\u0627\u0639 \u06A9\u0646"
+    - key: ui.skirmish.result.startup_failed
+      value: "\u0646\u0628\u0631\u062F \u0622\u063A\u0627\u0632 \u0646\u0634\u062F"
+    - key: ui.skirmish.result.units_defeated
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647\u0654
+        \u062F\u0634\u0645\u0646"
+    - key: ui.skirmish.result.units_lost
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
     - key: ui.skirmish.result.victory
       value: "\u067E\u06CC\u0631\u0648\u0632\u06CC"
     - key: ui.skirmish.retry
@@ -23164,7 +23263,11 @@ MonoBehaviour:
       value: "\u067E\u0627\u06CC\u0627\u0646 \u0631\u0648\u0632"
     - key: ui.v3.end_of_day_report.ba7c95c1ae
       value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646 \u0631\u0648\u0632"
+    - key: ui.v3.enemies.fa671011b4
+      value: "\u062F\u0634\u0645\u0646\u0627\u0646"
     - key: ui.v3.enemies_defeated.35e228242b
+      value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
+    - key: ui.v3.enemies_defeated.6eb58898a8
       value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
     - key: ui.v3.enemy_activity.acbd968cdb
       value: "\u0641\u0639\u0627\u0644\u06CC\u062A \u062F\u0634\u0645\u0646"
@@ -23183,6 +23286,8 @@ MonoBehaviour:
     - key: ui.v3.enemy_infantry_squad.980430343e
       value: "\u06AF\u0631\u0648\u0647 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
         \u062F\u0634\u0645\u0646"
+    - key: ui.v3.enemy_intel.9b9ee76a13
+      value: "\u0627\u0637\u0644\u0627\u0639\u0627\u062A \u062F\u0634\u0645\u0646"
     - key: ui.v3.enemy_patrol_spotted.55b73ec092
       value: "\u06AF\u0634\u062A \u062F\u0634\u0645\u0646 \u062F\u06CC\u062F\u0647
         \u0634\u062F"
@@ -24000,6 +24105,8 @@ MonoBehaviour:
       value: "\u062D\u0641\u0638 \u0630\u062E\u0627\u06CC\u0631"
     - key: ui.v3.primary_objective.68ce221e1d
       value: "\u0647\u062F\u0641 \u0627\u0635\u0644\u06CC"
+    - key: ui.v3.primary_objectives.81e956daf2
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0627\u0635\u0644\u06CC"
     - key: ui.v3.pro.7821a03e83
       value: PRO
     - key: ui.v3.proceed_with_caution.cb77de1eda
@@ -24412,7 +24519,7 @@ MonoBehaviour:
     - key: ui.v3.skip_to_victory.c35482c5ef
       value: "\u067E\u0631\u0634 \u0628\u0647 \u067E\u06CC\u0631\u0648\u0632\u06CC"
     - key: ui.v3.skirmish.a860c790aa
-      value: "\u062F\u0631\u06AF\u06CC\u0631\u06CC"
+      value: "\u0646\u0628\u0631\u062F"
     - key: ui.v3.skirmish_setup.ad862f98f3
       value: "\u062A\u0646\u0638\u06CC\u0645 \u062F\u0631\u06AF\u06CC\u0631\u06CC"
     - key: ui.v3.snipers.7780f2c0f9
@@ -24959,32 +25066,16 @@ MonoBehaviour:
     - key: warning_ground_attack_type
       value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \u062F\u0627\u0631\u0646 \u062D\u0645\u0644\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646"
-    - key: menu.approved.defaulttactics
-      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
-    - key: ui.v3.enemies_defeated.6eb58898a8
-      value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647"
-    - key: menu.approved.yourcommander
-      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u0634\u0645\u0627"
-    - key: menu.approved.viewlog
-      value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u06AF\u0632\u0627\u0631\u0634"
-    - key: menu.approved.searchbattles
-      value: "\u062C\u0633\u062A\u062C\u0648\u06CC \u0646\u0628\u0631\u062F\u0647\u0627"
-    - key: menu.approved.defaults
-      value: "\u067E\u06CC\u0634\u200C\u0641\u0631\u0636"
-    - key: menu.approved.shuffletactics
-      value: "\u062A\u0627\u06A9\u062A\u06CC\u06A9 \u062A\u0635\u0627\u062F\u0641\u06CC"
-    - key: menu.approved.missionprogress
-      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
-    - key: menu.approved.campaignrecord
-      value: "\u06A9\u0627\u0631\u0646\u0627\u0645\u0647 \u0639\u0645\u0644\u06CC\u0627\u062A"
-    - key: ui.v3.enemies.fa671011b4
-      value: "\u062F\u0634\u0645\u0646\u0627\u0646"
-    - key: menu.approved.commandlog
+    - key: ui.skirmish.squad
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0646\u06CC\u0631\u0648\u0647\u0627"
+    - key: ui.v3.command_feed.68cd2caada
       value: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: menu.approved.yourprogressissavedaftereachmission
-      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0634\u0645\u0627 \u067E\u0633
-        \u0627\u0632 \u0647\u0631 \u0645\u0627\u0645\u0648\u0631\u06CC\u062A \u0630\u062E\u06CC\u0631\u0647
-        \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: ui.v3.mission_briefing.48b3356714
+      value: "\u0634\u0631\u062D \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
+    - key: ui.v3.star_goals.02b14dde06
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627"
+    - key: ui.v3.view_operations.a3a1116d9a
+      value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u0639\u0645\u0644\u06CC\u0627\u062A"
     - key: menu.approved.character
       value: "\u0634\u062E\u0635\u06CC\u062A"
     - key: menu.approved.commandrecord
@@ -25001,8 +25092,6 @@ MonoBehaviour:
         \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
     - key: menu.approved.districtreport
       value: "\u06AF\u0632\u0627\u0631\u0634 \u0645\u0646\u0637\u0642\u0647"
-    - key: ui.v3.view_operations.a3a1116d9a
-      value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u0639\u0645\u0644\u06CC\u0627\u062A"
     - key: menu.approved.nodistrictreportisavailableopenoperationstoreviewcurrentobjectivesandavailablemissions
       value: "\u06AF\u0632\u0627\u0631\u0634 \u0645\u0646\u0637\u0642\u0647 \u062F\u0631
         \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A. \u0628\u0631\u0627\u06CC
@@ -25010,22 +25099,12 @@ MonoBehaviour:
         \u0648 \u0645\u0627\u0645\u0648\u0631\u06CC\u062A\u200C\u0647\u0627\u06CC
         \u0645\u0648\u062C\u0648\u062F\u060C \u0639\u0645\u0644\u06CC\u0627\u062A
         \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F."
-    - key: ui.skirmish.squad
-      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0646\u06CC\u0631\u0648\u0647\u0627"
-    - key: ui.v3.mission_briefing.48b3356714
-      value: "\u0634\u0631\u062D \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
     - key: menu.approved.missionforce
       value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
     - key: menu.approved.missionplan
       value: "\u0637\u0631\u062D \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
     - key: menu.approved.missionconditions
       value: "\u0634\u0631\u0627\u06CC\u0637 \u0645\u0627\u0645\u0648\u0631\u06CC\u062A"
-    - key: ui.v3.primary_objectives.81e956daf2
-      value: "\u0627\u0647\u062F\u0627\u0641 \u0627\u0635\u0644\u06CC"
-    - key: ui.v3.enemy_intel.9b9ee76a13
-      value: "\u0627\u0637\u0644\u0627\u0639\u0627\u062A \u062F\u0634\u0645\u0646"
-    - key: ui.v3.star_goals.02b14dde06
-      value: "\u0627\u0647\u062F\u0627\u0641 \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627"
     - key: menu.approved.viewarmory
       value: "\u0645\u0634\u0627\u0647\u062F\u0647 \u0632\u0631\u0627\u062F\u062E\u0627\u0646\u0647"
     - key: menu.approved.reviewthemissionobjectivesbeforedeployment
@@ -25034,16 +25113,6 @@ MonoBehaviour:
         \u0631\u0627 \u0645\u0631\u0648\u0631 \u06A9\u0646\u06CC\u062F."
     - key: menu.approved.districtdetail
       value: "\u062C\u0632\u0626\u06CC\u0627\u062A \u0645\u0646\u0637\u0642\u0647"
-    - key: ui.v3.command_feed.68cd2caada
-      value: "\u06AF\u0632\u0627\u0631\u0634 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: menu.approved.preparing
-      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC"
-    - key: menu.approved.loading
-      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
-    - key: menu.approved.ready
-      value: "\u0622\u0645\u0627\u062F\u0647"
-    - key: ui.loading.loading
-      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
     - key: narrative.speaker.qassem.name
       value: "\u0646\u0627\u062F\u0631 \u0642\u0627\u0633\u0645"
     - key: narrative.speaker.qassem.role

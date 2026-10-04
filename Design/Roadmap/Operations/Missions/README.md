@@ -1,5 +1,9 @@
 # All 60 mission briefs
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). All six districts bind current Campaign physical sources; no new district environments, mountain terrain, bridges or runways. The district briefs update all source assignments while retaining mission graphs and budgets. New physical map design requires an explicit owner request.
+
 ## Future-map planning amendment — 2026-09-29
 
 Use the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) for all 57 uncoded entries O004–O060. The six district packets now assign physical-source foundations and each future entry carries a map-preparation requirement. O001–O003 retain their current bindings. D03/D04/D06 derive from prepared RefineryDistrict/AshLinePort/CityEdgeAirfield; D01/D02 use urban layouts and D05 needs new highland terrain. Graphs, catalog IDs, budgets and evidence remain unchanged.

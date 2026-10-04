@@ -137,7 +137,8 @@ namespace Game.Tests.Editor
                 new SkirmishBattleCatalogEntry { ScenarioId = "S002", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
                 new SkirmishBattleCatalogEntry { ScenarioId = "S003", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
                 new SkirmishBattleCatalogEntry { ScenarioId = "S025", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
-                new SkirmishBattleCatalogEntry { ScenarioId = "S073", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 }
+                new SkirmishBattleCatalogEntry { ScenarioId = "S073", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
+                new SkirmishBattleCatalogEntry { ScenarioId = "S004", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 }
             };
             SkirmishPublicationValidator.ApplyLegacyPrototypeCompatibility(entries, 0);
             Assert.IsFalse(entries[0].IsPlayable);
@@ -156,6 +157,10 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldDefinitionId, entries[2].DefinitionId);
             Assert.IsTrue(entries[3].IsPlayable);
             Assert.IsTrue(entries[4].IsPlayable);
+            Assert.IsTrue(entries[5].IsPlayable);
+            Assert.AreEqual(SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex, entries[5].PlayableScenarioIndex);
+            Assert.AreEqual("skirmish.s004.title", entries[5].TitleKey);
+            Assert.AreEqual("skirmish.s004", entries[5].DefinitionId);
         }
 
         [Test]

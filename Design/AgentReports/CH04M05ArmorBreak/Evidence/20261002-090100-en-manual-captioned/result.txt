@@ -1,0 +1,1 @@
+[ArmorBreakInput] result=Failed Normal victory observed, result projection rejected Armor Break through generic defense facts

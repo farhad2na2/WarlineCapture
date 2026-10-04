@@ -20,6 +20,8 @@ namespace Game.UI.Runtime
         public string Objective1State;
         public string Objective2State;
         public string Objective3State;
+        public bool HasObjectiveFacts;
+        public byte CompletedObjectives;
         public string Performance1;
         public string Performance1Value;
         public string Performance2;
@@ -122,7 +124,9 @@ namespace Game.UI.Runtime
                 string state = i == 0 ? content.Objective1State : i == 1 ? content.Objective2State : content.Objective3State;
                 Set(objectiveLabels[i], label);
                 Set(objectiveStates[i], state);
-                objectiveStates[i].color = IsComplete(state) ? Green : Loss;
+                bool completed = content.HasObjectiveFacts
+                    ? (content.CompletedObjectives & (1 << i)) != 0 : IsComplete(state);
+                objectiveStates[i].color = completed ? Green : Loss;
             }
             Set(performanceLabels[0], content.Performance1);
             Set(performanceLabels[1], content.Performance2);

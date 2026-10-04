@@ -40,6 +40,9 @@ namespace Game.Runtime
             {
                 SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
                 view.AirProfile = army != null && army.AllowsOffensiveAir;
+                view.OwnDefenseTowers = CountPlayerDefenseTowers(em, session);
+                view.AntiAirCommitted = HasPendingRecruit(em, session, SkirmishRoleKind.AntiAir) ||
+                    HasLivingRole(em, session, SkirmishRoleKind.AntiAir);
                 view.CanAffordLogisticsTruck = SkirmishProductionService.EvaluateQueue(em, session,
                     SkirmishRoleIds.LogisticsTruck, 1, army, 1).Accepted;
                 view.RifleRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rifle);
@@ -107,6 +110,22 @@ namespace Game.Runtime
             view.HoldControlAvailable = true;
             view.GroupControlAvailable = true;
             return view;
+        }
+
+        private static int CountPlayerDefenseTowers(EntityManager em, Entity session)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishStructureIdentityComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            int count = 0;
+            foreach (var building in entities)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(building);
+                if (owned.FactionId != 1 || !owned.SessionId.Equals(id) || !SkirmishArmyGroupSystem.IsAlive(em, building)) continue;
+                string structure = em.GetComponentData<SkirmishStructureIdentityComponent>(building).StructureId.ToString();
+                if (structure == SkirmishStructureIds.Watchtower || structure == SkirmishStructureIds.WatchtowerApproach) count++;
+            }
+            return count;
         }
 
         private static void CountPlayerAttackAircraft(EntityManager em, Entity session, ref SkirmishAriaPublicView view)

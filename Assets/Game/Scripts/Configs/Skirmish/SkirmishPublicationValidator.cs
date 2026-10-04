@@ -315,6 +315,14 @@ namespace Game.Configs
                     SkirmishExpandedCopyProjection.ApplyLibraryCopyS003(ref entry);
                     entries[i] = entry;
                 }
+                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
+                {
+                    // Preserve S004's existing publication; this adds its missing library dispatch.
+                    entry.Status = SkirmishBattleCatalogStatus.Playable;
+                    entry.PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex;
+                    SkirmishExpandedCopyProjection.ApplyLibraryCopyS004(ref entry);
+                    entries[i] = entry;
+                }
                 else
                 {
                     entry.Status = SkirmishBattleCatalogStatus.Planned;

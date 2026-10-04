@@ -1,0 +1,13 @@
+{
+  "wrapperExit": 0,
+  "passed": true,
+  "kind": "scripted normal Touch input; ARIA stopped; not human or device acceptance",
+  "markers": [
+    "[SkirmishS002AriaRun] selected catalog=S004 definition=skirmish.s004 version=2 size=Standard difficulty=Regular seed=104733 locale=en",
+    "[S004ManualNative] started=1 input=Touch ariaStarted=0 strategy=visibleSquadCardsAttackVisibleBase",
+    "[S004ManualInput] completed=202 interventions=0 unexpected=0",
+    "[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU point=(1869.00, 153.50)",
+    "[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU completed=1 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=204.9534 reason= input=Touch ariaStarted=0 actions=202 attackReceipts=18"
+  ]
+}

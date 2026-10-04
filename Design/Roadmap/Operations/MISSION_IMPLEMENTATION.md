@@ -1,10 +1,8 @@
 # Shared mission implementation contract
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
-
-P6 consumes the [prepared-source manifest](../../MapVariants/HANDOFF_Map_Preparation.md) and owns district role/route layouts. Reuse modules without waiting for every Skirmish scenario to be accepted and without inheriting Campaign resource or production state. Preserve one authoritative owner per functional structure. New physical geometry receives an independent source identity; retain existing logical district IDs and protect active sources. No naval, bridge-collapse or arbitrary rooftop mechanic is added.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -103,27 +101,29 @@ A `PROTECT(site,alive)` requirement applies at all times. A brief can allow part
 
 World fact capture is always active: a civilian delivered, evidence carried to a safe exit, site destroyed, or squad reaching an exit is recorded even if a later graph node has not activated. Gated nodes consume eligible facts according to their configured start policy; default SCAN/INTERACT/REPAIR require an action after activation (except REPAIR's verified restored-site retry rule), while delivered-identity/protection/exit facts can satisfy Partial at any time. Ground safe exits remain reachable for withdrawal/partial extraction before the final EXTRACT node; this does not skip required nodes for Victory. Conclude is a separate public action evaluating the currently true Partial predicate, not a direct result override.
 
-## Six map authoring packets
+## Six logical district binding packets
 
-Environment authors must read the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [prefab manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). Use adapted Logistics/Utilities kits for D03 and separately certified Crossing pieces for D04; D02/D05/D06 use service/perimeter accents and D01 retains the desert baseline. Bind a generator/transformer/tower through the mission's existing role-to-anchor map when interactive. Repair/Scan/Interact/protection state comes from the shared rule systems, never the vendor mesh or an animation. The current 60 briefs do not gain production, naval or physical bridge-collapse mechanics from these assets.
+Read the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). P6 authors logical role/route configurations on current Campaign geometry. Bind Repair/Scan/Interact/protection state through shared rule systems and existing certified assets; an environment mesh does not grant gameplay. No new civic, industrial, port, highland or airfield environment is part of this work.
 
-| District / planned map ID suffix | Required layout and route choices | Reuse candidate to audit; not a ready asset claim |
+| District / planned logical map suffix | Existing Campaign source to assess | Roles to bind on current geometry |
 |---|---|---|
-| D01 `old_quarter` | Two connected pedestrian loops; protected clinic, courtyard, archive, rescue court, main/safe exit | M01 urban modules; City Crossroads navigation/selection lessons |
-| D02 `civic_center` | Central plaza with two approaches; clinic/service annex/relay; covered foot and exposed vehicle routes; elevated landing pad with certified ground ramp and flight clearance for O018 | Campaign forward-post/service props and city modules |
-| D03 `industrial_belt` | Ring road and freight spine; three separated service points; truck turning areas; depot breach | Industrial Basin modules, after current Skirmish work is accepted |
-| D04 `river_crossing` | Two already traversable land crossings; quays, road checkpoint, evacuation apron; no simulated bridge collapse | Existing road/bridge surface system; new district authoring |
-| D05 `highland_approach` | Switchback and longer safe route; overlook/relay/repair station; two valid ground extraction points | Mountain Pass modules when available; no unsupported cliff navigation |
-| D06 `airport_perimeter` | Perimeter loop, two landing zones, hangar gate, service road, terminal evacuation area | Airfield Plains and M04 transport work after certification |
+| D01 `old_quarter` | Current Old Quarter/shared city source | Clinic, courtyard, archive/rescue, existing route loops and safe exit; preserve coded intro |
+| D02 `civic_center` | Citywide Alert / Command Node / shared civic sectors | Distinct clinic/service/relay/shelter roles and hold areas; O018 needs an existing LZ with actual ground access |
+| D03 `industrial_belt` | RefineryDistrict / existing Armor Break logistics sector | Three separated service points, records and depot, existing freight/service choices and turning areas |
+| D04 `river_crossing` | AshLinePort / Trust Under Fire | Two existing traversable land crossings, aid/shelter and evacuation routes; no bridge construction |
+| D05 `highland_approach` | Existing Armor Break approach sector or suitable inventory source | Distinct observation/relay/repair roles and two existing ground exits; adapt terrain labels, no mountain construction |
+| D06 `airport_perimeter` | CityEdgeAirfield / Grounded Signal | Current landing/boarding/service/hangar roles and existing ground/air exits; no runway extension |
+
+These are source-fit candidates, not accepted capabilities. Keep every mission graph/force/resource/deadline contract. If no existing source fits, record the failed evidence and pending gate; do not create geometry, drop required actors or weaken objectives. Mission variety comes from authored logical roles, route choices and consequences on reused maps.
 
 Every map has typed anchors for `spawn.player`, `spawn.enemy_a`, `spawn.enemy_b`, `exit.ground`, `exit.air` if used, approach lanes, all named mission sites, optional secondary approach and safe camera focus. Mission-role aliases in each brief bind to specific anchors in that scenario asset. IDs use `anchor.operations.d01.clinic` etc.; the exact mission role-to-anchor manifest is authored and validated by the map owner. `route.main`, `route.safe`, `route.flank`, `route.enemy_cargo` contain ordered typed anchor IDs, lane widths and vehicle clearance. No runtime searches by GameObject name.
 
-Per-map deliverables: overview diagram with all routes/anchors, navigation clearance report for largest used vehicle, infantry and convoy reachability tests, minimap, mobile camera limits, EN/FA briefing imagery, placement/height/shadow inspection, civilian hazard zones and protected-object boundaries, all role mappings. Physical bridge destruction, arbitrary rooftop access, environmental fire damage and naval travel are excluded; if visuals suggest an unavailable path, correct the art/briefing.
+Per-map deliverables: overview diagram with all routes/anchors, navigation clearance report for largest used vehicle, infantry and convoy reachability tests, minimap, mobile camera limits, EN/FA briefing imagery, placement/height/shadow inspection, civilian hazard zones and protected-object boundaries, all role mappings. Physical bridge destruction, arbitrary rooftop access, environmental fire damage and naval travel are excluded; if visuals suggest an unavailable path, correct mission framing/briefing or choose another existing source; changing environment geometry requires separate owner authorization.
 
 ## Agent's recipe for any one mission
 
 1. Read the entry, shared family rules, district map contract, and prerequisite packages. Confirm needed rule systems and role capabilities are Accepted, not just present in source.
-   Record the environment manifest entries, adapted prefab GUIDs, resolved owners and content hash. Use the guide's Editor authoring and scoped rebuild procedure; D2-V1–V6 join this mission's evidence when the kit is used.
+   Record the existing Campaign definition/scene/hash, functional asset GUIDs, role owners and logical setup version. Use supported builders for metadata/overlays, preserving physical source geometry; a missing facility clearance is a source-fit gate, not permission to build a map.
 2. Create the three per-mission assets through `OperationsMissionAssetBuilder` with stable IDs and version; author roles, routes, finite groups, graph node IDs, timers, protected objects, partial predicate, consequences and localization keys.
 3. Resolve the semantic force/enemy packages to certified keys and record actual roster/resource/transport totals. Pin seed 1101 + numeric mission index for the first canonical fixture (O001 uses 1102), plus perturbation seeds defined in acceptance.
 4. Bind shared HUD/markers/interaction controls and public ARIA affordances. Add briefing, warnings, outcome reasons, local report copy and EN/FA localization. Required dialogue can use text until audio is separately produced; no mission silently depends on missing paid voice generation.

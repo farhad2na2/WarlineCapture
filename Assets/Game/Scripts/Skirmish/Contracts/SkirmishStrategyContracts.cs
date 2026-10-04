@@ -94,6 +94,8 @@ namespace Game.Skirmish.Contracts
         public bool AirQueueOffered;
         public bool AirRecruitPending;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
+        public int OwnDefenseTowers;
+        public bool AntiAirCommitted;
         public bool PadPresent, ReadinessEligible;
         public bool AirPadControlAvailable;
         public int VisibleHostileCombat;

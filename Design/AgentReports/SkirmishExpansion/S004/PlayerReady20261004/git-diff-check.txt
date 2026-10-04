@@ -1,0 +1,492 @@
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:203: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:801: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:827: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:1211: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:1257: trailing whitespace.
++  m_RegexValue: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:1287: trailing whitespace.
++  m_Text: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:1358: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:2967: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:4207: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:4221: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:8120: trailing whitespace.
++  m_Name: 
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab:8882: trailing whitespace.
++  m_Name: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:31: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:33: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:116: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:118: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:131: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:133: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:146: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:148: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:161: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:163: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:176: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:178: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:191: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:193: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:206: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:208: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:221: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:223: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:236: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:238: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:251: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:253: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:265: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:267: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:280: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:282: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:294: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:296: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:309: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:311: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:324: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:326: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:339: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:341: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:353: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:355: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:368: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:370: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:382: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:384: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:397: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:399: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:416: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:418: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:431: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:433: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:445: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:447: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:460: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:462: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:475: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:477: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:490: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:492: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:505: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:507: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:520: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:522: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:535: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:537: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:550: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:552: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:565: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:567: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:580: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:582: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:595: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:597: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:610: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:612: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:624: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:626: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:639: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:641: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:654: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:656: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:669: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:671: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:684: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:686: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:699: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:701: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:714: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:716: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:729: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:731: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:744: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:746: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:759: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:761: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:774: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:776: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:789: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:791: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:803: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:805: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:818: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:820: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:833: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:835: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:848: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:850: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:863: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:865: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:878: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:880: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:893: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:895: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:908: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:910: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:923: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:925: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:938: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:940: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:953: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:955: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:968: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:970: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:982: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:984: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:997: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:999: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1012: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1014: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1027: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1029: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1042: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1044: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1057: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1059: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1071: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1073: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1086: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1088: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1101: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1103: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1116: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1118: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1137: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1139: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1152: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1154: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1167: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1169: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1182: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1184: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1197: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1199: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1212: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1214: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1227: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1229: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1242: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1244: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1257: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1259: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1272: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1274: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1287: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1289: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1302: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1304: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1317: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1319: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1332: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1334: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1347: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1349: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1362: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1364: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1377: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1379: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1392: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1394: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1407: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1409: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1422: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1424: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1437: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1439: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1452: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1454: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1467: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1469: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1482: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1484: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1497: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1499: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1512: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1514: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1526: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1528: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1541: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1543: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1556: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1558: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1571: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1573: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1586: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1588: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1601: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1603: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1616: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1618: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1631: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1633: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1646: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1648: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1661: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1663: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1676: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1678: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1691: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1693: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1705: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1707: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1720: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1722: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1735: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1737: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1750: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1752: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1765: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1767: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1780: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1782: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1795: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1797: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1810: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1812: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1825: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1827: trailing whitespace.
++    ReadinessManifestId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1840: trailing whitespace.
++    DefinitionId: 
+Assets/Game/Resources/SkirmishBattleCatalog.asset:1842: trailing whitespace.
++    ReadinessManifestId: 

@@ -11,8 +11,8 @@ namespace Game.UI.Runtime
 
         public void Configure(UIShellContentView shell)
         {
-            Configure(shell, UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) &&
-                RequiresTutorialAccess(panel));
+            Configure(shell, UiShellRuntimeGateway.TryReadSkirmish(out _) ||
+                UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) && RequiresTutorialAccess(panel));
         }
 
         internal void Configure(UIShellContentView shell, bool preserveTutorial)

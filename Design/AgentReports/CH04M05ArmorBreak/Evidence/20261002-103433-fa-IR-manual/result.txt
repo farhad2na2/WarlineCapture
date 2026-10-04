@@ -1,0 +1,1 @@
+[ArmorBreakInput] result=Passed scope=VoicedJourney voices=14 normalInput=Passed dialogue=14 result=Passed settlement=Passed return=Passed route=CombinedArmsAuthority humanDeviceAcceptance=pending

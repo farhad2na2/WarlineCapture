@@ -1,0 +1,4 @@
+Android availability checked 2026-10-04T04:12:09.453470+00:00
+Command: rtk proxy adb devices -l
+Result: List of devices attached; no devices listed.
+No target-device or human acceptance claimed.

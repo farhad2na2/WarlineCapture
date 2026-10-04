@@ -78,15 +78,20 @@ namespace Game.Configs
         public IReadOnlyList<MapBuildingPlacementConfigEntry> Placements => placements;
 
         public static MapBuildingPlacementConfig CreateRuntimeOverlay(
-            MapBuildingPlacementConfig source, MapBuildingPlacementConfig additions)
+            MapBuildingPlacementConfig source, MapBuildingPlacementConfig additions, bool neutralizeSource = false)
         {
-            if (source == null || additions == null)
-                throw new ArgumentNullException(source == null ? nameof(source) : nameof(additions));
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
             var combined = Instantiate(source);
             combined.name = source.name + "_MissionOverlay";
             combined.hideFlags = HideFlags.DontSave;
             combined.placements = new List<MapBuildingPlacementConfigEntry>(source.placements);
-            combined.placements.AddRange(additions.placements);
+            if (neutralizeSource)
+                combined.placements = source.placements.ConvertAll(entry => new MapBuildingPlacementConfigEntry(
+                    entry.SourcePath,entry.Category,entry.BuildingPrefab,0,entry.WorldCenter,entry.WorldPosition,
+                    entry.WorldEulerAngles,entry.WorldScale,entry.YawDegrees,entry.RotateVertical,
+                    entry.InstantiateVisualWhenSourceMissing,entry.UseGeometricFootprintCenter));
+            if (additions != null) combined.placements.AddRange(additions.placements);
             return combined;
         }
 

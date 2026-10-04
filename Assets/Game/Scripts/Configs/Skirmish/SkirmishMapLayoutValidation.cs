@@ -177,10 +177,16 @@ namespace Game.Configs
                 }
             }
 
+            bool townEdge = layout.WorldBinding.SourceHash == "campaign.cityedgeairfield.s004.townedge.v2";
+            bool campaignAirfield = townEdge || layout.WorldBinding.SourceHash == "campaign.cityedgeairfield.s004.v1";
+            float playerX = townEdge ? 450f : campaignAirfield ? 477.2f : DesertBasePlayerDeploymentX;
+            float playerZ = campaignAirfield ? 540f : DesertBasePlayerDeploymentZ;
+            float enemyX = campaignAirfield ? 902.8f : DesertBaseEnemyDeploymentX;
+            float enemyZ = campaignAirfield ? 540f : DesertBaseEnemyDeploymentZ;
             if (layout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig playerBase) &&
                 layout.TryProjectToMap(playerBase.NormalizedU, playerBase.NormalizedV, out float px, out float pz) &&
-                (Abs(px - DesertBasePlayerDeploymentX) > WorldBindingEpsilon ||
-                 Abs(pz - DesertBasePlayerDeploymentZ) > WorldBindingEpsilon))
+                (Abs(px - playerX) > WorldBindingEpsilon ||
+                 Abs(pz - playerZ) > WorldBindingEpsilon))
             {
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.InsufficientAnchor, "worldBinding",
@@ -189,8 +195,8 @@ namespace Game.Configs
 
             if (layout.TryGetAnchor("base.enemy", out SkirmishLayoutAnchorConfig enemyBase) &&
                 layout.TryProjectToMap(enemyBase.NormalizedU, enemyBase.NormalizedV, out float ex, out float ez) &&
-                (Abs(ex - DesertBaseEnemyDeploymentX) > WorldBindingEpsilon ||
-                 Abs(ez - DesertBaseEnemyDeploymentZ) > WorldBindingEpsilon))
+                (Abs(ex - enemyX) > WorldBindingEpsilon ||
+                 Abs(ez - enemyZ) > WorldBindingEpsilon))
             {
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.InsufficientAnchor, "worldBinding",

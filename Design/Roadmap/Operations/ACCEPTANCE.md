@@ -1,10 +1,10 @@
 # Operations acceptance and required ARIA wins
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
-For each future mission pin physical/logical map hashes in launch/checkpoint evidence; validate protected-object/destruction ownership, complete role-to-anchor mapping, legal routes and actual travel deadlines. D04 requires two independently traversable land crossings sampled at deck height; D05 all mandatory sites remain ground-reachable; D06 uses certified ground/LZ/air exits. Prove complete normal manual/ARIA outcomes, Partial/Defeat/Withdraw/recovery, exact-once district settlement and return, with separate human/device acceptance. Preserve failed evidence and original catalog status until per-entry gates pass.
+**Source reuse gate:** every district/mission binds a current Campaign physical source and records actual definition/scene/hash plus its logical role/route manifest. Reject new environment geometry or physical derivatives created by a mission assignment. Preserve all graph, route, protected-actor, manual/ARIA, persistence and device gates.
 
 ## Mission product amendment — 2026-09-28
 

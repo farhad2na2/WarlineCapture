@@ -169,6 +169,8 @@ namespace Game.UI.Shell.Ecs
                     model.LogisticsTruckCommitted = publicView.LogisticsTruckCommitted;
                     model.RifleRecruitPending = publicView.RifleRecruitPending;
                     model.AirProfile = publicView.AirProfile;
+                    model.OwnDefenseTowers = publicView.OwnDefenseTowers;
+                    model.AntiAirCommitted = publicView.AntiAirCommitted;
                     model.PadPresent = publicView.PadPresent;
                     model.ReadinessEligible = publicView.ReadinessEligible;
                     model.CanQueueAir = publicView.AirQueueOffered;

@@ -15,7 +15,43 @@ public sealed class SkirmishScenarioSourceBindingTests
         tests.ReusesOnlySelectedExactPhysicalSource(false, false, true);
         tests.ReusesOnlySelectedExactPhysicalSource(true, false, false);
         tests.ReusesOnlySelectedExactPhysicalSource(false, true, false);
-        return "[SkirmishScenarioSourceBinding] result=Passed cases=3";
+        tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(false, false, true);
+        tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(true, false, false);
+        tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(false, true, false);
+        return "[SkirmishScenarioSourceBinding] result=Passed cases=6";
+    }
+
+    [TestCase(false, false, true)]
+    [TestCase(true, false, false)]
+    [TestCase(false, true, false)]
+    public void DesertBaseStandaloneSourceRequiresExactSelectedMetadata(bool staleContent, bool wrongScenario, bool expected)
+    {
+        var definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset");
+        Assert.NotNull(definition);
+        var loaded = Object.Instantiate(definition);
+        using var world = new World("S004 standalone source validation");
+        using var bootstrap = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
+        try
+        {
+            var em = world.EntityManager;
+            var match = em.CreateEntity(typeof(SkirmishMatchState));
+            em.SetComponentData(match, new SkirmishMatchState { ScenarioIndex = 6 });
+            FixedString64Bytes mission = SkirmishLaunchProjection.MissionId;
+            FixedString64Bytes scenario = wrongScenario ? "scenario.skirmish.wrong" : SkirmishLaunchProjection.ScenarioId;
+            Assert.IsTrue(bootstrap.TryPublish(definition, in scenario, in mission, 1,
+                OperationMapReadinessFlags.Metadata, OperationMapReadinessFlags.Metadata, out var root, out var error), error);
+            if (staleContent)
+            {
+                var serialized = new SerializedObject(loaded);
+                serialized.FindProperty("contentHash").stringValue = new string('a', 64);
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+            Assert.AreEqual(expected, CampaignMissionOperationMapReuseUtility.TryValidateStandalonePhysicalSource(
+                em, loaded, root, out error), error);
+            Assert.AreEqual(expected ? 1 : 0, em.GetComponentData<OperationMapMetadataComponent>(root).PhysicalSourceValidated);
+        }
+        finally { Object.DestroyImmediate(loaded); }
     }
 
     [TestCase(false, false, true)]

@@ -1,0 +1,22 @@
+S004 readiness evidence — 2026-10-04
+Status: native gameplay checks passed; full player/release acceptance remains open.
+Candidate: 67293af68d1f94d5f990ddf733293e525575a3fd7ea6f24fad75a1c83a109f39
+Campaign source: CityEdgeAirfield. All five physical source hashes unchanged.
+Fixed authored Campaign sunlight; no moving day/night lighting or procedural town.
+
+Implemented fixes:
+- Return clears stale Skirmish attack intent, sends aircraft home, and prevents auto-engagement interrupting touchdown. A new explicit attack permits a second sortie.
+- Expanded launch retains the catalog mission index, rather than substituting a physical-map hint. Result actions preserve S004 identity and seed.
+- Adjust Setup restores mission selection after setup views mount. Native probe waits for unobscured presented controls and matching mission/seed.
+- Result copy and objective colors support English/Farsi. Setup guidance uses bounded localized text.
+
+Automated checks: final-validation-status.json contains 11 passed wrapper runs, with required markers checked against full logs. Includes seven Return regressions, full delivery validation, aircraft cycle, two manual-input journeys, and six ARIA cases.
+Native scripted input: English manual victory 144.8953 seconds, 96 actions, 18 attack receipts; Farsi 206.6633 seconds, 152 actions, 29 receipts. ARIA matrix has all three seeds in both locales, normal speed, no input violations or human interventions. Native Play+Confirm consent exercised. No separately claimed Stop-button test.
+Aircraft focused check: paid delivery on existing Ready Helipad; first sortie, home touchdown, and second sortie; pooled fuel spending 91 then 38. This focused fixture is separate from the complete combat journeys.
+Replay and Adjust Setup: native normal-input result buttons tested on the same runtime implementation before the final test-only assertion updates. Logs replay109-en.log and adjust110-fa.log. Replay checks fresh S004 identity/seed; Adjust checks S004 selection/seed and visible controls.
+
+Agent visual review: actual Campaign airfield remains open and muted compared with the dense-town mockup. Farsi setup title remains visually missing and short guidance truncates; complete objectives remain visible. Therefore visual acceptance is open, not passed. Failed early loading/wrong-selection captures are retained. User has not approved the actual Campaign capture.
+Readiness limits: harness launch queues the packaged library through API; gameplay, consent, result and return use scripted native Touch. This is not a human or target-device acceptance run, nor a complete Touch-only menu-entry test. No attached Android device was found.
+Native checkpoint recovery is unavailable under the existing HasNativeActors guard. Fixture checkpoint tests do not prove native resume. Release ARIA remains gated to Editor/development until the shared release coverage gate is met. Publication readiness remains InProgress; no release readiness promotion made.
+
+Failed history: aircraft second-sortie failures, duplicate-Test compiler error, early Adjust loading capture, wrong S001 selection, strengthened Adjust timeout, and old map-index regression expectations remain saved. Final passes supersede only their corresponding functional failures; open visual/recovery/release/device gates remain open.

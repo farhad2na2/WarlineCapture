@@ -15,6 +15,10 @@ namespace Game.Runtime
 
         internal static bool ShouldEnableDayNightVisuals(EntityManager entityManager)
         {
+            // S004's warm desert art direction is authored daylight, like campaign maps.
+            if (SkirmishS004Environment.IsActive(entityManager))
+                return false;
+
             using EntityQuery activeMapQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<ActiveOperationMapComponent>());
             if (activeMapQuery.CalculateEntityCount() == 1 &&

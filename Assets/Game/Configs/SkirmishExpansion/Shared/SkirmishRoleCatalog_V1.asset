@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: SkirmishRoleCatalog_V1
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishRoleCatalogConfig
   catalogId: skirmish.roles.v1
-  contentVersion: 1
   roles:
   - RoleId: role.rifle
     Kind: 1
@@ -27,6 +26,22 @@ MonoBehaviour:
     Kind: 2
     SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_01_Config.asset
     RuntimePrefabKey: Unit_Chr_Soldier_Male_01
+    Producer: 1
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.marksman
+    Kind: 3
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Female_01_Config.asset
+    RuntimePrefabKey: Unit_Chr_Soldier_Female_01
+    Producer: 1
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.breacher
+    Kind: 4
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Female_02_Alt_02_Config.asset
+    RuntimePrefabKey: Unit_Chr_Soldier_Female_02_Alt_02
     Producer: 1
     RequiredReadiness: 1
     Disposition: 1
@@ -47,6 +62,14 @@ MonoBehaviour:
     RequiredReadiness: 1
     Disposition: 1
     CapabilityCertified: 0
+  - RoleId: role.apc_fast
+    Kind: 7
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_APC_Fast_Config.asset
+    RuntimePrefabKey: Unit_Veh_APC_Fast
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
   - RoleId: role.apc_armored
     Kind: 8
     SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_APC_Slow_Config.asset
@@ -55,12 +78,68 @@ MonoBehaviour:
     RequiredReadiness: 1
     Disposition: 1
     CapabilityCertified: 0
+  - RoleId: role.apc_heavy
+    Kind: 9
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_APC_Heavy_Config.asset
+    RuntimePrefabKey: Unit_Veh_APC_Heavy
+    Producer: 2
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
   - RoleId: role.tank
     Kind: 10
     SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Tank_USA_Config.asset
     RuntimePrefabKey: Unit_Veh_Tank_USA
     Producer: 2
     RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.radar
+    Kind: 12
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Radar_Tank.asset
+    RuntimePrefabKey: Unit_Veh_Radar_Tank
+    Producer: 2
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.siege
+    Kind: 13
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Ground_Config.asset
+    RuntimePrefabKey: Unit_Veh_Missle_Launcher_Ground
+    Producer: 2
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.transport_heli
+    Kind: 14
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Transport_Config.asset
+    RuntimePrefabKey: Unit_Veh_Helicopter_Transport
+    Producer: 3
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.drone
+    Kind: 17
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Drone_Config.asset
+    RuntimePrefabKey: Unit_Veh_Drone
+    Producer: 5
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.logistics_truck
+    Kind: 21
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tray.asset
+    RuntimePrefabKey: Unit_Veh_Truck_Tray
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.tanker
+    Kind: 22
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tanker.asset
+    RuntimePrefabKey: Unit_Veh_Truck_Tanker
+    Producer: 2
+    RequiredReadiness: 1
     Disposition: 1
     CapabilityCertified: 0
   - RoleId: role.aa
@@ -111,3 +190,4 @@ MonoBehaviour:
     RequiredReadiness: 3
     Disposition: 1
     CapabilityCertified: 0
+  contentVersion: 1

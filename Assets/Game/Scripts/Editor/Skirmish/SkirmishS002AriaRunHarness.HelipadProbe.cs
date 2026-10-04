@@ -21,13 +21,25 @@ namespace Game.Editor
         public static void RunS003HelipadProbeAndExit()
         {
             helipadProbeAircraftCycle = false;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "0");
             LaunchS003HelipadProbe();
         }
 
         public static void RunS003AircraftCycleProbeAndExit()
         {
             helipadProbeAircraftCycle = true;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
             LaunchS003HelipadProbe();
+        }
+
+        public static void RunS004AircraftCycleProbeAndExit()
+        {
+            helipadProbeAircraftCycle = true;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S004");
+            Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            helipadProbeStage = 0;
+            RunS003StartupAndExit();
         }
 
         private static void LaunchS003HelipadProbe()
@@ -40,8 +52,12 @@ namespace Game.Editor
 
         private static void StartNativeHelipadProbe(Entity session)
         {
+            helipadProbeAircraftCycle = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE") == "1";
             helipadProbeTouch = null;
-            helipadProbeStage = 1;
+            bool existingPad = helipadProbeAircraftCycle && catalogId == "S004" &&
+                UiShellRuntimeGateway.TryReadSkirmish(out var model) && model.PadPresent;
+            helipadProbeStage = existingPad ? 10 : 1;
+            if (existingPad) Debug.Log("[S004AircraftCycle] existingReadyPad=1 additionalPlacement=0");
             helipadProbeSite = 0;
             helipadProbeTappedSite = false;
             helipadProbeExpectedSite = Vector3.zero;

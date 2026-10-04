@@ -1,0 +1,1 @@
+[ArmorBreakInput] result=Failed Native spawn guard rejects Armor Break air/transport contract; fixing scoped guard

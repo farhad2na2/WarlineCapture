@@ -45,8 +45,12 @@ namespace Game.Runtime
             BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null,
             bool requirePackedVehiclePresentationContract = false,
             Func<MapVehiclePlacementConfig> resolveMapVehiclePlacementConfig = null,
-            Func<Transform> resolveMapVehicleAuthoringRoot = null)
+            Func<Transform> resolveMapVehicleAuthoringRoot = null,
+            Func<MapBuildingPlacementConfig> resolveMapBuildingPlacementConfig = null)
         {
+            MapBuildingPlacementConfig ResolveMapBuildingPlacementConfig() =>
+                resolveMapBuildingPlacementConfig?.Invoke() ?? mapBuildingPlacementConfig;
+
             MapVehiclePlacementConfig ResolveMapVehiclePlacementConfig()
             {
                 return resolveMapVehiclePlacementConfig?.Invoke() ?? mapVehiclePlacementConfig;
@@ -541,15 +545,10 @@ namespace Game.Runtime
                             return queries.tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
                         }
 
-                        MapBuildingPlacementSpawnPrefabSystemHelper.Context mapSpawnPlacementContext =
-                            new(
-                                mapBuildingPlacementConfig,
-                                mapBuildingAuthoringRoot,
-                                source.BuildingRuntimeSpawnCompositionSystemHelper,
-                                mapSpawnContext,
-                                TryGetMapGridData,
-                                Debug.LogWarning);
-                        return () => source.MapBuildingPlacementSpawnPrefabSystemHelper.Update(mapSpawnPlacementContext);
+                        return () => source.MapBuildingPlacementSpawnPrefabSystemHelper.Update(new(
+                            ResolveMapBuildingPlacementConfig(), mapBuildingAuthoringRoot,
+                            source.BuildingRuntimeSpawnCompositionSystemHelper, mapSpawnContext,
+                            TryGetMapGridData, Debug.LogWarning));
                     },
                     (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                     {
@@ -663,7 +662,7 @@ namespace Game.Runtime
             {
                 bool placementsComplete =
                     childSystems.MapBuildingPlacementSpawnPrefabSystemHelper.IsCompleteFor(
-                        mapBuildingPlacementConfig,
+                        ResolveMapBuildingPlacementConfig(),
                         mapBuildingAuthoringRoot) &&
                     childSystems.MapVehiclePlacementSpawnPrefabSystemHelper.IsCompleteFor(
                         ResolveMapVehiclePlacementConfig(),

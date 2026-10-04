@@ -1,10 +1,8 @@
 # Operations: mode and mission production plan
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
-
-P6 consumes the [prepared-source manifest](../../MapVariants/HANDOFF_Map_Preparation.md) and owns district role/route layouts. Reuse modules without waiting for every Skirmish scenario to be accepted and without inheriting Campaign resource or production state. Preserve one authoritative owner per functional structure. New physical geometry receives an independent source identity; retain existing logical district IDs and protect active sources. No naval, bridge-collapse or arbitrary rooftop mechanic is added.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -22,7 +20,7 @@ This package targets the existing **Operations game mode** on SCN-11/SCN-12. Wor
 
 Environment sourcing amendment (2026-09-21): the [Demo 2 asset reuse plan](../../Demo2_Asset_Reuse_Plan.md) selects warehouse/logistics/utility art for D03 Industrial Belt and bridge/quay pieces for D04 River Crossing, with restrained service/perimeter accents in D02/D05/D06. D01 keeps the established desert architecture. Reuse is planned, not accepted gameplay; preserve O001–O060, both independent land crossings, existing feature limits and all mission gates. No naval or structural bridge-collapse mechanic follows from available art.
 
-Plan **60 individually authored tactical missions: six district arcs of ten missions**. Build them with **12 reusable mission families**, six district map layouts, and a persistent city simulation. Add six abstract command actions, which are **not counted as missions**. Difficulty settings, seeds, repeat appearances, failed-attempt retries, practice replays, and alternate outcome branches do not increase 60.
+Plan **60 individually authored tactical missions: six district arcs of ten missions**. Build them with **12 reusable mission families**, six logical district layouts on existing Campaign physical sources, and a persistent city simulation. Add six abstract command actions, which are **not counted as missions**. Difficulty settings, seeds, repeat appearances, failed-attempt retries, practice replays, and alternate outcome branches do not increase 60.
 
 Skirmish's [120 planned scenarios](../Skirmish_Expansion/BATTLE_CATALOG.md) combine maps/objectives/armies/starts. Operations earns its variety through intelligence, civilian protection, infrastructure, changing district conditions, and consequences that shape subsequent deployments. Doubling an authored mission by changing weather or enemy health would not justify a second catalog entry. Sixty provides six substantial district stories without requiring 120 separate narrative/consequence/repair-path contracts before the mode is coherent.
 
@@ -30,7 +28,7 @@ Treat 60 as a **full-mode planning target**, not the first playable delivery or 
 
 ## Read this handoff in order
 
-For environment work, also read the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [source/output manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P2/P6 and the district briefs now include the adaptation assignments; use the guide's D2-A01–A04 work items and D2-V1–V6 gates alongside the mission handoff.
+For source selection, read the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) first. Older Demo 2 sourcing assignments remain asset references only for these missions; P2/P6 configures logical roles/routes and legal functional placements on existing Campaign geometry.
 
 | Document | Responsibility |
 |---|---|
@@ -60,10 +58,10 @@ The six arcs are concurrent command problems, not six Campaign chapters. All dis
 | D02 Civic Center | O011–O020 | Public buildings, broad plazas, exposed service corridors | Can essential services stay open under pressure? |
 | D03 Industrial Belt | O021–O030 | Depots, freight lanes, separated repair sites | Can logistics support security without destroying infrastructure? |
 | D04 River Crossing | O031–O040 | Two land crossings, quays, constrained vehicle routes | Can access and evacuation survive contested crossings? |
-| D05 Highland Approach | O041–O050 | Switchbacks, observation ridges, isolated service nodes | Can limited forces keep remote routes connected? |
+| D05 Highland Approach | O041–O050 | Existing approach alternatives, observation sites, isolated service nodes | Can limited forces keep remote routes connected? |
 | D06 Airport Perimeter | O051–O060 | Runways, hangars, perimeter roads, landing zones | Can air access recover while ground threats remain? |
 
-These are six planned authored layouts. Reuse terrain/art/roads and certified gameplay modules from Campaign/Skirmish where suitable. Identical physical maps retain their existing map ID; a genuinely different district layout earns a new one. Do not count six skins of one unchanged route graph as six completed battlefields.
+These are six logical district role/route layouts on existing Campaign physical sources. Retain district IDs separately from physical source IDs/hashes. Multiple districts may reuse one source; mission variety comes from distinct objectives, route decisions and strategic consequences. No new physical identity or environment geometry is authorized.
 
 ## Mission mix
 

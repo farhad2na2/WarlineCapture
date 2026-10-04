@@ -1,0 +1,10 @@
+Agent visual review, 2026-10-04:
+manual72-en opening: authored City-Edge Airfield geometry/materials visible, no cyan placeholders; fixed Campaign light. Large runway apron remains part of existing source. Does not reproduce dense-town ImageGen mockup. Human map appearance acceptance pending.
+manual72-en result: readable native Campaign-style victory card; factual two green objectives and red low-loss bonus; two stars.
+manual73-fa result: translated Persian native labels, no English result copy; completed objectives green, failed bonus red; readable fields and actions.
+These captures predate the Editor-only consent harness addition and remain historical visual evidence. Fresh candidate captures pending.
+
+Current-candidate manual77 English opening/result/menu captures saved. Natural victory 205.984 seconds, 148 Touch actions, 28 verified attack receipts, no interventions or unexpected samples.
+User actual-map visual review requested asynchronously with the opening capture; no answer received yet.
+
+Current-candidate manual78 Farsi result visually checked: translated, readable objectives/performance/actions; correct green/red objective facts. ARIA79 EN seed104733 opening: visible Stop ARIA and normal authored source materials. Shared airfield apron remains visibly open/brown; dense mockup is not implemented appearance. No human visual approval inferred.

@@ -1,36 +1,26 @@
 # Map, anchor and route implementation packets
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
-Pin independent physical manifest/hash plus logical map/layout version. The source table below records historical bindings; future IB/AP authoring now consumes prepared variants, not the old prototype source. Preserve prototype rollback and coded entries. Build real connected geometry for all twenty objective layouts and device-qualified sizes, then regenerate surfaces, blockers, presentation, minimap and typed anchors together.
+## Logical identities on existing Campaign sources
 
-2026-09-21. Supplements the five authored briefs in [MAPS](MAPS.md). These are authoring targets; this task did not generate geometry or run navigation. Use Unity Editor APIs/checked builders and the Unity CLI skill when implementing; preserve current map-source/presentation/addressable contracts and Campaign anchors.
-
-## Existing vs new map identities
-
-| Code | Expanded logical map ID | Observed source / required action |
+| Code | Stable logical map ID | Existing physical source / logical authoring |
 |---|---|---|
-| DB | `opmap.skirmish.desert_base_01` | Existing shared Desert Base; expand its certified layout, keeping legacy snapshot/regression variant |
-| CC | `opmap.skirmish.city_crossroads` | Existing `Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset` with source binding to Desert Base; certify the distinct north/south logical region and repair the documented floating shelf |
-| MP | `opmap.skirmish.mountain_pass` | Proposed new map definition/layout; author two valleys, pass and vehicle bypass before accepting any MP entry |
-| IB | `opmap.skirmish.industrial_basin` | Existing prototype `Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset` remains preserved for S073; future S074–S096 use a prepared RefineryDistrict-derived expanded source with two bases and all route/air clearances |
-| AP | `opmap.skirmish.airfield_plains` | New layout on a prepared CityEdgeAirfield-derived expanded source; author two runway compounds and ground-accessible objectives, not a direct prototype rebind |
+| DB | `opmap.skirmish.desert_base_01` | Existing Campaign desert/dense-city world; logical base/route overlays only, preserve S004's current airfield binding |
+| CC | `opmap.skirmish.city_crossroads` | Existing shared city sectors or suitable current Citywide Alert / Network Collapse source; preserve S025 and avoid recorded terrain defects |
+| MP | `opmap.skirmish.mountain_pass` | Assess existing Armor Break approach sector or another Campaign inventory source; adapt mountain/valley names to actual geometry |
+| IB | `opmap.skirmish.industrial_basin` | Existing RefineryDistrict or suitable existing Armor Break logistics sector; preserve coded S073 |
+| AP | `opmap.skirmish.airfield_plains` | Existing CityEdgeAirfield / Grounded Signal with measured current air infrastructure; no second runway compound |
 
 Asset paths in this table are relative to `Assets/Game/`. An existing logical/source binding is not proof the full target layout is built. If a physical/logical definition is reused unchanged, retain its stable ID; scenario army/start/size changes belong in layout/setup references. Do not publish a new map by relabeling the same inaccessible region.
 
-## Demo 2 assets: authoring work inside the five maps
+## Existing certified assets for mission facilities
 
-Follow the [integration guide](../../Demo2_Asset_Integration_Guide.md) and [manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). D2-A01 creates project-owned variants/materials; D2-A02 stages one IB candidate yard before broader adoption. For each placement record source/output GUID, resolved decoration/surface/gameplay owner, world transform/footprint, typed anchor if interactive, content hash and evidence. Keep roof props attached to building visual states and use the existing source/config → bake chain; never write a second render/gameplay copy into generated output.
+Earlier Demo 2 art selections are references only. A mission owner may bind/place required functional facilities on existing legal pads using certified assets, with one authoritative owner per entity. Do not create project scenery variants, industrial yards, bridges, decorative compounds or new environment output as a dependency of SK-11. Separately requested art/source maintenance retains its own scope and evidence.
 
-- **DB:** optional sparse logistics/perimeter pieces; preserve desert appearance and both base exits.
-- **CC:** service-yard/damage accents; measure curb/height transitions and fix the existing floating shelf before claiming visual acceptance.
-- **MP:** small utility/perimeter compounds clear of bypass and infantry paths; a bridge is conditional geometry, not a required new mechanic.
-- **IB:** warehouse/container/pallet and generator/transformer cluster beside the freight/service routes. Preserve all BA/FC/BT/CE layout anchors, truck turning/holding areas and independent routes.
-- **AP:** perimeter/comms/logistics around the existing runway contract; warehouse and wreck models do not supply validated hangars, runways or aircraft behavior.
-
-Rebuild affected placements, navigation/surfaces, presentation, hashes, preview/minimap and dependency layout with explicit target-map inputs. Review fixed-path bake tool limitations in the guide. D2-V1–V6 are additive to the map geometry and scenario gates; all 24 scenarios sharing a changed map require the relevant updated evidence. A module preview cannot publish an S-ID.
+Record existing asset GUIDs, source hashes, transforms/footprints and role ownership. Metadata/overlay packaging updates preserve physical geometry. All affected mission acceptance checks remain; an asset preview cannot publish an S-ID.
 
 ## New layout schema and files
 
@@ -42,7 +32,7 @@ Anchor IDs: `anchor.skirmish.<lower-map>.<role>`; route IDs: `route.skirmish.<lo
 
 ## Shared logical frame and initial placement recipe
 
-Use normalized authoring coordinates `(u,v)`: u runs from player rear to enemy rear; v runs across the battlefield. Map owner pins its world origin, forward/across axes and usable metres to actual `OperationMapDefinition` bounds and saves them. This is Editor layout input, never an AI coordinate shortcut. Orient DB/AP west→east, CC north→south, MP southwest→northeast, IB northwest→southeast. Expected envelopes remain DB 600×420 m, CC roughly 400×615 m, MP 650×550 m, IB 700×550 m, AP 850×650 m, subject to certified terrain.
+Use normalized authoring coordinates `(u,v)`: u runs from player rear to enemy rear; v runs across the battlefield. Map owner pins its world origin, forward/across axes and usable metres to actual `OperationMapDefinition` bounds and saves them. This is Editor layout input, never an AI coordinate shortcut. Orient DB/AP west→east, CC north→south, MP southwest→northeast, IB northwest→southeast. Previous numeric envelopes are superseded as map-building requirements. Measure actual existing playable bounds and pin the final frame; proposed orientation and landmark names may adapt to that geometry.
 
 | Required anchor/area | Initial normalized layout target | Binding / clearance |
 |---|---|---|
@@ -57,7 +47,7 @@ Use normalized authoring coordinates `(u,v)`: u runs from player rear to enemy r
 | `convoy_origin`, `convoy_destination` | (.08,.42), (.92,.58) | Three parking bays at origin, three-truck delivery footprint at destination |
 | `defender_tower_a/b` | (.65,.32), (.65,.68) | BT/CE extra towers cover separate approaches, never origin or both complete alternate routes |
 
-These coordinates are candidate layout controls, **not permission to place inside mountains/buildings**. Builder validates actual footprint/ground connectivity; author moves a failing candidate to the nearest same-zone legal pad while preserving the route decision and travel-time envelope. Record final anchor positions, movement proof and why a deviation was needed. No runtime relocation, teleport or automatic deletion of scenery to make a placement pass. If no legal pad exists, fix that layout's geometry as part of the map ticket.
+These coordinates are candidate layout controls, **not permission to place inside mountains/buildings**. Builder validates actual footprint/ground connectivity; author moves a failing candidate to the nearest same-zone legal pad while preserving the route decision and travel-time envelope. Record final anchor positions, movement proof and why a deviation was needed. No runtime relocation, teleport or automatic deletion of scenery to make a placement pass. If no legal pad exists, select another valid sector or existing Campaign source; otherwise record the failed source-fit gate. Do not alter physical geometry as part of the layout ticket.
 
 `main`: staging → near approach → central contact → far approach → enemy staging. `flank_a` and `flank_b` have their own middle waypoints and connect both deployment areas. `convoy_a/b`: origin → own holding pocket → separate central segments → far holding pocket → destination. `bt_route_a/b`: muster → corresponding corridor → far-side escape lane → exit. Every waypoint stores surface/movement masks, width, capacity and cover/exposure tags; graph edges store estimated traversal time for infantry/car/heaviest allowed vehicle and aircraft suitability where relevant.
 
@@ -94,6 +84,6 @@ For BT/CE, defender initial whole squads distribute A/B/reserve as 40/40/20 of s
 
 ## Definition of a finished map packet
 
-Submit the five-map-specific overview and all four objective overlays, typed ID/anchor manifest, actual per-size spawn/staging/facility placements, two truck routes and two BT routes, every FC approach, certified runway/helicopter routes, placement exclusion masks, minimap/camera framing and EN/FA UI views. Drive actual required units over each route and test the heaviest allowed footprint in both directions. Record first-contact/flank timing against MAPS targets and correct bottlenecks with evidence.
+Submit the five-map-specific overview and all four objective overlays, typed ID/anchor manifest, actual per-size spawn/staging/facility placements, two truck routes and two BT routes, every FC approach, certified runway/helicopter routes, placement exclusion masks, minimap/camera framing and EN/FA UI views. Drive actual required units over each route and test the heaviest allowed footprint in both directions. Record actual first-contact/flank timing and clearance evidence. Resolve bottlenecks through legal placement/route/source selection; preserve force/deadline contracts and never create roads or terrain to force a pass.
 
-CC's thin elevated ground shelf must pass geometry/surface/collision/shadow review from multiple camera pitches before its expanded entries are accepted. MP cannot rely on aircraft to reach a mandatory point; IB decorative pipes/rails cannot secretly block all exits; AP aircraft must pass taxi/landing/return/selection with full camera movement. Device/render cost uses real composition, not cheaper placeholder meshes. A shared-map source update triggers affected Campaign/legacy geometry regression checks.
+CC's historical floating shelf remains an open defect. Use a valid existing sector/source; a separately authorized physical repair must pass its own geometry/surface/collision/shadow and Campaign regression review. MP cannot rely on aircraft to reach a mandatory point; IB decorative pipes/rails cannot secretly block all exits; AP aircraft must pass taxi/landing/return/selection with full camera movement. Device/render cost uses real composition, not cheaper placeholder meshes. A separately authorized shared-map source update triggers affected Campaign/legacy geometry regression checks; mission assignments preserve the source.

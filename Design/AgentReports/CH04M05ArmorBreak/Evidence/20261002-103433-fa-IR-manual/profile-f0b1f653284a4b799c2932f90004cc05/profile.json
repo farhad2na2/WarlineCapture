@@ -1,0 +1,437 @@
+{
+    "profileCommitRevision": 21,
+    "missionProductMigrationVersion": 1,
+    "operations": {
+        "schemaVersion": 1,
+        "profileRevision": 0,
+        "activeRun": {
+            "scopeId": "operations.sahrin.full.v1",
+            "runId": "",
+            "revision": 0,
+            "day": 1,
+            "actionPoints": 3,
+            "difficulty": 1,
+            "seed": 0,
+            "phase": 0,
+            "consecutiveStableDays": 0,
+            "directorVersion": 1,
+            "prngState": 0,
+            "cityCompleted": false,
+            "introCompleted": false,
+            "liveVictoriesToday": 0,
+            "districts": [],
+            "milestones": [],
+            "offers": [],
+            "incidents": [],
+            "sites": [],
+            "routes": [],
+            "actionUses": [],
+            "attempts": [],
+            "cooldowns": [],
+            "citywidePriorityOfferIds": [],
+            "evidenceFlags": []
+        },
+        "runSummaries": [],
+        "firstClearRewardIds": [],
+        "practiceMissionIds": [],
+        "receipts": [],
+        "committedReports": [],
+        "pendingDeployment": {
+            "reserved": false,
+            "offerId": "",
+            "sessionId": "",
+            "transactionId": "",
+            "snapshotHash": ""
+        },
+        "checkpointReference": "",
+        "idSequence": 0,
+        "operationsRewardCredits": 0,
+        "operationsRewardCommanderXp": 0,
+        "repeatCreditsGrantedOnDay": 0,
+        "commandJournal": [],
+        "rewardLedger": []
+    },
+    "operationsAttemptJson": "",
+    "profileSchemaVersion": 3,
+    "commanderName": "Commander",
+    "commanderLevel": 1,
+    "commanderXp": 2500,
+    "credits": 11000,
+    "materials": 0,
+    "fuel": 0,
+    "intel": 0,
+    "commandAuthority": 0,
+    "rushTickets": 0,
+    "victories": 0,
+    "defeats": 0,
+    "missionsCompleted": 0,
+    "starsEarned": 0,
+    "enemiesDefeated": 0,
+    "unitsLost": 0,
+    "buildingsBuilt": 0,
+    "resourcesEarned": 0,
+    "blueprintParts": [],
+    "ownedUnitUnlocks": [],
+    "ownedBuildingUnlocks": [],
+    "supportMigrationVersion": 1,
+    "ownedSupportAbilityUnlocks": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements"
+    ],
+    "ownedCosmetics": [],
+    "firstLaunchStatus": "NotStarted",
+    "firstLaunchLastCompletedStateId": "",
+    "firstLaunchCommanderCallsign": "COMMANDER",
+    "firstLaunchCommanderDisplayName": "Commander",
+    "firstLaunchCommanderPortraitIndex": 0,
+    "firstLaunchGuidance": "Full",
+    "firstLaunchLanguage": "Unselected",
+    "firstLaunchWatched": false,
+    "firstLaunchSkipped": false,
+    "firstLaunchMissionTransitionToken": 0,
+    "firstLaunchMissionSessionToken": "",
+    "firstLaunchMissionAttemptOrdinal": 0,
+    "campaignMissionProgress": [
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch01.m01.first_contact",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-0:1",
+            "settledTokens": [
+                "input-prerequisite-0:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch01.m02.establish_base",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-1:1",
+            "settledTokens": [
+                "input-prerequisite-1:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch01.m03.radar_warning",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-2:1",
+            "settledTokens": [
+                "input-prerequisite-2:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch01.m04.airlift",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-3:1",
+            "settledTokens": [
+                "input-prerequisite-3:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch01.m05.breach_assault",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-4:1",
+            "settledTokens": [
+                "input-prerequisite-4:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch02.m01.gridlock",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-5:1",
+            "settledTokens": [
+                "input-prerequisite-5:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch02.m02.supply_line",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-6:1",
+            "settledTokens": [
+                "input-prerequisite-6:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch02.m03.market_lifeline",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-7:1",
+            "settledTokens": [
+                "input-prerequisite-7:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch02.m04.power_relay",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-8:1",
+            "settledTokens": [
+                "input-prerequisite-8:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch02.m05.route_reopened",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-9:1",
+            "settledTokens": [
+                "input-prerequisite-9:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch03.m01.signal_trace",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-10:1",
+            "settledTokens": [
+                "input-prerequisite-10:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch03.m02.safehouse_sweep",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-11:1",
+            "settledTokens": [
+                "input-prerequisite-11:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch03.m03.false_front",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-12:1",
+            "settledTokens": [
+                "input-prerequisite-12:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch03.m04.evidence_chain",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-13:1",
+            "settledTokens": [
+                "input-prerequisite-13:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch03.m05.network_break",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-14:1",
+            "settledTokens": [
+                "input-prerequisite-14:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch04.m01.air_corridor",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-15:1",
+            "settledTokens": [
+                "input-prerequisite-15:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch04.m02.steel_push",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-16:1",
+            "settledTokens": [
+                "input-prerequisite-16:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch04.m03.split_front",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-17:1",
+            "settledTokens": [
+                "input-prerequisite-17:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch04.m04.grounded_signal",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": false,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 1000,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "input-prerequisite-18:1",
+            "settledTokens": [
+                "input-prerequisite-18:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        },
+        {
+            "schemaVersion": 2,
+            "missionId": "saga.ch04.m05.armor_break",
+            "available": true,
+            "firstClearCompleted": true,
+            "chapterOpeningSeen": true,
+            "bestStars": 3,
+            "bestCompletionMilliseconds": 355843,
+            "firstClearRewardSettled": true,
+            "successfulReplayCount": 0,
+            "lastSettledToken": "campaign-m03-0000000000000001:1",
+            "settledTokens": [
+                "campaign-m03-0000000000000001:1"
+            ],
+            "pendingResume": false,
+            "lastAttemptOrdinal": 1
+        }
+    ]
+}

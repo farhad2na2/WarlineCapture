@@ -5,6 +5,13 @@
 - Keep all Unity execution rules below: RTK must wrap the required repository wrapper, never replace it. Preserve full validation logs and check required pass markers against those logs.
 - Use `rtk gain` to inspect measured token savings.
 
+# Campaign map reuse for Skirmish and Operations
+
+- All Skirmish and Operations mission work must follow `Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md` (owner direction, 2026-10-03). Reuse current Campaign physical maps; the 120 Skirmishes and 60 Operations entries are missions, not requests for 180 new maps.
+- Author scenario-specific bounds, typed anchors/routes, objectives, spawns and legal gameplay placements on existing geometry. New logical configuration assets are allowed; new terrain, roads, bridges, runways, environment scenes, procedural towns or physical map derivatives are not authorized by a mission assignment.
+- Preserve coded mission bindings and shared Campaign sources. If an existing map cannot support an objective, aircraft infrastructure or army size, select another existing Campaign source or record the unresolved source-fit gate. Do not design a new map, alter fixed gameplay budgets or claim readiness to make it fit. New physical map design requires an explicit owner request.
+- This policy supersedes older Skirmish/Operations instructions requiring mountain/highland geometry, enlarged map derivatives or two new runway compounds. Preserve catalog IDs/counts, gameplay rules, evidence and acceptance gates.
+
 # Mission UI and readiness evidence
 
 - For a new mission screen or substantial mission UI redesign, create ImageGen mockups using actual Campaign UI references and obtain the user's visual-direction review before implementation. An approval already given in the task remains valid; do not ask again for routine implementation choices.

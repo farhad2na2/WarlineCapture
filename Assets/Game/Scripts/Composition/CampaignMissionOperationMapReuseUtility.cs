@@ -58,25 +58,25 @@ namespace Game.Composition
                     OperationMapId = new Unity.Collections.FixedString64Bytes(content.operationMap.OperationMapId)
                 };
             }
-            else if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish) &&
-                (skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ||
-                 skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex))
+            else if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
             {
                 // A logical Skirmish window has the same physical-source contract as
                 // a campaign window, but no campaign launch request owns its lifetime.
                 var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
-                if (preset == null || preset.operationMap == null) return false;
                 string missionId = skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
                     ? SkirmishPresetConfig.IndustrialBasinMissionId
-                    : "skirmish.city_crossroads";
+                    : skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                        ? "skirmish.city_crossroads" : SkirmishLaunchProjection.MissionId;
                 string scenarioId = skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
                     ? SkirmishPresetConfig.IndustrialBasinScenarioSetupId
-                    : "scenario.skirmish.city_crossroads";
+                    : skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                        ? "scenario.skirmish.city_crossroads" : SkirmishLaunchProjection.ScenarioId;
                 request = new CampaignMissionLaunchRequestElement
                 {
                     MissionId = new Unity.Collections.FixedString64Bytes(missionId),
                     ScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId),
-                    OperationMapId = new Unity.Collections.FixedString64Bytes(preset.operationMap.OperationMapId)
+                    OperationMapId = new Unity.Collections.FixedString64Bytes(preset != null && preset.operationMap != null
+                        ? preset.operationMap.OperationMapId : SkirmishLaunchProjection.OperationMapId)
                 };
             }
             else

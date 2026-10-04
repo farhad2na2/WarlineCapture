@@ -251,6 +251,14 @@ namespace Game.Tests.Editor
             Assert.AreEqual(41, output.TargetId);
             Assert.AreEqual(1, plan.AirCycleStage);
             view.SelectedAircraft = true;
+            view.ReturnAircraft.Available = false;
+            view.OpenAircraftActions = new AriaTouchTarget { Id = 43, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(43, output.TargetId);
+            Assert.AreEqual(2, plan.AirCycleStage, "Opening Commands must not count as a Return order.");
+            touch.Actions++;
+            view.OpenAircraftActions.Available = false;
+            view.ReturnAircraft.Available = true;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(42, output.TargetId);
             Assert.AreEqual(3, plan.AirCycleStage);

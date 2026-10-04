@@ -1,10 +1,10 @@
 # D02 — Civic Center: ten mission implementation briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign map assignment — 2026-10-03
 
-Scope: **O011–O020**. New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing.
+Scope: **O011–O020**. Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry.
 
-Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Keep the district logical ID below; pin the existing physical definition/scene/hash and bind every graph role/route to it. Old landscape, compass and landmark descriptions are semantic candidates to adapt to existing geography, not map-building instructions. Preserve graphs, distinct route choices, numerical budgets, acceptance and publication. Do not import Campaign garrisons/resources or mutate shared geometry. If no existing source fits, record the unresolved gate; new physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -12,15 +12,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **All ten entries are Planned, including ARIA certification.** Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
-Planned map: `opmap.operations.civic_center`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
+Planned logical map: `opmap.operations.civic_center`. Retain this district identity and reference the selected existing Campaign physical source separately; do not mint a new physical identity or rewrite catalog IDs merely because geometry is shared. No map/mission readiness is claimed from these briefs.
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
-## Planned environment implementation — Demo 2
+## Scenario facility binding — existing assets
 
-Assigned kit: **Utilities; restrained Perimeter**. Use generator/transformer/service enclosures near typed service or relay sites. Keep civic landmarks, both plaza approaches and the O018 pad/ground-ramp/flight clearance intact.
-
-Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+Use the current Campaign environment and existing certified assets for scenario-owned functional sites on legal pads. Earlier Demo 2 kit selections are asset references only; they do not authorize scenery compounds, crossings, terrain or district environment generation. Record actual source hashes, typed role bindings and authoritative owners. Preserve every mission graph and finite budget; no source/capability acceptance is implied.
 
 ## O011 — Signals Across the Plaza
 
@@ -37,7 +35,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1112`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(plaza_antenna,annex_antenna,clinic_antenna) -> INTERACT(service_log,15) -> EXTRACT(squad,exit.ground). Three distinct search positions and one carried log.
 
@@ -68,7 +66,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1113`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(shelter,plaza_corner,clinic_entry) -> CLEAR(route_guards) -> HOLD(clinic_entry,45). PROTECT(shelter,alive).
 
@@ -99,7 +97,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1114`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(service_guards) -> (REPAIR(annex_generator) AND REPAIR(clinic_generator)) -> HOLD(service_lane,60). PROTECT(clinic,alive); 80 Materials.
 
@@ -130,7 +128,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1115`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(annex_loading,30) -> ESCORT(record_trucks,2,route.main OR route.safe) -> HOLD(storage_entry,30). PROTECT(storage,alive).
 
@@ -161,7 +159,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1116`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(shelter_guards) -> RESCUE(shelter_residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve civilians; PROTECT(shelter,alive).
 
@@ -192,7 +190,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1117`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(annex_target) -> CLEAR(command_post_guards) -> INTERACT(command_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(records_wing,alive).
 
@@ -223,7 +221,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1118`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(square_west,60) AND HOLD(square_east,60)) -> HOLD(service_lane,90). PROTECT(annex_generator,alive).
 
@@ -254,7 +252,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1119`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(lz_threats) -> HOLD(clinic_lz,30) -> AIRLIFT(clinic_staff,8,clinic_lz,exit.air). Twelve passengers; PROTECT(clinic_lz_site,alive). No free rooftop climbing.
 
@@ -285,7 +283,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1120`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(hospital_lane,210) AND CLEAR(assault_groups). PROTECT(hospital,alive); PROTECT(clinic_generator,alive). A arrives 75 s after warning at 45 s; B arrives 150 s after warning at 105 s.
 
@@ -316,7 +314,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1121`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse existing Campaign civic geometry from Citywide Alert, Command Node or a compatible shared city sector. Bind service, shelter and hold roles to existing pads. O018 uses an existing landing pad with verified ground access and flight clearance; no new rooftop/ramp geometry. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (REPAIR(emergency_service) AND ESCORT(service_trucks,2,route.safe)) -> (HOLD(square_west,60) AND HOLD(square_east,60)) -> EXTRACT(squad,exit.ground). Three trucks; PROTECT(hospital,alive).
 

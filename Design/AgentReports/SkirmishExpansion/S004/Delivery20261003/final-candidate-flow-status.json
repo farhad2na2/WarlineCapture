@@ -1,0 +1,18 @@
+[
+  {
+    "locale": "en",
+    "seed": 104733,
+    "exit": 2,
+    "countedWin": false,
+    "returnPassed": true,
+    "log": "/private/tmp/warline-s004-native-en-104733-10.log"
+  },
+  {
+    "locale": "fa-IR",
+    "seed": 104733,
+    "exit": 2,
+    "countedWin": false,
+    "returnPassed": false,
+    "log": "/private/tmp/warline-s004-native-fa-IR-104733-10.log"
+  }
+]

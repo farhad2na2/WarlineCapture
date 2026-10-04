@@ -1,0 +1,1 @@
+[CommandNodeInput] result=Failed Native visual review found inherited gradient covering Stop role color; rerun required after presentation fix

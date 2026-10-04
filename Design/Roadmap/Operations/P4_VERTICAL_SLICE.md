@@ -1,5 +1,9 @@
 # Operations P4 three-mission vertical slice (D01)
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 Recorded 2026-09-22; scope clarified after O001 review. Package 4 authors O001–O003 on the abstract Old Quarter model, wires planner-to-loop API win paths, day-report projection and multi-day scaffolding. Regular EN automated Play Mode captures exist. **This establishes a rules/presentation prototype, not normal-input player readiness.** [P4R](O001_PLAYER_READY_IMPLEMENTATION.md) is the next integration package. Device acceptance remains separate from manual Editor playability.
 
 ## What landed

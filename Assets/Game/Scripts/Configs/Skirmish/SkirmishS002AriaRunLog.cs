@@ -138,12 +138,16 @@ namespace Game.Configs
         {
             runId = null;
             string catalog = string.IsNullOrEmpty(catalogId) ? SkirmishAcceptanceCensusCapture.CatalogId : catalogId;
-            bool seedOk = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+            bool seedOk = catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
+                ? SkirmishAcceptanceCensusCapture.IsS004RegularStandardSeed(seed)
+                : catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
                 ? SkirmishAcceptanceCensusCapture.IsS003RegularStandardSeed(seed)
                 : SkirmishAcceptanceCensusCapture.IsRegularStandardAriaSeed(seed);
             if (!seedOk)
             {
-                error = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+                error = catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
+                    ? "First-visit ARIA seed must be 104733, 130367 or 155925."
+                    : catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
                     ? "First-visit ARIA seed must be 104732, 130366 or 155924."
                     : "First-visit ARIA seed must be 104731, 130365 or 155923.";
                 return false;

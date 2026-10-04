@@ -1,0 +1,9 @@
+S004 campaign map reuse — 2026-10-03
+Physical source: City-Edge Airfield, the existing campaign Airlift / Air Corridor map.
+Source definition: Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset
+Runtime scene: Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity
+Prepared navigation/entity scene, surface and residency are reused directly.
+S004-specific operation-map resource preserves its planned logical map ID and records the true source identity/content hashes.
+No procedural courtyard/town overlay is loaded. Source scenery is neutral; S004 deploys its own forces.
+The authored campaign sun and environment are applied once. Match directional lights are disabled during S004 and restored on teardown. No moving day/night lighting.
+S004 deployment runs along the existing runway route. Shared campaign assets are unchanged (5/5 source SHA256 checks).

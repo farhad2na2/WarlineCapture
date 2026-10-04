@@ -1,10 +1,10 @@
 # D03 — Industrial Belt: ten mission implementation briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign map assignment — 2026-10-03
 
-Scope: **O021–O030**. Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives.
+Scope: **O021–O030**. Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy.
 
-Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Keep the district logical ID below; pin the existing physical definition/scene/hash and bind every graph role/route to it. Old landscape, compass and landmark descriptions are semantic candidates to adapt to existing geography, not map-building instructions. Preserve graphs, distinct route choices, numerical budgets, acceptance and publication. Do not import Campaign garrisons/resources or mutate shared geometry. If no existing source fits, record the unresolved gate; new physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -12,15 +12,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **All ten entries are Planned, including ARIA certification.** Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
-Planned map: `opmap.operations.industrial_belt`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
+Planned logical map: `opmap.operations.industrial_belt`. Retain this district identity and reference the selected existing Campaign physical source separately; do not mint a new physical identity or rewrite catalog IDs merely because geometry is shared. No map/mission readiness is claimed from these briefs.
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
-## Planned environment implementation — Demo 2
+## Scenario facility binding — existing assets
 
-Assigned kit: **Logistics and Utilities; selective Perimeter**. Prioritize warehouses, containers, pallets, generators and transformers. Preserve freight spine, ring road, three separated service sites, truck turning bays and breach access. Bind repair visuals to actual site state; these missions gain no new production or Oil chain requirement.
-
-Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+Use the current Campaign environment and existing certified assets for scenario-owned functional sites on legal pads. Earlier Demo 2 kit selections are asset references only; they do not authorize scenery compounds, crossings, terrain or district environment generation. Record actual source hashes, typed role bindings and authoritative owners. Preserve every mission graph and finite budget; no source/capability acceptance is implied.
 
 ## O021 — Freight Ledger
 
@@ -37,7 +35,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1122`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(bay_north,bay_east,bay_south) -> INTERACT(freight_ledger,20) -> EXTRACT(squad,exit.ground). Each loading bay binds a distinct recon site.
 
@@ -68,7 +66,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1123`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(freight_junction) -> ESCORT(workshop_trucks,2,route.main OR route.safe) -> HOLD(workshop,45). Three cargo trucks; PROTECT(workshop_site,alive).
 
@@ -99,7 +97,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1124`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(station_guards) -> (REPAIR(station_a) AND REPAIR(station_b) AND REPAIR(station_c)) -> HOLD(workshop_lane,60). Three stations must remain alive; 120 Materials total.
 
@@ -130,7 +128,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1125`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(pocket_a,30) AND HOLD(pocket_b,30)) -> RESCUE(workers,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve workers, six in each pocket; both rescue interactions required.
 
@@ -161,7 +159,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1126`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(cargo_approach) -> STOP(fuel_trucks,2) -> HOLD(depot_road,45). Three hostile cargo trucks; PROTECT(service_depot,alive).
 
@@ -192,7 +190,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1127`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(depot) -> BREACH(depot_gate) -> CLEAR(dispatch_guards) -> INTERACT(dispatch_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(workshop_site,alive).
 
@@ -223,7 +221,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1128`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(road_junction,75) AND HOLD(loading_apron,75)) -> CLEAR(counterattack). Wave B targets whichever zone was captured first through a reachable public approach.
 
@@ -254,7 +252,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1129`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(supply_office) -> CLEAR(record_guards) -> (INTERACT(office_record,15) AND INTERACT(hut_record,15)) -> EXTRACT(squad,exit.ground). Both evidence objects required; PROTECT(supply_office,alive).
 
@@ -285,7 +283,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1130`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(workshop_lane,240) AND CLEAR(assault_groups). PROTECT(workshop_site,alive); PROTECT(station_a,alive). A arrives 90 s via freight spine; B 180 s via ring road, with 30/45 s warnings.
 
@@ -316,7 +314,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1131`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse the current Campaign RefineryDistrict source or an existing Armor Break logistics sector. Bind three separated service sites, worker pockets, records and depot roles to current geometry; no new industrial district or inherited Campaign economy. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** BREACH(freight_barrier) -> (REPAIR(backup_station) AND ESCORT(restart_trucks,2,route.main)) -> HOLD(freight_junction,90) -> EXTRACT(squad,exit.ground). Three trucks; PROTECT(workshop_site,alive).
 

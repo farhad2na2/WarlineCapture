@@ -30,6 +30,14 @@ namespace Game.Runtime
             try
             {
                 var buildings = new List<GameObject>(baseline.Spawnables);
+                if (setup.CatalogId == "S004")
+                {
+                    var environment = UnityEngine.Resources.Load<MapBuildingPlacementConfig>(SkirmishS004Environment.ResourceName);
+                    if (environment != null)
+                        foreach (var placement in environment.Placements)
+                            if (placement?.BuildingPrefab != null && !buildings.Contains(placement.BuildingPrefab))
+                                buildings.Add(placement.BuildingPrefab);
+                }
                 var availableBuildings = new Dictionary<string, GameObject>(StringComparer.Ordinal);
                 foreach (var prefab in scene.Spawnables) if (prefab != null) availableBuildings[prefab.name] = prefab;
                 foreach (var prefab in baseline.Spawnables) if (prefab != null) availableBuildings[prefab.name] = prefab;

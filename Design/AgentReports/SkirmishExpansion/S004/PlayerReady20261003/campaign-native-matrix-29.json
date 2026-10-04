@@ -1,0 +1,56 @@
+[
+  {
+    "locale": "en",
+    "seed": 104733,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-en-104733-29.log"
+  },
+  {
+    "locale": "fa-IR",
+    "seed": 104733,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-fa-IR-104733-29.log"
+  },
+  {
+    "locale": "en",
+    "seed": 130367,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-en-130367-29.log"
+  },
+  {
+    "locale": "fa-IR",
+    "seed": 130367,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-fa-IR-130367-29.log"
+  },
+  {
+    "locale": "en",
+    "seed": 155925,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-en-155925-29.log"
+  },
+  {
+    "locale": "fa-IR",
+    "seed": 155925,
+    "exit": 0,
+    "countedWin": true,
+    "returnPassed": true,
+    "campaignLightingPassed": true,
+    "log": "/private/tmp/warline-s004-campaign-native-fa-IR-155925-29.log"
+  }
+]

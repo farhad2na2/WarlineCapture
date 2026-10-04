@@ -30,7 +30,9 @@ namespace Game.Editor
                 foreach (string file in files)
                 {
                     writer.Write(file.Substring(root.Length + 1).Replace('\\', '/'));
-                    using var stream = File.OpenRead(file);
+                    int bufferSize = (int)Math.Min(1024 * 1024, Math.Max(4096, new FileInfo(file).Length));
+                    using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read,
+                        bufferSize, FileOptions.SequentialScan);
                     byte[] digest = sha.ComputeHash(stream);
                     writer.Write(digest.Length);
                     writer.Write(digest);

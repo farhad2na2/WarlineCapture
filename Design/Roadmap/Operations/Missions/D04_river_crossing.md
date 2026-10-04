@@ -1,10 +1,10 @@
 # D04 — River Crossing: ten mission implementation briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign map assignment — 2026-10-03
 
-Scope: **O031–O040**. Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic.
+Scope: **O031–O040**. Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic.
 
-Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+Follow the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) and [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Keep the district logical ID below; pin the existing physical definition/scene/hash and bind every graph role/route to it. Old landscape, compass and landmark descriptions are semantic candidates to adapt to existing geography, not map-building instructions. Preserve graphs, distinct route choices, numerical budgets, acceptance and publication. Do not import Campaign garrisons/resources or mutate shared geometry. If no existing source fits, record the unresolved gate; new physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -12,15 +12,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **All ten entries are Planned, including ARIA certification.** Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
-Planned map: `opmap.operations.river_crossing`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
+Planned logical map: `opmap.operations.river_crossing`. Retain this district identity and reference the selected existing Campaign physical source separately; do not mint a new physical identity or rewrite catalog IDs merely because geometry is shared. No map/mission readiness is claimed from these briefs.
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
-## Planned environment implementation — Demo 2
+## Scenario facility binding — existing assets
 
-Assigned kit: **Crossing; quay Logistics**. Use bridge 01/02 and quay slab/wall variants after separate geometry certification. Both required land crossings must already be traversable, with grounded ramps, usable convoy width and independent alternatives. Keep broken bridge and boat scenery off required routes; evacuation remains land/APC based where specified. No physical bridge-collapse or naval system is introduced.
-
-Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+Use the current Campaign environment and existing certified assets for scenario-owned functional sites on legal pads. Earlier Demo 2 kit selections are asset references only; they do not authorize scenery compounds, crossings, terrain or district environment generation. Record actual source hashes, typed role bindings and authoritative owners. Preserve every mission graph and finite budget; no source/capability acceptance is implied.
 
 ## O031 — Crossing Survey
 
@@ -37,7 +35,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1132`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(crossing_west,crossing_east,quay_road) -> INTERACT(crossing_log,15) -> EXTRACT(squad,exit.ground). Three ground-accessible recon sites.
 
@@ -68,7 +66,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1133`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(quay_shelter,30) -> RESCUE(quay_residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve residents; route.safe stays entirely on land.
 
@@ -99,7 +97,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1134`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(post_guards) -> (REPAIR(west_service_post) AND REPAIR(east_service_post)) -> HOLD(crossing_midpoint,60). Both posts alive; 80 Materials.
 
@@ -130,7 +128,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1135`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(far_approach) -> ESCORT(aid_trucks,2,route.main OR route.safe) -> HOLD(aid_depot,45). Three trucks; PROTECT(aid_depot_site,alive).
 
@@ -161,7 +159,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1136`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(west_post,quay_steps,warehouse_corner,east_post) -> CLEAR(quay_patrol) -> HOLD(east_post,45). Steps are a certified infantry path; route.safe avoids them.
 
@@ -192,7 +190,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1137`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(warehouse) -> BREACH(warehouse_gate) -> CLEAR(warehouse_guards) -> INTERACT(route_records,20) -> EXTRACT(squad,exit.ground). PROTECT(aid_depot_site,alive).
 
@@ -223,7 +221,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1138`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(west_exit,75) AND HOLD(east_exit,75)) -> CLEAR(counterattack). PROTECT(west_service_post,alive); PROTECT(east_service_post,alive).
 
@@ -254,7 +252,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1139`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(enemy_staging) -> STOP(cargo_trucks,2) -> HOLD(road_junction,45). Three hostile cargo trucks; exit route chosen and saved at launch, observable through scouting.
 
@@ -285,7 +283,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1140`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(near_approach,45) -> ESCORT(relief_trucks,2,route.main OR route.safe) -> HOLD(far_approach,60). Three friendly cargo trucks; PROTECT(aid_depot_site,alive).
 
@@ -316,7 +314,7 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1141`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
-**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+**Map preparation:** Reuse current Campaign AshLinePort or Trust Under Fire geometry. Bind the two independent land-route choices, aid and shelter roles to existing crossings and approaches; record deck heights and orientation. No new bridge, port derivative or naval mechanic. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the existing Campaign source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(west_exit,60) -> (REPAIR(evac_service) AND RESCUE(trapped_residents,8,exit.ground)) -> HOLD(east_exit,90) -> EXTRACT(squad,exit.ground). Twelve residents; PROTECT(aid_depot_site,alive).
 

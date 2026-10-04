@@ -6,9 +6,9 @@
 
 All S001–S120 belong to Campaign Edition, with S001 as the unlimited free sample. Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). ARIA is included; forces/resources/research remain scenario-owned. Later paid collections add to these 120. Membership does not promote any implementation or acceptance status.
 
-## Future-map amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to the 114 uncoded combinations: S005–S024, S026–S072 and S074–S120. Preserve coded S001/S002/S003/S004/S025/S073 bindings and evidence. The historical 117-row work queue includes S002–S004; it is not the current uncoded count. IB derives from prepared RefineryDistrict; AP from prepared CityEdgeAirfield; DB/CC retain their setting and MP needs new mountain geometry. Five map identities and all catalog/setup/publication data remain unchanged.
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to the 114 uncoded combinations: S005–S024, S026–S072 and S074–S120. Preserve coded S001/S002/S003/S004/S025/S073 bindings and evidence. The historical 117-row work queue includes S002–S004; it is not the current uncoded count. All groups reuse current Campaign physical sources under the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). No new mountain terrain, expanded physical derivatives or runway compounds. Five map identities and all catalog/setup/publication data remain unchanged.
 
 | Map | Base Assault | Frontline Control | Breakthrough | Convoy Escort |
 |---|---|---|---|---|

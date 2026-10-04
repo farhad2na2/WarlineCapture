@@ -27,6 +27,8 @@ namespace Game.UI.Contracts
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
+        public int OwnDefenseTowers;
+        public bool AntiAirCommitted;
         public Vector2 FocusThreatDragEnd, FocusGroupDragEnd, FocusAdvanceDragEnd;
         public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame, VisibleHostileCombat, OwnMaterials, ExpandedRetries, VisibleHostileAir;
         public float Time, PlayerHealth, EnemyHealth, ForceHealth;
@@ -38,7 +40,7 @@ namespace Game.UI.Contracts
         { 0 => PadSite0, 1 => PadSite1, 2 => PadSite2, _ => PadSite3 };
         public AriaTouchTarget Site(int index) => index switch { 0 => Site0, 1 => Site1, 2 => Site2, 3 => Site3, 4 => Site4, _ => Site5 };
         public AriaTouchTarget AdvanceGround, ThreatGround, FocusAdvance, DefenseBuild, PlacementConfirm, PlacementCancel, FocusPlayer, Select, GroupStart, GroupEnd, FocusEnemy, Attack, Hold, EnemyBase, Recruit, CloseDrawer, Threat, FocusThreat, FocusGroup, CloseMap;
-        public AriaTouchTarget RecruitAntiAir, AirPad, UpgradeReadiness, RecruitAir, ReturnAircraft;
+        public AriaTouchTarget RecruitAntiAir, AirPad, UpgradeReadiness, RecruitAir, OpenAircraftActions, ReturnAircraft;
         public AriaTouchTarget RecruitLogisticsTruck;
         public int ExpandedAssaultMask;
         public int ExpandedSelectedMask;

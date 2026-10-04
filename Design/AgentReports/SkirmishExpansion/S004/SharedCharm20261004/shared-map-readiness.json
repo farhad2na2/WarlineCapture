@@ -1,0 +1,128 @@
+{
+  "mission": "S004",
+  "target": "Unity Editor",
+  "date": "2026-10-04",
+  "playerReady": false,
+  "sourceFingerprint": "53868faaf2b3252840ee0b04b9cef255cf65b9168e16768c47a28507c7702c81",
+  "ownerDirection": "Reuse the existing Campaign map and improve its shared visual quality, with varied ground and props. No moving day/night lighting.",
+  "sharedChanges": [
+    "World-space sand, worn-earth and scrub color variation on the existing desert material.",
+    "Static authored sun with cooler ambient fill, no fog, 160m shadow coverage; follows render-quality profile replacement and restores settings on teardown.",
+    "Existing CityEdgeAirfield town and verges dressed with 46 palms, 96 detail objects including six canopy/cart/pot groups; renderer-only props with no colliders or gameplay scripts."
+  ],
+  "sharedConsumers": [
+    "All scenarios that load CityEdgeAirfield PreparedEntities/RuntimeBinding",
+    "CH01-M04 Airlift",
+    "CH04-M01 Air Corridor",
+    "S004"
+  ],
+  "scopeNote": "This is an owner-requested visual pass on the existing shared map. No new physical map, terrain, roads, runway, town layout or navigation derivative was built. The desert material is shared, so its palette also appears wherever that material is used.",
+  "physicalSourceIntegrity": "Definition, Grid and Surface SHA256 values match the prior Campaign source. PreparedEntities changed intentionally for cosmetic props; RuntimeBinding changed intentionally for lighting. See source-integrity.json.",
+  "s004Changes": [
+    "Town-side legal base and logical layout frame v2; player base 450,540, enemy base 902.8,540. Same fixed force/economy budgets.",
+    "Opening camera 55\u201365m, pitch50, yaw-35, FOV50, focused toward the existing town. Camera guidance does not issue orders.",
+    "ARIA opens the visible Commands wheel before targeting Return; opening the wheel is not counted as a return order."
+  ],
+  "visualReview": {
+    "mockupDirection": "Previously approved; retained.",
+    "native": "Actual shared-source and S004 HUD captures inspected. Ground has broader color variation and stronger shadows, town has added vegetation and fabric props. Usable airfield space remains open and the native scene is still less densely filled than the approved mockup.",
+    "ownerNativeAcceptance": "Pending; no owner review of this final native version yet."
+  },
+  "automatedChecks": [
+    {
+      "status": "Passed",
+      "log": "warline-s004-shared-regressions151.log",
+      "scope": "Shared materials/gameplay, definitions, catalog, objectives, visuals, evidence gates, source bindings, lighting restoration and quality replacement, Campaign M01 UI."
+    },
+    {
+      "status": "Passed",
+      "log": "warline-s004-shared-aria-unit154.log",
+      "scope": "Expanded ARIA and harness regressions, including separate Commands-wheel opening and Return touches."
+    }
+  ],
+  "normalInputJourneys": [
+    {
+      "locale": "en",
+      "control": "ARIA Touch",
+      "seed": 104733,
+      "status": "Passed",
+      "outcome": "Victory",
+      "reason": "MainBaseDestroyed",
+      "seconds": 158.503,
+      "normalSpeed": true,
+      "interventions": 0,
+      "inputViolations": 0,
+      "return": "Adjust Setup",
+      "log": "warline-s004-shared-aria155.log"
+    },
+    {
+      "locale": "fa-IR",
+      "control": "Manual Touch",
+      "seed": 104733,
+      "status": "Passed",
+      "outcome": "Victory",
+      "reason": "MainBaseDestroyed",
+      "seconds": 150.337,
+      "normalSpeed": true,
+      "ariaStarted": false,
+      "actions": 108,
+      "attackReceipts": 20,
+      "return": "Main Menu",
+      "resultLocalization": "Passed",
+      "log": "warline-s004-shared-manual156.log"
+    }
+  ],
+  "aircraftLifecycle": {
+    "status": "Passed",
+    "log": "warline-s004-shared-aircraft157.log",
+    "input": "Touch through visible controls",
+    "scope": "Paid delivery, takeoff, ReturnSector, actual home touchdown, service/fuel and second sortie; no health/position/outcome injection.",
+    "touchSamples": 28
+  },
+  "failedEvidence": [
+    {
+      "attempt": 152,
+      "result": "Failed",
+      "reason": "ARIA waited for retired hidden Return control and stopped Blocked; preserved, not counted as a win. Fixed to follow Commands wheel; regression154 and complete journey155 pass."
+    },
+    {
+      "attempt": 153,
+      "result": "Failed dispatch",
+      "reason": "Pipeline connection unavailable during script reload; Editor preserved."
+    },
+    {
+      "attempts": [
+        140,
+        146,
+        149
+      ],
+      "result": "Failed",
+      "reason": "Earlier authoring import/connection attempts preserved where logs exist."
+    }
+  ],
+  "releaseGates": {
+    "ownerNativeVisualReview": "Pending",
+    "completeCurrentSeedLocaleMatrix": "Only seed104733 EN ARIA and FA manual validated on this fingerprint.",
+    "campaignNativeRegressionJourneys": "Shared source bindings and automated checks pass; CH01-M04 and CH04-M01 complete native journeys not rerun in this visual pass.",
+    "checkpointRecovery": "Existing S004 support pending/unsupported; not certified.",
+    "realPlayerAcceptance": "Pending",
+    "deviceAcceptance": "Separate; not performed.",
+    "performance": "Editor diagnostics include frame hitches and variable FPS; no device/performance acceptance claimed.",
+    "publication": "No readiness flag flipped."
+  },
+  "editorHandoff": {
+    "status": "Passed preview handoff",
+    "state": "Unity Editor Play mode; S004 setup selected, seed104733, Start Match available.",
+    "profile": "Isolated /private/tmp/s004-shared-visual-review-profile; personal save root preserved.",
+    "restore": "Prior scenes, save root, resolution and enter-Play options scheduled to restore after user stops Play.",
+    "evidence": "Preview only; not readiness certification.",
+    "log": "warline-s004-shared-handoff158.log"
+  },
+  "nativeScreens": [
+    "town.png",
+    "town-edge.png",
+    "airfield.png",
+    "s004-native-opening-en.png",
+    "s004-native-opening-fa.png"
+  ]
+}

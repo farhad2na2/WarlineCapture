@@ -1,0 +1,1 @@
+Assets/Game/Scripts/Editor/CH04M05ArmorBreakConfigBuilder.Support.cs(24,36): error CS1061: 'ReadOnlySpan<OperationMapAnchorConfig>' does not contain a definition for 'Single' and no accessible extension method 'Single' accepting a first argument of type 'ReadOnlySpan<OperationMapAnchorConfig>' could be found (are you missing a using directive or an assembly reference?)

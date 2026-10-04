@@ -1,88 +1,75 @@
-# Five Skirmish battlefield briefs
+# Five Skirmish logical battlefield briefs
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). All 120 scenarios reuse current Campaign physical maps. Five logical groups and twenty objective overlays provide variety without new environment design. This supersedes older dedicated mountain terrain, enlarged industrial/airfield derivatives, paired-runway compounds and fixed map-envelope authoring requirements. Preserve coded S001/S025/S073/S002/S003/S004 bindings and evidence.
 
-The following source choices supersede older source-sourcing proposals only; all envelope, transit, objective and capability requirements below remain in force. Reuse Demo 2 modules as complementary qualified art. Never enlarge only camera bounds or rescale aircraft/buildings to fit a prototype.
+Use [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md), the [battle packets](Scenarios/README.md) and [future content plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md). Source choices below are first candidates to measure, not claims of full-roster, size or device readiness. Another source in the existing Campaign inventory can be selected when it better fits. No new physical source is authorized by a map ticket.
 
-Planning specification, updated 2026-09-21. Each battlefield hosts 24 candidate scenarios from [BATTLE_CATALOG.md](BATTLE_CATALOG.md). Dimensions and travel times below are authoring targets requiring real navigation measurements. These are not claims about current baked geometry. DB/CC reuse the existing environment, and IB prototype map assets/wiring are now present in the working tree; none certifies the expanded layouts. MP/AP remain new authoring work. A logical battlefield may reuse a shared scene region only if its complete playable geometry meets this brief.
+## Shared mission layout contract
 
-Use [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md) for exact proposed builders, typed anchors/routes, normalized placement candidates, five map IDs, twenty objective layouts, defender allocation and geometry tests. The [battle packets](Scenarios/README.md) bind every S-ID to those layouts. Geometry adjustments must be measured in the real map; planning coordinates are not baked-navigation evidence.
+Bind two legal base/deployment areas, producer/delivery exits, meaningful assault alternatives, two legal convoy routes, two breakthrough corridors, three capture zones, contested supply sites and the air-return/landing infrastructure required by the army profile. These are logical roles and reservations on existing geometry. Base/route/objective aliases resolve through typed assets, not hard-coded AI/ARIA coordinates. Public perception receives only observable route information.
 
-## Shared map contract
+Place required scenario-owned functional facilities and forces on existing legal pads using certified assets, without duplicating scenery owners. Do not manufacture a scenery compound, road opening, berm, bridge, runway or terrain shelf to create capacity. Build pads exclude roads/sidewalks, slopes, water, blocked decoration and reserved objectives/exits. Gates use existing legal openings. Validate full rotated footprints, largest enabled vehicle turns, aircraft clearance and actual connected ground access.
 
-Art sourcing: the [Demo 2 reuse plan](../../Demo2_Asset_Reuse_Plan.md) selects logistics/utility modules for IB, service-yard accents for CC, perimeter/comms dressing for AP, small checkpoints for MP and sparse props for DB. Retain desert identity and all route/clearance contracts below. Source models are candidates until adapted and validated; do not copy the demo scene or use a new art skin to claim another map. IB is the first candidate pilot, with no alteration required to existing prototypes.
+Standard, War and Large War keep stable logical layout identity with measured spawn/staging reservations on the selected source. All force/cost/cap/deadline inputs remain in [MATCH_SETUP](MATCH_SETUP.md); they cannot be reduced silently to fit a smaller map. Existing numeric envelope suggestions are superseded: record actual usable bounds and travel times at normal unit speeds. Never scale the world or enlarge only camera bounds to claim more space.
 
-Every map provides two expandable base pads, connected deployment pockets, independent production/delivery exits, three combat approaches, two legal convoy routes, two breakthrough corridors, three capture zones, two contested supply expansion sites and safe air-return/landing spaces. Base and objective anchors have named variants for each objective, not absolute coordinates in AI/ARIA code. A map owns a semantic route graph with usable width, surface type, travel cost, cover, danger exposure and vehicle/air compatibility; only public/observed attributes reach player perception.
-
-Road carriageways stay clear of ordinary buildings. Buildable pads exclude sidewalks, slopes, mountains, water, impassable decoration and reserved exits/objectives. Gates use allowed carriageways or actual wall openings and retain their preview transform. Airfield runways and clearance corridors use measured bounds of the largest allowed aircraft plus a validated safety margin. No plane option ships on a map without its required infrastructure; redesign the pad or block that scenario until it is supported.
-
-Standard, War and Large War use the same connected map identity with separately authored staging/expansion reservations and tuned transit times. Never enlarge only the camera rectangle to claim a larger battlefield. Paths must accommodate the biggest enabled ground platform. Two vehicles must be able to pass on main routes; single-file sections require a tested bypass/queue behavior. Convoy alternatives may not both depend on the same choke. Emergency recovery must not teleport units or secretly destroy blockers.
+Two vehicles must pass on main routes, or a tested queue/bypass must exist. Convoy alternatives cannot both depend on the same sole chokepoint. Wreck recovery must be real; no teleports or silent deletion of blockers. Every required ground objective remains reachable without owning aircraft.
 
 ## DB — Desert Base
 
-**Physical-source plan (2026-09-29):** Existing desert foundation with an independent expanded layout/derivative; preserve S001–S004. Retain open highway and both rear base/air logistics areas, not refinery density.
+**Source:** existing Campaign desert/dense-city world for future DB layouts. Preserve the current S004 CityEdgeAirfield binding and every other coded entry.
 
-- **Identity:** expanded version of the existing west/east Base Assault. Broad open desert with a highway, low ruins and dispersed cover. Best entry point for mixed ground tactics, not a permanent rifle-only map.
-- **Envelope target:** roughly 600 × 420 usable metres, subject to shared-scene placement. Infantry first contact 45–75 seconds from Field Base; slower flank 75–105 seconds. Scale staging for 116/224/340-unit limits before exposing them.
-- **Bases:** west and east on flat pads off the highway. Each has a rear logistics/air strip and side exit so deliveries do not cross the assault route. Supply expansions are southwest and northeast; avoid free protected income immediately beside both HQs.
-- **Routes:** direct highway for speed but little cover; northern ruin route for infantry/APCs; southern open sweep for vehicles, vulnerable to scouts/air. A berm breaks direct base-to-base fire, without making a floating terrain shelf.
-- **BA:** attack either highway access or flank the designated Barracks. **FC:** central crossroads, north ruins, south supply junction. **BT:** choose north gate corridor or south checkpoint; exit behind the east base. **CE:** west depot to east evacuation pad via highway or southern service road.
-- **Roles:** gunners cover roads, rocketeers punish exposed armor, tanks need infantry through ruins, transports shorten the safe flank, radar/drone spot open-ground movement, siege risks counter-flanking.
-- **Quality gates:** preserve campaign anchors; verify existing gate placement and full rotated footprints; confirm surface visuals match collision. No tree/rock dressing inside authored producer clearance.
+**Tactical identity:** opposing bases connected by exposed direct movement and safer existing flanks. Choose legal pads off the current highway and suitable logistics/producer clearances; no additional highway, rear runway or expanded derivative.
+
+**Objective aliases:** BA designated bases with direct/flank assaults; FC central and two side capture areas; BT two independent existing corridors and far-side exit; CE depot-to-destination on two current truck-safe routes. Highway/north-ruins/south-sweep labels are semantic candidates to fit actual geography, not instructions to construct landmarks.
+
+**Roles and evidence:** infantry covers armor and objectives, scouts observe exposed approaches, APC/transport supports legal movement and siege remains vulnerable to flanks. Verify original-base ownership, producer exits, gate footprint, destruction recovery and fair both-side travel. Record terrain defects; use another valid sector/source rather than repairing shared geometry under this assignment.
 
 ## CC — City Crossroads
 
-**Physical-source plan (2026-09-29):** Existing urban foundation with independent north/south layout/derivative; preserve S025. Correct the floating shelf without changing the frozen shared source beneath existing consumers.
+**Source:** existing shared Campaign city sectors; assess Citywide Alert or Network Collapse if a future layout fits them better. Preserve S025's current north/south binding.
 
-- **Identity:** existing Skirmish 2's north/south approach through the city, expanded with deliberate side routes. Player stages north, enemy south. Retain the distinct orientation without reusing DB's west/east strategy coordinates.
-- **Envelope target:** existing logical window is approximately 400 × 615 metres; first attempt to satisfy the brief inside it. Widen only after scene/navigation review. Field first contact 55–85 seconds; viable flank 85–120 seconds.
-- **Bases:** clear north/south yards with rear/side expansion pads and airport approaches outside the dense blocks. No starting barracks on highway or sidewalk. Helicopter deliveries land on clear ground, do not pin the camera, and cannot overlap the public command area.
-- **Routes:** central boulevard is short and exposed; east service lane favors armored flanking; west courtyards favor infantry and transports. Add connected openings so decorative walls do not produce traps. Streets support actual vehicle turning radii.
-- **BA:** pressure the central approach or cut around either flank. **FC:** market crossing, eastern depot entrance, western civic square. **BT:** clear boulevard barricade or east service checkpoint, then evacuate south. **CE:** northern supply yard to southern yard via boulevard or east ring road.
-- **Roles:** breachers and infantry clear defended street corners; APCs move exposed squads; heavy armor controls avenues but cannot bypass every courtyard; helicopters offer a risky shortcut against mobile anti-air; scouts distinguish occupied from empty approaches.
-- **Immediate open defect:** inspection found thin ground tiles near the northern base/civic scenery around height 5.85 m with exposed edges above surrounding ground, creating a floating shelf/shadow. Correct the authored terrain transition/support and verify surface traversal/collision together. Do not merely hide the shadow. This is an open visual defect; the previous four ARIA victories do not close it.
-- **Quality gates:** inspect low/high camera pitch and all route sides for terrain seams; check infantry/vehicle access at every height transition. Repeat legal placement, delivery, two-way traffic and public-map focus checks after correction.
+**Tactical identity:** existing exposed street route, vehicle-compatible service alternative and infantry-compatible covered route. Bind bases and deliveries to legal existing yards; no new courtyard openings, city extension or airport approach.
 
-## MP — Mountain Pass
+**Objective aliases:** BA street/flank assault; FC three ground-reachable street/service zones; BT two current corridor choices and safe exit; CE two existing truck routes between supply sites. Compass directions may adapt to the physical frame; save final transforms in logical assets.
 
-**Physical-source plan (2026-09-29):** Dedicated new mountain terrain remains required. None of RefineryDistrict, AshLinePort, CityEdgeAirfield or Frontier supplies two valleys and an independent truck bypass; qualified modules may be reused.
+**Open defect:** the historical northern-base floating shelf remains a failed visual/geometry observation, not accepted terrain. Avoid the affected area or select another existing Campaign source. Mission implementation does not authorize terrain/support repair; separately authorized source maintenance must retain its own regression evidence. Inspect ground/surface/shadow agreement and vehicle corner clearance on the selected sector.
 
-- **Identity:** two valleys separated by a rocky ridge, with a central pass and two meaningful alternatives. Terrain is restrictive but cannot reduce every battle to an immovable doorway.
-- **Envelope target:** roughly 650 × 550 metres. Field first contact 60–90 seconds, longer ground flank 90–135 seconds. Use ridgeline separation for air/recon value, not arbitrary path length padding.
-- **Bases:** southwest and northeast valley floors, with buildable terraces connected to logistics roads. Runway pads lie along the outer valley axes; helipads and helicopter drop sites sit clear of cliff geometry.
-- **Routes:** central wide pass; western winding vehicle bypass with passing bays; eastern higher infantry route with a separate transport landing pocket. CE uses pass or western bypass; do not send trucks down the infantry-only trail.
-- **BA:** threaten the pass while maneuvering around a flank. **FC:** pass junction, west turnout, east lookout reachable by infantry from both sides. **BT:** two distinct ridge crossings unlock the far valley exit. **CE:** move trucks between valley depots, using scouting to choose a route.
-- **Roles:** marksmen and gunners support chokepoints, rocketeers threaten tanks in predictable corridors, transport helicopters bypass travel distance but face anti-air, radar/drone improve early warning, siege forces defenders to move.
-- **Quality gates:** no mountains containing buildable cells; no aircraft clipping ridges or selecting ground through mountains; fallback route after a wreck; no cliff-top capture point unreachable without a particular aircraft.
+## MP — Mountain Pass (stable internal group ID)
+
+**Source:** assess the already implemented Campaign Armor Break approach sector, or another existing inventory source with the required independent routes. No dedicated mountain terrain or new Frontier derivative.
+
+**Tactical identity:** restrictive approach with a meaningful broad ground route and an independent alternative. Adapt mountain, valley, ridge, lookout and pass copy to the actual existing terrain. The internal MP ID preserves catalog/save identity; it does not promise two newly constructed valleys.
+
+**Objective aliases:** BA approach plus flank; FC three distinct accessible observation/control sites; BT two independent existing ground corridors and exit; CE two actual truck-safe routes between supply roles. Keep infantry-only shortcuts separate from heavy-vehicle routes where the existing source supports them. Do not advertise elevations or ridgeline occlusion absent from the source.
+
+**Roles and evidence:** gunners/anti-armor cover constrained routes; recon, air transport and siege are optional tactical tools as permitted by the unchanged army profile. Verify wreck bypass/queue behavior, ground completion and aircraft/source clearance. If no existing source accommodates a required configuration, leave its source-fit gate open; do not build mountains or drop required capabilities.
 
 ## IB — Industrial Basin
 
-**Physical-source plan (2026-09-29):** Use a prepared RefineryDistrict-derived expanded source for S074–S096. Preserve coded S073. Build northwest/southeast base compounds, freight spine, ring/warehouse alternatives and rear air infrastructure; the 600×400 prototype must be expanded and rebaked against the 700×550 target.
+**Source:** existing Campaign RefineryDistrict; assess the existing Armor Break logistics sector when more usable capacity is needed. Preserve coded S073's shared-city source.
 
-- **Identity:** refineries, warehouses, rail/service corridors and exposed supply infrastructure. Economy and protected advances matter as much as raw unit count.
-- **Envelope target:** roughly 700 × 550 metres. Field first contact 50–85 seconds; alternate industrial ring 85–120 seconds. Build density must fit the rendering budget without hiding small troops.
-- **Bases:** northwest and southeast industrial yards, each with a separated truck depot, production yard and rear runway strip. Expansion supply sites on opposite sides create a choice between secure income and pressure.
-- **Routes:** central freight avenue for heavy armor; north/east service ring for supply raids; south/west warehouse lane for infantry and APCs. Rail dressing has explicit passable crossings, not invisible continuous blockers.
-- **BA:** isolate supply or breach the main yard. **FC:** rail junction, refinery entrance, warehouse square. **BT:** clear either freight gate or service-ring control point to open the southeast exit. **CE:** deliver trucks between storage terminals along freight avenue or service ring.
-- **Roles:** tanks, heavy APCs and siege are useful with infantry protection; anti-armor infantry exploits limited sightlines; repair/supply roles only count once real recovery mechanics exist. Fuel loss creates readable operational limits rather than immobilizing the entire army without recourse.
-- **Quality gates:** no decorative pipes blocking all exits, no indestructible scenery advertised as a target, no accidental chain-explosion mechanic. Industrial hazards remain cosmetic unless explicitly designed and exposed in a later rules version.
+**Tactical identity:** existing industrial yards and freight/service alternatives with exposed supply access. Bind bases, production and expansions to legal current pads; no added industrial district, ring road, railway crossing, runway or 700×550 enlargement.
+
+**Objective aliases:** BA designated base assault and supply pressure; FC three separated industrial control zones; BT two existing approach corridors; CE two legal supply routes. Rail/refinery/warehouse names must correspond to actual landmarks or be adapted in copy.
+
+**Roles and evidence:** combined ground forces need infantry screening and usable sightlines; logistics uses the existing economy contract. Decorative pipes/rail cannot block required exits, and scenery is not automatically a destructible mission target. Validate legal routes, heaviest footprints, ownership and recovery; no new chain-explosion mechanic.
 
 ## AP — Airfield Plains
 
-**Physical-source plan (2026-09-29):** Use a prepared CityEdgeAirfield-derived expanded source for S097–S120. Build TWO operational runway compounds, highway and independent flanks against the 850×650 target; a single 600×400 airfield prototype is not this complete battlefield.
+**Source:** current Campaign CityEdgeAirfield or Grounded Signal. Use current runway, apron and landing infrastructure; do not add a second runway compound or enlarge the airfield to 850×650.
 
-- **Identity:** broad plains, two airfield bases, dispersed low structures and contested forward landing grounds. Designed for full combined arms, while G variants remain winnable without offensive aircraft.
-- **Envelope target:** roughly 850 × 650 metres. Field first contact 60–90 seconds; long vehicle sweep 90–135 seconds. Validate strategic distance at normal unit speeds; do not force a five-minute empty march.
-- **Bases:** west/east runway compounds, wide clear approaches and separated runway, ground recruitment and logistics exits. Both have ground-accessible supply and repair/refuel capacity. Airfield destruction must leave a visible recovery plan.
-- **Routes:** middle logistics highway; northern dispersed-cover line; southern broad armored sweep. Forward landing sites are optional advantages, never the only route for a ground army.
-- **BA:** combine ground pressure with defended air sorties. **FC:** central weather station, north depot, south landing-zone entrance, all capturable by ground infantry. **BT:** open north radar-road or south apron corridor then evacuate across the far perimeter. **CE:** protect a fuel convoy on highway or southern ring road with ground/air escort.
-- **Roles:** fighters counter hostile aircraft, strike jets attack exposed ground targets, mobile anti-air forces route planning, radar/drone create useful warning, tanks and infantry remain necessary for objectives. A plane icon alone is not a validated sortie system.
-- **Quality gates:** aircraft never occupy UI selection layers or disappear under terrain; jet passes, fuel return, runway queues, carrier loss, mixed-domain orders and large visible battles pass actual runtime tests.
+**Tactical identity:** current airfield/perimeter ground routes and certified air access. Place opposing scenario bases on valid existing pads. Measure whether the source can support both factions' required production, sortie, return/refuel and logistics access without unfair infrastructure monopolies.
 
-## Geometry acceptance for every map
+**Objective aliases:** BA original bases with ground assault choices; FC three ground-capturable sites; BT two existing perimeter corridors and far-side exit; CE two current truck routes separated from active air movements. Existing landmark labels and west/east orientation adapt to actual source geography.
 
-Inspect both base pads and every route/objective at minimum/maximum zoom, rotating the camera, in EN/FA HUD safe areas. Record physical terrain joins, terrain-to-navigation agreement, shadow artifacts, projectile occlusion, bridges/ramps if any, producer exits and wreck behavior. Building pads must include the model and all entrance clearance, not just the icon footprint. No ground panel can hover without visible supporting terrain or an intentional bridge structure.
+**Roles and evidence:** aircraft, radar, AA, vehicles and infantry keep their existing capability/counter contracts. Certify the largest allowed aircraft, taxi/landing/return queues, ground access, fuel recovery, mixed-domain commands and selection visibility. A single current runway is not automatically sufficient for the full matrix; try another existing Campaign source or keep the unsupported configuration gated. No aircraft capability may be removed silently to declare a mission accepted.
 
-A full map review includes walking/dragging the camera as a human would, plus real squads, heaviest vehicles, transports and logistics driving both ways. Map-surface audits complement visual review; they do not replace it. After changed geometry, rebuild the approved navigation/surface metadata and revalidate runtime map binding, source/content hashes and affected campaign regions.
+## Source fit and acceptance for every group
+
+Submit the selected existing definition path, scene/hash, physical bounds, coordinate frame, source-fit evidence and all four logical objective overlays. Inspect bases/routes/objectives at minimum/maximum zoom with full camera movement and EN/FA HUD safe areas. Record terrain joins, surface/navigation agreement, shadow defects, occlusion, existing ramps/crossings, producer exits and wreck behavior.
+
+Drive actual squads, largest enabled vehicles, transport and logistics both ways. Test the entry's real force census and peak queues; Campaign small-squad evidence cannot qualify hundreds of units. Preserve source geometry/hash and measure native runtime/packed parity. Logical setup or overlay changes still require affected scenario checks.
+
+If no existing source fits, retain failed evidence and explicitly record the pending gate. Continue unaffected work; new physical map design requires an explicit owner request. Native visual review, full normal-input manual/ARIA journeys, result/return, recovery and real player/device acceptance remain separate gates. Planning text, metadata validation and screenshots alone do not publish an S-ID.

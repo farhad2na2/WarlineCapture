@@ -40,7 +40,7 @@ namespace Game.Composition
             {
                 SessionId = new FixedString64Bytes(payload.SessionId),
                 Seed = payload.Seed,
-                ScenarioIndex = MapHint(setup.OperationMapId),
+                ScenarioIndex = ScenarioIndex(payload.CatalogId, setup.OperationMapId),
                 Phase = SkirmishPhase.Queued
             });
 
@@ -94,8 +94,13 @@ namespace Game.Composition
             return true;
         }
 
-        private static int MapHint(string operationMapId)
+        private static int ScenarioIndex(string catalogId, string operationMapId)
         {
+            // Shared physical maps do not identify a mission. Result actions must
+            // retain the catalog binding even when several missions reuse one map.
+            var catalog = SkirmishBattleCatalogConfig.Load();
+            if (catalog != null && catalog.TryGet(catalogId, out var entry) && entry.IsPlayable)
+                return entry.PlayableScenarioIndex;
             if (operationMapId == "opmap.skirmish.city_crossroads")
                 return SkirmishPresetConfig.CityCrossroadsScenarioIndex;
             return SkirmishPresetConfig.DesertBaseScenarioIndex;

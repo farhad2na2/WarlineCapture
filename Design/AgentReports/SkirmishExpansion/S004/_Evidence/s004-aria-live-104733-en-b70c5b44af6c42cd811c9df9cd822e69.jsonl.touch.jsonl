@@ -1,0 +1,3 @@
+{"frame":423,"device":4,"time":20.418180465698243,"kind":"Dispatched","generation":2,"dispatched":1,"completed":0,"samples":0,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":424,"device":4,"time":20.481897354125978,"kind":"Began","generation":2,"dispatched":1,"completed":0,"samples":1,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":426,"device":4,"time":20.638025283813478,"kind":"Ended","generation":2,"dispatched":1,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}

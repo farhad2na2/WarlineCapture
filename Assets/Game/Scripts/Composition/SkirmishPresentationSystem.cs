@@ -170,6 +170,7 @@ namespace Game.Composition
             if(query.CalculateEntityCount()!=1)return false;
             bool basinOpening = opening && scenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
             bool s002Focus = s002Session;
+            bool s004Focus = Game.Runtime.SkirmishS004Environment.IsActive(EntityManager);
             float s002Offset = enemy ? -30f : 30f;
             var focusPosition = EntityManager.GetComponentData<LocalTransform>(entity).Position;
             float openingDistance = 40f;
@@ -199,15 +200,17 @@ namespace Game.Composition
                 focusPosition = (minimum + maximum) * .5f;
                 float extent = Unity.Mathematics.math.max(maximum.x - minimum.x, maximum.z - minimum.z);
                 openingDistance = Unity.Mathematics.math.clamp(extent * 1.3f + 30f, 60f, 180f);
+                if(s004Focus) openingDistance=Unity.Mathematics.math.clamp(openingDistance,55f,65f);
             }
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // S002 frames the Barracks and its deployment pad on every focus,
                 // including ARIA's subsequent public base-focus action.
-                Perspective=new Unity.Mathematics.float4(authoredOpening ? openingDistance : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,58,0,60),
+                Perspective=new Unity.Mathematics.float4(authoredOpening ? openingDistance : s004Focus ? 60 : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,s004Focus ? 50 : 58,s004Focus ? -35 : 0,s004Focus ? 50 : 60),
                 World=focusPosition+
-                    (authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
+                    (s004Focus ? (enemy ? Unity.Mathematics.float3.zero : new Unity.Mathematics.float3(-12,0,-8)) :
+                        authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
                         opening ? new Unity.Mathematics.float3(20,0,6) : new Unity.Mathematics.float3(0,0,12))
             });
             return true;
@@ -217,6 +220,20 @@ namespace Game.Composition
             if(view!=null){UnityEngine.Object.Destroy(view.gameObject);view=null;}
             if(!UiShellRuntimeGateway.TryReadShellState(out var shell)||shell.IsTransitionRunning)return;
             var request=EntityManager.GetComponentData<SkirmishReturnRequest>(entity);
+            if(returnStage==3)
+            {
+                if(shell.ActiveRoute!=UIRoute.QuickCustomSetup)return;
+                bool restored=false;
+                foreach(var setupView in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                {
+                    if(!setupView.IsBaseAssaultSetup)continue;
+                    setupView.PrepareScenarioAdjustment(request.ScenarioIndex,request.Seed);
+                    restored=true;
+                }
+                if(!restored)return;
+                EntityManager.DestroyEntity(entity);returnStage=0;focusedSession=null;
+                return;
+            }
             if(returnStage==0)
             {
                 if(SkirmishLaunchProjection.TryGet(EntityManager,out var session,out _) &&
@@ -238,8 +255,12 @@ namespace Game.Composition
                 if(!SkirmishLaunchProjection.TryQueue(EntityManager,config))return;
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch,UIRoute.Match,false);
             }
-            else UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute,
-                request.Action==SkirmishAction.MainMenu?UIRoute.MainMenu:UIRoute.QuickCustomSetup,false);
+            else
+            {
+                if(!UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute,
+                    request.Action==SkirmishAction.MainMenu?UIRoute.MainMenu:UIRoute.QuickCustomSetup,false))return;
+                if(request.Action==SkirmishAction.AdjustSetup){returnStage=3;return;}
+            }
             EntityManager.DestroyEntity(entity);returnStage=0;focusedSession=null;
         }
         protected override void OnDestroy(){if(view!=null)UnityEngine.Object.Destroy(view.gameObject);}

@@ -1,10 +1,8 @@
 # Delivery packages
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
-
-SK-11 owns mode-specific geometry after source preparation; SK-13 retains per-entry acceptance. IB/AP prototypes are only 600×400 playable metres and require actual expanded connected layouts, two bases and air infrastructure under the existing map briefs. Retain the first DB gameplay-slice priority and current coded work. Do not mutate the shared dense-city source to implement future layouts.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -36,7 +34,7 @@ E0 begins performance work immediately. Within each package, measure the touched
 
 ## E0 — establish facts before enlargement
 
-- **E0.1:** Fix the reported CC raised-ground/floating-edge defect with geometry/surface agreement and multi-angle visual review. Pin code/config hashes and isolate QA saves. Recheck mountains, roads, full rotated footprints, buildings selectable with feedback, previews matching final spawn, recruitment deliveries and camera interruption, exchange balances, terminal voices, both languages.
+- **E0.1:** Record the CC raised-ground/floating-edge defect and use valid existing ground or another Campaign source. Physical repair is separately authorized source work, with geometry/surface agreement and multi-angle review required before reusing the repaired area. Pin code/config hashes and isolate QA saves. Recheck mountains, roads, full rotated footprints, buildings selectable with feedback, previews matching final spawn, recruitment deliveries and camera interruption, exchange balances, terminal voices, both languages.
 - **E0.2:** Create the roster ledger described in [BASELINE.md](BASELINE.md). Flag duplicated names/portraits, noncombatants, missing producers, missing counters and unimplemented advertised abilities.
 - **E0.3:** Build a reproducible stress scene/preset using real unit definitions, AI, projectiles and map geometry. Establish separate warmup, idle, mass move, dense combat, air/transport and destruction phases. Test both spread-out armies and concentrated visibility. Report actual counts, not requested spawn counts. Additive Scenario-2 probe is authored on `cursor/e03-stress-preset-b6c7`. Programmer 2 owns Unity self-validation and may fast-forward into `codex/m03-radar-warning` when satisfied; send screenshots to Game PM after landing. Draft PR is a bookmark only. See [E0_3_STRESS_PRESET_REPORT.md](E0_3_STRESS_PRESET_REPORT.md).
 - **E0.4:** Profile Editor diagnostically and Android builds on identified devices. Use the existing CI wrappers and performance contracts. Rank CPU, GPU, memory, path-queue and allocation issues by measured contribution.
@@ -85,7 +83,7 @@ E3 is the first user review build. It should already feel materially richer than
 
 ### Environment kit delivery
 
-The [Demo 2 implementation guide](../../Demo2_Asset_Integration_Guide.md) adds D2-A01–A04 inside the existing map work. A01 (variants/materials) and A02 (IB candidate pilot) belong to SK-11/E3 map qualification; A03 (map rollout) follows proven module ownership/geometry/cost; A04 (publication evidence) belongs to SK-13/E8. Preserve DB's first ground-battle delivery and the five-map/120-scenario scope. The environment manifest records separate Planned/Authored/AcceptedForReuse status; no kit automatically certifies any scenario, roster role or device tier.
+Demo 2 asset selections are references only under the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). SK-11/E3 binds legal functional facilities and logical overlays on existing Campaign geometry; SK-13/E8 keeps all acceptance gates. No kit-adaptation scenery pilot, map rollout or physical derivative is part of a mission assignment.
 
 - Change source and mode data in reviewable packages; use Unity builders/Editor APIs for assets.
 - Preserve the accepted small preset and independent M1–M5 configs. Shared selection, pathing, transport, economy and rendering changes trigger affected campaign checks.

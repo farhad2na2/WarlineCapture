@@ -28,7 +28,8 @@ namespace Game.Composition
             string canonicalId = config.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "skirmish.s025" :
                 config.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "skirmish.s073" :
                 config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ? "skirmish.s002" :
-                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ? "skirmish.s003" : "skirmish.s001";
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ? "skirmish.s003" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex ? "skirmish.s004" : "skirmish.s001";
             if (Game.Runtime.ContentAccessRuntime.Evaluate(canonicalId) != ContentAccessState.Allowed) return false;
             using var campaign = em.CreateEntityQuery(typeof(CampaignMissionLaunchRequestElement));
             using var roots = campaign.ToEntityArray(Allocator.Temp);
@@ -57,6 +58,8 @@ namespace Game.Composition
                 return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)
                 return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId, config.MapSeed);
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex)
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId, config.MapSeed);
 
             var entity = em.CreateEntity(typeof(SkirmishMatchState));
             em.SetName(entity, "SkirmishSession");

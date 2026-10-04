@@ -1,0 +1,50 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-10-03T15:12:22Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-10-03T15:12:22.962538Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/Projects/WarlineCapture
+-logFile
+/private/tmp/warline-s004-regressions-04.log
+-quit
+-executeMethod
+Game.Tests.Editor.SkirmishSharedMaterialsTests.RunS004DeliveryValidation
+Successfully changed project path to: /Users/farhad/Projects/WarlineCapture
+/Users/farhad/Projects/WarlineCapture
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-farhad"
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2" at "2026-10-03T15:12:24.117706Z"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              090734fbeaca4c399564d0c115c6de87
+  Correlation Id:          3f7b56503616c7b5be4d20af963d6383
+  External correlation Id: 4592318014815754298
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad-6000.5.2" (connect: 0.00s, validation: 0.01s, handshake: 1.03s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2-notifications" at "2026-10-03T15:12:25.156465Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 2.21s
+[Package Manager] Server process was shutdown

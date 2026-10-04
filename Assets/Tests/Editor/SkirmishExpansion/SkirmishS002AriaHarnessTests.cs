@@ -252,6 +252,51 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void ExistingAntiAirPreservesEstablishedAirBudget()
+        {
+            var view = new AriaSkirmishObservation { ExpandedSession = true, AirProfile = true,
+                OwnDefenseTowers = 2, Infantry = 20, Time = 10, AntiAirCommitted = true,
+                VisibleHostileAir = 1, CanAffordAntiAir = true, PadPresent = true, ReadinessEligible = true,
+                AirQueueOffered = true,
+                RecruitAntiAir = new AriaTouchTarget { Id = 1, Available = true },
+                RecruitAir = new AriaTouchTarget { Id = 2, Available = true } };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(2, output.TargetId, "A living or queued AA unit covers the known air contact; invest in the offered offensive aircraft.");
+        }
+
+        [Test]
+        public void EstablishedDefensesDoNotOpenAnotherConstructionSequence()
+        {
+            var view = new AriaSkirmishObservation { ExpandedSession = true, AirProfile = true,
+                OwnDefenseTowers = 2, Infantry = 20, Time = 10,
+                DefenseBuild = new AriaTouchTarget { Id = 1, Available = true },
+                FocusPlayer = new AriaTouchTarget { Id = 2, Available = true } };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(4, plan.DefenseStage);
+            Assert.AreNotEqual(AriaSkirmishIntent.BuildDefense, plan.Intent);
+        }
+
+        [Test]
+        public void S004RunIdsUseTheirOwnSeedSequenceAndRetainAttempts()
+        {
+            string csv = SkirmishAcceptanceScaffold.RequiredHeader + "\n";
+            foreach (int seed in new[] { 104733, 130367, 155925 })
+            {
+                Assert.IsTrue(SkirmishS002AriaRunLog.TryNextAriaRunId(csv, "S004", seed, "en", out string id, out _));
+                Assert.AreEqual("S004-aria-rs-" + seed + "-en-1", id);
+                Assert.IsTrue(SkirmishS002AriaRunLog.TryNextAriaRunId(csv + id + ",rest\n", "S004", seed, "en", out string next, out _));
+                Assert.AreEqual("S004-aria-rs-" + seed + "-en-2", next);
+            }
+            Assert.IsFalse(SkirmishS002AriaRunLog.TryNextAriaRunId(csv, "S004", 104731, "en", out _, out _));
+        }
+
+        [Test]
         public void FinishedOutcomesAppendAndOnlyUnguidedVictoryCounts()
         {
             string path = TempCsv();
@@ -1369,6 +1414,9 @@ namespace Game.Tests.Editor
                 suite.UnknownInputEvidenceCannotCountAsAriaWin();
                 suite.UnfinishedOutcomeIsRefusedUntilTheMatchEnds();
                 suite.FinishedOutcomesAppendAndOnlyUnguidedVictoryCounts();
+                suite.S004RunIdsUseTheirOwnSeedSequenceAndRetainAttempts();
+                suite.EstablishedDefensesDoNotOpenAnotherConstructionSequence();
+                suite.ExistingAntiAirPreservesEstablishedAirBudget();
                 suite.AttackOrdersDamageOnlyLegalVisibleTargets();
                 suite.AssaultColumnKillsTheEnemyTankAndLeavesThePlayerBarracks();
                 suite.ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks();

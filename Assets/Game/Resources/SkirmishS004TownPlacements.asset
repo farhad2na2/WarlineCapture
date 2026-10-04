@@ -1,0 +1,2994 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a870bee3db08143e5a68159c7496a096, type: 3}
+  m_Name: SkirmishS004TownPlacements
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MapBuildingPlacementConfig
+  spawnOnMatchStart: 1
+  hideAuthoringVisualsAfterSpawn: 1
+  useExistingStaticPresentationWhenAuthoringVisualMissing: 0
+  placements:
+  - sourcePath: S004Town/Block0
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 7.0691795, z: 125}
+    worldPosition: {x: 820, y: 7.0691795, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block1
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 3.9191797, z: 167}
+    worldPosition: {x: 820, y: 3.9191797, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block2
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 4.68918, z: 209}
+    worldPosition: {x: 820, y: 4.68918, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block3
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 4.0091796, z: 251}
+    worldPosition: {x: 820, y: 4.0091796, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block4
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 0.65917975, z: 461}
+    worldPosition: {x: 820, y: 0.65917975, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block5
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 6.6491795, z: 503}
+    worldPosition: {x: 820, y: 6.6491795, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block6
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 0.009179778, z: 545}
+    worldPosition: {x: 820, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block7
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 820, y: 0.009179778, z: 587}
+    worldPosition: {x: 820, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block8
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 4.43918, z: 125}
+    worldPosition: {x: 862, y: 4.43918, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block9
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 6.57918, z: 167}
+    worldPosition: {x: 862, y: 6.57918, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block10
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 3.8891797, z: 209}
+    worldPosition: {x: 862, y: 3.8891797, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block11
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 1.4291798, z: 251}
+    worldPosition: {x: 862, y: 1.4291798, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block12
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 2.1791797, z: 461}
+    worldPosition: {x: 862, y: 2.1791797, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block13
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 4.8191795, z: 503}
+    worldPosition: {x: 862, y: 4.8191795, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block14
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 0.009179778, z: 545}
+    worldPosition: {x: 862, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block15
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 862, y: 0.009179778, z: 587}
+    worldPosition: {x: 862, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block16
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 1.9091797, z: 125}
+    worldPosition: {x: 904, y: 1.9091797, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block17
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 4.6991796, z: 167}
+    worldPosition: {x: 904, y: 4.6991796, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block18
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 0.84917974, z: 209}
+    worldPosition: {x: 904, y: 0.84917974, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block19
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 0.66917974, z: 251}
+    worldPosition: {x: 904, y: 0.66917974, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block20
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 0.009179778, z: 503}
+    worldPosition: {x: 904, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block21
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 0.009179778, z: 545}
+    worldPosition: {x: 904, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block22
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 904, y: 0.009179778, z: 587}
+    worldPosition: {x: 904, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block23
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.009179778, z: 125}
+    worldPosition: {x: 946, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block24
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.65917975, z: 167}
+    worldPosition: {x: 946, y: 0.65917975, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block25
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.46917978, z: 209}
+    worldPosition: {x: 946, y: 0.46917978, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block26
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.71917975, z: 251}
+    worldPosition: {x: 946, y: 0.71917975, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block27
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.009179778, z: 503}
+    worldPosition: {x: 946, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block28
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.009179778, z: 545}
+    worldPosition: {x: 946, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block29
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 946, y: 0.009179778, z: 587}
+    worldPosition: {x: 946, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block30
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 125}
+    worldPosition: {x: 988, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block31
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 167}
+    worldPosition: {x: 988, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block32
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.85917974, z: 209}
+    worldPosition: {x: 988, y: 0.85917974, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block33
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.70917976, z: 251}
+    worldPosition: {x: 988, y: 0.70917976, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block34
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 461}
+    worldPosition: {x: 988, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block35
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 503}
+    worldPosition: {x: 988, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block36
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 545}
+    worldPosition: {x: 988, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block37
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 988, y: 0.009179778, z: 587}
+    worldPosition: {x: 988, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block38
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 125}
+    worldPosition: {x: 1030, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block39
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 167}
+    worldPosition: {x: 1030, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block40
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.51917976, z: 209}
+    worldPosition: {x: 1030, y: 0.51917976, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block41
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.6191798, z: 251}
+    worldPosition: {x: 1030, y: 0.6191798, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block42
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 461}
+    worldPosition: {x: 1030, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block43
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 503}
+    worldPosition: {x: 1030, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block44
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 545}
+    worldPosition: {x: 1030, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block45
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1030, y: 0.009179778, z: 587}
+    worldPosition: {x: 1030, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block46
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.009179778, z: 125}
+    worldPosition: {x: 1072, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block47
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.47917977, z: 167}
+    worldPosition: {x: 1072, y: 0.47917977, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block48
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.89917976, z: 209}
+    worldPosition: {x: 1072, y: 0.89917976, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block49
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.95917976, z: 251}
+    worldPosition: {x: 1072, y: 0.95917976, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block50
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.8691798, z: 293}
+    worldPosition: {x: 1072, y: 0.8691798, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block51
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.009179778, z: 335}
+    worldPosition: {x: 1072, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block52
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.009179778, z: 419}
+    worldPosition: {x: 1072, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block53
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.009179778, z: 461}
+    worldPosition: {x: 1072, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block54
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.009179778, z: 503}
+    worldPosition: {x: 1072, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block55
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.38917977, z: 545}
+    worldPosition: {x: 1072, y: 0.38917977, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block56
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1072, y: 0.42917976, z: 587}
+    worldPosition: {x: 1072, y: 0.42917976, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block57
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.009179778, z: 125}
+    worldPosition: {x: 1114, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block58
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.33917978, z: 167}
+    worldPosition: {x: 1114, y: 0.33917978, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block59
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.53917974, z: 209}
+    worldPosition: {x: 1114, y: 0.53917974, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block60
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.46917978, z: 251}
+    worldPosition: {x: 1114, y: 0.46917978, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block61
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.44917977, z: 293}
+    worldPosition: {x: 1114, y: 0.44917977, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block62
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.009179778, z: 419}
+    worldPosition: {x: 1114, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block63
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.009179778, z: 461}
+    worldPosition: {x: 1114, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block64
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.38917977, z: 503}
+    worldPosition: {x: 1114, y: 0.38917977, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block65
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.009179778, z: 545}
+    worldPosition: {x: 1114, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block66
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1114, y: 0.38917977, z: 587}
+    worldPosition: {x: 1114, y: 0.38917977, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block67
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 125}
+    worldPosition: {x: 1156, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block68
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 167}
+    worldPosition: {x: 1156, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block69
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.16917977, z: 209}
+    worldPosition: {x: 1156, y: 0.16917977, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block70
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.57917976, z: 251}
+    worldPosition: {x: 1156, y: 0.57917976, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block71
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.19917977, z: 293}
+    worldPosition: {x: 1156, y: 0.19917977, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block72
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 377}
+    worldPosition: {x: 1156, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block73
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 419}
+    worldPosition: {x: 1156, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block74
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 461}
+    worldPosition: {x: 1156, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block75
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 503}
+    worldPosition: {x: 1156, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block76
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 545}
+    worldPosition: {x: 1156, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block77
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1156, y: 0.009179778, z: 587}
+    worldPosition: {x: 1156, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block78
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 125}
+    worldPosition: {x: 1198, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block79
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 167}
+    worldPosition: {x: 1198, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block80
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 209}
+    worldPosition: {x: 1198, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block81
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 251}
+    worldPosition: {x: 1198, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block82
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 377}
+    worldPosition: {x: 1198, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block83
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 419}
+    worldPosition: {x: 1198, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block84
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 461}
+    worldPosition: {x: 1198, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block85
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 503}
+    worldPosition: {x: 1198, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block86
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 545}
+    worldPosition: {x: 1198, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block87
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1198, y: 0.009179778, z: 587}
+    worldPosition: {x: 1198, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block88
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 125}
+    worldPosition: {x: 1240, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block89
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 167}
+    worldPosition: {x: 1240, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block90
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 209}
+    worldPosition: {x: 1240, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block91
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 251}
+    worldPosition: {x: 1240, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block92
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 377}
+    worldPosition: {x: 1240, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block93
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 419}
+    worldPosition: {x: 1240, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block94
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 461}
+    worldPosition: {x: 1240, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block95
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 503}
+    worldPosition: {x: 1240, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block96
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 545}
+    worldPosition: {x: 1240, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block97
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1240, y: 0.009179778, z: 587}
+    worldPosition: {x: 1240, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block98
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 125}
+    worldPosition: {x: 1282, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block99
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 167}
+    worldPosition: {x: 1282, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block100
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 209}
+    worldPosition: {x: 1282, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block101
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 251}
+    worldPosition: {x: 1282, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block102
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 335}
+    worldPosition: {x: 1282, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block103
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 377}
+    worldPosition: {x: 1282, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block104
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 419}
+    worldPosition: {x: 1282, y: 0.009179778, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block105
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 461}
+    worldPosition: {x: 1282, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block106
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 503}
+    worldPosition: {x: 1282, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block107
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 545}
+    worldPosition: {x: 1282, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block108
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1282, y: 0.009179778, z: 587}
+    worldPosition: {x: 1282, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block109
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 125}
+    worldPosition: {x: 1324, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block110
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 167}
+    worldPosition: {x: 1324, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block111
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 209}
+    worldPosition: {x: 1324, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block112
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 335}
+    worldPosition: {x: 1324, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block113
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 377}
+    worldPosition: {x: 1324, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block114
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.44917977, z: 419}
+    worldPosition: {x: 1324, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block115
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 461}
+    worldPosition: {x: 1324, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block116
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 503}
+    worldPosition: {x: 1324, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block117
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 545}
+    worldPosition: {x: 1324, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block118
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1324, y: 0.009179778, z: 587}
+    worldPosition: {x: 1324, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block119
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 125}
+    worldPosition: {x: 1366, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block120
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 167}
+    worldPosition: {x: 1366, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block121
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 209}
+    worldPosition: {x: 1366, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block122
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 293}
+    worldPosition: {x: 1366, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block123
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 335}
+    worldPosition: {x: 1366, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block124
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 377}
+    worldPosition: {x: 1366, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block125
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.44917977, z: 419}
+    worldPosition: {x: 1366, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block126
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 461}
+    worldPosition: {x: 1366, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block127
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 503}
+    worldPosition: {x: 1366, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block128
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 545}
+    worldPosition: {x: 1366, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block129
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1366, y: 0.009179778, z: 587}
+    worldPosition: {x: 1366, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block130
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 125}
+    worldPosition: {x: 1408, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block131
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 167}
+    worldPosition: {x: 1408, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block132
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 293}
+    worldPosition: {x: 1408, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block133
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 335}
+    worldPosition: {x: 1408, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block134
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 377}
+    worldPosition: {x: 1408, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block135
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.44917977, z: 419}
+    worldPosition: {x: 1408, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block136
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 461}
+    worldPosition: {x: 1408, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block137
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 503}
+    worldPosition: {x: 1408, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block138
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 545}
+    worldPosition: {x: 1408, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block139
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1408, y: 0.009179778, z: 587}
+    worldPosition: {x: 1408, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block140
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 125}
+    worldPosition: {x: 1450, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block141
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 167}
+    worldPosition: {x: 1450, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block142
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 251}
+    worldPosition: {x: 1450, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block143
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 293}
+    worldPosition: {x: 1450, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block144
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 335}
+    worldPosition: {x: 1450, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block145
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 377}
+    worldPosition: {x: 1450, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block146
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.44917977, z: 419}
+    worldPosition: {x: 1450, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block147
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 461}
+    worldPosition: {x: 1450, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block148
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 503}
+    worldPosition: {x: 1450, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block149
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 545}
+    worldPosition: {x: 1450, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block150
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1450, y: 0.009179778, z: 587}
+    worldPosition: {x: 1450, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block151
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 125}
+    worldPosition: {x: 1492, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block152
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 251}
+    worldPosition: {x: 1492, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block153
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 293}
+    worldPosition: {x: 1492, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block154
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 335}
+    worldPosition: {x: 1492, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block155
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 377}
+    worldPosition: {x: 1492, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block156
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.44917977, z: 419}
+    worldPosition: {x: 1492, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block157
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 461}
+    worldPosition: {x: 1492, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block158
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 503}
+    worldPosition: {x: 1492, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block159
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 545}
+    worldPosition: {x: 1492, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block160
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1492, y: 0.009179778, z: 587}
+    worldPosition: {x: 1492, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block161
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 125}
+    worldPosition: {x: 1534, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block162
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 3.2091796, z: 251}
+    worldPosition: {x: 1534, y: 3.2091796, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block163
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 293}
+    worldPosition: {x: 1534, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block164
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 335}
+    worldPosition: {x: 1534, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block165
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 377}
+    worldPosition: {x: 1534, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block166
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.44917977, z: 419}
+    worldPosition: {x: 1534, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block167
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 461}
+    worldPosition: {x: 1534, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block168
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 503}
+    worldPosition: {x: 1534, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block169
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 545}
+    worldPosition: {x: 1534, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block170
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1534, y: 0.009179778, z: 587}
+    worldPosition: {x: 1534, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block171
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 125}
+    worldPosition: {x: 1576, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block172
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 2.1091797, z: 209}
+    worldPosition: {x: 1576, y: 2.1091797, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block173
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 5.0991797, z: 251}
+    worldPosition: {x: 1576, y: 5.0991797, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block174
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 293}
+    worldPosition: {x: 1576, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block175
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 335}
+    worldPosition: {x: 1576, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block176
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 377}
+    worldPosition: {x: 1576, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block177
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.44917977, z: 419}
+    worldPosition: {x: 1576, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block178
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 461}
+    worldPosition: {x: 1576, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block179
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 503}
+    worldPosition: {x: 1576, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block180
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 545}
+    worldPosition: {x: 1576, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block181
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1576, y: 0.009179778, z: 587}
+    worldPosition: {x: 1576, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block182
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 209}
+    worldPosition: {x: 1618, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block183
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 251}
+    worldPosition: {x: 1618, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block184
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 293}
+    worldPosition: {x: 1618, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block185
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 335}
+    worldPosition: {x: 1618, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block186
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 377}
+    worldPosition: {x: 1618, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block187
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.44917977, z: 419}
+    worldPosition: {x: 1618, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block188
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 461}
+    worldPosition: {x: 1618, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block189
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 503}
+    worldPosition: {x: 1618, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block190
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 545}
+    worldPosition: {x: 1618, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block191
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1618, y: 0.009179778, z: 587}
+    worldPosition: {x: 1618, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block192
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 167}
+    worldPosition: {x: 1660, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block193
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 209}
+    worldPosition: {x: 1660, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block194
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 251}
+    worldPosition: {x: 1660, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block195
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 293}
+    worldPosition: {x: 1660, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block196
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 335}
+    worldPosition: {x: 1660, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block197
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 377}
+    worldPosition: {x: 1660, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block198
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.44917977, z: 419}
+    worldPosition: {x: 1660, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block199
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 461}
+    worldPosition: {x: 1660, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block200
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 503}
+    worldPosition: {x: 1660, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block201
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 545}
+    worldPosition: {x: 1660, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block202
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1660, y: 0.009179778, z: 587}
+    worldPosition: {x: 1660, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block203
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 209}
+    worldPosition: {x: 1702, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block204
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 251}
+    worldPosition: {x: 1702, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block205
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 293}
+    worldPosition: {x: 1702, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block206
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 335}
+    worldPosition: {x: 1702, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block207
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 377}
+    worldPosition: {x: 1702, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block208
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.44917977, z: 419}
+    worldPosition: {x: 1702, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block209
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 461}
+    worldPosition: {x: 1702, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block210
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 503}
+    worldPosition: {x: 1702, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block211
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 545}
+    worldPosition: {x: 1702, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block212
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1702, y: 0.009179778, z: 587}
+    worldPosition: {x: 1702, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block213
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 167}
+    worldPosition: {x: 1744, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block214
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 209}
+    worldPosition: {x: 1744, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block215
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 251}
+    worldPosition: {x: 1744, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block216
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 293}
+    worldPosition: {x: 1744, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block217
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 335}
+    worldPosition: {x: 1744, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block218
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 377}
+    worldPosition: {x: 1744, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block219
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.44917977, z: 419}
+    worldPosition: {x: 1744, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block220
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 461}
+    worldPosition: {x: 1744, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block221
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 503}
+    worldPosition: {x: 1744, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block222
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 545}
+    worldPosition: {x: 1744, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block223
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1744, y: 0.009179778, z: 587}
+    worldPosition: {x: 1744, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block224
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 125}
+    worldPosition: {x: 1786, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block225
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 167}
+    worldPosition: {x: 1786, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block226
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 209}
+    worldPosition: {x: 1786, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block227
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 251}
+    worldPosition: {x: 1786, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block228
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 293}
+    worldPosition: {x: 1786, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block229
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 335}
+    worldPosition: {x: 1786, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block230
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 377}
+    worldPosition: {x: 1786, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block231
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.44917977, z: 419}
+    worldPosition: {x: 1786, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block232
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 461}
+    worldPosition: {x: 1786, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block233
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 503}
+    worldPosition: {x: 1786, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block234
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 545}
+    worldPosition: {x: 1786, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block235
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1786, y: 0.009179778, z: 587}
+    worldPosition: {x: 1786, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block236
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 125}
+    worldPosition: {x: 1828, y: 0.009179778, z: 125}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block237
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 167}
+    worldPosition: {x: 1828, y: 0.009179778, z: 167}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block238
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 209}
+    worldPosition: {x: 1828, y: 0.009179778, z: 209}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block239
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 251}
+    worldPosition: {x: 1828, y: 0.009179778, z: 251}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block240
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 293}
+    worldPosition: {x: 1828, y: 0.009179778, z: 293}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block241
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 335}
+    worldPosition: {x: 1828, y: 0.009179778, z: 335}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block242
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 377}
+    worldPosition: {x: 1828, y: 0.009179778, z: 377}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block243
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.44917977, z: 419}
+    worldPosition: {x: 1828, y: 0.44917977, z: 419}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block244
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2278124261599857610, guid: d5060b16db0504c7399a263720acd9ec, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 461}
+    worldPosition: {x: 1828, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block245
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 2074155891059463395, guid: 694cc1d86be0c49a8825ea021e960fa7, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 503}
+    worldPosition: {x: 1828, y: 0.009179778, z: 503}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block246
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 7634165631203546588, guid: bbf3a5c2bb8864721a2fb7abde8c4269, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 545}
+    worldPosition: {x: 1828, y: 0.009179778, z: 545}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: S004Town/Block247
+    category: Neutral neighbourhood
+    buildingPrefab: {fileID: 4111311547775211224, guid: d51a084496c8f4ed39828dedea0a984a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1828, y: 0.009179778, z: 587}
+    worldPosition: {x: 1828, y: 0.009179778, z: 587}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1

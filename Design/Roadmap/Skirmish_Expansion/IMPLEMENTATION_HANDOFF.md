@@ -1,10 +1,8 @@
 # Skirmish battles 4–120: implementation handoff
 
-## Future-map planning amendment — 2026-09-29
+## Existing Campaign maps only — 2026-10-03
 
-Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
-
-SK-11 owns mode-specific geometry after source preparation; SK-13 retains per-entry acceptance. IB/AP prototypes are only 600×400 playable metres and require actual expanded connected layouts, two bases and air infrastructure under the existing map briefs. Retain the first DB gameplay-slice priority and current coded work. Do not mutate the shared dense-city source to implement future layouts.
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
 
 ## Mission product amendment — 2026-09-28
 
@@ -71,7 +69,7 @@ These are source findings, not a Unity/device/ARIA run. Existing shared-source m
 
 ## Fixed decisions agents can implement without asking for design
 
-Environment asset implementation now includes the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [source/output planning manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). Assign D2-A01/A02 within SK-11 to qualify a small IB warehouse/logistics/utility candidate. Integrate accepted modules through each map's owning source/config and presentation path; retain stable S-IDs, map IDs, roster roles and the DB first-ground-slice priority. D2-A03/A04 join the affected SK-11/SK-13 acceptance work. Art selection is resolved; actual output GUIDs, dimensions, ownership and validation must be recorded by the implementation owner.
+Environment implementation follows the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md). SK-11 selects existing physical sources and authors logical overlays/functional placements; SK-13 certifies each entry. Earlier Demo 2 kit selections are asset references and do not authorize scenery pilots, new maps or physical derivatives. Preserve existing source hashes, stable S-IDs, map IDs, roster roles and the DB first-ground-slice priority.
 
 - Keep the 120 identities and exact objective/army/start matrix. Default a first visit to Regular/Standard; recommended War remains a user-visible suggestion gated by device and checkpoint certification.
 - Implement shared ECS systems and typed assets. Add no per-scenario C# controller and no 120-way gameplay/ARIA switch. Each packet lists the exact shared types it consumes.
@@ -81,7 +79,7 @@ Environment asset implementation now includes the [Demo 2 integration guide](../
 - Follow the economy reconciliation in the roster document: Materials fabrication and Fuel refining are separate real facilities, and their input/output/time budgets are explicit. Do not implement the contradictory earlier 300-Materials recipe alongside a 100-Materials/minute claim.
 - Preserve legacy prototype saves/results separately. No automatic victory, reward, or progress migration to an expanded definition. Unsupported data fails with a specific reason and safe setup return.
 - If a required feature is missing, its named work package is the next implementation task. Agents may implement that dependency and continue; they must not ask the owner to choose a rule already specified here or silently simplify the battle.
-- Routine tuning/geometry corrections are within implementation: record measured evidence and changed config version, preserve objective semantics/roster identity/fairness and update the affected packets. New modes, objectives, paid content, expanded 200-catalog scope or destructive unrelated edits remain outside this task.
+- Routine tuning and logical placement/route corrections on existing geometry are within implementation: record measured evidence and changed config version, preserve objective semantics/roster identity/fairness and update the affected packets. New modes, objectives, paid content, expanded 200-catalog scope or destructive unrelated edits remain outside this task.
 
 ## Authority and completion
 

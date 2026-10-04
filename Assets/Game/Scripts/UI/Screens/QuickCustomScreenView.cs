@@ -148,6 +148,11 @@ namespace Game.UI.Runtime
 
             if (mapNameText != null)
             {
+                mapNameText.enableAutoSizing = true;
+                mapNameText.fontSizeMin = 16f;
+                mapNameText.fontSizeMax = 30f;
+                mapNameText.textWrappingMode = TextWrappingModes.Normal;
+                mapNameText.overflowMode = TextOverflowModes.Ellipsis;
                 // Translate through the presentation binding as well as the catalog: assigning
                 // Persian directly to the authored Latin TMP font produces missing-glyph squares.
                 if (baseAssaultPreset)
@@ -176,7 +181,27 @@ namespace Game.UI.Runtime
 
                     var binding = mapNameText.GetComponent<V3LocalizedTextBindingView>() ??
                                   mapNameText.gameObject.AddComponent<V3LocalizedTextBindingView>();
-                    if (!string.IsNullOrEmpty(titleKey))
+                    binding.ConfigureFontBounds(12f, 22f);
+                    if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
+                    {
+                        // The responsive frame supplies a fixed-width title slot.
+                        // Older setup authoring left this label horizontally stretched.
+                        var titleRect = mapNameText.rectTransform;
+                        titleRect.anchorMin = titleRect.anchorMax = new Vector2(0f, 1f);
+                        titleRect.pivot = new Vector2(0f, 1f);
+                        titleRect.anchoredPosition = new Vector2(8f, 0f);
+                        titleRect.sizeDelta = new Vector2(784f, 54f);
+                        var previewRect = titleRect.parent.Find("MapPreviewClip") as RectTransform;
+                        if (previewRect != null)
+                        {
+                            previewRect.anchorMin = previewRect.anchorMax = new Vector2(0f, 1f);
+                            previewRect.pivot = new Vector2(0f, 1f);
+                        }
+                        UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
+                            ? "S004 · حملهٔ هوایی به پایگاه" : "S004 · Air-mobile base assault");
+                        mapNameText.overflowMode = TextOverflowModes.Overflow;
+                    }
+                    else if (!string.IsNullOrEmpty(titleKey))
                     {
                         binding.Configure(titleKey, titleEnglish, false);
                         binding.ApplyLocalization();
@@ -197,6 +222,18 @@ namespace Game.UI.Runtime
             _launchCommand = launchCommand;
             flowSystem.Initialize(this, _configStore);
         }
+
+        public void PrepareScenarioAdjustment(int scenarioIndex, int seed)
+        {
+            if (!baseAssaultPreset) return;
+            SelectScenario(scenarioIndex);
+            _config.MapSeed = seed;
+            Bind(_config);
+            _configStore?.Apply(ReadConfigFromControls());
+        }
+
+        public bool IsBaseAssaultSetup => baseAssaultPreset;
+        public string SelectedScenarioId => _selectedScenarioId;
 
         public UiQuickCustomGameConfig ReadConfigFromControls()
         {

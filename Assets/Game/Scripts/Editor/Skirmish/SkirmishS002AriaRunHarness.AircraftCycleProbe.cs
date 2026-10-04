@@ -1,8 +1,12 @@
 using System;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.Tactical.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Components;
+using Unity.Entities;
+using Unity.Collections;
 
 namespace Game.Editor
 {
@@ -10,6 +14,7 @@ namespace Game.Editor
     {
         private static double airProbePurchaseAt, airProbeServiceAt, airProbeSortieAt, airProbeLastStatusAt;
         private static int airProbePageTurns;
+        private static int airProbeFirstFuel, airProbeSecondFuel;
 
         private static void TickAircraftCycleProbe(double now, SkirmishMatchView skirmish,
             BuildDrawerView drawer, BuildDrawerCatalogRuntimeView catalog,
@@ -24,6 +29,7 @@ namespace Game.Editor
                     " canQueueAir=" + model.CanQueueAir + " airPending=" + model.AirRecruitPending +
                     " airLive=" + model.OwnAttackAirLive + " airActive=" + model.OwnAttackAirActive +
                     " airLanded=" + model.OwnAttackAirLanded + " fuel=" + model.OwnAirFuel);
+                TraceAircraftOrders();
             }
             if (model.Finished) { EndHelipadProbe(false, "matchEndedBeforeSecondSortie"); return; }
             if (!model.PadPresent) { EndHelipadProbe(false, "padLostBeforeSecondSortie"); return; }
@@ -69,32 +75,37 @@ namespace Game.Editor
             if (helipadProbeStage == 15)
             {
                 if (!skirmish.EnemyBaseMarkerVisible) return;
-                if (TapHelipadButton(controls?.AttackButton, now)) helipadProbeStage = 16;
+                if (EnsureAircraftAttackMode(now, controls)) helipadProbeStage = 16;
                 return;
             }
             if (helipadProbeStage == 16)
             {
                 if (TouchEnemyBase(now, skirmish))
-                { helipadProbeStage = 17; airProbeSortieAt = now; }
+                { helipadProbeStage = 17; airProbeSortieAt = now; airProbeFirstFuel = model.OwnAirFuel; }
                 return;
             }
             if (helipadProbeStage == 17)
             {
                 if (model.OwnAttackAirActive == 0) return;
                 if (now - airProbeSortieAt < 15d) return;
+                if (model.OwnAirFuel >= airProbeFirstFuel) return;
                 Debug.Log("[SkirmishS003AircraftCycleProbe] firstSortie=Observed active=" + model.OwnAttackAirActive);
+                Debug.Log("[SkirmishAircraftFuelCycle] firstFuelSpent=" + (airProbeFirstFuel - model.OwnAirFuel));
                 helipadProbeStage = 18;
             }
             if (helipadProbeStage == 18)
             {
                 if (!SelectPresentedAircraft(now)) return;
-                var panel = UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
-                if (TapHelipadButton(panel?.PresentedReturnButton, now)) helipadProbeStage = 19;
+                // The old panel buttons are hidden. Follow the player's Commands
+                // button into the wheel and tap its visible Return action.
+                var wheel = controls != null ? controls.CommandWheelPanel : null;
+                bool wasOpen = wheel != null && wheel.IsOpen;
+                if (TapHelipadButton(wheel?.NextReturnButton, now) && wasOpen) helipadProbeStage = 19;
                 return;
             }
             if (helipadProbeStage == 19)
             {
-                if (model.OwnAttackAirActive != 0 || model.OwnAttackAirLanded == 0) return;
+                if (model.OwnAttackAirActive != 0 || model.OwnAttackAirLanded == 0 || !SelectedAircraftAtHome()) return;
                 Debug.Log("[SkirmishS003AircraftCycleProbe] touchdown=Observed landed=" + model.OwnAttackAirLanded);
                 airProbeServiceAt = now + 5d;
                 helipadProbeStage = 20;
@@ -119,19 +130,76 @@ namespace Game.Editor
             if (helipadProbeStage == 23)
             {
                 if (!skirmish.EnemyBaseMarkerVisible) return;
-                if (TapHelipadButton(controls?.AttackButton, now)) helipadProbeStage = 24;
+                if (EnsureAircraftAttackMode(now, controls)) helipadProbeStage = 24;
                 return;
             }
             if (helipadProbeStage == 24)
             {
-                if (TouchEnemyBase(now, skirmish)) helipadProbeStage = 25;
+                if (TouchEnemyBase(now, skirmish))
+                { helipadProbeStage = 25; airProbeSecondFuel = model.OwnAirFuel; airProbeSortieAt = now; }
                 return;
             }
-            if (helipadProbeStage == 25 && model.OwnAttackAirActive > 0)
+            if (helipadProbeStage == 25 && model.OwnAttackAirActive > 0 &&
+                now - airProbeSortieAt >= 5d && model.OwnAirFuel < airProbeSecondFuel)
             {
                 Debug.Log("[SkirmishS003AircraftCycleProbe] secondSortie=Observed active=" + model.OwnAttackAirActive);
+                Debug.Log("[SkirmishAircraftFuelCycle] secondFuelSpent=" + (airProbeSecondFuel - model.OwnAirFuel));
                 EndHelipadProbe(true, "paidDeliveryTakeoffReturnTouchdownFuelAndSecondSortie");
             }
+            else if (helipadProbeStage == 25 && now - airProbeSortieAt > 45d)
+                EndHelipadProbe(false, "secondSortieNotLaunched");
+        }
+
+        private static bool EnsureAircraftAttackMode(double now, MatchOverlayCommandControlsView controls)
+        {
+            if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state) &&
+                state.ActiveCommandMode == TacticalCommandMode.Attack) return true;
+            TapHelipadButton(controls?.AttackButton, now);
+            return false;
+        }
+
+        private static void TraceAircraftOrders()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated) return;
+            var em = world.EntityManager;
+            using var query = em.CreateEntityQuery(typeof(UnitAirComponent), typeof(SelectedUnitTag));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+            {
+                var air = em.GetComponentData<UnitAirComponent>(actor);
+                Debug.Log("[S004AircraftOrders] entity=" + actor + " returning=" + air.ReturningHome +
+                    " airborne=" + air.Airborne + " engage=" + em.HasComponent<EngageTarget>(actor) +
+                    " target=" + em.HasComponent<UnitTarget>(actor) + " hold=" + em.HasComponent<HoldPositionOrderTag>(actor));
+            }
+            using var queues = em.CreateEntityQuery(typeof(UnitAttackOrderQueueComponent));
+            if (queues.CalculateEntityCount() == 1)
+            {
+                var queue = queues.GetSingletonEntity();
+                Debug.Log("[S004AircraftOrders] lastRequest=" + em.GetComponentData<UnitAttackOrderQueueComponent>(queue).LastRequestId);
+                if (em.HasBuffer<UnitAttackOrderResultElement>(queue))
+                    foreach (var result in em.GetBuffer<UnitAttackOrderResultElement>(queue, true))
+                        Debug.Log("[S004AircraftOrders] request=" + result.RequestId + " issued=" + result.Issued +
+                            " reason=" + result.ReasonCode + " message=" + result.Message);
+            }
+        }
+
+        private static bool SelectedAircraftAtHome()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated) return false;
+            var em = world.EntityManager;
+            using var query = em.CreateEntityQuery(typeof(UnitAirComponent), typeof(SelectedUnitTag),
+                typeof(Unity.Transforms.LocalTransform));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+            {
+                var air = em.GetComponentData<UnitAirComponent>(actor);
+                if (air.HomeInitialized == 0 || air.Airborne != 0 || air.ReturningHome != 0 ||
+                    Unity.Mathematics.math.distance(em.GetComponentData<Unity.Transforms.LocalTransform>(actor).Position,
+                        air.HomePosition) > 1.5f) return false;
+            }
+            return actors.Length > 0;
         }
 
         private static void TouchProbeCatalog(double now, BuildDrawerView drawer,
@@ -156,7 +224,7 @@ namespace Game.Editor
             var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (tray == null) return false;
             for (int slot = 0; slot < 5; slot++)
-                if ((page.AirMask & (1 << slot)) != 0)
+                if ((page.AirMask & page.AssaultMask & (1 << slot)) != 0)
                 { TapHelipadButton(tray.VisibleCardButton(slot), now); return false; }
             if (page.NextPage && airProbePageTurns++ < 12)
                 TapHelipadButton(tray.NextPageButton, now);

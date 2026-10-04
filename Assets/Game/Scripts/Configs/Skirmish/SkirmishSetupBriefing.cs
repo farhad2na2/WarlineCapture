@@ -29,6 +29,10 @@ namespace Game.Configs
         public static string MatchHelp(SkirmishResolvedSetup setup, bool fa)
         {
             bool air = setup != null && SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId)?.AllowsOffensiveAir == true;
+            if (air && setup.StartPackageId == SkirmishStartPackageId.EstablishedBase)
+                return fa
+                    ? "سربازخانهٔ اصلی دشمن را نابود کن و از پایگاهت دفاع کن. پد بالگردت آماده است؛ بالگرد رزمی جذب کن یا با پشتیبانی پیاده‌ها پیشروی کن. کارت نیرو ← حمله ← هدف."
+                    : "Destroy the original enemy Barracks and defend yours. Your Helipad is ready: recruit attack helicopters or advance with infantry support. Squad card → Attack → target.";
             return air
                 ? (fa ? "سربازخانهٔ اصلی دشمن را نابود کن. از راکت‌اندازها با پیاده‌ها پشتیبانی کن، یا مسیر تدارکات را حفظ کن و پس از ارتقای آمادگی، هلی‌پد بساز. کارت نیرو ← حمله ← هدف."
                     : "Destroy the original enemy Barracks. Support Rocketeers with infantry, or protect supply and upgrade readiness to build a Helipad. Squad card → Attack → target.")

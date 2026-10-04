@@ -1,5 +1,9 @@
 # Operations implementation architecture
 
+## Existing Campaign maps only — 2026-10-03
+
+Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add versioned ScopeId/ScopeVersion to run state, immutable launch snapshots, checkpoint, result and commit validation. Compile permitted mission/district/site/incident sets from scope. Access is checked before AP reservation; unavailable content cannot consume AP. Intro/full mismatches fail recoverably. O001–O003 account first clears deduplicate by canonical mission ID across scopes; upgrade archives intro and creates a fresh full run without overwriting an existing run. These are planned additions, not claims of implemented API.

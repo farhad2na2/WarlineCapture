@@ -24,6 +24,8 @@ namespace Game.Configs
         /// map hint 0.
         /// </summary>
         public const int DesertBaseAirMobileFieldScenarioIndex = 5;
+        /// <summary>Library dispatch for S004; the compiled session retains Desert Base map hint 0.</summary>
+        public const int DesertBaseAirMobileEstablishedScenarioIndex = 6;
         public const string IndustrialBasinMissionId = "skirmish.industrial_basin";
         public const string IndustrialBasinScenarioSetupId = "scenario.skirmish.industrial_basin";
         public const string IndustrialBasinOperationMapId = "opmap.skirmish.industrial_basin";

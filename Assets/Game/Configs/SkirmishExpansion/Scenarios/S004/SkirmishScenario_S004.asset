@@ -29,12 +29,11 @@ MonoBehaviour:
   upgradeCatalog: {fileID: 11400000, guid: 4cc33e81f1714b1990c22147ede7d678, type: 2}
   intelConfig: {fileID: 11400000, guid: 04b7de727d214decb18d44a0a1156838, type: 2}
   roleCatalog: {fileID: 11400000, guid: 576ea8bf79b7478480428278cdb00745, type: 2}
-  mapLayout: {fileID: 11400000, guid: e30ba39ba711469090738221819567dc, type: 2}
+  mapLayout: {fileID: 11400000, guid: 5e9a2d74c1b84f60a3e7d8c0b5f19463, type: 2}
   playerFaction: 1
   enemyFaction: 2
   sideRule: symmetric.ba
-  allowedCertifiedSizeIds:
-  - 1
+  allowedCertifiedSizeIds: 01
   requiredFeatureIds:
   - ground
   - intel

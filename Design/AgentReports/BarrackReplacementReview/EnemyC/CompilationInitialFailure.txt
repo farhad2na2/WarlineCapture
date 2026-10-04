@@ -1,0 +1,7 @@
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs(105,31): error CS0234: The type or namespace name 'BuildingFactionVisualVariants' does not exist in the namespace 'Game.Rendering' (are you missing an assembly reference?)
+Fixed: runtime consumes the new rendering contract interface, retaining the existing assembly dependency boundary.

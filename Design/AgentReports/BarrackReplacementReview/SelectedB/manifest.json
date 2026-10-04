@@ -1,0 +1,15 @@
+{
+    "source": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_02.prefab",
+    "candidate": "Assets/Game/Prefabs/Buildings/Candidates/BarrackB/Building_Barrack_B_Masonry_Visual_Preview.prefab",
+    "size": {
+        "x": 27.600000381469728,
+        "y": 7.463615417480469,
+        "z": 14.600000381469727
+    },
+    "center": {
+        "x": 0.0,
+        "y": 3.4718077182769777,
+        "z": 0.0
+    },
+    "renderers": 18
+}

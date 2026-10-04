@@ -52,7 +52,7 @@ MonoBehaviour:
   attackTraceDashDensity: 4
   attackTraceVisibleSeconds: 0.1
   attackTracerEveryNthShot: 3
-  destroyedVisualPrefab: {fileID: 9083467568423483946, guid: 81a72a361a4ec4f20b4327e0dfe7a61a, type: 3}
+  destroyedVisualPrefab: {fileID: 8651917824661745734, guid: 93a9750ad66f14bef8439d8c7b0e2bcb, type: 3}
   productions:
   - spawnUnitPrefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
     quantity: 4

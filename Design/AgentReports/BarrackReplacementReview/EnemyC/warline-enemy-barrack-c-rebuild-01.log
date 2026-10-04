@@ -1,0 +1,60 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.EnemyBarrackPrefabBuilder.ValidatePlayerRebuild
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[BarrackMasonryRuntime] result=Passed create=Native destruction=Native cleanup=Native production=4Soldiers exits=Outside28x15 footprint=28x15 deviceAcceptance=Pending fullMission=NotClaimed
+UnityEngine.Debug:Log (object)
+Game.Editor.BarrackMasonryPrefabBuilder:ValidateRuntimeAndCapture () (at Assets/Game/Scripts/Editor/BarrackMasonryPrefabBuilder.cs:165)
+Game.Editor.BarrackMasonryPrefabBuilder:BuildAndValidate () (at Assets/Game/Scripts/Editor/BarrackMasonryPrefabBuilder.cs:91)
+Game.Editor.EnemyBarrackPrefabBuilder:ValidatePlayerRebuild () (at Assets/Game/Scripts/Editor/EnemyBarrackPrefabBuilder.cs:117)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[BarrackMasonryReplacement] result=Passed assetIdentity=Preserved footprint=28x15 gameplay=Preserved genericCityRuins=Preserved runtimeCreateDestroyCleanup=Passed productionExit=OutsideFootprint activeScene=Preserved
+UnityEngine.Debug:Log (object)
+Game.Editor.BarrackMasonryPrefabBuilder:BuildAndValidate () (at Assets/Game/Scripts/Editor/BarrackMasonryPrefabBuilder.cs:94)
+Game.Editor.EnemyBarrackPrefabBuilder:ValidatePlayerRebuild () (at Assets/Game/Scripts/Editor/EnemyBarrackPrefabBuilder.cs:117)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[EnemyBarrackNative] result=Passed player=B enemy=C hostileFaction3=C neutral=B capture=B poolReuse=B sharedDefinition=Unchanged destruction=PerOwner cleanup=Passed noResurrection=Passed footprint=28x15 fullMission=NotClaimed deviceAcceptance=Pending
+UnityEngine.Debug:Log (object)
+Game.Editor.EnemyBarrackPrefabBuilder:Validate () (at Assets/Game/Scripts/Editor/EnemyBarrackPrefabBuilder.cs:111)
+Game.Editor.EnemyBarrackPrefabBuilder:ValidatePlayerRebuild () (at Assets/Game/Scripts/Editor/EnemyBarrackPrefabBuilder.cs:118)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[EnemyBarrackRebuild] result=Passed playerRebuild=EnemyVariantPreserved
+UnityEngine.Debug:Log (object)
+Game.Editor.EnemyBarrackPrefabBuilder:ValidatePlayerRebuild () (at Assets/Game/Scripts/Editor/EnemyBarrackPrefabBuilder.cs:119)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.EnemyBarrackPrefabBuilder.ValidatePlayerRebuild
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:110)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3a979c66/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

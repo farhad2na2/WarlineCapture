@@ -24,9 +24,13 @@ namespace Game.Runtime
             if (building == null)
                 return;
 
+            GameObject prefab = building.OwnerDestroyedVisualPrefab != null
+                ? building.OwnerDestroyedVisualPrefab
+                : building.Definition != null ? building.Definition.DestroyedVisualPrefab : null;
+
             // Copy a legacy destroyed child before hiding its live ancestors.
             if (building.DestroyedVisualInstance == null && building.Instance != null &&
-                (building.Definition == null || building.Definition.DestroyedVisualPrefab == null))
+                prefab == null)
             {
                 foreach (Transform child in building.Instance.GetComponentsInChildren<Transform>(true))
                 {
@@ -43,7 +47,6 @@ namespace Game.Runtime
                 return;
             }
 
-            GameObject prefab = building.Definition != null ? building.Definition.DestroyedVisualPrefab : null;
             if (prefab == null || building.Instance == null)
                 return;
 

@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run(\"Game.Editor.BarrackCandidateReviewCapture.Run\",\"/private/tmp/warline-barrack-review-capture-03.log\"); }; UnityEditor.EditorApplication.update += callback; return \"scheduled\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

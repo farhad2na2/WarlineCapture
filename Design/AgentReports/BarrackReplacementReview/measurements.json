@@ -1,0 +1,112 @@
+{
+    "footprint": {
+        "x": 28,
+        "y": 15
+    },
+    "entries": [
+        {
+            "id": "00",
+            "path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+            "guid": "683195b1e21c94df7add42ab26cd2a33",
+            "size": {
+                "x": 27.100147247314454,
+                "y": 10.280167579650879,
+                "z": 14.86128044128418
+            },
+            "renderers": 6,
+            "rotatedForFit": false,
+            "uniformFit": 1.0093343257904053
+        },
+        {
+            "id": "01",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_01.prefab",
+            "guid": "3cadbc2079e210144b233760a219b095",
+            "size": {
+                "x": 3.4102532863616945,
+                "y": 3.656615972518921,
+                "z": 5.09723424911499
+            },
+            "renderers": 3,
+            "rotatedForFit": true,
+            "uniformFit": 4.398500442504883
+        },
+        {
+            "id": "02",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_02.prefab",
+            "guid": "e84635c9579383a409db6da3477e581d",
+            "size": {
+                "x": 3.2248458862304689,
+                "y": 3.6480484008789064,
+                "z": 5.397187232971191
+            },
+            "renderers": 3,
+            "rotatedForFit": true,
+            "uniformFit": 4.6513848304748539
+        },
+        {
+            "id": "03",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_03.prefab",
+            "guid": "2fc01610ec566294893d91f8d8b04a32",
+            "size": {
+                "x": 10.697141647338868,
+                "y": 3.886676073074341,
+                "z": 7.0972394943237309
+            },
+            "renderers": 5,
+            "rotatedForFit": false,
+            "uniformFit": 2.113497734069824
+        },
+        {
+            "id": "04",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_01.prefab",
+            "guid": "43cecf02ca9a29341aa80150e36f4c3d",
+            "size": {
+                "x": 10.966904640197754,
+                "y": 7.586402416229248,
+                "z": 10.444368362426758
+            },
+            "renderers": 5,
+            "rotatedForFit": false,
+            "uniformFit": 1.4361807107925416
+        },
+        {
+            "id": "05",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_02.prefab",
+            "guid": "0cee5f343e1618e4d9b4cdf0cea994c9",
+            "size": {
+                "x": 13.378825187683106,
+                "y": 7.203615665435791,
+                "z": 12.479076385498047
+            },
+            "renderers": 5,
+            "rotatedForFit": false,
+            "uniformFit": 1.202012062072754
+        },
+        {
+            "id": "06",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_03.prefab",
+            "guid": "17a15b619ec1ddc4696479f73759de7c",
+            "size": {
+                "x": 5.619855880737305,
+                "y": 6.645501613616943,
+                "z": 10.609838485717774
+            },
+            "renderers": 5,
+            "rotatedForFit": true,
+            "uniformFit": 2.6390600204467775
+        },
+        {
+            "id": "07",
+            "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_Warehouse_01.prefab",
+            "guid": "f4bb022ab0d2a5c46b6af300deb95be5",
+            "size": {
+                "x": 21.718963623046876,
+                "y": 9.156790733337403,
+                "z": 22.609535217285158
+            },
+            "renderers": 1,
+            "rotatedForFit": true,
+            "uniformFit": 0.6906406879425049
+        }
+    ]
+}

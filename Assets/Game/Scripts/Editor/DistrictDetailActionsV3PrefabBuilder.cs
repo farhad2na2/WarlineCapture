@@ -69,6 +69,7 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             MenuAccountHeaderAuthoring.Apply(root.gameObject);
+            InnerScreenUiAuthoring.Apply(root.gameObject, "district-detail");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

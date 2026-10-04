@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -43,6 +44,11 @@ namespace Game.Editor
         {
             V3UiFoundationBuilder.EnsureBuilt();
             LoadAssets();
+
+            var previousMedia = new Dictionary<string, Texture>();
+            var previousPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            var previousScreen = previousPrefab != null ? previousPrefab.GetComponentInChildren<MissionBriefingScreenView>(true) : null;
+            if(previousScreen != null) { var oldData = new SerializedObject(previousScreen); var it = oldData.GetIterator(); while(it.NextVisible(true)) if(it.propertyType == SerializedPropertyType.ObjectReference && it.objectReferenceValue is Texture texture && it.name != "m01MissionArt" && it.name != "m02MissionArt") previousMedia[it.name] = texture; }
 
             RectTransform root = CreateRect("SCN06_MissionBriefingContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateGradientPanel(root, new Color32(24, 30, 32, 255), new Color32(2, 7, 9, 255), Color.clear, 0f);
@@ -115,6 +121,7 @@ namespace Game.Editor
             SetReference(serialized, "replayTutorialLabel", replayLabel);
             SetReference(serialized, "deployOperationButton", deploy);
             SetBool(serialized, "v3TargetLayout", true);
+            foreach(var media in previousMedia) { var property = serialized.FindProperty(media.Key); if(property != null) property.objectReferenceValue = media.Value; }
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             CampaignMissionScreenBinderView binder = composition.gameObject.AddComponent<CampaignMissionScreenBinderView>();
@@ -130,6 +137,7 @@ namespace Game.Editor
                 rewardsPanel,
                 deploy);
 
+            InnerScreenUiAuthoring.Apply(root.gameObject, "mission-briefing");
             PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             AssetDatabase.SaveAssets();

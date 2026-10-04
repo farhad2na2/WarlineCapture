@@ -10,8 +10,10 @@ namespace Game.UI.Runtime
     {
         [SerializeField] private RectTransform[] rows;
         [SerializeField] private float[] minimumHeights;
-        public void Configure(RectTransform[] ordered)
+        [SerializeField] private bool stretchTextRows;
+        public void Configure(RectTransform[] ordered, bool stretchCopy = false)
         {
+            stretchTextRows=stretchCopy;
             rows=ordered.Where(r=>r!=null).ToArray();
             minimumHeights=rows.Select(r=>r.sizeDelta.y).ToArray();
         }
@@ -23,6 +25,7 @@ namespace Game.UI.Runtime
             {
                 var row=rows[i]; if(row==null||!row.gameObject.activeSelf)continue;
                 var text=row.GetComponent<TMP_Text>()??row.Find("Label")?.GetComponent<TMP_Text>()??row.Find("Copy")?.GetComponent<TMP_Text>();
+                if(stretchTextRows && row.GetComponent<TMP_Text>()!=null)row.sizeDelta=new Vector2(Mathf.Max(40,((RectTransform)transform).rect.width-48),row.sizeDelta.y);
                 float height=minimumHeights[i];
                 if(text!=null)
                 {

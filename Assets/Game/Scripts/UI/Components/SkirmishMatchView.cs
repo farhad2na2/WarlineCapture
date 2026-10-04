@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     /// <summary>Skirmish presentation only; all match changes cross the UI gateway.</summary>
-    public sealed partial class SkirmishMatchView : MonoBehaviour
+    public sealed partial class SkirmishMatchView : MonoBehaviour, IUiBackOverlayParticipant
     {
         private GameObject hud, modal;
         private BuildDrawerView buildDrawer;
@@ -27,6 +27,16 @@ namespace Game.UI.Runtime
         private static readonly Color Background=new(.025f,.07f,.08f,.97f);
         private static readonly Color Cyan=new(0,.73f,.85f,1);
 
+        public bool IsOpen=>modal!=null&&modal.activeInHierarchy;
+        private void OnEnable()=>UiBackOverlayRegistry.Register(this);
+        private void OnDisable()=>UiBackOverlayRegistry.Unregister(this);
+        public bool HandleBack()
+        {
+            if(!IsOpen)return false;
+            if(confirming){confirming=false;modal.SetActive(false);return true;}
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var model)&&model.Finished)Send(UiSkirmishAction.MainMenu);
+            return true;
+        }
         public static SkirmishMatchView Create()
         {
             interfaceFont=null;

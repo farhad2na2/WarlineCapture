@@ -80,6 +80,7 @@ namespace Game.UI.Runtime
 
         private void ApplyReadingOrder()
         {
+            if (approvedInnerLayout) return;
             if (!_screenTitleBox.Captured)
                 CaptureAuthoredLayout();
 

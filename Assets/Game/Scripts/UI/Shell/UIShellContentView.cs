@@ -823,6 +823,7 @@ namespace Game.UI.Runtime
             if (popup == null)
                 return;
 
+            UiShellRuntimeGateway.TryHidePopup(UiShellPopupKind.Settings);
             if (Application.isPlaying)
             {
                 UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
@@ -830,6 +831,7 @@ namespace Game.UI.Runtime
                     {
                         DestroyRegionObject(popup);
                         MarkContentChanged();
+                        StartCoroutine(RestoreInnerMenuAfterSettings());
                     }))
                 {
                     return;
@@ -838,6 +840,7 @@ namespace Game.UI.Runtime
 
             DestroyRegionObject(popup);
             MarkContentChanged();
+            if(Application.isPlaying)StartCoroutine(RestoreInnerMenuAfterSettings());
         }
 
         public GameObject InstallSettingsPopup(UIRoute activeRoute)

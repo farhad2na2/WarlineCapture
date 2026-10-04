@@ -22,6 +22,12 @@ namespace Game.UI.Runtime
         private void Awake()
         {
             EnsureInputBinding();
+            foreach(var label in new[]{skipLabel,pauseLabel,subtitleLabel})
+            {
+                if(label==null)continue;label.textWrappingMode=TextWrappingModes.Normal;label.overflowMode=TextOverflowModes.Overflow;
+                var binding=label.GetComponent<V3LocalizedTextBindingView>()??label.gameObject.AddComponent<V3LocalizedTextBindingView>();
+                binding.ConfigureFontBounds(22,22);
+            }
         }
 
         private void OnDestroy()
@@ -58,16 +64,21 @@ namespace Game.UI.Runtime
 
         public void ApplyTransport(int page, int total, bool paused, bool subtitles)
         {
-            if (stateLabel != null) stateLabel.text = UiShellRuntimeGateway.Localization.Get("ui.narrative.story", "STORY");
+            if (stateLabel != null) UiLocalizedText.Set(stateLabel,UiShellRuntimeGateway.Localization.Get("ui.narrative.story", "STORY"));
             if (pageLabel != null)
             {
                 string pages = $"{page} / {total}";
                 if (UiShellRuntimeGateway.Localization.CurrentLocaleCode == Game.UI.Contracts.UiLocaleCodes.Persian)
                     for (int digit = 0; digit < 10; digit++) pages = pages.Replace((char)('0' + digit), (char)('\u06f0' + digit));
-                pageLabel.text = pages;
+                UiLocalizedText.Set(pageLabel,pages);
             }
-            if (pauseLabel != null) pauseLabel.text = UiShellRuntimeGateway.Localization.Get(paused ? "ui.narrative.resume" : "ui.narrative.pause", paused ? "PLAY" : "PAUSE");
-            if (subtitleLabel != null) subtitleLabel.text = UiShellRuntimeGateway.Localization.Get(subtitles ? "ui.narrative.subtitles_on" : "ui.narrative.subtitles_off", subtitles ? "CAPTIONS ON" : "CAPTIONS OFF");
+            if (pauseLabel != null) UiLocalizedText.Set(pauseLabel,UiShellRuntimeGateway.Localization.Get(paused ? "ui.narrative.resume" : "ui.narrative.pause", paused ? "PLAY" : "PAUSE"));
+            if (subtitleLabel != null)
+            {
+                string caption=UiShellRuntimeGateway.Localization.Get(subtitles ? "ui.narrative.subtitles_on" : "ui.narrative.subtitles_off", subtitles ? "CAPTIONS ON" : "CAPTIONS OFF");
+                if(UiShellRuntimeGateway.Localization.IsRightToLeft) caption=caption.Replace(" ","\n");
+                UiLocalizedText.Set(subtitleLabel,caption);
+            }
             if (progressTrack == null) return;
             float width = progressTrack.rect.width * Mathf.Clamp01(total > 0 ? (float)page / total : 0);
             if (progressFill != null) progressFill.sizeDelta = new Vector2(width, progressFill.sizeDelta.y);
@@ -89,9 +100,15 @@ namespace Game.UI.Runtime
             if (skipButton != null)
                 skipButton.interactable = interactable;
             if (skipLabel != null)
-                skipLabel.text = string.IsNullOrWhiteSpace(accessibleLabel)
+                UiLocalizedText.Set(skipLabel,string.IsNullOrWhiteSpace(accessibleLabel)
                     ? UiShellRuntimeGateway.Localization.Get("ui.common.skip", "SKIP")
-                    : accessibleLabel;
+                    : accessibleLabel);
+        }
+
+        public bool HandleBack()
+        {
+            if(skipButton==null||!skipButton.IsActive()||!skipButton.IsInteractable())return false;
+            HandleSkip();return true;
         }
 
         private void HandleSkip()

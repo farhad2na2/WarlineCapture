@@ -15,6 +15,8 @@ namespace Game.Rendering.Contracts
         bool TryReadWorldBounds(EntityManager manager, Entity entity, out Bounds bounds);
         void CollectStaticBounds(EntityManager manager, Rect horizontalArea, float minExtent, float maxExtent,
             ref NativeList<Bounds> results);
+        int CountAuthoredBuildingGeometry(EntityManager manager);
+        void CollectAuthoredBuildingBounds(EntityManager manager, ref NativeList<Bounds> results);
         void CollectWaterFootprints(EntityManager manager, ref NativeList<RenderSurfaceFootprint> results);
     }
 

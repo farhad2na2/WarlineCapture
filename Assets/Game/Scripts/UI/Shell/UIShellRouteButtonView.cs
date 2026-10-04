@@ -44,8 +44,14 @@ namespace Game.UI.Runtime
                 button.onClick.RemoveListener(SubmitRouteRequest);
         }
 
-        private void SubmitRouteRequest()
+        public void SubmitRouteRequest()
         {
+            // Settings is a modal over the current screen, so its close preserves navigation.
+            if (intent == UiShellRouteIntent.OpenSettings || (intent == UiShellRouteIntent.OpenMenuRoute && route == UIRoute.Settings))
+            {
+                UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.OpenSettings);
+                return;
+            }
             if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(intent, route, pushHistory))
             {
                 Debug.LogError($"[UiShellRoute] Missing UI shell boundary. intent={intent} route={route}");

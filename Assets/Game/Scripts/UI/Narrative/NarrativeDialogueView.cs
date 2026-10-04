@@ -50,10 +50,12 @@ namespace Game.UI.Runtime
         {
             EnsureInputBinding();
             CacheAuthoredCaptionLayout();
+            CacheReadingOrderLayout();
         }
 
         private void OnDestroy()
         {
+            if(readingOrderLayout!=null)readingOrderLayout.LayoutApplied-=RefreshReadingOrder;
             if (inputButton != null && inputBound)
                 inputButton.onClick.RemoveListener(HandleInput);
             inputBound = false;
@@ -100,6 +102,7 @@ namespace Game.UI.Runtime
                 return;
 
             CacheIdentityLayout();
+            ApplyDialogueReadingOrder(rightToLeft);
             float lineStart = 0f;
             if (dialogueText != null)
             {

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     /// <summary>Native presentation. Checklist and markers never issue troop orders.</summary>
-    public sealed partial class OperationsMissionScreenView : MonoBehaviour
+    public sealed partial class OperationsMissionScreenView : MonoBehaviour, IUiBackOverlayParticipant
     {
         private bool hud, interruptedAttempt;
         private TMP_FontAsset font;
@@ -35,6 +35,15 @@ namespace Game.UI.Runtime
         private Camera worldCamera;
         private static readonly Color Gold = new Color32(255,192,43,255), Cyan = new Color32(0,190,230,255),
             Green = new Color32(74,188,77,255), Muted = new Color32(175,186,188,255);
+        public bool IsOpen=>(confirmation!=null&&confirmation.activeInHierarchy)||(resultPanel!=null&&resultPanel.activeInHierarchy);
+        private void OnEnable()=>UiBackOverlayRegistry.Register(this);
+        private void OnDisable()=>UiBackOverlayRegistry.Unregister(this);
+        public bool HandleBack()
+        {
+            if(confirmation!=null&&confirmation.activeInHierarchy){confirmation.SetActive(false);return true;}
+            if(resultPanel!=null&&resultPanel.activeInHierarchy){Send(UiOperationsMissionAction.Return);return true;}
+            return false;
+        }
         public bool IsHud => hud;
         public Button IntroductionButton => introButton;
         public Button SkipButton => skipButton;

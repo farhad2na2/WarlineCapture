@@ -25,6 +25,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            if(GetComponent<UISystemBackView>()==null)gameObject.AddComponent<UISystemBackView>();
             if (contentSystem == null)
                 contentSystem = GetComponent<UIShellContentView>();
             RebuildRegionLookup();

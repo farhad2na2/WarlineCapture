@@ -15,6 +15,35 @@ namespace Game.Rendering
 
         private sealed class Reader : IRenderBoundsPresentation
     {
+        private static EntityQuery AuthoredBuildingGeometry(EntityManager manager) => manager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<LocalToWorld>(), ComponentType.ReadOnly<MaterialMeshInfo>(), ComponentType.ReadOnly<RenderMeshArray>() },
+            None = new[] { ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>(), ComponentType.ReadOnly<Prefab>() }
+        });
+        public int CountAuthoredBuildingGeometry(EntityManager manager)
+        {
+            using var query = AuthoredBuildingGeometry(manager);
+            return query.CalculateEntityCount();
+        }
+        public void CollectAuthoredBuildingBounds(EntityManager manager, ref NativeList<Bounds> results)
+        {
+            using var query = AuthoredBuildingGeometry(manager);
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            using var matrices = query.ToComponentDataArray<LocalToWorld>(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var materialMesh = manager.GetComponentData<MaterialMeshInfo>(entities[i]);
+                if (materialMesh.HasMaterialMeshIndexRange) continue;
+                var mesh = manager.GetSharedComponentManaged<RenderMeshArray>(entities[i]).GetMesh(materialMesh);
+                if (mesh == null || !mesh.name.StartsWith("SM_Bld_", System.StringComparison.Ordinal) ||
+                    mesh.name.Contains("Destroyed")) continue;
+                var local = mesh.bounds;
+                var bounds = AABB.Transform(matrices[i].Value, new AABB { Center = local.center, Extents = local.extents });
+                if (bounds.Extents.y < 1f) continue;
+                results.Add(new Bounds(bounds.Center, bounds.Extents * 2f));
+            }
+        }
+
         public void CollectWaterFootprints(EntityManager manager, ref NativeList<RenderSurfaceFootprint> results)
         {
             using var query = manager.CreateEntityQuery(typeof(RenderMeshArray), typeof(MaterialMeshInfo), typeof(LocalToWorld));

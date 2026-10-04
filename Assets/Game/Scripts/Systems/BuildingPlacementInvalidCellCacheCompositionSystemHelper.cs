@@ -14,6 +14,7 @@ namespace Game.Runtime
 
         private int[] _placementInvalidPrefix;
         internal readonly BuildingPlacementAuthoredRoadCache RoadSurfaces=new();
+        internal readonly BuildingPlacementAuthoredBuildingCache AuthoredBuildings = new();
         private bool _hasPlacementInvalidPrefix;
         private int _placementInvalidPrefixWidth;
         private int _placementInvalidPrefixHeight;
@@ -36,7 +37,12 @@ namespace Game.Runtime
 
             bool[] roadMask = new bool[grid.Width * grid.Height];
             startupSystem.FillRoadFootprintMask(grid, roadMask);
-            if(tryGetEntityManager(out var em)) RoadSurfaces.Ensure(em,ecsQuerySystem.SurfaceQuery,grid);
+            if(tryGetEntityManager(out var em))
+            {
+                RoadSurfaces.Ensure(em,ecsQuerySystem.SurfaceQuery,grid);
+                AuthoredBuildings.Ensure(em,grid);
+            }
+            AuthoredBuildings.AppendTo(roadMask);
             RoadSurfaces.AppendTo(roadMask);
             RoadSurfaces.AppendWaterTo(roadMask);
 

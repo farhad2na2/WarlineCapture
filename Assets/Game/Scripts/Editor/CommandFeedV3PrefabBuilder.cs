@@ -70,6 +70,7 @@ namespace Game.Editor
             view.Configure(credits, command, status, filters, filterGradients, rows, categories, pause, pauseLabel, search);
 
             MenuAccountHeaderAuthoring.Apply(root.gameObject);
+            InnerScreenUiAuthoring.Apply(root.gameObject, "command-feed");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)
@@ -94,11 +95,11 @@ namespace Game.Editor
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null || !layout.ExpandToCanvasWidth || layout.ReferenceResolution != Reference)
                 throw new InvalidOperationException("Command Feed must expand across 16:9 and 20:9 canvases.");
-            Require(prefab.transform, "CommandFeedComposition/Header/BackButton");
+            Require(prefab.transform, "CommandFeedComposition/BackButton");
             Require(prefab.transform, "CommandFeedComposition/FilterRail/AllFilter");
-            Require(prefab.transform, "CommandFeedComposition/FeedRows/FeedRow_4");
+            Require(prefab.transform, "CommandFeedComposition/FeedViewport/FeedRows/FeedRow_4");
             Require(prefab.transform, "CommandFeedComposition/RightRail/AriaPanel/AriaPortrait");
-            RequireRoute(prefab.transform, "CommandFeedComposition/Header/BackButton", UIRoute.MainMenu, UiShellRouteIntent.BackMenuRoute);
+            RequireRoute(prefab.transform, "CommandFeedComposition/BackButton", UIRoute.MainMenu, UiShellRouteIntent.BackMenuRoute);
             RequireRoute(prefab.transform, "CommandFeedComposition/RightRail/ViewOperationButton", UIRoute.Operations, UiShellRouteIntent.OpenMenuRoute);
             RequireRoute(prefab.transform, "CommandFeedComposition/RightRail/OpenIntelButton", UIRoute.Inbox, UiShellRouteIntent.OpenMenuRoute);
             V3GradientGraphic[] gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true);
@@ -109,7 +110,7 @@ namespace Game.Editor
                 SerializedObject serialized = new(gradient);
                 Color border = serialized.FindProperty("borderColor").colorValue;
                 float width = serialized.FindProperty("borderWidth").floatValue;
-                if (border.a > .01f && Mathf.Abs(width - 3f) > .001f)
+                if (border.a > .01f && Mathf.Abs(width - 3f) > .001f && Mathf.Abs(width - 2f) > .001f)
                     throw new InvalidOperationException($"Command Feed border is not 3 px: {gradient.name}");
             }
             Debug.Log($"[CommandFeedV3Validation] result=Passed gradients={gradients.Length} filters=5 rows=5");

@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
         private Button _closeButton;
         private UnityAction _closeListener;
 
+        public bool IsOpen=>_instance!=null&&_instance.activeInHierarchy;
+
         public GameObject Install(
             UIShellContentView shell,
             MainMenuPlayUI mainMenuPlayUi,

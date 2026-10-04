@@ -38,7 +38,53 @@ namespace Game.UI.Runtime
 
         // The V3 layout owns horizontal expansion. Apply only vertical geometry after
         // it has reacted to aspect/mount changes, keeping the card's bottom edge fixed.
-        private void LateUpdate() => ApplyAuthoredCaptionLayout();
+        private void LateUpdate()
+        {
+            ApplyAuthoredCaptionLayout();
+            ApplyIdentityReadingOrder(UiShellRuntimeGateway.Localization.IsRightToLeft);
+        }
+
+        private RectTransform[] readingOrderTargets;
+        private float[] readingOrderBaseX;
+        private MainMenuV3SectionLayoutView readingOrderLayout;
+        private void CacheReadingOrderLayout()
+        {
+            if(!useAuthoredHeight||dialogueRect==null||readingOrderTargets!=null)return;
+            var targets=new System.Collections.Generic.List<RectTransform>();
+            foreach(Transform child in dialogueRect)
+                if(child is RectTransform rect&&child.name!="SpeakerName"&&child.name!="SpeakerRole")targets.Add(rect);
+            readingOrderTargets=targets.ToArray();readingOrderBaseX=new float[targets.Count];
+            readingOrderLayout=GetComponentInParent<MainMenuV3SectionLayoutView>();
+            float appliedWidth=readingOrderLayout!=null?readingOrderLayout.LastAppliedExtraWidth:0;
+            for(int i=0;i<targets.Count;i++)
+            {
+                // Parent Awake may already have expanded these right-anchored controls.
+                // Cache reference coordinates so expansion is applied exactly once.
+                readingOrderBaseX[i]=targets[i].anchoredPosition.x;
+                if(targets[i].name is "NextPanel" or "Pointer" or "NextLabel")readingOrderBaseX[i]-=appliedWidth;
+            }
+            if(readingOrderLayout!=null)readingOrderLayout.LayoutApplied+=RefreshReadingOrder;
+        }
+        private void RefreshReadingOrder()=>ApplyIdentityReadingOrder(UiShellRuntimeGateway.Localization.IsRightToLeft);
+        private void ApplyDialogueReadingOrder(bool rightToLeft)
+        {
+            CacheReadingOrderLayout();
+            if(readingOrderTargets==null)return;
+            float extraWidth=readingOrderLayout!=null?readingOrderLayout.LastAppliedExtraWidth:0;
+            for(int i=0;i<readingOrderTargets.Length;i++)
+            {
+                var rect=readingOrderTargets[i];if(rect==null)continue;
+                float x=readingOrderBaseX[i];
+                if(rect.name is "NextPanel" or "Pointer" or "NextLabel")x+=extraWidth;
+                var position=rect.anchoredPosition;
+                position.x=rightToLeft?dialogueRect.rect.width-x-rect.rect.width:x;
+                rect.anchoredPosition=position;
+                if(rect.name=="Pointer"&&rect.Find("SharedAdvanceIcon") is Transform icon)
+                {
+                    var scale=icon.localScale;scale.x=Mathf.Abs(scale.x)*(rightToLeft?-1:1);icon.localScale=scale;
+                }
+            }
+        }
 
         private void ApplyAuthoredCaptionLayout()
         {

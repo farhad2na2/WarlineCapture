@@ -17,6 +17,8 @@ namespace Game.UI.Runtime
             return current.TryEnqueueRouteRequest(intent, route, pushHistory);
         }
 
+        public static bool TryHidePopup(UiShellPopupKind kind)=>current is IUiPopupNavigationGateway popup&&popup.TryHidePopup(kind);
+
         public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId = 0)
         {
             return current.TryEnqueueUiAction(kind, payloadId);

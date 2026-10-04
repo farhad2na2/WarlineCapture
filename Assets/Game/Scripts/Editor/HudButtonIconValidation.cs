@@ -71,12 +71,37 @@ namespace Game.Editor
                         Require(go.GetComponentsInChildren<Image>(true).Length==2,"single icon");
                     }
                 }
+                // Measure the actual atlas alpha bounds independently of the runtime offsets.
+                // All roles share this layout, including ARIA Play/Stop and selection Commands.
+                foreach (string language in new[] { "en", "fa-IR" })
+                {
+                    GameLocalization.SetLocale(language, false);
+                    foreach (HudButtonIcon kind in Enum.GetValues(typeof(HudButtonIcon)))
+                    {
+                        HudIconButtonView.Apply(button, kind, HudButtonRole.Neutral, "ACTION", "عملیات");
+                        Canvas.ForceUpdateCanvases();
+                        var icon = go.transform.Find("HudActionIcon").GetComponent<Image>();
+                        int index = (int)kind;
+                        float cell = texture.height / 4f;
+                        float bottom = (3 - index / 4) * cell;
+                        int minY = texture.height, maxY = -1;
+                        for (int y = Mathf.CeilToInt(bottom); y < bottom + cell; y++)
+                        for (int x = Mathf.CeilToInt(index % 4 * cell); x < (index % 4 + 1) * cell; x++)
+                            if (pixels[y * texture.width + x].a > 100) { minY = Mathf.Min(minY, y); maxY = Mathf.Max(maxY, y); }
+                        float artworkOffset = ((minY + maxY + 1) * .5f - bottom - cell * .5f) / cell;
+                        var iconRect = icon.rectTransform;
+                        Vector3 centre = ((RectTransform)go.transform).InverseTransformPoint(
+                            iconRect.TransformPoint(iconRect.rect.center + new Vector2(0, artworkOffset * iconRect.rect.height)));
+                        Require(Mathf.Abs(centre.y - ((RectTransform)go.transform).rect.center.y) < .3f,
+                            "visible icon vertically centred " + kind + " " + language);
+                    }
+                }
                 button.onClick.Invoke();
                 Require(clicks==1,"input listener preserved");
                 button.interactable=false;
                 HudIconButtonView.Apply(button,HudButtonIcon.Stop,HudButtonRole.Stop,"STOP ARIA","توقف آریا");
                 Require(!button.interactable,"disabled control preserved");
-                Debug.Log("[HudButtonIcons] result=Passed icons=16 locales=en,fa-IR labelSize=24 listeners=preserved");
+                Debug.Log("[HudButtonIcons] result=Passed icons=16 locales=en,fa-IR labelSize=24 visibleIconCentres=32 listeners=preserved");
             }
             finally
             {
@@ -85,6 +110,34 @@ namespace Game.Editor
                 GameLocalization.SetLocale(locale,false);
             }
         }
+        public static void ValidateNativeArtworkCentres()
+        {
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                Require(texture.LoadImage(File.ReadAllBytes("Assets/Game/Resources/HudButtonIcons/hud-action-icons-v01.png")), "native PNG load");
+                var pixels = texture.GetPixels32();
+                foreach (var view in UnityEngine.Object.FindObjectsByType<HudIconButtonView>(FindObjectsSortMode.None))
+                {
+                    var icon = view.transform.Find("HudActionIcon")?.GetComponent<Image>();
+                    Require(icon != null && icon.sprite != null, "native icon present " + view.name);
+                    var spriteRect = icon.sprite.rect;
+                    int minY = texture.height, maxY = -1;
+                    for (int y = Mathf.CeilToInt(spriteRect.yMin); y < spriteRect.yMax; y++)
+                    for (int x = Mathf.CeilToInt(spriteRect.xMin); x < spriteRect.xMax; x++)
+                        if (pixels[y * texture.width + x].a > 100) { minY = Mathf.Min(minY, y); maxY = Mathf.Max(maxY, y); }
+                    Require(maxY >= minY, "native icon has artwork " + view.name);
+                    float offset = ((minY + maxY + 1) * .5f - spriteRect.center.y) / spriteRect.height;
+                    var rect = icon.rectTransform;
+                    Vector3 centre = view.transform.InverseTransformPoint(rect.TransformPoint(
+                        rect.rect.center + new Vector2(0, offset * rect.rect.height)));
+                    Require(Mathf.Abs(centre.y - ((RectTransform)view.transform).rect.center.y) < .3f,
+                        "native visible icon centred " + view.name);
+                }
+            }
+            finally { UnityEngine.Object.DestroyImmediate(texture); }
+        }
+
         private static void Require(bool passed,string detail)
         {if(!passed)throw new InvalidOperationException("[HudButtonIcons] "+detail);}
     }

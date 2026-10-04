@@ -12,8 +12,8 @@ namespace Game.UI.Runtime
         [SerializeField] private Texture gridlockMissionPreview;
         [SerializeField] private TMP_Text[] chapterMissionNames;
         [SerializeField] private GameObject chapterTwoRailLock;
-        public Button ChapterOneButton=>chapterOneButton;
-        public Button ChapterTwoButton=>chapterTwoButton;
+        public Button ChapterOneButton=>chapterOneButton??=ResolveChapterCardButton(0);
+        public Button ChapterTwoButton=>chapterTwoButton??=ResolveChapterCardButton(1);
         public Button ChapterTwoOverviewButton=>chapterTwoOverviewButton;
         public Button ChapterThreeButton=>ResolveChapterCardButton(2);
         public bool IsChapterTwo {get;private set;}

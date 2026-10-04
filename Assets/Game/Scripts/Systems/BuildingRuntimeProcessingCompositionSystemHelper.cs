@@ -24,6 +24,7 @@ namespace Game.Runtime
         private readonly HashSet<int> _producedReadModelBuildingIdsScratch = new();
         private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
         private readonly BuildingPlacementAuthoredRoadCache _skirmishRoads = new();
+        private readonly BuildingPlacementAuthoredBuildingCache _skirmishBuildings = new();
         private float _nextPublishAt;
         private bool _forcePublishNextUpdate;
         private bool _configuredReadModelsPublished;
@@ -387,6 +388,9 @@ namespace Game.Runtime
                     using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
                     if (grantSurfaces.CalculateEntityCount() != 1) continue;
                     _skirmishRoads.Ensure(em, grantSurfaces, grantGrid);
+                    _skirmishBuildings.Ensure(em, grantGrid);
+                    using var grantSkirmish = em.CreateEntityQuery(typeof(SkirmishMatchState));
+                    if (!grantSkirmish.IsEmptyIgnoreFilter && !_skirmishBuildings.IsReady) continue;
                     // Apply authored road/water/sidewalk rules to every relocation candidate,
                     // even before the Build drawer has initialized its own cache.
                     var originalContext = runtimeSpawnContext;
@@ -395,6 +399,7 @@ namespace Game.Runtime
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) return false;
                         bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
                         if(authoredRoad||water)
                         {if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}

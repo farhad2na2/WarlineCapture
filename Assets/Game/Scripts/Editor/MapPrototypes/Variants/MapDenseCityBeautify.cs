@@ -146,6 +146,7 @@ namespace Game.Editor.MapVariants
                     }
                 }
                 paving.Save(); kerbs.Save(); rubble.Save(); paper.Save(); white.Save(); dark.Save(); sand.Save();
+                DenseCityRoadKerbRepair.TrimGeneratedKerbs();
                 // Cloth shades, rooftop storage and laundry stay inside existing building footprints.
                 var fabric=new[]{new Color(.72f,.28f,.16f),new Color(.15f,.43f,.38f),new Color(.82f,.62f,.24f),new Color(.7f,.61f,.43f)};
                 int clothIndex=0;

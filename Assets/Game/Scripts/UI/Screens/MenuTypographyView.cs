@@ -24,7 +24,7 @@ namespace Game.UI.Runtime
             {
                 rightToLeft=rtl;
                 foreach(var layout in GetComponentsInChildren<HorizontalLayoutGroup>(true))layout.reverseArrangement=rtl;
-                foreach(var button in GetComponentsInChildren<Button>(true).Where(b=>b.name=="BackButton"||b.name=="MissionBackButton"))
+                foreach(var button in GetComponentsInChildren<Button>(true).Where(b=>b.name=="BackButton"||b.name=="MissionBackButton"||b.name=="HeaderBackButton"))
                 {
                     foreach(var image in button.GetComponentsInChildren<Image>(true).Where(i=>i.sprite!=null))
                     {

@@ -37,6 +37,7 @@ namespace Game.UI.Runtime
 
         public string LocalizationKey => localizationKey;
         public string EnglishFallback => englishFallback;
+        public string SourceValue => hasRuntimeSource ? runtimeSource : englishFallback;
 
         public void Configure(string key, string fallback, bool observeRuntimeChanges = true)
         {

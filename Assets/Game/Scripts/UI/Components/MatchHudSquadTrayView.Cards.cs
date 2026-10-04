@@ -28,7 +28,9 @@ namespace Game.UI.Runtime
                 stripRect.anchorMin = new Vector2(0f, 0f);
                 stripRect.anchorMax = new Vector2(1f, 0f);
                 stripRect.pivot = new Vector2(0.5f, 0f);
-                stripRect.anchoredPosition = new Vector2(0f, 6f);
+                // The authored HealthFrame occupies the bottom 19 units of the card.
+                // Keep the localized name above it with a clear gap.
+                stripRect.anchoredPosition = new Vector2(0f, 26f);
                 stripRect.sizeDelta = new Vector2(-12f, 34f);
                 Image stripImage = stripObject.GetComponent<Image>() ?? stripObject.AddComponent<Image>();
                 stripImage.color = CardLabelStripColor;

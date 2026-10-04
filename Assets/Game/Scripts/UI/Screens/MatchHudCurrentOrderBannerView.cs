@@ -52,19 +52,8 @@ namespace Game.UI.Runtime
                     icon.enabled = iconEnabled;
             }
 
-            if (orderText != null)
-            {
-                string text = model.OrderText ?? string.Empty;
-                if (orderText.text != text)
-                    orderText.text = text;
-            }
-
-            if (descriptionText != null)
-            {
-                string text = model.DescriptionText ?? string.Empty;
-                if (descriptionText.text != text)
-                    descriptionText.text = text;
-            }
+            UiLocalizedText.Set(orderText, model.OrderText);
+            UiLocalizedText.Set(descriptionText, model.DescriptionText);
         }
 
         public void Hide()
@@ -96,17 +85,9 @@ namespace Game.UI.Runtime
                     icon.enabled = false;
             }
 
-            if (orderText != null)
-            {
-                if (!string.IsNullOrEmpty(orderText.text))
-                    orderText.text = string.Empty;
-            }
-
-            if (descriptionText != null)
-            {
-                if (!string.IsNullOrEmpty(descriptionText.text))
-                    descriptionText.text = string.Empty;
-            }
+            // Clear the source too so re-enabling cannot restore an old order.
+            UiLocalizedText.Set(orderText, string.Empty);
+            UiLocalizedText.Set(descriptionText, string.Empty);
         }
     }
 }

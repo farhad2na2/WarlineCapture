@@ -18,7 +18,11 @@ namespace Game.Editor
 {
     public static class InnerScreenUiMissionReview
     {
-        public static async Task<int> Run()
+        public static Task<int> Run()=>RunCore(480);
+        // A focused post-HUD check retains the same victory/ARIA/return requirements;
+        // a stalled startup fails early instead of repeating the eight-minute baseline timeout.
+        public static Task<int> RunHudJourney()=>RunCore(90);
+        private static async Task<int> RunCore(double missionTimeout)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Requires idle Editor");
             string output="Design/AgentReports/InnerScreenUiAudit/After/input-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");Directory.CreateDirectory(output);
@@ -54,7 +58,7 @@ namespace Game.Editor
                 await Tap(touch,Button("LoadoutButton"));await Route(UIRoute.LoadoutSquadPrep);Shot(output,language,"preparation-m01");
                 await Tap(touch,Button("DeployButton"));
                 await Until(()=>UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning,150);
-                double deadline=EditorApplication.timeSinceStartup+480,lastLog=0;int actions=0;bool started=false;
+                double deadline=EditorApplication.timeSinceStartup+missionTimeout,lastLog=0;int actions=0;bool started=false,capturedHud=false;
                 while(!UiShellRuntimeGateway.TryReadMissionResult(out var result))
                 {
                     if(EditorApplication.timeSinceStartup>deadline)throw new TimeoutException("Normal M01 journey timed out");
@@ -72,6 +76,14 @@ namespace Game.Editor
                         }
                         else
                         {
+                            if(!capturedHud)
+                            {
+                                capturedHud=true;await Task.Delay(1000);Shot(output,"fa-IR","match-hud-2400");await Task.Delay(500);
+                                MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);await Task.Delay(1000);Shot(output,"fa-IR","match-hud-1920");await Task.Delay(500);
+                                MainMenuV3PrefabBuilder.SetGameViewResolution(2400,1080);GameLocalization.SetLocale("en",false);await Task.Delay(1000);Shot(output,"en","match-hud-2400");await Task.Delay(500);
+                                GameLocalization.SetLocale(language,false);await Task.Delay(1000);
+                                Debug.Log("[MatchHudUiUxReview] nativeHudCaptured=True injectedOutcome=False output="+output);
+                            }
                             var buttons=UnityEngine.Object.FindObjectsByType<Button>(FindObjectsSortMode.None);
                             var play=buttons.FirstOrDefault(b=>b.name=="ConfirmWatchAria"&&b.IsActive()&&b.IsInteractable()&&Visible(b.transform))??buttons.FirstOrDefault(b=>b.name=="WatchAriaPlay"&&b.IsActive()&&b.IsInteractable()&&Visible(b.transform));
                             if(play!=null)await Tap(touch,play);

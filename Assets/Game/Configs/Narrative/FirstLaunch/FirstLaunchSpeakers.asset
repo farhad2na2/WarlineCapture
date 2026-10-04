@@ -111,7 +111,7 @@ MonoBehaviour:
     accessibleLabelKey: narrative.speaker.qassem.accessibleLabel
     accessibleLabelFallback: Nadir Qassem, Ash Line strategist
     treatment: 1
-    identitySprite: {fileID: 21300000, guid: 790b5a063ac549fdad9c80fbbd1447a2, type: 3}
+    identitySprite: {fileID: 21300000, guid: 386f72ccce7194439b40a0bd54456840, type: 3}
     accentColor: {r: 0.86, g: 0.25, b: 0.16, a: 1}
   - speakerId: 10
     nameKey: narrative.speaker.karim.name
@@ -121,7 +121,7 @@ MonoBehaviour:
     accessibleLabelKey: narrative.speaker.karim.name
     accessibleLabelFallback: Warrant Officer Karim Daher, Transport specialist
     treatment: 1
-    identitySprite: {fileID: 21300000, guid: 317601db2cf0496189fa76b7a2502b21, type: 3}
+    identitySprite: {fileID: 21300000, guid: 033e456342a904bd39b02f2158689ba5, type: 3}
     accentColor: {r: 0.91, g: 0.66, b: 0.27, a: 1}
   - speakerId: 11
     nameKey: narrative.speaker.yusuf.name
@@ -131,5 +131,5 @@ MonoBehaviour:
     accessibleLabelKey: narrative.speaker.yusuf.name
     accessibleLabelFallback: Chief Yusuf Darzi, Hardware recovery specialist
     treatment: 1
-    identitySprite: {fileID: 21300000, guid: df1b6ca91be4a40e29e92c8f87c9bcab, type: 3}
+    identitySprite: {fileID: 21300000, guid: e55336967556242678a2510d1184e333, type: 3}
     accentColor: {r: 0.91, g: 0.66, b: 0.27, a: 1}

@@ -19,6 +19,15 @@ namespace Game.UI.Runtime
         public const float LabelSize = 24;
         private static readonly Sprite[] icons = new Sprite[16];
         private static Texture2D atlas;
+        // Visible artwork centres measured from the v01 atlas (alpha > 100).
+        // Cells include unequal transparent padding; centring the cell alone shifts the glyph.
+        private static readonly float[] verticalArtworkOffsets =
+        {
+            .07894737f, .08213716f, .08532695f, .08692185f,
+            .07894737f, .06937799f, .07097289f, .07256778f,
+            .01674641f, -.00239234f, .00079745f, -.00079745f,
+            -.05023923f, -.04864434f, -.03269537f, -.04385965f
+        };
         private Button button;
         private TMP_Text label;
         private Image icon;
@@ -157,7 +166,7 @@ namespace Game.UI.Runtime
             rect.offsetMax = new Vector2(rtl ? -76 : -12, -4);
             var imageRect = icon.rectTransform;
             imageRect.anchorMin = imageRect.anchorMax = imageRect.pivot = new Vector2(rtl ? 1 : 0, .5f);
-            imageRect.anchoredPosition = new Vector2(rtl ? -8 : 8, 0);
+            imageRect.anchoredPosition = new Vector2(rtl ? -8 : 8, 64f * verticalArtworkOffsets[(int)kind]);
             imageRect.sizeDelta = new Vector2(64, 64);
             icon.color = button.IsInteractable() ? Color.white : new Color(.6f, .6f, .6f, .85f);
             label.color = button.IsInteractable() ? Color.white : new Color(.65f, .7f, .72f);

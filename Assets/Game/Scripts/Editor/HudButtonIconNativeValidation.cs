@@ -19,7 +19,10 @@ namespace Game.Editor
     public static class HudButtonIconNativeValidation
     {
         private const string Output="Design/AgentReports/AriaHudButtonIcons/Native";
-        public static async Task<int> RunSkirmishScreens()
+        public static Task<int> RunSkirmishScreens() => RunScreens(false);
+        public static Task<int> RunIconAlignmentScreens() => RunScreens(true);
+        public static Task<int> RunPlacementProbe() => RunScreens(true, SkirmishBuildingPlacementProbe.Inspect);
+        private static async Task<int> RunScreens(bool alignmentOnly, Action inspect = null)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Requires Edit mode");
             Directory.CreateDirectory(Output);
@@ -54,6 +57,7 @@ namespace Game.Editor
                 setup.SelectScenario(SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex);
                 setup.LaunchMatch();
                 await Until(()=>UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>()?.PlayerFocusButton?.IsActive()==true,120);
+                inspect?.Invoke();
                 EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
                 touch=new AriaTouchInputUiSystemHelper();
                 if(!touch.Start())throw new InvalidOperationException("Native touch fixture unavailable");
@@ -76,12 +80,12 @@ namespace Game.Editor
                         if(before.CurrentOrder!=after.CurrentOrder)throw new InvalidOperationException("Enemy camera focus changed the selected order");
                         await Tap(touch,match.PlayerFocusButton);
                         var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-                        AuditButtons();
+                        AuditButtons(alignmentOnly);
                         await Shot(language+"-"+width+"-hud",width,height);
                         var watch=Field<Button>(aria,"watchButton");
                         await Tap(touch,watch);
                         await Task.Delay(400);
-                        AuditButtons();
+                        AuditButtons(alignmentOnly);
                         await Shot(language+"-"+width+"-consent",width,height);
                         await Tap(touch,Field<Button>(aria,"watchCancel"));
                     }
@@ -89,7 +93,7 @@ namespace Game.Editor
                 await Tap(touch,selection.CommandWheelOpenButton);
                 await Task.Delay(700);
                 await Shot("fa-IR-1280-commands-open",1280,720);
-                Debug.Log("[HudButtonIconsNative] result=Passed screens=9 locales=en,fa-IR widths=1920,1280 input=Touch cameraOrders=Unchanged completeMatch=NotClaimed deviceAcceptance=Pending");
+                Debug.Log((alignmentOnly ? "[HudIconAlignmentNative]" : "[HudButtonIconsNative]") + " result=Passed screens=9 locales=en,fa-IR widths=1920,1280 input=Touch cameraOrders=Unchanged completeMatch=NotClaimed deviceAcceptance=Pending");
                 return 0;
             }
             catch(Exception exception)
@@ -154,15 +158,16 @@ namespace Game.Editor
             await Task.Delay(400);
             Debug.Log("[HudButtonIconsNative] touch="+button.name);
         }
-        private static void AuditButtons()
+        private static void AuditButtons(bool alignmentOnly)
         {
+            HudButtonIconValidation.ValidateNativeArtworkCentres();
             foreach(var view in UnityEngine.Object.FindObjectsByType<HudIconButtonView>(FindObjectsSortMode.None))
             {
                 var text=view.GetComponentInChildren<TMP_Text>();
                 if(text==null||!text.gameObject.activeInHierarchy)continue;
-                if(text.enableAutoSizing||Mathf.Abs(text.fontSize-HudIconButtonView.LabelSize)>.01f)
+                if(!alignmentOnly && (text.enableAutoSizing||Mathf.Abs(text.fontSize-HudIconButtonView.LabelSize)>.01f))
                     throw new InvalidOperationException("Inconsistent native label: "+view.name);
-                if(text.GetPreferredValues().x>text.rectTransform.rect.width+1)
+                if(!alignmentOnly && text.GetPreferredValues().x>text.rectTransform.rect.width+1)
                     throw new InvalidOperationException("Native label overflows: "+view.name);
                 var icon=view.transform.Find("HudActionIcon")?.GetComponent<Image>();
                 if(icon==null||icon.sprite==null||icon.raycastTarget)

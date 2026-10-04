@@ -1,0 +1,27 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.CampaignComicSpeakerPortraitBuilder.InstallAndValidate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_25c97a9c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignComicSpeakerPortraits] result=Passed speakers=3 campaignLines=14 captures=6 locales=en,fa-IR fallbackUnitPortraits=0 activeScene=Preserved fullMission=NotClaimed
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignComicSpeakerPortraitBuilder:ValidateAndCapture () (at Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs:132)
+Game.Editor.CampaignComicSpeakerPortraitBuilder:InstallAndValidate () (at Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs:58)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_25c97a9c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CampaignComicSpeakerPortraitBuilder.InstallAndValidate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:110)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_25c97a9c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

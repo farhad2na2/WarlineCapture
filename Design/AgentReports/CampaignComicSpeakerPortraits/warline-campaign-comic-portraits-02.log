@@ -1,0 +1,40 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.CampaignComicSpeakerPortraitBuilder.InstallAndValidate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_401cd1f3/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetImporter:SaveAndReimport ()
+Game.Editor.CampaignComicSpeakerPortraitBuilder:InstallAndValidate () (at Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs:43)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_401cd1f3/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignComicSpeakerPortraits] result=Passed speakers=3 campaignLines=14 captures=6 locales=en,fa-IR fallbackUnitPortraits=0 activeScene=Preserved fullMission=NotClaimed
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignComicSpeakerPortraitBuilder:ValidateAndCapture () (at Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs:93)
+Game.Editor.CampaignComicSpeakerPortraitBuilder:InstallAndValidate () (at Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs:57)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:93)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_401cd1f3/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CampaignComicSpeakerPortraitBuilder.InstallAndValidate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:110)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_401cd1f3/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

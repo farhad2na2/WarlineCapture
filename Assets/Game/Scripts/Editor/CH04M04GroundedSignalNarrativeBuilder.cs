@@ -105,8 +105,8 @@ namespace Game.Editor
                 ?? throw new InvalidOperationException("Narrative speaker catalog missing");
             var data = new SerializedObject(catalog); var entries = data.FindProperty("speakers");
             foreach (var definition in new[] {
-                (NarrativeSpeakerId.Karim, "karim", "Warrant Officer Karim Daher", "Transport specialist", "Portrait_Unit_Chr_Pilot_Male_01_CompactPistol_Card_512.png"),
-                (NarrativeSpeakerId.Yusuf, "yusuf", "Chief Yusuf Darzi", "Hardware recovery specialist", "Portrait_Unit_Chr_Bombsuit_Male_01_BombSuit_Card_512.png") })
+                (NarrativeSpeakerId.Karim, "karim", "Warrant Officer Karim Daher", "Transport specialist", "Portrait_Karim_CampaignComic.png"),
+                (NarrativeSpeakerId.Yusuf, "yusuf", "Chief Yusuf Darzi", "Hardware recovery specialist", "Portrait_Yusuf_CampaignComic.png") })
             {
                 SerializedProperty entry = null;
                 for (int i = 0; i < entries.arraySize; i++)
@@ -120,7 +120,7 @@ namespace Game.Editor
                     entry.FindPropertyRelative(pair.Item1 + "Fallback").stringValue = pair.Item2;
                 }
                 entry.FindPropertyRelative("treatment").intValue = (int)NarrativeSpeakerTreatment.HumanPortrait;
-                var portrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/Art/UI/Portraits/Secondary/" + definition.Item5)
+                var portrait = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/Art/UI/Portraits/Generated/" + definition.Item5)
                     ?? throw new InvalidOperationException("Canonical specialist portrait missing: " + definition.Item5);
                 entry.FindPropertyRelative("identitySprite").objectReferenceValue = portrait;
                 entry.FindPropertyRelative("accentColor").colorValue = new Color(.91f, .66f, .27f);

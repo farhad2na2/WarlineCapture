@@ -865,6 +865,8 @@ namespace Game.Editor
             Dictionary<string, string> persian,
             Dictionary<string, string> keysByEnglish)
         {
+            foreach (var entry in CampaignComicSpeakerIdentityCopy.Entries)
+                AddRuntimeText(entry.Key, entry.English, entry.Persian);
             AddRuntimeText("narrative.first_launch.language.title", "SELECT STORY LANGUAGE", "زبان داستان رو انتخاب کن");
             AddRuntimeText("narrative.first_launch.language.info", "This can be changed later\nin Command Settings.", "بعداً هم می‌تونی این مورد رو\nتوی تنظیمات فرماندهی عوض کنی.");
             AddRuntimeText("narrative.first_launch.language.continue", "CONTINUE   ›", "ادامه   ‹");

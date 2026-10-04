@@ -1,0 +1,1 @@
+Assets/Game/Scripts/Editor/CampaignComicSpeakerPortraitBuilder.cs(138,103): error CS0104: SettingsService ambiguous between Game.UI.Runtime.SettingsService and UnityEditor.SettingsService. Corrected with fully qualified runtime type.

@@ -9547,6 +9547,20 @@ MonoBehaviour:
       value: Ready
     - key: ui.loading.loading
       value: Loading
+    - key: narrative.speaker.qassem.name
+      value: Nadir Qassem
+    - key: narrative.speaker.qassem.role
+      value: Ash Line strategist
+    - key: narrative.speaker.qassem.accessibleLabel
+      value: Nadir Qassem, Ash Line strategist
+    - key: narrative.speaker.karim.name
+      value: Warrant Officer Karim Daher
+    - key: narrative.speaker.karim.role
+      value: Transport specialist
+    - key: narrative.speaker.yusuf.name
+      value: Chief Yusuf Darzi
+    - key: narrative.speaker.yusuf.role
+      value: Hardware recovery specialist
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -25030,3 +25044,20 @@ MonoBehaviour:
       value: "\u0622\u0645\u0627\u062F\u0647"
     - key: ui.loading.loading
       value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
+    - key: narrative.speaker.qassem.name
+      value: "\u0646\u0627\u062F\u0631 \u0642\u0627\u0633\u0645"
+    - key: narrative.speaker.qassem.role
+      value: "\u0637\u0631\u0627\u062D \u0631\u0627\u0647\u0628\u0631\u062F \u062E\u0637
+        \u062E\u0627\u06A9\u0633\u062A\u0631"
+    - key: narrative.speaker.qassem.accessibleLabel
+      value: "\u0646\u0627\u062F\u0631 \u0642\u0627\u0633\u0645\u060C \u0637\u0631\u0627\u062D
+        \u0631\u0627\u0647\u0628\u0631\u062F \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631"
+    - key: narrative.speaker.karim.name
+      value: "\u06A9\u0631\u06CC\u0645 \u0638\u0627\u0647\u0631"
+    - key: narrative.speaker.karim.role
+      value: "\u0645\u062A\u062E\u0635\u0635 \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: narrative.speaker.yusuf.name
+      value: "\u06CC\u0648\u0633\u0641 \u062F\u0631\u0632\u06CC"
+    - key: narrative.speaker.yusuf.role
+      value: "\u0645\u062A\u062E\u0635\u0635 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A"

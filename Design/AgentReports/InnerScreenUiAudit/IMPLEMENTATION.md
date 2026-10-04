@@ -57,3 +57,37 @@ This batch is prepared for commit and push on `codex/campaign-inner-ui` in the T
 The user identified comic dialogue displayed over the main menu in the playback capture. Archive playback used the shared narrative layer whose art-less dialogue states intentionally exposed the scene beneath; for archive replay that scene was the live main menu. Archive playback now enables an opaque backdrop inside the narrative layer and disables it on close/return. Campaign/mission narrative background behavior is unchanged.
 
 Checked native touch regression passed, wrapper exit 0 plus both pass markers: `After/input-20261004-021004` contains 22 nonempty PNGs. Visual review confirms the menu is covered during playback and `home-after-story-fa-IR.png` shows the menu without dialogue after closing. The test also asserts the active opaque backdrop during playback and narrative visibility false after close. The earlier operation-map mission failure remains pending.
+
+
+## Farsi comic and system Back follow-up — 2026-10-04
+
+Commit `662aa80` was pushed after the user's explicit approval. This follow-up mirrors comic portrait, frame, dialogue, voice-track and Next positions for Farsi while retaining unmirrored portrait artwork. English restores authored positions. Responsive expansion is accounted for once, including when the parent layout has already expanded before dialogue Awake.
+
+A single system Back coordinator consumes Escape (Unity's Android Back mapping), reuses native screen Back route handlers and existing gameplay actions, dismisses popups before screen navigation, opens Pause from Match, and resumes on Back from Pause. Root Home delegates to Android's ordinary background/minimize behavior. Transitions consume Back to prevent accidental double navigation. Archive Back returns to its chooser or closes it; campaign narrative follows its existing skip/confirmation controls. Result/debrief handlers preserve their existing settlement guards. Inbox remains excluded.
+
+All ten reachable menu Back controls are 180 × 86: Campaign, Operations, Commander, Skirmish setup, Briefing, Preparation, Armory, Store, District and Feed. The inner Settings buttons now open the existing popup instead of an empty Settings route. Closing it clears modal state and restores the underlying inner screen without adding navigation history.
+
+### Automated and normal-input evidence
+
+- `warline-ui-back-20261004-01.log.gz`: failed District Back due to a destroyed selected UI object. Fixed with Unity-aware null checks.
+- `02` and `03`: failed inner Settings checks; the authored OpenSettings route intent opened an empty route. Corrected to popup dispatch.
+- `04`: wrapper exit 0, `[InnerScreenUiInput] result=Passed`, `[SystemBackFixture] result=Passed`, `[ExistingEditorValidation] result=Passed`. Ten routes passed system Back in English and Farsi using Input System keyboard events, with touch/raycast navigation and Settings restoration. Pause opens, Back resumes, and match Settings dismisses in an isolated shell-state fixture. This does not claim a real mission completion.
+- Visual review rejected `After/input-20261004-025226` comic captures despite automated pass: Next was off-screen due to duplicated width expansion, and locale/resolution changed before asynchronous screenshots finished. Both defects are corrected; bounds and capture completion checks were added. These rejected captures and full log are retained.
+- `05`: focused validation was scheduled before the new entry point was imported and failed with MissingMethodException. Retained as failed evidence.
+
+### Android recommendation and remaining acceptance
+
+Recommended policy: one step per press; dismiss the top popup or cancel confirmation first; use screen history for inner menus; open Pause during a live match and resume from Pause; delegate root Home to Android rather than quitting the process. Confirm only explicit abandonment of an unfinished match. This is our product policy, informed by Android's native Back/predictive navigation conventions.
+
+Official references: [Unity Back mapping](https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/input/backbuttonleavesapp), [Android predictive Back design](https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back?hl=en), [Android predictive Back integration](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture).
+
+No ADB device is connected. Physical Back button, gesture navigation, IME dismissal and Android 13–16 predictive Back commit/cancel remain device acceptance gates. No custom predictive animation is claimed. The previously failed normal-input M01 operation-map/ARIA/result/return gate remains open.
+
+- `06`: focused comic/Pause wrapper passed with nine images in `After/input-20261004-030056`. Panel bounds and reading order passed. Visual review found the gold advance icon flipped around its left pivot and protruding outside the Next panel; navigation-icon mirroring now centers its pivot. The English capture retained the current Farsi story line during live locale switching, so the final harness reopens playback for each language rather than claiming live narrative retranslation. A subsequent focused run verifies archive playback Back and the actual icon bounds.
+
+
+### Final native review
+
+`07`: final focused wrapper exit 0, `[InnerScreenUiInput] result=Passed`, `[SystemBackFixture] result=Passed` and `[ExistingEditorValidation] result=Passed`. `After/input-20261004-030524` contains nine nonempty images, including properly localized English playback and Farsi playback at 2400×1080, 1920×1080 and 1920×1200. Native review confirms portrait on the right, Next on the left, contained mirrored chevrons, full archive backdrop and clean Home after close. The advance chevron retains its existing blink behavior. Keyboard Back returns playback to the archive chooser in both languages and closes the chooser; touch uses the native archive controls. Pause Back/Resume and match Settings dismissal pass as shell fixtures, with no real mission readiness claim. The ten-route normal-input navigation pass is `04`; only comic/icon geometry changed afterward.
+
+Current implementation and checks are complete for this follow-up. Device button/gesture/predictive Back and complete normal-input mission acceptance remain pending as described above. Pause's existing authored sample/debug contents in the isolated fixture are not accepted as a player-ready mission screen.

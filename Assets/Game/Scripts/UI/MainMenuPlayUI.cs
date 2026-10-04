@@ -134,12 +134,6 @@ namespace Game.UI.Runtime
 
         public void Update()
         {
-            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true &&
-                TryCloseMatchHudAssistantForBack())
-            {
-                return;
-            }
-
             float now = Time.unscaledTime;
             using (MinimapUpdateMarker.Auto())
             {

@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace Game.Composition
 {
     // Read-only playback on the existing narrative canvas; no mission or reward handoff.
-    public sealed class MainMenuStoryArchiveView : MonoBehaviour
+    public sealed class MainMenuStoryArchiveView : MonoBehaviour, IUiBackOverlayParticipant
     {
         [SerializeField] private Button openButton;
         [SerializeField] private TMP_FontAsset font;
@@ -29,8 +29,8 @@ namespace Game.Composition
         public bool IsOpen => overlay != null || playing;
         public bool IsPlaying => playing;
         public void Configure(Button button, TMP_FontAsset bodyFont, NarrativeSequenceConfig[] additionalSequences) { openButton=button; font=bodyFont; supplementalSequences=additionalSequences; }
-        private void OnEnable() => openButton?.onClick.AddListener(Open);
-        private void OnDisable() { openButton?.onClick.RemoveListener(Open); Close(); }
+        private void OnEnable() { openButton?.onClick.AddListener(Open);UiBackOverlayRegistry.Register(this); }
+        private void OnDisable() { openButton?.onClick.RemoveListener(Open);UiBackOverlayRegistry.Unregister(this);Close(); }
         public static bool IsMissionEarned(uint completed, int index) => index >= 0 && index < CampaignMissionSequence.RegisteredMissionCount && (completed & (1u << index)) != 0;
         public static bool IsChapterEarned(uint completed, int chapter)
         {
@@ -216,7 +216,6 @@ namespace Game.Composition
         {
             if(!IsOpen)return;
             if(UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.ActiveRoute!=UIRoute.MainMenu){Close();return;}
-            if(Keyboard.current?.escapeKey.wasPressedThisFrame==true){if(playing)ReturnToChooser();else Close();return;}
             if(playing && player.IsRunning)
             {
                 player.Tick(Time.unscaledDeltaTime);
@@ -226,6 +225,12 @@ namespace Game.Composition
             }
             else if(playing && bookends!=null && !bookends.IsOpen)ReturnToChooser();
             if(!playing && locale!=GameLocalization.CurrentLocaleCode)BuildChooser();
+        }
+        public bool HandleBack()
+        {
+            if(!IsOpen)return false;
+            if(playing)ReturnToChooser();else Close();
+            return true;
         }
         private void ReturnToChooser()
         {

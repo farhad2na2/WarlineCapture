@@ -212,6 +212,12 @@ namespace Game.UI.Runtime
         private static void MirrorNavigationIcon(Transform icon, bool rightToLeft)
         {
             if (icon == null) return;
+            // Flip around the icon center so RTL art stays inside its authored control.
+            if(icon is RectTransform rect&&rect.pivot.x!=.5f)
+            {
+                var position=rect.anchoredPosition;position.x+=(.5f-rect.pivot.x)*rect.rect.width;
+                rect.pivot=new Vector2(.5f,rect.pivot.y);rect.anchoredPosition=position;
+            }
             Vector3 scale = icon.localScale;
             scale.x = Mathf.Abs(scale.x) * (rightToLeft ? -1f : 1f);
             icon.localScale = scale;

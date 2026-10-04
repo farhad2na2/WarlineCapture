@@ -4,7 +4,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class CampaignMissionHudResultBinderView : MonoBehaviour
+    public sealed class CampaignMissionHudResultBinderView : MonoBehaviour, IUiBackOverlayParticipant
     {
         [SerializeField] private RectTransform modalOverlay;
         [SerializeField] private GameObject missionResultPopupPrefab;
@@ -18,6 +18,17 @@ namespace Game.UI.Runtime
         private FutureMissionComicPreviewController chapterClosePreview;
         private bool chapterClosePending;
 
+        public bool IsOpen=>activeView!=null&&activeView.gameObject.activeInHierarchy;
+        private void OnEnable()=>UiBackOverlayRegistry.Register(this);
+        private void OnDisable()=>UiBackOverlayRegistry.Unregister(this);
+        public bool HandleBack()
+        {
+            if(!IsOpen)return false;
+            if(activeModel.SettlementFailed)return true;
+            if(activeModel.DebriefRequired&&activeModel.Outcome==UiMissionResultOutcome.Victory)OnPrimaryRequested();
+            else UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.MatchMenu);
+            return true;
+        }
         private void Awake()
         {
             // Existing Menu scenes predate the serialized region reference. Restore the

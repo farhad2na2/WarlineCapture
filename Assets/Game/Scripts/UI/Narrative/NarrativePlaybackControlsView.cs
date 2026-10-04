@@ -105,6 +105,12 @@ namespace Game.UI.Runtime
                     : accessibleLabel);
         }
 
+        public bool HandleBack()
+        {
+            if(skipButton==null||!skipButton.IsActive()||!skipButton.IsInteractable())return false;
+            HandleSkip();return true;
+        }
+
         private void HandleSkip()
         {
             skipHandler?.Invoke();

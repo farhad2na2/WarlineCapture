@@ -38,6 +38,8 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text replayTutorialLabel;
         [SerializeField] private Button deployOperationButton;
         [SerializeField] private bool v3TargetLayout;
+        [SerializeField] private bool approvedInnerLayout;
+        public void ConfigureApprovedInnerLayout() => approvedInnerLayout = true;
         private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
 
         public UIShellRouteButtonView BackRouteButton => backRouteButton;
@@ -213,6 +215,12 @@ namespace Game.UI.Runtime
                 FitArmorBreakIntelValue(enemyIntel?.Find("Row_AIR_THREAT/Value")?.GetComponent<TMP_Text>());
             }
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal || model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.ArmorBreak || model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert) FitGroundedBriefingObjectives();
+            if(approvedInnerLayout)
+            {
+                foreach(var panel in new[]{primaryObjectives,tacticalConditions,enemyIntel,rewards})if(panel!=null)panel.gameObject.SetActive(false);
+                enemyIntel?.parent.Find("EnemyCommander")?.gameObject.SetActive(false);
+                enemyIntel?.parent.Find("StarGoals")?.gameObject.SetActive(false);
+            }
         }
 
         public void ApplyUnavailable()
@@ -224,7 +232,7 @@ namespace Game.UI.Runtime
             if (replayTutorialLabel != null) replayTutorialLabel.gameObject.SetActive(false);
         }
 
-        private static string MissionTitleFromId(string missionId)
+        public static string MissionTitleFromId(string missionId)
         {
             if (missionId == UiCampaignMissionProjectionIds.M01) return "FIRST CONTACT";
             if (missionId == UiCampaignMissionProjectionIds.M02) return "ESTABLISH THE BASE";
@@ -234,7 +242,7 @@ namespace Game.UI.Runtime
             return token.Replace('_', ' ').ToUpperInvariant();
         }
 
-        private static string FormatObjective(
+        public static string FormatObjective(
             in UiMissionObjectiveModel objective,
             IGameTextResolver gameTextResolver)
         {
@@ -333,7 +341,7 @@ namespace Game.UI.Runtime
                 Restriction(model.EconomyDisabled || model.TransportDisabled || model.AirDisabled));
         }
 
-        private static string SummaryFallback(string missionId) =>
+        public static string SummaryFallback(string missionId) =>
             missionId == UiCampaignMissionProjectionIds.M02
                 ? "Reopen an abandoned JRC forward post before a second hostile cell reaches it."
                 : "Secure the Old Market corridor and protect the civilian route.";

@@ -11927,8 +11927,8 @@ MonoBehaviour:
   - {fileID: 1550221251572263203}
   - {fileID: 1085606430475731547}
   - {fileID: 2518031912218206047}
-  chapterOneButton: {fileID: 0}
-  chapterTwoButton: {fileID: 0}
+  chapterOneButton: {fileID: 9014098897845949422}
+  chapterTwoButton: {fileID: 5197904346019701462}
   chapterTwoOverviewButton: {fileID: 0}
   chapterTwoLock: {fileID: 0}
   selectedChapterLabel: {fileID: 0}
@@ -18502,6 +18502,7 @@ MonoBehaviour:
   - 60
   - 60
   - 60
+  stretchTextRows: 0
 --- !u!1 &7171637950033440717
 GameObject:
   m_ObjectHideFlags: 0

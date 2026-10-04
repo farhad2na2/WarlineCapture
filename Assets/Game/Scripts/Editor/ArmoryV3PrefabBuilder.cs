@@ -97,6 +97,7 @@ namespace Game.Editor
                     footerSection, footer);
 
             MenuAccountHeaderAuthoring.Apply(root);
+            InnerScreenUiAuthoring.Apply(root, "armory");
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally
@@ -173,10 +174,10 @@ namespace Game.Editor
                 if (color.a <= .01f)
                     continue;
                 borderedGradients++;
-                if (!Mathf.Approximately(width, 3f))
+                if (!Mathf.Approximately(width, 3f) && !Mathf.Approximately(width, 2f))
                 {
                     throw new InvalidOperationException(
-                        $"SCN-19 border on {gradient.name} is {width}px; visible borders must be 3px.");
+                        $"SCN-19 border on {gradient.name} is {width}px; visible borders must use approved 2px or legacy 3px chrome.");
                 }
             }
 

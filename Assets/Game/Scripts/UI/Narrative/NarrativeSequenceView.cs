@@ -102,6 +102,20 @@ namespace Game.UI.Runtime
                 safeAreaPreview.SetActive(visible);
         }
 
+        private Image archiveBackdrop;
+        public void SetArchiveBackdropVisible(bool visible)
+        {
+            if(rootGroup==null)return;
+            if(archiveBackdrop==null&&visible)
+            {
+                var rect=new GameObject("StoryArchiveBackdrop",typeof(RectTransform),typeof(Image)).GetComponent<RectTransform>();
+                rect.SetParent(rootGroup.transform,false);rect.SetAsFirstSibling();
+                rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=Vector2.zero;rect.offsetMax=Vector2.zero;
+                archiveBackdrop=rect.GetComponent<Image>();archiveBackdrop.color=Color.black;archiveBackdrop.raycastTarget=false;
+            }
+            if(archiveBackdrop!=null)archiveBackdrop.gameObject.SetActive(visible);
+        }
+
         public void SetVisible(bool visible)
         {
             if (rootGroup == null)

@@ -113,6 +113,7 @@ namespace Game.Editor
                 purchaseLabel);
 
             MenuAccountHeaderAuthoring.Apply(root);
+            InnerScreenUiAuthoring.Apply(root, "store");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -138,7 +139,7 @@ namespace Game.Editor
             Require(prefab.transform, "StoreComposition/Header/StoreBrand");
             Require(prefab.transform, "StoreComposition/CategoryRail/Category_0");
             Require(prefab.transform, "StoreComposition/OffersPanel/OfferSlot_0");
-            RawImage detailArtImage = Require(prefab.transform, "StoreComposition/DetailPanel/DetailArtClip/DetailArt").GetComponent<RawImage>();
+            RawImage detailArtImage = Require(prefab.transform, "StoreComposition/DetailPanel/DetailScroll/Content/DetailArtClip/DetailArt").GetComponent<RawImage>();
             if (detailArtImage == null || detailArtImage.GetComponent<AspectRatioFitter>()?.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
                 throw new InvalidOperationException("Store detail art must crop without stretching.");
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
@@ -401,7 +402,7 @@ namespace Game.Editor
             SetTopLeft(shield.rectTransform, 26f, 20f, 62f, 73f);
             TMP_Text level = CreateText("Eligibility", eligibility, "AVAILABLE FOR LEVELS 1 - 8", 27f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetHorizontalStretch(level.rectTransform, 111f, 15f, 9f, 45f);
-            TMP_Text reason = CreateText("UnavailableReason", eligibility, "Purchases unavailable until secure receipt services are connected.", 15f, mediumFont, TextAlignmentOptions.MidlineLeft, TextMuted);
+            TMP_Text reason = CreateText("UnavailableReason", eligibility, "Purchases are currently unavailable.", 15f, mediumFont, TextAlignmentOptions.MidlineLeft, TextMuted);
             SetHorizontalStretch(reason.rectTransform, 111f, 15f, 53f, 44f);
 
             purchase = CreateButton("PurchaseButton", root, 951f, 802f, 712f, 115f, AmberTop, AmberBottom, Amber, 3f);

@@ -15,31 +15,31 @@ namespace Game.Editor
     public static class MenuUiApprovedAuthoring
     {
         private static readonly Color Top = new Color32(20,31,35,252), Bottom = new Color32(6,13,16,252), Border = new Color32(70,82,86,255);
-        private static RectTransform Find(GameObject root, string name) => root.GetComponentsInChildren<RectTransform>(true).FirstOrDefault(t => t.name == name);
-        private static TMP_Text Text(GameObject root, string name) => Find(root,name)?.GetComponent<TMP_Text>();
-        private static void Place(RectTransform r, float x, float y, float w, float h)
+        internal static RectTransform Find(GameObject root, string name) => root.GetComponentsInChildren<RectTransform>(true).FirstOrDefault(t => t.name == name);
+        internal static TMP_Text Text(GameObject root, string name) => Find(root,name)?.GetComponent<TMP_Text>();
+        internal static void Place(RectTransform r, float x, float y, float w, float h)
         {
             if (r == null) return;
             r.anchorMin = r.anchorMax = r.pivot = new Vector2(0,1);
             r.anchoredPosition = new Vector2(x,-y); r.sizeDelta = new Vector2(w,h);
         }
-        private static void Hide(GameObject root, params string[] names)
+        internal static void Hide(GameObject root, params string[] names)
         { foreach (string n in names) { var r=Find(root,n); if(r != null) r.gameObject.SetActive(false); } }
         private static void Copy(RectTransform root, string child, string value)
         { var text=root?.Find(child)?.GetComponent<TMP_Text>(); if(text!=null) Bind(text,value); }
-        private static RectTransform Panel(Transform parent,string name,float x,float y,float w,float h)
+        internal static RectTransform Panel(Transform parent,string name,float x,float y,float w,float h)
         {
             var r=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>();r.SetParent(parent,false);Place(r,x,y,w,h);
             r.gameObject.AddComponent<V3GradientGraphic>().Configure(Top,Bottom,Border,2);return r;
         }
-        private static TMP_Text NewText(Transform parent,string name,string copy,float x,float y,float w,float h)
+        internal static TMP_Text NewText(Transform parent,string name,string copy,float x,float y,float w,float h)
         {
             var r=new GameObject(name,typeof(RectTransform),typeof(TextMeshProUGUI)).GetComponent<RectTransform>();r.SetParent(parent,false);Place(r,x,y,w,h);
             var t=r.GetComponent<TMP_Text>();t.font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset");
             t.fontSize=30;t.color=Color.white;t.raycastTarget=false;t.textWrappingMode=TextWrappingModes.Normal;
             Bind(t,copy);return t;
         }
-        private static void Bind(TMP_Text text,string copy)
+        internal static void Bind(TMP_Text text,string copy)
         {
             if(text==null)return;
             text.text=copy;
@@ -56,6 +56,9 @@ namespace Game.Editor
                 {"MISSION PROGRESS","پیشرفت ماموریت"},{"CAMPAIGN RECORD","کارنامه عملیات"},
                 {"ENEMIES","دشمنان"},{"COMMAND LOG","گزارش فرماندهی"},
                 {"Your progress is saved after each mission.","پیشرفت شما پس از هر ماموریت ذخیره می‌شود."},
+                {"CHARACTER","شخصیت"},{"COMMAND RECORD","سوابق فرماندهی"},{"DISTRICT OVERVIEW","نمای منطقه"},{"Starting","در حال آغاز"},{"Purchases are currently unavailable.","خرید در حال حاضر در دسترس نیست."},
+                {"NO DISTRICT REPORT","گزارش منطقه در دسترس نیست"},{"DISTRICT REPORT","گزارش منطقه"},{"VIEW OPERATIONS","مشاهده عملیات"},{"No district report is available. Open Operations to review current objectives and available missions.","گزارش منطقه در دسترس نیست. برای مرور اهداف جاری و ماموریت‌های موجود، عملیات را باز کنید."},
+                {"SQUAD PREPARATION","آماده‌سازی نیروها"},{"MISSION BRIEFING","شرح ماموریت"},{"MISSION FORCE","نیروهای ماموریت"},{"MISSION PLAN","طرح ماموریت"},{"MISSION CONDITIONS","شرایط ماموریت"},{"PRIMARY OBJECTIVES","اهداف اصلی"},{"ENEMY INTEL","اطلاعات دشمن"},{"STAR GOALS","اهداف ستاره‌ها"},{"VIEW ARMORY","مشاهده زرادخانه"},{"Review the mission objectives before deployment.","پیش از اعزام، اهداف ماموریت را مرور کنید."},{"DISTRICT DETAIL","جزئیات منطقه"},{"COMMAND FEED","گزارش فرماندهی"},
                 {"PREPARING","آماده‌سازی"},{"LOADING","در حال بارگذاری"},{"Ready","آماده"},{"Loading","در حال بارگذاری"}
             };
             var tables=new List<GameLocaleTable>();
@@ -92,11 +95,11 @@ namespace Game.Editor
             }
             foreach(var frame in root.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true)) if(frame.name!="MenuBackgroundContent")ConfigureFrame(frame,screen);
         }
-        private static void Header(GameObject root,string screen)
+        internal static void Header(GameObject root,string screen)
         {
             var frame=root.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true).FirstOrDefault(v=>v.name=="HeaderContent") ?? root.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             var parent=frame.transform;
-            var credits=Find(root,"Credits")??Find(root,"CreditsChip")??Find(root,"CreditsVisualPanel");
+            var credits=Find(root,"Credits")??Find(root,"CreditsChip")??Find(root,"CreditsVisualPanel")??Find(root,"CreditsPanel");
             if(credits==null)
             {
                 credits=Panel(parent,"Credits",1296,10,360,86);
@@ -114,7 +117,7 @@ namespace Game.Editor
             Place(Find(root,"SettingsButton"),1166,10,118,86);
             if(screen=="main-menu") { Place(Find(root,"HeaderLogoPanel"),14,10,800,86); return; }
             Hide(root,"WarlineLogo","TitleDivider","TitleSection");
-            var back=Find(root,screen=="campaign"?"MissionBackButton":"BackButton");
+            var back=Find(root,screen=="campaign"?"MissionBackButton":"BackButton")??Find(root,"HeaderBackButton");
             if(back!=null)
             {
                 back.SetParent(parent,false);Place(back,14,10,180,86);Copy(back,"Label","BACK");
@@ -126,7 +129,7 @@ namespace Game.Editor
             else
             {
                 title=Panel(parent,"MenuTitlePanel",206,10,948,86);
-                NewText(title,"MenuTitle",screen=="campaign"?"CAMPAIGN":"COMMANDER",24,8,900,70).fontSize=44;
+                NewText(title,"MenuTitle",screen=="campaign"?"CAMPAIGN":screen=="mission-briefing"?"MISSION BRIEFING":screen=="squad-preparation"?"SQUAD PREPARATION":screen=="store"?"STORE":screen=="armory"?"ARMORY":screen=="district-detail"?"DISTRICT DETAIL":screen=="command-feed"?"COMMAND FEED":"COMMANDER",24,8,900,70).fontSize=44;
             }
             if(screen=="campaign") Hide(root,"ScreenTitle");
         }
@@ -162,6 +165,11 @@ namespace Game.Editor
         }
         private static void Campaign(GameObject root)
         {
+            var campaignView=root.GetComponentInChildren<CampaignOperationsScreenView>(true);
+            var chapterBindings=new SerializedObject(campaignView);
+            chapterBindings.FindProperty("chapterOneButton").objectReferenceValue=campaignView.ChapterOneButton;
+            chapterBindings.FindProperty("chapterTwoButton").objectReferenceValue=campaignView.ChapterTwoButton;
+            chapterBindings.ApplyModifiedPropertiesWithoutUndo();
             var map=Find(root,"StrategicMap");Place(map,414,108,748,680);
             var clip=Find(root,"MapClip");if(clip!=null) Stretch(clip,4);
             var rail=Find(root,"ChapterRail");Place(rail,14,108,388,680);
@@ -341,7 +349,7 @@ namespace Game.Editor
         }
         private static void Stretch(RectTransform r,float padding)
         {if(r==null)return;r.anchorMin=Vector2.zero;r.anchorMax=Vector2.one;r.pivot=new Vector2(.5f,.5f);r.offsetMin=Vector2.one*padding;r.offsetMax=Vector2.one*-padding;}
-        private static RectTransform ScrollContent(RectTransform panel,string name,float height)
+        internal static RectTransform ScrollContent(RectTransform panel,string name,float height)
         {
             var children=panel.Cast<Transform>().ToArray();
             var viewport=new GameObject(name,typeof(RectTransform),typeof(Image),typeof(RectMask2D)).GetComponent<RectTransform>();viewport.SetParent(panel,false);Stretch(viewport,4);
@@ -415,7 +423,11 @@ namespace Game.Editor
                     if(r.name=="ChangeCommanderButton")x=1;
                     if(r.name=="OpenArmoryButton")w=1;
                 }
-                if(r.name=="MenuTitlePanel")w=1;
+                if(screen=="store") { if(r.name=="OffersPanel"){w=1;h=1;} if(r.name=="CategoryRail")h=1; if(r.name=="DetailPanel"){x=1;h=1;} }
+                if(screen=="armory") { if(r.name=="CatalogPanel"||r.name=="CatalogViewport"){w=1;h=1;} if(r.name=="InspectionPanel"){x=1;h=1;} if(r.name=="CategoryRail")h=1; }
+                if(screen=="district-detail") { if(r.name=="DistrictVisual"){w=1;h=1;} if(r.name=="DistrictReport"){x=1;h=1;} if(r.name=="DistrictOperationsButton"){w=1;y=1;} }
+                if(screen=="command-feed") { if(r.name=="FeedViewport"){w=1;h=1;} if(r.name=="RightRail"){x=1;h=1;} if(r.name=="FilterRail")h=1; }
+                if(r.name=="MenuTitlePanel"||r.name=="ScreenTitlePanel")w=1;
                 if(screen=="commander"&&r.parent?.name=="CommanderStatsPanel"&&r.name.StartsWith("Divider"))x=r.anchoredPosition.x/860f;
                 if(r.name=="Credits"||r.name=="CreditsChip"||r.name=="SettingsButton")x=1;
                 bool mirror=top||r.parent?.name=="MissionSelectState"||(screen=="skirmish"&&(r.name=="MapPreviewClip"||r.name=="SeedHelp"));

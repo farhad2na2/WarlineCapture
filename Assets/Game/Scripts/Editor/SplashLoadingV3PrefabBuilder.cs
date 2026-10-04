@@ -39,6 +39,16 @@ namespace Game.Editor
             UIShellLoadingProgressView progressView = root.AddComponent<UIShellLoadingProgressView>();
             BuildScreen(root.transform, progressView);
 
+            foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if(text.name == "LoadingPercent") continue;
+                var binding = text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
+                string source = text.text;
+                UiShellRuntimeGateway.Localization.TryGetBySource(source, out string key, out _);
+                binding.Configure(key, source);
+                text.fontSize = text.name == "LoadingTitle" ? 50 : 30;
+                binding.ConfigureFontBounds(text.fontSize, text.fontSize);
+            }
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -275,12 +285,13 @@ namespace Game.Editor
             RectTransform spinner = CreateTopLeftRect("LoadingSpinner", footer, 38f, 155f, 39f, 39f);
             CreateSpinner(spinner, theme.Cyan);
             TMP_Text status = CreateText("LoadingStatus", footer, "LOADING REQUIRED DATA", 23f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
-            SetTopLeft(status.rectTransform, 94f, 151f, 640f, 48f);
-            status.rectTransform.localScale = new Vector3(0.74f, 1f, 1f);
+            SetTopLeft(status.rectTransform, 94f, 145f, 760f, 66f);
+            status.rectTransform.localScale = Vector3.one;
             TMP_Text tipLabel = CreateText("TipLabel", footer, "Tip:", 25f, mediumFont, TextAlignmentOptions.MidlineRight, theme.Cyan);
-            SetTopLeft(tipLabel.rectTransform, 1120f, 151f, 96f, 48f);
+            SetTopLeft(tipLabel.rectTransform, 880f, 145f, 120f, 66f);
             TMP_Text tip = CreateText("TipText", footer, "Scout streets before committing armor.", 22f, mediumFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
-            SetTopLeft(tip.rectTransform, 1224f, 151f, 410f, 48f);
+            SetTopLeft(tip.rectTransform, 1012f, 145f, 622f, 66f);
+            tip.textWrappingMode = TextWrappingModes.Normal;
 
             SetObject(progressView, "progressFill", progressFill);
             SetObject(progressView, "percentText", percent);

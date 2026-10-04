@@ -129,12 +129,12 @@ namespace Game.Composition
         private void BuildMissionRow(RectTransform parent,int row,int index)
         {
             string label=UiShellRuntimeGateway.Localization.Format("ui.home.chapter_mission","CHAPTER {0} • MISSION {1}",index/5+1,index%5+1);
-            Text("Mission"+index,parent,label,25,new Vector2(360,78),new Vector2(-340,0));
+            Text("Mission"+index,parent,label,25,new Vector2(360,78),new Vector2(UiShellRuntimeGateway.Localization.IsRightToLeft?340:-340,0));
             string[] stages={"brief","comms","debrief"};string[] labels={"BRIEFING","RADIO","DEBRIEF"};
             for(int i=0;i<3;i++)
             {
                 string stage=stages[i];
-                var button=Button("Story"+index+stage,parent,Local("ui.home.archive."+stage,labels[i]),new Vector2(215,78),new Vector2(-30+i*235,0),()=>PlayMission(index,stage));
+                var button=Button("Story"+index+stage,parent,Local("ui.home.archive."+stage,labels[i]),new Vector2(215,78),new Vector2((UiShellRuntimeGateway.Localization.IsRightToLeft?-1:1)*(-30+i*235),0),()=>PlayMission(index,stage));
                 button.interactable=FindSequence(index,stage)!=null;
             }
         }
@@ -155,7 +155,7 @@ namespace Game.Composition
             if(!player.Initialize(config,bootstrap.FirstLaunchSpeakerCatalog,bootstrap.FirstLaunchPunctuationProfile,narrative,resolver,SettingsService.Load(),persian,storyOnly:true)) return false;
             player.HandoffRequested-=EndPlayback;player.HandoffRequested+=EndPlayback;
             if(!player.Start())return false;
-            playing=true;overlay?.SetActive(false);
+            playing=true;overlay?.SetActive(false);narrative?.SetArchiveBackdropVisible(true);
             narrative.PlaybackControlsView.BindSkip(ReturnToChooser);
             narrative.PlaybackControlsView.BindTransport(()=>{if(player.IsPaused)player.Resume();else player.Pause();},()=>player.SetSubtitlesEnabled(!player.SubtitlesEnabled));
             return true;
@@ -166,7 +166,7 @@ namespace Game.Composition
             if (id == "seq.ch04.close.protocol_fragment_04" || id == "seq.ch05.open.citywide_command" || id == "seq.ch05.close.protocol_fragment_05" || id == "seq.campaign.epilogue.canonical") return PlayRegistered(id, null);
             bookends??=gameObject.AddComponent<FutureMissionComicPreviewController>();
             if(!bookends.PlaySequence(id,completed:ReturnToChooser))return false;
-            playing=true;overlay?.SetActive(false);return true;
+            playing=true;overlay?.SetActive(false);narrative?.SetArchiveBackdropVisible(true);return true;
         }
         private readonly Queue<string> finaleArchiveQueue=new();
         private static bool IsFinaleEmphasis(string id) => new[]{"trust","evidence","infrastructure"}.Any(family=>id=="seq.campaign.epilogue."+family+"_emphasis.high"||id=="seq.campaign.epilogue."+family+"_emphasis.low");
@@ -198,7 +198,7 @@ namespace Game.Composition
             if (!player.Initialize(config,bootstrap.FirstLaunchSpeakerCatalog,bootstrap.FirstLaunchPunctuationProfile,narrative,resolver,SettingsService.Load(),persian,storyOnly:true)) return false;
             player.HandoffRequested-=EndPlayback; player.HandoffRequested+=EndPlayback;
             if (!(string.IsNullOrEmpty(stateId) ? player.Start() : player.StartAt(stateId))) return false;
-            playing=true; overlay?.SetActive(false);
+            playing=true; overlay?.SetActive(false);narrative?.SetArchiveBackdropVisible(true);
             narrative.PlaybackControlsView.BindSkip(ReturnToChooser);
             narrative.PlaybackControlsView.BindTransport(()=>{if(player.IsPaused)player.Resume();else player.Pause();},()=>player.SetSubtitlesEnabled(!player.SubtitlesEnabled));
             return true;
@@ -230,13 +230,13 @@ namespace Game.Composition
         private void ReturnToChooser()
         {
             finaleArchiveQueue.Clear();
-            player.HandoffRequested-=EndPlayback;player.Cancel();bookends?.Close();playing=false;
+            player.HandoffRequested-=EndPlayback;player.Cancel();bookends?.Close();playing=false;narrative?.SetArchiveBackdropVisible(false);
             if(overlay!=null)BuildChooser();
         }
         public void Close()
         {
             finaleArchiveQueue.Clear();
-            player.HandoffRequested-=EndPlayback;player.Cancel();bookends?.Close();playing=false;
+            player.HandoffRequested-=EndPlayback;player.Cancel();bookends?.Close();playing=false;narrative?.SetArchiveBackdropVisible(false);
             if(overlay!=null)Destroy(overlay);overlay=null;
         }
         private static string Local(string key,string fallback)=>UiShellRuntimeGateway.Localization.Get(key,fallback);

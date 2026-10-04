@@ -105,6 +105,7 @@ namespace Game.UI.Runtime
         internal static void InstallLoadoutSquadPrepBody(this UIShellContentView contentView)
         {
             GameObject body = InstallBody(contentView, contentView.LoadoutSquadPrepContentPrefab);
+            body?.GetComponent<CampaignInnerMissionView>()?.BindGameTextResolver(contentView.GameTextResolver);
             body?.GetComponent<LoadoutSquadPrepScreenView>()?.RefreshBindings();
         }
 
@@ -147,7 +148,7 @@ namespace Game.UI.Runtime
         private static GameObject InstallBody(UIShellContentView contentView, GameObject prefab)
         {
             contentView.UnbindMatchHudThreatWarningHeader();
-            if(prefab == contentView.CampaignContentPrefab || prefab == contentView.SkirmishSetupContentPrefab || prefab == contentView.OperationsContentPrefab)
+            if(prefab == contentView.CampaignContentPrefab || prefab == contentView.SkirmishSetupContentPrefab || prefab == contentView.OperationsContentPrefab || prefab == contentView.MissionBriefingContentPrefab || prefab == contentView.LoadoutSquadPrepContentPrefab || prefab == contentView.DistrictDetailContentPrefab || prefab == contentView.StoreContentPrefab || prefab == contentView.CommandFeedContentPrefab)
                 contentView.ClearRegion(UIShellRegionId.HeaderRegion);
             CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(contentView);
             contentView.ClearRegion(UIShellRegionId.LeftRegion);

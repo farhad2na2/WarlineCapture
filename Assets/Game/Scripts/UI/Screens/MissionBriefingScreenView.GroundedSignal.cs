@@ -49,6 +49,7 @@ namespace Game.UI.Runtime
 
         private void FitGroundedBriefingObjectives()
         {
+            if (approvedInnerLayout) return;
             if (objectiveLabels == null) return;
             _groundedObjectiveRows ??= new AuthoredText[objectiveLabels.Length];
             _groundedObjectiveText ??= new AuthoredText[objectiveLabels.Length];

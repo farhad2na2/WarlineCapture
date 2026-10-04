@@ -126,7 +126,7 @@ namespace Game.Editor
                 await Task.Delay(700);Shot(output,"fa-IR","home-after-story");
                 if(UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>().IsVisible)throw new InvalidOperationException("Narrative leaked onto home after archive close");
                 await PauseBackFixture(keyboard,output);
-                await Until(()=>Directory.GetFiles(output,"*.png").Length==(comicOnly?9:27)&&Directory.GetFiles(output,"*.png").All(f=>new FileInfo(f).Length>0),20);
+                await Until(()=>Directory.GetFiles(output,"*.png").Length==(comicOnly?10:28)&&Directory.GetFiles(output,"*.png").All(f=>new FileInfo(f).Length>0),20);
                 passed=true;
                 Debug.Log("[InnerScreenUiInput] result=Passed input=InputSystemTouch locales=en,fa-IR "+(comicOnly?"scope=ComicAndPause":"screens=6 systemBackRoutes=10 innerScrolling=True selectedMission=True storeDisabled=True armoryCategories=True rewardsUnchanged=True")+" comicRtl=True completeMission=NotClaimed deviceAcceptance=Pending output="+output);
             }
@@ -177,7 +177,14 @@ namespace Game.Editor
             UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.OpenSettings);await Until(()=>UnityEngine.Object.FindAnyObjectByType<SettingsPopupView>()!=null,20);await Task.Delay(1000);Shot(output,"fa-IR","match-settings-back-fixture");
             await SystemBack(keyboard);await Until(()=>UnityEngine.Object.FindAnyObjectByType<SettingsPopupView>()==null,20);
             if(em.GetComponentData<UiShellActivePopupComponent>(root).Visible!=0)throw new InvalidOperationException("Back left hidden modal state active");
-            em.SetComponentData(root,original);
+            UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.ReturnToMainMenu,UIRoute.MainMenu,false);
+            await Route(UIRoute.MainMenu);
+            Shot(output,"fa-IR","home-after-match-fixture");await Task.Delay(500);
+            var gameViewType=typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.GameView");
+            var gameView=EditorWindow.GetWindow(gameViewType);
+            var gizmos=gameViewType.GetProperty("drawGizmos",System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+            if((bool)gizmos.GetValue(gameView))throw new InvalidOperationException("Editor gizmos contaminated player review");
+            Debug.Log("[MenuReturnReview] result=Passed route=MainMenu editorGizmos=False realMission=NotClaimed");
             Debug.Log("[SystemBackFixture] result=Passed pauseOpens=True pauseBackResumes=True settingsDismisses=True realMission=NotClaimed");
         }
         private static async Task DismissNarrative(AriaTouchInputUiSystemHelper touch)

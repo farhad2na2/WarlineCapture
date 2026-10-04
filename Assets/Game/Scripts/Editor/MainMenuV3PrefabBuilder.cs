@@ -414,6 +414,14 @@ namespace Game.Editor
             if (selectedSize == null)
                 throw new MissingMemberException("Unity Game View selectedSizeIndex is unavailable.");
 
+            // Player reviews must exclude Editor-only outlines, which can remain
+            // visible over Home after leaving the match shell.
+            PropertyInfo drawGizmos = gameViewType.GetProperty("drawGizmos",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (drawGizmos == null)
+                throw new MissingMemberException("Unity Game View drawGizmos is unavailable.");
+            drawGizmos.SetValue(gameView, false);
+
             selectedSize.SetValue(gameView, matchingIndex);
             MethodInfo selectionCallback = gameViewType.GetMethod("SizeSelectionCallback",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,

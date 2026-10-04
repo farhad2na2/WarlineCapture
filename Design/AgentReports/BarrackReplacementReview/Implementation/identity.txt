@@ -1,0 +1,5 @@
+prefab=Assets/Game/Prefabs/Buildings/Building_Barrack.prefab
+guid=683195b1e21c94df7add42ab26cd2a33
+fileId=6603657636351658259
+configSettings=Preserved
+genericCityRuins=Preserved

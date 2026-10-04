@@ -102,6 +102,8 @@ namespace Game.Runtime
         public float DoorOpenLocalEulerZ;
         public float DoorOpen01;
         public GameObject DestroyedVisualInstance;
+        public Game.Rendering.IBuildingFactionVisualVariants FactionVisualVariants;
+        public GameObject OwnerDestroyedVisualPrefab;
         public Transform[] AliveVisualRoots;
         public BuildingVisualSystem.AnimatedPart[] AnimatedParts;
         public bool ResourceVisualAnimationActive;

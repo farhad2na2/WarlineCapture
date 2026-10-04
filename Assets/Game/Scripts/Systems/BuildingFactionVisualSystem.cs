@@ -36,6 +36,7 @@ namespace Game.Runtime
             if (building == null || visualRoot == null)
                 return;
 
+            building.FactionVisualVariants = visualRoot.GetComponentInChildren<Game.Rendering.IBuildingFactionVisualVariants>(true);
             Renderer[] renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
             if (renderers == null || renderers.Length == 0)
             {
@@ -67,6 +68,16 @@ namespace Game.Runtime
         {
             if (building == null)
                 return;
+
+            if (!building.IsDestroyed && building.FactionVisualVariants != null)
+            {
+                bool enemy = building.HasOwnerFaction &&
+                             Game.Components.FactionIdentity.IsHostileToPlayer(building.OwnerFactionId);
+                building.FactionVisualVariants.SelectEnemy(enemy);
+                building.OwnerDestroyedVisualPrefab = enemy
+                    ? building.FactionVisualVariants.EnemyDestroyedVisualPrefab
+                    : null;
+            }
 
             if (!building.HasOwnerFaction)
             {

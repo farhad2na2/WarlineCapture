@@ -1,0 +1,4 @@
+Native checkpoint capture/reconstruction: unavailable by explicit HasNativeActors guard; fixture checkpoint tests passed but are not native resume evidence.
+Real player and target-device acceptance: pending; requested target selection has no reply.
+Native appearance: normal materials confirmed after shader-settling gate; human visual acceptance remains pending. Earlier dense-town mockup is not evidence of implemented map appearance.
+Release-build ARIA: shared Skirmish capability remains gated to UNITY_EDITOR || DEVELOPMENT_BUILD until shared coverage matrix acceptance; no per-S004 bypass applied.

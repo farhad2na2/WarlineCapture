@@ -160,7 +160,8 @@ namespace Game.Runtime
             IMatchIntroStateQuery matchIntroStateQuery,
             bool requirePackedVehiclePresentationContract = false,
             System.Func<MapVehiclePlacementConfig> resolveMapVehiclePlacementConfig = null,
-            System.Func<Transform> resolveMapVehicleAuthoringRoot = null)
+            System.Func<Transform> resolveMapVehicleAuthoringRoot = null,
+            System.Func<MapBuildingPlacementConfig> resolveMapBuildingPlacementConfig = null)
         {
             DayNightSystem dayNight = ResolveDayNightSystem();
             dayNight?.Init(dayNightConfig, directionalLight, globalVolume);
@@ -195,7 +196,8 @@ namespace Game.Runtime
                 tryGetUnitDefinitionMetadata,
                 requirePackedVehiclePresentationContract,
                 resolveMapVehiclePlacementConfig,
-                resolveMapVehicleAuthoringRoot);
+                resolveMapVehicleAuthoringRoot,
+                resolveMapBuildingPlacementConfig);
 
             Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
             {

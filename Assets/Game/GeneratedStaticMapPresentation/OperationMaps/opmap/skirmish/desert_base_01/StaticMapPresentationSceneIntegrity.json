@@ -1,0 +1,1351 @@
+﻿{
+    "schemaVersion": 1,
+    "contentHash": "6a215389b88cb1c9656d2580942d5f70",
+    "scenes": [
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p067.unity",
+            "fileHash": "2444c006c618366b91f261f6df58da69d2ff9412c7a053b065d5a706ebe0b6ee",
+            "metaHash": "341acaa23b3e272f10db0d8b34917dfc3544f74b9ab0411ec5daab1d99892c91"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n002_p013.unity",
+            "fileHash": "7c3461817663a32c51c2c547857be050730806234349706154f6daf10c898eec",
+            "metaHash": "ba7fc5f5da6474784b00370f29045ce97442fd6b509b38924a788785d4b572b8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n006_n015.unity",
+            "fileHash": "85ad5fad54f3e5d055211d69d8318c17e3f40ee8a5eb8aff2fe868745b03bb2a",
+            "metaHash": "7cc90b866d5fa4d25111d5a260fea065a96bba1b1537972dc5e8398a7a51c00c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n007_p013.unity",
+            "fileHash": "6f0634db5b7115cfdc909baf389ead4ef89cb8b78e4d9239e11799facdf6016c",
+            "metaHash": "577468107d03c9f3caf2c1f00fda256cfba46cac781fff44ad470d2b127ab5be"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n008_p056.unity",
+            "fileHash": "22a8cab35ef594fa7c6ef9f18ff8e79b554c8ebfe740a9bca488412081f7d4a1",
+            "metaHash": "25e43a1c158270b9a9f1432bba25da4815e08a732c902578fae664174c555b61"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n010_p013.unity",
+            "fileHash": "c7588404a92fb0ffc891b21cd7e3c2bc1db6eb7d2bd083fa2cf29bb380fc14d2",
+            "metaHash": "774e3ca34f25099a7324b139e35211020c59c21092f99833fcbfd471367e0d65"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n012_p052.unity",
+            "fileHash": "4a1cf8deea16a5e2b69b4f2c3ffc16ae98b8864f43c17c0c8a031ccdc67464aa",
+            "metaHash": "36509b696495924113da985fb008855ec37a121fa8ad94ce71bf10efa19663ec"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n013_p013.unity",
+            "fileHash": "466d82195fd13654e84079ee8f4d367e82718a6b81a33e1afd659cf04d880715",
+            "metaHash": "a267b287df6ed4484487b64713835ec7bfdc3866f207a72c239e2f4a6e01869b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n013_p027.unity",
+            "fileHash": "609cabed4c892ae9fbf71fcde8a53fb6c1c0e681ce8d70d0b3ec34b18e9ee125",
+            "metaHash": "752e9ab2f00738444cfea1bb0d61cf42c6bf1854dc70adc5a141b70122e49c90"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n014_p007.unity",
+            "fileHash": "a11b746ef6ad88fe89f1a859fadd9fb81eaf3e799b196b4cb853994db0d79e4c",
+            "metaHash": "fe2eec5d60f0fb485a11d5f38a086cf59917de84e7c32f148eca8272029c84c8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n016_p013.unity",
+            "fileHash": "0972fd4a09db499f5fb226cdd74249a95f9dfda663e99bab8dfc454269091238",
+            "metaHash": "1adca56f72ad8474e1f201af4c298d4ea1d05b30d67c9e44f7ffc5ec27b50497"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n017_n005.unity",
+            "fileHash": "f586cff01bed26785b4cc1dfad47278d78808abf319cf112e8a405f89b73dfd7",
+            "metaHash": "7a392e45b82a537536d7d95cae4eec2e19098670937a25f82f72366a555af8d7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n018_p049.unity",
+            "fileHash": "60162caec14c195e27f545029b4890076d5927e2e2819f624b14ce8fae2e450f",
+            "metaHash": "4004a8a50746bdfd7b04c09f4f4f4f7255efa95bf6f1ef6ced8d3f079c2bfb78"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n019_n015.unity",
+            "fileHash": "472d6a6a81d5b336611ccfe7c3481d2c81a138cca3d532e522e580c48af0cdad",
+            "metaHash": "4faaeabfecdea918cc5eaf18a82e46321d972acda3b4b98d1120022b6704f30d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n022_p013.unity",
+            "fileHash": "beb856291a900d32db3917d3be5c1e80832f97d551ecd2c15dd87d4f20dabe9b",
+            "metaHash": "7e304e9cc2f4ac541e453f9f0cca46046af9dc725d32079cb4f5759bfa7bb991"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n028_p004.unity",
+            "fileHash": "7a4e08b2f0bb9782d69cd7e7287afa806c6a32c6878007ec5bdb1df50c4232a9",
+            "metaHash": "966d1511005ec36ba036d0f4b1d58ba25b8b99ba7777203d84a855a6238e4505"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n029_p013.unity",
+            "fileHash": "231e1cf797e0e25e1df92f58f57d4fa75b7633adde53b22e5e091dbb9ae4a04d",
+            "metaHash": "a65b2a02c4aaa6a242eba412758a9b0c974b4b2bd82b8fce22228919178d2de4"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n035_p013.unity",
+            "fileHash": "cbf96dc5daab948993f7aadf0ce848cd4ecfa6fbb270d2431515f67d2a0a0ca2",
+            "metaHash": "7cc4b1c9f15b39b94bee0cacc45731ebb327d0af9ecdb7a01c97a73726e2ea02"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n035_p048.unity",
+            "fileHash": "7953b1a56c0c0296b3ddbe22285cab6ae0642c50ff043faa0784dc88d0068abb",
+            "metaHash": "286aa111b974deba3cdab0f260b4507d00f61273cd1f699ac0e84d77f3794a0d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n041_p013.unity",
+            "fileHash": "c30aa3ef6a1703abf5a75fe6846c8e890beff8ffd52a342bb78238243325e172",
+            "metaHash": "1d30fb53a92fd40f01aa654e89f03919f81e8c05745ee52b829fa6813695ee38"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n042_n005.unity",
+            "fileHash": "e874d873a73ebe430baa870f4c08c11595149661c4bebee0962c1ca3e0a35206",
+            "metaHash": "8ef81f5216ef78a15e1ff31ae0b2c680010671134b8f8507d02389814cc0591b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n047_p013.unity",
+            "fileHash": "ee15be9e7cc06b73bef03bf9a3fcfe29aeb35a5bb558b981a27aa9e145e662d0",
+            "metaHash": "4c9930cc0e0e1dbef7b50da7461cf99a2803d8af4b122796cbaeadc6535761b5"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_n048.unity",
+            "fileHash": "7415270b64ee558dea9ea41f6ab168c25267cc84a0bcdb937901dbd3ac866dc5",
+            "metaHash": "90c735c808f5eb8785615858d5d1e49076b88b066629ee859a5e0f3009770f60"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p001_p013.unity",
+            "fileHash": "7fc9992fbbefe146fc8ed1eb20ebd5fd19738afaafede1cc655bf907e236c153",
+            "metaHash": "9b8aca5aebd330ea69174d6e496e996e92531a8c0ac032a043556bb2ffc60a58"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p001_p015.unity",
+            "fileHash": "c4657a798934b2392ea3b2b513c667512b26161cc588f92ed744c55415e6b2c1",
+            "metaHash": "bb3ab80845e0f73ff8df0d7f1df2577b1c2983aa694fcf5e8788b23d3b2b7889"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p004_n015.unity",
+            "fileHash": "1fe0ff9b128c736243e2e255252aca2d16b079b4625d14ec118516b2af88d215",
+            "metaHash": "78cf60ebaf34562bc0f5c320c3c28c67af355c01a222ee9e3e56a855d77ddf84"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p004_p013.unity",
+            "fileHash": "d864694af0a3d6633d9fe240c0f57e53fa3768e01e3a94e23f1cf259d782dff1",
+            "metaHash": "9e2b5593d4253e02514d7ce7d26b84471adfd830fe607a6babe8514894661550"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p005_n007.unity",
+            "fileHash": "95d75b5aadc934651f2491d0ccdcbb1e68b89586f09fa3bc8303e3d321d54f49",
+            "metaHash": "8c749da500089c899ee7edd6b35c86a42a67c71cdf0122d8567868b1291f74cb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p007_p013.unity",
+            "fileHash": "3feb298b78170338e67dc4e6ecbdd2ef4d08057573f958b997209c8af4d55b76",
+            "metaHash": "232b69b38bf27bdb9f06897803de8f69daa30db180543873bf7ef802217b989a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p007_p050.unity",
+            "fileHash": "8801d676231cb9cfb25807358dac7399a7ba1cddab9f1860db2304407ac4569a",
+            "metaHash": "541eaa1d7eaf681a423036c5626809ddec17f98b0f24dff9febbc3385f6fe432"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p008_n028.unity",
+            "fileHash": "8879ae89ce00800cc879436d17e3fda7b1eebb3c1f9b9e91778a077e9582ea3b",
+            "metaHash": "455b643f5743f6a64ba75a619820505ed4df50e3b144ffdfbf1a1cc17b031770"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p008_p013.unity",
+            "fileHash": "7171ea02621635140d7a019164092983ac75529805b73087dce663904115d5bb",
+            "metaHash": "f273752e168c8c5c4aaca2b29c7fc2ce6558131a3c10fffe414b2f0de6c6680a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p009_p043.unity",
+            "fileHash": "83d795e88fc88e63621f048372677f0f7e896d732af327141e79da8bc4e0f0da",
+            "metaHash": "0aadb6362f705b94d870423e29ca7dc2edfc757ff7f96a70156e0a3fb46dea98"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p010_p013.unity",
+            "fileHash": "bd5dafc982c644749ee91e6a6c47e4bc11af1e0443960cbfd60c342bd00ebf51",
+            "metaHash": "25a2bd76d63f7d166e98a3affa7f268e0bf38f196eb40a29c0472e55861697e6"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p011_p013.unity",
+            "fileHash": "2f8c119255d5532ea1dd86edcf3995274ac3fb8e2650c9d7fbfa2a83f8fbce60",
+            "metaHash": "cd0fce5e17e0917eb8b869a3ce286778e395470b464cfde7cf73e9649489ba70"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p011_p020.unity",
+            "fileHash": "0ed26f21db1796a2f9329b693ecbfbbe1f8d722cf1851911a19d22c382d52d3b",
+            "metaHash": "8ed208725b634f78e835b0f53d7a18e78b8d44dfb5a2f3e2039383712adcad6e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_p008.unity",
+            "fileHash": "7ab59a34465e4830a785acd790540d9a0a6ba716058f405373c286cfe8b0012f",
+            "metaHash": "3863fe8a4bd39a87b5de9887ece9dead02501769c17384c7fd381014947500cc"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_p011.unity",
+            "fileHash": "3a167a36e5155a87aa6222b90189c1b53ce3c39c536f6398cc8de0e91d570505",
+            "metaHash": "c8e589ecc2148e1fb18b432094747e79ca49e6a93552b24e22d2dfcbbed885cc"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_p018.unity",
+            "fileHash": "3d28fd74b2e8ad3e4aa6dfa7846845c9e30aed5978e8a0d51a172c395e748112",
+            "metaHash": "3fd0b1239757c6281279507e1143bb35bb0a097a086c404aafa92fc2f3555d1a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_p019.unity",
+            "fileHash": "e85818e7adf2dc1df15b66555b1932b585182d60922815ef5fe2c81e1036e49a",
+            "metaHash": "858c9cbc7a78ca10d64d1b160c72d8222e96a38c2ccab46ee68c6c9f76ab5c1e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p013_p012.unity",
+            "fileHash": "e98900f331121665055d50e12c6ec7c9e29514fabd60b6dc2870f5d6b21c4045",
+            "metaHash": "baa896268c1a127883c895e6761f51e6c6fb38826c304427524ee3c9432f0b20"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p013_p013.unity",
+            "fileHash": "1251fd918f28d487f7b5f779276689dd8161a5f6af8f5cc1cb6375889cb1f542",
+            "metaHash": "dc1d74bf7d7e51a25c1d8ca4fac9b71a3c0a66d15fcd96aa9573db71ed99e5d8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p013_p036.unity",
+            "fileHash": "e9bfc2586478939f550b547d42a53434a683d334e56b02dbb80f17356583f0bc",
+            "metaHash": "cdae84c7233e9fce5794faa28db2ff548ea6e37f202baf6a12e1def4c8c244be"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p014_p010.unity",
+            "fileHash": "9197c07b71e4e609fc915a431b581e180736ac320cae3de8c4fc5c9195a61fad",
+            "metaHash": "dd386ba5d938f4f9e6335addc97be35f713b419b328d4cb80631c57409e2810c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p014_p013.unity",
+            "fileHash": "9009be588b29a220954c3ba9bfcfd41632d6138d2afc5281004eeafd8781c2dc",
+            "metaHash": "08b42b4d9d8da9827ef3db92ab81f38b06518654342ae4643f13b66971aa56ec"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p014_p016.unity",
+            "fileHash": "eba4e62c6576cf8ffd49f1f60eb8c390ceaf2819b40de2e3f458aebd9246c629",
+            "metaHash": "a131eaae5beb53a13ae527d2ec9040da1bc45278cfafb095686ba7df2cb38c1f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p015_p004.unity",
+            "fileHash": "9fd88f81195c5cd01e286f8f94fc7124ea4e26077416ccf16d42d46a2c2cd777",
+            "metaHash": "9919d31e4d778ebb957b2aa4153061678a85a4e3bd61f7994b37c49ba867c174"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p015_p012.unity",
+            "fileHash": "3c47737e32e371e5194a2c5131ab289be6d07f895fec89e62082191c3e62b288",
+            "metaHash": "d0052d8418e257b00efe7d9fd55faabc63c864363bb73d7ec4856a0b6b634633"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p015_p019.unity",
+            "fileHash": "4f28b797c8ea44388130cfdf9f9122c11816ba744b3adfbee90a123b649be543",
+            "metaHash": "90162becb5f23c503ef5626a09eeb5e996c91dc27cb2a4aa7529f6dd707b4b3f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p015_p116.unity",
+            "fileHash": "8666e6f963f6e47657f8cadd8ea05621564d12df2985a1b5199ed281703a4a3f",
+            "metaHash": "fadc98c6f8a8167896e41bb3b7ffdd98debe6395e41f962903e8e95c4be5f3ea"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p009.unity",
+            "fileHash": "3c012bcda8102b36ad925efa1293fa2403b5113a6ad9704ca4b38c8c8e76796c",
+            "metaHash": "cfa7816fee1bb5dfdd0b58047610fced687bfd6eee424b752dcdbe3ebf33f8a3"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p010.unity",
+            "fileHash": "54e571ab28328b35de076e6e413de144b24d491ea7eac490df21340f5002b5c7",
+            "metaHash": "825c6c8864919a18b76865a5e6d3bf71c372c0d15cb165616a10a38de1e4813a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p011.unity",
+            "fileHash": "be8a73beda1951706d799742365118c8541ece892ec91eba3731b7396dd488a5",
+            "metaHash": "c1620e5a4ed92b09a05404d3f52208738529f5b1d6537adc505a78e700e38377"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p012.unity",
+            "fileHash": "7eb11523631e3bd798bdd179d83e5e4b9329d4edead0b372e7f0495d7bdc97af",
+            "metaHash": "1f9f800e6627873cb1d02cd35e9f2d767a82cf8af2ec7bbaa24b3e51f7276bdb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p013.unity",
+            "fileHash": "d8d7e57fe864fd67f9e6a430a5ab0320d7a288133832d934bf3d4ddfb1e94aad",
+            "metaHash": "6d124ddd6b8ccfaf79bcbad46f4e88310f6308db6d1c51b2e6855cbed90889ff"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p014.unity",
+            "fileHash": "a7de74d199665c2b8b2e180c5632aad13057f8e5d15171bc0c7a11e7cd7509e9",
+            "metaHash": "e5719d03732d79a86ae19913b4a2182bb5eb0904e6aa23b9c226d933d0158f94"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p015.unity",
+            "fileHash": "404bf933f75deeb9d565294a1abf35edff66281b4c91fad3e021c538ebf9e68c",
+            "metaHash": "091707ee8b999999e4e72cd42bcd322e134dd76b05c384e218618a937dd8cc95"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p016_p042.unity",
+            "fileHash": "13efd66214ff1ac8ffc9706a34fce9553c724d84471a6c27e88793131e870681",
+            "metaHash": "e8ff8226df3cd9b876c36fbed8faff067d3fdc590e659f9d4cf577f377e9110f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_n015.unity",
+            "fileHash": "63b743323f36156cf80b17acbd46c3b32993004bf690b18d3f3837fad48c58ed",
+            "metaHash": "292a3178f0c8bd25a2a7958a12c377f0d248cc244ee0fa941bcd504e5f28c33b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p009.unity",
+            "fileHash": "706f128858a84de0f1e4d373a3b114d3e12325f9b69fe51cb5424f9e0f7b6358",
+            "metaHash": "a6ce98cba61cb0e6bda7f52640eac61f3192c1a82811cef2d2dacfb863d4d722"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p010.unity",
+            "fileHash": "1bcb5ca2ade01eaaa3fb7235805c58b0c0c7504d2f064969097fcc6d6ea8886c",
+            "metaHash": "c4528b668cf915d29b20792735fe1e57108955c553fa1071e6d1cb121fa6f712"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p011.unity",
+            "fileHash": "e240b3a936b99e27dfd5452edf6a795bc755bc434cc5a1f348c448fd46567683",
+            "metaHash": "79861f6da2c264811b89430dd41e94febcf66ce90662a3dcf5eb5b59c6d8b15d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p012.unity",
+            "fileHash": "aa143fc0cdb1800fbb0993a7527567cd2602523a37db81454ba303ca4657366b",
+            "metaHash": "d228fe9d0932cbcb63d6a5979c362b7cb07e3cbedaf949faddf9a996b7090ea0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p013.unity",
+            "fileHash": "567c7f400df1e31f442352c196d748baffa8c3f7412155b8fd7278871e8f4aeb",
+            "metaHash": "9929e2753a18b4647a99db5b17f9ddb0d273d388e8a8483c3d501607ca354039"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p014.unity",
+            "fileHash": "6541cf92692bf096b6b6b45808c26940644f16466d5466b640564a1b52fd7b28",
+            "metaHash": "088466bf89b143746ad6432cf91dd5e7d4ef03ed8c8e0a62779d0aad4aa6ca4f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p015.unity",
+            "fileHash": "32dd255bd1162ca254aca1633dfa58c8041b2027152c223d92e9781de8402e58",
+            "metaHash": "c92278363dc1f707f94f3ac55219273156221e1d2c197dbc5fa971aa151b0567"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p016.unity",
+            "fileHash": "ca37c041e6f044e197bbd921b8f8eacf479079b7f0dd2e76bce2df0df79e288b",
+            "metaHash": "f493642f38d8def7dbb682cb84b8ca552eca4b14375c28988f6f9a38f575257b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p017_p083.unity",
+            "fileHash": "1c3e4b678b90af6199dd3e46f222418305f8833a9d1e550487e3d171e82c2036",
+            "metaHash": "8dbe38d2471940e32fd75280139e67ecc191d0b094dcba892a2f18b1e33888f5"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p005.unity",
+            "fileHash": "7cbf0c44a0a1fede168049c76abc8c8aa41bd85981ad53234ec99c37c1c1a07e",
+            "metaHash": "185754179d698adcdcf3844f14fb0842a04193dbe8b0711302a6529a3b386954"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p008.unity",
+            "fileHash": "84d14f80c36260d7ad76e84d822d64690537b632a968edfc76a92a5cb82cd679",
+            "metaHash": "d630b3e0f92173b0714d2219bee53bde9a0ba72651de91cba9f154451232a89c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p009.unity",
+            "fileHash": "dd75c0a057737a7b393e27566a17293f74e2830d68d8a644ce287163e0cb4083",
+            "metaHash": "9cc7667522dfc484ce842b33f8d12f1d7ea0fea6a66d84a7cbd11602156ec062"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p010.unity",
+            "fileHash": "057b5e4167981077562b1399da002c93f86a1f352a7455a5d08d5fcf01816298",
+            "metaHash": "39cbe9cfd2d111e662e2e8f174b2906da67865027f84df6746e9ce6501d228b2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p011.unity",
+            "fileHash": "5acf269ddea34ef871c2c28724cdbd88cbd375337ca3ec1074333bac9bc87fb3",
+            "metaHash": "7e77d5ebd039d852046d28983d9ceab9656c47691955fad8ecc0569b87dda636"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p012.unity",
+            "fileHash": "05739ee836fd19e2cf298b6d194bcc998449ed5b77b7f06db12cced48399e981",
+            "metaHash": "c8df211932f6cda1dd288d9f95bfaa09440bbe0a8174e964e78be4b9e92be4cf"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p013.unity",
+            "fileHash": "53fe91ac6458fd1fd9ec71c15817c29d256768d14104708e35645824f1ede962",
+            "metaHash": "6866ae69c265bf40463bd7cdfee3121bc281762dfe9d3a6e68d4455dd2c78c1c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p014.unity",
+            "fileHash": "ca80ce18a8ec66064e90432b94afe13897a4c246d795ef15a508dfe6cf9f602b",
+            "metaHash": "282cc58ee138a753067c59b2c98b312feab2fe0c7db4da51ce77903653e7615c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p015.unity",
+            "fileHash": "7512ddeb259640336d60922dd5a9b69f75913753d16600ace13d352d1e653cba",
+            "metaHash": "e26458387b088a8b124923894f863f2994790b2adc6382809283b6116d41bd2b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p018_p016.unity",
+            "fileHash": "dbca354df9bf9c7becf2b064bb579c20a73cbd038d4cd946717033b99a7bc8c8",
+            "metaHash": "4c591a13cda01dfe5c21ccffe7bfd8f172b02c73e0c23b35317977e9db2eee7c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p009.unity",
+            "fileHash": "b6ee9bf00e47e68e545d49340b1054d3c1635e7e7b6287cf36da5f7ec24d1533",
+            "metaHash": "72a991fe7384d9de341eac796c5aee6ad6bea913bc9a12a20d81fba7cea169a9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p010.unity",
+            "fileHash": "482b512fca44349c2e40d95d2ad4a382c53ab111633abb8cb6ca2dbc7f2f5deb",
+            "metaHash": "673046c20e0b6a62ac7c22d3f19d70aa7fde08a2aefb1303250f4c3f4b5a1c69"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p011.unity",
+            "fileHash": "2e1bb76b134077f2b7c8357205908a945ef428a46c7b7f0ef2fed6b2cfad35ab",
+            "metaHash": "c41aaa2d852392199e6055c0a26c7870480816a9bc7059e0228c3a931a811c4e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p012.unity",
+            "fileHash": "e8fd87a04ef33d11c40eab252235b3c41fc13738051b9fec68c8d3c5438cf566",
+            "metaHash": "d3e4ddc141f99710556427a75f20ce3452a713f5c8a94c56836064c838947034"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p013.unity",
+            "fileHash": "e7150621b72641f6fedf3822e76e50f31ffc8b9f2f56504fd492e76987222717",
+            "metaHash": "e764a9bc056c405518ddbe70013ce19ce9a028ec8734459beeed39d73dc78934"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p014.unity",
+            "fileHash": "40dd9bb486679242114084f6bb4dbe63d80b760b2a7191e3dafeff3cbff546c2",
+            "metaHash": "f41f975893d89ae2eb19b1da8b6362440a5b1d05a61564657518a04653f34530"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p015.unity",
+            "fileHash": "7e27eb46b665c07cc802f82fc41043cddfd82e5dba897a3104cd63b556aab5b5",
+            "metaHash": "3e51e00e290a864d8df6a7d309428c3be43a4beaba689ebadeb3803b889dc89a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p019_p016.unity",
+            "fileHash": "f760f9de196b1ab7312ab505acdb5b6ce430d722bfd062cd907a35b6a9c857bb",
+            "metaHash": "360bbd5bad1c104be77443d80dd74205cf46871774b019fe4c8d1cb06663e8fe"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p004.unity",
+            "fileHash": "0e550350df05c761cfbab37dbfe627b0e4997f282454fc4e744859337e105062",
+            "metaHash": "6aa853f01503dbf58aba2eea122d4ead4b58b6b82e7e2f5de76b6ede74ac5cc0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p008.unity",
+            "fileHash": "bcb898e081cf42d97647ed4d986244e74b21d05f5baaa4a77351774eca17c56a",
+            "metaHash": "be5e37d02b04b21f7655c886182b214f757486e0a38eaa9bcd5693bbb6128f67"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p009.unity",
+            "fileHash": "cca233eabf2f9e99f6e59c2b8e0a7ec88dce1eb09bfa4696dd47126d6022197a",
+            "metaHash": "25399d50134bc77ba2e68586fde77672f66ce43be94d0041b46d4cd91329f7f2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p010.unity",
+            "fileHash": "0174aa988e1a36a8ebee4cd7d092684aeeb55ab9d8a48b3b0f3823e8299f8bd5",
+            "metaHash": "cb89092372638bd375d4b6c0c084e63199f7b3a1cd4f5582a8faa7f2639b0516"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p011.unity",
+            "fileHash": "26a0d14dd69da688bec7a68c1c3759f417fc9f50cf7ce2dbb93d5d3eadf91026",
+            "metaHash": "cd24b06cf71ba499f5572822ffb285c36ffdf44a9c920f23083e5e27174bef66"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p012.unity",
+            "fileHash": "b503e394577f44f0f294cb47ac4de5323404ca6ba83044ccef2ed612cce5f252",
+            "metaHash": "f5e591ab0c38efc945af097c2d4b62555cbd70517d98812138c7b372479029b6"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p013.unity",
+            "fileHash": "9df0ba1706c0c1c5168d726b432cc76076b3c4a1fa83746b75a277fc6876ce40",
+            "metaHash": "a610c62140940ae6263c0e22a41caf71753bde0884c39b2bf575742336c60846"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p014.unity",
+            "fileHash": "0e9d693dbcf5796eb32eb8fde631cfe10a78ce50915f94241dbdd3dd0775d7a0",
+            "metaHash": "a1c0f51fe2c364fbda9503f1ebb816ce8693973e6afc0cbf6aecd181e9b88cad"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p015.unity",
+            "fileHash": "c7d03399fde3d5bb5748d5e61d4e5a2fd9da52e92e9a42041428b6956698e82e",
+            "metaHash": "7d355829f1db6998ae9f68e965fa07aab0d734c1b3c6c7d47b8dc6282b3ffacc"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p016.unity",
+            "fileHash": "cd84f6c55e525f837c51d5796b209a4972b482ef10a52217db36216ae0612179",
+            "metaHash": "27a42669bfd4f520c84434224ecfaab549ba7df5647e2fea765f9e9cc094a3fe"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p017.unity",
+            "fileHash": "6bd9800864f5d8fe2e761dcff2fe0b7b4b19765f580a62db1795fdcb80c3f298",
+            "metaHash": "d7742c7a911fda99f6fc3a68b415b1a65f036850dc645793d36b49d9a7a03152"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p020_p019.unity",
+            "fileHash": "ca086e03e9966b8f3c26430b0d9b9d610c7a43bbd2e934c6466f702c12bc90ea",
+            "metaHash": "09be58aa74dd960475ce383f95d2bd522f9e5cf93628fddd8d78101ef85ef2ba"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p009.unity",
+            "fileHash": "f7764af8c76c5b66d6f11ffab1232a000dd8e13f928de15c833dd9be9b8824c8",
+            "metaHash": "08c78135f54580294d61b643817d9daf7326ddaa09ffc99264ca4e599ce08c1b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p010.unity",
+            "fileHash": "dab34fbcfd6b1141a50f65011a7023e93227fbeb7bcb5d4d7081bbd6de325cf7",
+            "metaHash": "ef43802ac06249acd5a656eb683de9e7fbed3b56561b150241b73f2c2bbae5d0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p011.unity",
+            "fileHash": "46c89cfe7f70992efddd7ff7ce11b8d0f4a03c0a9afc95d4edb382b464453330",
+            "metaHash": "2138d59ef1e9dd2139625a599033cc09579cc8c2f5e4f0d8197b2c165cb60046"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p012.unity",
+            "fileHash": "7b6d5160f4e4ca21adbfb96de9baf5ce14d0d330f18394eb9cfa00f0ae8ad63d",
+            "metaHash": "2eb5206bb65141f88767e28b26a86e8a4dec3b0b2696e2427cd7db365e1a8c7c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p013.unity",
+            "fileHash": "f1cdf1553c59f0b87f99ba351adf91d49725363018146823759729c344b8d74d",
+            "metaHash": "befab4fb7889a8b37a824c5f5f0760b1c667430044edb9adbb24d261c58c7e8e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p014.unity",
+            "fileHash": "957297e4c0856ab67acd8246b95129beea3e08cb39e97e4754b33fb0312dc40b",
+            "metaHash": "ebb9bf561b3de367f1b0637cc59f1b581461b214f7845b3c5d3ab6b9bfb67df9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p015.unity",
+            "fileHash": "210ce542af4945cbcb6b5af4379d57eadfce9b2093f755982e09dee006645ff5",
+            "metaHash": "807176de4acc86716d674cec7713b8fa99a4c5e619ca09f918d0934caa5a0ae8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p021_p016.unity",
+            "fileHash": "18ef75615dba046970a354141f94d79284f14cc003e4ca6cfaa7e5e2737096ab",
+            "metaHash": "d9b13e06e12439010c112b72787517306ec82243c290c667fbf9f27613bc429c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p005.unity",
+            "fileHash": "476b634da1bf11dceeb00efa96aabd2aba70c98d7e68881bdf24b3e19f64d768",
+            "metaHash": "1a61a17a6478829a1bf0cae299b7d8e115cb8883ccd811b7b11f7d1c838c877c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p009.unity",
+            "fileHash": "d45a709a7bfa9ea3dc7ea3586d545f46cba4914443844bfbb96d6ec57a6a9825",
+            "metaHash": "add5a4980008993e7131a711541e78f756d94dfe8b5967d01f82fbda36fa0c5c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p010.unity",
+            "fileHash": "69a62e4e380fc62515fbb361b7fccb73273c65d330b635049c3d8642b1b1f7d3",
+            "metaHash": "28efae2fef31a5c108fae2cd072a9a7180e3b39b947e83221a7e322a0a51c948"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p011.unity",
+            "fileHash": "92327cdb43cdd4554bf3ca797a54c468ba200c84b67e9d0992d9439b0550776d",
+            "metaHash": "2ff3ae5504f46b0ba0db483098fffd68c8dab8b3367e8fb8311ef90244eb89f7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p012.unity",
+            "fileHash": "e79c7f3e64ac83658e14264366e47d34efec637488b8304982ead4b20e5a9f7c",
+            "metaHash": "3e49d7fa34a5d8d5715126f5be44bda4d5302e9aabc5174b67f792752ff51b49"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p013.unity",
+            "fileHash": "9b38480afd0ed17854b21eaec207e46215fb56b83ebeeeb9dbfb838b7fe31417",
+            "metaHash": "1f74ab1b80552080d6a8e5f1462a82c2b0ecde413d4ba6fce59324700ed6171f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p014.unity",
+            "fileHash": "3fc2737a69f45a5d2f490d2445c1d12c3460f2cc6c6d70d9448e91223310d8e9",
+            "metaHash": "5c9a78ee46be0a7599551284d44ac937c7a5eab8527d75c0e12ccc9f52733673"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p015.unity",
+            "fileHash": "e89421109bf6c853912e325158264dfc452b3f459b53fc78f2ffb482bdb64fff",
+            "metaHash": "ef9805fac18411f8094a3906e9677d3484783a47386494f84f68f2a48fdae375"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p016.unity",
+            "fileHash": "9e6ffd6361f8ed3751069cd60a4efd32b620dca76de39677f9920ac86eb67364",
+            "metaHash": "ca485c5588ab2415536a6679d1233ea58dce6a59a3090b1373656f63396ac887"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p022_p041.unity",
+            "fileHash": "b9c5ea4468dda1c6d11be0e6c68341e5341ba20a37129be8771ae7536826c048",
+            "metaHash": "7a0a4c64634255bff5d2465c3da478cba4946af06191ebd3eda5dd4172f812a3"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p007.unity",
+            "fileHash": "ad3ba39c40d16c35bdca5bc038483c59012eb08b366e6d21931affae9359986e",
+            "metaHash": "8ccf9f28f48357e0347072273a1db2ad3c242050f5a6fc5faf381643e819ad9a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p008.unity",
+            "fileHash": "a54beff401eb76dbaea733bd5cf06f59ad9a29b03ca5b4312f3fd1382e533060",
+            "metaHash": "4981a53f8d7d0bbd214475421b23805483ba36a68bc296f68afe8521d6c229ae"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p009.unity",
+            "fileHash": "811cc3bc008a77d7bdac02005d1119e4ef27fe224df9e53836bc1f230152eac7",
+            "metaHash": "8129be4900035fba26652db36c828d015f25b0ca95c8ee5e2ff7bf9e81f1cbde"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p010.unity",
+            "fileHash": "1daf26e854414a6cfe26426f935a64d29058973060bf9d838b56c8e48ae7c0ef",
+            "metaHash": "6a5d86535b903f3c6200f5efbd9c4c4ad7c81ea49e431dbb15b53e66ca316a23"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p011.unity",
+            "fileHash": "bc6b81104fe92074abd6625c676f5f47319bb089878c92fe1f68d552930623be",
+            "metaHash": "5f24ffa2854f674e8346b07f3f35de6bdb650a4a81c2914525d9492bf5749c51"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p012.unity",
+            "fileHash": "f443660f1f3e99bc3ba75c2e588fa21bebf495d50555a5ee3d0cb88ac48ddcfd",
+            "metaHash": "4f9c4673ada340f8976f69a051b202d0a3d788a4f3c959432bdec4a082ba8192"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p013.unity",
+            "fileHash": "17085757edfc1d2c5d51fa175501c98f5703318acc9ed801defc8dcacae144b3",
+            "metaHash": "b6e3c7d0e2b3b97fc7a7d21bab12185379f72ee11b1711fdef94c3c9fca85185"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p014.unity",
+            "fileHash": "98b764d3db37a7f63721ba450027b80e151491076e26a6548630eaf1de6723f3",
+            "metaHash": "c347cbcae3d7401fa5acb0c05e98bec2f57887b87acb47d98b92c1780c73dfe9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p015.unity",
+            "fileHash": "babc5fa9db98666aa2c5e33e15957a7f585f71be2f11e538b05aa0d6756808de",
+            "metaHash": "4b580bcf53c415bda43b201b4e01f054cafcfecec72e43464af77c35ee2790f9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p016.unity",
+            "fileHash": "e7efe2b8773e8ae9f3ecdc874654afed2b20b76f7f227784d9f3ffa5d899ed09",
+            "metaHash": "519dad290cb63eadbe1a81279ee1e2c82f9cd309ae5cf497e8e2648adf9b15cc"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p023_p017.unity",
+            "fileHash": "284c09ed4655a0db5ac3af0f302a6ee6599c474202f209bd06ed8a49f4d9994a",
+            "metaHash": "c2a00a3a5f9971be19071f2b65af33e5c508b8f27aa89d13a5c505dea2401652"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p009.unity",
+            "fileHash": "293c6ae592c97ad69c4712966487ceaddfc2fc39dc7b0ae76d14997a9dd2a822",
+            "metaHash": "8f79800d8005a48fc042d7cfe8fc00b62dca6ecd66204a41edfc8e18c84996ab"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p010.unity",
+            "fileHash": "291fa145a8eb7356410cae8109036a4c7b0ad4a6b22ec4becc2b2a91e96b0c86",
+            "metaHash": "9415e29b32329d8282e56446f7fa3d0e2cbcc80cfce3763d2f091b38717d53e7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p011.unity",
+            "fileHash": "a9fb87b57639d743fefe6ec9d618d8d1518f4cf1745af12ea1f09bdcf2dcea7c",
+            "metaHash": "bbc0f3b9b35efd0fc02fd9fc0516226b97edb0aa2a76ff732128d64a8e4d4f5a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p012.unity",
+            "fileHash": "161fd86208abc17783e54d4b3a52759d5eb656aa94458cddd4ede2647eba35d8",
+            "metaHash": "7b466484e01fa663ae4695c48955443a0d097c84afde84def344d1016c088a58"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p013.unity",
+            "fileHash": "aa41239323b5e82a9eb9e7a6a10d687c0fd96fe90c6082e9c0f8224518ffc8ec",
+            "metaHash": "68b4be85fefbbf6d85c3523c0902342daef533556810022796eee5bbeebf82b2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p014.unity",
+            "fileHash": "7f82e5fa277bdf52fb91b2a77781d6ba0340ff05f6730d90d1c32c3a17f6df96",
+            "metaHash": "da3a576cdbccdd6f078560e0636c04bf86005efd727f1edb702d7d08a3827d71"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p015.unity",
+            "fileHash": "f80fe7bcaace1bf888f5350dd106e09611c71843b7d61c76650f6b664c98a251",
+            "metaHash": "b3e65cb5fc7560bbf96ef5a5c25a6a2d5e1d7985816e5a53fa5e1428cd3d8f72"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p016.unity",
+            "fileHash": "a5a1b1cfd0c288267a8ce88377c5c8ff01219ac43318ebdb5f7bc95cf0b23624",
+            "metaHash": "55411bcd609352a1922d1d47414cb91b2c1ad67f8b202c1718284e0c4e3d6642"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p017.unity",
+            "fileHash": "2f8b8b8e8a2ecaf440953a5e660643a1329b66be3764847081c52e1b24625e79",
+            "metaHash": "b837be0af45b6ecc8387065d3ea79cb3074b70c6d53c17254ed89f9d7d4d4bbb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p042.unity",
+            "fileHash": "7326014ae202c09f1a403506551ee293e4ce7c2f98dede46c387bbb41d6f629e",
+            "metaHash": "86fad727cc832b4506bc7ca003ba7788a864a803c7e8fa0ff612e346956ce874"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p024_p056.unity",
+            "fileHash": "2e8288ff6f96d8ccfe97311be318e6eae80b8bc0ee3fe8388b7012268537ec6b",
+            "metaHash": "ee9ea60d326fec7d9e91e1b303caeec43c4a45450b64f3b5805bb2246007f7a6"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p004.unity",
+            "fileHash": "c4fecee0560400b9610b890a7f09313f7c3981969fb63ea76e7e4099a26a5383",
+            "metaHash": "0f9d4b8abf1bc8a0129fb2fe6aacdc4048d9de8ac47ec2cfe82eddf7b8898a10"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p007.unity",
+            "fileHash": "2447ef3bb0262206a939bdd8bb004f6f9f9109ed6ee0666134b6cd3f46979e51",
+            "metaHash": "b27bba4617f9218747e15c84f039998086b189bea914479a5aa5c347ba2c0914"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p009.unity",
+            "fileHash": "cf690b227586d41244f71fc0bd136c199fe425dc027cb9f000077f660449da52",
+            "metaHash": "22c61facfb312c77493521874ca25b2f8cee2cf9be5f52e320224db7e2105b25"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p010.unity",
+            "fileHash": "989a21d221cf8c55ee67bb1035931050ad6890b9f85cceb10f9a855eef476d6d",
+            "metaHash": "4d23c235341c6df27bce5cf8e7364d3f20c9e7663c7acb0a083fbac556aea3c5"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p011.unity",
+            "fileHash": "4c239352f4517a20ece628844c7c3d81f38cf58200b4a966a25ea47e49ae6b46",
+            "metaHash": "463494f192eb242acc64f0059c70d0bc4afda9dbeb30a615ba99d736bb2ea5a2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p012.unity",
+            "fileHash": "fef9fd09c0c34841d1baec6189183a71a039b90b710342e492b49b64df856c2a",
+            "metaHash": "b66d58fc4c272d8fdc8fa01c78c88e3bc13dc2845211463cb1c12cf7342a1195"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p013.unity",
+            "fileHash": "f2ee9d33626e4bcf1e0129f2d27bcf287b20adaaf727902207e24aec769fa809",
+            "metaHash": "ab387e3e8f91ee817db87381ee5b799616cd2e46c489f6f766a5c94649542c37"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p014.unity",
+            "fileHash": "51781d5998c3aba4f71e956f56d7f817f643042cb4fc9c9eac25ce26bd0ed620",
+            "metaHash": "9aa35c870b17275fb16828dbd1b3765eeedf53f3a1d553cd8e8950200333e75d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p025_p016.unity",
+            "fileHash": "9f9424861a547280f3176a07dc43989cced3d84ee2db9eba239312ea2ff614cc",
+            "metaHash": "b9d77170f028aa93889d78a3538750effa3f559bf31631c5e244530429b0d57b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p005.unity",
+            "fileHash": "a689b5e724d6efd91bb7bd82e0ee83d6c6932617841891ebb256a15827220bee",
+            "metaHash": "145fe796ff5730df2b807288701f1382066549167189b7f89ea565a35922330b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p010.unity",
+            "fileHash": "a9801c4e26f718865d992eaff6ae838f3c871cf8fb268dbac351879db8d919dc",
+            "metaHash": "d553ace011f3d686ecff515123e9dde524b3dc56f71c660461aaf5bae75ddccb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p011.unity",
+            "fileHash": "45398c8b6076a92377008b09d11e74683c2f237b4f07a823081559cbbe49b2d0",
+            "metaHash": "685e9520bb414d6dce7dc59546b32c11edd55982494a10592fe28cfedcd2df59"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p012.unity",
+            "fileHash": "d90f6b7a4b7b4fab4fc35e7dd7b84a84d96d7c086ff54b0bb35525383e0afe34",
+            "metaHash": "e200003710ae3759bff875daee8501e2152cddba74c396ffe1d26cc65e45f798"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p013.unity",
+            "fileHash": "f837345208805e40d8d2bf6ae3c678a430ee1621e9c00f4e68f89c249b73ce80",
+            "metaHash": "640e3dd1add19090a487dfefe062d35f588757addffb1686be2dbd3ec9881a86"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p014.unity",
+            "fileHash": "846668879abc53f32ac3c9b26a9fd20b709b9426b8540ace4c086c55c922e40b",
+            "metaHash": "45a140a54ea0d55360d73e90d27d178bf6f79e92e4044b319c3bf4a486884a54"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p026_p015.unity",
+            "fileHash": "7bed7d5a889e174a8938885317d4db0872ef343f76e007fa880d6624bac543c6",
+            "metaHash": "49d6ae9f7c42acd7f8094260c12d3642ac9bc18b423b3f3ff1f9ec02dbdbe3a0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p027_p009.unity",
+            "fileHash": "89848cc7452d2cd30e9153e0e79fbfdc412d5d1c27d0c145ab6b3ad81c3a99dc",
+            "metaHash": "31fdcca660e77a879e0b66c4e5686126671f926882ea3d6d08c4afd6347a9487"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p027_p010.unity",
+            "fileHash": "7e5c060fda3e9f637460b0ab9cc8cc2f9900bab10c828964d4d7b1d922cd8ef4",
+            "metaHash": "f5afb959f9ee949da2a9a3312931048ac45a1594eb9c883ed6978b4367e61004"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p027_p011.unity",
+            "fileHash": "0b4b780c5819e340b7ac2661b0bb3be9dde02353ca8269296b3a836476573369",
+            "metaHash": "fc097223a3776750ba62eb4f50b071e198898f03aa8f97b3c2cf1cf34f3860c4"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p027_p012.unity",
+            "fileHash": "beb3b3231de7857c2912db8f9dd8774241ee0a72cb90aded5077cedcd5de981f",
+            "metaHash": "140ef589b243edebec1da5244aad02a0f5f5d6fd30ddbbdb45cd531dd386804e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p027_p013.unity",
+            "fileHash": "c467bada7a763e60694a79eb5f2e78c1a408009583da4e829e3ed6b87927cdf0",
+            "metaHash": "110c5d591e0fb0c54de3ca4d06db84458f0225ed065d11c597e3147a4f4760e1"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p028_p007.unity",
+            "fileHash": "6e83242836cf4cc48156906892147b1db0b73e02f3baeb9ba2d8450c1ce293dc",
+            "metaHash": "a02bbc9ad05d0fa22d4ceafc10d7ad1a8b64e82c390c0ee93cfc83fdbf31acb1"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p028_p010.unity",
+            "fileHash": "e3edeeb96edbdd1100f9ebd1e800c27fffb7159010b56465ab67bae50b2be15a",
+            "metaHash": "3f80ef18047c2bb2e3409121b493dab160183012326f53c84ceea1703d468a60"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p028_p011.unity",
+            "fileHash": "9e30d13eb25b52a1ee397277156b64156049d63662c22727d30cd6ee10e19bfc",
+            "metaHash": "6b25316c48e5e0e44e1ffa859a0f71c2dd82f35707afdea977b40b437d678834"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p028_p012.unity",
+            "fileHash": "b7809279085e003e14e1cf3a7534f0d43641702049c9d03125927b3f41ec2fc9",
+            "metaHash": "93bf36de3dbcb5867fd138492f70d304701a6e9f8761c356d75cd08573c2c8ee"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p028_p013.unity",
+            "fileHash": "cc75551fb8f6cdddbde1c58e85b5d9735d87c7fde516fe954610b535c130e102",
+            "metaHash": "af74e0d2da0650883b832b1728383a68436303175dbe6ac66adfc166c4a8035f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p010.unity",
+            "fileHash": "08b031281b1b124c8215a7e75690d15d3a2d2424eaf56d6a6eace8759b642a28",
+            "metaHash": "96cbfc8ea42ec86558e3d3323e5b1b02bb8de02610c783fb7f6592fbb9436bba"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p011.unity",
+            "fileHash": "0fcc42c76a44a683d32d97769eba998a7e7010cac623c45bde6b2e124d654bbe",
+            "metaHash": "a21275f83e384309eb4cc70fd75db3d3cda25cbe05b9cf0afa4bfc1622b22cc2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p012.unity",
+            "fileHash": "1a8bcddfd4bd7e97f7ae474faf51f65e4eb3519068783c2d5360aa81bb6e62f1",
+            "metaHash": "048fb91e156545df69acbd0cf59b7e843ccc056d580f6ef86451b0107bbce549"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p013.unity",
+            "fileHash": "d8e7b4f82eca6c3900c3ef06f225b361599fc0b27bc16bbf96b3607925fdccb6",
+            "metaHash": "a16111da78c73e9bc1a6a7bad26b51d94548074d15507e4be74438b4a04de84e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p018.unity",
+            "fileHash": "984cf60909f5a340f64b356356dfead80a75029fe69171072a0403e2a24d4fea",
+            "metaHash": "6b0fcc0f3cc0af73bce2272ad53c1df99f9d8c997305024bc4753b5987da7cfa"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p019.unity",
+            "fileHash": "0d51bf2e02cf8516fa67c959770df2eef6e0a127158699a63998a0687e5d639b",
+            "metaHash": "5cd842a667efe1c968fcca580bc13562bbea402372357b8092bbd61a3146e739"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p020.unity",
+            "fileHash": "e50c9143301cbbd5084b42b92807c6474c595464fb1503ac78558004e78018fc",
+            "metaHash": "d1e3cee51df143e20f9e9e1acc8e225285db80b5f5b5f523f9d6a5eab1e9da72"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p029_p021.unity",
+            "fileHash": "3967e86ae3e31243caf7ccbae4c80790bce3e2788207dc24af03a85ee78b2273",
+            "metaHash": "f033fe8351026968eb795dadaab34e17e74bead8e868746b005b415cf0911b76"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p009.unity",
+            "fileHash": "b121d1a037a7d57c597b87198c6bcee6e1829aa2ad4648ba3cfc53c664a7f601",
+            "metaHash": "711da13224e8195b89fa53763b21a1ca9fe75248082c7e78c97733a9811f8c3d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p010.unity",
+            "fileHash": "acfbf460f38b4dd341ff20cc5a4ecee23d3bdec48d469797d852c7e73cb41ce1",
+            "metaHash": "b435b700e570336895fcaf6e3e631980a19f94e98106fbc26d9b9d15558fd3a8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p011.unity",
+            "fileHash": "ab4a6e3a0201fa02aed50903c8e972a64bde424e5f84c6143a6215f3ec28e268",
+            "metaHash": "8cdff44f0453ef4311fe110d0ef25a5a84619954de05cde4c4583bcfe27d2299"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p012.unity",
+            "fileHash": "0545f68ff53ed71ab8923b556ac0b73bf0d53751c4c810aa9cdb169aeaa8d126",
+            "metaHash": "3f82ba7ea88e8af7c242f6f53af95d59dc846a5deb05bf81ed90f6e19fc2f488"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p013.unity",
+            "fileHash": "a39ca9aaa3cc9c7d7f1069649044a3b980723993a1b06074b1d16d1ffc9d42fc",
+            "metaHash": "45dce716a15e33211fe6109b5d70b6981ae65847f0aa80ce412a7ef487188631"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p017.unity",
+            "fileHash": "4ab7eddf02637159a5cc8b053f570aea8db1cf6d21f4dedf73313f5e5fcfa636",
+            "metaHash": "d951f9dc878a76585c15993c58a01de2826c4dabb03a82252151e974043364ca"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p018.unity",
+            "fileHash": "31a282b490fa6327ebb3a70230cd030a5ef709182e01d462ff2ae4586579e826",
+            "metaHash": "b8ed31a5f37012cecd2a544ac0602149b5974d0abc8bf2e874e36f212bab4c17"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p019.unity",
+            "fileHash": "3984afe25aafea0e51813e23b86ec1010ac3e04f31ca24042d9b5d6d05ec2dfd",
+            "metaHash": "e203c1621e60ee9ded17e238ba80241030405cabe313416165c3def2c96583fd"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p020.unity",
+            "fileHash": "4f6fb6a303aa2edaaf6e6e405c775b1d0558cdb04b495867257964b333c3acb7",
+            "metaHash": "4201d5e2c42d1d1f74981f0ae5549d6e15ff31033ed3b142c3fc4704a8c0761b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p021.unity",
+            "fileHash": "8aa86b3ec8c152d53c436991e9eba559d25e417d5c4c1d40da7f5999af8d5d3b",
+            "metaHash": "c125a70c2c1e794320c28b1fc05534425de9f9fb23d2552157142c513292344a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p030_p022.unity",
+            "fileHash": "4192dd633830ffbd895234c185eae52004a9c539e424bc3cb758c19748c88603",
+            "metaHash": "23574aa6b644ee00464ee931ba00d2fb7a96c8fdc9b1d1913739e09d33c7b5a7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p007.unity",
+            "fileHash": "c7a323605b69c66b150457ff123dd59f975470c20f003f8c04cabf525747e4ca",
+            "metaHash": "8eb4fc0398b9372330ed4b58366ed16c2f2d541bd98f5bf4eebcc619a1ca5e41"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p015.unity",
+            "fileHash": "29c34d783bcbac99da8578506693b4859599c2592e4bb30822ec1eb3076dd302",
+            "metaHash": "2ffac84bbe0b7f1609a0feabe97222abdd498c5a7d8ca8cf4cf110b20a792a46"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p016.unity",
+            "fileHash": "3d09d364f77bb4eef52a530e3bcc935b84be4860b2750469b9d46719648ba7b3",
+            "metaHash": "aedb786c6cf5c4971dbb5c2f0dab5a425be9ac2b96428276a910597458039ebd"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p017.unity",
+            "fileHash": "916c6d9e9165d925cd31a0d3f29092e3af2dbe6d86ec628ea11bdd7f11bf1455",
+            "metaHash": "e311df76c2dc7ff2042124af17e0398f34b36756fd084ec1fdb631e41c2c13ee"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p018.unity",
+            "fileHash": "2caa181f796390c8e2943a2743ce2b5ceb8f43f167ddb92d7c9ee00170ee9f24",
+            "metaHash": "d04373e39ca75504039ee2785d7d9d4bb7e9d2c801f4851cde946c2f42d0924f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p019.unity",
+            "fileHash": "337274450fbc8c0ad3bb0683ad87c30d57dc84706d5445d726fe505fb86c1b88",
+            "metaHash": "21324ecdabea56e3b4286964ff360bcdfda27ba5f82ad1cb74c278c816e8508c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p020.unity",
+            "fileHash": "f011d7c160715f7d93dfaec96e697e90af9573007677cd6a5a8aed3f55456711",
+            "metaHash": "3d89b0619161d9b83d2b3844b7db839e3a6e79cad74b64f8801d6f0b21632b9e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p021.unity",
+            "fileHash": "4548f7243e7869303944a5e3be01ef26c8ebd10592474f01e60fb407210bc278",
+            "metaHash": "911caed4286c46f9a9d79920d91f67a4bb1c1f517f498d49d118f2dc0cd82ca9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p031_p022.unity",
+            "fileHash": "b9170e3e5e2f5b05f06b06e34a5a5fb1b4965744d5bda501fb3d5e93756f462f",
+            "metaHash": "ed6064fce8fe422bfdad8e0108062409b46a071d588b5c04c5dc613e2f9e964f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p013.unity",
+            "fileHash": "b89c92ea5fd02531a818286dcdd2b913598371eaedd465568021881efeef6818",
+            "metaHash": "aed5d8c7602ab3b7fd22e0462017347095ee4c4899b0ed1fc80816e9823484ef"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p014.unity",
+            "fileHash": "184167871bfddd80726516f2e83b98eca446c85cebdb2cd31892cdf09752a51e",
+            "metaHash": "0fb6b4d55c567026298cdf1097715ffe7c8604693c1e377c8a45af8aa35d390c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p015.unity",
+            "fileHash": "425022906999462339629f126bd8f786944dec42fcd3eb6897748c677af18f60",
+            "metaHash": "b2efd53485dceed9fa63680de88d21ffb956ec3044f8b8cc8861c174c90a53ee"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p016.unity",
+            "fileHash": "42ca137e3ebabd7906f4ecc0e888fdcf1f8b61a95d741d9ad72886b7f3b4bb0f",
+            "metaHash": "5450e6c7fa6256ce796d93896bfc0db6c004b7105603d8de5dcc463a213bc099"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p017.unity",
+            "fileHash": "497553b983eac08e8fd20233bbe9906c27a32215a3bf3c64fcd3215f08af40fe",
+            "metaHash": "2db11917d513b17fe52a585ebb723e01aa606151402e5aa09f11b5ec00951858"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p018.unity",
+            "fileHash": "d91210e0a7d5650580cfca2863eb4dcbd6317e6b5b2fd3a146329e03db3125b2",
+            "metaHash": "bf6d92b7244702e2b70e1aea98522c45144aeaa9ccf72bf2541e08bc484b70d5"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p019.unity",
+            "fileHash": "9a51252b76dc47940a9f2142ed1b96b7096cbdae6ad738a74227fc2843fc94c7",
+            "metaHash": "165645628ffe3e013c7ce765a4581f2a703218e14bab9d5e1f6bd94a9925bfed"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p020.unity",
+            "fileHash": "1d390a5dbceb9a33f4bca7876e85c72d56583040df99d3e3c6400604d801bfb2",
+            "metaHash": "2124cf0b85892bae151e45c3b5700843d796a22db97ae0d969bc92a6f6535cf7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p032_p022.unity",
+            "fileHash": "76e17e01793d13b9d1d2e0998578d56fac46bc69eb8319ee45f7c9181802ab56",
+            "metaHash": "df8552c4c011827b5ac4da1a50a1537a595be30d4073366e48fb5461ec82b2e5"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p013.unity",
+            "fileHash": "1a1876a103769014918330d07485deb3be590061b375f038fa7808c77b7a1f0e",
+            "metaHash": "39b611e1c2484522e5525f65a542c867ae52f42edfd51c8afa36524145782591"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p014.unity",
+            "fileHash": "1215cd85ad5a60e0ca34f341fd28e480c8999970f4716283f30b033db7b3e9ac",
+            "metaHash": "ef7a873e4c4cd88a5b17612569b9dec22beaa81701817488edc34d1da633e117"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p015.unity",
+            "fileHash": "fa195002ff7a3b4852fc78175d252504fcff40730f0c411d7773b3fca3f7b1af",
+            "metaHash": "d454f68dc352d256846a08745b71f21ccd79f07aacae6dcf16983662518ccf5e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p016.unity",
+            "fileHash": "5938ef77b4a02afe90e1010f10b8b2d2e8d7f4c7313bfe2408bd9263535e982d",
+            "metaHash": "029bef79b3be52a22c58132ac252ad2f09ee4f1e59b66a317136ac8407d4e39f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p017.unity",
+            "fileHash": "13b749fcba829bc767da5b62f10022ff38f4741b846169f0c9ca0c93cc994c67",
+            "metaHash": "706b6294e4b2feed07106025409abf193cdc054409f11af7df59899f75f4a5ff"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p018.unity",
+            "fileHash": "f8351904a7e574f81cbe73e97a297c0e35d909929d0c094d708efeea07ae469b",
+            "metaHash": "56a959f8c304e78afab574e9735ba8158e6240e5deda016ae68f04b854c97183"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p019.unity",
+            "fileHash": "467dd2683955b6e0b4fd310864b946f50dcd0b49ac647dcccc7574504dbbdd9a",
+            "metaHash": "bb6205c836932b097372caf01b05c86005e41404a4ebd03325f1c8ae6796753a"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p020.unity",
+            "fileHash": "ef9c603bde94ef005266a758450c39969a8423b0b3742ac8edcdf7e562e8f5ec",
+            "metaHash": "5dce6822f61dbe47de1673edb78a1ca1c3f1ef3088428f160c4c9519635a9dd2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p038.unity",
+            "fileHash": "f48fc0364098934846c5edc5934a6688e72fa4eae05f4f6279ccb9af0adeb3f8",
+            "metaHash": "1d870cdf3508c518b39d522621be9fd7df49295ac31106c4f61611a7d7625ce9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p033_p071.unity",
+            "fileHash": "5427ee317f3d6c124bf1f61648cde72e7331adaad0747c437698200e083147b7",
+            "metaHash": "4a7b0a7e1719282335e3eb9274a5b4a1ae628905e2cc78745bdf91d4fd1e60cb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p007.unity",
+            "fileHash": "358197504cd6c404ebf30769819c3e68aa50cb5169f3796b465042debc833f42",
+            "metaHash": "e690c1496a13afc08437eea926537429c413536cc9b845daf20d19a0384f5b29"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p014.unity",
+            "fileHash": "7c366473914410c3d6b446961f10ecb8083e336043bd902daf6344cb3423f9f6",
+            "metaHash": "05f1d42639b58fe2e0cea5c4c09055ba8aa97669ede87e0e54efa2c54de22f07"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p015.unity",
+            "fileHash": "266ed81aa2e5417489df5fb741a80b66b6a7cef6c8651406e7e67687c11d94f9",
+            "metaHash": "a970b0e1c9994c6c645c22bc1c5c82155c06623df672685a98277052e546b76f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p016.unity",
+            "fileHash": "5f782eabd8507ffb524ab60c6910c2a4d33a6f2d46802ac3f4187c6f051afd23",
+            "metaHash": "9115c034e19f1158c0095f1f9b425b65731596d23460113ed2baf7883182be77"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p017.unity",
+            "fileHash": "33bbac4bbb4cbcb57047addf793e2e693dfeeabe6fd0160adb355c37e63fe309",
+            "metaHash": "7198a8c4cb7f0bf279e364bf696a6af7db18c2b499c0ea393f2777e71e38e612"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p018.unity",
+            "fileHash": "2e53dd588a483dd3a755d6390063c5a6ae1d39f82b6365e902edc251c8b88d1d",
+            "metaHash": "a0d4881ec9df5f4754d6f84ebdb32354455becaed71e79a7e758936e03cc74cf"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p019.unity",
+            "fileHash": "2e801398c484df0c2d018a9a2705bd04fa0c524f0d8c5a63f6231c644b549ac5",
+            "metaHash": "33072c1a90a7b459858c6a6c45cee0a84202b9b99fa013fc65df0dffef5ddfc9"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p034_p020.unity",
+            "fileHash": "cdcf0ff7ac770787802eb1a20b7bdcbc6e9db48701f9942de236e2531945fdc0",
+            "metaHash": "a84eabbba87b821d7042d7244b68852d9e8295fe5a38cfc10f0bb23e619e6302"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p013.unity",
+            "fileHash": "0fc46d006ac13f499adc017858ee4640575414f21cd567daf5fb7cf14e10789c",
+            "metaHash": "ef5e55dff6630c29b17815e1e59691ea77b1df01b7242f2dfc711706faf1ea60"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p014.unity",
+            "fileHash": "3240be4d8dc477a3d52cec42bdd91c8d1cc644292f66b16e4bc77d72b178a689",
+            "metaHash": "70d0eacc7584b6c34cf90f49ccb013905842f838ddbc23a7887384c0572a066d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p015.unity",
+            "fileHash": "4ca97baf7e9f1def829b5564dd14edab2b8ceacf8a848620674bd5a159e20f6c",
+            "metaHash": "8f2e0ced99acf5eab94cadfaaa5ae6babdcd4b328a289c9bac80b3b4771a47a8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p016.unity",
+            "fileHash": "3f9b75d79dded71e9471e8f42e6bfcedbe4fea3589fd8a81fa520145714ca784",
+            "metaHash": "bbbd8fe1609043a9e8e2ebed0dfb9e3e4bf9c5117fa3dffe9566accfc0b777ac"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p017.unity",
+            "fileHash": "64474c046d12e400f07a37b87a9acdc7465b40f05723b1106014c4d6633e63e0",
+            "metaHash": "d51d194d52bf37f29f845ebcf0a7656cc27b9d202fc0626844a59f3db6de8585"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p018.unity",
+            "fileHash": "04b05909d24eeaf59907d01835b90d54ef012c394f980f4fb1e6a96629dabcf0",
+            "metaHash": "c97aeb6c39e07c6785cc58ec5dcaf49d7f424d0a42a7aaa2eb09d18a2adc9eb2"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p019.unity",
+            "fileHash": "2d2720cc75fa9dc67df8034f9afa9af3f7c9308fb648580a6da0f106d33c5fc9",
+            "metaHash": "a72b10ce025dc122bd5398337bf216495872fe4e2b770e5cebe1b8418d900586"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p035_p020.unity",
+            "fileHash": "5af193846245789b90dcc5fe6e3b3b41335e2cc196aa3a53fbf105cb6038815f",
+            "metaHash": "100af0e9b48f18c27df25da861ed3ce17fa2eb9f502133f7e104ca61cf63c119"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p013.unity",
+            "fileHash": "930da75da0ec5a6d533ed20bfb406d19417e3ba0709cede5621458647db4a287",
+            "metaHash": "7f0c1095fe59c87346a80bb0ad5d34c1b4d1a4b7a1dd9f3e99cdb59dddb43034"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p014.unity",
+            "fileHash": "0c268c6c534fb0f65f7a61bf5d385eff6d6c303c64298f990db25c0c0f601a66",
+            "metaHash": "bb24485c5df8639febcafad00b2b330a277a6e9fec50875e3a545b83c4b533f1"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p015.unity",
+            "fileHash": "3c89a2a3b7e50a45010d2208693c4bdff3f078814d4b9db0a65d97c2bc85d0bb",
+            "metaHash": "3deffd5488a14918456e1aa21eb0d995aaa4c536f5f78edc4f8970f5e5ee5fdb"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p016.unity",
+            "fileHash": "6b1b65945b2faad933382729827205164726ea9384b509ad93618146de93c4a1",
+            "metaHash": "e68f4b637661365ce2e22cd01df2eb63d46dc69391fa5382178613d362d43029"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p017.unity",
+            "fileHash": "1f159fe29f8f0b77c7afee1e95ae8962530109d9afaa9be4d4d28836b241baa0",
+            "metaHash": "f2f6ab03fa20726ce1d973728fc6aace3d1b44a68d72db0a1474f9c593855499"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p018.unity",
+            "fileHash": "ec3c6077c15991e358b53f35dddd3630f6e1b50ddea0b48739add59343e607d4",
+            "metaHash": "a3fe3e3eca83714a21783ed5b147261717b2770fc96ce90c50692090485c279f"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p019.unity",
+            "fileHash": "ea967860b4cc410150be06e72fb36985c39924b51570e1507c0afc7e6fc96a83",
+            "metaHash": "7a5725cc918dd4664f26341e18bbc1d561435682a72a318d683abad7a024e9bc"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p036_p020.unity",
+            "fileHash": "a4aa047f7232f32d7794f35644a815877c912ed7a84828034ba18767bfe32b69",
+            "metaHash": "a762982e62f20a772826694580c9d52d44332c45097329191b2a4cfa205c1a14"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p037_p014.unity",
+            "fileHash": "910f2e220275a529731fff0806b539691cb4c986ecd16012159dc6fb39f99c4a",
+            "metaHash": "6e3c061561c6d2fc664a0176e2437bfd4169d8a445bcaeb375963a14a663b0fa"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p037_p015.unity",
+            "fileHash": "18fcae2101e7905fdf421de58d1a62c280af7119ef634c8fe7f1f00f7cb17742",
+            "metaHash": "b3b543fd493299aa30939eda591ff5a878b99bcbd0437e65110f3dd44b2ee5f3"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p037_p017.unity",
+            "fileHash": "dbd72a03144982f2b6fa2a984d78a107daa2d1b71e0e60b56ff24ba3faff8342",
+            "metaHash": "2ed13615a8211c4a1eb45153f54aa21b351f7590d3708d0b09116aadba2569a8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p037_p018.unity",
+            "fileHash": "6df1d786e55b6754926f411baaa87c0369f44a63a29f1d3b8cd1d88292a6d384",
+            "metaHash": "b8c939cc45b75a011da5be69273c9ddba1eaed5cb115d0ff9c732335ecbf120b"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p037_p019.unity",
+            "fileHash": "573a2f8c41753b4a4bdc7b22e82590d825ee16559bae8b0ab18852933846ba80",
+            "metaHash": "c23249b33f5539352be707ae00dec1678388dd3f4803d23ce9d618c76e3b3292"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p038_p013.unity",
+            "fileHash": "a32099cbee281e0e757d910d4219e8296ea65e75f60d57a6b1c267293edf81be",
+            "metaHash": "b30e76ffa4ed733f6ec17889a6d328f21f3131d9c4408522a6ce98f28ed56bb0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p038_p014.unity",
+            "fileHash": "2afff9b7becfcb4dbc28be6837d73589ab5aa0e43ad96351fdf6b4da92261d33",
+            "metaHash": "f7b638f189ebb953ec2ad716def4f2b255631daf4336b8a71970287fd6e07954"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p039_p013.unity",
+            "fileHash": "dafb356314f4c0aea08b74042138f1c6a1927c455a06e7b050bd984c9683fc22",
+            "metaHash": "f8239d216e066097b3fda5f41d188c086d30ea5c2ab959f5ce2470be2c078d46"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p042_p013.unity",
+            "fileHash": "7ea258afc8fbfbbfa87d20bce8de75d0bf1dbee8ebfcc8e1cf392a2f87019230",
+            "metaHash": "d193c5b3e939a52248437b83acf1e41108909547f9c1fa3ba7e948b699cbd88c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p042_p044.unity",
+            "fileHash": "87a249e95492eb067051a35d851c4ad5c07a6321aae2d8a529de36497b40f522",
+            "metaHash": "5bb09a90e9473873fcc24eccd011a3d8ac6d7d5a314d913d7fec2895524542f3"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p045_p013.unity",
+            "fileHash": "56a4a4a172200a51c729ff853adc043642169be5aa234e2ebbca9f8adc58f2ac",
+            "metaHash": "88800b64ad8673a335d27550b641e55c9855b13deb62e1c90165fe20eb1ab937"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p047_n024.unity",
+            "fileHash": "28928cbafc0ca5020c7310c647d875f071ba7d09248dc23b3b4ffb9ef6e99ea3",
+            "metaHash": "9647b918da7624303227f21637fea78ef7a97f33f77287964bdeff569398c9fd"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p050_n054.unity",
+            "fileHash": "654a43e4a85ee75221024fc48a0ac10d98fea201d06c0f5664b608c8bb43b6ca",
+            "metaHash": "2a62c4ff129cd2a890589639dede8a51482df0c1731535fa54e5041fd6d8b825"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p050_p013.unity",
+            "fileHash": "ecb2c1650ba8e011a170b9e83ceb002efc66d53d36ade889b9867b37c655aa74",
+            "metaHash": "e4ac2729d8ea21f0df60316435c5f2274890693ea18bf6ebb39c29c95ac3c675"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p054_p051.unity",
+            "fileHash": "873aa61cf49babd27f3f7a58bc2db5f47cce95f7d7c79f80429802df30bb3674",
+            "metaHash": "f04a74dc3709fa81bcb9e841087256574e068e673562e836cc25fbe5cb31ce09"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p056_p013.unity",
+            "fileHash": "47d0052761df5c1ae7c5e3f6979a77a48ff7dd1fec445bff47c6f82d23e62589",
+            "metaHash": "7949fb93b02f602e228e376ce78bcc86bae5a111a55a0a31d66e14a4c96241db"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p056_p046.unity",
+            "fileHash": "06438e195636e04fb2e3b176af7554bc130124499798b2cead1418b27560e04d",
+            "metaHash": "8a78129f4c54b7714e265beb404bef2c39d653dd3181d6c50364f9cb456d94c8"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p059_n026.unity",
+            "fileHash": "5f3647a1fdb9b17401c0ccc173c124ab831e9493fbfc07ad7f1b84f2c6114964",
+            "metaHash": "16720c48d8a9e92286130d897312d7ca442bf9c0b4c1b18ebad5778084cf3557"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p059_p013.unity",
+            "fileHash": "c478843a3a1cb3fd244332f9c32b3f3187f9078ed2e9966d83360961b1ba09d0",
+            "metaHash": "c425b85ecf75b72c5de43325430b5c7c9382c9123170cf85db77cbda2511d580"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p060_p016.unity",
+            "fileHash": "efc03d302766d6053dc438cb1e122cf9f15983a35b96eba93259b1dd5cd696a4",
+            "metaHash": "e8058510f20e761a83cf6c932d329a6eda848c45f2fdfdf6de60d7ed2d243029"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p065_p013.unity",
+            "fileHash": "964e1e71b65ca06a39b25f7167926d790375119f5a186f0be90bfae10e35b7e9",
+            "metaHash": "8ed90dcd75081d361a83e976886d213b56b3f0a9a7395a225a4d046bee33988d"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p066_p039.unity",
+            "fileHash": "d95f9e1f472e08859a8b52ac46eb7e6bfa72573bce9369979ea3819e9aeef859",
+            "metaHash": "9152541077a691aecce177687dcd083defd699361c896078eb254250aeb5ef11"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p071_n026.unity",
+            "fileHash": "b0e146e47b1260c1e40919cfcc50dff753389117d931d5a0bff3967ba30c1892",
+            "metaHash": "f81812cff7bae8d504629638fce388aee81642a717bc02650f25d6c2aece3ac1"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p071_p013.unity",
+            "fileHash": "cea0607153a052f9f1f9ae0e21690b9b2f7639658d2d326391f15d9244e1b17e",
+            "metaHash": "33475bc77ba15abf94d022acfcf83509aebb7027a8ecddfd6219406296ed086c"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p076_n052.unity",
+            "fileHash": "0c51274288a44fe4e5b6a7e50cdae5dea841ef812709377ebf2467af2eb7b489",
+            "metaHash": "01955227de06bb185cbb07b39a2ce540449f8d27e5c67512b13dcba10e4535c7"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p078_p013.unity",
+            "fileHash": "e4112601ab0bcaca2177b6ca0ff82b34a7a69b2009c91676abf7a4f2d35f8839",
+            "metaHash": "4272f952b2ff1ccc49b88e4b4abe18c69d8d884a44fc5e452ad652495b0cda1e"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p084_p013.unity",
+            "fileHash": "c3befa1bd15d7bbb60ff3a01166ee3c56698e8132109eb8774662641ca4e94a1",
+            "metaHash": "d7a6d0de40529fc0f2d62e6598127131689f5d138e4ea67d18e95acfe7829dc0"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p088_p035.unity",
+            "fileHash": "38eaaf7d19c2491d836e329422ba8baa6c1e038f4861ad7d8738d4720724539c",
+            "metaHash": "8d8e7dce59d9bdb36d8065dfa0719dc2bbde116d76a0f616acf3308379144879"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p090_n035.unity",
+            "fileHash": "32993ee43a53808d6a1d0963c4ce8784f3c407111dbbb9680baa17d92445e3e2",
+            "metaHash": "0f5b9928514b50cc11e6942f78ffce3a2ded59405bb7b5fb1c0a4a4bbf838b12"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p090_p013.unity",
+            "fileHash": "537152682dcdbf5fc8048536d5ba33d5f831c1611c9edd18314b72130ef00a1a",
+            "metaHash": "ed250bcf66a5cc574296dacdf41a643de6cb2716c701bc1cb92691578db328ba"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p092_n013.unity",
+            "fileHash": "5f38acad3a1a4230a5907579f9d1d65337b6a6bbd234ee8b6d11fc574c147ca5",
+            "metaHash": "df6222bb8ef5f5cf576a06b2cd18ec47fdbef3f72202e7a818f3b84f3a531707"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p094_p021.unity",
+            "fileHash": "9c1e43058d52098d8c9417099b9b0d3dd8c334b50cf69842e97c2499167a483d",
+            "metaHash": "d1620cc1b8e0430242db3e3562375637478b6bbd0f5f9d90cad46bb6391448e3"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p099_n012.unity",
+            "fileHash": "5f8784fff2b83a286bf696c39aa2860de5d5b47d20215599562ff5727325fe2b",
+            "metaHash": "ca5cf0bc465af393df0ff4944c8c1d027867e82eac409714a5f957710fc608e1"
+        },
+        {
+            "scenePath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p107_p034.unity",
+            "fileHash": "35a0a00787eb37dae44e6b9dc99683d92efd3ad225ceb0e06eed05ffc49d48a6",
+            "metaHash": "7818916f3db02cab4dbbd4bb73b808cc4a5ea92fed4b8571b5ae20a93f7c7f6b"
+        }
+    ]
+}

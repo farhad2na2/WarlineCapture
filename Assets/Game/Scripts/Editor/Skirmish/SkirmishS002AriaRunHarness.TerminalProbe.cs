@@ -25,11 +25,13 @@ namespace Game.Editor
         private static float terminalTimeScale;
         private static int terminalPlayerHp, terminalEnemyHp, terminalStep;
         private static double terminalDue, terminalDeadline;
+        private static double terminalDestinationVisibleSince;
         private static AriaTouchInputUiSystemHelper terminalTouch;
         private static int terminalInterventions, terminalUnexpectedSamples;
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
+            StopS004ManualProbe();
             terminalSnapshotValid = terminalProbeActive = true;
             terminalInterventions = terminalUnexpectedSamples = 0;
             terminalMatch = match;
@@ -44,6 +46,7 @@ namespace Game.Editor
             terminalPlayerHp = DesignatedBaseHp(em, session, 1);
             terminalEnemyHp = DesignatedBaseHp(em, session, 2);
             terminalStep = 0;
+            terminalDestinationVisibleSince = 0d;
             terminalDue = EditorApplication.timeSinceStartup + 3d;
             terminalDeadline = terminalDue + 45d;
             var runner = new GameObject("SkirmishTerminalInputProbe");
@@ -75,6 +78,19 @@ namespace Game.Editor
                         SkirmishLaunchProjection.IsSimulationActive(em))
                     { EndTerminalProbe(false, "terminalNotFrozen"); return; }
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                    if (UiShellRuntimeGateway.Localization.IsRightToLeft)
+                    {
+                        var card = UnityEngine.Object.FindAnyObjectByType<CampaignStyleResultCard>();
+                        if (card == null) { EndTerminalProbe(false, "localizedResultMissing"); return; }
+                        foreach (var label in card.GetComponentsInChildren<TMPro.TMP_Text>())
+                            if (System.Text.RegularExpressions.Regex.IsMatch(label.text ?? string.Empty, "[A-Za-z]{2,}"))
+                            {
+                                Debug.LogError("[SkirmishNativeResultLocalization] untranslated=" + label.text);
+                                EndTerminalProbe(false, "resultNotLocalized"); return;
+                            }
+                        Debug.Log("[SkirmishNativeResultLocalization] result=Passed locale=" +
+                            UiShellRuntimeGateway.Localization.CurrentLocaleCode);
+                    }
                     string actionObject = terminalAction == "REPLAY" ? "Replay"
                         : terminalAction == "ADJUST SETUP" ? "Adjust"
                         : terminalAction == "RETRY" ? "Retry" : "Leave";
@@ -97,6 +113,8 @@ namespace Game.Editor
                         if (!SkirmishLaunchProjection.TryGet(em, out var replay, out var replayMatch) ||
                             replayMatch.Phase != SkirmishPhase.Playing || !SkirmishLaunchProjection.IsSimulationActive(em)) return;
                         if (em.GetComponentData<SkirmishExpandedSessionComponent>(replay).SessionId.Equals(terminalAttempt) ||
+                            em.GetComponentData<SkirmishExpandedSessionComponent>(replay).CatalogId.ToString() != catalogId ||
+                            replayMatch.ScenarioIndex != terminalMatch.ScenarioIndex || replayMatch.Seed != terminalMatch.Seed ||
                             SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, replay, in replayMatch) > 10f ||
                             DesignatedBaseHp(em, replay, 1) <= 0 || DesignatedBaseHp(em, replay, 2) <= 0)
                         { EndTerminalProbe(false, "replayNotFresh"); return; }
@@ -108,6 +126,28 @@ namespace Game.Editor
                         if (SkirmishLaunchProjection.TryGet(em, out _, out _))
                         { EndTerminalProbe(false, "sessionNotCleaned"); return; }
                     }
+                    // Route state can precede the loading fade and destination layout.
+                    // Require the actual presented controls before accepting a return.
+                    var shellView = UnityEngine.Object.FindAnyObjectByType<UIShellView>();
+                    bool obscured = shellView != null &&
+                        shellView.TryGetRegion(UIShellRegionId.LoadingLayer, out var loading) &&
+                        loading.CanvasGroup != null && loading.CanvasGroup.alpha > .01f;
+                    bool controlsVisible = terminalAction != "ADJUST SETUP";
+                    if (!controlsVisible)
+                    {
+                        foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                        {
+                        if (setup.IsBaseAssaultSetup && setup.SelectedScenarioId == catalogId &&
+                            setup.ReadConfigFromControls().ScenarioIndex == terminalMatch.ScenarioIndex &&
+                            setup.ReadConfigFromControls().MapSeed == terminalMatch.Seed)
+                            foreach (var control in setup.GetComponentsInChildren<Button>())
+                                if (TryPresentedButtonPoint(control, out _)) { controlsVisible = true; break; }
+                        }
+                    }
+                    if (obscured || !controlsVisible)
+                    { terminalDestinationVisibleSince = 0d; return; }
+                    if (terminalDestinationVisibleSince == 0d) terminalDestinationVisibleSince = now;
+                    if (now - terminalDestinationVisibleSince < 2d) return;
                     ScreenCapture.CaptureScreenshot(prefix + "-destination.png");
                     terminalStep = 2;
                     terminalDue = now + 1d;

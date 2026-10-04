@@ -1,0 +1,110 @@
+{
+  "mission": "S004",
+  "target": "Unity Editor",
+  "date": "2026-10-04",
+  "status": "Editor gameplay candidate validated; visual density gate open",
+  "playerReady": false,
+  "sourceHash": "ceff0859d79760dd5c3baa8f94aedcca65a50eff396c6d51ed16167f1d6802f2",
+  "changes": [
+    "Reused existing CityEdgeAirfield Campaign source; five physical source hashes unchanged.",
+    "Fixed S004 setup title dimensions, preview anchors and localized helicopter guidance.",
+    "Reduced camera height to 55–65m, subsequent focus 60m, pitch50, FOV50; camera requests do not issue orders.",
+    "Kept static authored Campaign sun; disabled fog for S004; temporary pipeline copy extends shadow coverage to160m and restores previous rendering settings on teardown.",
+    "Added native menu-entry validation using Touch on Skirmish, scenario selection, scrolling and Start Match."
+  ],
+  "visualReview": {
+    "mockupDirection": "Previously approved by owner; approval retained.",
+    "nativeUi": "English and Farsi setup/result captures inspected; mission title, objective and launch/return controls visible.",
+    "nativeMap": "Closer and clearer, but reused airfield remains substantially sparser and less charming than the approved mockup; density gate not passed.",
+    "ownerNativeReview": "Pending; real Editor screenshot opened and optional town-side placement preference requested.",
+    "townEdgePreflight": "Some clear28x15m Barracks footprint centres found near x450,z540. Full army, facilities, legal routes and infrastructure fit not validated; no relocation authored."
+  },
+  "automatedChecks": {
+    "status": "Passed",
+    "log": "warline-s004-editor136-regressions.log",
+    "requiredMarkers": [
+      "[SkirmishPlayerReadyRegressions] result=Passed",
+      "[S004CampaignLightingValidation] result=Passed",
+      "[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3",
+      "[ExistingEditorValidation] result=Passed"
+    ]
+  },
+  "normalInputJourneys": [
+    {
+      "locale": "en",
+      "control": "ARIA",
+      "seed": 104733,
+      "status": "Passed",
+      "outcome": "Victory",
+      "reason": "MainBaseDestroyed",
+      "seconds": 150.217,
+      "normalSpeed": true,
+      "gestures": 37,
+      "completedGestures": 37,
+      "interventions": 0,
+      "unexpectedSamples": 0,
+      "receiptViolations": 0,
+      "acceptedCommands": 48,
+      "return": "Adjust Setup",
+      "log": "warline-s004-editor137-en.log",
+      "readinessEvidence": "Full native menu-to-result-to-return journey, uninterrupted ARIA play; countedWin=1."
+    },
+    {
+      "locale": "fa-IR",
+      "control": "Manual Touch",
+      "seed": 104733,
+      "status": "Passed",
+      "outcome": "Victory",
+      "reason": "MainBaseDestroyed",
+      "seconds": 208.283,
+      "ariaStarted": false,
+      "actions": 162,
+      "attackReceipts": 30,
+      "return": "Main Menu",
+      "log": "warline-s004-editor138-fa-manual.log",
+      "readinessEvidence": "Full native menu-to-result-to-return manual journey using visible controls."
+    }
+  ],
+  "ariaStopControl": {
+    "nativeControls": "Play,Confirm,Stop,Play,Confirm verified in attempt133.",
+    "aggregateRunStatus": "Failed; intentionally pressing Stop was recorded as one intervention, countedWin=0.",
+    "scope": "Prior presentation candidate; preserved separately, never counted as an uninterrupted ARIA win.",
+    "log": "FailedAttempts/warline-s004-editor133-en.log"
+  },
+  "historicalEvidence": {
+    "directory": "../PlayerReady20261004",
+    "sourceHash": "67293af68d1f94d5f990ddf733293e525575a3fd7ea6f24fad75a1c83a109f39",
+    "note": "Earlier six-seed/locale ARIA matrix, paid aircraft cycle and manual victories are historical source evidence; not recertified as the current native matrix."
+  },
+  "releaseGates": {
+    "visualDensity": "Open",
+    "checkpointRecovery": "Unsupported/pending in existing S004 implementation; unchanged.",
+    "completeCurrentSeedLocaleMatrix": "Only current seed104733 English ARIA and Farsi manual journeys were run.",
+    "realPlayerAcceptance": "Pending",
+    "deviceAcceptance": "Separate, outside this Editor target request.",
+    "publication": "No release flag flip or readiness certification."
+  },
+  "editorHandoff": {
+    "state": "Play mode; S004 setup selected; Start Match available.",
+    "profile": "Isolated QA profile, personal saves unchanged.",
+    "restore": "Previous save root, scenes and resolution scheduled to restore when exiting Play mode.",
+    "previewWrapperStatus": "Timed out at180s awaiting legacy helper completion; retained as failure. Later observed S004 setup and closed preview-only logger. This handoff is not gameplay readiness evidence.",
+    "log": "warline-s004-editor139-preview.log"
+  },
+  "failedEvidence": "FailedAttempts contains earlier menu/runner, reload, compile/locale and intentional-intervention failures. Preserved; not counted as readiness.",
+  "integrityEvidence": [
+    "campaign-source-integrity.json",
+    "final-source-integrity.json"
+  ],
+  "nativeScreens": [
+    "native-en-setup.png",
+    "native-en-opening.png",
+    "native-en-result.png",
+    "native-en-adjust-setup.png",
+    "native-fa-setup.png",
+    "native-fa-opening.png",
+    "native-fa-result.png",
+    "native-fa-main-menu.png",
+    "editor-handoff-setup.png"
+  ]
+}

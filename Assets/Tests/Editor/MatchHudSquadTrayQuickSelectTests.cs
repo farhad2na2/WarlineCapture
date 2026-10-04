@@ -17,6 +17,41 @@ public sealed class MatchHudSquadTrayQuickSelectTests
     };
 
     [Test]
+    public void RtlPaginationKeepsBothArrowHitAreasInsideTheNavigationRow()
+    {
+        var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath));
+        try
+        {
+            var view = instance.GetComponentInChildren<MatchHudSquadTrayView>(true);
+            var serialized = new SerializedObject(view);
+            var pagination = (RectTransform)serialized.FindProperty("paginationRoot").objectReferenceValue;
+            pagination.gameObject.SetActive(true);
+            var row = (RectTransform)pagination.Find("NavigationRow");
+            view.PreviousPageButton.gameObject.SetActive(true);
+            view.NextPageButton.gameObject.SetActive(true);
+            view.ClearSelectionButton.gameObject.SetActive(false);
+            row.Find("FlexibleSpacer")?.gameObject.SetActive(false);
+            typeof(MatchHudSquadTrayView).GetMethod("ArrangePaginationRow",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(view, new object[] { row, true });
+            LayoutRebuilder.ForceRebuildLayoutImmediate(pagination);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(row);
+            foreach (var button in new[] { view.PreviousPageButton, view.NextPageButton })
+            {
+                var corners = new Vector3[4];
+                ((RectTransform)button.transform).GetWorldCorners(corners);
+                foreach (var corner in corners)
+                {
+                    var local = row.InverseTransformPoint(corner);
+                    Assert.That(local.x, Is.InRange(row.rect.xMin - 1f, row.rect.xMax + 1f),
+                        button.name + " must remain touchable inside the navigation row in RTL.");
+                }
+            }
+        }
+        finally { Object.DestroyImmediate(instance); }
+    }
+
+    [Test]
     public void MatchHudSquadTrayCardsAreButtons()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);

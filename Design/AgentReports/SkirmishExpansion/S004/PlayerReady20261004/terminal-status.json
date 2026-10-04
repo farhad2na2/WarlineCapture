@@ -1,0 +1,20 @@
+[
+  {
+    "name": "replay80-en",
+    "locale": "en",
+    "seed": 104733,
+    "exit": 0,
+    "passed": true,
+    "missing": [],
+    "log": "/private/tmp/warline-s004-ready-replay80-en.log"
+  },
+  {
+    "name": "adjust81-fa",
+    "locale": "fa-IR",
+    "seed": 104733,
+    "exit": 0,
+    "passed": true,
+    "missing": [],
+    "log": "/private/tmp/warline-s004-ready-adjust81-fa.log"
+  }
+]

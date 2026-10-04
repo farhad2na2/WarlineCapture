@@ -1,0 +1,1 @@
+[CommandNodeInput] result=Failed Known input fixture defect: lowercase comms panel names; restarting after correction

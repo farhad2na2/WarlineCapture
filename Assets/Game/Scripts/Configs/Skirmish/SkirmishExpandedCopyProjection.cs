@@ -113,6 +113,20 @@ namespace Game.Configs
             }
         }
 
+        public static void ApplyLibraryCopyS004(ref SkirmishBattleCatalogEntry entry)
+        {
+            if (entry.ScenarioId != SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
+                return;
+            entry.TitleKey = "skirmish.s004.title";
+            entry.DefinitionId = SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedDefinitionId;
+            entry.ContentVersion = 2;
+            entry.ReadinessManifestId = "publication.skirmish.s004";
+            entry.DescriptionEnglish = Resolve("skirmish.s004.brief", GameLocalization.EnglishLocaleCode,
+                "Scout with infantry and the starting transport helicopter. AA covers the staging area. Lift infantry toward the north ruins, or build offensive air while a ground reserve stays home.");
+            entry.DescriptionFarsi = Resolve("skirmish.s004.brief", GameLocalization.PersianLocaleCode,
+                "با پیاده و هلی‌کوپتر ترابری شروع‌شده شناسایی کن. پدافند هوایی محل استقرار را می‌پوشاند. پیاده را به خرابه‌های شمال ببر، یا هوایی تهاجمی بساز و یک ذخیره زمینی در خانه نگه دار.");
+        }
+
         public static bool TryResolveS002LibraryBriefing(string locale, out SkirmishLibraryBriefing briefing)
         {
             briefing = new SkirmishLibraryBriefing(
@@ -295,20 +309,29 @@ namespace Game.Configs
 
         public static string Resolve(string key, string locale, string englishFallback)
         {
-            if (string.Equals(locale, GameLocalization.PersianLocaleCode, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(key))
             {
-                if (TryKnownFa(key, out string fa))
+                if (string.Equals(locale, GameLocalization.CurrentLocaleCode, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (GameLocalization.TryGet(key, out string live) &&
-                        !string.Equals(live, englishFallback, StringComparison.Ordinal))
+                    if (GameLocalization.TryGet(key, out string live) && !string.IsNullOrEmpty(live))
                         return live;
-                    return fa;
+                }
+                else
+                {
+                    // Authoring resolves both languages without changing the active UI locale.
+                    foreach (GameLocaleTable table in GameLocalization.AvailableLocales)
+                    {
+                        if (table == null || !string.Equals(table.LocaleCode, locale, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        foreach (GameLocalizedStringRecord entry in table.Entries)
+                            if (entry != null && entry.Key == key && !string.IsNullOrEmpty(entry.Value))
+                                return entry.Value;
+                    }
                 }
             }
-
-            if (!string.IsNullOrEmpty(key) && GameLocalization.TryGet(key, out string resolved) &&
-                !string.IsNullOrEmpty(resolved))
-                return resolved;
+            if (string.Equals(locale, GameLocalization.PersianLocaleCode, StringComparison.OrdinalIgnoreCase) &&
+                TryKnownFa(key, out string fa))
+                return fa;
             return englishFallback ?? string.Empty;
         }
 

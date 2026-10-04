@@ -296,6 +296,29 @@ namespace Game.Runtime
             if (!TryResolveReturnToBaseGoal(em, queueEntity, buildingRuntimeStateQuery, entity, factionId, currentCell, out int2 goal))
                 return false;
 
+            // A Return interrupts the logical Skirmish attack as well as the
+            // native order. Otherwise a later attack on that same target is
+            // mistaken for an order still executing and never launches again.
+            if (SkirmishSharedCombatBinding.UsesSharedCommands(em, entity))
+                SkirmishWorldMovementService.ClearIntent(em, entity);
+            if (em.HasComponent<UnitAirComponent>(entity))
+            {
+                var air = em.GetComponentData<UnitAirComponent>(entity);
+                if (air.HomeInitialized != 0)
+                {
+                    goal = air.HomeCell;
+                    air.ReturningHome = 1;
+                    em.SetComponentData(entity, air);
+                }
+                // Returning aircraft must not reacquire a nearby enemy and
+                // abandon the landing. A new AttackMove explicitly arms combat.
+                if (em.HasComponent<UnitCombat>(entity))
+                {
+                    var combat = em.GetComponentData<UnitCombat>(entity);
+                    combat.AutoEngage = 0;
+                    em.SetComponentData(entity, combat);
+                }
+            }
             UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
             return true;
         }

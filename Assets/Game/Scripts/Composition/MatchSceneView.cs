@@ -84,6 +84,7 @@ namespace Game.Composition
 #endif
 
         public Camera WorldCamera => worldCamera;
+        public UnityEngine.SceneManagement.Scene OperationMapLightingScene => activeOperationMapSceneView != null ? activeOperationMapSceneView.gameObject.scene : default;
         public Light DirectionalLight => directionalLight;
         public Volume GlobalVolume => globalVolume;
         public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
@@ -131,15 +132,26 @@ namespace Game.Composition
                 var source = activeOperationMapSceneView != null
                     ? activeOperationMapSceneView.BuildingPlacements : mapBuildingPlacementConfig;
                 var additions = resolvedOperationMapDefinition?.AdditionalBuildingPlacements;
-                if (additions == null) return source;
+                bool neutralizeSource = false;
+                if (IsSkirmishSession && World.DefaultGameObjectInjectionWorld is { IsCreated: true } world)
+                {
+                    var s004 = SkirmishS004Environment.LoadForSession(world.EntityManager);
+                    additions = s004 ?? additions;
+                    neutralizeSource = SkirmishS004Environment.IsActive(world.EntityManager);
+                }
+                if (additions == null && !neutralizeSource) return source;
                 if (source == null) return additions;
                 if (missionPlacementOverlay == null)
-                    missionPlacementOverlay = MapBuildingPlacementConfig.CreateRuntimeOverlay(source, additions);
+                    missionPlacementOverlay = MapBuildingPlacementConfig.CreateRuntimeOverlay(source, additions, neutralizeSource);
                 return missionPlacementOverlay;
             }
         }
         public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
-            IsOperationsSession ? null : IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
+            IsOperationsSession ? null : IsSkirmishSession &&
+                World.DefaultGameObjectInjectionWorld is { IsCreated: true } vehicleWorld &&
+                SkirmishS004Environment.IsActive(vehicleWorld.EntityManager)
+                ? activeOperationMapSceneView?.VehiclePlacements
+                : IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.VehiclePlacements
                 : mapVehiclePlacementConfig;
         public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
@@ -253,6 +265,8 @@ namespace Game.Composition
             }
         }
 
+        private SkirmishS004CampaignLighting skirmishCampaignLighting;
+
         private void Update()
         {
             if (!Application.isPlaying)
@@ -268,6 +282,14 @@ namespace Game.Composition
                     return;
             }
 
+            // Entity-presentation maps do not have the resident Map GameObject root.
+            // Apply the campaign environment at the scene owner after source binding.
+            if(skirmishCampaignLighting==null && activeOperationMapSceneView!=null &&
+                SkirmishS004CampaignLighting.Supports(activeOperationMapSceneView.Definition))
+            {
+                skirmishCampaignLighting=gameObject.AddComponent<SkirmishS004CampaignLighting>();
+                skirmishCampaignLighting.Configure(gameObject.scene,OperationMapLightingScene);
+            }
             matchBootstrapSystem.Update();
         }
 

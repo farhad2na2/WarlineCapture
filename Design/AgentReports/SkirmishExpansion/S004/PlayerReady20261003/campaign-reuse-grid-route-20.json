@@ -1,0 +1,8 @@
+{
+  "source": "campaign CityEdgeAirfield authored Grid.asset",
+  "blockedCells": 22840,
+  "playerCenterRadius2Clear": true,
+  "enemyCenterRadius2Clear": true,
+  "groundRouteLengthMetres": 440,
+  "scope": "authored-grid read-only check; native gameplay still required"
+}

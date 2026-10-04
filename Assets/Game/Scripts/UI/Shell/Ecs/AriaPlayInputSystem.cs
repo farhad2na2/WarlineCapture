@@ -77,6 +77,9 @@ namespace Game.UI.Shell.Ecs
                     (current.Phase != AriaPlayPhase.Starting && UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5) ||
                     observation.ValueRO.Kind == AriaPlayObservationKind.Finished)
                 {
+                    Debug.LogWarning("[AriaInputLifecycleStop] ended=" + ended + " route=" + shell.ValueRO.ActiveRoute +
+                        " timeScale=" + UnityEngine.Time.timeScale + " kind=" + observation.ValueRO.Kind +
+                        " observationFrame=" + observation.ValueRO.Frame + " frame=" + UnityEngine.Time.frameCount);
                     touch.Stop(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0;
                     current.StopReason = (byte)(ended ? 5 :
                         !Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation ? 2 :

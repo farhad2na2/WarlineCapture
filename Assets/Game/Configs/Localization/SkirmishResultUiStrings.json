@@ -1,0 +1,19 @@
+{
+  "entries": [
+    { "key": "ui.skirmish.result.mode", "source": "SKIRMISH", "translations": [{ "locale": "fa-IR", "value": "نبرد" }] },
+    { "key": "ui.skirmish.result.complete", "source": "Complete", "translations": [{ "locale": "fa-IR", "value": "تکمیل شد" }] },
+    { "key": "ui.skirmish.result.failed", "source": "Failed", "translations": [{ "locale": "fa-IR", "value": "ناموفق" }] },
+    { "key": "ui.skirmish.result.held", "source": "Held", "translations": [{ "locale": "fa-IR", "value": "حفظ شد" }] },
+    { "key": "ui.skirmish.result.enemy_destroyed", "source": "Enemy main base destroyed.", "translations": [{ "locale": "fa-IR", "value": "پایگاه اصلی دشمن نابود شد." }] },
+    { "key": "ui.skirmish.result.base_standing", "source": "Your main base is still standing.", "translations": [{ "locale": "fa-IR", "value": "پایگاه اصلی شما همچنان سالم است." }] },
+    { "key": "ui.skirmish.result.base_lost", "source": "Your main base was lost.", "translations": [{ "locale": "fa-IR", "value": "پایگاه اصلی شما از دست رفت." }] },
+    { "key": "ui.skirmish.result.startup_failed", "source": "MATCH DID NOT START", "translations": [{ "locale": "fa-IR", "value": "نبرد آغاز نشد" }] },
+    { "key": "ui.skirmish.result.match_complete", "source": "MATCH COMPLETE", "translations": [{ "locale": "fa-IR", "value": "نبرد پایان یافت" }] },
+    { "key": "ui.skirmish.result.destroy_base", "source": "Destroy the enemy main base", "translations": [{ "locale": "fa-IR", "value": "پایگاه اصلی دشمن را نابود کن" }] },
+    { "key": "ui.skirmish.result.protect_base", "source": "Protect your main base", "translations": [{ "locale": "fa-IR", "value": "از پایگاه اصلی خود دفاع کن" }] },
+    { "key": "ui.skirmish.result.low_losses", "source": "Keep squad losses low", "translations": [{ "locale": "fa-IR", "value": "تلفات نیروها را کم نگه دار" }] },
+    { "key": "ui.skirmish.result.units_lost", "source": "UNITS LOST", "translations": [{ "locale": "fa-IR", "value": "نیروهای ازدست‌رفته" }] },
+    { "key": "ui.skirmish.result.units_defeated", "source": "UNITS DEFEATED", "translations": [{ "locale": "fa-IR", "value": "نیروهای شکست‌خوردهٔ دشمن" }] },
+    { "key": "ui.skirmish.result.buildings", "source": "BUILDINGS LOST / DESTROYED", "translations": [{ "locale": "fa-IR", "value": "ساختمان‌های ازدست‌رفته / نابودشده" }] }
+  ]
+}

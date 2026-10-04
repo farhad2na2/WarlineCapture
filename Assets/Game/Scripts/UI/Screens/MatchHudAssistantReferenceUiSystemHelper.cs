@@ -33,6 +33,7 @@ namespace Game.UI.Runtime
             {
                 Button candidate = authoredButtons[i];
                 if (candidate == null ||
+                    candidate.GetComponent<AriaTutorialBriefingView>() == null ||
                     candidate.GetComponent<Canvas>() == null ||
                     candidate.GetComponent<GraphicRaycaster>() == null ||
                     candidate.transform is not RectTransform candidateRoot)
@@ -57,33 +58,11 @@ namespace Game.UI.Runtime
             if (buttonRoot == null)
                 return false;
 
-            TMP_Text[] authoredText = buttonRoot.GetComponentsInChildren<TMP_Text>(true);
-            int directTextCount = 0;
-            int highestSiblingIndex = -1;
-            int secondHighestSiblingIndex = -1;
-            for (int i = 0; i < authoredText.Length; i++)
-            {
-                TMP_Text candidate = authoredText[i];
-                if (candidate == null || candidate.transform.parent != buttonRoot)
-                    continue;
-
-                directTextCount++;
-                int siblingIndex = candidate.transform.GetSiblingIndex();
-                if (siblingIndex > highestSiblingIndex)
-                {
-                    secondHighestSiblingIndex = highestSiblingIndex;
-                    stateText = cueText;
-                    highestSiblingIndex = siblingIndex;
-                    cueText = candidate;
-                }
-                else if (siblingIndex > secondHighestSiblingIndex)
-                {
-                    secondHighestSiblingIndex = siblingIndex;
-                    stateText = candidate;
-                }
-            }
-
-            return directTextCount == 3 && stateText != null && cueText != null;
+            // Runtime ARIA explanations may add direct text children during play.
+            // Bind the authored access labels by their stable hierarchy roles.
+            stateText = buttonRoot.Find("State")?.GetComponent<TMP_Text>();
+            cueText = buttonRoot.Find("AlertCue")?.GetComponent<TMP_Text>();
+            return stateText != null && cueText != null;
         }
     }
 }

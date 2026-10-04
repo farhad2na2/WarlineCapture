@@ -112,7 +112,18 @@ namespace Game.UI.Runtime
                 if (view.SelectedCount == 0) view.SelectedCount = ReadDisplayedCount(selected.Subtitle);
             }
             if (watchSelection == null) watchSelection = Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
-            if (view.SelectedAircraft) view.ReturnAircraft = ObserveWatchButton(watchSelection?.PresentedReturnButton);
+            if (view.SelectedAircraft)
+            {
+                view.ReturnAircraft = ObserveWatchButton(watchSelection?.PresentedReturnButton);
+                // The current HUD presents selection actions in the Commands
+                // wheel. Opening it is a separate touch from choosing Return.
+                var wheel = _commandControlsView?.CommandWheelPanel;
+                if (!view.ReturnAircraft.Available && wheel != null)
+                {
+                    if (wheel.IsOpen) view.ReturnAircraft = ObserveWatchButton(wheel.NextReturnButton);
+                    else view.OpenAircraftActions = ObserveWatchButton(wheel.OpenButton);
+                }
+            }
             if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) { view.AttackMode = command.ActiveCommandMode == TacticalCommandMode.Attack; view.SelectionMode = command.ActiveCommandMode == TacticalCommandMode.Select; }
             view.Infantry = model.InfantryCount;
             view.PlayerHealth = model.PlayerHealth; view.EnemyHealth = model.EnemyHealth;
@@ -137,6 +148,8 @@ namespace Game.UI.Runtime
                 view.LogisticsTruckCommitted = model.LogisticsTruckCommitted;
                 view.RifleRecruitPending = model.RifleRecruitPending;
                 view.AirProfile = model.AirProfile;
+                view.OwnDefenseTowers = model.OwnDefenseTowers;
+                view.AntiAirCommitted = model.AntiAirCommitted;
                 view.PadPresent = model.PadPresent;
                 view.ReadinessEligible = model.ReadinessEligible;
                 view.PadReady = model.PadPresent && model.ReadinessEligible;

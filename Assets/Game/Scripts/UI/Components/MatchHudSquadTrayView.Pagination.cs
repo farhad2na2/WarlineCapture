@@ -246,8 +246,14 @@ namespace Game.UI.Runtime
             var layout = row.GetComponent<HorizontalLayoutGroup>();
             if (layout != null) layout.reverseArrangement = rtl;
             Vector3 arrowScale = new Vector3(rtl ? -1f : 1f, 1f, 1f);
-            previousPageButton.transform.localScale = arrowScale;
-            nextPageButton.transform.localScale = arrowScale;
+            // Mirror the glyph, never the layout/hit rectangle. A negative root scale
+            // makes HorizontalLayoutGroup place the RTL pager outside its bounds.
+            previousPageButton.transform.localScale = Vector3.one;
+            nextPageButton.transform.localScale = Vector3.one;
+            var previousGlyph = previousPageButton.GetComponentInChildren<TMP_Text>(true);
+            var nextGlyph = nextPageButton.GetComponentInChildren<TMP_Text>(true);
+            if (previousGlyph != null) previousGlyph.transform.localScale = arrowScale;
+            if (nextGlyph != null) nextGlyph.transform.localScale = arrowScale;
         }
 
         private void HidePagination()

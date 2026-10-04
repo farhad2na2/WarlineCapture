@@ -148,8 +148,8 @@ namespace Game.Editor
             var catalog =
                 AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogBuilder.AssetPath);
             Check(catalog != null && catalog.TryValidate(out _), "Battle catalog asset must validate.");
-            Check(catalog.Entries.Count == 120 && catalog.CountPlayable() == 5,
-                "Catalog must list 120 scenarios with exactly five playable entries.");
+            Check(catalog.Entries.Count == 120 && catalog.CountPlayable() == 6,
+                "Catalog must list 120 scenarios with exactly six playable entries.");
             Check(catalog.TryGet(SkirmishBattleCatalogConfig.IndustrialBasinScenarioId, out var basin) &&
                   basin.PlayableScenarioIndex == 3,
                 "S073 must resolve to playable scenario index 3.");

@@ -125,7 +125,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsSelectedPlayerUnitsWhenFocusedUnitMissing());
             RunCase(test => test.ReturnToBaseCommandSystem_RejectsWithoutSelectedPlayerUnit());
             RunCase(test => test.ReturnToBaseCommandSystem_RecordsTouchReceiptAndDirectViolation());
-            UnityEngine.Debug.Log("[ReturnToBaseInputValidation] result=Passed tests=6");
+            RunCase(test => test.ReturnToBaseCommandSystem_InterruptsSkirmishAircraftAttack());
+            UnityEngine.Debug.Log("[ReturnToBaseInputValidation] result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -2086,6 +2087,38 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(0, runtimeState.SelectionModeActive);
         Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
         AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
+    public void ReturnToBaseCommandSystem_InterruptsSkirmishAircraftAttack()
+    {
+        var em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: false);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(12, 14));
+        var unit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove),
+            typeof(UnitAirMovement), typeof(UnitAirComponent), typeof(UnitCombat),
+            typeof(SkirmishSharedActorTag), typeof(CombatTargetPolicy), typeof(SkirmishMoveIntentComponent),
+            typeof(EngageTarget), typeof(AttackMoveOrder));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitMove { Speed = 24f });
+        em.SetComponentData(unit, new UnitAirComponent { HomeInitialized = 1, HomeCell = new int2(7, 9), Airborne = 1 });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(unit, new SkirmishMoveIntentComponent {
+            Active = 1, Order = Game.Skirmish.Contracts.SkirmishGroupOrderKind.Attack, AttackTarget = em.CreateEntity() });
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        Assert.IsTrue(input.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, frame: 501));
+        Assert.IsTrue(RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(em, unit,
+            out _, out bool accepted, out _, out int issued));
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(1, issued);
+        var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+        Assert.AreEqual(0, intent.Active);
+        Assert.AreEqual(Entity.Null, intent.AttackTarget);
+        Assert.AreEqual(new int2(7, 9), em.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(1, em.GetComponentData<UnitAirComponent>(unit).ReturningHome);
+        Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
+        Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit));
     }
 
     [Test]

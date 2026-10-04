@@ -1,0 +1,16 @@
+{
+  "locale": "fa-IR",
+  "seed": 104733,
+  "elapsed": 209.0869,
+  "outcome": "Victory",
+  "input": "Touch",
+  "ariaStarted": false,
+  "completedGestures": 163,
+  "interventions": 0,
+  "unexpected": 0,
+  "attackReceipts": 31,
+  "terminalReturn": "MainMenu",
+  "nativeResultPassed": true,
+  "visualReview": "Failed: untranslated result labels",
+  "schedulerStoppedAfterEditorExit": true
+}

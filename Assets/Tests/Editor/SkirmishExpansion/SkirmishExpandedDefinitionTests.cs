@@ -127,7 +127,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(0, session.IsLegacy);
         Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
         var match = em.CreateEntityQuery(typeof(SkirmishMatchState)).GetSingleton<SkirmishMatchState>();
-        Assert.AreEqual(0, match.ScenarioIndex);
+        Assert.AreEqual(SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex, match.ScenarioIndex);
     }
 
     [Test]
@@ -142,6 +142,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.IsTrue(SkirmishLegacyPrototypeMap.IsEditorStressIndex(2));
         Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(4, out _));
         Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(5, out _));
+        Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(6, out _));
         var established = QuickGameConfig.Defaults;
         established.ScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
         Assert.AreEqual(
@@ -153,8 +154,11 @@ public sealed class SkirmishExpandedDefinitionTests
             SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex,
             airMobile.NormalizeForBaseAssault().ScenarioIndex);
         var unknown = QuickGameConfig.Defaults;
-        unknown.ScenarioIndex = 6;
+        unknown.ScenarioIndex = 7;
         Assert.AreEqual(0, unknown.NormalizeForBaseAssault().ScenarioIndex);
+        unknown.ScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex;
+        Assert.AreEqual(SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex,
+            unknown.NormalizeForBaseAssault().ScenarioIndex);
         unknown.ScenarioIndex = 2;
         Assert.AreEqual(2, unknown.NormalizeForBaseAssault().ScenarioIndex);
     }
@@ -563,6 +567,13 @@ public sealed class SkirmishExpandedDefinitionTests
         {
             int seed = SkirmishS004FirstVisit.RegularStandardSeeds[i];
             CompileS004(SkirmishSizeId.Standard, seed, out SkirmishResolvedSetup setup, out SkirmishLaunchPayload payload);
+            using (var launchWorld = new World("S004SharedMapIdentity"))
+            {
+                Assert.IsTrue(SkirmishExpandedLaunchProjection.TryQueue(launchWorld.EntityManager, payload, setup));
+                var launched = launchWorld.EntityManager.CreateEntityQuery(typeof(SkirmishMatchState)).GetSingleton<SkirmishMatchState>();
+                Assert.AreEqual(SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex, launched.ScenarioIndex);
+                Assert.AreEqual(seed, launched.Seed);
+            }
             Assert.AreEqual("S004", setup.CatalogId);
             Assert.AreEqual("skirmish.s004", setup.DefinitionId);
             Assert.AreEqual("scenario.skirmish.s004", setup.ScenarioSetupId);
@@ -859,7 +870,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(SkirmishDifficultyId.Regular, session.DifficultyId);
         Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
         SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(sessionEntity);
-        Assert.AreEqual(SkirmishPresetConfig.DesertBaseScenarioIndex, match.ScenarioIndex);
+        Assert.AreEqual(config.ScenarioIndex, match.ScenarioIndex);
         Assert.AreEqual(SkirmishAcceptanceCensusCapture.FirstVisitSeed, match.Seed);
         SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity).Setup;
         Assert.AreEqual(SkirmishStartPackageId.EstablishedBase, setup.StartPackageId);
@@ -884,7 +895,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(SkirmishDifficultyId.Regular, session.DifficultyId);
         Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
         SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(sessionEntity);
-        Assert.AreEqual(SkirmishPresetConfig.DesertBaseScenarioIndex, match.ScenarioIndex);
+        Assert.AreEqual(config.ScenarioIndex, match.ScenarioIndex);
         Assert.AreEqual(SkirmishS003FirstVisit.SeedA, match.Seed);
         SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity).Setup;
         Assert.AreEqual(SkirmishStartPackageId.FieldBase, setup.StartPackageId);
@@ -892,6 +903,35 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
         Assert.AreEqual("skirmish.s003.title", setup.TitleKey);
         Assert.AreEqual("skirmish.s003.objective", setup.ObjectiveKey);
+    }
+
+    [Test]
+    public void LibraryDispatchIndexQueuesEstablishedAirMobileS004()
+    {
+        using var world = new World(nameof(LibraryDispatchIndexQueuesEstablishedAirMobileS004));
+        EntityManager em = world.EntityManager;
+        var config = QuickGameConfig.Defaults;
+        config.ScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex;
+        config.MapSeed = SkirmishS004FirstVisit.SeedA;
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em, config));
+        Entity sessionEntity = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
+        Assert.AreEqual(0, session.IsLegacy);
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId, session.CatalogId.ToString());
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedDefinitionId, session.DefinitionId.ToString());
+        Assert.AreEqual(SkirmishDifficultyId.Regular, session.DifficultyId);
+        Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
+        SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(sessionEntity);
+        Assert.AreEqual(config.ScenarioIndex, match.ScenarioIndex);
+        Assert.AreEqual(SkirmishS004FirstVisit.SeedA, match.Seed);
+        SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity).Setup;
+        Assert.AreEqual(SkirmishStartPackageId.EstablishedBase, setup.StartPackageId);
+        Assert.AreEqual(SkirmishArmyProfileId.AirMobile, setup.ArmyProfileId);
+        Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
+        Assert.AreEqual("skirmish.s004.title", setup.TitleKey);
+        Assert.AreEqual("skirmish.s004.objective", setup.ObjectiveKey);
+        foreach (var force in setup.Forces)
+            Assert.IsFalse(string.IsNullOrEmpty(force.RuntimePrefabKey), "Packaged starting role lacks prefab: " + force.RoleId);
     }
 
     [Test]
@@ -990,6 +1030,7 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.LegacyPrototypeIndicesRemainReserved();
             suite.LibraryDispatchIndexQueuesEstablishedS002();
             suite.LibraryDispatchIndexQueuesAirMobileS003();
+            suite.LibraryDispatchIndexQueuesEstablishedAirMobileS004();
             suite.PackagedMatrixMatchesDesignCsv();
             suite.PackagedCatalogResolvesAuthoredDefinitions();
             suite.WorldBindingProjectsDeploymentOntoMapAnchors();

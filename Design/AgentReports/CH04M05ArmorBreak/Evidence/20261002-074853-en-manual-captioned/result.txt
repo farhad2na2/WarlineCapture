@@ -1,0 +1,1 @@
+[ArmorBreakInput] result=Failed Armor Break defeat: ArmorLost

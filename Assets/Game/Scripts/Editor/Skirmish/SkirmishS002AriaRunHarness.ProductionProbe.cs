@@ -125,7 +125,9 @@ namespace Game.Editor
             var rect = (RectTransform)button.transform;
             var canvas = button.GetComponentInParent<Canvas>();
             var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
-            point = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            var wedge = button.targetGraphic as V3RadialWedgeGraphic;
+            var visiblePoint = wedge != null ? wedge.GuidanceTouchPoint : rect.TransformPoint(rect.rect.center);
+            point = RectTransformUtility.WorldToScreenPoint(camera, visiblePoint);
             if (!Screen.safeArea.Contains(point)) return false;
             var hits = new System.Collections.Generic.List<RaycastResult>();
             EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);

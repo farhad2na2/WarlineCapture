@@ -1,0 +1,1 @@
+Final automated and scripted-native checks completed. Full player/release readiness is not certified; see readiness.txt for open gates.

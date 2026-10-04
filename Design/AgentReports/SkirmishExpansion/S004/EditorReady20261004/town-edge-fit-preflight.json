@@ -1,0 +1,89 @@
+{
+  "status": "Preflight only; not a legal placement or source-fit certification",
+  "candidateBaseFootprints": [
+    {
+      "originX": 410,
+      "baseX": 477,
+      "centreZ": 540,
+      "squareMetres": 8,
+      "blockedCells": 0
+    },
+    {
+      "originX": 410,
+      "baseX": 477,
+      "centreZ": 540,
+      "squareMetres": 12,
+      "blockedCells": 0
+    },
+    {
+      "originX": 410,
+      "baseX": 477,
+      "centreZ": 540,
+      "squareMetres": 20,
+      "blockedCells": 16
+    },
+    {
+      "originX": 410,
+      "baseX": 477,
+      "centreZ": 540,
+      "squareMetres": 30,
+      "blockedCells": 27
+    },
+    {
+      "originX": 380,
+      "baseX": 447,
+      "centreZ": 540,
+      "squareMetres": 8,
+      "blockedCells": 0
+    },
+    {
+      "originX": 380,
+      "baseX": 447,
+      "centreZ": 540,
+      "squareMetres": 12,
+      "blockedCells": 0
+    },
+    {
+      "originX": 380,
+      "baseX": 447,
+      "centreZ": 540,
+      "squareMetres": 20,
+      "blockedCells": 8
+    },
+    {
+      "originX": 380,
+      "baseX": 447,
+      "centreZ": 540,
+      "squareMetres": 30,
+      "blockedCells": 76
+    },
+    {
+      "originX": 370,
+      "baseX": 437,
+      "centreZ": 540,
+      "squareMetres": 8,
+      "blockedCells": 16
+    },
+    {
+      "originX": 370,
+      "baseX": 437,
+      "centreZ": 540,
+      "squareMetres": 12,
+      "blockedCells": 24
+    },
+    {
+      "originX": 370,
+      "baseX": 437,
+      "centreZ": 540,
+      "squareMetres": 20,
+      "blockedCells": 48
+    },
+    {
+      "originX": 370,
+      "baseX": 437,
+      "centreZ": 540,
+      "squareMetres": 30,
+      "blockedCells": 76
+    }
+  ]
+}

@@ -175,12 +175,12 @@ MonoBehaviour:
     - anchor.skirmish.db.highway_far
     - anchor.skirmish.db.staging_enemy
     Kind: 1
-    LengthMetres: 384.0
-    InfantryTransitSeconds: 96.0
-    GroundTransitSeconds: 48.0
-    AirTransitSeconds: 24.0
-    InfantryFirstContactSeconds: 48.0
-    GroundFirstContactSeconds: 24.0
+    LengthMetres: 384
+    InfantryTransitSeconds: 96
+    GroundTransitSeconds: 48
+    AirTransitSeconds: 24
+    InfantryFirstContactSeconds: 48
+    GroundFirstContactSeconds: 24
     ProvisionalTimes: 1
     WidthMetres: 12
     AllowsVehicles: 1
@@ -388,14 +388,14 @@ MonoBehaviour:
     DepthMetres: 12
     FactionId: 0
   worldBinding:
-    OriginX: 832.6532
-    OriginZ: 382.0755
-    ForwardX: 0.9521014
-    ForwardZ: -0.3057846
-    AcrossX: 0.3057846
-    AcrossZ: 0.9521014
-    ForwardMetres: 1018.5232
-    AcrossMetres: 300
-    PlayerAnchorId: anchor.skirmish.desert_base_01.deployment.faction_1
-    EnemyAnchorId: anchor.skirmish.desert_base_01.deployment.faction_2
-    SourceHash: db.deploy-anchors.v1
+    OriginX: 378.50525
+    OriginZ: 540
+    ForwardX: 1
+    ForwardZ: 0
+    AcrossX: 0
+    AcrossZ: 1
+    ForwardMetres: 595.7895
+    AcrossMetres: 160
+    PlayerAnchorId: anchor.skirmish.db.base_player
+    EnemyAnchorId: anchor.skirmish.db.base_enemy
+    SourceHash: campaign.cityedgeairfield.s004.townedge.v2

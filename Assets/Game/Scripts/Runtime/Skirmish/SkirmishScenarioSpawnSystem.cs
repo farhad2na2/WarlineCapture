@@ -218,6 +218,8 @@ namespace Game.Runtime
                         setup);
                     if (spawned == Entity.Null)
                     {
+                        UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + prefabKey +
+                            " faction=" + force.FactionId + " member=" + member);
                         DestroyAttemptOwned(em, sessionId);
                         reason = SkirmishReasonCode.BlockedSpawn;
                         return false;

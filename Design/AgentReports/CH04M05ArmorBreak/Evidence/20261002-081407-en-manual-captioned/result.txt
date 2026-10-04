@@ -1,0 +1,1 @@
+[ArmorBreakInput] result=Failed Normal helicopter Move returns to apron before Attack; fixing mission-scoped hover

@@ -44,6 +44,28 @@ namespace Game.Editor
 
         private static UnityEngine.InputSystem.InputSettings previousInputSettings, validationInputSettings;
         private static bool previousRunInBackground;
+        private static double nativeShadersSettledAt = -1d;
+        private static bool nativeShadersReady;
+
+        private static bool NativeShadersAreReady(double now)
+        {
+            if (nativeShadersReady) return true;
+            if (ShaderUtil.anythingCompiling)
+            {
+                nativeShadersSettledAt = -1d;
+                next = now + .5d;
+                return false;
+            }
+            if (nativeShadersSettledAt < 0d) nativeShadersSettledAt = now;
+            if (now - nativeShadersSettledAt < 2d)
+            {
+                next = now + .5d;
+                return false;
+            }
+            nativeShadersReady = true;
+            Debug.Log("[SkirmishNativeShaderGate] result=Passed compiling=0 settledSeconds=2");
+            return true;
+        }
 
         private static void ConfigureBackgroundInput()
         {
@@ -169,8 +191,8 @@ namespace Game.Editor
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_SEED")))
             {
                 string catalog = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG");
-                int defaultSeed = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
-                    ? 104732
+                int defaultSeed = catalog == SkirmishAcceptanceCensusCapture.S004CatalogId ? SkirmishS004FirstVisit.SeedA
+                    : catalog == SkirmishAcceptanceCensusCapture.S003CatalogId ? SkirmishS003FirstVisit.SeedA
                     : SkirmishAcceptanceCensusCapture.FirstVisitSeed;
                 Environment.SetEnvironmentVariable(
                     "WARLINE_S002_SEED",
@@ -298,6 +320,29 @@ namespace Game.Editor
             RunFocusedAriaAndExit();
         }
 
+        public static void RunS004AriaAndExit()
+        {
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", SkirmishAcceptanceCensusCapture.S004CatalogId);
+            RunFocusedAriaAndExit();
+        }
+
+        private static string SelectedReportDirectory() => catalogId switch
+        {
+            SkirmishAcceptanceCensusCapture.S004CatalogId => SkirmishAcceptanceScaffold.S004RelativeReportEvidenceDirectory,
+            SkirmishAcceptanceCensusCapture.S003CatalogId => SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory,
+            _ => SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory
+        };
+
+        private static bool TryCreateSelectedPayload(string catalog, int selectedSeed, string selectedLocale,
+            out SkirmishAriaAcceptancePayload payload, out string error)
+        {
+            if (catalog == SkirmishAcceptanceCensusCapture.S004CatalogId)
+                return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS004(selectedSeed, selectedLocale, out payload, out error);
+            if (catalog == SkirmishAcceptanceCensusCapture.S003CatalogId)
+                return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(selectedSeed, selectedLocale, out payload, out error);
+            return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(selectedSeed, selectedLocale, out payload, out error);
+        }
+
         public static void LaunchFromEnvironment()
         {
             string seedText = Environment.GetEnvironmentVariable("WARLINE_S002_SEED");
@@ -319,10 +364,10 @@ namespace Game.Editor
 
         public static void LaunchCatalog(string requestedCatalog, int requestedSeed, string requestedLocale)
         {
+            nativeShadersReady = false;
+            nativeShadersSettledAt = -1d;
             string error;
-            bool accepted = requestedCatalog == SkirmishAcceptanceCensusCapture.S003CatalogId
-                ? SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(requestedSeed, requestedLocale, out _, out error)
-                : SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(requestedSeed, requestedLocale, out _, out error);
+            bool accepted = TryCreateSelectedPayload(requestedCatalog, requestedSeed, requestedLocale, out _, out error);
             if (!accepted)
                 throw new InvalidOperationException(error);
             if (EditorApplication.isPlaying)
@@ -362,6 +407,15 @@ namespace Game.Editor
             var profile = save.LoadProfile();
             profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
             profile.firstLaunchWatched = true;
+            if (Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1")
+            {
+                // Isolated test profile satisfies the existing Chapter 1 mode unlock.
+                profile.campaignMissionProgress = new CampaignMissionProgressSaveData[5];
+                for (int i = 0; i < 5; i++)
+                    profile.campaignMissionProgress[i] = new CampaignMissionProgressSaveData
+                    { missionId = Game.Missions.Contracts.CampaignMissionSequence.IdAt(i), available = true, firstClearCompleted = true, bestStars = 3 };
+                Debug.Log("[S004MenuProfileFixture] chapter1Completed=5 progressionGate=Preserved isolatedProfile=1");
+            }
             save.SaveProfile(profile);
 
             EditorApplication.update -= Tick;
@@ -382,10 +436,13 @@ namespace Game.Editor
         public static string EvidenceDirectory()
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            string relative = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
-                ? SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory
-                : SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory;
+            string relative = SelectedReportDirectory();
             return Path.Combine(root, relative);
+        }
+
+        public static void AbortFailedValidationAndExit()
+        {
+            Finish(true, "incompleteNativeInputFlow");
         }
 
         private static string RunsCsvPath(string root)
@@ -397,9 +454,7 @@ namespace Game.Editor
         {
             string hash = SessionState.GetString(CandidateHashKey, "");
             if (hash.Length != 64) throw new InvalidOperationException("Missing candidate source fingerprint.");
-            string report = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
-                ? SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory
-                : SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory;
+            string report = SelectedReportDirectory();
             return report + "/candidates/" + hash;
         }
 
@@ -453,6 +508,12 @@ namespace Game.Editor
                 if (world == null || !world.IsCreated)
                     return;
                 EntityManager em = world.EntityManager;
+                foreach (var view in UnityEngine.Object.FindObjectsByType<MatchSceneView>(FindObjectsSortMode.None))
+                    if (view.OperationMapContentFailureCode != OperationMapLoadResultCode.None)
+                    {
+                        Finish(true, "operationMapFailure=" + view.OperationMapContentFailureCode);
+                        return;
+                    }
                 using (var expanded = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)))
                 {
                     if (expanded.CalculateEntityCount() == 1)
@@ -468,18 +529,20 @@ namespace Game.Editor
                 if (stage == 0)
                 {
                     GameLocalization.SetLocale(locale, false);
-                    if (!SkirmishLaunchProjection.IsShellReadyToEnterMatch(em))
+                    bool menuJourney = Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                    if ((!menuJourney || menuStep == 0) && !SkirmishLaunchProjection.IsShellReadyToEnterMatch(em))
                     {
                         next = now + 0.5d;
                         return;
                     }
 
-                    if (!TryQueueExpanded(em))
-                        return;
+                    if (menuJourney)
+                    {
+                        if (!EnterS004ThroughPresentedControls()) return;
+                    }
+                    else if (!TryQueueExpanded(em)) return;
                     SkirmishAriaAcceptancePayload payload;
-                    bool selected = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
-                        ? SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(seed, locale, out payload, out _)
-                        : SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(seed, locale, out payload, out _);
+                    bool selected = TryCreateSelectedPayload(catalogId, seed, locale, out payload, out _);
                     if (!selected)
                         return;
                     Debug.Log("[SkirmishS002AriaRun] selected " + payload.FormatSelectedConfiguration());
@@ -562,6 +625,7 @@ namespace Game.Editor
                         readyShell.CurrentMode != UiShellMode.MatchHud || readyShell.IsTransitionRunning ||
                         readyShell.Phase is not (UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle))
                     { next = now + .5d; return; }
+                    if (!NativeShadersAreReady(now)) return;
                     if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
                     {
                         if (elapsed < 2f) { next = now + 0.5d; return; }
@@ -576,6 +640,9 @@ namespace Game.Editor
                         var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
                         int expectedUnits = 0;
                         foreach (var force in setup.Forces) expectedUnits += math.max(1, force.Quantity);
+                        bool rosterValid = NativeStartupRosterMatches(em, session, setup, out int initialUnits, out int deliveredUnits);
+                        Debug.Log("[SkirmishNativeStartupRoster] result=" + (rosterValid ? "Passed" : "Failed") +
+                            " initial=" + initialUnits + " expectedInitial=" + expectedUnits + " paidDelivered=" + deliveredUnits);
                         int playerBanks = 0, enemyBanks = 0;
                         int claimedScenery = 0, mismatchedOwners = 0;
                         using var boundBuildings = buildings.ToEntityArray(Allocator.Temp);
@@ -615,8 +682,8 @@ namespace Game.Editor
                             + " genericStrategyControllers=" + genericControllers
                             + " claimedScenery=" + claimedScenery + " mismatchedBuildingOwners=" + mismatchedOwners);
                         bool invalid = ready.CalculateEntityCount() != 1 || buildings.CalculateEntityCount() != setup.Structures.Length ||
-                            units.CalculateEntityCount() != expectedUnits || playerBanks != 1 || enemyBanks != 1 ||
-                            sharedUnits.CalculateEntityCount() != expectedUnits || suppressedUnits.CalculateEntityCount() != 0 ||
+                            !rosterValid || units.CalculateEntityCount() != initialUnits + deliveredUnits || playerBanks != 1 || enemyBanks != 1 ||
+                            sharedUnits.CalculateEntityCount() != units.CalculateEntityCount() || suppressedUnits.CalculateEntityCount() != 0 ||
                             controls.IsEmptyIgnoreFilter || genericControllers != 0 || claimedScenery != 0 || mismatchedOwners != 0 ||
                             !supplyInitialized || (setup.OilEach > 0 && playerOil <= 0) || (setup.UsableFuelEach > 0 && playerFuel <= 0);
                         if (!invalid && Environment.GetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE") == "1")
@@ -635,7 +702,30 @@ namespace Game.Editor
                         Finish(invalid, "sharedStartupDiagnostic");
                         return;
                     }
-                    if (!UiShellRuntimeGateway.TryStartAriaPlay())
+                    if(catalogId==SkirmishAcceptanceCensusCapture.S004CatalogId)
+                    {
+                        var guards=UnityEngine.Object.FindObjectsByType<SkirmishS004CampaignLighting>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+                        var lights=UnityEngine.Object.FindObjectsByType<Light>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+                        bool matchSunActive=Array.Exists(lights,l=>l.type==LightType.Directional && l.gameObject.scene.name=="Match" && l.enabled);
+                        var sun=RenderSettings.sun;
+                        if(guards.Length!=1 || matchSunActive || sun==null || !sun.enabled || sun.gameObject.scene.name!="RuntimeBinding")
+                        {
+                            Debug.LogError("[S004NativeCampaignLighting] result=Failed guards="+guards.Length+" matchSunActive="+matchSunActive);
+                            Finish(true,"campaignLightingNotApplied");return;
+                        }
+                        Debug.Log("[S004NativeCampaignLighting] result=Passed campaignSun="+sun.name+" intensity="+sun.intensity+" matchSunActive=0");
+                    }
+                    if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") == "1")
+                    {
+                        StartS004ManualProbe();
+                        ScreenCapture.CaptureScreenshot(LiveTracePath() + ".opening.png");
+                        stage = 3;
+                        next = now + 1d;
+                        return;
+                    }
+                    if (catalogId == SkirmishAcceptanceCensusCapture.S004CatalogId
+                        ? !StartS004AriaThroughPresentedControls()
+                        : !UiShellRuntimeGateway.TryStartAriaPlay())
                     {
                         next = now + 0.5d;
                         return;
@@ -668,7 +758,8 @@ namespace Game.Editor
                 // A stopped/blocked driver is failed evidence. The harness must
                 // never silently consent again or override a player's Stop.
                 AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
-                if (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
+                if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") != "1" &&
+                    (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked))
                 {
                     Finish(abort: true, abortReason: "ariaStopped:" + aria.Phase);
                     return;
@@ -684,43 +775,26 @@ namespace Game.Editor
 
         private static bool TryQueueExpanded(EntityManager em)
         {
-            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))
-                throw new InvalidOperationException(error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
-            bool airMobile = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId;
-            SkirmishScenarioDefinitionConfig definition = airMobile ? authored.DefinitionS003 : authored.DefinitionS002;
-            string queuedCatalog = airMobile
-                ? SkirmishAcceptanceCensusCapture.S003CatalogId
-                : SkirmishAcceptanceCensusCapture.CatalogId;
-            var manifest = new SkirmishContentManifest
-            {
-                RequiredFeatureIds = definition.RequiredFeatureIds
-            };
-            UnitPrefabRegistryAuthoringConfig registry =
-                AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(RegistryPath);
-            if (SkirmishLaunchProjection.TryGet(em, out _, out _))
-                return false;
-            if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
-                    em,
-                    queuedCatalog,
-                    SkirmishDifficultyId.Regular,
-                    SkirmishSizeId.Standard,
-                    seed,
-                    authored,
-                    matrix,
-                    manifest,
-                    out SkirmishResolvedSetup setup,
-                    out _,
-                    out List<SkirmishCompileReason> reasons,
-                    registry))
-                throw new InvalidOperationException(reasons == null || reasons.Count == 0 ? queuedCatalog + " queue failed" : reasons[0].ToString());
-
-            Debug.Log(string.Format(
-                CultureInfo.InvariantCulture,
+            if (SkirmishLaunchProjection.TryGet(em, out _, out _)) return false;
+            var config = QuickGameConfig.Defaults;
+            config.ScenarioIndex = catalogId == SkirmishAcceptanceCensusCapture.S004CatalogId
+                ? SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex
+                : catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
+                    ? SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex
+                    : SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+            config.MapSeed = seed;
+            if (!SkirmishLaunchProjection.TryQueue(em, config))
+                throw new InvalidOperationException(catalogId + " packaged library queue failed");
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishResolvedSetupRecord));
+            var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessions.GetSingletonEntity()).Setup;
+            if (setup.CatalogId != catalogId || setup.Seed != seed)
+                throw new InvalidOperationException("Library dispatch selected the wrong scenario");
+            if (!SkirmishLaunchProjection.TryGet(em, out _, out var queuedMatch) ||
+                queuedMatch.ScenarioIndex != config.ScenarioIndex)
+                throw new InvalidOperationException("Library dispatch lost the mission scenario index");
+            Debug.Log(string.Format(CultureInfo.InvariantCulture,
                 "[SkirmishS002AriaRun] queued catalog={0} seed={1} hash={2:X8} acceptance=Pending normal_speed=1",
-                setup.CatalogId,
-                setup.Seed,
-                setup.SetupHash));
+                setup.CatalogId, setup.Seed, setup.SetupHash));
             return true;
         }
 
@@ -946,6 +1020,9 @@ namespace Game.Editor
         {
             EditorApplication.update -= Tick;
             RestoreBackgroundInput();
+            StopS004ManualProbe();
+            StopS004AriaConsentProbe();
+            StopS004MenuProbe();
             nativeProductionTouch?.Dispose(); nativeProductionTouch = null;
             terminalProbeActive = false;
             terminalTouch?.Dispose(); terminalTouch = null;
@@ -1000,6 +1077,17 @@ namespace Game.Editor
             if (terminalSnapshotValid)
             {
                 haveMatch = true; match = terminalMatch; session = terminalSession; duration = terminalElapsed;
+            }
+
+            if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") == "1")
+            {
+                bool passed = !abort && haveMatch && match.Outcome == SkirmishOutcome.Victory && terminalSnapshotValid && manualAttackReceipts > 0;
+                Debug.Log("[S004ManualNative] result=" + (passed ? "Passed" : "Failed") +
+                    " outcome=" + match.Outcome + " seconds=" + duration + " reason=" + abortReason +
+                    " input=Touch ariaStarted=0 actions=" + manualActions + " attackReceipts=" + manualAttackReceipts);
+                EditorApplication.ExitPlaymode();
+                RequestQuitIfAsked(passed ? 0 : 2);
+                return;
             }
 
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -1109,6 +1197,13 @@ namespace Game.Editor
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out _))
                 return false;
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            if (catalogId == SkirmishAcceptanceCensusCapture.S004CatalogId)
+            {
+                bool captured = SkirmishAcceptanceCensusCapture.TryCaptureS004RegularStandard(
+                    authored, matrix, seed, out census, out _);
+                if (captured) census.CodeHash = SessionState.GetString(CandidateHashKey, "");
+                return captured;
+            }
             if (catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId)
             {
                 bool captured = SkirmishAcceptanceCensusCapture.TryCaptureS003RegularStandard(
@@ -1148,6 +1243,12 @@ namespace Game.Editor
             SessionState.EraseInt(QuitCodeKey);
             EditorApplication.update -= FinishQuitAfterPlayMode;
             Debug.Log("[SkirmishValidationExit] result=Requested code=" + exitCode);
+            RestoreS004EditorJourneyOptions();
+            if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
+            {
+                MissionEditorValidationExit.Complete(exitCode == 0);
+                return;
+            }
             EditorApplication.Exit(exitCode);
         }
 

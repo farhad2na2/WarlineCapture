@@ -1,0 +1,6 @@
+{"frame":353,"device":4,"time":23.805309295654298,"kind":"Dispatched","generation":2,"dispatched":1,"completed":0,"samples":0,"unexpected":0,"interventions":0,"position":{"x":901.3333129882813,"y":912.5}}
+{"frame":354,"device":4,"time":23.88556671142578,"kind":"Began","generation":2,"dispatched":1,"completed":0,"samples":1,"unexpected":0,"interventions":0,"position":{"x":901.3333129882813,"y":912.5}}
+{"frame":356,"device":4,"time":24.056135177612306,"kind":"Ended","generation":2,"dispatched":1,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":901.3333129882813,"y":912.5}}
+{"frame":383,"device":4,"time":27.143571853637697,"kind":"Dispatched","generation":2,"dispatched":2,"completed":1,"samples":2,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":384,"device":4,"time":27.217113494873048,"kind":"Began","generation":2,"dispatched":2,"completed":1,"samples":3,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}
+{"frame":386,"device":4,"time":27.399240493774415,"kind":"Ended","generation":2,"dispatched":2,"completed":2,"samples":4,"unexpected":0,"interventions":0,"position":{"x":2257.75634765625,"y":106.16363525390625}}

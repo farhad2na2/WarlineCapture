@@ -1,0 +1,30 @@
+[SkirmishS004CampaignReuse] result=Passed source=opmap.skirmish.cityedgeairfield_prepared scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity additionalTown=0 campaignAssetsUnchanged=1
+[SkirmishS004RoleBindings] result=Passed roles=22
+[SkirmishBattleCatalog] result=Passed entries=120 playable=6 library=rebuilt
+[UnitMoveOrderFocusedValidation] result=Passed tests=21
+[AIFactionControlStartupValidation] result=Passed tests=4
+[SkirmishS002AriaHarnessTests] result=Passed
+[SkirmishExpandedAriaTests] result=Passed
+[SkirmishExpandedArmyTests] result=Passed
+[SkirmishExpandedEconomyTests] result=Passed
+[SkirmishExpandedCheckpointTests] result=Passed
+[SkirmishS002AriaHarnessTests] result=Passed
+[AriaTouchInputValidation] result=Passed cases=22
+[SkirmishSharedMaterialsTests] result=Passed
+[FactionTacticalMaterialsFocusedValidation] result=Passed tests=9
+[SkirmishExpandedDefinitionTests] result=Passed
+[SkirmishExpandedCatalogTests] result=Passed
+[SkirmishExpandedObjectiveTests] result=Passed
+[SkirmishExpandedVisualTests] result=Passed
+[SkirmishExpandedAcceptanceTests] result=Passed
+[SkirmishScenarioSourceBinding] result=Passed cases=6
+[SkirmishPlayerReadyRegressions] result=Passed
+[SkirmishS004EnvironmentValidation] result=Passed campaignReuse=CityEdgeAirfield additionalTown=0
+[S004CampaignLightingValidation] result=Passed authoredSunPreserved=1 matchLightsRestored=1
+[S004FixedDaylightValidation] result=Passed restored=1 legacyPolicyPreserved=1
+[SkirmishDrawerGuidanceValidation] result=Passed cases=2
+[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3
+[SkirmishExpandedEconomyTests] result=Passed
+[SkirmishS002AriaHarnessTests] result=Passed
+[SkirmishExpandedAriaTests] result=Passed
+[SkirmishS004DeliveryValidation] result=Passed

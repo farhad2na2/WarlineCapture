@@ -42,6 +42,8 @@ namespace Game.Configs
         public const string DesertBaseEstablishedDefinitionId = "skirmish.s002";
         public const string DesertBaseAirMobileFieldScenarioId = "S003";
         public const string DesertBaseAirMobileFieldDefinitionId = "skirmish.s003";
+        public const string DesertBaseAirMobileEstablishedScenarioId = "S004";
+        public const string DesertBaseAirMobileEstablishedDefinitionId = "skirmish.s004";
         public const string CityCrossroadsScenarioId = "S025";
         public const string IndustrialBasinScenarioId = "S073";
 
@@ -178,6 +180,15 @@ namespace Game.Configs
                 airMobile.DefinitionId != DesertBaseAirMobileFieldDefinitionId)
             {
                 error = "S003 must be Playable at scenario index 5 with definition skirmish.s003.";
+                return false;
+            }
+
+            if (!TryGet(DesertBaseAirMobileEstablishedScenarioId, out SkirmishBattleCatalogEntry establishedAir) ||
+                !establishedAir.IsPlayable ||
+                establishedAir.PlayableScenarioIndex != SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex ||
+                establishedAir.DefinitionId != DesertBaseAirMobileEstablishedDefinitionId)
+            {
+                error = "S004 must be Playable at scenario index 6 with definition skirmish.s004.";
                 return false;
             }
 

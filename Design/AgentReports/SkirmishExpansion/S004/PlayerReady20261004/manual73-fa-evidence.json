@@ -1,0 +1,12 @@
+{
+  "wrapperExit": 0,
+  "passed": true,
+  "kind": "scripted normal Touch input; ARIA stopped; historical candidate before consent-probe addition",
+  "markers": [
+    "[S004ManualNative] started=1 input=Touch ariaStarted=0 strategy=visibleSquadCardsAttackVisibleBase",
+    "[SkirmishNativeResultLocalization] result=Passed locale=fa-IR",
+    "[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU point=(1869.00, 153.50)",
+    "[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU completed=1 interventions=0",
+    "[S004ManualNative] result=Passed outcome=Victory seconds=205.922 reason= input=Touch ariaStarted=0 actions=152 attackReceipts=29"
+  ]
+}

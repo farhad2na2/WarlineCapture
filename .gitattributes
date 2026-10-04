@@ -1,5 +1,4 @@
 * text=auto eol=lf
-
 Assets/Game/Scenes/Generated/*.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Game/Scenes/OperationMaps/**/*.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/DenseCity.meta -diff
@@ -10,11 +9,9 @@ Assets/Game/Art/MapPrototypes/Variants/*/Ground/*.asset filter=lfs diff=lfs merg
 Design/MapVariants/**/*.png filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/Variants/**/Ground.asset filter=lfs diff=lfs merge=lfs -text
 Design/MapVariants/Preparation/*/inventory.json filter=lfs diff=lfs merge=lfs -text
-
 Assets/Game/GeneratedOperationMaps/Variants/**/*.asset filter=lfs diff=lfs merge=lfs -text
 Design/MapVariants/Preparation/*/Candidate/output-manifest.json filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/Variants/**/*.png filter=lfs diff=lfs merge=lfs -text
-
 Assets/Game/Art/MapBeautify/**/*.asset filter=lfs diff=lfs merge=lfs -text
-
 Assets/Game/GeneratedOperationMaps/RuntimeBinding/**/*.unity filter=lfs diff=lfs merge=lfs -text
+Design/AgentReports/WorkspaceConsolidation/20261001/airlift-local-evidence.tar.gz filter=lfs diff=lfs merge=lfs -text

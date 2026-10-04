@@ -168,31 +168,35 @@ namespace Game.UI.Runtime
             string mapFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "INDUSTRIAL BASIN"
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
             string map = UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback);
-            string complete = "COMPLETE";
-            string failed = "FAILED";
+            string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get("ui.skirmish.result." + key, fallback);
+            string complete = Text("complete", "Complete");
+            string failed = Text("failed", "Failed");
             bool victory = model.ResultStars > 0;
             return new ModeResultContent
             {
                 Victory = victory,
                 Title = string.IsNullOrEmpty(model.ResultTitle) ? (victory ? "VICTORY" : "DEFEAT") : model.ResultTitle,
-                Identity = "SKIRMISH\n" + map,
+                Identity = Text("mode", "SKIRMISH") + "\n" + map,
                 ObjectiveTitle = model.EnemyBaseDestroyed
-                    ? "Enemy main base destroyed."
-                    : model.PlayerBaseHeld ? "Your main base is still standing." : "Your main base was lost.",
-                Status = model.StartupFailed ? "MATCH DID NOT START" : victory ? "MATCH COMPLETE" : model.ResultTitle,
+                    ? Text("enemy_destroyed", "Enemy main base destroyed.")
+                    : model.PlayerBaseHeld ? Text("base_standing", "Your main base is still standing.") : Text("base_lost", "Your main base was lost."),
+                Status = model.StartupFailed ? Text("startup_failed", "MATCH DID NOT START") : victory ? Text("match_complete", "MATCH COMPLETE") : model.ResultTitle,
                 Elapsed = model.ResultElapsed,
                 Stars = model.ResultStars,
-                Objective1 = "Destroy the enemy main base",
-                Objective2 = "Protect your main base",
-                Objective3 = "Keep squad losses low",
+                Objective1 = Text("destroy_base", "Destroy the enemy main base"),
+                Objective2 = Text("protect_base", "Protect your main base"),
+                Objective3 = Text("low_losses", "Keep squad losses low"),
                 Objective1State = model.EnemyBaseDestroyed ? complete : failed,
-                Objective2State = model.PlayerBaseHeld ? "HELD" : failed,
+                Objective2State = model.PlayerBaseHeld ? Text("held", "Held") : failed,
                 Objective3State = victory && model.PlayerUnitsLost <= 2 ? complete : failed,
-                Performance1 = "UNITS LOST",
+                HasObjectiveFacts = true,
+                CompletedObjectives = (byte)((model.EnemyBaseDestroyed ? 1 : 0) | (model.PlayerBaseHeld ? 2 : 0) |
+                    (victory && model.PlayerUnitsLost <= 2 ? 4 : 0)),
+                Performance1 = Text("units_lost", "UNITS LOST"),
                 Performance1Value = model.PlayerUnitsLost.ToString(),
-                Performance2 = "UNITS DEFEATED",
+                Performance2 = Text("units_defeated", "UNITS DEFEATED"),
                 Performance2Value = model.EnemyUnitsLost.ToString(),
-                Performance3 = "BUILDINGS LOST / DESTROYED",
+                Performance3 = Text("buildings", "BUILDINGS LOST / DESTROYED"),
                 Performance3Value = model.PlayerBuildingsLost + " / " + model.EnemyBuildingsLost,
                 Summary = string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail,
                 LeaveLabel = "MAIN MENU",

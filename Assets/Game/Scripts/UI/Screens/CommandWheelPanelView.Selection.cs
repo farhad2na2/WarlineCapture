@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Image selectionPortrait;
         private MatchHudSelectionPanelView _selection;
         public Button NextBoardButton => IsOpen && selectionActions.Length == 4 ? selectionActions[3] : OpenButton;
+        public Button NextReturnButton => IsOpen && selectionActions.Length == 4 ? selectionActions[1] : OpenButton;
 
         private void BindSelectionWheelActions()
         {

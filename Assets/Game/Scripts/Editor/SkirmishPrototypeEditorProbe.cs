@@ -26,6 +26,8 @@ namespace Game.Editor
             public UnityEditor.SceneManagement.SceneSetup[] scenes;
             public string profile;
             public Vector2 gameViewSize;
+            public bool optionsEnabled;
+            public EnterPlayModeOptions options;
         }
         public static void LaunchInIdleEditor(string isolatedProfileRoot = null)
         {
@@ -36,7 +38,8 @@ namespace Game.Editor
             var snapshot=new EditorSnapshot{
                 scenes=UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup(),
                 profile=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
-                gameViewSize=Handles.GetMainGameViewSize()};
+                gameViewSize=Handles.GetMainGameViewSize(), optionsEnabled=EditorSettings.enterPlayModeOptionsEnabled,
+                options=EditorSettings.enterPlayModeOptions};
             SessionState.SetString(Key+".EditorSnapshot",JsonUtility.ToJson(snapshot));
             SessionState.SetBool(Key+".SetupOnly",false);
             UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
@@ -45,6 +48,16 @@ namespace Game.Editor
         public static void PrepareSetupInIdleEditor()
         {
             LaunchInIdleEditor();
+            SessionState.SetBool(Key+".SetupOnly",true);
+        }
+        public static void ReviewS004InIdleEditor()
+        {
+            SessionState.SetBool(Key+".S004VisualReview",true);
+            LaunchInIdleEditor("/private/tmp/s004-shared-visual-review-profile");
+        }
+        public static void PrepareS004SetupInIdleEditor()
+        {
+            ReviewS004InIdleEditor();
             SessionState.SetBool(Key+".SetupOnly",true);
         }
         public static void RestoreIdleEditor()
@@ -61,6 +74,8 @@ namespace Game.Editor
             {
                 var snapshot=JsonUtility.FromJson<EditorSnapshot>(json);
                 Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",snapshot.profile);
+                EditorSettings.enterPlayModeOptionsEnabled=snapshot.optionsEnabled;
+                EditorSettings.enterPlayModeOptions=snapshot.options;
                 UnityEditor.SceneManagement.EditorSceneManager.RestoreSceneManagerSetup(snapshot.scenes);
                 if(snapshot.gameViewSize.x>0&&snapshot.gameViewSize.y>0)
                     MainMenuV3PrefabBuilder.SetGameViewResolution((int)snapshot.gameViewSize.x,(int)snapshot.gameViewSize.y);
@@ -73,16 +88,27 @@ namespace Game.Editor
         {
             if(EditorApplication.isPlaying)throw new InvalidOperationException("Exit play mode before launch.");
             System.Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",isolatedProfileRoot ?? "/private/tmp/skirmish-prototype-profile");
+            if(SessionState.GetBool(Key+".S004VisualReview",false))
+            {
+                EditorSettings.enterPlayModeOptionsEnabled=true;
+                EditorSettings.enterPlayModeOptions |= EnterPlayModeOptions.DisableDomainReload;
+                var save=Game.Runtime.SaveService.CreateDefault();var profile=save.LoadProfile();
+                profile.firstLaunchStatus=Game.Runtime.FirstLaunchProfileState.Completed;profile.firstLaunchWatched=true;
+                profile.campaignMissionProgress=new Game.Runtime.CampaignMissionProgressSaveData[5];
+                for(int i=0;i<5;i++) profile.campaignMissionProgress[i]=new Game.Runtime.CampaignMissionProgressSaveData {
+                    missionId=Game.Missions.Contracts.CampaignMissionSequence.IdAt(i),available=true,firstClearCompleted=true,bestStars=3 };
+                save.SaveProfile(profile);
+            }
             SessionState.SetBool(Key,true); stage=0;next=0;deadline=0;
             EditorApplication.update-=Tick;EditorApplication.update+=Tick;
-            MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
+            MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetBool(Key+".S004VisualReview",false)?2400:1920,1080);
             EditorApplication.EnterPlaymode();
         }
         private static void Tick()
         {
             if(!EditorApplication.isPlaying)return;
             double now=EditorApplication.timeSinceStartup;
-            if(deadline==0)deadline=now+150;
+            if(deadline==0)deadline=now+300;
             if(now>deadline){Finish("Timed out at stage "+stage);return;}
             if(now<next)return;
             try
@@ -96,6 +122,8 @@ namespace Game.Editor
                 if(stage==1)
                 {
                     var setup=UnityEngine.Object.FindAnyObjectByType<QuickCustomScreenView>();if(setup==null)return;
+                    if(SessionState.GetBool(Key+".S004VisualReview",false))
+                        setup.PrepareScenarioAdjustment(SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex,104733);
                     Directory.CreateDirectory("/private/tmp/skirmish-prototype-evidence");
                     ScreenCapture.CaptureScreenshot("/private/tmp/skirmish-prototype-evidence/setup-en.png");
                     stage=2;next=now+1;return;
@@ -118,6 +146,15 @@ namespace Game.Editor
             catch(Exception e){Finish(e.ToString());}
         }
         private static void Finish(string message)
-        {SessionState.SetBool(Key,false);EditorApplication.update-=Tick;Debug.Log("[SkirmishPrototypeProbe] "+message);}
+        {
+            SessionState.SetBool(Key,false);EditorApplication.update-=Tick;Debug.Log("[SkirmishPrototypeProbe] "+message);
+            if(SessionState.GetBool(Key+".S004VisualReview",false))
+            {
+                SessionState.SetBool(Key+".S004VisualReview",false);
+                if(ExistingEditorValidation.IsRunning) MissionEditorValidationExit.LastCompletion=
+                    message.StartsWith("Playing;") || message.StartsWith("Setup ready") ? 0 : 1;
+                Debug.Log("[S004VisualPreview] evidence=PreviewOnly playerReadiness=NotCertified");
+            }
+        }
     }
 }

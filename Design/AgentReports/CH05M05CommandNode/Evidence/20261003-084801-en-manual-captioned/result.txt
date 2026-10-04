@@ -1,0 +1,1 @@
+[CommandNodeInput] result=Passed scope=CaptionedGameplay voices=NotRequested dialogue=38 normalInput=Passed result=Passed settlement=Passed return=Passed finale=Canonical fragment=5 audit=NewReleaseOrder specialists=OriginalProtected Supply=Optional optionalSupport=approve humanDeviceAcceptance=pending

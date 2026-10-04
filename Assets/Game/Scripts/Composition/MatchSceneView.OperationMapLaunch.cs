@@ -49,7 +49,7 @@ namespace Game.Composition
                 if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
                 {
                     var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
-                    var map = preset != null ? preset.operationMap : null;
+                    var map = SkirmishS004Environment.LoadMapForSession(entityManager) ?? (preset != null ? preset.operationMap : null);
                     if (map != null)
                     {
                         if (!map.TryValidateMetadata(out error))

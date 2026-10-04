@@ -1,0 +1,36 @@
+library-01: FAILED missing required pass marker despite wrapper exit 0; concurrent main-project menu audit.
+library-02: FAILED isolated-project initial-import timeout (exit 124, 600s).
+library-03: PASSED isolated library validation (1800s budget); older candidate.
+library-04: PASSED main library validation: 120 entries, 6 playable.
+regressions-01: FAILED old unknown-index assertion and English catalog copy resolved from active Farsi locale; corrected both.
+regressions-02: FAILED Campaign English-only fixture under Farsi; all Skirmish suites passed, aggregate marker was insufficient.
+regressions-03: PASSED all required Skirmish markers plus Campaign UI tests=10 captures=3; aggregate now scopes English and checks Campaign exit state.
+native-en-104733-01: FAILED MetadataBindFailed before ARIA; Desert Base source reuse lacked a Skirmish-owned request. Coordinator stopped, Play mode ended without killing Editor.
+abort-map-failure-01: FAILED stale assembly missing newly added method.
+abort-map-failure-02: closed failed run; old run-ID validation rejected S004 seeds, fixed separately.
+regressions-04: FAILED missing markers (main Editor still owned project); wrapper exit 0 insufficient.
+regressions-05: FAILED new source-binding fixture used null preset map; corrected to catalog-owned compatibility map.
+regressions-06: PASSED all required markers, source binding cases=6, Campaign tests=10 captures=3.
+native-en-104733-02: FAILED startup BlockedSpawn; no ARIA or result.
+native-en-104733-03: FAILED diagnostic identifies empty starting transport-helicopter prefab key in packaged role catalog.
+regressions-07: PASSED refreshed role catalog (22 roles), all Skirmish and Campaign markers.
+native-en-104733-04: FAILED ARIA lifecycle stop after two UI gestures at 11.321 match seconds; full native opening captured, no natural result. Existing-defense observation/decision added.
+regressions-08: PASSED shared existing-defense planner decision plus complete S004 and Campaign aggregate.
+native-en-104733-05: FAILED ARIA stale observation after aircraft recruitment drawer tap; observationFrame=328, frame=334. No win claimed. HUD waiting-frame handoff added.
+regressions-09: PASSED complete S004 and Campaign aggregate after HUD handoff fix.
+native-en-104733-06: FAILED incomplete input flow; fresh waiting observation avoids stale gestures but hidden ARIA/header leaves no targets. Coordinator stopped; harness abort retained (historical abort helper label operationMapBindingFailed does not describe this drawer issue).
+regressions-10: PASSED complete aggregate plus drawer guidance/restore cases=2 after extending occlusion preservation to Skirmish.
+native-en-104733-07: FAILED incomplete input flow; preserved ARIA panel is visible, but rebind chooses another Canvas/Button and logs invalid ARIA hierarchy. Typed ARIA component lookup required.
+
+regressions-11: PASS wrapper exit 0; all required markers including S004 aggregate, source bindings 6, drawer guidance 2, Campaign 10/captures 3; competing canvas-button binding regression included.
+abort-button-binding: Pipeline returned timeout exit 6 with no reuse log produced, but scheduled harness completed its own failed run and exited Editor; full native-07 log retained.
+
+native-08: FAIL wrapper exit 2, countedWin=0; ARIA stale observation after runtime explanation changed direct text-child count.
+abort-runtime-label: FAIL dispatch exit 6; Editor already ended its native run.
+regressions-12: PASS all individual and aggregate markers; authored State/AlertCue binding remains stable with extra runtime text.
+
+native-09 EN seeds 104733/130367: natural Defeat; full touch ARIA/result/frozen-state/MAIN MENU passed, countedWin=0. Coordinator stopped before further cases after visual review revealed terminal facts reverting when destroyed entities are removed.
+
+regressions-13: PASS wrapper exit 0 and all markers, including terminal fact freeze regression.
+
+native-10 final candidate aacc01356d87db0dbd995c973e80c32fed219747c6fd7bb00b74be13cec068dc: EN 104733 natural Defeat 195.409 s; frozen result and touch MAIN MENU PASS; countedWin=0, exit 2. FA 104733 Abort ariaStopped:Blocked 141.718 s; no terminal result/menu, countedWin=0, exit 2. Both measured zero input violations and zero human interventions. Complete readiness NOT established.

@@ -28,15 +28,26 @@ MonoBehaviour:
       \u0634\u0647\u0631 \u0628\u0647 \u062F\u0634\u0645\u0646 \u0628\u0631\u0633."
     Status: 1
     PlayableScenarioIndex: 0
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S002
     MapId: DB
     ObjectiveId: BA
     ArmyProfile: G
     StartProfile: E
     TitleKey: skirmish.s002.title
-    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Established"
-    DescriptionEnglish: Use the starting tank and APC to contest the highway. Keep one infantry squad at home. Press now or scout the south sweep before siege.
-    DescriptionFarsi: با تانک و نفربر شروع‌شده بزرگراه را بگیر. یک دسته پیاده در خانه بماند. یا سریع فشار بده یا جنوب را شناسایی کن.
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: Use the starting tank and APC to contest the highway. Keep
+      one infantry squad at home. Press now or scout the south sweep before siege.
+    DescriptionFarsi: "\u0628\u0627 \u062A\u0627\u0646\u06A9 \u0648 \u0646\u0641\u0631\u0628\u0631
+      \u0634\u0631\u0648\u0639\u200C\u0634\u062F\u0647 \u0628\u0632\u0631\u06AF\u0631\u0627\u0647
+      \u0631\u0627 \u0628\u06AF\u06CC\u0631. \u06CC\u06A9 \u062F\u0633\u062A\u0647
+      \u067E\u06CC\u0627\u062F\u0647 \u062F\u0631 \u062E\u0627\u0646\u0647 \u0628\u0645\u0627\u0646\u062F.
+      \u06CC\u0627 \u0633\u0631\u06CC\u0639 \u0641\u0634\u0627\u0631 \u0628\u062F\u0647
+      \u06CC\u0627 \u062C\u0646\u0648\u0628 \u0631\u0627 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+      \u06A9\u0646."
     Status: 1
     PlayableScenarioIndex: 4
     DefinitionId: skirmish.s002
@@ -49,11 +60,17 @@ MonoBehaviour:
     StartProfile: F
     TitleKey: skirmish.s003.title
     TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
-    DescriptionEnglish: Hold a light ground screen and contest the highway. Build Helipad
-      before you commit attack helicopters. Escort an APC push or transition to air
-      while you guard supply.
-    DescriptionFarsi: "یک پوشش زمینی سبک نگه دار و بزرگراه را بگیر. قبل از هلی‌کوپترهای
-      تهاجمی پد بالگرد بساز. یا با نفربر فشار بده یا به هوا برو و تدارکات را نگه دار."
+    DescriptionEnglish: Hold a light ground screen and contest the highway. Build
+      Helipad before you commit attack helicopters. Escort an APC push or transition
+      to air while you guard supply.
+    DescriptionFarsi: "\u06CC\u06A9 \u067E\u0648\u0634\u0634 \u0632\u0645\u06CC\u0646\u06CC
+      \u0633\u0628\u06A9 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u0628\u0632\u0631\u06AF\u0631\u0627\u0647
+      \u0631\u0627 \u0628\u06AF\u06CC\u0631. \u0642\u0628\u0644 \u0627\u0632 \u0647\u0644\u06CC\u200C\u06A9\u0648\u067E\u062A\u0631\u0647\u0627\u06CC
+      \u062A\u0647\u0627\u062C\u0645\u06CC \u067E\u062F \u0628\u0627\u0644\u06AF\u0631\u062F
+      \u0628\u0633\u0627\u0632. \u06CC\u0627 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631
+      \u0641\u0634\u0627\u0631 \u0628\u062F\u0647 \u06CC\u0627 \u0628\u0647 \u0647\u0648\u0627
+      \u0628\u0631\u0648 \u0648 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0627
+      \u0646\u06AF\u0647 \u062F\u0627\u0631."
     Status: 1
     PlayableScenarioIndex: 5
     DefinitionId: skirmish.s003
@@ -64,13 +81,27 @@ MonoBehaviour:
     ObjectiveId: BA
     ArmyProfile: A
     StartProfile: E
-    TitleKey: 
+    TitleKey: skirmish.s004.title
     TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Air Mobile \xB7 Established
       Base"
-    DescriptionEnglish: 
-    DescriptionFarsi: 
-    Status: 0
-    PlayableScenarioIndex: -1
+    DescriptionEnglish: Scout with infantry and the starting transport helicopter.
+      AA covers the staging area. Lift infantry toward the north ruins, or build
+      offensive air while a ground reserve stays home.
+    DescriptionFarsi: "\u0628\u0627 \u067E\u06CC\u0627\u062F\u0647 \u0648 \u0647\u0644\u06CC\u200C\u06A9\u0648\u067E\u062A\u0631
+      \u062A\u0631\u0627\u0628\u0631\u06CC \u0634\u0631\u0648\u0639\u200C\u0634\u062F\u0647
+      \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u06A9\u0646. \u067E\u062F\u0627\u0641\u0646\u062F
+      \u0647\u0648\u0627\u06CC\u06CC \u0645\u062D\u0644 \u0627\u0633\u062A\u0642\u0631\u0627\u0631
+      \u0631\u0627 \u0645\u06CC\u200C\u067E\u0648\u0634\u0627\u0646\u062F. \u067E\u06CC\u0627\u062F\u0647
+      \u0631\u0627 \u0628\u0647 \u062E\u0631\u0627\u0628\u0647\u200C\u0647\u0627\u06CC
+      \u0634\u0645\u0627\u0644 \u0628\u0628\u0631\u060C \u06CC\u0627 \u0647\u0648\u0627\u06CC\u06CC
+      \u062A\u0647\u0627\u062C\u0645\u06CC \u0628\u0633\u0627\u0632 \u0648 \u06CC\u06A9
+      \u0630\u062E\u06CC\u0631\u0647 \u0632\u0645\u06CC\u0646\u06CC \u062F\u0631
+      \u062E\u0627\u0646\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    Status: 1
+    PlayableScenarioIndex: 6
+    DefinitionId: skirmish.s004
+    ContentVersion: 2
+    ReadinessManifestId: publication.skirmish.s004
   - ScenarioId: S005
     MapId: DB
     ObjectiveId: BA
@@ -82,6 +113,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S006
     MapId: DB
     ObjectiveId: BA
@@ -94,6 +128,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S007
     MapId: DB
     ObjectiveId: FC
@@ -106,6 +143,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S008
     MapId: DB
     ObjectiveId: FC
@@ -118,6 +158,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S009
     MapId: DB
     ObjectiveId: FC
@@ -130,6 +173,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S010
     MapId: DB
     ObjectiveId: FC
@@ -142,6 +188,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S011
     MapId: DB
     ObjectiveId: FC
@@ -154,6 +203,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S012
     MapId: DB
     ObjectiveId: FC
@@ -166,6 +218,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S013
     MapId: DB
     ObjectiveId: BT
@@ -178,6 +233,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S014
     MapId: DB
     ObjectiveId: BT
@@ -190,6 +248,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S015
     MapId: DB
     ObjectiveId: BT
@@ -201,6 +262,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S016
     MapId: DB
     ObjectiveId: BT
@@ -213,6 +277,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S017
     MapId: DB
     ObjectiveId: BT
@@ -224,6 +291,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S018
     MapId: DB
     ObjectiveId: BT
@@ -236,6 +306,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S019
     MapId: DB
     ObjectiveId: CE
@@ -248,6 +321,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S020
     MapId: DB
     ObjectiveId: CE
@@ -260,6 +336,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S021
     MapId: DB
     ObjectiveId: CE
@@ -271,6 +350,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S022
     MapId: DB
     ObjectiveId: CE
@@ -283,6 +365,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S023
     MapId: DB
     ObjectiveId: CE
@@ -294,6 +379,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S024
     MapId: DB
     ObjectiveId: CE
@@ -306,6 +394,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S025
     MapId: CC
     ObjectiveId: BA
@@ -322,6 +413,9 @@ MonoBehaviour:
       \u062C\u0644\u0648 \u0628\u0631\u0648."
     Status: 1
     PlayableScenarioIndex: 1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S026
     MapId: CC
     ObjectiveId: BA
@@ -334,6 +428,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S027
     MapId: CC
     ObjectiveId: BA
@@ -345,6 +442,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S028
     MapId: CC
     ObjectiveId: BA
@@ -357,6 +457,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S029
     MapId: CC
     ObjectiveId: BA
@@ -369,6 +472,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S030
     MapId: CC
     ObjectiveId: BA
@@ -381,6 +487,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S031
     MapId: CC
     ObjectiveId: FC
@@ -393,6 +502,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S032
     MapId: CC
     ObjectiveId: FC
@@ -405,6 +517,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S033
     MapId: CC
     ObjectiveId: FC
@@ -417,6 +532,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S034
     MapId: CC
     ObjectiveId: FC
@@ -429,6 +547,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S035
     MapId: CC
     ObjectiveId: FC
@@ -441,6 +562,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S036
     MapId: CC
     ObjectiveId: FC
@@ -453,6 +577,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S037
     MapId: CC
     ObjectiveId: BT
@@ -465,6 +592,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S038
     MapId: CC
     ObjectiveId: BT
@@ -477,6 +607,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S039
     MapId: CC
     ObjectiveId: BT
@@ -488,6 +621,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S040
     MapId: CC
     ObjectiveId: BT
@@ -500,6 +636,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S041
     MapId: CC
     ObjectiveId: BT
@@ -512,6 +651,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S042
     MapId: CC
     ObjectiveId: BT
@@ -524,6 +666,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S043
     MapId: CC
     ObjectiveId: CE
@@ -536,6 +681,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S044
     MapId: CC
     ObjectiveId: CE
@@ -548,6 +696,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S045
     MapId: CC
     ObjectiveId: CE
@@ -560,6 +711,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S046
     MapId: CC
     ObjectiveId: CE
@@ -572,6 +726,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S047
     MapId: CC
     ObjectiveId: CE
@@ -584,6 +741,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S048
     MapId: CC
     ObjectiveId: CE
@@ -596,6 +756,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S049
     MapId: MP
     ObjectiveId: BA
@@ -608,6 +771,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S050
     MapId: MP
     ObjectiveId: BA
@@ -620,6 +786,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S051
     MapId: MP
     ObjectiveId: BA
@@ -631,6 +800,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S052
     MapId: MP
     ObjectiveId: BA
@@ -643,6 +815,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S053
     MapId: MP
     ObjectiveId: BA
@@ -655,6 +830,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S054
     MapId: MP
     ObjectiveId: BA
@@ -667,6 +845,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S055
     MapId: MP
     ObjectiveId: FC
@@ -679,6 +860,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S056
     MapId: MP
     ObjectiveId: FC
@@ -691,6 +875,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S057
     MapId: MP
     ObjectiveId: FC
@@ -703,6 +890,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S058
     MapId: MP
     ObjectiveId: FC
@@ -715,6 +905,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S059
     MapId: MP
     ObjectiveId: FC
@@ -727,6 +920,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S060
     MapId: MP
     ObjectiveId: FC
@@ -739,6 +935,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S061
     MapId: MP
     ObjectiveId: BT
@@ -751,6 +950,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S062
     MapId: MP
     ObjectiveId: BT
@@ -763,6 +965,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S063
     MapId: MP
     ObjectiveId: BT
@@ -774,6 +979,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S064
     MapId: MP
     ObjectiveId: BT
@@ -786,6 +994,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S065
     MapId: MP
     ObjectiveId: BT
@@ -798,6 +1009,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S066
     MapId: MP
     ObjectiveId: BT
@@ -810,6 +1024,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S067
     MapId: MP
     ObjectiveId: CE
@@ -822,6 +1039,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S068
     MapId: MP
     ObjectiveId: CE
@@ -834,6 +1054,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S069
     MapId: MP
     ObjectiveId: CE
@@ -845,6 +1068,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S070
     MapId: MP
     ObjectiveId: CE
@@ -857,6 +1083,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S071
     MapId: MP
     ObjectiveId: CE
@@ -869,6 +1098,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S072
     MapId: MP
     ObjectiveId: CE
@@ -881,6 +1113,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S073
     MapId: IB
     ObjectiveId: BA
@@ -899,6 +1134,9 @@ MonoBehaviour:
       \u06A9\u0646."
     Status: 1
     PlayableScenarioIndex: 3
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S074
     MapId: IB
     ObjectiveId: BA
@@ -911,6 +1149,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S075
     MapId: IB
     ObjectiveId: BA
@@ -923,6 +1164,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S076
     MapId: IB
     ObjectiveId: BA
@@ -935,6 +1179,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S077
     MapId: IB
     ObjectiveId: BA
@@ -947,6 +1194,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S078
     MapId: IB
     ObjectiveId: BA
@@ -959,6 +1209,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S079
     MapId: IB
     ObjectiveId: FC
@@ -971,6 +1224,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S080
     MapId: IB
     ObjectiveId: FC
@@ -983,6 +1239,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S081
     MapId: IB
     ObjectiveId: FC
@@ -995,6 +1254,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S082
     MapId: IB
     ObjectiveId: FC
@@ -1007,6 +1269,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S083
     MapId: IB
     ObjectiveId: FC
@@ -1019,6 +1284,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S084
     MapId: IB
     ObjectiveId: FC
@@ -1031,6 +1299,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S085
     MapId: IB
     ObjectiveId: BT
@@ -1043,6 +1314,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S086
     MapId: IB
     ObjectiveId: BT
@@ -1055,6 +1329,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S087
     MapId: IB
     ObjectiveId: BT
@@ -1067,6 +1344,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S088
     MapId: IB
     ObjectiveId: BT
@@ -1079,6 +1359,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S089
     MapId: IB
     ObjectiveId: BT
@@ -1091,6 +1374,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S090
     MapId: IB
     ObjectiveId: BT
@@ -1103,6 +1389,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S091
     MapId: IB
     ObjectiveId: CE
@@ -1115,6 +1404,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S092
     MapId: IB
     ObjectiveId: CE
@@ -1127,6 +1419,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S093
     MapId: IB
     ObjectiveId: CE
@@ -1139,6 +1434,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S094
     MapId: IB
     ObjectiveId: CE
@@ -1151,6 +1449,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S095
     MapId: IB
     ObjectiveId: CE
@@ -1163,6 +1464,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S096
     MapId: IB
     ObjectiveId: CE
@@ -1175,6 +1479,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S097
     MapId: AP
     ObjectiveId: BA
@@ -1187,6 +1494,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S098
     MapId: AP
     ObjectiveId: BA
@@ -1199,6 +1509,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S099
     MapId: AP
     ObjectiveId: BA
@@ -1210,6 +1523,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S100
     MapId: AP
     ObjectiveId: BA
@@ -1222,6 +1538,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S101
     MapId: AP
     ObjectiveId: BA
@@ -1234,6 +1553,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S102
     MapId: AP
     ObjectiveId: BA
@@ -1246,6 +1568,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S103
     MapId: AP
     ObjectiveId: FC
@@ -1258,6 +1583,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S104
     MapId: AP
     ObjectiveId: FC
@@ -1270,6 +1598,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S105
     MapId: AP
     ObjectiveId: FC
@@ -1282,6 +1613,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S106
     MapId: AP
     ObjectiveId: FC
@@ -1294,6 +1628,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S107
     MapId: AP
     ObjectiveId: FC
@@ -1306,6 +1643,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S108
     MapId: AP
     ObjectiveId: FC
@@ -1318,6 +1658,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S109
     MapId: AP
     ObjectiveId: BT
@@ -1330,6 +1673,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S110
     MapId: AP
     ObjectiveId: BT
@@ -1342,6 +1688,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S111
     MapId: AP
     ObjectiveId: BT
@@ -1353,6 +1702,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S112
     MapId: AP
     ObjectiveId: BT
@@ -1365,6 +1717,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S113
     MapId: AP
     ObjectiveId: BT
@@ -1377,6 +1732,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S114
     MapId: AP
     ObjectiveId: BT
@@ -1389,6 +1747,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S115
     MapId: AP
     ObjectiveId: CE
@@ -1401,6 +1762,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S116
     MapId: AP
     ObjectiveId: CE
@@ -1413,6 +1777,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S117
     MapId: AP
     ObjectiveId: CE
@@ -1425,6 +1792,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S118
     MapId: AP
     ObjectiveId: CE
@@ -1437,6 +1807,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S119
     MapId: AP
     ObjectiveId: CE
@@ -1449,6 +1822,9 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 
   - ScenarioId: S120
     MapId: AP
     ObjectiveId: CE
@@ -1461,3 +1837,6 @@ MonoBehaviour:
     DescriptionFarsi: 
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: 
+    ContentVersion: 0
+    ReadinessManifestId: 

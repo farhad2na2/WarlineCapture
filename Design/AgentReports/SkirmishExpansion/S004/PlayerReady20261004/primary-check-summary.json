@@ -1,0 +1,106 @@
+{
+  "allPassed": true,
+  "count": 11,
+  "candidate": "fb26ce746803f637cc7f199c2077131026c6c1d6aeb49541847e3e2ae1abb938",
+  "checks": [
+    {
+      "name": "return75",
+      "locale": "en",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-return75.log"
+    },
+    {
+      "name": "validation75",
+      "locale": "en",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-validation75.log"
+    },
+    {
+      "name": "air76-en",
+      "locale": "en",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-air76-en.log"
+    },
+    {
+      "name": "manual77-en",
+      "locale": "en",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-manual77-en.log"
+    },
+    {
+      "name": "manual78-fa",
+      "locale": "fa-IR",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-manual78-fa.log"
+    },
+    {
+      "name": "aria79-en-104733",
+      "locale": "en",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-en-104733.log"
+    },
+    {
+      "name": "aria79-fa-IR-104733",
+      "locale": "fa-IR",
+      "seed": 104733,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-fa-IR-104733.log"
+    },
+    {
+      "name": "aria79-en-130367",
+      "locale": "en",
+      "seed": 130367,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-en-130367.log"
+    },
+    {
+      "name": "aria79-fa-IR-130367",
+      "locale": "fa-IR",
+      "seed": 130367,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-fa-IR-130367.log"
+    },
+    {
+      "name": "aria79-en-155925",
+      "locale": "en",
+      "seed": 155925,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-en-155925.log"
+    },
+    {
+      "name": "aria79-fa-IR-155925",
+      "locale": "fa-IR",
+      "seed": 155925,
+      "exit": 0,
+      "passed": true,
+      "missing": [],
+      "log": "/private/tmp/warline-s004-ready-aria79-fa-IR-155925.log"
+    }
+  ]
+}

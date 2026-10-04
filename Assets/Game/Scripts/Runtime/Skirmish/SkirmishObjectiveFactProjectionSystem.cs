@@ -76,7 +76,11 @@ namespace Game.Runtime
             for (int i = 0; i < sessions.Length; i++)
             {
                 Entity entity = sessions[i];
-                if (em.GetComponentData<SkirmishExpandedSessionComponent>(entity).IsLegacy != 0)
+                var session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                // Keep terminal objective facts after destroyed entities are removed.
+                // The no-base startup fallback must not resurrect a finished base.
+                if (session.IsLegacy != 0 || session.Phase is SkirmishSessionPhase.Finished
+                    or SkirmishSessionPhase.Failed or SkirmishSessionPhase.Cleaning)
                     continue;
                 SkirmishBaseAssaultFacts facts = Collect(
                     em,

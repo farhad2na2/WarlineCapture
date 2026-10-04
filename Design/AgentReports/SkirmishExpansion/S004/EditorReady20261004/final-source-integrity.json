@@ -1,0 +1,8 @@
+{
+  "algorithm": "Same path/string and digest manifest as SkirmishCandidateSourceHash",
+  "files": 37833,
+  "sourceHash": "ceff0859d79760dd5c3baa8f94aedcca65a50eff396c6d51ed16167f1d6802f2",
+  "nativeCandidateHash": "ceff0859d79760dd5c3baa8f94aedcca65a50eff396c6d51ed16167f1d6802f2",
+  "matches": true,
+  "seconds": 17.36
+}

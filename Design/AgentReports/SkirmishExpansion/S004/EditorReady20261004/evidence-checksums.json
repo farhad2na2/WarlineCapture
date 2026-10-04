@@ -1,0 +1,222 @@
+[
+  {
+    "path": "warline-s004-editor138-fa-manual.log.dispatch.json",
+    "sha256": "7cdbb4c2b4cba1f8d02265908ed9ad766071812bd5f38397ece811e073d0cd37"
+  },
+  {
+    "path": "native-fa-setup.png",
+    "sha256": "1f90bdb442f48e64e35ba402828c8ca743771add884aa2027269082e6e765146"
+  },
+  {
+    "path": "warline-s004-editor139-preview.log.dispatch.json",
+    "sha256": "33656956156bd0c217b2d4d5b1b73f81ec69213df99a5de8d48ad0d3954b848b"
+  },
+  {
+    "path": "warline-s004-editor138-fa-manual.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "warline-s004-editor136-regressions.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "campaign-source-integrity.json",
+    "sha256": "70174c8b4abbe359cdc9c85dfd0e03ceb925aa588d4a2d3bf05f0e183caf29ec"
+  },
+  {
+    "path": "native-fa-opening.png",
+    "sha256": "fa98affcea1a79e2c7d7c93ce9875449dc03ae7484bf4209670ff8ba7b879f08"
+  },
+  {
+    "path": "native-en-setup.png",
+    "sha256": "2b32a82682f3841686723e76ee60491468b3bd0f29814dde1b12f1738308d299"
+  },
+  {
+    "path": "native-en-adjust-setup.png",
+    "sha256": "02a89cd1c4f88a2835f07de0a7328f1db7418cf9c80d64775677e84cf40501cf"
+  },
+  {
+    "path": "warline-s004-editor139-preview.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "warline-s004-editor139-preview.log",
+    "sha256": "4308b034f91504a802bbf6f131034602df4875492df5e03a779fb485c0d3044d"
+  },
+  {
+    "path": "warline-s004-editor137-en.log",
+    "sha256": "86b84bb5031ebac80125ccb47e72f9654d866d862cd4402c0ceab010fda759da"
+  },
+  {
+    "path": "native-fa-main-menu.png",
+    "sha256": "80021de7045575c0fff1dedd3c79345e1d254d5ea4947af5dcbc2d3a08c63a1b"
+  },
+  {
+    "path": "warline-s004-editor138-fa-manual.log",
+    "sha256": "a3a594ed942c9d9d3f16e613083a62138bcd3f47c7ddad38cb5cd8383665cf39"
+  },
+  {
+    "path": "warline-s004-editor137-en.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "editor-handoff-setup.png",
+    "sha256": "9c2f8e65a721e9a8e0dd9e166e87b592a6263a15b58e11080e20c92a73312b30"
+  },
+  {
+    "path": "town-edge-fit-preflight.json",
+    "sha256": "6fde60f6faf8531843b6f075bc4103fe30590ebf9fa964d80a1c84535da581f0"
+  },
+  {
+    "path": "final-source-integrity.json",
+    "sha256": "070bb82052865612d0c7f8d27ae8fff814689799f86a1d1f575b563212a1c2b4"
+  },
+  {
+    "path": "warline-s004-editor137-en.log.dispatch.json",
+    "sha256": "926d27bbddc5efafef48acb4ee1f14ddba2c42e953624b5bcec670d85ef91e1e"
+  },
+  {
+    "path": "native-en-opening.png",
+    "sha256": "91f1630dd6039160648d8dc738974129515e6482407e634962fba9f981076898"
+  },
+  {
+    "path": "editor-readiness.json",
+    "sha256": "2c5025088e6c04788f7705bd92b232d84898314005321368861754791a124c0f"
+  },
+  {
+    "path": "native-fa-result.png",
+    "sha256": "effba439185f2fe1b1aee30e5bf02da4f9560b8dd1883ddb7310bf12512289da"
+  },
+  {
+    "path": "warline-s004-editor136-regressions.log",
+    "sha256": "ff4ec7b5728c866e9fd881bfe01c54c2d723e7d67be773bfc5b2bdf57cfd96d0"
+  },
+  {
+    "path": "native-en-result.png",
+    "sha256": "36225cebbd0dc80d8bbe0e3c7b082f4dcdaf1f52e08d9c4fa3bf7118ccb69735"
+  },
+  {
+    "path": "warline-s004-editor136-regressions.log.dispatch.json",
+    "sha256": "21c236a91ed10d414a50931e11d854c89559a4e8b65f51d64435c153a4231a59"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-en.log.exit",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor133-en.log",
+    "sha256": "844ae5593a42035c41672e4e0c8a4f0e02821a31bef8b84ad08a5ff1ce399f88"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor131-en.log",
+    "sha256": "522b79360d49e9a8bb47a37e5dcba7d4b55c9233de037c35b454b9dd07c98ec9"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor127-en.log.dispatch.json",
+    "sha256": "8c98103ebd7dab77786b3cd9fd8647f8bd8cc4e26605fb6e6ac279fcf1672e4f"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor121-abort.log",
+    "sha256": "90759085a7174d1940742312df16c3fd8cdd0b39eb2d72256e83e3596eb1d4be"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor122-abort.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor127-en.log",
+    "sha256": "56394c60fbc2e2a196686e9d40dcbff182d16ebfd58583708a28fefac9d15836"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-abort.log",
+    "sha256": "052086ff4e01bfa8a43c5cb2966ba2b064223234e71037b059db8201bd39dbe0"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-abort.log.exit",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor135-regressions.log",
+    "sha256": "d587740328838877d1705726ee60640dfbba022111f54a160d72f351f91d2fa1"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor121-abort.log.exit",
+    "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor125-en.log.exit",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor125-en.log",
+    "sha256": "6bf424086ca903c97992b8b8c699ac9c37e64f1a5cfbde24e3d02bc115a76e81"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor129-en.log",
+    "sha256": "09151d72b912f0fbddce8f9d732cd783aaf8b1a1e9ebfb23ca5169c820076487"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-en.log.dispatch.json",
+    "sha256": "142d59f47b328db361ca616eb8bc6261292bd8b8899ee340c0deb4739c5ca545"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor125-en.log.dispatch.json",
+    "sha256": "dfe3a3d45ed28492fb67d7ce44949fca038e49ba4ce57807074163cfdc26ee44"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor132-en.log",
+    "sha256": "08f07afa0568467d9dd28330b61e9efc09f7f87fee919a53071168c310437082"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor121-abort.log.dispatch.json",
+    "sha256": "6cf439713c7c0f740795d3174575efeaf174eb29257d48fc3a89e76b41f61f4c"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor127-en.log.exit",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor130-en.log",
+    "sha256": "d033002f00259239e0eaf804de51dd15b074fa6386f0c4fa84708ec9cdd52114"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor124-en.log.exit",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor122.log",
+    "sha256": "57f20ba6e5221a0ee038457a68e0b3aed05e56feb00341e7477852ba72396775"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor122-abort.log.dispatch.json",
+    "sha256": "4e6826c9cde9836ae2a144ae88f18afe45ef9a4a5972fe0153e084db9a7e3658"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor124-en.log.dispatch.json",
+    "sha256": "f24c7c33d7cfc2a4abf2e46d27262f95c199c43d2ea5bbf033ed3d4fc59d65e5"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-en.log",
+    "sha256": "b2aa9e522713d7afd9dd00903930cc5331f873e1ddc1d1df70f0afe5036daf5e"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor121.log",
+    "sha256": "0abb8dfe287313555cc58c1f6a703a94f405547a8fc9da3043f2996f80b5ee3e"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor124-en.log",
+    "sha256": "93bd72ab1d500a5c22be7e6dfb364650eb77fc73511d819ff0470c52f6e9c21b"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor128-en.log",
+    "sha256": "2b14d9e1bbf02512bf79e523f693c7de0f0beb708b82de72f3f9aad48d3c2e55"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor122-abort.log",
+    "sha256": "5b0a52038ab74d29c358a2da4a6350c3b551edc62b7a91d2dabd77d56e759d80"
+  },
+  {
+    "path": "FailedAttempts/warline-s004-editor126-abort.log.dispatch.json",
+    "sha256": "cb568469d31b7aefe0b04255bf5000259de2a78b28233544f28e789e5b4d35ed"
+  }
+]

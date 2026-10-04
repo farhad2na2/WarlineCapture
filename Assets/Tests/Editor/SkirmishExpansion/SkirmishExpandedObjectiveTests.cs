@@ -13,6 +13,22 @@ namespace Game.Tests.Editor
     public sealed class SkirmishExpandedObjectiveTests
     {
         [Test]
+        public void FinishedBaseFactsStayFrozenAfterDestroyedEntitiesAreRemoved()
+        {
+            using var world = new World(nameof(FinishedBaseFactsStayFrozenAfterDestroyedEntitiesAreRemoved));
+            var em = world.EntityManager;
+            var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent),
+                typeof(SkirmishObjectiveClockComponent), typeof(SkirmishBaseAssaultFactComponent));
+            em.SetComponentData(session, new SkirmishExpandedSessionComponent { Phase = SkirmishSessionPhase.Finished });
+            em.SetComponentData(session, new SkirmishBaseAssaultFactComponent
+                { PlayerDesignatedAlive = 0, EnemyDesignatedAlive = 1 });
+            world.GetOrCreateSystem<SkirmishObjectiveFactProjectionSystem>().Update(world.Unmanaged);
+            var facts = em.GetComponentData<SkirmishBaseAssaultFactComponent>(session);
+            Assert.AreEqual(0, facts.PlayerDesignatedAlive);
+            Assert.AreEqual(1, facts.EnemyDesignatedAlive);
+        }
+
+        [Test]
         public void ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup()
         {
             using var world = new World(nameof(ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup));
@@ -265,6 +281,7 @@ namespace Game.Tests.Editor
             try
             {
                 var suite = new SkirmishExpandedObjectiveTests();
+                suite.FinishedBaseFactsStayFrozenAfterDestroyedEntitiesAreRemoved();
                 suite.ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup();
                 suite.ReplacementBarracksAndArmyWipeAreNonTerminal();
                 suite.PausedDeadlineDoesNotFreeze();

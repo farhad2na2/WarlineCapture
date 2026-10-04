@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+    "sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+    "change": "unchanged physical source"
+  },
+  {
+    "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+    "sha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+    "change": "unchanged physical source"
+  },
+  {
+    "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+    "sha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+    "change": "unchanged physical source"
+  },
+  {
+    "path": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+    "sha256": "0dc79754e153d58ca694a447af8725636fb04a12d4e91e71e76afc097085ccfc",
+    "change": "intended presentation change"
+  },
+  {
+    "path": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity",
+    "sha256": "51a6c3e3623d3184480433e8af2ac1e36eb643230432798c44dac9c807149494",
+    "change": "intended presentation change"
+  }
+]

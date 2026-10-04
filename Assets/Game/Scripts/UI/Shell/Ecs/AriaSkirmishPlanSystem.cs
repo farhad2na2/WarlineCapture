@@ -336,6 +336,8 @@ namespace Game.UI.Shell.Ecs
         private static bool OpeningDefense(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
+            if (view.OwnDefenseTowers >= 2 && plan.DefenseStage == 0)
+                plan.DefenseStage = 4;
             if (plan.DefenseStage == 4) return false;
             // Recruit before opening construction: the initial force must survive
             // the first raid while the player is occupied with placement.
@@ -627,7 +629,7 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (view.VisibleHostileAir > 0 && view.CanAffordAntiAir && view.RecruitAntiAir.Available)
+            if (view.VisibleHostileAir > 0 && !view.AntiAirCommitted && view.CanAffordAntiAir && view.RecruitAntiAir.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.RecruitAntiAir, false, ref output);
@@ -819,7 +821,11 @@ namespace Game.UI.Shell.Ecs
                 plan.Intent = AriaSkirmishIntent.ReturnAircraft;
                 if (!view.SelectedAircraft) { plan.AirCycleStage = 1; return true; }
                 if (!view.ReturnAircraft.Available)
-                { output.Kind = AriaPlayObservationKind.Waiting; return true; }
+                {
+                    if (view.OpenAircraftActions.Available) Target(view.OpenAircraftActions, false, ref output);
+                    else output.Kind = AriaPlayObservationKind.Waiting;
+                    return true;
+                }
                 plan.AirCycleAction = touch.Actions;
                 plan.AirCycleStage = 3;
                 Target(view.ReturnAircraft, false, ref output);

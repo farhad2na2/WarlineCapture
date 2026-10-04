@@ -25,6 +25,11 @@ Shader "Game/Environment/GroundMacroVariation"
         _MacroScale("Macro Noise Scale (1/m)", Range(0.001, 0.2)) = 0.022
         _MacroContrastLow("Macro Mask Low", Range(0, 1)) = 0.25
         _MacroContrastHigh("Macro Mask High", Range(0, 1)) = 0.75
+        [Header(Desert Landscape Palette)]
+        _SandPaletteStrength("Landscape Palette Blend", Range(0, 1)) = 0
+        _SandDryColor("Sunlit Sand", Color) = (0.88, 0.75, 0.51, 1)
+        _SandWornColor("Worn Earth", Color) = (0.69, 0.57, 0.39, 1)
+        _SandScrubColor("Dry Scrub Pockets", Color) = (0.65, 0.65, 0.43, 1)
 
         [Header(Close Detail)]
         _DetailStrength("Detail Strength", Range(0, 0.3)) = 0.06
@@ -102,6 +107,10 @@ Shader "Game/Environment/GroundMacroVariation"
                 half4 _SpecColor;
                 half4 _MacroTintA;
                 half4 _MacroTintB;
+                half _SandPaletteStrength;
+                half4 _SandDryColor;
+                half4 _SandWornColor;
+                half4 _SandScrubColor;
                 half _MacroStrength;
                 float _MacroScale;
                 half _MacroContrastLow;
@@ -267,6 +276,16 @@ Shader "Game/Environment/GroundMacroVariation"
 
                 half4 atlas = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
                 half3 albedo = atlas.rgb * lerp(half3(1, 1, 1), _BaseColor.rgb, _BaseColorInfluence);
+                // Independent, world-space fields prevent a repeating carpet of
+                // brown speckles. Broad sand banks blend into worn earth, with
+                // smaller dry scrub pockets; road materials opt out by default.
+                float2 landscape = input.positionWS.xz;
+                float2 warp = float2(ValueNoise(landscape * .011 + 9), ValueNoise(landscape * .013 + 51)) * 19;
+                float worn = smoothstep(.30, .72, Fbm((landscape + warp) * .024));
+                float scrub = smoothstep(.65, .83, Fbm(landscape * .048 + 107));
+                half3 sand = lerp(_SandDryColor.rgb, _SandWornColor.rgb, worn);
+                sand = lerp(sand, _SandScrubColor.rgb, scrub * .7);
+                albedo = lerp(albedo, sand, _SandPaletteStrength);
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
                 albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);

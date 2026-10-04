@@ -87,7 +87,11 @@ namespace Game.Runtime
                             if (shared[j].RequestId == item.RequestId) { result = shared[j]; found = true; break; }
                         if (!found) { reason = SkirmishReasonCode.SpawnBoundaryUnavailable; complete = false; continue; }
                         if (result.Status == BuildingRuntimeSpawnRequest.Failed)
-                        { reason = SkirmishReasonCode.BlockedSpawn; complete = false; continue; }
+                        {
+                            UnityEngine.Debug.LogError("[SkirmishStartingBuilding] failed building=" + result.BuildingId +
+                                " faction=" + result.FactionId + " preferred=" + result.PreferredOrigin);
+                            reason = SkirmishReasonCode.BlockedSpawn; complete = false; continue;
+                        }
                         if (result.Status == BuildingRuntimeSpawnRequest.Pending) { complete = false; continue; }
                         Entity building = FindBuilding(em, result.BuildingRuntimeId);
                         if (building == Entity.Null) { complete = false; continue; }

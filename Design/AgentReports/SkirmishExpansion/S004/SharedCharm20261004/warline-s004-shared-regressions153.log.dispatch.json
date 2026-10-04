@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Cannot connect to Unity Editor Pipeline server at 127.0.0.1:7801. Make sure Unity Editor is running with the Pipeline package installed."
+    }
+  ],
+  "warnings": []
+}

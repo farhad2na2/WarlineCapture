@@ -1,0 +1,6 @@
+[UnityInvokeMac] LicensingMode: gui (batchmode disabled on macOS)
+[UnityInvokeMac] UnityExe: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+[UnityInvokeMac] ProjectPath: /Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] LogFile: /private/tmp/warline-s004-native-fa-IR-104733-10.log
+[UnityInvokeMac] TimeoutSeconds: 1500
+[UnityInvokeMac] Arguments: -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/warline-s004-native-fa-IR-104733-10.log -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunS004AriaAndExit

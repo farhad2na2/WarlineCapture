@@ -21,6 +21,18 @@ namespace Game.Editor
         [MenuItem("Tools/Warline/Skirmish/Rebuild Expanded Definitions")]
         public static void RebuildMenu() => Debug.Log(Rebuild());
 
+        public static void RefreshS004RoleBindings()
+        {
+            if (EditorApplication.isPlaying)
+                throw new InvalidOperationException("Refresh role bindings in Edit mode.");
+            var roles = AssetDatabase.LoadAssetAtPath<SkirmishRoleCatalogConfig>(SharedFolder + "/SkirmishRoleCatalog_V1.asset");
+            if (roles == null) throw new InvalidOperationException("Packaged Skirmish role catalog is missing.");
+            roles.ConfigureCanonicalGroundSlice();
+            EditorUtility.SetDirty(roles);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[SkirmishS004RoleBindings] result=Passed roles=" + roles.Roles.Length);
+        }
+
         public static string Rebuild()
         {
             if (EditorApplication.isPlaying)
@@ -70,6 +82,7 @@ namespace Game.Editor
             if (preserveS004Playable)
                 RestorePlayable("S004", preservedS004Notes);
             AssetDatabase.SaveAssets();
+            SkirmishS004CampaignMapBuilder.Build();
             return "[SkirmishDefinitionBuilder] result=Passed definition=skirmish.s002,skirmish.s003,skirmish.s004";
         }
 

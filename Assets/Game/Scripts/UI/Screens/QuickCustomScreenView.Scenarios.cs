@@ -154,7 +154,24 @@ namespace Game.UI.Runtime
 
             if (scenarioDescription != null)
             {
-                if (SkirmishExpandedCopyProjection.IsExpandedS002(selected.ScenarioId) &&
+                var descriptionBinding = scenarioDescription.GetComponent<V3LocalizedTextBindingView>() ??
+                    scenarioDescription.gameObject.AddComponent<V3LocalizedTextBindingView>();
+                descriptionBinding.ConfigureFontBounds(14f, 22f);
+                scenarioDescription.enableAutoSizing = true;
+                scenarioDescription.fontSizeMin = 18f;
+                scenarioDescription.fontSizeMax = 28f;
+                scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
+                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
+                if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
+                {
+                    var descriptionRect = scenarioDescription.rectTransform;
+                    descriptionRect.anchorMin = descriptionRect.anchorMax = new Vector2(0f, 1f);
+                    descriptionRect.pivot = new Vector2(0f, 1f);
+                    UiLocalizedText.Set(scenarioDescription, fa
+                        ? "آشیانه آماده است؛ بالگرد رزمی بساز."
+                        : "Your Helipad is ready. Recruit attack helicopters.");
+                }
+                else if (SkirmishExpandedCopyProjection.IsExpandedS002(selected.ScenarioId) &&
                     SkirmishExpandedCopyProjection.TryResolveS002LibraryBriefing(
                         fa ? GameLocalization.PersianLocaleCode : GameLocalization.EnglishLocaleCode,
                         out SkirmishLibraryBriefing briefing))
@@ -181,6 +198,9 @@ namespace Game.UI.Runtime
                 }
             }
 
+            if (battleLibrarySearch != null && battleLibrarySearch.placeholder is TMP_Text searchHint)
+                UiLocalizedText.Set(searchHint, fa ? "جست‌وجوی نبرد (S004، کویر، ...)" : "Search battles (S004, Desert, ...)");
+
             PresentCompiledBriefing(selected, fa);
             if (launchButton != null)
                 launchButton.interactable = selected.IsPlayable;
@@ -199,7 +219,8 @@ namespace Game.UI.Runtime
                 _briefingSeed = _config.MapSeed;
                 _briefingSetup = null;
                 if (selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ||
-                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)
+                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ||
+                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex)
                     SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, out _briefingSetup);
             }
             string[] names = { "Opponent", "Objective", "Roster", "Economy", "Intel" };

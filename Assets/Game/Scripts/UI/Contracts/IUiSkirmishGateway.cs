@@ -14,6 +14,8 @@ namespace Game.UI.Contracts
         public bool CanBuildAirPad;
         public bool AirRecruitPending;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
+        public int OwnDefenseTowers;
+        public bool AntiAirCommitted;
         public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
         public byte ResultStars;

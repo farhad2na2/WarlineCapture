@@ -1,0 +1,5 @@
+Visual status — existing campaign map candidate
+The user approved the earlier dense-town mockup, then explicitly requested reuse of an existing map. S004 now uses City-Edge Airfield; the procedural town overlay has been removed.
+Native map loading and authored campaign lighting pass live assertions. Native opening screenshots show the existing town, apron, hangars and runway.
+Visual issue remains: several player objects appear solid cyan in the opening capture. Read-only diagnostics confirmed existing ECS selection-outline entities on selected aircraft, but have not established the cause of all cyan objects. Do not claim the visual issue is fixed or that this native candidate matches the mockup.
+Implemented-screen visual acceptance by the user and real device/player acceptance remain pending.

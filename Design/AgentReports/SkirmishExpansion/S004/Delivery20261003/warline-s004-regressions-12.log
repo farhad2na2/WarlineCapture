@@ -1,0 +1,1824 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-10-03T16:15:58Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-10-03T16:15:58.539319Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/Projects/WarlineCapture
+-logFile
+/private/tmp/warline-s004-regressions-12.log
+-quit
+-executeMethod
+Game.Tests.Editor.SkirmishSharedMaterialsTests.RunS004DeliveryValidation
+Successfully changed project path to: /Users/farhad/Projects/WarlineCapture
+/Users/farhad/Projects/WarlineCapture
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-farhad"
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+[Licensing::IpcConnector] Channel LicenseClient-farhad-6000.5.2 doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 99661)
+Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55504 [Flags] 2 [Guid] 1007888750 [EditorId] 1007888750 [Version] 1048832 [Id] OSXEditor(0,Farhads-Air-2) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-99658" after 0.1 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2" at "2026-10-03T16:15:58.916951Z"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              24a17a5343084541952c65125b7184ab
+  Correlation Id:          2ffa50802615eae4b6c663880bfab23a
+  External correlation Id: 6812501469534219425
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad-6000.5.2" (connect: 0.17s, validation: 0.02s, handshake: 0.18s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2-notifications" at "2026-10-03T16:15:59.113308Z"
+[Licensing::Module] Connected to LicensingClient (PId: 99661, launch time: 0.00, total connection time: 0.37s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.58s
+[Licensing::Module] Licensing is initialized (took 0.28s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/Projects/WarlineCapture/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56658
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.007313 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.195 seconds
+Domain Reload Profiling: 406ms
+	BeginReloadAssembly (38ms)
+		CreateAndSetChildDomain (4ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (33ms)
+	LoadAllAssembliesAndSetupDomain (128ms)
+		LoadAssemblies (34ms)
+		AnalyzeDomain (97ms)
+			TypeCache.Refresh (96ms)
+				TypeCache.ScanAssembly (89ms)
+	FinalizeReload (196ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (42ms)
+			BeforeProcessingInitializeOnLoad (37ms)
+			ProcessInitializeOnLoadAttributes (44ms)
+			ProcessInitializeOnLoadMethodAttributes (38ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/Projects/WarlineCapture/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/Projects/WarlineCapture/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-cab634237f5413a71fd009541e827d78
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/Projects/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 18.2890ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/Projects/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 17.7537ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Runtime.dll, with 138 defines and 319 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.PlayMode.dll, with 138 defines and 317 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Rocks.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.MapPreparation.Native.dll, with 138 defines and 298 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 51.7575ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Editor.dll, with 136 defines and 355 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Composition.dll, with 138 defines and 335 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Collections, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Collections.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Burst.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Shell.Ecs.dll, with 138 defines and 326 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Cecil.Awesome, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null with Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.CodeGen/Unity.Cecil.Awesome.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Scripting, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/Unity.Scripting.dll
+  - EILPP : Game.Tests.PlayMode : : 246ms (~207ms)
+  - EILPP : Game.Tests.MapPreparation.Native : : 245ms (~201ms)
+    - EILPP : Game.Tests.PlayMode : GetAllComponentTypes: 2ms 
+    - EILPP : Game.Tests.MapPreparation.Native : GetAllComponentTypes: 2ms 
+    - EILPP : Game.Tests.PlayMode : ComponentDataPP: 22ms 
+    - EILPP : Game.Tests.MapPreparation.Native : Cloner: 2ms 
+    - EILPP : Game.Tests.PlayMode : StaticTypeRegistryPostProcessor: 15ms 
+    - EILPP : Game.Tests.MapPreparation.Native : ComponentDataPP: 26ms 
+    - EILPP : Game.Tests.MapPreparation.Native : StaticTypeRegistryPostProcessor: 14ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEditor.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 358.2082ms
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 369.2142ms
+  - EILPP : Game.Composition : : 439ms (~183ms)
+    - EILPP : Game.Composition : GetAllComponentTypes: 5ms 
+  - EILPP : Game.UI.Shell.Ecs : : 415ms (~171ms)
+    - EILPP : Game.UI.Shell.Ecs : GetAllComponentTypes: 2ms 
+    - EILPP : Game.Composition : ComponentDataPP: 20ms 
+    - EILPP : Game.UI.Shell.Ecs : Cloner: 47ms 
+    - EILPP : Game.Composition : StaticTypeRegistryPostProcessor: 81ms 
+    - EILPP : Game.UI.Shell.Ecs : StaticTypeRegistryPostProcessor: 51ms 
+    - EILPP : Game.Composition : WriteAssembly: 150ms 
+    - EILPP : Game.UI.Shell.Ecs : WriteAssembly: 144ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 529.0973ms
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil.Rocks, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.Rocks.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 827.3297ms
+  - EILPP : Game.Editor : : 902ms (~273ms)
+    - EILPP : Game.Editor : GetAllComponentTypes: 18ms 
+    - EILPP : Game.Editor : ComponentDataPP: 33ms 
+    - EILPP : Game.Editor : StaticTypeRegistryPostProcessor: 15ms 
+    - EILPP : Game.Editor : WriteAssembly: 563ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 1061.5046ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.Editor.dll, with 136 defines and 332 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+  - EILPP : Game.Tests.Editor : : 495ms (~78ms)
+    - EILPP : Game.Tests.Editor : GetAllComponentTypes: 2ms 
+    - EILPP : Game.Tests.Editor : ComponentDataPP: 7ms 
+    - EILPP : Game.Tests.Editor : StaticTypeRegistryPostProcessor: 16ms 
+    - EILPP : Game.Tests.Editor : WriteAssembly: 392ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 1231.7806ms
+ExitCode: 0 Duration: 8s937ms
+[1322/2004  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1976/2004  2s] Csc Library/Bee/artifacts/200b0aE.dag/Game.UI.Runtime.dll (+2 others)
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,125): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+[1982/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.UI.Runtime.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Runtime.dll, with 138 defines and 319 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1983/2004  0s] CopyFiles Library/ScriptAssemblies/Game.UI.Runtime.pdb
+[1984/2004  0s] CopyFiles Library/ScriptAssemblies/Game.UI.Runtime.dll
+[1985/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Editor.dll, with 136 defines and 355 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1988/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.PlayMode.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.PlayMode.dll, with 138 defines and 317 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1989/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.MapPreparation.Native.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.MapPreparation.Native.dll, with 138 defines and 298 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1994/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.UI.Shell.Ecs.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.UI.Shell.Ecs.dll, with 138 defines and 326 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1997/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Composition.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Composition.dll, with 138 defines and 335 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[2000/2004  5s] Csc Library/Bee/artifacts/200b0aE.dag/Game.Tests.Editor.dll (+2 others)
+[2001/2004  1s] ILPostProcess Library/Bee/artifacts/200b0aE.dag/post-processed/Game.Tests.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/200b0aE.dag/Game.Tests.Editor.dll, with 136 defines and 332 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[2002/2004  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.Editor.pdb
+[2003/2004  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.Editor.dll
+*** Tundra build success (8.92 seconds), 14 items updated, 2004 evaluated
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,125): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs(147,42): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,120): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(51,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,126): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs(236,43): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs(16,22): warning CS0414: The field 'BuildDrawerCatalogRuntimeView._guidedProductionInvocation' is assigned but its value is never used
+AssetDatabase: script compilation time: 9.304555s
+Begin MonoManager ReloadAssembly
+Total cache size 267784022
+Total cache size after purge 267784022, took 00:00:00.2414071
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 137ms
+The assembly Game.Authoring is using the BakingVersion attribute. But the following Baker/Baking systems/EntitySceneOptimizations systems are missing the attribute:
+Game.Authoring.SupportAbilityCatalogAuthoring+SupportBaker.
+
+Updating these bakers/systems won't trigger a scene import automatically. Please add a BakingVersion attribute on them and update their version number everytime you want them to be rerun before an import. 
+Or don't use the attribute at all in their assembly to trigger scene import automatically after each changes in the assembly.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Scenes.Editor.TypeDependencyCache:PrintMissingBakingVersionAttributesWarning (System.Collections.Generic.Dictionary`2<string, System.Collections.Generic.List`1<System.Type>>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:305)
+Unity.Scenes.Editor.TypeDependencyCache:RegisterBakingAssemblies () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:284)
+Unity.Scenes.Editor.TypeDependencyCache:.cctor () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:61)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+Start HTTP server: port:7800
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[McpToolRegistry] Discovered 20 MCP tools
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:RefreshTools () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:201)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:Initialize () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:177)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadMethodAttributes () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:184)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+[McpToolRegistry] Available tools: Unity_ApplyTextEdits, Unity_CreateScript, Unity_DeleteScript, Unity_FindInFile, Unity_GetSha, Unity_ImportExternalModel, Unity_ListResources, Unity_ManageAsset, Unity_ManageEditor, Unity_ManageGameObject, Unity_ManageMenuItem, Unity_ManageScene, Unity_ManageScript, Unity_ManageScript_capabilities, Unity_ManageShader, Unity_ReadConsole, Unity_ReadResource, Unity_RunCommand, Unity_ScriptApplyEdits, Unity_ValidateScript
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:RefreshTools () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:204)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:Initialize () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:177)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadMethodAttributes () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:184)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+[Idle]
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:LogBreadcrumb (string) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:2055)
+Unity.AI.MCP.Editor.Bridge:OnAfterAssemblyReload () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1899)
+UnityEditor.AssemblyReloadEvents:OnAfterAssemblyReload () (at /Users/bokken/build/output/unity/unity/Editor/Mono/AssemblyReloadEvents.cs:43)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+- Finished resetting the current domain, in  5.962 seconds
+Domain Reload Profiling: 6629ms
+	BeginReloadAssembly (87ms)
+		DisableScriptedObjects (7ms)
+		CreateAndSetChildDomain (23ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (39ms)
+	LoadAllAssembliesAndSetupDomain (530ms)
+		LoadAssemblies (171ms)
+		AnalyzeDomain (315ms)
+			TypeCache.Refresh (257ms)
+				TypeCache.ScanAssembly (239ms)
+			BuildScriptInfoCaches (53ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (5962ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (6ms)
+			BeforeProcessingInitializeOnLoad (48ms)
+			ProcessInitializeOnLoadAttributes (3111ms)
+			ProcessInitializeOnLoadMethodAttributes (2589ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Starting new worker id: 0 with log in /Users/farhad/Projects/WarlineCapture/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=08871beade4774808977ae98c8274ba9): Total: 18.080 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=7619 ms
+		Asset DB Callback time: managed=374 ms, native=22 ms
+		Scripting: domain reloads=1, domain reload time=699 ms, compile time=9306 ms, other=58 ms
+		Project Asset Count: scripts=3475, non-scripts=23150
+		Asset File Changes: new=0, changed=2, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 11.278ms
+	ApplyChangesToAssetFolders: 0.228ms
+	Scan: 1021.060ms
+	Collect global state as custom dependencies: 1.546ms
+	OnSourceAssetsModified: 0.402ms
+	CategorizeScriptCompilationAssets: 57.602ms
+	ProcessAssetsWithTransientArtifactChanges: 81.162ms
+	CategorizeAssets: 176.524ms
+	CompileScripts: 9305.527ms
+	ImportOutOfDateAssets: 6171.994ms (5984.819ms without children)
+		ReloadNativeAssets: 0.309ms
+		UnloadImportedAssets: 3.734ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.255ms
+		ImportSchedulerStart: 180.873ms
+	PostProcessAllAssets: 375.781ms
+		VCAutoAddAssetPostprocess 1.024ms
+		XRBuildSystem.XRAssetImported 0.093ms
+		MonoPostProcessAllAssets: 374.404ms
+			AssetPostprocessor.OnPostprocessAllAssets 235.462ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 20.722ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 11.152ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 5.118ms
+			SyncVS.PostprocessSyncProject 4.376ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 3.315ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 3.139ms
+			AssetChangedListener.OnPostprocessAllAssets 1.982ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.794ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 1.630ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.989ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 0.803ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.754ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.569ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.565ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.430ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.346ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.297ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.253ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.236ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.234ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.212ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.188ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.175ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.173ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.158ms
+			PostProcessor.OnPostprocessAllAssets 0.157ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.144ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.143ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.139ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.133ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.121ms
+			AssetEvents.OnPostprocessAllAssets 0.120ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.084ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.082ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.066ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.056ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.056ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.052ms
+	PostAssetChangesProfiler: 10.915ms
+	UnloadStreamsBegin: 1.273ms
+	PersistCurrentRevisions: 0.565ms
+	GenerateScriptTypeHashes: 2.995ms
+	GenerateScriptTypeSerializationHashes: 4.221ms
+	Untracked: 862.569ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.05 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.114ms
+Initializing Unity extensions:
+Worker ready: AssetImportWorkerHW0 0
+2026-10-03 18:16:19.194 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x94a639400 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:19.194 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x94a639540 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:19.194 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x94a6395e0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:19.197 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x94a6a5cc0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 1957 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            914.340 ms
+	Integration:            576.986 ms
+	Integration of assets:  592.982 ms
+	Thread Wait Time:       -0.809 ms
+	Total Operation Time:   2083.500 ms
+Unloading 15259 unused Assets / (38.1 MB). Loaded Objects now: 46750.
+Memory consumption went from 1.27 GB to 1.23 GB.
+Total: 78.768334 ms (FindLiveObjects: 5.911167 ms CreateObjectMapping: 11.862041 ms MarkObjects: 42.948750 ms  DeleteObjects: 18.046042 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /Users/farhad/Projects/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+2026-10-03 18:16:23.083 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x9579c2a80 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:23.083 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x9579c2bc0 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:23.083 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x9579c2c60 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-03 18:16:23.087 Unity[99658:45940782] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x94a6a38e0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Importing 'GUID: 576ea8bf79b7478480428278cdb00745 - Path: Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 576ea8bf79b7478480428278cdb00745' -> (Import Result ID: '144d8659ab03087759c73a109a97175a') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=f7351269a4dcc19dbbc4e593b0c52b63 DependenciesID=f6da9a83c8751fc3e006504043271b6c StaticDependenciesID=72a0aba4d461e626981affd719fab2f7 
+
+Asset Pipeline Refresh (id=b21ecb46988a84abca4e006d5a24b93f): Total: 0.474 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=466 ms
+		Asset DB Callback time: managed=3 ms, native=2 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3475, non-scripts=23150
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 6
+	ApplyChangesToAssetFolders: 0.094ms
+	Scan: 8.373ms
+	Collect global state as custom dependencies: 0.202ms
+	CategorizeScriptCompilationAssets: 0.111ms
+	ProcessAssetsWithTransientArtifactChanges: 0.402ms
+	CategorizeAssets: 250.489ms
+	ImportOutOfDateAssets: 171.795ms (16.516ms without children)
+		ImportManagerImport: 5.468ms (1.288ms without children)
+		ReloadNativeAssets: 0.457ms
+		UnloadImportedAssets: 0.089ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.823ms
+		InitializingProgressBar: 3.069ms
+		ImportSchedulerStart: 144.373ms
+	PostProcessAllAssets: 4.704ms
+		XRBuildSystem.XRAssetImported 0.985ms
+		MonoPostProcessAllAssets: 3.652ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 1.097ms
+			AssetPostprocessor.OnPostprocessAllAssets 1.097ms
+			SyncVS.PostprocessSyncProject 0.635ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 0.272ms
+			AssetChangedListener.OnPostprocessAllAssets 0.065ms
+	PostAssetChangesProfiler: 1.942ms
+	GatherAllCurrentPrimaryImportResultRevisions: 3.610ms
+	UnloadStreamsBegin: 5.165ms
+	PersistCurrentRevisions: 0.539ms
+	Untracked: 26.749ms
+
+[SkirmishS004RoleBindings] result=Passed roles=22
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishDefinitionBuilder:RefreshS004RoleBindings () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishDefinitionBuilder.cs:33)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:240)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishDefinitionBuilder.cs Line: 33)
+
+Importing 'GUID: 57f18ca43b8ca4fa48aee0224cc72328 - Path: Assets/Game/Resources/SkirmishBattleCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 57f18ca43b8ca4fa48aee0224cc72328' -> (Import Result ID: '3338ce0689cef932426a466b731ee5fb') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=8ec1d33ce5e08d201aaedcb5fe30083d DependenciesID=1f7aa1f0966d398cdb8a9b683a92ffa2 StaticDependenciesID=cae899b4ce9dff34b8d28c64399b492b 
+Asset Pipeline Refresh (id=202ad0f571af3495a92c5ea512439b2d): Total: 0.196 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/b18c7c3d188394a309ba3dcd304ed8bd'
+	Deserialize:            3.902 ms
+	Integration:            3.164 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.003 ms
+	Total Operation Time:   7.071 ms
+Importing 'GUID: 55d7c0139800d4cde8c2e97e255e423c - Path: Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab' with importer (PrefabImporter)
+Imported 'GUID: 55d7c0139800d4cde8c2e97e255e423c' -> (Import Result ID: 'e842cc266b094290ec5e02b3589011a2') in 0.014 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3a100ebd9a444f6fe9223b964db0321b DependenciesID=7d1a0f66715cf98055598cce962c3579 StaticDependenciesID=2ce8b7bd743160ac9c8e029493287de9 
+Asset Pipeline Refresh (id=b099e8c58042f4a7ea4bfb9cd7e943f7): Total: 0.231 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[SkirmishBattleCatalog] result=Passed entries=120 playable=6 library=rebuilt
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:241)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 241)
+
+[UnitMoveOrderFocusedValidation] result=Passed tests=21
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnitMoveOrderSystemTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitMoveOrderSystemTests.cs:49)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:291)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/UnitMoveOrderSystemTests.cs Line: 49)
+
+[AIFactionControlStartupValidation] result=Passed tests=4
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+AIFactionControlStartupSystemValidationTests:RunFocusedValidation () (at Assets/Tests/Editor/AIFactionControlStartupSystemValidationTests.cs:19)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:292)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/AIFactionControlStartupSystemValidationTests.cs Line: 19)
+
+[AriaPlayEditorValidation] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=en
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaPlayEditorValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs:113)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1012)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:296)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs Line: 113)
+
+[SkirmishExpandedAriaWatch] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=155923 locale=fa-IR
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:32)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (string,Game.Skirmish.Contracts.SkirmishSizeId,Game.Skirmish.Contracts.SkirmishDifficultyId,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:55)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1013)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:296)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs Line: 32)
+
+'Game.Runtime.SkirmishSessionCleanupSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishSessionCleanupSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs:22)
+Game.Runtime.SkirmishSessionCleanupSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.SystemHandle:Update (Unity.Entities.WorldUnmanaged) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:169)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1128)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1421)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:296)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+[SkirmishS002AriaHarnessTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1425)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:296)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs Line: 1425)
+
+[SkirmishExpandedAriaTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1015)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:296)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs Line: 1015)
+
+[SkirmishExpandedArmyTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedArmyTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs:394)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:298)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs Line: 394)
+
+[SkirmishExpandedEconomyTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedEconomyTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedEconomyTests.cs:914)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:299)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedEconomyTests.cs Line: 914)
+
+'Game.Runtime.SkirmishCheckpointSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishCheckpointSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointSystem.cs:23)
+Game.Runtime.SkirmishCheckpointSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.SystemHandle:Update (Unity.Entities.WorldUnmanaged) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:169)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:FirstCheckpointSystemRequestAttachesItsDocumentWithoutStructuralIterationFailure () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:46)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:396)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:300)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+[SkirmishStress] playRequested=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryRequestPlay (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:232)
+Game.Composition.SkirmishCheckpointCompositionSystemHelper:TryReplayLive (Unity.Entities.EntityManager,Unity.Entities.Entity,string&) (at Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs:167)
+Game.Composition.SkirmishCheckpointCompositionSystemHelper:TryConsumeExpandedReplay (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.SkirmishAction) (at Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs:181)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:LivePauseSettlesOnceAndReplayReseedsFreshSession () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:333)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:403)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:300)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs Line: 232)
+
+[SkirmishExpandedCheckpointTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedCheckpointTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs:405)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:300)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs Line: 405)
+
+[AriaPlayEditorValidation] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=en
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaPlayEditorValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs:113)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1012)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:301)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs Line: 113)
+
+[SkirmishExpandedAriaWatch] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=155923 locale=fa-IR
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:32)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (string,Game.Skirmish.Contracts.SkirmishSizeId,Game.Skirmish.Contracts.SkirmishDifficultyId,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:55)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1013)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:301)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs Line: 32)
+
+'Game.Runtime.SkirmishSessionCleanupSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishSessionCleanupSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs:22)
+Game.Runtime.SkirmishSessionCleanupSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.SystemHandle:Update (Unity.Entities.WorldUnmanaged) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:169)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1128)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1421)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:301)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+[SkirmishS002AriaHarnessTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1425)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:301)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs Line: 1425)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalMouse type=FastMouse generated=False
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:183)
+UnityEngine.InputSystem.Utilities.DelegateHelpers:InvokeCallbacksSafe<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice> (UnityEngine.InputSystem.Utilities.CallbackArray`1<System.Action`2<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice>>&,UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice,Unity.Profiling.ProfilerMarker,string,object) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Utilities/DelegateHelpers.cs:71)
+UnityEngine.InputSystem.InputManager:OnUpdate (UnityEngine.InputSystem.LowLevel.InputUpdateType,UnityEngine.InputSystem.LowLevel.InputEventBuffer&) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:3463)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:65)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:32)
+UnityEngine.InputSystem.InputManager:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:1840)
+UnityEngine.InputSystem.InputSystem:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputSystem.cs:2810)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:211)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:110)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:302)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs Line: 183)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalMouse type=FastMouse generated=False
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:183)
+UnityEngine.InputSystem.Utilities.DelegateHelpers:InvokeCallbacksSafe<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice> (UnityEngine.InputSystem.Utilities.CallbackArray`1<System.Action`2<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice>>&,UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice,Unity.Profiling.ProfilerMarker,string,object) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Utilities/DelegateHelpers.cs:71)
+UnityEngine.InputSystem.InputManager:OnUpdate (UnityEngine.InputSystem.LowLevel.InputUpdateType,UnityEngine.InputSystem.LowLevel.InputEventBuffer&) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:3463)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:65)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:32)
+UnityEngine.InputSystem.InputManager:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:1840)
+UnityEngine.InputSystem.InputSystem:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputSystem.cs:2810)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:211)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:129)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:302)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs Line: 183)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalTouch type=FastTouchscreen generated=False
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:183)
+UnityEngine.InputSystem.Utilities.DelegateHelpers:InvokeCallbacksSafe<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice> (UnityEngine.InputSystem.Utilities.CallbackArray`1<System.Action`2<UnityEngine.InputSystem.LowLevel.InputEventPtr, UnityEngine.InputSystem.InputDevice>>&,UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice,Unity.Profiling.ProfilerMarker,string,object) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Utilities/DelegateHelpers.cs:71)
+UnityEngine.InputSystem.InputManager:OnUpdate (UnityEngine.InputSystem.LowLevel.InputUpdateType,UnityEngine.InputSystem.LowLevel.InputEventBuffer&) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:3463)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:65)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/NativeInputRuntime.cs:32)
+UnityEngine.InputSystem.InputManager:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputManager.cs:1840)
+UnityEngine.InputSystem.InputSystem:Update (UnityEngine.InputSystem.LowLevel.InputUpdateType) (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/InputSystem.cs:2810)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:211)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:143)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:302)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs Line: 183)
+
+[AriaTouchInputValidation] result=Passed cases=22
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:171)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:302)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs Line: 171)
+
+DefaultInputActions: Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.Object:Destroy (UnityEngine.Object,single)
+UnityEngine.Object:Destroy (UnityEngine.Object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnityEngineObject.bindings.cs:707)
+UnityEngine.InputSystem.DefaultInputActions:Dispose () (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/PlayerInput/DefaultInputActions.cs:904)
+UnityEngine.InputSystem.UI.InputSystemUIInputModule:UnassignActions () (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/UI/InputSystemUIInputModule.cs:1580)
+UnityEngine.InputSystem.UI.InputSystemUIInputModule:OnDisable () (at ./Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/InputSystem/Plugins/UI/InputSystemUIInputModule.cs:1667)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:186)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:302)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+[Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs line 186]
+
+[SkirmishSharedMaterialsTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:319)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:215)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 319)
+
+[FactionTacticalMaterialsFocusedValidation] result=Passed tests=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+FactionTacticalMaterialsUtilitySystemHelperTests:RunFocusedValidation () (at Assets/Tests/Editor/FactionTacticalMaterialsUtilitySystemHelperTests.cs:23)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:216)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/FactionTacticalMaterialsUtilitySystemHelperTests.cs Line: 23)
+
+[SkirmishLaunch] queued expanded catalog=S002 definition=skirmish.s002 start=EstablishedBase difficulty=Regular size=Standard seed=104731 mapHint=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:132)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:58)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesEstablishedS002 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:857)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1024)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:217)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs Line: 132)
+
+[SkirmishLaunch] queued expanded catalog=S003 definition=skirmish.s003 start=FieldBase difficulty=Regular size=Standard seed=104732 mapHint=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:132)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:60)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesAirMobileS003 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:882)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1025)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:217)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs Line: 132)
+
+[SkirmishLaunch] queued expanded catalog=S004 definition=skirmish.s004 start=EstablishedBase difficulty=Regular size=Standard seed=104733 mapHint=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:132)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:62)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:LibraryDispatchIndexQueuesEstablishedAirMobileS004 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:909)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1026)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:217)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs Line: 132)
+
+[SkirmishExpandedDefinitionTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedDefinitionTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs:1048)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:217)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs Line: 1048)
+
+[SkirmishExpandedCatalogTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedCatalogTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCatalogTests.cs:334)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:218)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCatalogTests.cs Line: 334)
+
+[SkirmishExpandedObjectiveTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedObjectiveTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedObjectiveTests.cs:275)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:219)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedObjectiveTests.cs Line: 275)
+
+[SkirmishExpandedVisualTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedVisualTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedVisualTests.cs:404)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:220)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedVisualTests.cs Line: 404)
+
+[AriaPlayEditorValidation] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=en
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaPlayEditorValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs:113)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:AriaPlayAndWatchFacilitiesLogSelectedConfiguration () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:170)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:547)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:221)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs Line: 113)
+
+[SkirmishExpandedAriaWatch] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=130365 locale=fa-IR
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:32)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (string,Game.Skirmish.Contracts.SkirmishSizeId,Game.Skirmish.Contracts.SkirmishDifficultyId,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:55)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:AriaPlayAndWatchFacilitiesLogSelectedConfiguration () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:178)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:547)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:221)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs Line: 32)
+
+[SkirmishIndustrialBasinAriaWatch] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=en
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishIndustrialBasinAriaWatchProbe:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/SkirmishIndustrialBasinAriaWatchProbe.cs:47)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:AriaPlayAndWatchFacilitiesLogSelectedConfiguration () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:187)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:547)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:221)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Game/Scripts/Editor/SkirmishIndustrialBasinAriaWatchProbe.cs Line: 47)
+
+[SkirmishExpandedAcceptanceTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedAcceptanceTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs:552)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:221)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAcceptanceTests.cs Line: 552)
+
+[SkirmishScenarioSourceBinding] result=Passed cases=6
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c:<RunBroaderRegressionValidation>b__7_1 () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:222)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:<RunBroaderRegressionValidation>g__Run|7_0 (System.Action,string,Game.Tests.Editor.SkirmishSharedMaterialsTests/<>c__DisplayClass7_0&) (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:212)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:222)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 222)
+
+[SkirmishPlayerReadyRegressions] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunBroaderRegressionValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:225)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:242)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 225)
+
+[SkirmishDrawerGuidanceValidation] result=Passed cases=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:250)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 250)
+
+[M01FirstContactCampaignUiValidation] passed=NewProfileProjectsAvailableM01
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:30)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=ExplicitLockFailsClosed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:31)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=PendingResumeProjectsContinue
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:32)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=FirstClearProjectsReplayAndRevealsM02
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:33)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=ReplayProjectsBestMetrics
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:34)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=UnchangedSourcesDoNotChurnVersion
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:35)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=GatewayReadsAuthoritativeProjection
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:36)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=GatewayRejectsLockedAndEnqueuesAvailableAction
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:37)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] passed=BinderHasNoFramePollingLoop
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:38)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+GPU Resident Drawer created.
+[M01DC029Capture] aspect=16x9 size=1280x720 sha256=fa5be781f044e008c5b37c005b6c723a105ea7993ab16aa48411d61c97559600 path=Build/EditorEvidence/M01FirstContact/M01DC029/campaign_16x9.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Capture (UnityEngine.GameObject,int,int,string) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:271)
+M01FirstContactCampaignUiTests:ViewAppliesProfilesAndCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:170)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:299)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:39)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 271)
+
+[M01DC029Capture] aspect=20x9 size=1000x450 sha256=f2f42ff8d39179b4d68a33edc8ea4f46774ce23c1d38180be80df9cd142c1df0 path=Build/EditorEvidence/M01FirstContact/M01DC029/campaign_20x9.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Capture (UnityEngine.GameObject,int,int,string) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:271)
+M01FirstContactCampaignUiTests:ViewAppliesProfilesAndCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:171)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:299)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:39)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 271)
+
+[M01DC029Capture] aspect=tablet4x3 size=1024x768 sha256=514d00e54ce48159a9c8d828b6783928cd7a8211fced8fb622c5c0fca65f8a8e path=Build/EditorEvidence/M01FirstContact/M01DC029/campaign_tablet4x3.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Capture (UnityEngine.GameObject,int,int,string) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:271)
+M01FirstContactCampaignUiTests:ViewAppliesProfilesAndCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:172)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:299)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:39)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 271)
+
+[M01FirstContactCampaignUiValidation] passed=ViewAppliesProfilesAndCapturesSupportedAspects
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:301)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:39)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 301)
+
+[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs:40)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:252)
+
+(Filename: Assets/Tests/Editor/M01FirstContactCampaignUiTests.cs Line: 40)
+
+[SkirmishExpandedEconomyTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedEconomyTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedEconomyTests.cs:914)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:255)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedEconomyTests.cs Line: 914)
+
+[AriaPlayEditorValidation] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=en
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaPlayEditorValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs:113)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1012)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:256)
+
+(Filename: Assets/Game/Scripts/Editor/AriaPlayEditorValidation.cs Line: 113)
+
+[SkirmishExpandedAriaWatch] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=155923 locale=fa-IR
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (Game.Configs.SkirmishAriaAcceptancePayload&) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:32)
+Game.Editor.SkirmishExpandedAriaWatchValidation:AcceptExpandedPayload (string,Game.Skirmish.Contracts.SkirmishSizeId,Game.Skirmish.Contracts.SkirmishDifficultyId,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs:55)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:PayloadLoggersDoNotStampVictory () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1013)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1417)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:256)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishExpandedAriaWatchValidation.cs Line: 32)
+
+'Game.Runtime.SkirmishSessionCleanupSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishSessionCleanupSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs:22)
+Game.Runtime.SkirmishSessionCleanupSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.SystemHandle:Update (Unity.Entities.WorldUnmanaged) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:169)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1128)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1421)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:256)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+[SkirmishS002AriaHarnessTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishS002AriaHarnessTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs:1425)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1014)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:256)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs Line: 1425)
+
+[SkirmishExpandedAriaTests] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishExpandedAriaTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs:1015)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:256)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs Line: 1015)
+
+[SkirmishS004DeliveryValidation] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SkirmishSharedMaterialsTests:RunS004DeliveryValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs:257)
+
+(Filename: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs Line: 257)
+
+Thread 0x3a12fb000 may have been prematurely finalized
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Unloading 74 Unused Serialized files (Serialized files now loaded: 0)
+Killing ADB server in 0.115471 seconds.
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Unloading 5775 unused Assets / (3.0 MB). Loaded Objects now: 53453.
+Memory consumption went from 1.57 GB to 1.57 GB.
+Total: 59.390791 ms (FindLiveObjects: 1.183916 ms CreateObjectMapping: 8.826167 ms MarkObjects: 43.732333 ms  DeleteObjects: 5.648208 ms)
+
+Thread 0x3b0cc7000 may have been prematurely finalized
+VB/C# compiler server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+MSBuild server shut down successfully.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-6000.5.2-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad-6000.5.2 channel disconnected successfully.
+Thread 0x16ffcb000 may have been prematurely finalized
+Thread 0x1700e3000 may have been prematurely finalized
+Thread 0x170057000 may have been prematurely finalized
+Thread 0x1701fb000 may have been prematurely finalized
+Thread 0x170287000 may have been prematurely finalized
+Thread 0x170313000 may have been prematurely finalized
+Thread 0x17039f000 may have been prematurely finalized
+Thread 0x17016f000 may have been prematurely finalized
+Thread 0x17042b000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x175cc7000 may have been prematurely finalized
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+Cleanup mono
+CodeReloadManager destroyed
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 399 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 44
+Exiting batchmode successfully now!
+[Package Manager] Server process was shutdown

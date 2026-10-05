@@ -46,7 +46,7 @@ namespace Game.Rendering
                 ? singleton
                 : new FactionVisualConfig
                 {
-                    PlayerColor = new float4(0.12f, 0.72f, 1f, 1f),
+                    PlayerColor = new float4(1f),
                     EnemyColor = new float4(1f, 0.35f, 0.2f, 1f),
                     NeutralColor = new float4(0.82f, 0.82f, 0.82f, 1f)
                 };

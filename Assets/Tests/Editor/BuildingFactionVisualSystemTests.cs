@@ -125,7 +125,7 @@ public sealed class BuildingFactionVisualSystemTests
         var settings = new FactionVisualSettings();
 
         Assert.AreEqual(new Color(0.82f, 0.82f, 0.82f, 1f), settings.GetColor(0));
-        Assert.AreEqual(new Color(0.12f, 0.72f, 1f, 1f), settings.GetColor(1));
+        Assert.AreEqual(Color.white, settings.GetColor(1));
         Assert.AreEqual(new Color(1f, 0.35f, 0.2f, 1f), settings.GetColor(2));
         Assert.AreEqual(0.45f, settings.BuildingFactionTintStrength);
     }
@@ -151,8 +151,8 @@ public sealed class BuildingFactionVisualSystemTests
             building);
 
         Color tinted = ReadAppliedColor(renderer);
-        Assert.That(tinted.r, Is.LessThan(0.7f));
-        Assert.That(tinted.g, Is.GreaterThan(0.8f));
+        Assert.That(tinted.r, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tinted.g, Is.EqualTo(1f).Within(0.001f));
         Assert.That(tinted.b, Is.EqualTo(1f).Within(0.001f));
 
         building.OwnerFactionId = 2;

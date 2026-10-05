@@ -306,7 +306,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             AssetDatabase.LoadAssetAtPath<FactionVisualSettingsSceneConfigAsset>(
                 "Assets/Game/Configs/Scene/Game_FactionVisualSettings_Config.asset");
         Assert.IsNotNull(authoredConfig);
-        Assert.AreEqual(new Color(0.12f, 0.72f, 1f, 1f), authoredConfig.PlayerColor);
+        Assert.AreEqual(Color.white, authoredConfig.PlayerColor);
         Assert.AreEqual(new Color(1f, 0.35f, 0.2f, 1f), authoredConfig.EnemyColor);
 
         using var world = new World(nameof(FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs));

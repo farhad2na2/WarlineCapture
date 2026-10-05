@@ -12,7 +12,7 @@ namespace Game.Authoring
         [SerializeField] private FactionVisualSettingsConfig config;
 
         [Header("Marker Colors")]
-        [SerializeField, HideInInspector] private Color playerColor = new(0.12f, 0.72f, 1f, 1f);
+        [SerializeField, HideInInspector] private Color playerColor = Color.white;
         [SerializeField, HideInInspector] private Color enemyColor = new(1f, 0.35f, 0.2f, 1f);
         [SerializeField, HideInInspector] private Color neutralColor = new(0.82f, 0.82f, 0.82f, 1f);
 

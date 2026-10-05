@@ -476,7 +476,7 @@ namespace Game.Configs
 
     [CreateAssetMenu(menuName = "Game/Config/Faction Visual Settings")]
     public class FactionVisualSettingsConfig : ScriptableObject
-    { [SerializeField] private Color playerColor = new(0.12f, 0.72f, 1f, 1f); [SerializeField] private Color enemyColor = new(1f, 0.35f, 0.2f, 1f); [SerializeField] private Color neutralColor = new(0.82f, 0.82f, 0.82f, 1f); [Range(0f, 1f), SerializeField] private float buildingFactionTintStrength = 0.45f;
+    { [SerializeField] private Color playerColor = Color.white; [SerializeField] private Color enemyColor = new(1f, 0.35f, 0.2f, 1f); [SerializeField] private Color neutralColor = new(0.82f, 0.82f, 0.82f, 1f); [Range(0f, 1f), SerializeField] private float buildingFactionTintStrength = 0.45f;
 
         public Color PlayerColor => playerColor;
         public Color EnemyColor => enemyColor;

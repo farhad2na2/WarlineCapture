@@ -6,7 +6,7 @@ namespace Game.Runtime
     public sealed class FactionVisualSettings
     {
         private FactionVisualSettingsConfig _config;
-        private Color _playerColor = new(0.12f, 0.72f, 1f, 1f);
+        private Color _playerColor = Color.white;
         private Color _enemyColor = new(1f, 0.35f, 0.2f, 1f);
         private Color _neutralColor = new(0.82f, 0.82f, 0.82f, 1f);
         private float _buildingFactionTintStrength = 0.45f;

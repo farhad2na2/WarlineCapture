@@ -132,7 +132,7 @@ namespace Game.Runtime
             return ownerFactionId switch
             {
                 0 => new Color(0.82f, 0.82f, 0.82f, 1f),
-                1 => new Color(0.12f, 0.72f, 1f, 1f),
+                1 => Color.white,
                 _ => new Color(0.92f, 0.2f, 0.16f, 1f)
             };
         }

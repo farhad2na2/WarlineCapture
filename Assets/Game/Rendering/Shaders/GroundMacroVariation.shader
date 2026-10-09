@@ -30,6 +30,7 @@ Shader "Game/Environment/GroundMacroVariation"
         _SandDryColor("Sunlit Sand", Color) = (0.88, 0.75, 0.51, 1)
         _SandWornColor("Worn Earth", Color) = (0.69, 0.57, 0.39, 1)
         _SandScrubColor("Dry Scrub Pockets", Color) = (0.65, 0.65, 0.43, 1)
+        _SandScrubCoverage("Scrub Patch Coverage", Range(0, 1)) = 0
 
         [Header(Close Detail)]
         _DetailStrength("Detail Strength", Range(0, 0.3)) = 0.06
@@ -45,6 +46,13 @@ Shader "Game/Environment/GroundMacroVariation"
         _GroundDetailStrength("Detail Albedo Strength", Range(0, 1)) = 0.7
         _GroundDetailNormalStrength("Detail Normal Strength", Range(0, 2)) = 0.8
         _GreenPatchThreshold("Green Patch Threshold", Range(0, 1)) = 0.5
+
+        [Header(District Surfaces)]
+        _DistrictSurfaceMap("District Surface Mask", 2D) = "black" {}
+        _DistrictSurfaceRect("District World Rect", Vector) = (0, 0, 2048, 1024)
+        _DistrictSurfaceStrength("District Surface Strength", Range(0, 1)) = 0
+        _DistrictSurfaceConstant("Constant Surface Weights", Vector) = (0, 0, 0, 0)
+        _DetailAntiRepeat("Detail Anti Repeat Blend", Range(0, 1)) = 0
 
         [Header(Atlas Dirt Shoulder Match)]
         _DirtShoulderColorScale("Dirt Shoulder Color Scale", Color) = (1, 1, 1, 1)
@@ -99,8 +107,15 @@ Shader "Game/Environment/GroundMacroVariation"
             TEXTURE2D(_DesertDetailNormal);
             TEXTURE2D(_GreenDetailMap);
 
+            TEXTURE2D(_DistrictSurfaceMap);
+            SAMPLER(sampler_DistrictSurfaceMap);
+
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
+                float4 _DistrictSurfaceRect;
+                half4 _DistrictSurfaceConstant;
+                half _DistrictSurfaceStrength;
+                half _DetailAntiRepeat;
                 half4 _BaseColor;
                 half _BaseColorInfluence;
                 half _Smoothness;
@@ -111,6 +126,7 @@ Shader "Game/Environment/GroundMacroVariation"
                 half4 _SandDryColor;
                 half4 _SandWornColor;
                 half4 _SandScrubColor;
+                half _SandScrubCoverage;
                 half _MacroStrength;
                 float _MacroScale;
                 half _MacroContrastLow;
@@ -178,6 +194,7 @@ Shader "Game/Environment/GroundMacroVariation"
                      + ValueNoise(p * 2.13 + 5.2) * 0.30
                      + ValueNoise(p * 4.71 + 9.1) * 0.15;
             }
+            #include "SkirmishDistrictSurfaces.hlsl"
             // ------------------------------------------------------------------
 
             // Computes the world-projected variation multiplier and perturbs the
@@ -214,6 +231,14 @@ Shader "Game/Environment/GroundMacroVariation"
                 half3 greenDetail = SAMPLE_TEXTURE2D(_GreenDetailMap, sampler_DesertDetailMap, duv * 0.93).rgb;
                 half greenMask = smoothstep(_GreenPatchThreshold, _GreenPatchThreshold + 0.25, tintSelect)
                                * smoothstep(0.2, 0.6, patchMask);
+                // Blend a rotated, offset sample across broad fields to break repeated stone motifs.
+                if (_DetailAntiRepeat > .001)
+                {
+                    float repeatBlend = smoothstep(.22, .78, ValueNoise(p * .065 + 23)) * _DetailAntiRepeat;
+                    half3 alternate = SAMPLE_TEXTURE2D(_DesertDetailMap, sampler_DesertDetailMap,
+                        float2(-duv.y, duv.x) * 1.17 + float2(.37, .61)).rgb;
+                    desertDetail = lerp(desertDetail, alternate, repeatBlend);
+                }
                 half3 detailColor = lerp(desertDetail, greenDetail, greenMask);
                 half detailWeight = _GroundDetailStrength * detailFade * enabled;
                 variation *= lerp(half3(1, 1, 1), detailColor * 2.0, detailWeight);
@@ -282,13 +307,15 @@ Shader "Game/Environment/GroundMacroVariation"
                 float2 landscape = input.positionWS.xz;
                 float2 warp = float2(ValueNoise(landscape * .011 + 9), ValueNoise(landscape * .013 + 51)) * 19;
                 float worn = smoothstep(.30, .72, Fbm((landscape + warp) * .024));
-                float scrub = smoothstep(.65, .83, Fbm(landscape * .048 + 107));
+                float scrub = smoothstep(.65 - _SandScrubCoverage * .35,
+                    .83 - _SandScrubCoverage * .22, Fbm(landscape * .048 + 107));
                 half3 sand = lerp(_SandDryColor.rgb, _SandWornColor.rgb, worn);
                 sand = lerp(sand, _SandScrubColor.rgb, scrub * .7);
                 albedo = lerp(albedo, sand, _SandPaletteStrength);
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
                 albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);
+                ApplyDistrictSurface(input.positionWS, albedo, normalWS);
 
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;

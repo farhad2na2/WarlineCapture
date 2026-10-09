@@ -1,0 +1,1 @@
+[SkirmishSurfaceValidation] result=Passed shader=Compiled mask=2048x1024 concretePixels=4148 stonePixels=194951 tilePixels=66807 vertices=137471 triangles=70227 sourceScene=Unchanged nativeVisualReview=6Views fullMission=Pending device=Pending

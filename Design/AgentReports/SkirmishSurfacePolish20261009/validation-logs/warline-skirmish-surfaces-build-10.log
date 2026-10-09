@@ -1,0 +1,20 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.SkirmishSurfacePolish.BuildAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_45ab917b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishSurfacePolish] result=Passed {"result":"Passed","sourceSceneSha256Before":"77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40","sourceSceneSha256After":"77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40","roadTiles":5758,"previousDirtPieces":4116,"concreteZones":4,"limestoneZones":2082,"tileZones":708,"groundMaterials":4,"scope":"Shared dense-city presentation assets; no scene, navigation, building, objective or budget changes."}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.SkirmishSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Build.cs:75)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_45ab917b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.SkirmishSurfacePolish.BuildAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_45ab917b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

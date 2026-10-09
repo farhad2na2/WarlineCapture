@@ -1,0 +1,19 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "beforeHash": "20a09607bca1be778cf36f2d430aaa5969ee104dafe988e51a175c7d9c354769",
+    "afterHash": "20a09607bca1be778cf36f2d430aaa5969ee104dafe988e51a175c7d9c354769",
+    "protectedSceneHash": "02f0138c34ed2bcf93ec2ccdaf49e108010358e923eb9f777a3431a3adcd5931",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 4055,
+    "renderersAfter": 4055,
+    "trianglesBefore": 2168333,
+    "trianglesAfter": 2168333,
+    "moves": [],
+    "waterSurfaces": []
+}

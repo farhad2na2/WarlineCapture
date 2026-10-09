@@ -1,0 +1,19 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "2c9f02e955fe0a37fbd119739296992d42c1e6fa5458175eb84c5a0b0392d76c",
+    "afterHash": "2c9f02e955fe0a37fbd119739296992d42c1e6fa5458175eb84c5a0b0392d76c",
+    "protectedSceneHash": "a3115dc7e5aa97363a21a2fb79586e3bd757299d97d86d99520a8c8a36504631",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 25127,
+    "renderersAfter": 25127,
+    "trianglesBefore": 16335637,
+    "trianglesAfter": 16335637,
+    "moves": [],
+    "waterSurfaces": []
+}

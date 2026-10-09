@@ -1,0 +1,173 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "2c9f02e955fe0a37fbd119739296992d42c1e6fa5458175eb84c5a0b0392d76c",
+    "afterHash": "5dc790b721b1925e7b807c8442c2e7b13e3f1f4f6cf9aba6699053649cea2012",
+    "protectedSceneHash": "41050b20ddbc917ea9b132bd1c4021f6d3b441ab8a05c83bd54341a34f4d43ef",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 25127,
+    "renderersAfter": 25127,
+    "trianglesBefore": 16335637,
+    "trianglesAfter": 16335637,
+    "moves": [
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_01",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 662.9638671875,
+                "y": 0.0,
+                "z": 558.5713500976563
+            },
+            "after": {
+                "x": 662.9638061523438,
+                "y": 0.0,
+                "z": 539.381103515625
+            },
+            "transformId": 4934782820232222,
+            "instanceId": 1186815981,
+            "prefabTransformId": 4934782820232222
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_01",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 619.1201171875,
+                "y": 0.0,
+                "z": 565.3405151367188
+            },
+            "after": {
+                "x": 613.1201171875,
+                "y": 0.0,
+                "z": 579.1531982421875
+            },
+            "transformId": 4934782820232222,
+            "instanceId": 1615604891,
+            "prefabTransformId": 4934782820232222
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 703.2592163085938,
+                "y": 0.0,
+                "z": 551.767822265625
+            },
+            "after": {
+                "x": 692.8206787109375,
+                "y": 0.0,
+                "z": 533.7678833007813
+            },
+            "transformId": 4605177531797984,
+            "instanceId": 1795484719,
+            "prefabTransformId": 4605177531797984
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 532.529052734375,
+                "y": 0.0,
+                "z": 550.1048583984375
+            },
+            "after": {
+                "x": 532.5291137695313,
+                "y": 0.0,
+                "z": 539.2613525390625
+            },
+            "transformId": 4605177531797984,
+            "instanceId": 1344301999,
+            "prefabTransformId": 4605177531797984
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_04",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 511.458251953125,
+                "y": 0.0,
+                "z": 578.1199951171875
+            },
+            "after": {
+                "x": 517.458251953125,
+                "y": 0.0,
+                "z": 583.9528198242188
+            },
+            "transformId": 4983930442933392,
+            "instanceId": 1857608692,
+            "prefabTransformId": 4983930442933392
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_05",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 655.750732421875,
+                "y": 0.0,
+                "z": 550.7744750976563
+            },
+            "after": {
+                "x": 615.750732421875,
+                "y": 0.0,
+                "z": 588.33349609375
+            },
+            "transformId": 4010455486446270,
+            "instanceId": 790372790,
+            "prefabTransformId": 4010455486446270
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_06",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 777.7872924804688,
+                "y": 0.0,
+                "z": 568.2254638671875
+            },
+            "after": {
+                "x": 753.7872314453125,
+                "y": 0.0,
+                "z": 590.2581787109375
+            },
+            "transformId": 4630494031576786,
+            "instanceId": 1974214037,
+            "prefabTransformId": 4630494031576786
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_06",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 811.6605834960938,
+                "y": 0.0,
+                "z": 563.259521484375
+            },
+            "after": {
+                "x": 823.6605834960938,
+                "y": 0.0,
+                "z": 589.0174560546875
+            },
+            "transformId": 4630494031576786,
+            "instanceId": 942140537,
+            "prefabTransformId": 4630494031576786
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_SandEdge_06",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 705.735107421875,
+                "y": 0.0,
+                "z": 571.33984375
+            },
+            "after": {
+                "x": 705.735107421875,
+                "y": 0.0,
+                "z": 583.3753051757813
+            },
+            "transformId": 4630494031576786,
+            "instanceId": 1035274619,
+            "prefabTransformId": 4630494031576786
+        }
+    ],
+    "waterSurfaces": []
+}

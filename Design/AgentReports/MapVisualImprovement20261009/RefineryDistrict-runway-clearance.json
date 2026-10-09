@@ -1,0 +1,19 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeHash": "c5ea5d879372a390ab3f828b92865ef0cce5d2d46041dcfa5c6c5efd50d78dbc",
+    "afterHash": "c5ea5d879372a390ab3f828b92865ef0cce5d2d46041dcfa5c6c5efd50d78dbc",
+    "protectedSceneHash": "",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 24996,
+    "renderersAfter": 24996,
+    "trianglesBefore": 14932269,
+    "trianglesAfter": 14932269,
+    "moves": [],
+    "waterSurfaces": []
+}

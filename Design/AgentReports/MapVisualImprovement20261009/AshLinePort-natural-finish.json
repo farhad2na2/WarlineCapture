@@ -1,0 +1,19 @@
+{
+    "map": "AshLinePort",
+    "result": "Passed",
+    "beforeHash": "11b1dcb92d3c7ccdee8b94e6a761f4475565d7140e27ab6148e7bbca2932ece2",
+    "afterHash": "11b1dcb92d3c7ccdee8b94e6a761f4475565d7140e27ab6148e7bbca2932ece2",
+    "protectedSceneHash": "6ab7070db33bf3056c225b4ca31712702787fa4f108de4bb527606dddc368c5b",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 31295,
+    "renderersAfter": 31295,
+    "trianglesBefore": 20735295,
+    "trianglesAfter": 20735295,
+    "moves": [],
+    "waterSurfaces": []
+}

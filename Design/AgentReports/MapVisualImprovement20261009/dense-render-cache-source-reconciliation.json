@@ -1,0 +1,23 @@
+{
+  "result": "PassedSourceReconciliation",
+  "previousPublishedSourceSHA256": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
+  "finalSourceSHA256": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
+  "previousPublishedSteps": [
+    "https://github.com/farhad2na2/WarlineCapture/pull/59",
+    "https://github.com/farhad2na2/WarlineCapture/pull/60",
+    "https://github.com/farhad2na2/WarlineCapture/pull/61"
+  ],
+  "step4Receipts": [
+    "DenseCity-natural-details.json",
+    "DenseCity-natural-finish.json",
+    "DenseCity-runway-clearance.json"
+  ],
+  "nativeProtectedSceneChecks": "All passed; only visual references and documented render-only plant transforms excluded. Gameplay, collision, ownership and mission configuration retained.",
+  "rendererAndTriangleCountsUnchanged": true,
+  "denseMovedPlants": 20,
+  "runwayMaterialSlotAdditionFromPR60": 1,
+  "expectedAuthoredRenderOnlyRows": 10843,
+  "mainSourceMatchesPreviousPublishedSource": true,
+  "renderDatabaseParity": "Passed fresh native source parity and determinism; wrapper exit 0, native exit 0",
+  "nativeLog": "warline-map-dense-cache-details-01.log"
+}

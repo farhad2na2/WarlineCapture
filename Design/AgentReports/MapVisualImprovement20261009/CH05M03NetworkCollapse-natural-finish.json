@@ -1,0 +1,19 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "beforeHash": "8d249965e5448f6476459b85ec6f2a07eb978fcd2e7814dfa075f40f4e41e91c",
+    "afterHash": "8d249965e5448f6476459b85ec6f2a07eb978fcd2e7814dfa075f40f4e41e91c",
+    "protectedSceneHash": "fac3f67bd8cb032d800ef194478db0a8bc09618bee723c5bbbad9ee38356ca90",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 4644,
+    "renderersAfter": 4644,
+    "trianglesBefore": 2499613,
+    "trianglesAfter": 2499613,
+    "moves": [],
+    "waterSurfaces": []
+}

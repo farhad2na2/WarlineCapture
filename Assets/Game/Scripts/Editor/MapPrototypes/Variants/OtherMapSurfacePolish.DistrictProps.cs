@@ -78,13 +78,15 @@ namespace Game.Editor.MapVariants
             {
                 foreach(string map in VisualMaps)
                 {
-                    string source=Source(map),original=File.ReadAllText(source),backup=VisualReport+"/local-baselines/"+map+"-district-scene.unity";
+                    string source=Source(map),backup=VisualReport+"/local-baselines/"+map+"-district-scene.unity";
                     string receiptPath=VisualReport+"/"+map+"-district-details.json";
                     if(File.Exists(receiptPath))
                     {
                         var completed=JsonUtility.FromJson<DistrictDetailReceipt>(File.ReadAllText(receiptPath));
                         if(completed.result=="Passed"&&completed.afterHash==Hash(source)){Debug.Log("[MapDistrictDetails] preserved completed map="+map);continue;}
+                        throw new InvalidOperationException("District source changed since its saved receipt; re-audit before establishing a new baseline: "+map);
                     }
+                    string original=ReadSceneText(source);
                     if(!File.Exists(backup))File.WriteAllText(backup,original);
                     else if(Hash(source)!=Hash(backup))throw new InvalidOperationException("Unreviewed partial district run: inspect pending receipt before retrying "+map);
                     var scene=EditorSceneManager.OpenScene(source,OpenSceneMode.Single);var rs=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<MeshRenderer>(true)).ToArray();
@@ -152,10 +154,10 @@ namespace Game.Editor.MapVariants
                         }
                         if(changed){r.sharedMaterials=mats;EditorUtility.SetDirty(r);if(container)receipt.variedContainers++;else receipt.buildingRenderers++;}
                     }
-                    receipt.moves=moves.ToArray();receipt.protectedSceneHash=TextHash(NonDecorativeChanges(original,receipt.moves));
+                    receipt.moves=moves.ToArray();receipt.protectedSceneHash=TextHash(NonDecorativeChanges(original,receipt.moves));original=null;GC.Collect();
                     receipt.result="Pending native save and invariant check";File.WriteAllText(receiptPath+".pending.json",JsonUtility.ToJson(receipt,true));
                     EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))throw new InvalidOperationException("District scene save failed "+map);
-                    if(NonDecorativeChanges(original,receipt.moves)!=NonDecorativeChanges(File.ReadAllText(source),receipt.moves))throw new InvalidOperationException("Non-decorative scene data changed "+map);
+                    if(receipt.protectedSceneHash!=TextHash(NonDecorativeChanges(ReadSceneText(source),receipt.moves)))throw new InvalidOperationException("Non-decorative scene data changed "+map);
                     receipt.renderersAfter=rs.Length;receipt.trianglesAfter=rs.Sum(r=>(r.GetComponent<MeshFilter>()?.sharedMesh?.triangles.Length??0)/3);
                     if(receipt.trianglesAfter!=receipt.trianglesBefore)throw new InvalidOperationException("Unexpected geometry cost "+map);
                     AssetDatabase.SaveAssets();

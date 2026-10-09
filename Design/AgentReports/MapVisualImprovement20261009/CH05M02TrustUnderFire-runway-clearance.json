@@ -1,0 +1,19 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "beforeHash": "6bddd4830ee4cacbcc883061a277e42f2f2bb8a282fa97b17e72653879f3b897",
+    "afterHash": "6bddd4830ee4cacbcc883061a277e42f2f2bb8a282fa97b17e72653879f3b897",
+    "protectedSceneHash": "",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 10373,
+    "renderersAfter": 10373,
+    "trianglesBefore": 8017300,
+    "trianglesAfter": 8017300,
+    "moves": [],
+    "waterSurfaces": []
+}

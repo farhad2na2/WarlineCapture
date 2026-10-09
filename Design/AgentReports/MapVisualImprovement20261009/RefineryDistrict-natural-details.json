@@ -1,0 +1,547 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeHash": "97836ca7f406dfb6ba295cab39cd8698f0649566d53060e83ef05db5af311991",
+    "afterHash": "c5ea5d879372a390ab3f828b92865ef0cce5d2d46041dcfa5c6c5efd50d78dbc",
+    "protectedSceneHash": "6987ce4f4d4d09bbb12ede0992251c6e4d3ce36c494f84ff900081807a27bbe6",
+    "rocks": 106,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 16,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 24996,
+    "renderersAfter": 24996,
+    "trianglesBefore": 14932269,
+    "trianglesAfter": 14932269,
+    "moves": [
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 415.3638000488281,
+                "y": 0.36402708292007449,
+                "z": 417.53070068359377
+            },
+            "after": {
+                "x": 411.9049377441406,
+                "y": 0.3640270233154297,
+                "z": 403.6611328125
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1049689708,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 426.50897216796877,
+                "y": 0.0,
+                "z": 393.2416687011719
+            },
+            "after": {
+                "x": 420.03131103515627,
+                "y": 0.0,
+                "z": 405.3111267089844
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1396117043,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 429.9525146484375,
+                "y": 0.0347919724881649,
+                "z": 395.43084716796877
+            },
+            "after": {
+                "x": 411.98638916015627,
+                "y": 0.0347919762134552,
+                "z": 406.96112060546877
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1133798286,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 494.70013427734377,
+                "y": 0.0,
+                "z": 597.4002685546875
+            },
+            "after": {
+                "x": 492.0615234375,
+                "y": 0.0,
+                "z": 595.788330078125
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1468802622,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 493.1513977050781,
+                "y": 0.0,
+                "z": 598.19970703125
+            },
+            "after": {
+                "x": 491.9733581542969,
+                "y": 0.0,
+                "z": 597.4383544921875
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 176999507,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 498.66143798828127,
+                "y": 0.0,
+                "z": 598.7145385742188
+            },
+            "after": {
+                "x": 491.99908447265627,
+                "y": 0.0,
+                "z": 599.0884399414063
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1159766762,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 485.5574645996094,
+                "y": 0.0,
+                "z": 531.375244140625
+            },
+            "after": {
+                "x": 478.2611999511719,
+                "y": 0.0,
+                "z": 530.7412109375
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 2053976182,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 486.24468994140627,
+                "y": 0.0,
+                "z": 532.6583251953125
+            },
+            "after": {
+                "x": 478.45770263671877,
+                "y": 0.0,
+                "z": 532.3912353515625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 566681371,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 486.1025085449219,
+                "y": 0.0,
+                "z": 535.9560546875
+            },
+            "after": {
+                "x": 478.5503234863281,
+                "y": 0.0,
+                "z": 534.041259765625
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1388496221,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 887.899169921875,
+                "y": 0.0,
+                "z": 617.0113525390625
+            },
+            "after": {
+                "x": 881.439453125,
+                "y": 0.0,
+                "z": 627.2596435546875
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1875771288,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 874.6280517578125,
+                "y": 0.6174548864364624,
+                "z": 658.1871948242188
+            },
+            "after": {
+                "x": 871.0767822265625,
+                "y": 0.6174548864364624,
+                "z": 662.8032836914063
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1063771008,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 860.89013671875,
+                "y": 0.0,
+                "z": 656.5008544921875
+            },
+            "after": {
+                "x": 878.315673828125,
+                "y": 0.0,
+                "z": 664.453369140625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 2065576861,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 396.1681213378906,
+                "y": 0.0,
+                "z": 455.1785888671875
+            },
+            "after": {
+                "x": 403.3774719238281,
+                "y": 0.0,
+                "z": 458.9058837890625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1130403272,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 470.88897705078127,
+                "y": 0.0,
+                "z": 574.8325805664063
+            },
+            "after": {
+                "x": 470.20318603515627,
+                "y": 0.0,
+                "z": 565.1599731445313
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 2051983416,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 469.48486328125,
+                "y": 0.0,
+                "z": 573.7982788085938
+            },
+            "after": {
+                "x": 469.8248291015625,
+                "y": 0.0,
+                "z": 566.8099975585938
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 1950193932,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 468.25360107421877,
+                "y": 0.0,
+                "z": 574.1641845703125
+            },
+            "after": {
+                "x": 470.15435791015627,
+                "y": 0.0,
+                "z": 568.4600830078125
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 2058553472,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 519.3721923828125,
+                "y": 0.0,
+                "z": 633.0029296875
+            },
+            "after": {
+                "x": 508.7744140625,
+                "y": 0.0,
+                "z": 634.0260009765625
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1749562382,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 520.3318481445313,
+                "y": 0.0,
+                "z": 633.7737426757813
+            },
+            "after": {
+                "x": 508.76226806640627,
+                "y": 0.0,
+                "z": 635.6759643554688
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 391187509,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 520.2561645507813,
+                "y": 0.0,
+                "z": 637.8441772460938
+            },
+            "after": {
+                "x": 508.74517822265627,
+                "y": 0.0,
+                "z": 637.3259887695313
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1283991313,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 928.8045654296875,
+                "y": 4.585864067077637,
+                "z": 635.6060791015625
+            },
+            "after": {
+                "x": 909.8104248046875,
+                "y": 4.585864067077637,
+                "z": 639.3004150390625
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1083546269,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 944.9480590820313,
+                "y": 3.5353636741638185,
+                "z": 633.2139892578125
+            },
+            "after": {
+                "x": 931.2213745117188,
+                "y": 3.5353639125823976,
+                "z": 640.6817626953125
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1119271321,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 967.259033203125,
+                "y": 0.0,
+                "z": 614.0245361328125
+            },
+            "after": {
+                "x": 955.87255859375,
+                "y": 0.0,
+                "z": 624.05078125
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 489947336,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 964.5748291015625,
+                "y": 0.0,
+                "z": 610.1856079101563
+            },
+            "after": {
+                "x": 968.9417724609375,
+                "y": 0.0,
+                "z": 625.7008666992188
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 148278447,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 972.507080078125,
+                "y": 0.0,
+                "z": 611.5980224609375
+            },
+            "after": {
+                "x": 956.2779541015625,
+                "y": 0.0,
+                "z": 627.350830078125
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 763417181,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 401.1199035644531,
+                "y": 0.0,
+                "z": 618.4099731445313
+            },
+            "after": {
+                "x": 404.9331970214844,
+                "y": 0.0,
+                "z": 605.5095825195313
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 630735649,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 402.8766784667969,
+                "y": 0.0,
+                "z": 594.0607299804688
+            },
+            "after": {
+                "x": 404.7846374511719,
+                "y": 0.0,
+                "z": 607.1596069335938
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1688183122,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 410.6309814453125,
+                "y": 0.0,
+                "z": 579.0601196289063
+            },
+            "after": {
+                "x": 420.6474609375,
+                "y": 0.0,
+                "z": 585.5082397460938
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 84246536,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 951.6411743164063,
+                "y": 3.1429483890533449,
+                "z": 632.4118041992188
+            },
+            "after": {
+                "x": 948.8125610351563,
+                "y": 3.1429483890533449,
+                "z": 640.8734741210938
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1455312797,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1001.4425659179688,
+                "y": 0.6579319834709168,
+                "z": 619.2163696289063
+            },
+            "after": {
+                "x": 985.9426879882813,
+                "y": 0.6579320430755615,
+                "z": 624.0643920898438
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 242051337,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1004.5509643554688,
+                "y": 0.5991381406784058,
+                "z": 617.5565185546875
+            },
+            "after": {
+                "x": 985.9419555664063,
+                "y": 0.5991381406784058,
+                "z": 625.7144775390625
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1731850675,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_RefineryDistrict/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1007.5369262695313,
+                "y": 0.0,
+                "z": 572.682861328125
+            },
+            "after": {
+                "x": 998.6625366210938,
+                "y": 0.0,
+                "z": 577.437744140625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1891068848,
+            "prefabTransformId": 4007070079012600
+        }
+    ],
+    "waterSurfaces": []
+}

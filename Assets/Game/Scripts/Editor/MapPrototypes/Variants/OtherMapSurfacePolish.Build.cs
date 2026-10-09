@@ -49,7 +49,14 @@ namespace Game.Editor.MapVariants
             if(materialCount!=Maps.Length*5)throw new InvalidOperationException("Missing surface materials.");
             Debug.Log("[OtherMapSurfaceValidation] result=Passed maps="+Maps.Length+" materials="+materialCount);
         }
-        private static string TextHash(string value){using var h=System.Security.Cryptography.SHA256.Create();return BitConverter.ToString(h.ComputeHash(System.Text.Encoding.UTF8.GetBytes(value))).Replace("-", "").ToLowerInvariant();}
+        private static string TextHash(string value)
+        {
+            using var hash=System.Security.Cryptography.SHA256.Create();
+            using var stream=new System.Security.Cryptography.CryptoStream(Stream.Null,hash,System.Security.Cryptography.CryptoStreamMode.Write);
+            using(var writer=new StreamWriter(stream,new System.Text.UTF8Encoding(false),65536,true)){writer.Write(value);}
+            stream.FlushFinalBlock();
+            return BitConverter.ToString(hash.Hash).Replace("-", "").ToLowerInvariant();
+        }
         public static void BuildAndCapture()
         {
             Check();Directory.CreateDirectory(Report);Directory.CreateDirectory(Art);AssetDatabase.Refresh();

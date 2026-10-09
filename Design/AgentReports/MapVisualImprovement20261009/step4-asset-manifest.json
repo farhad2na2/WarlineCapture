@@ -1,0 +1,18 @@
+{
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/e7ec4ea6cf0ea4132b3b8a3d463e1e4d_Water.mat.meta": "6557ab337fddd901f8a0c85b684bc1963c223e258e3efcf5f73390535cd63443",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/48843a2db7a47754f9c8d6ae390ebf4b_Mountain.mat.meta": "0d1348050db891dfabb51bfdec65e01ae4dc638d1e0bfa6c78fd0973a3c9c008",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/48843a2db7a47754f9c8d6ae390ebf4b_Rock.mat": "ebf29d0a9c46946641e2b51b9e20d7724724728012d996e0acc105c0a7a4bbf8",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/7ebfd405eb8711d4bb584f620ef5043a_Water.mat.meta": "400beb489aa5a7c252c004956fc026c3160d1212591ab5a8341f4f284a532d96",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/48843a2db7a47754f9c8d6ae390ebf4b_Mountain.mat": "45f269f6f31b41b929f3fee0f461e01992bd82ddc7bf1a853e406d4a9b33ddb9",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/48843a2db7a47754f9c8d6ae390ebf4b_Rock.mat.meta": "e4c760730a397d3c93a9360be97d16d37c01b924edff3027813c1ec5dfabadb3",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/d90068bfe6ce4c78a2d95bf6fd876882_Mountain.mat.meta": "49532900e1589338e0748ce355a2fbfc9667a3c35399a0b6ecd158468540c376",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/988a3b944108f4af9800219477fa7f65_Water.mat.meta": "5591cba58ab82b9159684fae5bbd67f4da98e2f0379bf0063990c744f6a613a0",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/e7ec4ea6cf0ea4132b3b8a3d463e1e4d_Water.mat": "c6eea9dadea58103355faa071923982b06e84d2b2cd0400c9e3343d99caa6116",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/d90068bfe6ce4c78a2d95bf6fd876882_Mountain.mat": "f4b4f8f72a81b7e3e3f9582f64cca811c50ddc70360a2a697396e0fde402b3f4",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/7ebfd405eb8711d4bb584f620ef5043a_Water.mat": "3683721deaf1aa9acc7d6d47af4746de255bbae0e70ff8722e7b531a29101dea",
+  "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape/988a3b944108f4af9800219477fa7f65_Water.mat": "eb505966ec2ccab6e8f0424bd30c5a48e80e0b0effab118e050737081b52c229",
+  "Assets/Game/Rendering/Shaders/CampaignRockWeathering.shader": "81af03e7f8cb68eb4b88c1da9d78c93e6c5de172014a331caf2e22274b7ac525",
+  "Assets/Game/Rendering/Shaders/CampaignRockWeathering.shader.meta": "b457347e98b47f45e16b6413f704d88f73a3f46c80e22cd23bde0b27a1a7e9e1",
+  "Assets/Game/Rendering/Shaders/CampaignWater.shader": "84e15a20cc94c35d9c37edf5178a8831ea92899c10f39a2b38e7881c171481db",
+  "Assets/Game/Rendering/Shaders/CampaignWater.shader.meta": "19678b2e4748c385c2a9ad010086fd231634eba4102083cecc269e7cce38d52d"
+}

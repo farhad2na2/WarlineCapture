@@ -1,0 +1,105 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "beforeHash": "68577e50cf2a71f5eafa8f9d9bcda43795c47edfef9c30f8db86853430a9d6b7",
+    "afterHash": "6bddd4830ee4cacbcc883061a277e42f2f2bb8a282fa97b17e72653879f3b897",
+    "protectedSceneHash": "a40d63def41127be51d9df0aa53715b4d21a4cc67d98b35614127d1d93e98c74",
+    "rocks": 2,
+    "mountains": 0,
+    "water": 1,
+    "plantGroups": 1,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 10373,
+    "renderersAfter": 10373,
+    "trianglesBefore": 8017300,
+    "trianglesAfter": 8017300,
+    "moves": [
+        {
+            "path": "Map_AshLinePort/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 406.42962646484377,
+                "y": 1.2439419031143189,
+                "z": 650.8375854492188
+            },
+            "after": {
+                "x": 410.74981689453127,
+                "y": 1.2439417839050294,
+                "z": 636.4580688476563
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1618902472,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_AshLinePort/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 413.4998779296875,
+                "y": 1.6871062517166138,
+                "z": 625.22509765625
+            },
+            "after": {
+                "x": 410.51629638671877,
+                "y": 1.6871061325073243,
+                "z": 638.108154296875
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1817286517,
+            "prefabTransformId": 4148633311000140
+        }
+    ],
+    "waterSurfaces": [
+        {
+            "id": "GlobalObjectId_V1-2-90992732d4aa74998b3ed7a132e27f5d-809602432-0",
+            "name": "Water",
+            "path": "Map_AshLinePort/Ground/Water",
+            "mesh": "Plane",
+            "meshAsset": "Library/unity default resources",
+            "material": "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat",
+            "shader": "Synty/Generic_Basic",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 680.0,
+                "y": -0.800000011920929,
+                "z": 499.0
+            },
+            "size": {
+                "x": 44.0,
+                "y": 2.220446049250313e-16,
+                "z": 482.0
+            },
+            "position": {
+                "x": 680.0,
+                "y": -0.800000011920929,
+                "z": 499.0
+            },
+            "scale": {
+                "x": 4.400000095367432,
+                "y": 1.0,
+                "z": 48.20000076293945
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 10.0,
+                "y": 2.220446049250313e-16,
+                "z": 10.0
+            },
+            "vertices": 121,
+            "triangles": 200,
+            "colliders": 0,
+            "active": true
+        }
+    ]
+}

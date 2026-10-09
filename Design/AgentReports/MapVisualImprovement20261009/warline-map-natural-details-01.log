@@ -1,0 +1,138 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildNaturalDetails
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapVisualHashHelpers] result=Passed samples=4
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ValidateVisualHashHelpers () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:115)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:119)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:119)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CityEdgeAirfield result=Passed rocks=230 mountains=0 water=0 plantGroups=14 movedPlants=35 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=RefineryDistrict result=Passed rocks=106 mountains=0 water=0 plantGroups=16 movedPlants=31 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=AshLinePort result=Passed rocks=9 mountains=0 water=2 plantGroups=1 movedPlants=3 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH04M04GroundedSignal result=Passed rocks=40 mountains=0 water=0 plantGroups=0 movedPlants=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH04M05ArmorBreak result=Passed rocks=90 mountains=0 water=0 plantGroups=31 movedPlants=62 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH05M01CitywideAlert result=Passed rocks=28 mountains=0 water=46 plantGroups=2 movedPlants=3 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH05M02TrustUnderFire result=Passed rocks=2 mountains=0 water=1 plantGroups=1 movedPlants=2 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH05M03NetworkCollapse result=Passed rocks=28 mountains=0 water=46 plantGroups=2 movedPlants=3 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH05M04LastCorridor result=Passed rocks=27 mountains=0 water=46 plantGroups=2 movedPlants=3 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=CH05M05CommandNode result=Passed rocks=20 mountains=0 water=46 plantGroups=1 movedPlants=1 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] map=DenseCity result=Passed rocks=416 mountains=29 water=220 plantGroups=9 movedPlants=20 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:191)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapNaturalDetails] result=Passed maps=11 gameplayCollisionAndLighting=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:193)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+ArgumentException: Invalid SceneManagerSetup:
+ No loaded scene found.
+ One active scene is required. Number of active scenes: 0
+Game.Editor.MapVariants.OtherMapSurfacePolish.BuildNaturalDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.NaturalDetails.cs:195)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildNaturalDetails
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_7efadca2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

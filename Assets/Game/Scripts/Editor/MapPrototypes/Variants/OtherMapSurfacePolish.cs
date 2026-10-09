@@ -23,7 +23,8 @@ namespace Game.Editor.MapVariants
         [Serializable] private sealed class MaterialRow{public string path,shader;public int renderers;}
         [Serializable] private sealed class Audit{public string map,source,sha256;public Vector3 min,max;public int rendererCount;public SurfaceRow[] surfaces;public MaterialRow[] materials;}
         private static string Hierarchy(Transform t)=>t.parent==null?t.name:Hierarchy(t.parent)+"/"+t.name;
-        private static string Hash(string path){using var h=SHA256.Create();return BitConverter.ToString(h.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
+        private static string Hash(string path){using var h=SHA256.Create();using var input=new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read,1024*1024,FileOptions.SequentialScan);return BitConverter.ToString(h.ComputeHash(input)).Replace("-","").ToLowerInvariant();}
+        private static string ReadSceneText(string path)=>System.Text.Encoding.UTF8.GetString(File.ReadAllBytes(path));
         private static void Check(){if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Edit mode required.");for(int i=0;i<SceneManager.sceneCount;i++)if(SceneManager.GetSceneAt(i).isDirty)throw new InvalidOperationException("Existing scene has unsaved edits.");}
         public static void AuditAndCapture(){Run(false);}
         private static void Run(bool apply)
@@ -72,7 +73,9 @@ namespace Game.Editor.MapVariants
                 SceneManager.SetActiveScene(lighting);
                 if(!lighting.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<Light>(true)).Any(l=>l.type==LightType.Directional&&l.enabled&&l.gameObject.activeInHierarchy))throw new InvalidOperationException("Capture requires the authored Match sun: "+map);
             }
-            foreach(var owner in scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<OperationMapBuildingAuthoring>(true)))if(owner.DestroyedVisualRoot!=null)owner.DestroyedVisualRoot.SetActive(false);
+            var destroyedStates=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<OperationMapBuildingAuthoring>(true))
+                .Where(owner=>owner.DestroyedVisualRoot!=null).Select(owner=>(root:owner.DestroyedVisualRoot,active:owner.DestroyedVisualRoot.activeSelf)).ToArray();
+            foreach(var state in destroyedStates)state.root.SetActive(false);
             bool async=ShaderUtil.allowAsyncCompilation;ShaderUtil.allowAsyncCompilation=false;
             var go=new GameObject("SurfaceReviewCamera");SceneManager.MoveGameObjectToScene(go,binding);var camera=go.AddComponent<Camera>();camera.nearClipPlane=.3f;camera.farClipPlane=4000;camera.fieldOfView=48;
             var type=Type.GetType("UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");if(type!=null){var data=go.AddComponent(type);type.GetProperty("renderPostProcessing")?.SetValue(data,true);}
@@ -98,7 +101,7 @@ namespace Game.Editor.MapVariants
                     finally{RenderSettings.fog=fog;type?.GetProperty("renderPostProcessing")?.SetValue(data,true);}
                 }
             }
-            finally{camera.targetTexture=null;RenderTexture.active=previous;UnityEngine.Object.DestroyImmediate(image);UnityEngine.Object.DestroyImmediate(rt);UnityEngine.Object.DestroyImmediate(go);ShaderUtil.allowAsyncCompilation=async;if(lighting.IsValid()&&lighting.isLoaded){SceneManager.SetActiveScene(binding);EditorSceneManager.CloseScene(lighting,true);}}
+            finally{foreach(var state in destroyedStates)if(state.root!=null)state.root.SetActive(state.active);camera.targetTexture=null;RenderTexture.active=previous;UnityEngine.Object.DestroyImmediate(image);UnityEngine.Object.DestroyImmediate(rt);UnityEngine.Object.DestroyImmediate(go);ShaderUtil.allowAsyncCompilation=async;if(lighting.IsValid()&&lighting.isLoaded){SceneManager.SetActiveScene(binding);EditorSceneManager.CloseScene(lighting,true);}}
         }
     }
 }

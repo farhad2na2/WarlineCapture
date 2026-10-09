@@ -53,7 +53,7 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 
 - Earlier shared desert/dense-city road and district surface foundation: PR [#58](https://github.com/farhad2na2/WarlineCapture/pull/58), merged as `024768787b6a05e590bd2cffa9ca59c8985fb6bd` and pulled to main.
 - Ten-map surface foundation: native detail review complete; saved scene/material validation passed for 10 scenes and 50 materials. Scene differences are material references only. Full normal-input mission and Android acceptance remain pending. Evidence: `../OtherMapSurfacePolish20261009/validation-summary.json`.
-- New improvement steps: in progress. Record actual results here as work is completed; recommendations above are not claims of implementation.
+- Four visual passes have native asset/capture evidence. Dense-city render-cache integration passed; final publication is tracked below; normal-input and Android acceptance are separate gates.
 
 ### Step 1 published
 
@@ -74,3 +74,25 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 - City and industrial detail: 193 groups, 2,701 buildingRenderers, 12,055 variedContainers, 606 movedProps.
 - All eleven native scene checks passed. Renderers and triangles unchanged. Recorded decorative transforms and material references are the only source changes; collision, gameplay data, building placements and authored lighting retained.
 - Evidence: `step3-validation.json`, native receipts, full wrapper logs and `step3-gallery.html`. Normal-input mission and Android acceptance remain pending.
+
+- Step 3 published: commit `089ee8fb0af309ac23142277199a397151ec0e42`, PR [#61](https://github.com/farhad2na2/WarlineCapture/pull/61), main merge `d5c9d600db9354114d2f3565457d3529ff42649e`. Main fast-forwarded; fourteen unrelated dirty files and all 7,230 untracked paths preserved. The initial wrapper timeout is retained as failed evidence; saved-source revalidation run 02 passed with wrapper exit 0.
+
+### Step 4 validated
+
+- Natural and waterfront finish: 996 rock renderers, 29 foreground mountain renderers, 407 water surfaces, 79 sheltered planting groups (163 plants moved), and 27 decorative sand edges cleared from runways.
+- All eleven native scene checks passed. Renderers and triangles unchanged. Recorded decorative transforms and visual material/mesh references are the only source changes; collision, gameplay data, building placements and authored lighting retained.
+- Evidence: `step4-validation.json`, native receipts, full wrapper logs and `step4-gallery.html`. Normal-input mission and Android acceptance remain pending.
+
+### Final visual review and retained findings
+
+- Matched native detail views were reviewed for all eleven sources, including rock, water, mountain and runway views where present. Rock materials retain the original atlas and silhouettes, with restrained strata and deposited dust. Water uses continuous world-space ripples, muted blue-green color and soft specular sheen; opaque rendering removes overlapping plane transparency seams.
+- The runway intrusions were `SM_Env_SandEdge_*` decorations, not terrain. Native inspection found the terrain already below the runway. Moved 27 verified render-only sand-edge roots onto clear shoulders across CityEdgeAirfield, Grounded Signal and Armor Break. Terrain mesh assets were not modified. The final check found zero sand-edge intersections in the reviewed runways.
+- The first natural run saved all eleven maps but failed restoring an unsaved empty Editor scene. Run 02 passed after fixing the empty-scene restore path. The first sand-edge clearance attempt found no legal nearby placement and failed without saving; expanding the search along the same shoulders passed with all obstacle checks retained. Both failed logs and wrapper exits are retained.
+- The rejected dark water iteration and raw audit/baseline scene files remain local. Published galleries show the original and reviewed final result. Repeated runway capture reflects the final shoulder fix.
+- Authored fog, sun, grading and lens flare remain unchanged. Grounded Signal and several Chapter 5 views retain their strong yellow haze. The final pass did not flatten lighting to make inspection images brighter.
+- Authored canal geometry still has straight banks and abrupt ends in some Chapter 5 views. Command Node's source view still contains unsupported-looking rooftop dressing around its sparse compound. Dense authored vehicle parking remains repetitive. These source-layout issues are retained for a separate normal-input placement review; this pass does not claim they are repaired, and adds no new blocking shore structures.
+- Background mountain billboard materials remain authored; the weathering applies to actual foreground mountain meshes. No new scene renderers or triangles were added. Shader/material variants still require real Android GPU profiling.
+
+### Dense-city render integration
+
+The dense city is the only one of these eleven sources with an explicit virtualized render database. Native source edits require regenerated material and placement records for the match to display the new art. `dense-render-cache-source-reconciliation.json` links the exact published PR59–61 source to the final native receipts, retaining gameplay/collision/ownership records and accounting for PR60's one extra runway marking material slot. The fresh source-parity and deterministic database build passed (`warline-map-dense-cache-details-01.log`, wrapper and native exit 0), with no removed source rows. Another task is editing the same generated data on main; preserve its source changes and coordinate the final checkout synchronization.

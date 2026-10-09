@@ -1,0 +1,14 @@
+{
+  "commit": "cfca98cdb734bc78342150d418eba5416f628f3e",
+  "pullRequest": "https://github.com/farhad2na2/WarlineCapture/pull/62",
+  "mergeCommit": "f9181fa18f221d5ecbdf6a4890427853f8391cd0",
+  "mainSync": "Completed: main task rebased its placement commit onto the visual merge; all 169 published visual/cache/evidence files match T7 exactly.",
+  "nativeValidation": "Passed",
+  "normalInputMissionAcceptance": "Pending",
+  "androidAcceptance": "Pending",
+  "mainCheckoutHead": "a1dca424c8b0b474d0a311410bf770f7c18f3e95",
+  "verifiedPublishedFiles": 169,
+  "unmergedPaths": 0,
+  "mainIntegrationPerformedBy": "Existing main task reconciled its staged placement commit; this task independently verified the resulting files and completed the final ff-only pull.",
+  "mainPullResult": "Already up to date; ff-only pull completed successfully"
+}

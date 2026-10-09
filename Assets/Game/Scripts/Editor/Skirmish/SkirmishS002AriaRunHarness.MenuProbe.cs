@@ -15,12 +15,51 @@ namespace Game.Editor
         private static int menuStep;
         private static double menuDue;
         private static double menuDeadline;
+        private static Button menuStableTarget;
+        private static Vector2 menuStablePoint;
+        private static double menuStableSince, menuLastTapAt;
+        private static double menuDiagnosticDue;
+        private static bool menuDiagnosticCaptured;
+        private static IDisposable candidateCatalogScope;
+        private static SkirmishBattleCatalogConfig candidateCatalog;
 
         public static void RunS004EditorAriaEn() => RunEditorJourney("en", false);
         public static void RunS004EditorAriaStopEn() => RunEditorJourney("en", false, true);
         public static void RunS004EditorManualFa() => RunEditorJourney("fa-IR", true);
-        private static void RunEditorJourney(string language, bool manual, bool stopProbe=false)
+        public static void RunS005EditorAriaEn() => RunEditorJourney("en", false, false, "S005");
+        public static void RunS005EditorAriaFa() => RunEditorJourney("fa-IR", false, false, "S005");
+        public static void RunS005EditorAriaEnSeed2() => RunEditorJourney("en", false, false, "S005", 130368);
+        public static void RunS005EditorAriaEnSeed3() => RunEditorJourney("en", false, false, "S005", 155926);
+        public static void RunS005EditorAriaFaSeed2() => RunEditorJourney("fa-IR", false, false, "S005", 130368);
+        public static void RunS005EditorAriaFaSeed3() => RunEditorJourney("fa-IR", false, false, "S005", 155926);
+        public static void RunS005EditorManualFa() => RunEditorJourney("fa-IR", true, false, "S005");
+        private static void RunEditorJourney(string language, bool manual, bool stopProbe=false, string selectedCatalog="S004", int selectedSeed=0)
         {
+            if (selectedCatalog == "S005")
+            {
+                var source = SkirmishBattleCatalogConfig.Load();
+                if (source == null) throw new InvalidOperationException("Packaged battle catalog is missing.");
+                var rows = new SkirmishBattleCatalogEntry[source.Entries.Count];
+                bool found = false;
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    rows[i] = source.Entries[i];
+                    if (rows[i].ScenarioId != selectedCatalog) continue;
+                    found = true;
+                    rows[i].Status = SkirmishBattleCatalogStatus.Playable;
+                    rows[i].PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;
+                    rows[i].DefinitionId = "skirmish.s005";
+                    rows[i].TitleKey = "skirmish.s005.title";
+                    rows[i].DescriptionEnglish = "Advance with armor and infantry, or upgrade readiness to build a Helipad. Defend your original Barracks.";
+                    rows[i].DescriptionFarsi = "با زرهی‌ها و پیاده‌ها پیشروی کن، یا آمادگی را ارتقا بده و هلی‌پد بساز. از سربازخانهٔ اصلی‌ات دفاع کن.";
+                }
+                if (!found) throw new InvalidOperationException("S005 candidate catalog entry is missing.");
+                candidateCatalog = ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
+                candidateCatalog.hideFlags = HideFlags.HideAndDontSave;
+                candidateCatalog.Configure(rows);
+                candidateCatalogScope = SkirmishBattleCatalogConfig.UseEditorValidationCatalog(candidateCatalog);
+                Debug.Log("[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0");
+            }
             SessionState.SetBool("S004EditorJourney.OptionsSaved", true);
             SessionState.SetBool("S004EditorJourney.OptionsEnabled", EditorSettings.enterPlayModeOptionsEnabled);
             SessionState.SetInt("S004EditorJourney.Options", (int)EditorSettings.enterPlayModeOptions);
@@ -30,20 +69,43 @@ namespace Game.Editor
             // refresh suspension and release it after the owned Play session ends.
             AssetDatabase.DisallowAutoRefresh();
             SessionState.SetBool("Warline.MissionValidation.ResumeRefresh", true);
+            // A reused Editor retains process environment between validations.
+            // A normal mission journey must not inherit a previous diagnostic.
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_PLAYER_RESUME_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_COMBAT_RESUME_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_SAVE_ROLE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_BOARDED_RESUME_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_AIRPORT_PLACEMENT_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_FIXED_WING_CYCLE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S003_NATIVE_REVIEW", null);
+            Environment.SetEnvironmentVariable("WARLINE_MAP_REVIEW_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC", null);
+            Environment.SetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE", null);
             Environment.SetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY", "1");
             Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", language);
-            Environment.SetEnvironmentVariable("WARLINE_S002_SEED", "104733");
+            Environment.SetEnvironmentVariable("WARLINE_S002_SEED", selectedSeed > 0 ? selectedSeed.ToString(System.Globalization.CultureInfo.InvariantCulture) : selectedCatalog == "S005" ? "104734" : "104733");
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", selectedCatalog);
             Environment.SetEnvironmentVariable("WARLINE_REVIEW_WIDTH", "2400");
             Environment.SetEnvironmentVariable("WARLINE_REVIEW_HEIGHT", "1080");
             Environment.SetEnvironmentVariable("WARLINE_TERMINAL_ACTION", manual ? "MAIN MENU" : "ADJUST SETUP");
             Environment.SetEnvironmentVariable("WARLINE_S004_STOP_PROBE", stopProbe ? "1" : null);
             Environment.SetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE", manual ? "1" : null);
             menuStep = 0;
-            RunS004AriaAndExit();
+            RunFocusedAriaAndExit();
         }
 
         private static void RestoreS004EditorJourneyOptions()
         {
+            candidateCatalogScope?.Dispose();
+            candidateCatalogScope = null;
+            if (candidateCatalog != null) UnityEngine.Object.DestroyImmediate(candidateCatalog);
+            candidateCatalog = null;
             if (!SessionState.GetBool("S004EditorJourney.OptionsSaved", false)) return;
             EditorSettings.enterPlayModeOptions = (EnterPlayModeOptions)SessionState.GetInt("S004EditorJourney.Options", 0);
             EditorSettings.enterPlayModeOptionsEnabled = SessionState.GetBool("S004EditorJourney.OptionsEnabled", false);
@@ -58,6 +120,10 @@ namespace Game.Editor
                 ConfigureBackgroundInput();
                 menuStep = 0;
                 menuDeadline = EditorApplication.timeSinceStartup + 90d;
+                menuStableTarget = null;
+                menuStableSince = menuLastTapAt = 0;
+                menuDiagnosticDue = 0;
+                menuDiagnosticCaptured = false;
                 menuTouch = new AriaTouchInputUiSystemHelper();
                 if (!menuTouch.Start()) throw new InvalidOperationException("Menu Touch unavailable.");
                 var runner = new GameObject("S004MenuInputProbe");
@@ -81,24 +147,57 @@ namespace Game.Editor
                 throw new InvalidOperationException("Menu input interrupted.");
             if (menuTouch.IsBusy || EditorApplication.timeSinceStartup < menuDue) return;
             var buttons = UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude);
+            if (menuStep == 1 && EditorApplication.timeSinceStartup - menuLastTapAt >= 2d &&
+                EditorApplication.timeSinceStartup >= menuDiagnosticDue)
+            {
+                menuDiagnosticDue = EditorApplication.timeSinceStartup + 10d;
+                ObservePresentedMenuControls(buttons);
+            }
             if (menuStep == 5)
             {
-                menuStep = 6;
-                StopS004MenuProbe();
+                var world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+                if (world != null && world.IsCreated &&
+                    Game.Composition.SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out _))
+                {
+                    Debug.Log("[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll," +
+                        catalogId + ",Launch seedFixture=" + seed + " nativeSessionObserved=1");
+                    menuStep = 6;
+                    StopS004MenuProbe();
+                    return;
+                }
+                if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
+                    foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                        if (setup.IsBaseAssaultSetup && setup.SelectedScenarioId == catalogId)
+                        {
+                            menuStep = 4;
+                            Debug.Log("[S004MenuJourney] phase=LaunchRetry input=Touch reason=SetupStillVisible");
+                            break;
+                        }
                 return;
             }
             if (menuStep == 0)
             {
                 foreach (var b in buttons)
-                    if ((b.name == "Card_Skirmish" || b.transform.parent.name == "Card_Skirmish") && MenuTap(b)) { menuStep++; return; }
+                    if ((b.name == "Card_Skirmish" || b.transform.parent.name == "Card_Skirmish") &&
+                        TryPresentedButtonPoint(b, out _))
+                    { if (MenuTap(b)) menuStep++; return; }
                 foreach (var b in buttons)
-                    if ((b.name == "SkipButton" || b.name == "ConfirmButton") && MenuTap(b)) return;
+                    if ((b.name == "SkipButton" || b.name == "ConfirmButton") && TryPresentedButtonPoint(b, out _))
+                    { MenuTap(b); return; }
             }
             else if (menuStep == 1)
             {
                 foreach (var b in buttons)
-                    if (b.name == "ScenarioCard_" + SkirmishAcceptanceCensusCapture.S004CatalogId && MenuTap(b))
-                    { menuStep = 4; return; }
+                    if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
+                    { if (MenuTap(b)) menuStep = 4; return; }
+                if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
+                    foreach (var b in buttons)
+                        if ((b.name == "Card_Skirmish" || b.transform.parent.name == "Card_Skirmish") &&
+                            TryPresentedButtonPoint(b, out _))
+                        {
+                            if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=LibraryRetry input=Touch reason=MainMenuStillVisible");
+                            return;
+                        }
                 foreach (var scroll in UnityEngine.Object.FindObjectsByType<ScrollRect>(FindObjectsInactive.Exclude))
                 {
                     if (scroll.name != "BattleLibrary" || scroll.viewport == null) continue;
@@ -114,6 +213,13 @@ namespace Game.Editor
             }
             else if (menuStep == 4)
             {
+                if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
+                    foreach (var b in buttons)
+                        if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
+                        {
+                            if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=ScenarioRetry input=Touch reason=LibraryStillVisible");
+                            return;
+                        }
                 foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
                 {
                     if (!setup.IsBaseAssaultSetup || setup.SelectedScenarioId != catalogId) continue;
@@ -127,12 +233,15 @@ namespace Game.Editor
                                 " fontSize=" + label.fontSize + " characters=" + label.textInfo.characterCount +
                                 " visible=" + label.textInfo.characterCount + " overflow=" + label.isTextOverflowing);
                         }
-                    ScreenCapture.CaptureScreenshot(LiveTracePath() + ".setup.png");
                     foreach (var b in setup.GetComponentsInChildren<Button>())
-                        if ((b.name.Contains("Launch") || b.name.Contains("Start")) && MenuTap(b))
+                        if ((b.name.Contains("Launch") || b.name.Contains("Start")) && TryPresentedButtonPoint(b, out _))
                         {
-                            Debug.Log("[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S004,Launch seedFixture=" + seed);
-                            menuStep = 5;
+                            if (MenuTap(b))
+                            {
+                                ScreenCapture.CaptureScreenshot(LiveTracePath() + ".setup.png");
+                                Debug.Log("[S004MenuJourney] phase=LaunchTouch input=Touch controls=Skirmish,Scroll," + catalogId + ",Launch seedFixture=" + seed);
+                                menuStep = 5;
+                            }
                             return;
                         }
                 }
@@ -142,9 +251,58 @@ namespace Game.Editor
         private static bool MenuTap(Button b)
         {
             if (!TryPresentedButtonPoint(b, out var p)) return false;
+            double now = EditorApplication.timeSinceStartup;
+            if (menuStableTarget != b || Vector2.Distance(menuStablePoint, p) > 1f)
+            {
+                menuStableTarget = b;
+                menuStablePoint = p;
+                menuStableSince = now;
+                return false;
+            }
+            if (now - menuStableSince < .5d) return false;
             bool accepted = menuTouch.TryGesture(p, p, .15f, 0f, Time.unscaledTime);
-            if (accepted) menuDue = EditorApplication.timeSinceStartup + 1d;
+            if (accepted)
+            {
+                menuLastTapAt = now;
+                menuDue = now + 1d;
+                menuStableTarget = null;
+                Debug.Log("[S004MenuJourney] phase=Touch step=" + menuStep + " button=" + b.name +
+                    " point=" + p + " stableBeforeTouch=1 transitionAcceptance=Pending");
+            }
             return accepted;
+        }
+
+        private static void ObservePresentedMenuControls(Button[] buttons)
+        {
+            if (!menuDiagnosticCaptured)
+            {
+                ScreenCapture.CaptureScreenshot(LiveTracePath() + ".menu-selection-diagnostic.png");
+                menuDiagnosticCaptured = true;
+            }
+            foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                Debug.Log("[S005MenuObservation] setup=" + setup.name + " baseAssault=" + setup.IsBaseAssaultSetup +
+                    " selected=" + setup.SelectedScenarioId + " readOnly=1");
+            foreach (var scroll in UnityEngine.Object.FindObjectsByType<ScrollRect>(FindObjectsInactive.Exclude))
+                Debug.Log("[S005MenuObservation] scroll=" + scroll.name + " viewport=" +
+                    (scroll.viewport != null ? scroll.viewport.rect.ToString() : "None") + " content=" +
+                    (scroll.content != null ? scroll.content.rect.ToString() : "None") +
+                    " normalized=" + scroll.normalizedPosition + " readOnly=1");
+            foreach (var button in buttons)
+            {
+                if (button.name != "ScenarioCard_" + catalogId && button.name != "LaunchMissionButton") continue;
+                var rect = (RectTransform)button.transform;
+                var canvas = button.GetComponentInParent<Canvas>();
+                var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+                var point = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+                var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                if (UnityEngine.EventSystems.EventSystem.current != null)
+                    UnityEngine.EventSystems.EventSystem.current.RaycastAll(
+                        new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = point }, hits);
+                Debug.Log("[S005MenuObservation] button=" + button.name + " active=" + button.IsActive() +
+                    " interactable=" + button.IsInteractable() + " point=" + point + " safe=" + Screen.safeArea.Contains(point) +
+                    " presented=" + TryPresentedButtonPoint(button, out _) + " topHit=" +
+                    (hits.Count > 0 ? hits[0].gameObject.name : "None") + " readOnly=1");
+            }
         }
 
         private static void StopS004MenuProbe()

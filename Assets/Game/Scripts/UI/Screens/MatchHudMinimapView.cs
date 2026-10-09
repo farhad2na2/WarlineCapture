@@ -33,6 +33,10 @@ namespace Game.UI.Runtime
         private Vector2 _lastViewportAnchoredPosition;
         private Vector2 _lastViewportSize;
         private Vector2 _viewportDragOffset;
+        private Vector2 _viewportDragStartScreen;
+        private Rect _requestedViewportNormalizedRect;
+        private bool _hasRequestedViewportRect;
+        private Vector2 _viewportDragSize;
         private readonly Vector3[] _worldCorners = new Vector3[4];
         private Canvas _cachedCanvas;
 
@@ -73,6 +77,7 @@ namespace Game.UI.Runtime
             _dragMoved = false;
             _hasManualViewportOverride = false;
             _hasLastViewportLayout = false;
+            _hasRequestedViewportRect = false;
         }
 
         private void OnTransformParentChanged()
@@ -106,7 +111,14 @@ namespace Game.UI.Runtime
                 mapImage.sprite = sprite;
             AspectRatioFitter aspectFitter = mapImage.GetComponent<AspectRatioFitter>();
             if (aspectFitter != null && sprite != null && sprite.rect.height > 0f)
+            {
+                // A tactical map is an interactive coordinate surface. Filling
+                // and cropping its clip hides legal map edges and their touch
+                // targets; keep the complete projection inside the visible panel.
+                if (UseFullMapProjection)
+                    aspectFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
                 aspectFitter.aspectRatio = sprite.rect.width / sprite.rect.height;
+            }
             if (mapImage.preserveAspect)
                 mapImage.preserveAspect = false;
             if (!mapImage.enabled)
@@ -172,11 +184,14 @@ namespace Game.UI.Runtime
             if (!TryGetMapRectInViewportParent(rectTransform, out Rect map))
                 map = rectTransform.rect;
 
-            float normalizedWidth = Mathf.Clamp01(normalizedRect.width);
-            float normalizedHeight = Mathf.Clamp01(normalizedRect.height);
-            float normalizedLeft = Mathf.Clamp(Mathf.Clamp01(normalizedRect.xMin), 0f, Mathf.Max(0f, 1f - normalizedWidth));
-            float normalizedBottom = Mathf.Clamp(Mathf.Clamp01(normalizedRect.yMin), 0f, Mathf.Max(0f, 1f - normalizedHeight));
-            float normalizedTop = normalizedBottom + normalizedHeight;
+            _requestedViewportNormalizedRect = normalizedRect;
+            _hasRequestedViewportRect = true;
+            // Clip the visible outline, preserving the full camera footprint for dragging.
+            float normalizedLeft = Mathf.Clamp01(normalizedRect.xMin);
+            float normalizedBottom = Mathf.Clamp01(normalizedRect.yMin);
+            float normalizedTop = Mathf.Clamp01(normalizedRect.yMax);
+            float normalizedWidth = Mathf.Max(0f, Mathf.Clamp01(normalizedRect.xMax) - normalizedLeft);
+            float normalizedHeight = Mathf.Max(0f, normalizedTop - normalizedBottom);
             float width = Mathf.Max(6f, map.width * normalizedWidth);
             float height = Mathf.Max(6f, map.height * normalizedHeight);
             float left = map.xMin + map.width * normalizedLeft;
@@ -309,11 +324,18 @@ namespace Game.UI.Runtime
             if (TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent) &&
                 TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
             {
+                if (_hasRequestedViewportRect && TryGetMapRectInViewportParent(MapRect, out Rect map))
+                    viewportInParent = new Rect(map.xMin + map.width * _requestedViewportNormalizedRect.xMin,
+                        map.yMin + map.height * _requestedViewportNormalizedRect.yMin,
+                        map.width * _requestedViewportNormalizedRect.width,
+                        map.height * _requestedViewportNormalizedRect.height);
+                _viewportDragSize = viewportInParent.size;
                 _viewportDragOffset = new Vector2(
                     Mathf.Clamp(pointerInParent.x - viewportInParent.xMin, 0f, viewportInParent.width),
                     Mathf.Clamp(viewportInParent.yMax - pointerInParent.y, 0f, viewportInParent.height));
             }
 
+            _viewportDragStartScreen = screenPosition;
             _draggingViewport = true;
             return true;
         }
@@ -326,6 +348,11 @@ namespace Game.UI.Runtime
             if (!_draggingViewport)
                 return false;
 
+            // Raw touch polling also visits stationary presses. Keep the padded
+            // drag hit area, but do not consume an edge tap before it has moved.
+            if (!_dragMoved && (screenPosition - _viewportDragStartScreen).sqrMagnitude < 4f)
+                return false;
+
             if (!TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent))
                 return false;
 
@@ -336,12 +363,14 @@ namespace Game.UI.Runtime
                 return false;
 
             _dragMoved = true;
-            float rectWidth = Mathf.Max(6f, viewportInParent.width);
-            float rectHeight = Mathf.Max(6f, viewportInParent.height);
+            float rectWidth = Mathf.Max(6f, _viewportDragSize.x);
+            float rectHeight = Mathf.Max(6f, _viewportDragSize.y);
             float localX = pointerInParent.x - map.xMin;
             float localY = map.yMax - pointerInParent.y;
-            float left = Mathf.Clamp(localX - _viewportDragOffset.x, 0f, Mathf.Max(0f, map.width - rectWidth));
-            float top = Mathf.Clamp(localY - _viewportDragOffset.y, 0f, Mathf.Max(0f, map.height - rectHeight));
+            // A legal map-edge target must be focusable even when the camera
+            // footprint extends past that edge. Constrain its center, not its outline.
+            float left = Mathf.Clamp(localX - _viewportDragOffset.x, -rectWidth * .5f, map.width - rectWidth * .5f);
+            float top = Mathf.Clamp(localY - _viewportDragOffset.y, -rectHeight * .5f, map.height - rectHeight * .5f);
 
             float normalizedX = (left + (rectWidth * 0.5f)) / Mathf.Max(0.001f, map.width);
             float normalizedY = 1f - ((top + (rectHeight * 0.5f)) / Mathf.Max(0.001f, map.height));

@@ -36,8 +36,74 @@ namespace Game.Tests.Editor
         }
         public static void RunFocusedValidation()
         {
-            try {var t=new SupportSupplyValidation();t.RealFlightAndCargoDescentConsumeOnce();t.CapacityRemainderAndFullStorage();t.TwoCollectorsCannotDuplicateStock();t.ReplacementMoveCancelsEvenSameGoal();t.DeadEnemyAirAndWrongAttemptReject();t.ExternalFlightRemovalReleasesHeldCrate();t.BlockedLandingIsNoSpend();t.AttemptCleanupDestroysCrateAndCanopy();t.PathFallbackMustReachInteractionRange();Debug.Log("[SupportSupplyValidation] result=Passed tests=9");ValidationExit.Exit(0);}
+            try {var t=new SupportSupplyValidation();t.RealFlightAndCargoDescentConsumeOnce();t.CapacityRemainderAndFullStorage();t.TwoCollectorsCannotDuplicateStock();t.ReplacementMoveCancelsEvenSameGoal();t.DeadEnemyAirAndWrongAttemptReject();t.ExternalFlightRemovalReleasesHeldCrate();t.BlockedLandingIsNoSpend();t.AttemptCleanupDestroysCrateAndCanopy();t.PathFallbackMustReachInteractionRange();t.MultipleSessionCollectionQueuesAreProcessed();t.NativeCollectionRejectsForeignActorsAndBanks();t.NativeTerminalClearsCargoWithoutReward();t.PausedCollectionCannotTransfer();Debug.Log("[SupportSupplyValidation] result=Passed tests=13");ValidationExit.Exit(0);}
             catch(Exception ex){Debug.LogException(ex);Debug.LogError("[SupportSupplyValidation] result=Failed");ValidationExit.Exit(1);throw;}
+        }
+        private static Entity Native(Supply s)
+        {
+            var state=s.Em.GetComponentData<SupportSessionComponent>(s.Root);
+            var session=s.Em.CreateEntity(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishSharedMaterialsInitialized));
+            s.Em.SetComponentData(session,new SkirmishExpandedSessionComponent {SessionId=state.SessionToken,Phase=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing,SpawnComplete=1});
+            s.Em.AddComponentData(s.Root,new SkirmishSupportOwnerComponent {Session=session,SessionId=state.SessionToken});
+            s.Em.AddComponentData(s.Store,new FactionEconomy {FactionId=1});
+            return session;
+        }
+        [Test] public void NativeCollectionRejectsForeignActorsAndBanks()
+        {
+            using var s=new Supply();var crateEntity=s.Land();Native(s);var collector=s.Collector();
+            var crate=s.Em.GetComponentData<SupportSupplyCrateComponent>(crateEntity);
+            Assert.IsFalse(SupportSupplyAdapterSystemHelper.EligibleCollector(s.Em,collector,crate));
+            s.Em.AddComponent<SkirmishSharedActorTag>(collector);
+            s.Em.AddComponentData(collector,new SkirmishAttemptOwnedComponent {SessionId="foreign",FactionId=1});
+            Assert.IsFalse(SupportSupplyAdapterSystemHelper.EligibleCollector(s.Em,collector,crate));
+            s.Em.SetComponentData(collector,new SkirmishAttemptOwnedComponent {SessionId=crate.SessionToken,FactionId=1});
+            Assert.IsTrue(SupportSupplyAdapterSystemHelper.EligibleCollector(s.Em,collector,crate));
+            var foreign=s.Em.CreateEntity(typeof(FactionTacticalMaterialsComponent));
+            s.Em.SetComponentData(foreign,new FactionTacticalMaterialsComponent {FactionId=1,Capacity=600});
+            Assert.AreEqual(s.Store,SupportSupplyAdapterSystemHelper.MaterialsEntity(s.Em,s.Root,1));
+            Assert.AreEqual(SupportRejectionReason.None,SupportSupplyAdapterSystemHelper.BeginCollection(s.Em,s.Root,collector,crateEntity));
+            crate=s.Em.GetComponentData<SupportSupplyCrateComponent>(crateEntity);
+            Assert.AreEqual(0,SupportSupplyAdapterSystemHelper.Transfer(s.Em,crateEntity,ref crate,foreign));
+            Assert.AreEqual(40,crate.RemainingMaterials);
+            Assert.AreEqual(0,s.Em.GetComponentData<FactionTacticalMaterialsComponent>(foreign).Current);
+            s.Em.AddComponentData(foreign,new FactionEconomy {FactionId=1});
+            Assert.AreEqual(Entity.Null,SupportSupplyAdapterSystemHelper.MaterialsEntity(s.Em,s.Root,1));
+            Assert.AreEqual(0,SupportSupplyAdapterSystemHelper.Transfer(s.Em,crateEntity,ref crate,s.Store));
+            s.Em.DestroyEntity(foreign);
+            Assert.AreEqual(10,SupportSupplyAdapterSystemHelper.Transfer(s.Em,crateEntity,ref crate,s.Store));
+            Assert.AreEqual(600,s.Em.GetComponentData<FactionTacticalMaterialsComponent>(s.Store).Current);
+        }
+        [Test] public void NativeTerminalClearsCargoWithoutReward()
+        {
+            using var s=new Supply();var crateEntity=s.Land();var session=Native(s);
+            var canopy=s.Em.GetComponentData<SupportSupplyCrateComponent>(crateEntity).Canopy;
+            var native=s.Em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            native.Phase=Game.Skirmish.Contracts.SkirmishSessionPhase.Finished;s.Em.SetComponentData(session,native);
+            s.Tick();Assert.IsFalse(s.Em.Exists(crateEntity));Assert.IsFalse(s.Em.Exists(canopy));
+            Assert.AreEqual(590,s.Em.GetComponentData<FactionTacticalMaterialsComponent>(s.Store).Current);
+        }
+        [Test] public void PausedCollectionCannotTransfer()
+        {
+            using var s=new Supply();var crateEntity=s.Land();var collector=s.Collector();
+            Assert.AreEqual(SupportRejectionReason.None,SupportSupplyAdapterSystemHelper.BeginCollection(s.Em,s.Root,collector,crateEntity));
+            var state=s.Em.GetComponentData<SupportSessionComponent>(s.Root);state.Active=0;s.Em.SetComponentData(s.Root,state);
+            var crate=s.Em.GetComponentData<SupportSupplyCrateComponent>(crateEntity);
+            Assert.AreEqual(0,SupportSupplyAdapterSystemHelper.Transfer(s.Em,crateEntity,ref crate,s.Store));
+            s.Tick();Assert.IsTrue(s.Em.Exists(crateEntity));Assert.AreEqual(40,crate.RemainingMaterials);
+            state.Active=1;s.Em.SetComponentData(s.Root,state);s.Tick();
+            Assert.AreEqual(600,s.Em.GetComponentData<FactionTacticalMaterialsComponent>(s.Store).Current);
+        }
+        [Test] public void MultipleSessionCollectionQueuesAreProcessed()
+        {
+            using var f=new SupportValidationFixture();f.Em.AddBuffer<SupportCollectRequestElement>(f.Root);
+            var other=f.Em.Instantiate(f.Root);var session=f.Em.GetComponentData<SupportSessionComponent>(other);session.FactionId=2;f.Em.SetComponentData(other,session);
+            foreach(var root in new[]{f.Root,other})f.Em.GetBuffer<SupportCollectRequestElement>(root).Add(new SupportCollectRequestElement {SessionToken="wrong-attempt",AttemptOrdinal=1});
+            f.World.CreateSystem<SupportSupplySystem>().Update(f.World.Unmanaged);
+            foreach(var root in new[]{f.Root,other})
+            {
+                Assert.AreEqual(0,f.Em.GetBuffer<SupportCollectRequestElement>(root).Length);
+                Assert.AreEqual(SupportRejectionReason.WrongAttempt,f.Em.GetComponentData<SupportCollectionFeedbackComponent>(root).Reason);
+            }
         }
         [Test] public void RealFlightAndCargoDescentConsumeOnce()
         {

@@ -577,9 +577,28 @@ namespace Game.UI.Shell.Ecs
             bool supplyProgress = savingForAir && savedMaterials > plan.MaterialsHighWater;
             plan.EconomicMilestones |= milestones;
             if (supplyProgress) plan.MaterialsHighWater = savedMaterials;
+            // Only a new closest approach on the player's presented minimap
+            // counts. Paging, jitter and retreat/re-advance cannot mask a stall.
+            bool assaultAdvance = false;
+            if (plan.AssaultIssued != 0 && view.AssaultDistanceVisible &&
+                view.NearestFriendlyObjectiveDistance >= 0f &&
+                !float.IsNaN(view.NearestFriendlyObjectiveDistance) &&
+                !float.IsInfinity(view.NearestFriendlyObjectiveDistance))
+            {
+                if (plan.AssaultDistanceObserved == 0)
+                {
+                    plan.AssaultDistanceObserved = 1;
+                    plan.BestAssaultDistance = view.NearestFriendlyObjectiveDistance;
+                }
+                else if (view.NearestFriendlyObjectiveDistance <= plan.BestAssaultDistance - 2f)
+                {
+                    plan.BestAssaultDistance = view.NearestFriendlyObjectiveDistance;
+                    assaultAdvance = true;
+                }
+            }
             if (plan.LastProgressAt == 0 || plan.EnemyHealth != view.EnemyHealth ||
                 plan.PlayerHealth != view.PlayerHealth || plan.Infantry != view.Infantry ||
-                newMilestone || supplyProgress)
+                newMilestone || supplyProgress || assaultAdvance)
             {
                 plan.LastProgressAt = view.Time;
                 plan.EnemyHealth = view.EnemyHealth; plan.PlayerHealth = view.PlayerHealth; plan.Infantry = view.Infantry;
@@ -592,7 +611,7 @@ namespace Game.UI.Shell.Ecs
                 touch.GestureRequested = 0;
                 return;
             }
-            // Air Mobile's starting force cannot leave the Barracks undefended.
+            // An air-capable starting force cannot leave its base undefended.
             // Reuse the visible, bounded construction sequence used by legacy
             // skirmishes after the first reinforcement squad arrives.
             if (view.AirProfile && plan.AssaultStarted == 0 &&
@@ -608,6 +627,30 @@ namespace Game.UI.Shell.Ecs
                 // A placement opened outside this plan has no proven home site.
                 plan.Intent = AriaSkirmishIntent.Inspect;
                 Target(view.PlacementCancel, false, ref output);
+                return;
+            }
+            // Preserve a viable base-assault force, then establish physical
+            // Oil and Fuel delivery before research or repeated aircraft sorties.
+            // These are visible paid catalog controls, with queue/capacity eligibility.
+            bool openingNeedsInfantry = !view.CombinedArmsField && plan.AssaultStarted == 0 && view.Infantry < 20 &&
+                (plan.OpeningUntil == 0 || view.Time < plan.OpeningUntil);
+            bool supplyReady = view.AirProfile && !openingNeedsInfantry &&
+                (!view.CombinedArmsField || view.OwnStructureAttackUnits >= 8);
+            // The opening force or its existing deadline is complete before
+            // a supply touch can return from this frame.
+            if (supplyReady && !view.CombinedArmsField) plan.AssaultStarted = 1;
+            if (supplyReady && !view.LogisticsTruckCommitted && view.CanAffordLogisticsTruck &&
+                view.RecruitLogisticsTruck.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.RecruitLogisticsTruck, false, ref output);
+                return;
+            }
+            if (supplyReady && view.LogisticsTruckCommitted && view.TankersCommitted < 2 &&
+                view.CanAffordTanker && view.RecruitTanker.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.RecruitTanker, false, ref output);
                 return;
             }
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
@@ -635,6 +678,23 @@ namespace Game.UI.Shell.Ecs
                 Target(view.RecruitAntiAir, false, ref output);
                 return;
             }
+            // Combined Arms needs a viable structure force before spending
+            // its remaining materials on rifles that cannot hurt the base.
+            if (view.CombinedArmsField && view.OwnStructureAttackUnits < 8 && view.Infantry < 24)
+            {
+                if (view.RocketeerRecruitPending)
+                {
+                    plan.Intent = AriaSkirmishIntent.ObserveBattle;
+                    if (view.DrawerOpen) Target(view.CloseDrawer, false, ref output);
+                    return;
+                }
+                if (view.CanAffordRocketeer && view.RecruitRocketeer.Available)
+                {
+                    plan.Intent = AriaSkirmishIntent.Recruit;
+                    Target(view.RecruitRocketeer, false, ref output);
+                    return;
+                }
+            }
             if (view.AirProfile && plan.AssaultStarted == 0)
             {
                 if (plan.OpeningUntil == 0) plan.OpeningUntil = view.Time + 75f;
@@ -659,13 +719,6 @@ namespace Game.UI.Shell.Ecs
                     }
                 }
                 plan.AssaultStarted = 1;
-            }
-            if (view.AirProfile && !view.LogisticsTruckCommitted && view.CanAffordLogisticsTruck &&
-                view.RecruitLogisticsTruck.Available)
-            {
-                plan.Intent = AriaSkirmishIntent.Recruit;
-                Target(view.RecruitLogisticsTruck, false, ref output);
-                return;
             }
             if (!view.ReadinessEligible && view.CanUpgradeReadiness && view.UpgradeReadiness.Available &&
                 plan.AssaultIssued != 0)

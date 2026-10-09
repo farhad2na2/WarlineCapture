@@ -301,13 +301,22 @@ namespace Game.Runtime
             // mistaken for an order still executing and never launches again.
             if (SkirmishSharedCombatBinding.UsesSharedCommands(em, entity))
                 SkirmishWorldMovementService.ClearIntent(em, entity);
+            bool initializedAircraftHome = false;
             if (em.HasComponent<UnitAirComponent>(entity))
             {
                 var air = em.GetComponentData<UnitAirComponent>(entity);
                 if (air.HomeInitialized != 0)
                 {
                     goal = air.HomeCell;
+                    initializedAircraftHome = true;
                     air.ReturningHome = 1;
+                    // Replace an attack/move pass with the native landing
+                    // maneuver. Preserve a return already lining up or rolling.
+                    if (air.ReturnApproachInitialized == 0 && air.AttackRunActive <= 3)
+                    {
+                        air.AttackRunActive = 0;
+                        air.AttackRunExitPosition = default;
+                    }
                     em.SetComponentData(entity, air);
                 }
                 // Returning aircraft must not reacquire a nearby enemy and
@@ -318,6 +327,14 @@ namespace Game.Runtime
                     combat.AutoEngage = 0;
                     em.SetComponentData(entity, combat);
                 }
+            }
+            if (initializedAircraftHome)
+            {
+                // A normal Move to parking makes fixed wings fly over it at
+                // cruise height before their runway return can start.
+                // ReturningHome already owns landing and the final taxi.
+                UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, entity);
+                return true;
             }
             UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
             return true;

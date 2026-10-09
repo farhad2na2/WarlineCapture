@@ -39,6 +39,10 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MissingActiveMap_WaitsThenInitializes());
             RunCase(tests, nameof(CameraSchedule_PublishesCommandsThenNoOpsInsideGuard),
                 test => test.CameraSchedule_PublishesCommandsThenNoOpsInsideGuard());
+            RunCase(tests, nameof(WideOrthographicRecoveryCamera_PublishesRenderCommands),
+                test => test.WideOrthographicRecoveryCamera_PublishesRenderCommands());
+            RunCase(tests, nameof(SingularCameraMatrix_RejectsEnvelope),
+                test => test.SingularCameraMatrix_RejectsEnvelope());
             RunCase(tests, nameof(OperationMapMismatch_FailsClosed),
                 test => test.OperationMapMismatch_FailsClosed());
             RunCase(tests, nameof(SourceBoundLogicalMap_ValidatesPhysicalDatabase),
@@ -51,7 +55,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MissingStateOwner_FailsClosed());
             Debug.Log(
                 "[OperationMapRenderVirtualizationInitializationFocusedValidation] " +
-                "result=Passed tests=11");
+                "result=Passed tests=13");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -288,6 +292,44 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 OperationMapRenderVirtualizationStateComponent>(_databaseEntity)
                 .RebuildCount,
             Is.EqualTo(1));
+    }
+
+    [Test]
+    public void WideOrthographicRecoveryCamera_PublishesRenderCommands()
+    {
+        var cameraObject = new GameObject("Native recovery planning camera");
+        try
+        {
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.transform.SetPositionAndRotation(new Vector3(700, 600, 500), Quaternion.Euler(90, 0, 0));
+            camera.orthographic = true;
+            camera.orthographicSize = 220;
+            camera.aspect = 2400f / 1080f;
+            camera.nearClipPlane = .3f;
+            camera.farClipPlane = 10000;
+            var snapshot = new RuntimeCameraSnapshotComponent
+            {
+                IsValid = 1, PublicationVersion = 1,
+                Position = camera.transform.position, Rotation = camera.transform.rotation,
+                Projection = ToFloat4x4(camera.projectionMatrix),
+                WorldToCamera = ToFloat4x4(camera.worldToCameraMatrix),
+                ViewProjection = ToFloat4x4(camera.projectionMatrix * camera.worldToCameraMatrix)
+            };
+            Assert.That(math.abs(math.determinant(snapshot.ViewProjection)), Is.LessThan(1e-8f));
+            Entity owner = _world.EntityManager.CreateEntity(typeof(RuntimeCameraSnapshotComponent));
+            _world.EntityManager.SetComponentData(owner, snapshot);
+            Assert.DoesNotThrow(() => _system.Update(_world.Unmanaged));
+            _world.EntityManager.CompleteAllTrackedJobs();
+            Assert.That(_world.EntityManager.GetComponentData<OperationMapRenderSlotCommandStateComponent>(_databaseEntity).Version, Is.EqualTo(1));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(cameraObject); }
+    }
+
+    [Test]
+    public void SingularCameraMatrix_RejectsEnvelope()
+    {
+        Assert.That(OperationMapRenderVirtualizationInitializationSystem.TryBuildCameraEnvelopes(
+            _blob, new RuntimeCameraSnapshotComponent { IsValid = 1, ViewProjection = default }, out _, out _), Is.False);
     }
 
     [Test]

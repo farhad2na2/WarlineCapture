@@ -64,8 +64,16 @@ namespace Game.UI.Runtime
         {
             if (string.IsNullOrEmpty(source)) return string.Empty;
             int separator = source.IndexOf(": ", System.StringComparison.Ordinal);
-            return separator < 0 ? CatalogLabel(source)
-                : CatalogLabel(source.Substring(0, separator)) + ": " + CatalogLabel(source.Substring(separator + 2));
+            if (separator >= 0)
+                return CatalogLabel(source.Substring(0, separator)) + ": " + PlacementStatus(source.Substring(separator + 2));
+
+            // Grid coordinates belong to placement diagnostics. The player already sees
+            // the footprint and drag guidance in the confirmation bar.
+            if (source == "Valid placement" || source.StartsWith("Valid placement (", System.StringComparison.Ordinal))
+                return UiShellRuntimeGateway.Localization.Get("build.placement.status.valid_ground", "VALID GROUND");
+            if (source == "Blocked by road or blocker" || source.StartsWith("Blocked by road or blocker (", System.StringComparison.Ordinal))
+                return UiShellRuntimeGateway.Localization.Get("ui.v3.invalid_placement.378003ae89", "INVALID PLACEMENT");
+            return CatalogLabel(source);
         }
     }
 }

@@ -1,0 +1,11 @@
+{
+  "sourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingGameplayAndMapUnchanged": true,
+  "materialsUnchanged": true,
+  "currentSourceCompiled": false,
+  "playerReady": false
+}

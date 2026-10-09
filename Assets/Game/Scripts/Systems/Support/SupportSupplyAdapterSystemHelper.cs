@@ -20,12 +20,33 @@ namespace Game.Runtime
             if(!SupportLandingUtilitySystemHelper.IsFree(em,root,gridEntity,grid,cell,new int2(1),default,ownCrate)||
                 !new MapSurfaceSpawnGrounding().TryGroundCellCenter(em,grid,cell,ref position,out _)||!math.all(math.isfinite(position)))return SupportRejectionReason.LandingBlocked;
             var ground=SupportTargetValidationUtilitySystemHelper.ValidateGround(em,root,position);if(ground!=SupportRejectionReason.None)return ground;
-            var session=em.GetComponentData<SupportSessionComponent>(root);return MaterialsEntity(em,session.FactionId)!=Entity.Null?SupportRejectionReason.None:SupportRejectionReason.NotReady;
+            var session=em.GetComponentData<SupportSessionComponent>(root);return MaterialsEntity(em,root,session.FactionId)!=Entity.Null?SupportRejectionReason.None:SupportRejectionReason.NotReady;
         }
         public static Entity MaterialsEntity(EntityManager em,byte faction)
         {
             Entity found=Entity.Null;using var q=em.CreateEntityQuery(typeof(FactionTacticalMaterialsComponent));using var chunks=q.ToArchetypeChunkArray(Allocator.Temp);var entityType=em.GetEntityTypeHandle();
             foreach(var chunk in chunks)foreach(var entity in chunk.GetNativeArray(entityType))if(em.GetComponentData<FactionTacticalMaterialsComponent>(entity).FactionId==faction){if(found!=Entity.Null)return Entity.Null;found=entity;}return found;
+        }
+        // Native matches use the same economy bank as construction and production.
+        // Faction-only cargo banks are not native economy owners.
+        public static Entity MaterialsEntity(EntityManager em,Entity root,byte faction)
+        {
+            if(!em.Exists(root)||!em.HasComponent<SupportSessionComponent>(root))return Entity.Null;
+            var support=em.GetComponentData<SupportSessionComponent>(root);
+            if(support.FactionId!=faction||SupportSessionUtility.IsTerminal(em,root,support))return Entity.Null;
+            if(!em.HasComponent<SkirmishSupportOwnerComponent>(root))return MaterialsEntity(em,faction);
+            var owner=em.GetComponentData<SkirmishSupportOwnerComponent>(root);
+            if(!em.HasComponent<SkirmishSharedMaterialsInitialized>(owner.Session))return Entity.Null;
+            using var sessions=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            if(sessions.CalculateEntityCount()!=1||sessions.GetSingletonEntity()!=owner.Session)return Entity.Null;
+            Entity found=Entity.Null;
+            using var banks=em.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent));
+            using var entities=banks.ToEntityArray(Allocator.Temp);
+            foreach(var entity in entities)
+                if(em.GetComponentData<FactionEconomy>(entity).FactionId==faction&&
+                    em.GetComponentData<FactionTacticalMaterialsComponent>(entity).FactionId==faction)
+                {if(found!=Entity.Null)return Entity.Null;found=entity;}
+            return found;
         }
         public static Entity Prepare(EntityManager em,Entity root,Entity flight,in SupportRequestElement request,int materials)
         {
@@ -72,6 +93,16 @@ namespace Game.Runtime
             if(!em.Exists(collector)||em.HasComponent<Disabled>(collector)||!em.HasComponent<UnitHealth>(collector)||em.GetComponentData<UnitHealth>(collector).Current<=0||
                 !em.HasComponent<Faction>(collector)||em.GetComponentData<Faction>(collector).Id!=crate.FactionId||!em.HasComponent<UnitGrid>(collector)||!em.HasComponent<UnitMove>(collector)||!em.HasComponent<LocalTransform>(collector)||
                 em.HasComponent<UnitAirMovement>(collector)||em.HasComponent<UnitTransportPassenger>(collector)||em.HasComponent<UnitTransportParachuteDropComponent>(collector)||em.HasComponent<UnitTransportCargoDropComponent>(collector)||em.HasComponent<UnitTransportAirdropSettleComponent>(collector)||em.HasComponent<CampaignMissionDormantMapUnitTag>(collector)||em.HasComponent<RuntimeBuildingCombatInfo>(collector))return false;
+            if(!em.Exists(crate.Root)||!em.HasComponent<SupportSessionComponent>(crate.Root))return false;
+            var session=em.GetComponentData<SupportSessionComponent>(crate.Root);
+            if(!crate.SessionToken.Equals(session.SessionToken)||crate.AttemptOrdinal!=session.AttemptOrdinal||
+                crate.FactionId!=session.FactionId||SupportSessionUtility.IsTerminal(em,crate.Root,session))return false;
+            if(em.HasComponent<SkirmishSupportOwnerComponent>(crate.Root))
+            {
+                if(!em.HasComponent<SkirmishAttemptOwnedComponent>(collector)||!em.HasComponent<SkirmishSharedActorTag>(collector))return false;
+                var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(collector);
+                if(!owner.SessionId.Equals(session.SessionToken)||owner.FactionId!=crate.FactionId||owner.IsStructure!=0||owner.CapacityReleased!=0)return false;
+            }
             if(em.HasComponent<CampaignMissionUnitRoleComponent>(collector)&&!em.GetComponentData<CampaignMissionUnitRoleComponent>(collector).SessionToken.Equals(crate.SessionToken))return false;
             return true;
         }
@@ -80,7 +111,7 @@ namespace Game.Runtime
             if(!em.Exists(entity)||!em.HasComponent<SupportSupplyCrateComponent>(entity))return SupportRejectionReason.TargetGone;
             var crate=em.GetComponentData<SupportSupplyCrateComponent>(entity);var session=em.GetComponentData<SupportSessionComponent>(root);
             if(crate.Root!=root||!crate.SessionToken.Equals(session.SessionToken)||crate.AttemptOrdinal!=session.AttemptOrdinal)return SupportRejectionReason.WrongAttempt;
-            if(session.Active==0)return SupportRejectionReason.NotActive;if(crate.Landed==0||crate.RemainingMaterials<=0)return SupportRejectionReason.NotReady;
+            if(session.Active==0||SupportSessionUtility.IsTerminal(em,root,session))return SupportRejectionReason.NotActive;if(crate.Landed==0||crate.RemainingMaterials<=0)return SupportRejectionReason.NotReady;
             if(!EligibleCollector(em,collector,crate))return SupportRejectionReason.InvalidTargetType;
             if(crate.Claimant!=Entity.Null)return SupportRejectionReason.AlreadyProcessed;
             if(!SupportLandingUtilitySystemHelper.TryGrid(em,out var gridEntity,out var grid))return SupportRejectionReason.NotReady;
@@ -139,7 +170,10 @@ namespace Game.Runtime
         {
             if(!EligibleCollector(em,crate.Claimant,crate)||!em.HasComponent<SupportCollectOrderComponent>(crate.Claimant)||em.GetComponentData<SupportCollectOrderComponent>(crate.Claimant).Crate!=entity||
                 math.distancesq(em.GetComponentData<LocalTransform>(crate.Claimant).Position.xz,crate.LandingPosition.xz)>4)return 0;
-            var storage=materialsEntity==Entity.Null?MaterialsEntity(em,crate.FactionId):materialsEntity;if(storage==Entity.Null)return 0;var materials=em.GetComponentData<FactionTacticalMaterialsComponent>(storage);
+            var session=em.GetComponentData<SupportSessionComponent>(crate.Root);
+            if(session.Active==0||crate.Landed==0||crate.Released==0)return 0;
+            var storage=MaterialsEntity(em,crate.Root,crate.FactionId);
+            if(storage==Entity.Null||materialsEntity!=Entity.Null&&materialsEntity!=storage)return 0;var materials=em.GetComponentData<FactionTacticalMaterialsComponent>(storage);
             int accepted=math.min(crate.RemainingMaterials,math.max(0,materials.Capacity-materials.Current));if(accepted<=0)return 0;
             if(FactionTacticalMaterialsUtilitySystemHelper.TryGrant(ref materials,accepted,FactionTacticalMaterialsSourceKind.Reward)!=FactionTacticalMaterialsMutationResult.Applied)return 0;
             crate.RemainingMaterials-=accepted;em.SetComponentData(storage,materials);em.SetComponentData(entity,crate);return accepted;

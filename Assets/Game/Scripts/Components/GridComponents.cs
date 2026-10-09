@@ -301,6 +301,13 @@ namespace Game.Components
         public Entity VisualEntity;
     }
 
+    // Stable prefab provenance survives the carrier leaving or being destroyed.
+    public struct UnitTransportDropVisualSource : IComponentData
+    {
+        public FixedString64Bytes CarrierSourceKey;
+        public byte PassengerKind;
+    }
+
     public struct UnitTransportAirdropVisualCleanup : IComponentData
     {
         public float DestroyAt;

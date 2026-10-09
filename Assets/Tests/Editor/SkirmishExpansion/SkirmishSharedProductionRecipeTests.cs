@@ -7,6 +7,61 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishSharedProductionRecipeTests
     {
+        public static void RunProducerMessageValidation()
+        {
+            var tests = new SkirmishSharedProductionRecipeTests();
+            tests.MissingExpandedTankerProducerNamesGroundStagingBeforeLegacyFuelBladder();
+            tests.ProducerMessageOverrideDoesNotApplyToLegacyWorld();
+            tests.RuntimeRecipeChangesProducerPacketAndPriceWithoutMutatingAuthoredDefaults();
+            Debug.Log("[SkirmishProducerMessageTests] result=Passed tests=3");
+        }
+
+        [Test]
+        public void MissingExpandedTankerProducerNamesGroundStagingBeforeLegacyFuelBladder()
+        {
+            var baseline = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Skirmish/Construction.asset");
+            var scene = UnityEditor.AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+            var setup = new SkirmishResolvedSetup {
+                Readiness = Game.Skirmish.Contracts.SkirmishReadinessStage.Field,
+                ArmyProfileId = Game.Skirmish.Contracts.SkirmishArmyProfileId.AirMobile,
+                RoleOverlays = SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
+            };
+            using var catalog = SkirmishProductionCatalog.Create(setup, baseline, scene);
+            using var world = new Unity.Entities.World("MissingTankerProducerMessage");
+            var em = world.EntityManager;
+            var session = em.CreateEntity(typeof(Game.Components.SkirmishExpandedSessionComponent));
+            em.AddComponentObject(session, new SkirmishResolvedSetupRecord { Setup = setup });
+            em.AddComponentObject(session, new SkirmishProductionCatalogRecord { Catalog = catalog });
+            var tanker = catalog.Config.UnitPrefabRegistryConfig.UnitSpawnPrefabs.Find(p => p.name == "Unit_Veh_Truck_Tanker");
+            var staging = catalog.Config.Spawnables.Find(p => p.name == "Building_GroundStaging");
+            var fuel = catalog.Config.Spawnables.Find(p => p.name == "Building_Fuel_Bladder");
+            Assert.NotNull(tanker); Assert.NotNull(staging); Assert.NotNull(fuel);
+            var definitions = new[] {
+                new BuildingDefinition { Prefab = fuel, DisplayName = "Fuel Bladder" },
+                new BuildingDefinition { Prefab = staging, DisplayName = "Ground Staging" }
+            };
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding,
+                SkirmishNativeProduction.RequestFailure(em, tanker, false));
+            Assert.IsTrue(SkirmishNativeProduction.TryRequiredProducerDisplayName(em, tanker, definitions, out var name));
+            Assert.AreEqual("Ground Staging", name);
+        }
+
+        [Test]
+        public void ProducerMessageOverrideDoesNotApplyToLegacyWorld()
+        {
+            using var world = new Unity.Entities.World("LegacyProducerMessage");
+            var unit = new GameObject("Unit_Veh_Truck_Tanker");
+            try
+            {
+                Assert.IsFalse(SkirmishNativeProduction.TryRequiredProducerDisplayName(world.EntityManager, unit,
+                    System.Array.Empty<BuildingDefinition>(), out var name));
+                Assert.IsEmpty(name);
+            }
+            finally { Object.DestroyImmediate(unit); }
+        }
+
         [Test]
         public void RuntimeRecipeChangesProducerPacketAndPriceWithoutMutatingAuthoredDefaults()
         {
@@ -109,6 +164,22 @@ namespace Game.Tests.Editor
                 SkirmishNativeProduction.RequestFailure(em, pad, true));
             Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessFullArsenalRequired,
                 SkirmishNativeProduction.RequestFailure(em, airport, true));
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding,
+                SkirmishNativeProduction.RequestFailure(em, aaPrefab, false), "A missing producer is not an army-cap rejection.");
+            var ground = em.CreateEntity(typeof(Game.Components.SkirmishStructureIdentityComponent),
+                typeof(Game.Components.SkirmishAttemptOwnedComponent), typeof(Game.Components.UnitHealth));
+            em.SetComponentData(ground, new Game.Components.SkirmishStructureIdentityComponent {
+                Producer = Game.Skirmish.Contracts.SkirmishProducerKind.GroundStaging });
+            em.SetComponentData(ground, new Game.Components.SkirmishAttemptOwnedComponent { FactionId = 2 });
+            em.SetComponentData(ground, new Game.Components.UnitHealth { Current = 100, Max = 100 });
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding,
+                SkirmishNativeProduction.RequestFailure(em, aaPrefab, false), "An enemy producer cannot supply player recruitment.");
+            em.SetComponentData(ground, new Game.Components.SkirmishAttemptOwnedComponent { FactionId = 1 });
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.None,
+                SkirmishNativeProduction.RequestFailure(em, aaPrefab, false));
+            em.SetComponentData(ground, new Game.Components.UnitHealth { Current = 0, Max = 100 });
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding,
+                SkirmishNativeProduction.RequestFailure(em, aaPrefab, false), "A destroyed producer must be reported before capacity.");
             foreach (var failure in new[] {
                 BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessEstablishedRequired,
                 BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessFullArsenalRequired,

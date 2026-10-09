@@ -152,7 +152,8 @@ namespace Game.UI.Runtime
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
                     ? "CITY CROSSROADS"
                     : "DESERT BASE";
-            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get(mapTitleKey, mapTitleFallback));
+            UiLocalizedText.Set(mapName, string.IsNullOrEmpty(model.MissionTitle)
+                ? UiShellRuntimeGateway.Localization.Get(mapTitleKey, mapTitleFallback) : model.MissionTitle);
             SetBaseLabel(mapPlayer, mapPlayerHealth, model.PlayerBase);
             SetBaseLabel(mapEnemy, mapEnemyHealth, model.EnemyBase);
             var time = (model.Clock ?? string.Empty).Split(new[] { "  " }, StringSplitOptions.None);
@@ -177,7 +178,8 @@ namespace Game.UI.Runtime
                 : "ui.skirmish.base_assault_map";
             string mapFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "INDUSTRIAL BASIN"
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
-            string map = UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback);
+            string map = string.IsNullOrEmpty(model.MissionTitle)
+                ? UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback) : model.MissionTitle;
             string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get("ui.skirmish.result." + key, fallback);
             string complete = Text("complete", "Complete");
             string failed = Text("failed", "Failed");

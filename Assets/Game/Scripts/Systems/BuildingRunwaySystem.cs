@@ -24,7 +24,8 @@ namespace Game.Runtime
             out RuntimeBuildingEntity airport,
             out Vector3 runwayCenter,
             out Quaternion runwayRotation,
-            out Vector3 runwayHalfExtents)
+            out Vector3 runwayHalfExtents,
+            byte? requestingFaction = null)
         {
             airport = null;
             runwayCenter = Vector3.zero;
@@ -38,7 +39,8 @@ namespace Game.Runtime
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingDictionary)
                 {
-                    TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
+                    if (CanUseRunway(pair.Value, requestingFaction))
+                        TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
                 }
 
                 return airport != null;
@@ -46,13 +48,14 @@ namespace Game.Runtime
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
             {
-                TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
+                if (CanUseRunway(pair.Value, requestingFaction))
+                    TryUseNearestAirportRunway(pair.Value, origin, ref bestDistance, ref airport, ref runwayCenter, ref runwayRotation, ref runwayHalfExtents);
             }
 
             return airport != null;
         }
 
-        public bool HasAvailableAirportRunway(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        public bool HasAvailableAirportRunway(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings, byte? requestingFaction = null)
         {
             if (runtimeBuildings == null)
                 return false;
@@ -61,7 +64,7 @@ namespace Game.Runtime
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingDictionary)
                 {
-                    if (IsAvailableAirportRunway(pair.Value))
+                    if (CanUseRunway(pair.Value, requestingFaction) && IsAvailableAirportRunway(pair.Value))
                         return true;
                 }
 
@@ -70,12 +73,17 @@ namespace Game.Runtime
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
             {
-                if (IsAvailableAirportRunway(pair.Value))
+                if (CanUseRunway(pair.Value, requestingFaction) && IsAvailableAirportRunway(pair.Value))
                     return true;
             }
 
             return false;
         }
+
+        private static bool CanUseRunway(RuntimeBuildingEntity candidate, byte? requestingFaction) =>
+            candidate != null && (!requestingFaction.HasValue || !candidate.HasOwnerFaction ||
+                candidate.OwnerFactionId == FactionIdentity.NeutralFactionId ||
+                candidate.OwnerFactionId == requestingFaction.Value);
 
         private static bool IsAvailableAirportRunway(RuntimeBuildingEntity candidate)
         {

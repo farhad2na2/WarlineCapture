@@ -5,6 +5,7 @@ using Game.UI.Runtime;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace Game.Editor
 {
@@ -42,6 +43,24 @@ namespace Game.Editor
             RunS003StartupAndExit();
         }
 
+        public static void RunS005CameraTouchProbeAndExit()
+        {
+            Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
+            Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            helipadProbeStage = 0;
+            RunS005StartupEn();
+        }
+
+        public static void RunS005AircraftCycleProbeAndExit()
+        {
+            Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE", "1");
+            Environment.SetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE", "1");
+            helipadProbeStage = 0;
+            RunS005StartupEn();
+        }
+
         private static void LaunchS003HelipadProbe()
         {
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S003");
@@ -53,6 +72,9 @@ namespace Game.Editor
         private static void StartNativeHelipadProbe(Entity session)
         {
             helipadProbeAircraftCycle = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_AIRCRAFT_CYCLE") == "1";
+            airProbeCameraCommandsBefore = -1;
+            airProbeCameraAttackMaskBefore = -1;
+            if (Environment.GetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY") == "1") Game.Runtime.AriaCommandEvidence.Begin();
             helipadProbeTouch = null;
             bool existingPad = helipadProbeAircraftCycle && catalogId == "S004" &&
                 UiShellRuntimeGateway.TryReadSkirmish(out var model) && model.PadPresent;
@@ -63,6 +85,10 @@ namespace Game.Editor
             helipadProbeExpectedSite = Vector3.zero;
             airProbePurchaseAt = airProbeServiceAt = airProbeSortieAt = airProbeLastStatusAt = 0d;
             airProbePageTurns = 0;
+            airProbeDefenseSlot = airProbeDefenseStep = 0;
+            airProbeDefenseMapStep = 0;
+            airProbeDefenseMapAttempts = 0;
+            airProbeFirstFuel = airProbeSecondFuel = airProbeTouchdownFuel = airProbeRequiredReserve = 0;
             initialHelipadObjects.Clear();
             foreach (var item in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (item.name.StartsWith("Helipad_", StringComparison.Ordinal))
@@ -112,6 +138,10 @@ namespace Game.Editor
             }
             if (helipadProbeStage == 2)
             {
+                if (helipadProbeAircraftCycle && catalogId == "S005" &&
+                    !GuardPresentedBase(now, skirmish, controls)) return;
+                if (helipadProbeAircraftCycle && catalogId == "S005" &&
+                    !TapHelipadButton(skirmish.PlayerFocusButton, now)) return;
                 helipadProbeStage = 3;
                 helipadProbeNext = now + .5d;
                 return;
@@ -153,19 +183,29 @@ namespace Game.Editor
                         Debug.Log($"[SkirmishS003HelipadProbe] feedback site={helipadProbeSite - 1} status={feedback.Status} viewStatus={placement.StatusText?.text} canConfirm={feedback.CanConfirm} button={placement.ConfirmButton?.IsInteractable()}");
                     helipadProbeTappedSite = false;
                 }
-                if (helipadProbeSite >= 4) { EndHelipadProbe(false, "noLegalSite"); return; }
+                if (helipadProbeSite >= 16) { EndHelipadProbe(false, "noLegalVisibleSite"); return; }
                 Vector3 home = skirmish.PlayerBaseObjectivePosition;
                 Vector3 forward = skirmish.EnemyBaseObjectivePosition - home;
                 forward.y = 0;
                 if (forward.sqrMagnitude < 1) { EndHelipadProbe(false, "missingBaseDirection"); return; }
                 forward.Normalize();
                 Vector3 side = Vector3.Cross(Vector3.up, forward);
-                Vector3 site = home + forward * (helipadProbeSite / 2 == 0 ? 18f : 12f) -
-                    side * (helipadProbeSite % 2 == 0 ? 34f : 42f);
+                float along = new[] { 18f, 12f, 36f, -24f }[helipadProbeSite / 4];
+                float across = new[] { -34f, 34f, -42f, 42f }[helipadProbeSite % 4];
+                Vector3 site = home + forward * along + side * across;
                 var point = Camera.main != null ? Camera.main.WorldToScreenPoint(site) : Vector3.zero;
                 if (point.z <= 0 || !Screen.safeArea.Contains(point))
                 {
                     Debug.Log($"[SkirmishS003HelipadProbe] siteOffscreen screen={point}");
+                    helipadProbeSite++;
+                    return;
+                }
+                var hits = new List<RaycastResult>();
+                if(EventSystem.current != null)
+                    EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) {position=point},hits);
+                if(hits.Count>0)
+                {
+                    Debug.Log("[SkirmishHelipadVisibleSite] rejected=UiOcclusion target="+hits[0].gameObject.name+" screen="+point);
                     helipadProbeSite++;
                     return;
                 }
@@ -274,7 +314,9 @@ namespace Game.Editor
         {
             Debug.Log("[SkirmishS003HelipadProbe] result=" + (passed ? "Passed" : "Failed") +
                 " reason=" + reason + " input=Touch samples=" + (helipadProbeTouch?.AcceptedSamples ?? 0) +
-                " acceptance=" + (helipadProbeAircraftCycle ? "AircraftLifecycleTouchProbe" : "PlacementVisualOnly"));
+                " acceptance=" + (Environment.GetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY") == "1"
+                    ? "CameraTouchOnly" : helipadProbeAircraftCycle ? "AircraftLifecycleTouchProbe" : "PlacementVisualOnly"));
+            Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_TOUCH_ONLY", null);
             helipadProbeStage = 0;
             Finish(!passed, reason);
         }

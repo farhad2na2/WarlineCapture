@@ -67,7 +67,7 @@ Choose the largest **certified** preset appropriate for the device before deploy
 
 ## 3. Roster: meaningful roles before every model
 
-The repository contains 51 UnitGrid configs and 23 BuildingDefinition configs, including civilians and visual variants. That is an asset inventory, not 51 finished combat roles. Every eligible military entry needs a recorded producer, cost, target capability, counter, movement/transport behavior, usable portrait, localization, and performance status.
+The repository contains 51 UnitGrid configs and 24 BuildingDefinition configs, including civilians and visual variants. That is an asset inventory, not 51 finished combat roles. Every eligible military entry needs a recorded producer, cost, target capability, counter, movement/transport behavior, usable portrait, localization, and performance status.
 
 | Release group | Existing candidates | Intended job and necessary counterplay |
 |---|---|---|

@@ -115,6 +115,25 @@ namespace Game.Editor
             var targets = serialized.FindProperty("localizedTextTargets");
             var keys = serialized.FindProperty("localizedTextKeys");
             var fallbacks = serialized.FindProperty("localizedTextEnglishFallbacks");
+            // Rebuilt surfaces destroy their old TMP objects. Compact all three
+            // parallel arrays together so an old key can never bind a new label.
+            var retained = new List<(UnityEngine.Object target, string key, string fallback)>();
+            for (int i = 0; i < targets.arraySize; i++)
+            {
+                var target = targets.GetArrayElementAtIndex(i).objectReferenceValue;
+                if (target == null) continue;
+                if (i >= keys.arraySize || i >= fallbacks.arraySize)
+                    throw new InvalidOperationException("Narrative localization arrays are misaligned.");
+                retained.Add((target, keys.GetArrayElementAtIndex(i).stringValue,
+                    fallbacks.GetArrayElementAtIndex(i).stringValue));
+            }
+            targets.arraySize = keys.arraySize = fallbacks.arraySize = retained.Count;
+            for (int i = 0; i < retained.Count; i++)
+            {
+                targets.GetArrayElementAtIndex(i).objectReferenceValue = retained[i].target;
+                keys.GetArrayElementAtIndex(i).stringValue = retained[i].key;
+                fallbacks.GetArrayElementAtIndex(i).stringValue = retained[i].fallback;
+            }
             var entries = ReadUiStringConfigs().GroupBy(e => e.source, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
             var bound = new HashSet<UnityEngine.Object>();
             for (int i = 0; i < targets.arraySize; i++) bound.Add(targets.GetArrayElementAtIndex(i).objectReferenceValue);
@@ -128,6 +147,39 @@ namespace Game.Editor
                 fallbacks.GetArrayElementAtIndex(index).stringValue = entry.source;
             }
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        // Preserve reviewed catalog values and screen geometry while restoring
+        // bindings lost when native prefab builders replace their hierarchy.
+        public static void RepairExistingUiBindings()
+        {
+            ApplyConfiguredUiTables();
+            var roots = new List<(string path, GameObject root, int changed)>();
+            try
+            {
+                foreach (var path in FindUiPrefabPaths())
+                {
+                    var root = PrefabUtility.LoadPrefabContents(path);
+                    roots.Add((path, root, 0));
+                    if (UsesSpecializedNarrativeLocalization(path))
+                    {
+                        var sequence = root.GetComponent<NarrativeSequenceView>();
+                        if (sequence != null) ExtendConfiguredNarrativeBindings(sequence);
+                        roots[roots.Count - 1] = (path, root, sequence != null ? 1 : 0);
+                    }
+                    else roots[roots.Count - 1] = (path, root, BindExistingCatalog(root));
+                }
+                // No writes until every authored source has a reviewed entry.
+                foreach (var item in roots)
+                    if (item.changed != 0) PrefabUtility.SaveAsPrefabAsset(item.root, item.path);
+                AssetDatabase.SaveAssets();
+                ValidateBindingsAndCoverage();
+                Debug.Log("[ExistingUiBindings] result=Passed prefabs=" + roots.Count);
+            }
+            finally
+            {
+                foreach (var item in roots) PrefabUtility.UnloadPrefabContents(item.root);
+            }
         }
 
         public static void ValidateConfiguredCatalogEntries(GameLocalizationCatalog catalog)

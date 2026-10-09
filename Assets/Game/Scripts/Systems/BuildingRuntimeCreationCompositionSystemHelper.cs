@@ -160,6 +160,8 @@ namespace Game.Runtime
                 context.RuntimeBuildingEntityLinks,
                 building);
             context.RuntimeBuildingSystem.AddBuilding(building.Id, building);
+            if (hasEntityManager && combatEntity != Entity.Null && entityManager.Exists(combatEntity))
+                entityManager.AddComponentObject(combatEntity, new SkirmishNativeBuildingCheckpointRecord { Building = building });
 
             if (defer)
                 context.MarkPendingMarkerRefresh?.Invoke();

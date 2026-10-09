@@ -203,6 +203,11 @@ namespace Game.UI.Runtime
             if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
                 return;
 
+            // The transparent loading plate must release input to the destination.
+            // ResetVisualState restores blocking at the next loading handoff.
+            loading.CanvasGroup.interactable = false;
+            loading.CanvasGroup.blocksRaycasts = false;
+
             // Fade only. Scaling this full-screen plate to zero collapses it into a
             // one-pixel line across the menu it is supposed to cover.
             steps.Add(UIMotionStep.Single(

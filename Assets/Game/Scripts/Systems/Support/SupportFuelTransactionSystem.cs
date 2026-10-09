@@ -11,8 +11,12 @@ namespace Game.Runtime
         public static float Usable(in BuildingResourceStorageComponent s, byte faction) =>
             s.OwnerFactionId==faction && s.FuelStorageCapacity>0 && s.FuelBarrelsPerDay<=0 && s.OilBarrelsPerDay<=0
             ? math.max(0,s.StoredFuelBarrels-s.ReservedFuelOutboundBarrels-s.CivilianFuelReserveBarrels) : 0;
-        public static float Available(EntityManager em, byte faction)
+        public static float Available(EntityManager em, byte faction) => Available(em,Entity.Null,faction);
+        public static float Available(EntityManager em, Entity root, byte faction)
         {
+            if(root!=Entity.Null && !em.Exists(root))return 0;
+            if(TryOwnedScope(em,root,out var ownedStorage))return em.Exists(ownedStorage) && em.HasComponent<BuildingResourceStorageComponent>(ownedStorage)
+                ? Usable(em.GetComponentData<BuildingResourceStorageComponent>(ownedStorage),faction):0;
             if(CampaignCitywideFuelScope.TryGet(em,out _,out _))return faction==1?CampaignCitywideFuelScope.Total(em):0;
             if(TryScope(em,out var scope))return em.Exists(scope) && em.HasComponent<BuildingResourceStorageComponent>(scope)
                 ? Usable(em.GetComponentData<BuildingResourceStorageComponent>(scope),faction):0;
@@ -24,11 +28,14 @@ namespace Game.Runtime
                 foreach(var store in chunk.GetNativeArray(ref storageType))total+=Usable(store,faction);
             return total;
         }
-        public static bool TryConsumeImmediate(EntityManager em, byte faction, int cost)
+        public static bool TryConsumeImmediate(EntityManager em, byte faction, int cost) => TryConsumeImmediate(em,Entity.Null,faction,cost);
+        public static bool TryConsumeImmediate(EntityManager em, Entity root, byte faction, int cost)
         {
+            if(root!=Entity.Null && !em.Exists(root))return false;
             if(cost<0) return false;
             if(cost==0) return true;
-            bool scoped=TryScope(em,out var scope);
+            bool owned=TryOwnedScope(em,root,out var scope);
+            bool scoped=owned || TryScope(em,out scope);
             using var query=em.CreateEntityQuery(ComponentType.ReadWrite<BuildingResourceStorageComponent>());
             using var chunks=query.ToArchetypeChunkArray(Allocator.Temp);
             var entityType=em.GetEntityTypeHandle();var storageType=em.GetComponentTypeHandle<BuildingResourceStorageComponent>(true);
@@ -36,7 +43,7 @@ namespace Game.Runtime
             foreach(var chunk in chunks)
             {
                 var entities=chunk.GetNativeArray(entityType);var stores=chunk.GetNativeArray(ref storageType);
-                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
+                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || !owned && faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
             }
             var prepared=plan;
             // Deterministic source order; no writes during preparation.
@@ -63,10 +70,13 @@ namespace Game.Runtime
             foreach(var contribution in plan)if(contribution.Amount>0)em.SetComponentData(contribution.Entity,contribution.Copy);
             return true;
         }
-        public static bool TryReserve(EntityManager em,Entity execution,byte faction,int cost,uint requestId)
+        public static bool TryReserve(EntityManager em,Entity execution,byte faction,int cost,uint requestId) => TryReserve(em,Entity.Null,execution,faction,cost,requestId);
+        public static bool TryReserve(EntityManager em,Entity root,Entity execution,byte faction,int cost,uint requestId)
         {
+            if(root!=Entity.Null && !em.Exists(root))return false;
             if(cost<0 || !em.HasBuffer<SupportFuelReservationElement>(execution))return false;
-            bool scoped=TryScope(em,out var scope);
+            bool owned=TryOwnedScope(em,root,out var scope);
+            bool scoped=owned || TryScope(em,out scope);
             using var query=em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
             using var chunks=query.ToArchetypeChunkArray(Allocator.Temp);
             var entityType=em.GetEntityTypeHandle();var storageType=em.GetComponentTypeHandle<BuildingResourceStorageComponent>(true);
@@ -74,7 +84,7 @@ namespace Game.Runtime
             foreach(var chunk in chunks)
             {
                 var entities=chunk.GetNativeArray(entityType);var stores=chunk.GetNativeArray(ref storageType);
-                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)
+                for(int i=0;i<entities.Length;i++)if((!scoped || entities[i]==scope || !owned && faction==1 && CampaignCitywideFuelScope.IsStorage(em,entities[i])) && Usable(stores[i],faction)>0)
                     plan.Add(new Contribution {Entity=entities[i],Copy=stores[i]});
             }
             var prepared=plan;
@@ -131,6 +141,15 @@ namespace Game.Runtime
                 }
                 r.Status=2;reservations[i]=r;
             }
+        }
+        // An explicit owner scope takes precedence over inherited Campaign scopes.
+        // A destroyed or foreign storage never falls back to another session's stock.
+        private static bool TryOwnedScope(EntityManager em,Entity root,out Entity storage)
+        {
+            storage=Entity.Null;
+            if(root==Entity.Null || !em.Exists(root) || !em.HasComponent<SupportFuelScopeComponent>(root))return false;
+            var scope=em.GetComponentData<SupportFuelScopeComponent>(root);
+            storage=scope.Storage;return scope.Required!=0;
         }
         private static bool TryScope(EntityManager em,out Entity storage)
         {

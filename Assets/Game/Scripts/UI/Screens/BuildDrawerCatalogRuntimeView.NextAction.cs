@@ -51,6 +51,20 @@ namespace Game.UI.Runtime
             return null;
         }
 
+        public bool TryReadSelectedRequest(out string prefabKey, out int materialsCost,
+            out BuildingUiCommandFailure failure, out string requiredProducer)
+        {
+            prefabKey = string.Empty;
+            materialsCost = 0;
+            failure = BuildingUiCommandFailure.InvalidSelection;
+            requiredProducer = string.Empty;
+            if (!_hasSelectedItem || _selectedItem.Prefab == null) return false;
+            prefabKey = _selectedItem.Prefab.name;
+            materialsCost = _selectedItem.MaterialsCost;
+            failure = GetCampRequestFailure(_selectedItem, out requiredProducer);
+            return true;
+        }
+
         private static bool IsTutorialBuilding(GameObject prefab, bool defense) => prefab != null &&
             (defense ? prefab.name is "Building_Road_Barrier" or "Building_GuardTower" : prefab.name == BarracksPrefabName);
 

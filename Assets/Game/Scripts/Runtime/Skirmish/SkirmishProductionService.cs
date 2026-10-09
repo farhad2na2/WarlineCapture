@@ -565,6 +565,8 @@ namespace Game.Runtime
             if (!SkirmishCapacityLedger.TryReleaseDeath(ref snapshot, role.Category, role.SupplyCost))
                 return false;
 
+            if(em.HasComponent<SkirmishSupportPassengerCapacity>(unit))
+            {var cleanup=em.GetComponentData<SkirmishSupportPassengerCapacity>(unit);cleanup.Released=1;em.SetComponentData(unit,cleanup);}
             owned.CapacityReleased = 1;
             em.SetComponentData(unit, owned);
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
@@ -741,8 +743,7 @@ namespace Game.Runtime
         {
             if (!em.HasComponent<SkirmishResearchStateComponent>(session))
                 return compiled;
-            var research = em.GetComponentData<SkirmishResearchStateComponent>(session);
-            if (research.FactionId != factionId) return compiled;
+            if (!SkirmishResearchService.TryReadState(em, session, factionId, out var research)) return compiled;
             SkirmishReadinessStage live = research.Readiness;
             return live > compiled ? live : compiled;
         }

@@ -158,7 +158,7 @@ namespace Game.Runtime
             int issuedCount = 0;
             bool issuedGroundMissileOrder = false;
             bool sawTransportWithoutAttackPayload = false;
-            TacticalCommandResult missileRangeRejection = default;
+            TacticalCommandResult commandRejection = default;
             EntityCommandBuffer orderEcb = new(Allocator.Temp);
             try
             {
@@ -175,18 +175,19 @@ namespace Game.Runtime
                     bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
                     if (SkirmishSharedCombatBinding.UsesSharedCommands(entityManager, entity))
                     {
-                        if (SkirmishArmyCommandService.TryAttackMember(entityManager, entity, targetEntity)) issuedCount++;
+                        if (SkirmishArmyCommandService.TryAttackMember(entityManager, entity, targetEntity, out var sharedResult)) issuedCount++;
+                        else commandRejection = sharedResult;
                         continue;
                     }
                     if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
                     {
-                        missileRangeRejection = missileRangeResult;
+                        commandRejection = missileRangeResult;
                         continue;
                     }
 
                     if (!CampaignSplitFrontLauncherSafety.TryIssueAttack(entityManager, entity, targetEntity))
                     {
-                        missileRangeRejection = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable,
+                        commandRejection = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable,
                             GameText.Get("mission.split_front.attack.unsafe", "Target unavailable or too close to protected civilians."));
                         continue;
                     }
@@ -282,8 +283,8 @@ namespace Game.Runtime
 
             TacticalCommandResult result = issuedCount > 0
                 ? TacticalCommandResult.Success(issuedGroundMissileOrder ? GameText.Get("tactical.feedback.missile_preparing", "Preparing missile.") : string.Empty)
-                : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
-                    ? missileRangeRejection
+                : commandRejection.ReasonCode != TacticalCommandReasonCode.None
+                    ? commandRejection
                     : sawTransportWithoutAttackPayload
                         ? TacticalCommandResult.Rejected(
                             TacticalCommandReasonCode.TargetNotAttackable,

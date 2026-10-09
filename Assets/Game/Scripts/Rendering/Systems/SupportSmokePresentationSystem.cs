@@ -11,18 +11,25 @@ namespace Game.Rendering
     {
         private readonly Dictionary<Entity,GameObject> visuals=new(8);
         private readonly List<Entity> expired=new(8);
+        private EntityQuery sessionRoots;
+        protected override void OnCreate()=>sessionRoots=GetEntityQuery(typeof(SupportSessionComponent));
+        public static GameObject ResolvePrefab(EntityManager em,NativeArray<Entity> roots,in SupportSmokeZoneComponent zone)
+        {
+            if(!SupportSessionUtility.TrySmokeOwner(em,roots,zone,out var owner) || !em.HasComponent<SupportSmokeVisualConfigComponent>(owner))return null;
+            return em.GetComponentData<SupportSmokeVisualConfigComponent>(owner).Prefab.Value;
+        }
         protected override void OnUpdate()
         {
-            bool hasConfig=SystemAPI.TryGetSingleton(out SupportSmokeVisualConfigComponent config) && config.Prefab.Value!=null;
+            using var roots=sessionRoots.ToEntityArray(Allocator.Temp);
             expired.Clear();
-            foreach(var pair in visuals) if(!hasConfig || !EntityManager.Exists(pair.Key) || !EntityManager.HasComponent<SupportSmokeZoneComponent>(pair.Key))
+            foreach(var pair in visuals) if(!EntityManager.Exists(pair.Key) || !EntityManager.HasComponent<SupportSmokeZoneComponent>(pair.Key) || ResolvePrefab(EntityManager,roots,EntityManager.GetComponentData<SupportSmokeZoneComponent>(pair.Key))==null)
             {Object.Destroy(pair.Value);expired.Add(pair.Key);}
             foreach(var entity in expired)visuals.Remove(entity);
-            if(!hasConfig)return;
             foreach(var (zone,entity) in SystemAPI.Query<RefRO<SupportSmokeZoneComponent>>().WithEntityAccess())
             {
                 if(visuals.ContainsKey(entity))continue;
-                var visual=Object.Instantiate(config.Prefab.Value,(Vector3)zone.ValueRO.Center,Quaternion.identity);
+                var prefab=ResolvePrefab(EntityManager,roots,zone.ValueRO);if(prefab==null)continue;
+                var visual=Object.Instantiate(prefab,(Vector3)zone.ValueRO.Center,Quaternion.identity);
                 visual.name="SupportSmoke";
                 // Existing source smoke particles are spread over the gameplay footprint; no target-obscuring opaque mesh.
                 float radius=Mathf.Sqrt(zone.ValueRO.RadiusSquared);

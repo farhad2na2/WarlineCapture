@@ -22,6 +22,7 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
     private TestSquadTrayView _view;
     private Entity _lastHudSelection;
     private int _lastHudSquadCount;
+    private int _buildingSelectionClears;
 
     public static void RunFocusedValidation()
     {
@@ -32,7 +33,8 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
             RunCase(test => test.SelectAircraftAndTransportSlots_SelectsExpectedUnitKinds());
             RunCase(test => test.SelectSoldiersSlot_RebindsAfterWorldReplacement());
             RunCase(test => test.SelectSoldiersSlot_ReplaySelectsExactlyCurrentMissionSquad());
-            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=5");
+            RunCase(test => test.ExpandedSelectionReplacesBuildingFocusAndPreservesAdditiveMembers());
+            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=6");
         }
         catch (Exception exception)
         {
@@ -229,6 +231,41 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
         Assert.AreEqual(4, _lastHudSquadCount);
     }
 
+    [Test]
+    public void ExpandedSelectionReplacesBuildingFocusAndPreservesAdditiveMembers()
+    {
+        Entity oldFocus = CreatePlayerUnit("Building_Airport", new float3(1, 0, 1));
+        Entity strike = CreatePlayerUnit("Unit_Veh_Jet_01", new float3(2, 0, 2), isAir: true);
+        _entityManager.AddComponentData(strike, new SkirmishAttemptOwnedComponent { FactionId = 1 });
+        _selectionState.SetFocusedUnit(oldFocus);
+        _selectionState.CacheSelectedMoveEntity(_entityManager, oldFocus);
+        _entityManager.AddComponent<SelectedUnitTag>(strike);
+        _system.SynchronizeExpandedSelection(CreateContext(), _entityManager);
+        Assert.AreEqual(1, _buildingSelectionClears);
+        Assert.AreEqual(strike, _selectionState.FocusedUnit);
+        Assert.AreEqual(strike, _lastHudSelection);
+        CollectionAssert.AreEqual(new[] { strike }, _selectionState.CachedSelectedMoveEntities);
+        Assert.IsTrue(_entityManager.HasComponent<SelectedUnitTag>(strike));
+        Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(strike), "selection must not issue movement orders");
+
+        Entity second = CreatePlayerUnit("Unit_Veh_Helicopter_Attack_Small", new float3(3, 0, 3), isAir: true);
+        _entityManager.AddComponentData(second, new SkirmishAttemptOwnedComponent { FactionId = 1 });
+        _entityManager.AddComponent<SelectedUnitTag>(second);
+        _system.SynchronizeExpandedSelection(CreateContext(), _entityManager);
+        CollectionAssert.AreEquivalent(new[] { strike, second }, SelectedEntities());
+        CollectionAssert.AreEquivalent(new[] { strike, second }, _selectionState.CachedSelectedMoveEntities);
+        Assert.AreEqual(Entity.Null, _selectionState.FocusedUnit);
+        Assert.AreEqual(2, _lastHudSquadCount);
+
+        _entityManager.RemoveComponent<SelectedUnitTag>(strike);
+        _entityManager.RemoveComponent<SelectedUnitTag>(second);
+        _system.SynchronizeExpandedSelection(CreateContext(), _entityManager);
+        Assert.AreEqual(0, _selectionState.CachedSelectedMoveEntities.Count);
+        Assert.AreEqual(Entity.Null, _selectionState.FocusedUnit);
+        Assert.AreEqual(0, _lastHudSquadCount);
+        Assert.AreEqual(3, _buildingSelectionClears);
+    }
+
     private MatchHudSquadTraySelectionUiSystemHelper.Context CreateContext()
     {
         return new MatchHudSquadTraySelectionUiSystemHelper.Context(
@@ -236,7 +273,7 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
             TryGetEntityManager,
             _ => { },
             ClearCurrentSelection,
-            () => { },
+            () => _buildingSelectionClears++,
             (_, entity) => _lastHudSelection = entity,
             count => _lastHudSquadCount = count,
             _ => { },

@@ -429,6 +429,9 @@ namespace Game.Runtime
                 ? missileEntity
                 : ecb.CreateEntity();
             bool usesExistingMissileVisual = projectileEntity == missileEntity;
+            if (!usesExistingMissileVisual && em.HasComponent<SkirmishAttemptOwnedComponent>(launcherEntity))
+                ecb.AddComponent(projectileEntity, new SkirmishNativeTransientOwner {
+                    SessionId = em.GetComponentData<SkirmishAttemptOwnedComponent>(launcherEntity).SessionId });
 
             Entity originalParent = Entity.Null;
             if (usesExistingMissileVisual)

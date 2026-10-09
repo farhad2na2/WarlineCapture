@@ -154,6 +154,9 @@ namespace Game.UI.Runtime
 
             if (scenarioDescription != null)
             {
+                var descriptionRect = scenarioDescription.rectTransform;
+                descriptionRect.anchorMin = descriptionRect.anchorMax = new Vector2(0f, 1f);
+                descriptionRect.pivot = new Vector2(0f, 1f);
                 var descriptionBinding = scenarioDescription.GetComponent<V3LocalizedTextBindingView>() ??
                     scenarioDescription.gameObject.AddComponent<V3LocalizedTextBindingView>();
                 descriptionBinding.ConfigureFontBounds(14f, 22f);
@@ -164,9 +167,6 @@ namespace Game.UI.Runtime
                 scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
                 if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
                 {
-                    var descriptionRect = scenarioDescription.rectTransform;
-                    descriptionRect.anchorMin = descriptionRect.anchorMax = new Vector2(0f, 1f);
-                    descriptionRect.pivot = new Vector2(0f, 1f);
                     UiLocalizedText.Set(scenarioDescription, fa
                         ? "آشیانه آماده است؛ بالگرد رزمی بساز."
                         : "Your Helipad is ready. Recruit attack helicopters.");
@@ -202,10 +202,33 @@ namespace Game.UI.Runtime
                 UiLocalizedText.Set(searchHint, fa ? "جست‌وجوی نبرد (S004، کویر، ...)" : "Search battles (S004, Desert, ...)");
 
             PresentCompiledBriefing(selected, fa);
+            _savedMatchAvailable = selected.IsPlayable && UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
             if (launchButton != null)
+            {
                 launchButton.interactable = selected.IsPlayable;
+                if (_launchLabel == null) { _launchLabel = launchButton.GetComponentInChildren<TMP_Text>(); _launchDefault = AuthoredButtonDefault(_launchLabel, "PLAY"); }
+                UiLocalizedText.Set(_launchLabel, _savedMatchAvailable ? (fa ? "ادامهٔ نبرد" : "CONTINUE MATCH") : _launchDefault);
+            }
+            if (resetButton != null)
+            {
+                if (_resetLabel == null) { _resetLabel = resetButton.GetComponentInChildren<TMP_Text>(); _resetDefault = AuthoredButtonDefault(_resetLabel, "DEFAULTS"); }
+                UiLocalizedText.Set(_resetLabel, _savedMatchAvailable ? (fa ? "نبرد جدید" : "NEW MATCH") : _resetDefault);
+            }
+            if (_savedMatchAvailable)
+                UiLocalizedText.Set(scenarioDescription, fa ? "یک نبرد ذخیره‌شده داری. ادامه بده، یا «نبرد جدید» را بزن تا از ابتدا شروع کنی." : "You have a saved match. Continue it, or choose New Match to start again.");
         }
 
+        private static string AuthoredButtonDefault(TMP_Text label, string fallback)
+        {
+            var binding = label != null ? label.GetComponent<V3LocalizedTextBindingView>() : null;
+            // Rendered text can already be Persian and shaped. Preserve the authored source.
+            return binding != null && !string.IsNullOrEmpty(binding.EnglishFallback)
+                ? binding.EnglishFallback : fallback;
+        }
+
+        private bool _savedMatchAvailable;
+        private TMP_Text _launchLabel, _resetLabel;
+        private string _launchDefault, _resetDefault;
         private readonly Dictionary<TMP_Text, (string key, string fallback)> _authoredRuleCopy = new();
         private string _briefingCatalogId;
         private int _briefingSeed;
@@ -218,9 +241,7 @@ namespace Game.UI.Runtime
                 _briefingCatalogId = selected.ScenarioId;
                 _briefingSeed = _config.MapSeed;
                 _briefingSetup = null;
-                if (selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ||
-                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ||
-                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex)
+                if (selected.IsPlayable)
                     SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, out _briefingSetup);
             }
             string[] names = { "Opponent", "Objective", "Roster", "Economy", "Intel" };

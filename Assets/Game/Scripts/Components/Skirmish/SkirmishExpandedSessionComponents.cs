@@ -172,6 +172,12 @@ namespace Game.Components
         public uint NextResearchId;
     }
 
+    // Keep the existing player component layout stable for native checkpoint compatibility.
+    public struct SkirmishEnemyResearchStateComponent : IComponentData
+    {
+        public SkirmishResearchStateComponent State;
+    }
+
     public struct SkirmishResearchQueueItem : IBufferElementData
     {
         public uint ResearchId;

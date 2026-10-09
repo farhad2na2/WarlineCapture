@@ -265,11 +265,26 @@ namespace Game.Runtime
                 source.RuntimeBuildings,
                 source.VisualSystem);
 
+            var transportContext = CreateProductionTransportContext(source);
+            var checkpointPrefabs = new SkirmishNativeCheckpointPrefabRegistry(
+                source.DefinitionSystem?.ConfiguredUnitSpawnPrefabs, source.DefinitionSystem?.UnitSpawnPrefabsByKey);
+            if (source.TransportSystem != null && source.RuntimeBuildings != null && source.TryGetEntityManager != null &&
+                source.TryGetEntityManager(out EntityManager em))
+            {
+                foreach (var pair in source.RuntimeBuildings)
+                {
+                    var building = pair.Value;
+                    if (building == null || !em.Exists(building.CombatEntity) ||
+                        !em.HasComponent<SkirmishNativeBuildingCheckpointRecord>(building.CombatEntity)) continue;
+                    source.TransportSystem.BindCheckpointProductionOwner(transportContext, building,
+                        em.GetComponentObject<SkirmishNativeBuildingCheckpointRecord>(building.CombatEntity), checkpointPrefabs);
+                }
+            }
             return new BuildingProductionUpdateCompositionSystemHelper.Context(
                 source.RuntimeBuildings,
                 source.ProductionSystem,
                 source.TransportSystem,
-                CreateProductionTransportContext(source));
+                transportContext, checkpointPrefabs);
         }
 
         public BuildingProductionTransportPresentationSystemHelper.Context CreateProductionTransportContext(Source source)

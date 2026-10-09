@@ -449,11 +449,13 @@ namespace Game.UI.Runtime
             }
 
             _mainMenuPlayUi?.BindMatchHudFullMapPopup(_fullMapPopupView);
+            _buildPlacementConfirmationBarView?.SetFullMapOpen(true);
         }
 
         private void CloseFullMapPopup()
         {
             _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);
+            _buildPlacementConfirmationBarView?.SetFullMapOpen(false);
             GameObject popup = _fullMapPopupInstance;
             _fullMapPopupInstance = null;
             _fullMapPopupView = null;
@@ -665,6 +667,7 @@ namespace Game.UI.Runtime
             }
             else if (regionId == UIShellRegionId.PopupLayer)
             {
+                _buildPlacementConfirmationBarView?.SetFullMapOpen(false);
                 _supportPopupInstance = null;
                 UnbindBuildDrawerPopupCloseButton();
                 _mainMenuPlayUi?.BindBuildDrawer(null);

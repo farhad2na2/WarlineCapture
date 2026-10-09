@@ -48,6 +48,9 @@ namespace Game.Runtime
                     : BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessEstablishedRequired;
             if (!building && catalog.TryRole(prefab.name, out var researchRole) && ResearchBlocks(em, session, researchRole.Producer, 1))
                 return BuildingUiCommandSystemHelper.CampRequestFailure.ResearchInProgress;
+            if (!building && catalog.TryRole(prefab.name, out var producerRole) &&
+                !SkirmishProductionService.HasLivingProducer(em, session, producerRole.Producer, 1))
+                return BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding;
             return BuildingUiCommandSystemHelper.CampRequestFailure.None;
         }
 
@@ -57,6 +60,23 @@ namespace Game.Runtime
                 foreach (var research in em.GetBuffer<SkirmishResearchQueueItem>(session))
                     if (research.FactionId == faction && research.Producer == producer && research.Phase == SkirmishResearchPhase.Researching)
                         return true;
+            return false;
+        }
+
+        internal static bool TryRequiredProducerDisplayName(EntityManager em, GameObject prefab,
+            System.Collections.Generic.IReadOnlyList<BuildingDefinition> definitions, out string name)
+        {
+            name = string.Empty;
+            if (prefab == null || definitions == null || !TrySession(em, out var session)) return false;
+            var catalog = em.GetComponentObject<SkirmishProductionCatalogRecord>(session).Catalog;
+            if (catalog == null || !catalog.TryRole(prefab.name, out var role)) return false;
+            string key = SkirmishProductionCatalog.ProducerPrefabKey(role.Producer);
+            foreach (var definition in definitions)
+                if (definition?.Prefab != null && definition.Prefab.name == key)
+                {
+                    name = string.IsNullOrWhiteSpace(definition.DisplayName) ? "Building" : definition.DisplayName;
+                    return true;
+                }
             return false;
         }
 

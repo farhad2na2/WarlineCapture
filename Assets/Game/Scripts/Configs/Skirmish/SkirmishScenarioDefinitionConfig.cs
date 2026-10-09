@@ -41,6 +41,11 @@ namespace Game.Configs
         [SerializeField] private string resultDefeatKey = "skirmish.s002.result.defeat";
         [SerializeField] private string readinessManifestId = "publication.skirmish.s002";
 
+        [SerializeField] private OperationMapDefinition campaignMap;
+        public OperationMapDefinition CampaignMap => campaignMap;
+
+        public void BindCampaignMap(OperationMapDefinition source) => campaignMap = source;
+
         public string CatalogId => catalogId;
         public string DefinitionId => definitionId;
         public string ScenarioSetupId => scenarioSetupId;

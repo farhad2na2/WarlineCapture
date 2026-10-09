@@ -20,6 +20,7 @@ namespace Game.Editor
             public object Gate = new object();
             public string LogFile, Method;
             public bool OwnsPlay, Aborted;
+            public Task<int> Operation;
             public Application.LogCallback Callback;
         }
         private static Capture active;
@@ -54,8 +55,11 @@ namespace Game.Editor
                 SessionState.SetBool("Warline.M03.LaunchProbe.Active", false);
             }
             MissionEditorValidationExit.LastCompletion = 1;
+            EditorApplication.update -= PollCompletion;
+            active = null;
+            IsRunning = false;
         }
-        public static async void Run(string executeMethod,string logFile)
+        public static void Run(string executeMethod,string logFile)
         {
             if (IsRunning)
             {
@@ -68,7 +72,7 @@ namespace Game.Editor
             MissionEditorValidationExit.LastCompletion = null;
             int status=1;
             Directory.CreateDirectory(Path.GetDirectoryName(logFile));
-            using var writer=new StreamWriter(logFile,false) {AutoFlush=true};
+            var writer=new StreamWriter(logFile,false) {AutoFlush=true};
             var run = new Capture { Writer=writer, LogFile=logFile, Method=executeMethod };
             active = run;
             object gate=run.Gate;
@@ -92,19 +96,24 @@ namespace Game.Editor
                 bool wasPlaying = EditorApplication.isPlayingOrWillChangePlaymode;
                 object invocation=method.Invoke(null,null);
                 run.OwnsPlay = !wasPlaying && EditorApplication.isPlayingOrWillChangePlaymode;
-                if(invocation is Task<int> operation)status=await operation;
+                if(invocation is Task<int> operation)
+                {
+                    run.Operation = operation;
+                    EditorApplication.update += PollCompletion;
+                    return;
+                }
+                if (run.OwnsPlay)
+                {
+                    // Entering and leaving Play mode replaces Unity's synchronization
+                    // context. An awaited Task.Delay can strand its continuation on
+                    // the old context even though the native probe has completed.
+                    EditorApplication.update += PollCompletion;
+                    return;
+                }
                 else
                 {
-                    if (!wasPlaying && EditorApplication.isPlayingOrWillChangePlaymode)
-                    {
-                        while (!MissionEditorValidationExit.LastCompletion.HasValue) await Task.Delay(100);
-                        status = MissionEditorValidationExit.LastCompletion.Value;
-                    }
-                    else
-                    {
                     object result=exit?.GetProperty("LastExitCode",BindingFlags.Public|BindingFlags.Static)?.GetValue(null);
                     status=MissionEditorValidationExit.LastCompletion ?? (result is int code?code:0);
-                    }
                 }
                 if (run.Aborted) status = 1;
                 Debug.Log("[ExistingEditorValidation] result="+(status==0?"Passed":"Failed")+" executeMethod="+executeMethod);
@@ -114,17 +123,50 @@ namespace Game.Editor
                 Debug.LogException(exception is TargetInvocationException invocation && invocation.InnerException!=null?invocation.InnerException:exception);
                 Debug.LogError("[ExistingEditorValidation] result=Failed executeMethod="+executeMethod);
             }
-            finally
+            CompleteCapture(run, status);
+        }
+
+        private static void PollCompletion()
+        {
+            var run = active;
+            if (run == null || run.Aborted)
             {
-                Application.logMessageReceivedThreaded-=capture;
+                EditorApplication.update -= PollCompletion;
+                return;
+            }
+            if (run.Operation != null)
+            {
+                if (!run.Operation.IsCompleted) return;
+                int status = 1;
+                try { status = run.Operation.GetAwaiter().GetResult(); }
+                catch (Exception exception) { Debug.LogException(exception); }
+                Debug.Log("[ExistingEditorValidation] result="+(status==0?"Passed":"Failed")+" executeMethod="+run.Method);
+                CompleteCapture(run, status);
+                return;
+            }
+            if (!MissionEditorValidationExit.LastCompletion.HasValue ||
+                EditorApplication.isPlayingOrWillChangePlaymode) return;
+            int completion = MissionEditorValidationExit.LastCompletion.Value;
+            Debug.Log("[ExistingEditorValidation] result="+(completion==0?"Passed":"Failed")+" executeMethod="+run.Method);
+            CompleteCapture(run, completion);
+        }
+
+        private static void CompleteCapture(Capture run, int status)
+        {
+            EditorApplication.update -= PollCompletion;
+            Application.logMessageReceivedThreaded -= run.Callback;
+            lock (run.Gate)
+            {
                 if (!run.Aborted)
                 {
-                    lock(gate)writer.Flush();
-                    File.WriteAllText(logFile+".exit",status.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    run.Writer.Flush();
+                    run.Writer.Dispose();
+                    run.Aborted = true;
+                    File.WriteAllText(run.LogFile+".exit",status.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
-                if (ReferenceEquals(active, run)) active = null;
-                IsRunning = false;
             }
+            if (ReferenceEquals(active, run)) active = null;
+            IsRunning = false;
         }
     }
 }

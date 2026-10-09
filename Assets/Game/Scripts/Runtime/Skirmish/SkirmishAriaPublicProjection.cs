@@ -45,7 +45,12 @@ namespace Game.Runtime
                     HasLivingRole(em, session, SkirmishRoleKind.AntiAir);
                 view.CanAffordLogisticsTruck = SkirmishProductionService.EvaluateQueue(em, session,
                     SkirmishRoleIds.LogisticsTruck, 1, army, 1).Accepted;
+                view.CanAffordTanker = SkirmishProductionService.EvaluateQueue(em, session,
+                    SkirmishRoleIds.Tanker, 1, army, 1).Accepted;
+                view.TankersCommitted = CountCommittedPlayerRole(em, session, SkirmishRoleKind.Tanker);
                 view.RifleRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rifle);
+                view.RocketeerRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rocketeer);
+                view.OwnStructureAttackUnits = CountPlayerStructureAttackUnits(em, session);
                 view.LogisticsTruckCommitted = HasPendingRecruit(em, session, SkirmishRoleKind.LogisticsTruck) ||
                     HasLivingRole(em, session, SkirmishRoleKind.LogisticsTruck);
                 var perception = new SkirmishPublicPerception
@@ -141,8 +146,8 @@ namespace Game.Runtime
                 if (owned.FactionId != 1 || !owned.SessionId.Equals(id) ||
                     !SkirmishArmyGroupSystem.IsAlive(em, unit)) continue;
                 var role = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role;
-                if (role != SkirmishRoleKind.AttackHeliLight && role != SkirmishRoleKind.AttackHeli)
-                    continue;
+                if (SkirmishRoleIds.Category(role) != SkirmishPopulationCategory.Air ||
+                    !SkirmishExpandedPresentedOrders.IsAssaultRole(role)) continue;
                 view.OwnAttackAirLive++;
                 var air = em.GetComponentData<UnitAirComponent>(unit);
                 if (air.Airborne != 0 || air.TakeoffRolling != 0 || air.LandingRolling != 0 || air.ReturningHome != 0)
@@ -176,6 +181,27 @@ namespace Game.Runtime
             return false;
         }
 
+        private static int CountCommittedPlayerRole(EntityManager em, Entity session, SkirmishRoleKind role)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            int count = 0;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+            {
+                var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                if (owner.FactionId == 1 && owner.SessionId.Equals(id) &&
+                    em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role == role &&
+                    SkirmishArmyGroupSystem.IsAlive(em, actor)) count++;
+            }
+            if (em.HasBuffer<SkirmishProductionReservation>(session))
+                foreach (var receipt in em.GetBuffer<SkirmishProductionReservation>(session, true))
+                    if (receipt.FactionId == 1 && receipt.Role == role &&
+                        receipt.Phase is SkirmishReservationPhase.Reserved or SkirmishReservationPhase.Producing)
+                        count += System.Math.Max(0, receipt.MemberCount - receipt.DeliveredMembers);
+            return count;
+        }
+
         private static bool HasLivingRole(EntityManager em, Entity session, SkirmishRoleKind role)
         {
             var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
@@ -189,6 +215,23 @@ namespace Game.Runtime
                     SkirmishArmyGroupSystem.IsAlive(em, unit)) return true;
             }
             return false;
+        }
+
+        private static int CountPlayerStructureAttackUnits(EntityManager em, Entity session)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishRoleOverlayComponent));
+            using var units = query.ToEntityArray(Allocator.Temp);
+            int count = 0;
+            foreach (var unit in units)
+            {
+                var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                var overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(unit);
+                if (owner.FactionId == 1 && owner.IsStructure == 0 && owner.SessionId.Equals(id) &&
+                    overlay.Damage > 0 && (overlay.TargetDomains & SkirmishTargetDomain.Structure) != 0 &&
+                    SkirmishArmyGroupSystem.IsAlive(em, unit)) count++;
+            }
+            return count;
         }
 
         private static int CountVisibleHostileCombat(EntityManager em, Entity session)

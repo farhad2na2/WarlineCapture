@@ -1,0 +1,13 @@
+{
+  "result": "FailedExecuteMethod",
+  "sourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-804-corrected-return-driver-compilation-shared-regressions-pre-source-manifest.json",
+  "postSourceManifest": "final-804-compiled-invalid-method-closed-post-source-manifest.json",
+  "log": "native-804-corrected-driver-compilation-shared-regressions.log",
+  "wrapperExitCode": 0,
+  "failure": "Incorrect namespace in command: actual test class has global namespace. Required pass marker absent.",
+  "compilerErrorsObserved": 0,
+  "regressionsCertified": false,
+  "playerReady": false
+}

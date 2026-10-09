@@ -24,6 +24,10 @@ namespace Game.UI.Contracts
         public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public bool CanAffordAntiAir, PadReady, AirQueueOffered, PadPresent, ReadinessEligible, CanUpgradeReadiness;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
+        public bool CanAffordTanker;
+        public int TankersCommitted;
+        public bool CombinedArmsField, RocketeerRecruitPending;
+        public int OwnStructureAttackUnits;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
@@ -32,6 +36,8 @@ namespace Game.UI.Contracts
         public Vector2 FocusThreatDragEnd, FocusGroupDragEnd, FocusAdvanceDragEnd;
         public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame, VisibleHostileCombat, OwnMaterials, ExpandedRetries, VisibleHostileAir;
         public float Time, PlayerHealth, EnemyHealth, ForceHealth;
+        public bool AssaultDistanceVisible;
+        public float NearestFriendlyObjectiveDistance;
         public AriaTouchTarget Squad0, Squad1, Squad2, Squad3, Squad4;
         public AriaTouchTarget PreviousSquadPage, NextSquadPage, ClearSquadSelection;
         public AriaTouchTarget Site0, Site1, Site2, Site3, Site4, Site5;
@@ -42,6 +48,8 @@ namespace Game.UI.Contracts
         public AriaTouchTarget AdvanceGround, ThreatGround, FocusAdvance, DefenseBuild, PlacementConfirm, PlacementCancel, FocusPlayer, Select, GroupStart, GroupEnd, FocusEnemy, Attack, Hold, EnemyBase, Recruit, CloseDrawer, Threat, FocusThreat, FocusGroup, CloseMap;
         public AriaTouchTarget RecruitAntiAir, AirPad, UpgradeReadiness, RecruitAir, OpenAircraftActions, ReturnAircraft;
         public AriaTouchTarget RecruitLogisticsTruck;
+        public AriaTouchTarget RecruitTanker;
+        public AriaTouchTarget RecruitRocketeer;
         public int ExpandedAssaultMask;
         public int ExpandedSelectedMask;
         public int ExpandedStructureMask;

@@ -7,7 +7,7 @@ using Unity.Rendering;
 
 namespace Game.Rendering
 {
-    [BakingVersion("WarlineCapture", 2)]
+    [BakingVersion("WarlineCapture", 5)]
     [RequireMatchingQueriesForUpdate]
     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     [UpdateInGroup(typeof(PostBakingSystemGroup))]
@@ -264,7 +264,7 @@ namespace Game.Rendering
                             "render entity.");
                     }
                     var convertedRenderEntities = new List<Entity>();
-                    if (entityManager.HasComponent<RenderMeshUnmanaged>(convertedRenderEntity))
+                    if (HasConvertedRenderRepresentation(entityManager, convertedRenderEntity))
                     {
                         convertedRenderEntities.Add(convertedRenderEntity);
                     }
@@ -276,9 +276,16 @@ namespace Game.Rendering
                     }
                     if (convertedRenderEntities.Count == 0)
                     {
+                        using var types = entityManager.GetComponentTypes(convertedRenderEntity, Allocator.Temp);
+                        var typeNames = new List<string>();
+                        foreach (var type in types) typeNames.Add(type.GetManagedType().Name);
                         throw new InvalidOperationException(
                             "Eligible source row does not resolve to a converted render " +
-                            "entity or exact additional render entities.");
+                            "entity or exact additional render entities. entity=" + convertedRenderEntity +
+                            " name=" + entityManager.GetName(convertedRenderEntity) +
+                            " packedInfo=" + entityManager.HasComponent<MaterialMeshInfo>(convertedRenderEntity) +
+                            " packedArray=" + entityManager.HasComponent<RenderMeshArray>(convertedRenderEntity) +
+                            " componentTypes=" + string.Join(",", typeNames));
                     }
 
                     var rendererMatchedParts = new HashSet<SourcePartKey>();

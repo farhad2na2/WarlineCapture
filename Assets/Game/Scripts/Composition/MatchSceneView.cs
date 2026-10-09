@@ -137,7 +137,7 @@ namespace Game.Composition
                 {
                     var s004 = SkirmishS004Environment.LoadForSession(world.EntityManager);
                     additions = s004 ?? additions;
-                    neutralizeSource = SkirmishS004Environment.IsActive(world.EntityManager);
+                    neutralizeSource = SkirmishS004Environment.UsesCampaignMap(world.EntityManager);
                 }
                 if (additions == null && !neutralizeSource) return source;
                 if (source == null) return additions;
@@ -149,7 +149,7 @@ namespace Game.Composition
         public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
             IsOperationsSession ? null : IsSkirmishSession &&
                 World.DefaultGameObjectInjectionWorld is { IsCreated: true } vehicleWorld &&
-                SkirmishS004Environment.IsActive(vehicleWorld.EntityManager)
+                SkirmishS004Environment.UsesCampaignMap(vehicleWorld.EntityManager)
                 ? activeOperationMapSceneView?.VehiclePlacements
                 : IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.VehiclePlacements

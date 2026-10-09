@@ -19,11 +19,78 @@ namespace Game.Tests.Editor
             try
             {
                 var t=new SupportUiAriaValidation();t.PreviewAndCameraNeverSpendOrIssueOrders();t.ApprovalQueuesExactlyOneAction();
-                t.ChangedTargetDeclineAndExpiryCannotCommit();t.InterruptionCancelsPreviewAndConsent();t.RejectedCommitReturnsToPreview();t.PointerPicksProjectedMilitaryHitbox();t.FlightStatusShowsReservedCostWithoutMutation();
-                Debug.Log("[SupportUiAriaValidation] result=Passed tests=7");ValidationExit.Exit(0);
+                t.ChangedTargetDeclineAndExpiryCannotCommit();t.InterruptionCancelsPreviewAndConsent();t.RejectedCommitReturnsToPreview();t.PointerPicksProjectedMilitaryHitbox();t.FlightStatusShowsReservedCostWithoutMutation();t.PlayerControlsIgnoreEnemySupportSession();t.ActivePlayerSessionOverridesInactiveBinding();t.AmbiguousPlayerSessionsRejectInput();t.PausedSessionDoesNotSkipOtherConsentExpiry();t.TerminalCleanupOnlyRemovesOwnedSmoke();t.AriaInboxRoutesConsentAndStopOnlyToPlayer();
+                Debug.Log("[SupportUiAriaValidation] result=Passed tests=13");ValidationExit.Exit(0);
             }
             catch(Exception ex){Debug.LogException(ex);Debug.LogError("[SupportUiAriaValidation] result=Failed");ValidationExit.Exit(1);throw;}
         }
+        [Test] public void PlayerControlsIgnoreEnemySupportSession()=>WithGateway((f,store)=>
+        {
+            var enemy=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(enemy);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(enemy);session.FactionId=2;f.Em.SetComponentData(enemy,session);
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadSupport(out _));
+            Assert.IsTrue(UiShellRuntimeGateway.SelectSupport(1));
+            Assert.AreEqual(SupportAbilityKind.Smoke,f.Em.GetComponentData<SupportInputStateComponent>(f.Root).Selected);
+            Assert.AreEqual(SupportAbilityKind.None,f.Em.GetComponentData<SupportInputStateComponent>(enemy).Selected);
+        });
+        [Test] public void ActivePlayerSessionOverridesInactiveBinding()=>WithGateway((f,store)=>
+        {
+            var inactive=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(inactive);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(inactive);session.Active=0;f.Em.SetComponentData(inactive,session);
+            Assert.IsTrue(UiShellRuntimeGateway.SelectSupport(1));
+            Assert.AreEqual(SupportAbilityKind.Smoke,f.Em.GetComponentData<SupportInputStateComponent>(f.Root).Selected);
+            Assert.AreEqual(SupportAbilityKind.None,f.Em.GetComponentData<SupportInputStateComponent>(inactive).Selected);
+        });
+        [Test] public void AmbiguousPlayerSessionsRejectInput()=>WithGateway((f,store)=>
+        {
+            var duplicate=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(duplicate);
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadSupport(out _));
+            Assert.IsFalse(UiShellRuntimeGateway.SelectSupport(1));
+            foreach(var root in new[]{f.Root,duplicate})
+                Assert.AreEqual(SupportAbilityKind.None,f.Em.GetComponentData<SupportInputStateComponent>(root).Selected);
+            Assert.AreEqual(2,f.Em.GetComponentData<BuildingResourceStorageComponent>(store).StoredFuelBarrels);
+        });
+        [Test] public void PausedSessionDoesNotSkipOtherConsentExpiry()=>WithGateway((f,store)=>
+        {
+            var other=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(other);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(f.Root);session.Active=0;f.Em.SetComponentData(f.Root,session);
+            session=f.Em.GetComponentData<SupportSessionComponent>(other);session.FactionId=2;session.SimulationSeconds=20;f.Em.SetComponentData(other,session);
+            f.Em.SetComponentData(f.Root,new SupportInputStateComponent {Phase=3});
+            f.Em.SetComponentData(other,new SupportProposalComponent {ProposalId=7,ExpiresAt=15});
+            f.Em.GetBuffer<SupportRequestElement>(f.Root).Add(f.Request());
+            f.World.CreateSystem<SupportAttemptCleanupSystem>().Update(f.World.Unmanaged);
+            Assert.AreEqual(0,f.Em.GetComponentData<SupportInputStateComponent>(f.Root).Phase);
+            Assert.AreEqual(0,f.Em.GetBuffer<SupportRequestElement>(f.Root).Length);
+            Assert.AreEqual(1,f.Em.GetComponentData<SupportProposalComponent>(other).Consumed);
+        });
+        [Test] public void TerminalCleanupOnlyRemovesOwnedSmoke()=>WithGateway((f,store)=>
+        {
+            var other=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(other);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(f.Root);session.Active=0;f.Em.SetComponentData(f.Root,session);
+            f.Em.AddComponentData(other,new CampaignMissionRuntimeComponent {Outcome=Game.Missions.Contracts.MissionOutcomeKind.Victory});
+            Entity Zone(Entity root)
+            {var entity=f.Em.CreateEntity(typeof(SupportSmokeZoneComponent));f.Em.SetComponentData(entity,new SupportSmokeZoneComponent {Root=root,SessionToken="support-test",AttemptOrdinal=1,ExpiresAt=15});return entity;}
+            var pausedZone=Zone(f.Root);var terminalZone=Zone(other);
+            f.World.CreateSystem<SupportAttemptCleanupSystem>().Update(f.World.Unmanaged);
+            Assert.IsTrue(f.Em.Exists(pausedZone));Assert.IsFalse(f.Em.Exists(terminalZone));
+        });
+        [Test] public void AriaInboxRoutesConsentAndStopOnlyToPlayer()=>WithGateway((f,store)=>
+        {
+            Preview();var enemy=f.Em.Instantiate(f.Root);f.Em.RemoveComponent<UiShellRootComponent>(enemy);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(enemy);session.FactionId=2;f.Em.SetComponentData(enemy,session);
+            var inbox=f.Em.CreateEntity();f.Em.AddBuffer<AssistantCommandIntentRequestElement>(inbox);f.Em.AddBuffer<AssistantCommandIntentResultElement>(inbox);
+            f.Em.GetBuffer<AssistantCommandIntentRequestElement>(inbox).Add(Packet(f,AssistantCommandIntentKind.ProposeSupport));
+            var system=f.World.CreateSystem<AssistantSupportIntentSystem>();system.Update(f.World.Unmanaged);
+            Assert.AreEqual(0,f.Em.GetBuffer<AssistantCommandIntentRequestElement>(inbox).Length);
+            Assert.AreEqual(AssistantCommandIntentStatus.Accepted,f.Em.GetBuffer<AssistantCommandIntentResultElement>(inbox)[0].Status);
+            Assert.AreEqual(7,f.Em.GetComponentData<SupportProposalComponent>(f.Root).ProposalId);
+            Assert.AreEqual(0,f.Em.GetComponentData<SupportProposalComponent>(enemy).ProposalId);
+            f.Em.SetComponentData(enemy,new SupportProposalComponent {ProposalId=9});
+            f.Em.GetBuffer<AssistantCommandIntentRequestElement>(inbox).Add(new AssistantCommandIntentRequestElement {Kind=AssistantCommandIntentKind.StopAssistantControl});system.Update(f.World.Unmanaged);
+            Assert.AreEqual(1,f.Em.GetComponentData<SupportProposalComponent>(f.Root).Consumed);
+            Assert.AreEqual(0,f.Em.GetComponentData<SupportProposalComponent>(enemy).Consumed);
+            Assert.AreEqual(1,f.Em.GetBuffer<AssistantCommandIntentRequestElement>(inbox).Length,"Stop must remain queued for the ordinary assistant owner.");
+        });
         private static void WithGateway(Action<SupportValidationFixture,Entity> action)
         {
             var old=World.DefaultGameObjectInjectionWorld;

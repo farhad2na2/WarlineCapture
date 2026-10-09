@@ -21,8 +21,8 @@ namespace Game.UI.Shell.Ecs
             var world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated)return false;
             em=world.EntityManager;
             if(supportWorld!=world){supportWorld=world;supportQuery=em.CreateEntityQuery(typeof(SupportSessionComponent),typeof(SupportInputStateComponent));supportMissionFixed=default;supportMissionText=string.Empty;supportTargetEntity=Entity.Null;supportTargetText=string.Empty;}
-            if(supportQuery.CalculateEntityCount()!=1)return false;
-            root=supportQuery.GetSingletonEntity();return true;
+            using var candidates=supportQuery.ToEntityArray(Allocator.Temp);
+            return SupportSessionUtility.TryPlayer(em,candidates,out root);
         }
         bool IUiSupportGateway.TryReadSupport(out UiSupportModel model)
         {

@@ -17,7 +17,7 @@ namespace Game.Runtime
     {
         private const float ProductionTransportLaneSpacing = 12f;
         private const float RunwaySurfaceClearance = 0.03f;
-        private const int HelicopterDropSearchRadiusCells = 24;
+        private const int HelicopterDropSearchRadiusCells = 96;
         private const float HelicopterDropBlockedRetryBaseSeconds = 0.5f;
         private const float HelicopterDropBlockedRetryMaxSeconds = 2f;
         private const float HelicopterDropPartialSearchRetrySeconds = 0.05f;
@@ -271,6 +271,20 @@ namespace Game.Runtime
                 return;
 
             UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(newest);
+            // Keep the reserved parking destination separate from a player's
+            // queued UnitTarget. Delivery transit must finish at this home even
+            // when Move, Attack or Hold arrives before the taxi is complete.
+            Vector3 parkingPosition = ResolveProductionTransportDropPosition(building, pending);
+            int2 parkingCell = ResolveProductionGroundGoalCell(context, parkingPosition);
+            float3 parkingWorld = parkingPosition;
+            if (context.TransportBridgeContext.TryGetGridData != null &&
+                context.TransportBridgeContext.TryGetGridData(out _, out GridConfig parkingGrid, out _, out _))
+                parkingWorld = GridUtils.CellToWorldCenter(parkingGrid, parkingCell);
+            if (em.HasComponent<LocalTransform>(newest))
+                parkingWorld.y = em.GetComponentData<LocalTransform>(newest).Position.y;
+            airState.HomePosition = parkingWorld;
+            airState.HomeCell = parkingCell;
+            airState.HomeInitialized = 1;
             airState.UsesRunway = 1;
             airState.RunwayTakeoffPosition = transport.TouchdownPosition;
             airState.RunwayTakeoffCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
@@ -1005,57 +1019,56 @@ namespace Game.Runtime
                 ReserveStaticRenderDropBuffers(em, ref reserved, grid, preferredCell);
                 // Dynamic occupancy already rejects live and produced unit footprints. Avoid rebuilding
                 // broad per-unit safety reservations during the production transport frame tick.
-                int candidateChecks = 0;
-                int safeStartRadius = math.clamp(startRadius, 0, HelicopterDropSearchRadiusCells);
-                for (int radius = safeStartRadius; radius <= HelicopterDropSearchRadiusCells; radius++)
-                {
-                    for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
-                    {
-                        for (int x = preferredCell.x - radius; x <= preferredCell.x + radius; x++)
-                        {
-                            if (radius > 0 &&
-                                math.abs(x - preferredCell.x) != radius &&
-                                math.abs(y - preferredCell.y) != radius)
-                            {
-                                continue;
-                            }
-
-                            int2 candidate = new(x, y);
-                            candidateChecks++;
-                            if (!TryResolveHelicopterDropCandidate(
-                                    em,
-                                    grid,
-                                    walkable,
-                                    blockerData.Blocked,
-                                    occupied,
-                                    reserved,
-                                    candidate,
-                                    unitFootprint,
-                                    out Vector3 candidatePosition))
-                            {
-                                if (candidateChecks >= HelicopterDropMaxCandidateChecksPerSearch)
-                                {
-                                    nextSearchRadius = radius < HelicopterDropSearchRadiusCells ? radius + 1 : 0;
-                                    exhaustedSearchBudget = nextSearchRadius > 0;
-                                    return false;
-                                }
-
-                                continue;
-                            }
-
-                            dropCell = candidate;
-                            dropPosition = candidatePosition;
-                            return true;
-                        }
-                    }
-                }
+                return TryFindClearHelicopterDropCell(em, grid, walkable, blockerData.Blocked,
+                    occupied, reserved, preferredCell, unitFootprint, startRadius,
+                    out exhaustedSearchBudget, out nextSearchRadius, out dropCell, out dropPosition);
             }
             finally
             {
                 if (reserved.IsCreated)
                     reserved.Dispose();
             }
+        }
 
+        // Finish each perimeter before yielding. Saving only a radius must not
+        // skip the remaining cells on that perimeter when the budget is reached.
+        internal static bool TryFindClearHelicopterDropCell(
+            EntityManager em, GridConfig grid, NativeArray<GridWalkable> walkable,
+            NativeBitArray blocked, NativeBitArray occupied, NativeBitArray reserved,
+            int2 preferredCell, int2 unitFootprint, int startRadius,
+            out bool exhaustedSearchBudget, out int nextSearchRadius,
+            out int2 dropCell, out Vector3 dropPosition)
+        {
+            exhaustedSearchBudget = false;
+            nextSearchRadius = 0;
+            dropCell = default;
+            dropPosition = default;
+            int candidateChecks = 0;
+            int safeStartRadius = math.clamp(startRadius, 0, HelicopterDropSearchRadiusCells);
+            for (int radius = safeStartRadius; radius <= HelicopterDropSearchRadiusCells; radius++)
+            {
+                for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
+                {
+                    for (int x = preferredCell.x - radius; x <= preferredCell.x + radius; x++)
+                    {
+                        if (radius > 0 && math.abs(x - preferredCell.x) != radius &&
+                            math.abs(y - preferredCell.y) != radius) continue;
+                        candidateChecks++;
+                        var candidate = new int2(x, y);
+                        if (!TryResolveHelicopterDropCandidate(em, grid, walkable, blocked,
+                            occupied, reserved, candidate, unitFootprint, out var position)) continue;
+                        dropCell = candidate;
+                        dropPosition = position;
+                        return true;
+                    }
+                }
+                if (candidateChecks >= HelicopterDropMaxCandidateChecksPerSearch)
+                {
+                    nextSearchRadius = radius < HelicopterDropSearchRadiusCells ? radius + 1 : 0;
+                    exhaustedSearchBudget = nextSearchRadius > 0;
+                    return false;
+                }
+            }
             return false;
         }
 

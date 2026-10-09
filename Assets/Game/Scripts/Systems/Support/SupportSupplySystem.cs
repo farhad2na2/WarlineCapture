@@ -8,10 +8,13 @@ namespace Game.Runtime
     [UpdateAfter(typeof(UnitMoveOrderRequestSystem))]
     public partial struct SupportSupplySystem : ISystem
     {
+        private EntityQuery collectionRoots;
+        public void OnCreate(ref SystemState state)=>collectionRoots=state.GetEntityQuery(typeof(SupportSessionComponent),typeof(SupportCollectRequestElement));
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency.Complete();var em=state.EntityManager;
-            if(SystemAPI.TryGetSingletonEntity<SupportCollectRequestElement>(out var root)&&em.HasComponent<SupportSessionComponent>(root))
+            using var roots=collectionRoots.ToEntityArray(Allocator.Temp);
+            foreach(var root in roots)
             {
                 var requests=em.GetBuffer<SupportCollectRequestElement>(root);
                 while(requests.Length>0)
@@ -28,14 +31,12 @@ namespace Game.Runtime
             foreach(var (reference,entity) in SystemAPI.Query<RefRW<SupportSupplyCrateComponent>>().WithOptions(EntityQueryOptions.IncludeDisabledEntities).WithEntityAccess())
             {
                 var crate=reference.ValueRO;bool valid=em.Exists(crate.Root)&&em.HasComponent<SupportSessionComponent>(crate.Root);
-                SupportSessionComponent session=default;if(valid){session=em.GetComponentData<SupportSessionComponent>(crate.Root);valid=crate.SessionToken.Equals(session.SessionToken)&&crate.AttemptOrdinal==session.AttemptOrdinal&&!session.SessionToken.IsEmpty;
+                SupportSessionComponent session=default;if(valid){session=em.GetComponentData<SupportSessionComponent>(crate.Root);valid=crate.SessionToken.Equals(session.SessionToken)&&crate.AttemptOrdinal==session.AttemptOrdinal&&crate.FactionId==session.FactionId&&!SupportSessionUtility.IsTerminal(em,crate.Root,session);
                     if(em.HasComponent<CampaignMissionRuntimeComponent>(crate.Root))valid&=em.GetComponentData<CampaignMissionRuntimeComponent>(crate.Root).Outcome==Game.Missions.Contracts.MissionOutcomeKind.None;}
                 if(!valid){if(em.Exists(crate.Canopy))ecb.DestroyEntity(crate.Canopy);if(em.Exists(crate.Claimant))ecb.RemoveComponent<SupportCollectOrderComponent>(crate.Claimant);ecb.DestroyEntity(entity);continue;}
                 if(crate.Released==0)continue;
                 if(!em.HasComponent<UnitTransportCargoDropComponent>(entity))crate.Landed=1;
-                Entity storage=Entity.Null;bool ambiguous=false;
-                foreach(var (materials,store) in SystemAPI.Query<RefRO<FactionTacticalMaterialsComponent>>().WithEntityAccess())if(materials.ValueRO.FactionId==crate.FactionId){if(storage!=Entity.Null)ambiguous=true;storage=store;}
-                if(ambiguous)storage=Entity.Null;
+                Entity storage=SupportSupplyAdapterSystemHelper.MaterialsEntity(em,crate.Root,crate.FactionId);
                 if(crate.Claimant!=Entity.Null)
                 {
                     bool owned=SupportSupplyAdapterSystemHelper.EligibleCollector(em,crate.Claimant,crate)&&em.HasComponent<SupportCollectOrderComponent>(crate.Claimant)&&em.GetComponentData<SupportCollectOrderComponent>(crate.Claimant).Crate==entity;

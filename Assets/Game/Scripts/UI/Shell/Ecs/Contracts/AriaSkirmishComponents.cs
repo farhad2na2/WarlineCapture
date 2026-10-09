@@ -15,6 +15,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public uint SweepRosterRevision;
         public int EconomicMilestones, MaterialsHighWater;
         public int ObservedPageIndex;
+        public byte AssaultDistanceObserved;
+        public float BestAssaultDistance;
         // Separate from the legacy two-tower opening. A legal preview alone never
         // proves that the requested helipad site was selected.
         public int PadStage, PadSiteIndex, PadAction, PadTargetId, PadFeedbackFrame;

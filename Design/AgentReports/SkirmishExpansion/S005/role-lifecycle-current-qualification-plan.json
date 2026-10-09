@@ -1,0 +1,453 @@
+{
+  "mission": "S005",
+  "sourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "gate": "X37",
+  "scope": "22 enabled roles; inventory is not lifecycle proof",
+  "roles": [
+    {
+      "role": "Rifle",
+      "producer": "Barracks",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Gunner",
+      "producer": "Barracks",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Marksman",
+      "producer": "Barracks",
+      "targetDomains": "Infantry",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Breacher",
+      "producer": "Barracks",
+      "targetDomains": "Infantry, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Rocketeer",
+      "producer": "Barracks",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Car",
+      "producer": "GroundStaging",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "ApcFast",
+      "producer": "GroundStaging",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "boarding and hidden passenger ownership",
+        "transport movement",
+        "disembark and cleanup"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "ApcArmored",
+      "producer": "GroundStaging",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "boarding and hidden passenger ownership",
+        "transport movement",
+        "disembark and cleanup"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Radar",
+      "producer": "GroundStaging",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "LogisticsTruck",
+      "producer": "GroundStaging",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Tanker",
+      "producer": "GroundStaging",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "AntiAir",
+      "producer": "GroundStaging",
+      "targetDomains": "Air",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "TransportHeli",
+      "producer": "Helipad",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported",
+        "boarding and hidden passenger ownership",
+        "transport movement",
+        "disembark and cleanup"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "AttackHeliLight",
+      "producer": "Helipad",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "AttackHeli",
+      "producer": "Helipad",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Drone",
+      "producer": "IntelStation",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior"
+      ],
+      "currentSourceCertified": false,
+      "stage": "pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Fighter",
+      "producer": "Airport",
+      "targetDomains": "Air",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported"
+      ],
+      "currentSourceCertified": false,
+      "stage": "native functional Airport placement qualification active",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Strike",
+      "producer": "Airport",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported"
+      ],
+      "currentSourceCertified": false,
+      "stage": "Native802 failed; native evidence retained, no cycle pass claim.",
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "scopedNativeProgress": "native780-current-paid-strike-second-sortie-deadline-failure.json",
+      "scopedNativeProof": "native802-normal-paid-strike-cycle-failure.json"
+    },
+    {
+      "role": "TransportPlane",
+      "producer": "Airport",
+      "targetDomains": "None",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native service or intelligence behavior",
+        "legal facility placement on reused Campaign source",
+        "launch and return",
+        "parking/clearance at bilateral capacity",
+        "refuel/rearm where supported",
+        "boarding and hidden passenger ownership",
+        "transport movement",
+        "disembark and cleanup"
+      ],
+      "currentSourceCertified": false,
+      "stage": "native functional Airport placement qualification active",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "Tank",
+      "producer": "GroundStaging",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "current-source native recertification pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    },
+    {
+      "role": "ApcHeavy",
+      "producer": "GroundStaging",
+      "targetDomains": "Infantry, Ground",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target",
+        "boarding and hidden passenger ownership",
+        "transport movement",
+        "disembark and cleanup"
+      ],
+      "currentSourceCertified": false,
+      "stage": "Historical native779 paid280 APC/four passengers Save/Continue, unload and full manual win passed. Current runtime refresh and full combat/death/capacity lifecycle pending.",
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "scopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    },
+    {
+      "role": "Siege",
+      "producer": "GroundStaging",
+      "targetDomains": "Ground, Structure",
+      "requiredEvidence": [
+        "paid production from functional producer",
+        "native selection and movement",
+        "correct target domain",
+        "death and capacity release",
+        "attempt cleanup",
+        "native attack and visible effect against legal target"
+      ],
+      "currentSourceCertified": false,
+      "stage": "historical native firing and recovery passed; remaining lifecycle gates pending",
+      "historicalInventory": "native359-current-baked-role-census.json"
+    }
+  ],
+  "airportQualification": "Native769 passed joint normal paid construction of two living same-faction Airports at western and southern sites. Bilateral aircraft capacity, parking/taxi and remaining aircraft lifecycles remain pending.",
+  "currentSourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "currentAutomatedEvidence": "TECHNICAL_READINESS_CURRENT.json",
+  "currentRecoveryStagingCertified": false,
+  "latestNativeStatus": "Native790 fleet purchase driver watchdog before flight; native791 repeats after driver drawer lifetime correction.",
+  "latestRetainedFailure": "native790-normal-paid-strike-cycle-failure.json",
+  "currentSourceFingerprint": "final-805-verified-global-shared-regressions-closed-post-independent-fingerprint.json",
+  "latestNativeOutcomePass": "native490-aria-menu-result-return-pass.json",
+  "historicalStatusAliases": {
+    "currentNativeCaptureRun": "native467 paid Strike cycle with full-batch refinery supply and safe reserve",
+    "currentCandidateCertification": "Compiled; normal-input flight and bilateral capacity pending",
+    "currentFingerprint": "final-479-aria-opening-fixed-pre-independent-fingerprint.json",
+    "activeNativeRun": "native-483-three-oil-two-fuel-return-repair.log",
+    "activeNativeValidation": 483,
+    "currentQualificationProgress": "ARIA480, shared gameplay481 and physical economy profile482 passed; native483 running after idempotent return repair, with three paid Oil trucks and two early Tankers.",
+    "pre791_latestNativeStatus": "Native781 paid Strike delivered earlier, but watchdog fired before first launch while usable fuel stayed below960; normal route balancing qualification is next.",
+    "pre791_latestRetainedFailure": "native781-paid-third-factory-fuel-reserve-watchdog-failure.json",
+    "pre791_currentSourceFingerprint": "final-790-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
+    "pre791_currentCandidateCertification": "Not player-ready. Shipping runtime unchanged from manual/bilingual ARIA baseline proofs; full native role/air/capacity, Campaign regressions and family stress remain open.",
+    "pre791_currentCandidateNormalJourneysPending": false,
+    "pre791_currentQualificationProgress": "Current shared HUD navigation, joint paid Airports, EN/FA manual journeys, fresh ARIA fixed seed threshold and boarded APC recovery/full Victory passed; remaining aircraft/role/capacity and Campaign/family regressions pending.",
+    "pre791_latestStatus": "Native780 paid Strike fired and landed at home, then recovered fuel420 to574; normal1080-second Draw before second sortie. Failed evidence retained."
+  },
+  "currentSourceFingerprintPending": false,
+  "currentCandidateCertification": "Not player-ready. Focused shared regressions passed; normal paid aircraft cycle, recovery, complete role/capacity and affected mission regression gates pending.",
+  "currentCandidateNormalJourneysPending": true,
+  "activeNativeRun": null,
+  "activeValidation": null,
+  "currentQualificationProgress": "Retained EN/FA manual, fresh ARIA seed threshold, boarded APC and dual same-faction Airport construction proofs predate the shipping Return fix. No current-source full native recertification or all-role readiness claimed.",
+  "historicalRootSourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "authoritativeReadinessReport": "TECHNICAL_READINESS_CURRENT.json",
+  "historicalCurrentSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "historicalCurrentSourceFingerprint": "final-505-shared-frontage-and-evidence-pre-independent-fingerprint.json",
+  "latestStatus": "Original native800 candidate disqualified by driver compilation error; verified namespace repaired. Failed validation Editor remains open; explicit permission requested to close onlyPID22844 and cleanly rerun.",
+  "currentNativeStatus": "Compiler clean and77 focused shared cases passed. Native fixed-wing cycle remains pending.",
+  "proofApplicability": {
+    "earlierFullSource": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+    "delta": "source-delta-796-shared-oil-air-fuel-and-sequential-purchases.json",
+    "shippingRuntimeEquivalent": false,
+    "exactWholeSourceEquivalent": false,
+    "freshAriaBaselineProof": "native773-778-current-fresh-aria-seed-matrix.json",
+    "normalJourneyProofs": [
+      "native770-current-manual-en-seed130368-victory.json",
+      "native772-current-manual-fa-IR-seed104734-victory.json",
+      "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    ],
+    "note": "Historical baseline retained; shipping Return/fuel and expanded Oil reservation behavior changed. Focused passes do not recertify historical native wins."
+  },
+  "currentFingerprint": "final-805-verified-global-shared-regressions-closed-post-independent-fingerprint.json"
+}

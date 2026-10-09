@@ -50,6 +50,17 @@ namespace Game.Runtime
         public bool IsCameraDragging => _cameraSystem != null && _cameraSystem.IsDragging;
         public Camera WorldCamera => _worldCamera;
 
+        public void ApplyRuntimeCameraProfile(SelectionRuntimeConfigStartupSystemHelper.State profile)
+        {
+            _normalModeZoomHeight = profile.NormalModeZoomHeight;
+            _normalModePitch = profile.NormalModePitch;
+            _normalModeYaw = profile.NormalModeYaw;
+            _normalModeFieldOfView = profile.NormalModeFieldOfView;
+            _fullscreenIsoYaw = profile.FullscreenIsoYaw;
+            if (_matchHudZoomLevel == MatchHudZoomLevel.Default && !_matchHudZoomTransitionActive)
+                _matchHudZoomTargetHeight = _normalModeZoomHeight;
+        }
+
         public void Init(RTSSelectionSystemConfig config, Camera worldCamera)
         {
             SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig =

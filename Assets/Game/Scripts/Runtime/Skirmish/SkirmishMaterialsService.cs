@@ -35,11 +35,12 @@ namespace Game.Runtime
                 });
                 Set(em, bank, new FactionMaterialFabricationTelemetryComponent { FactionId = faction });
                 Set(em, bank, new FactionFuelLogisticsTelemetryComponent { FactionId = faction });
-                if (!em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(bank))
-                    em.AddComponentData(bank, new MaterialFabricationEconomyEventQueueComponent());
+                Set(em, bank, new MaterialFabricationEconomyEventQueueComponent());
                 if (!em.HasBuffer<MaterialFabricationEconomyEventElement>(bank))
                     em.AddBuffer<MaterialFabricationEconomyEventElement>(bank)
                         .EnsureCapacity(MaterialFabricationEconomyEventQueueComponent.Capacity);
+                else
+                    em.GetBuffer<MaterialFabricationEconomyEventElement>(bank).Clear();
             }
             em.AddComponent<SkirmishSharedMaterialsInitialized>(session);
         }

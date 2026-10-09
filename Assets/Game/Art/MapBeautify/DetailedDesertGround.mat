@@ -124,7 +124,7 @@ Material:
     - _DetailFadeStart: 180
     - _DetailNormalMapScale: 1
     - _DetailScale: 0.7
-    - _DetailStrength: 0.06
+    - _DetailStrength: 0.09
     - _DirtShoulderTintStrength: 0
     - _DirtShoulderWarmthThreshold: 0.08
     - _DstBlend: 0
@@ -134,13 +134,13 @@ Material:
     - _Glossiness: 0.2
     - _GlossyReflections: 1
     - _GreenPatchThreshold: 0.5
-    - _GroundDetailNormalStrength: 0.32
-    - _GroundDetailStrength: 0.35
+    - _GroundDetailNormalStrength: 0.42
+    - _GroundDetailStrength: 0.52
     - _GroundDetailTiling: 0.13
     - _MacroContrastHigh: 0.8
     - _MacroContrastLow: 0.1
     - _MacroScale: 0.045
-    - _MacroStrength: 0.28
+    - _MacroStrength: 0.3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -148,6 +148,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _SandPaletteStrength: 1
+    - _SandScrubCoverage: 0.65
     - _Smoothness: 0.04
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -165,9 +166,9 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MacroTintA: {r: 0.96, g: 0.91, b: 0.78, a: 1}
     - _MacroTintB: {r: 1.05, g: 1.03, b: 0.96, a: 1}
-    - _SandDryColor: {r: 0.88, g: 0.75, b: 0.51, a: 1}
-    - _SandScrubColor: {r: 0.65, g: 0.65, b: 0.43, a: 1}
-    - _SandWornColor: {r: 0.69, g: 0.57, b: 0.39, a: 1}
+    - _SandDryColor: {r: 0.92, g: 0.83, b: 0.65, a: 1}
+    - _SandScrubColor: {r: 0.46, g: 0.61, b: 0.32, a: 1}
+    - _SandWornColor: {r: 0.67, g: 0.6, b: 0.46, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

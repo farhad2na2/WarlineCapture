@@ -56,9 +56,15 @@ namespace Game.Runtime
                 }
 
                 ref UnitAirComponent air = ref airState.ValueRW;
-                air.ReturningHome = 1;
-                air.AttackRunActive = 0;
-                air.ReturnApproachInitialized = 0;
+                // Start the safety return once. Resetting an existing return
+                // every low-Fuel frame discards its lineup/go-around progress
+                // and can prevent a fixed-wing aircraft from ever landing.
+                if (air.ReturningHome == 0)
+                {
+                    air.ReturningHome = 1;
+                    air.AttackRunActive = 0;
+                    air.ReturnApproachInitialized = 0;
+                }
 
                 RemoveIfPresent<UnitTarget>(ecb, entity, targetLookup);
                 RemoveIfPresent<EngageTarget>(ecb, entity, engageLookup);

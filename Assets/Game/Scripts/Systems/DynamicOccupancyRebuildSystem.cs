@@ -20,10 +20,13 @@ namespace Game.Runtime
         private EntityQuery _gridQuery;
         private EntityQuery _trackedUnitsQuery;
         private EntityQuery _changedGridUnitsQuery;
+        private bool _ownsTrackedUnitsQuery;
         private NativeParallelHashMap<Entity, OccupancyRecord> _occupancyRecords;
         private NativeArray<int> _occupancyCounts;
         private int _cachedGridSize;
         private int _lastTrackedUnitCount;
+        private int _lastTrackedComponentOrderVersion;
+        private Entity _cachedGridEntity;
         private EntityTypeHandle _trackedEntityType;
 
         private static void GetClampedFootprintBounds(in GridConfig grid, int2 centerCell, int2 size, out int2 clampedMin, out int2 clampedMax)
@@ -130,7 +133,9 @@ namespace Game.Runtime
             state.RequireForUpdate<DynamicOccupancyComponent>();
             state.RequireForUpdate<UnitGrid>();
 
-            _trackedUnitsQuery = state.GetEntityQuery(new EntityQueryDesc
+            // SystemState caches identical queries. Keep full membership independently
+            // owned so a movement change filter cannot hide stationary live units.
+            _trackedUnitsQuery = state.EntityManager.CreateEntityQuery(new EntityQueryDesc
             {
                 All = new[]
                 {
@@ -144,6 +149,7 @@ namespace Game.Runtime
                     ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
                 }
             });
+            _ownsTrackedUnitsQuery = true;
 
             _changedGridUnitsQuery = state.GetEntityQuery(new EntityQueryDesc
             {
@@ -165,11 +171,18 @@ namespace Game.Runtime
             _occupancyCounts = default;
             _cachedGridSize = 0;
             _lastTrackedUnitCount = -1;
+            _lastTrackedComponentOrderVersion = -1;
+            _cachedGridEntity = Entity.Null;
             _trackedEntityType = state.GetEntityTypeHandle();
         }
 
         public void OnDestroy(ref SystemState state)
         {
+            if (_ownsTrackedUnitsQuery)
+            {
+                _trackedUnitsQuery.Dispose();
+                _ownsTrackedUnitsQuery = false;
+            }
             if (_occupancyRecords.IsCreated)
                 _occupancyRecords.Dispose();
             if (_occupancyCounts.IsCreated)
@@ -203,17 +216,19 @@ namespace Game.Runtime
             occ.Occupied.Clear();
 
             _cachedGridSize = gridSize;
+            _cachedGridEntity = gridEntity;
             _occupancyRecords.Clear();
 
-            foreach (var (unitGrid, footprint, entity) in SystemAPI
-                         .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>()
-                         .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag, UnitDeathAnimationComponent>()
-                         .WithEntityAccess())
+            var unitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
+            var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
+            using NativeArray<Entity> entities = _trackedUnitsQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
+                Entity entity = entities[i];
                 OccupancyRecord record = new()
                 {
-                    Cell = unitGrid.ValueRO.Cell,
-                    Size = footprint.ValueRO.Size
+                    Cell = unitGridLookup[entity].Cell,
+                    Size = footprintLookup[entity].Size
                 };
 
                 AddOccupancy(grid, ref occ, _occupancyCounts, record.Cell, record.Size);
@@ -221,9 +236,10 @@ namespace Game.Runtime
             }
 
             _lastTrackedUnitCount = trackedUnitCount;
+            _lastTrackedComponentOrderVersion = state.EntityManager.GetComponentOrderVersion<UnitGrid>();
         }
 
-        private void SyncTrackedEntitiesForCountChange(
+        private void SyncTrackedEntityMembership(
             ref SystemState state,
             in GridConfig grid,
             ref DynamicOccupancyComponent occ,
@@ -319,6 +335,9 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
+            int componentOrderVersion = state.EntityManager.GetComponentOrderVersion<UnitGrid>();
+            bool membershipChanged = trackedUnitCount != _lastTrackedUnitCount ||
+                                     componentOrderVersion != _lastTrackedComponentOrderVersion;
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
 
@@ -329,8 +348,9 @@ namespace Game.Runtime
             if (occ.GridSize != gridSize || !occ.Occupied.IsCreated)
                 return;
 
-            bool gridChanged = !_changedGridUnitsQuery.IsEmptyIgnoreFilter;
-            if (trackedUnitCount == _lastTrackedUnitCount &&
+            bool gridChanged = !_changedGridUnitsQuery.IsEmpty;
+            if (!membershipChanged &&
+                _cachedGridEntity == gridEntity &&
                 _cachedGridSize == gridSize &&
                 _occupancyCounts.IsCreated &&
                 _occupancyRecords.IsCreated &&
@@ -342,18 +362,20 @@ namespace Game.Runtime
             bool needsInitialRebuild = _lastTrackedUnitCount < 0;
             bool missingCounts = !_occupancyCounts.IsCreated;
             bool gridSizeChanged = _cachedGridSize != gridSize;
+            bool gridEntityChanged = _cachedGridEntity != gridEntity;
             bool missingRecords = !_occupancyRecords.IsCreated;
             if (needsInitialRebuild ||
                 missingCounts ||
                 gridSizeChanged ||
+                gridEntityChanged ||
                 missingRecords)
             {
                 RebuildOccupancy(ref state, gridEntity, grid, ref occ, trackedUnitCount);
                 return;
             }
 
-            if (trackedUnitCount != _lastTrackedUnitCount)
-                SyncTrackedEntitiesForCountChange(ref state, grid, ref occ, trackedUnitCount);
+            if (membershipChanged)
+                SyncTrackedEntityMembership(ref state, grid, ref occ, trackedUnitCount);
 
             var unitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true);
             var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
@@ -368,6 +390,7 @@ namespace Game.Runtime
             }
 
             _lastTrackedUnitCount = trackedUnitCount;
+            _lastTrackedComponentOrderVersion = componentOrderVersion;
         }
     }
 }

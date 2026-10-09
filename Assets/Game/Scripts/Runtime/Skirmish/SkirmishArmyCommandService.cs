@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Skirmish.Contracts;
+using Game.Tactical.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -13,7 +14,11 @@ namespace Game.Runtime
         // The shared AttackMove owner executes travel and combat; no second order
         // is issued by the UI's Attack-mode button.
         public static bool TryAttackMember(EntityManager em, Entity unit, Entity target)
+            => TryAttackMember(em, unit, target, out _);
+
+        public static bool TryAttackMember(EntityManager em, Entity unit, Entity target, out TacticalCommandResult result)
         {
+            result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             if (!em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
                 !em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit) ||
                 !em.HasComponent<SkirmishAttemptOwnedComponent>(target) ||
@@ -27,7 +32,8 @@ namespace Game.Runtime
             {
                 var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
                 if (!state.SessionId.Equals(owner.SessionId) || state.Phase != SkirmishSessionPhase.Playing) continue;
-                if (!ApplyOrder(em, unit, SkirmishGroupOrderKind.Attack, em.GetComponentData<LocalTransform>(target).Position, target)) return false;
+                if (!ApplyOrder(em, unit, SkirmishGroupOrderKind.Attack,
+                    em.GetComponentData<LocalTransform>(target).Position, target, out result)) return false;
                 AriaCommandEvidence.Accepted("ArmyAttack", owner.FactionId);
                 uint groupId = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId;
                 var groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
@@ -287,7 +293,12 @@ namespace Game.Runtime
             SkirmishGroupOrderKind order,
             float3 destination,
             Entity target)
+            => ApplyOrder(em, unit, order, destination, target, out _);
+
+        private static bool ApplyOrder(EntityManager em, Entity unit, SkirmishGroupOrderKind order,
+            float3 destination, Entity target, out TacticalCommandResult result)
         {
+            result = TacticalCommandResult.Success();
             if (order == SkirmishGroupOrderKind.Hold)
             {
                 SkirmishWorldMovementService.ClearIntent(em, unit);
@@ -296,8 +307,6 @@ namespace Game.Runtime
                 return true;
             }
 
-            if (em.HasComponent<HoldPositionOrderTag>(unit))
-                em.RemoveComponent<HoldPositionOrderTag>(unit);
             float cooldown = 0f;
             byte engaged = 0;
             if (order == SkirmishGroupOrderKind.Attack &&
@@ -315,7 +324,7 @@ namespace Game.Runtime
                 }
             }
 
-            if (!SkirmishWorldMovementService.AssignIntent(em, unit, destination, order)) return false;
+            if (!SkirmishWorldMovementService.AssignIntent(em, unit, destination, order, out result)) return false;
             if (!em.HasComponent<SkirmishMoveIntentComponent>(unit))
                 return false;
             var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);

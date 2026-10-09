@@ -1,0 +1,23 @@
+{
+  "result": "FailedCompilation",
+  "sourceHash": "358ea09a1a4d192f631472c6449ff9ddb7b03ba1854930c47f7fc7495d75781e",
+  "preSourceManifest": "final-803-native-return-receipt-and-stable-wheel-pre-source-manifest.json",
+  "failedCandidateSnapshot": "final-803-compilation-failure-before-repair-source-snapshot-source-manifest.json",
+  "failedCandidateSnapshotMatchesOriginalPre": true,
+  "compileError": "FixedWingCycleProbe.cs:36 CS0246 Button requires UnityEngine.UI import.",
+  "log": "native-803-current-manual-en-seed155926.log",
+  "wrapperStillRunning": false,
+  "candidateInvalidated": true,
+  "missionCensusRecorded": false,
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "repairSourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "repairSourceFingerprint": "final-803-compilation-repair-unqualified-current-source-independent-fingerprint.json",
+  "repair": "Added UnityEngine.UI import for the new Button field; no gameplay change.",
+  "wrapperExitCode": null,
+  "wrapperExitUnavailableReason": "Previous execution session absent and exit artifact missing; process verification confirms owned Editor closed. No exit code inferred.",
+  "postSourceManifest": "final-803-invalidated-unobserved-closed-post-source-manifest.json",
+  "sourceUnchanged": false,
+  "postSourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "editorTerminationPerformed": false
+}

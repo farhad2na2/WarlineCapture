@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Game.UI.Contracts;
+using Game.Configs;
 
 namespace Game.UI.Runtime
 {
@@ -127,8 +128,9 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.TryRequestOperationsMission(UiOperationsMissionAction.SaveAndExit);
                 return;
             }
-            if(UiShellRuntimeGateway.TryReadSkirmish(out _))
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var skirmish))
             {
+                if (skirmish.CanSaveMatch) { UiShellRuntimeGateway.TryRequestSkirmish(UiSkirmishAction.SaveExit); return; }
                 Object.FindAnyObjectByType<SkirmishMatchView>()?.Confirm(UiSkirmishAction.Restart);
                 return;
             }
@@ -327,7 +329,12 @@ namespace Game.UI.Runtime
             SetBaseStatus(skirmishEnemyBase, skirmishEnemyHealth, model.EnemyBase);
             SetText(skirmishInfantry, UiShellRuntimeGateway.Localization.Get("ui.skirmish.infantry", "Infantry"));
             SetText(skirmishInfantryCount, model.Infantry);
-            SetText(skirmishSaveNote, UiShellRuntimeGateway.Localization.Get("ui.skirmish.no_resume", "Leaving ends this match. Your setup is saved for a new match."));
+            bool fa = GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode;
+            SetText(skirmishSaveNote, model.SaveFailed
+                ? (fa ? "ذخیره نشد. نبرد همچنان متوقف است؛ دوباره تلاش کن یا ادامه بده." : "Could not save. The match is still paused. Try again or resume.")
+                : model.CanSaveMatch
+                    ? (fa ? "ذخیره و خروج، همین نبرد را نگه می‌دارد. از صفحهٔ نبرد ادامه بده." : "Save & Exit keeps this match. Continue it from the battle setup.")
+                    : UiShellRuntimeGateway.Localization.Get("ui.skirmish.no_resume", "Leaving ends this match. Your setup is saved for a new match."));
         }
 
         private static void SetBaseStatus(TMP_Text heading, TMP_Text value, string source)
@@ -394,7 +401,9 @@ namespace Game.UI.Runtime
                 SetText(objectiveText,skirmish.Objective);
                 ShowSkirmishStatus(skirmish);
                 if(exitButton!=null)UiLocalizedText.Set(exitButton.GetComponentInChildren<TMP_Text>(),UiShellRuntimeGateway.Localization.Get("ui.skirmish.surrender","SURRENDER"));
-                if(restartButton!=null)SetText(restartButton.GetComponentInChildren<TMP_Text>(),"RESTART MATCH");
+                if(restartButton!=null)SetText(restartButton.GetComponentInChildren<TMP_Text>(),skirmish.CanSaveMatch
+                    ? (GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode ? "ذخیره و خروج" : "SAVE & EXIT")
+                    : "RESTART MATCH");
                 if(civilianRiskText!=null)civilianRiskText.transform.parent.gameObject.SetActive(false);
                 return;
             }

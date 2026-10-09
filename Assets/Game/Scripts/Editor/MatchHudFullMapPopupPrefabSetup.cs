@@ -511,7 +511,7 @@ namespace Game.Editor
                 mapImage.raycastTarget = true;
                 mapImage.preserveAspect = false;
                 AspectRatioFitter mapFitter = mapImage.gameObject.AddComponent<AspectRatioFitter>();
-                mapFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                mapFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
                 mapFitter.aspectRatio = mapImage.sprite.rect.width / mapImage.sprite.rect.height;
                 MatchHudMinimapView minimapView = mapImage.gameObject.AddComponent<MatchHudMinimapView>();
 

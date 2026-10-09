@@ -61,7 +61,7 @@ public sealed class DenseDirtRoadMaterialValidationTests
             MatchUsesExactDemoVolumeProfile();
             Debug.Log(
                 "[DenseDirtRoadMaterialValidation] result=Passed " +
-                "dirtRenderers=36 packedParts=18 demoMaterial=Exact demoVolume=Exact");
+                "sourceDirtRenderers=36 currentPackedLegacyParts=0 demoMaterial=Exact demoVolume=Exact");
         }
         catch (Exception exception)
         {
@@ -134,7 +134,6 @@ public sealed class DenseDirtRoadMaterialValidationTests
                 break;
             }
         }
-        Assert.That(dirtMaterialIndex, Is.GreaterThanOrEqualTo(0));
 
         RenderPrototypeReport prototypeReport = JsonUtility.FromJson<RenderPrototypeReport>(
             File.ReadAllText(RenderPrototypeReportPath));
@@ -152,7 +151,8 @@ public sealed class DenseDirtRoadMaterialValidationTests
                 database.Parts[part.partIndex].MaterialIndex,
                 $"Packed dirt-road part {part.partIndex} must use the exact Demo material.");
         }
-        Assert.AreEqual(18, packedDirtPartCount, "Every packed Dirt renderer must be covered.");
+        Assert.AreEqual(0, packedDirtPartCount,
+            "The current shared source replaces disabled Dirt rendering with resident FlatPaving/KerbPaving; never repack obsolete Dirt parts.");
     }
 
     [Test]

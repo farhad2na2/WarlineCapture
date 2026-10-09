@@ -822,6 +822,69 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunDenseCompoundDeliverySearchValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.ManagedDeliverySearch_FindsClearGroundOutsideDenseCompound();
+            tests.ManagedDeliverySearch_DoesNotSkipTheEndOfABudgetedRing();
+            tests.ManagedBarracksTransport_ReservesOccupiedStaticHelipad();
+            Debug.Log("[DenseCompoundDeliverySearchValidation] result=Passed tests=3");
+        }
+        catch { Debug.LogError("[DenseCompoundDeliverySearchValidation] result=Failed"); throw; }
+    }
+
+    [Test]
+    public void ManagedDeliverySearch_FindsClearGroundOutsideDenseCompound()
+    {
+        ValidateManagedDeliverySearch(false);
+    }
+
+    [Test]
+    public void ManagedDeliverySearch_DoesNotSkipTheEndOfABudgetedRing()
+    {
+        ValidateManagedDeliverySearch(true);
+    }
+
+    private static void ValidateManagedDeliverySearch(bool onlyLastCornerClear)
+    {
+        using var world = new World("DenseCompoundDeliverySearch");
+        var grid = new GridConfig { Width = 256, Height = 256, CellSize = 1f, Origin = float3.zero };
+        using var walkableOwner = new NativeArray<GridWalkable>(256 * 256, Allocator.Temp);
+        var walkable = walkableOwner;
+        using var blocked = new NativeBitArray(256 * 256, Allocator.Temp);
+        using var occupied = new NativeBitArray(256 * 256, Allocator.Temp);
+        using var reserved = new NativeBitArray(256 * 256, Allocator.Temp);
+        for (int y = 0; y < 256; y++)
+            for (int x = 0; x < 256; x++)
+            {
+                walkable[y * 256 + x] = new GridWalkable { Value = 1 };
+                bool clear = onlyLastCornerClear
+                    ? x >= 144 && x <= 146 && y >= 144 && y <= 146
+                    : math.abs(x - 128) > 26 || math.abs(y - 128) > 26;
+                if (!clear) blocked.Set(y * 256 + x, true);
+            }
+        bool found = false;
+        int start = 0;
+        int2 result = default;
+        for (int step = 0; step < 40 && !found; step++)
+        {
+            found = BuildingProductionTransportPresentationSystemHelper.TryFindClearHelicopterDropCell(
+                world.EntityManager, grid, walkable, blocked, occupied, reserved,
+                new int2(128, 128), new int2(1, 1), start, out bool partial,
+                out int next, out result, out _);
+            if (found) break;
+            Assert.IsTrue(partial, "Search must continue until the legal landing cell is checked.");
+            Assert.Greater(next, start);
+            start = next;
+        }
+        Assert.IsTrue(found, "Paid delivery must find a clear landing cell without bypassing blockers.");
+        if (onlyLastCornerClear) Assert.AreEqual(new int2(145, 145), result);
+        else Assert.GreaterOrEqual(math.cmax(math.abs(result - new int2(128, 128))), 28);
+        Assert.IsFalse(blocked.IsSet(result.y * 256 + result.x));
+    }
+
     private static void SetRemainingQuantity(
         DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue,
         int remainingQuantity)

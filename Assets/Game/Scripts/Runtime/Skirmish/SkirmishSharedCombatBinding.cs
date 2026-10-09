@@ -57,6 +57,16 @@ namespace Game.Runtime
                 launcher.MaxSupportRangeBonus = 0f;
                 em.SetComponentData(entity, launcher);
             }
+            if (em.HasComponent<GroundMissileLauncherComponent>(entity))
+            {
+                // Siege fire is owned by the native missile system. Its weapon
+                // must use the mission overlay as well as the generic attack data.
+                var launcher = em.GetComponentData<GroundMissileLauncherComponent>(entity);
+                launcher.Damage = overlay.Damage;
+                launcher.MaxRange = overlay.RangeWorld;
+                launcher.MinRange = Unity.Mathematics.math.min(launcher.MinRange, overlay.RangeWorld * .5f);
+                em.SetComponentData(entity, launcher);
+            }
             if (UsesSharedCommands(em, entity))
                 em.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
         }

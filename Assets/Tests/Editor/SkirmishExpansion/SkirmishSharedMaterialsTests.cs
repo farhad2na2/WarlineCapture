@@ -485,6 +485,7 @@ namespace Game.Tests.Editor
                 AIFactionControlStartupSystemValidationTests.RunFocusedValidation();
                 new SkirmishSharedCombatTests().RuntimeActorAndLinkedVisualSurviveSourceSceneUnload();
                 new SkirmishSharedCombatTests().RegistryActorsNeverReceiveSupplementalStructureDamage();
+                new SkirmishSharedCombatTests().CommandedSiegeUsesNativeOrdersAndRejectsIllegalTargets();
                 new SkirmishSharedCombatTests().AntiAirOverlayBindsTheActualMissileWeapon();
                 SkirmishExpandedAriaTests.RunFocusedValidation();
                 new SkirmishExpandedArmyTests().AcceptedArmyOrdersRequireInputEvidence();
@@ -499,6 +500,7 @@ namespace Game.Tests.Editor
                 fuel.VehicleFuelConsumption_UsesAirFuelCostForAirUnits();
                 fuel.AircraftFuelSafetyReturn_ZeroFuelClearsOrdersAndReturnsHome();
                 fuel.AircraftFuelSafetyReturn_WithUsableFuelKeepsActiveOrders();
+                fuel.AircraftFuelSafetyReturn_AlreadyReturningPreservesManeuverAndLandingProgress();
                 fuel.GroundVehicleFuelHold_ZeroFuelClearsMovementAndStopsKinematics();
                 fuel.GroundVehicleFuelHold_WithUsableFuelKeepsMovement();
                 var recipes = new SkirmishSharedProductionRecipeTests();

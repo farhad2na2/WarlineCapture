@@ -16,8 +16,21 @@ namespace Game.Runtime
             return em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0 &&
                 em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup?.CatalogId == "S004";
         }
-        public static OperationMapDefinition LoadMapForSession(EntityManager em) =>
-            IsActive(em) ? Resources.Load<OperationMapDefinition>("SkirmishS004OperationMap") : null;
+        public static OperationMapDefinition LoadMapForSession(EntityManager em)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupRecord));
+            if (query.CalculateEntityCount() == 1)
+            {
+                var session = query.GetSingletonEntity();
+                var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var catalog = SkirmishExpansionCatalogConfig.Load();
+                if (setup != null && catalog != null && catalog.TryGetDefinition(setup.CatalogId, out var definition) &&
+                    definition.CampaignMap != null)
+                    return definition.CampaignMap;
+            }
+            return IsActive(em) ? Resources.Load<OperationMapDefinition>("SkirmishS004OperationMap") : null;
+        }
+        public static bool UsesCampaignMap(EntityManager em) => LoadMapForSession(em) != null;
         // S004 reuses the campaign scenery without an additional procedural town.
         public static MapBuildingPlacementConfig LoadForSession(EntityManager em) => null;
     }

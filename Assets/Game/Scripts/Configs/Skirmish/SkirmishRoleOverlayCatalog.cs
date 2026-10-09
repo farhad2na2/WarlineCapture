@@ -48,6 +48,19 @@ namespace Game.Configs
             return kept.ToArray();
         }
 
+        public static SkirmishRoleOverlay[] CreateCombinedArmsSlice()
+        {
+            var roles = new System.Collections.Generic.List<SkirmishRoleOverlay>(CreateAirMobileSlice());
+            TryGet(CreateS002GroundSlice(), SkirmishRoleKind.Tank, out var tank);
+            roles.Add(tank);
+            // Mode-owned projection on the existing combat scale; Campaign config remains untouched.
+            roles.Add(Overlay(SkirmishRoleIds.ApcHeavy, SkirmishRoleKind.ApcHeavy, 360, 18, 24f, 280,
+                SkirmishProducerKind.GroundStaging, SkirmishTargetDomain.Infantry | SkirmishTargetDomain.Ground, 1));
+            roles.Add(Overlay(SkirmishRoleIds.Siege, SkirmishRoleKind.Siege, 240, 40, 48f, 420,
+                SkirmishProducerKind.GroundStaging, SkirmishTargetDomain.Ground | SkirmishTargetDomain.Structure, 1));
+            return roles.ToArray();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]

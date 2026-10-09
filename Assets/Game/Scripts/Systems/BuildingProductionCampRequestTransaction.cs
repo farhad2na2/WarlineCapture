@@ -26,7 +26,14 @@ namespace Game.Runtime
             {
                 var readinessFailure = SkirmishNativeProduction.RequestFailure(readinessWorld, prefab,
                     context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab));
-                if (readinessFailure != CampRequestFailure.None) return readinessFailure;
+                if (readinessFailure != CampRequestFailure.None)
+                {
+                    if (readinessFailure == CampRequestFailure.MissingProducerBuilding)
+                        if (!SkirmishNativeProduction.TryRequiredProducerDisplayName(readinessWorld, prefab,
+                            context.ConfiguredSpawnableDefinitions, out requiredBuildingDisplayName))
+                            TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
+                    return readinessFailure;
+                }
             }
 
             if (context.ConfiguredDefinitionsByPrefab != null &&

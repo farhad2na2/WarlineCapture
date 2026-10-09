@@ -48,7 +48,8 @@ namespace Game.Runtime
                         out _,
                         out Vector3 runwayCenter,
                         out Quaternion runwayRotation,
-                        out Vector3 runwayHalfExtents))
+                        out Vector3 runwayHalfExtents,
+                        BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(building)))
                 {
                     return false;
                 }

@@ -60,7 +60,11 @@ namespace Game.Runtime
                 bool sharedCombat = em.HasComponent<SkirmishSharedActorTag>(unit);
                 // Production units use shared combat for structures as well as units.
                 // This fixture-only damage path must never supplement a real weapon.
-                if (sharedCombat) continue;
+                if (sharedCombat)
+                {
+                    IssueCommandedSiegeAttack(em, unit, intent.AttackTarget, sessionId, owned.FactionId, overlay);
+                    continue;
+                }
                 Entity combatant = FindCombatant(em, sessionId, unit, owned.FactionId, overlay);
                 Entity structure = OrderedStructure(em, intent.AttackTarget, owned.FactionId, unit, overlay);
                 // A combatant on the way is fought only until the ordered structure
@@ -101,6 +105,53 @@ namespace Game.Runtime
             if (category == SkirmishPopulationCategory.Air)
                 return (domains & SkirmishTargetDomain.Air) != 0;
             return false;
+        }
+
+        private static void IssueCommandedSiegeAttack(
+            EntityManager em, Entity unit, Entity target, FixedString64Bytes sessionId,
+            byte factionId, SkirmishRoleOverlayComponent overlay)
+        {
+            // Native launchers deliberately do not auto-acquire attack-move contacts.
+            // Forward only the target already accepted by the mission's Attack command;
+            // the native weapon continues to own preparation, projectiles and damage.
+            if (!em.HasComponent<SkirmishUnitRoleComponent>(unit) ||
+                em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role != SkirmishRoleKind.Siege ||
+                !em.HasComponent<GroundMissileLauncherComponent>(unit) ||
+                target == Entity.Null || !em.Exists(target) ||
+                !em.HasComponent<SkirmishAttemptOwnedComponent>(target) ||
+                !em.HasComponent<LocalTransform>(target) ||
+                !SkirmishArmyGroupSystem.IsAlive(em, target) || !SkirmishFogService.IsVisible(em, target))
+                return;
+            var targetOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+            if (!targetOwner.SessionId.Equals(sessionId) || targetOwner.FactionId == 0 ||
+                targetOwner.FactionId == factionId)
+                return;
+            var category = em.HasComponent<SkirmishUnitRoleComponent>(target)
+                ? em.GetComponentData<SkirmishUnitRoleComponent>(target).Category
+                : SkirmishPopulationCategory.None;
+            if (!DomainAllows(overlay.TargetDomains, targetOwner.IsStructure != 0, category))
+                return;
+            float3 position = em.GetComponentData<LocalTransform>(target).Position;
+            var weapon = em.GetComponentData<GroundMissileLauncherComponent>(unit);
+            float distance = math.distance(em.GetComponentData<LocalTransform>(unit).Position.xz, position.xz);
+            float minRange = math.max(0f, weapon.MinRange);
+            if (!math.isfinite(distance) || distance < minRange ||
+                distance > math.min(overlay.RangeWorld, math.max(minRange, weapon.MaxRange)))
+                return;
+            if (em.HasComponent<EngageTarget>(unit) &&
+                em.GetComponentData<EngageTarget>(unit).Target == target)
+                return;
+            if (em.HasComponent<GroundMissileInFlightComponent>(unit)) return;
+            if (em.HasComponent<GroundMissileLauncherStateComponent>(unit))
+            {
+                byte phase = em.GetComponentData<GroundMissileLauncherStateComponent>(unit).Phase;
+                if (phase == (byte)GroundMissileLauncherPhase.Preparing ||
+                    phase == (byte)GroundMissileLauncherPhase.Launching) return;
+            }
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.CalculateEntityCount() != 1) return;
+            UnitAttackOrderRequestSystem.EnqueueAndProcessDirectAttackTarget(
+                em, unit, target, GridUtils.WorldToCell(grids.GetSingleton<GridConfig>(), position), position);
         }
 
         private static bool CanShoot(EntityManager em, Entity unit, out SkirmishRoleOverlayComponent overlay)

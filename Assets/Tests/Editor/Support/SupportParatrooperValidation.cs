@@ -42,8 +42,104 @@ namespace Game.Tests.Editor
         }
         public static void RunFocusedValidation()
         {
-            try {var t=new SupportParatrooperValidation();t.ManifestAndPopulationFailClosed();t.LiveQueuedAndReservedPopulationCountOnce();t.AllSlotsReservedAndRealParachutesLand();t.BlockedFirstReleaseRestoresExactly();t.PartialDeliveryDoesNotRefund();t.ExternalFlightRemovalDestroysHeldPassengers();t.PausedFlightPreservesReservation();t.ExternalPartialFlightRemovalKeepsReleasedSquadAndReceipt();t.ReleasedPassengerDeathDestroysCanopy();Debug.Log("[SupportParatrooperValidation] result=Passed tests=9");ValidationExit.Exit(0);}
+            try {var t=new SupportParatrooperValidation();t.ManifestAndPopulationFailClosed();t.LiveQueuedAndReservedPopulationCountOnce();t.AllSlotsReservedAndRealParachutesLand();t.BlockedFirstReleaseRestoresExactly();t.PartialDeliveryDoesNotRefund();t.ExternalFlightRemovalDestroysHeldPassengers();t.PausedFlightPreservesReservation();t.ExternalPartialFlightRemovalKeepsReleasedSquadAndReceipt();t.ReleasedPassengerDeathDestroysCanopy();t.NativePopulationUsesCompiledLedgerAndPendingPassengers();t.NativePopulationRejectsMissingOrChangedCapacity();t.NativePassengerPauseAndTerminalCleanup();t.NativeReleasedRiflesBindSquadAndReleaseCapacityOnce();t.NativeExternalDestructionAndSupplyCapFailClosed();t.NativeCapacityRecoveryCannotSilentlyLoseOwner();Debug.Log("[SupportParatrooperValidation] result=Passed tests=15");ValidationExit.Exit(0);}
             catch(Exception ex){Debug.LogException(ex);Debug.LogError("[SupportParatrooperValidation] result=Failed");ValidationExit.Exit(1);throw;}
+        }
+        private static Entity Native(Encounter e)
+        {
+            var support=e.Em.GetComponentData<SupportSessionComponent>(e.F.Root);
+            var session=e.Em.CreateEntity(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishCapacityComponent),typeof(SkirmishEnemyCapacityComponent),typeof(SkirmishEconomyStockComponent));
+            e.Em.SetComponentData(session,new SkirmishExpandedSessionComponent {SessionId=support.SessionToken,Phase=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing,SpawnComplete=1});
+            e.Em.SetComponentData(session,new SkirmishCapacityComponent {FactionId=1,InfantryCap=12,SupplyCap=100,InfantryLive=3,InfantryReserved=2});
+            e.Em.SetComponentData(session,new SkirmishEnemyCapacityComponent {InfantryCap=12,SupplyCap=100,InfantryLive=7,InfantryReserved=1});
+            e.Em.AddComponentObject(session,new SkirmishResolvedSetupRecord {Setup=new Game.Configs.SkirmishResolvedSetup {InfantryCapEach=12,SupplyCapEach=100,RoleOverlays=Game.Configs.SkirmishRoleOverlayCatalog.CreateS002GroundSlice(),Forces=new[] {new Game.Configs.SkirmishResolvedForceEntry {RoleKind=Game.Skirmish.Contracts.SkirmishRoleKind.Rifle,RuntimePrefabKey="rifle-test"}}}});
+            e.Em.AddComponentData(e.Infantry,new UnitSourcePrefabKey {Value="rifle-test"});
+            e.Em.AddComponentData(e.F.Root,new SkirmishSupportOwnerComponent {Session=session,SessionId=support.SessionToken});
+            return session;
+        }
+        [Test] public void NativePopulationUsesCompiledLedgerAndPendingPassengers()
+        {
+            using var e=new Encounter();Native(e);
+            // Global presentation actors and queue summaries must not duplicate the native ledger.
+            var foreign=e.F.Unit(float3.zero,1);e.Em.AddComponent<UnitMovementBehavior>(foreign);
+            var queues=e.Em.CreateEntity();e.Em.AddBuffer<BuildingRuntimeUnitProductionSummary>(queues).Add(new BuildingRuntimeUnitProductionSummary {FactionId=1,UnitId="unknown",QueuedCount=99});
+            Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out var count,out var ceiling));
+            Assert.AreEqual(5,count);Assert.AreEqual(12,ceiling);
+            var flight=e.Commit();Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out count,out ceiling));Assert.AreEqual(9,count);
+            var session=e.Em.GetComponentData<SupportSessionComponent>(e.F.Root);session.FactionId=2;e.Em.SetComponentData(e.F.Root,session);
+            Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out count,out ceiling));Assert.AreEqual(8,count);
+            session.FactionId=1;e.Em.SetComponentData(e.F.Root,session);
+            var policy=e.Em.GetComponentData<SupportMissionPolicyComponent>(e.F.Root);policy.PopulationCeiling=1000;e.Em.SetComponentData(e.F.Root,policy);
+            Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out count,out ceiling));Assert.AreEqual(12,ceiling);
+            SupportParatrooperAdapterSystemHelper.DestroyUnreleased(e.Em,flight);
+            Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out count,out ceiling));Assert.AreEqual(5,count);
+        }
+        [Test] public void NativePopulationRejectsMissingOrChangedCapacity()
+        {
+            using var e=new Encounter();var native=Native(e);
+            e.Em.RemoveComponent<SkirmishCapacityComponent>(native);
+            Assert.IsFalse(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out _,out _));
+            e.Em.AddComponentData(native,new SkirmishCapacityComponent {FactionId=1,InfantryCap=13});
+            Assert.IsFalse(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out _,out _));
+            e.Em.SetComponentData(native,new SkirmishCapacityComponent {FactionId=1,InfantryCap=12,InfantryLive=9});
+            Assert.AreEqual(SupportRejectionReason.PopulationFull,SupportTargetValidationUtilitySystemHelper.Validate(e.Em,e.F.Root,e.Request));
+            Assert.AreEqual(6,SupportFuelTransactionSystem.Available(e.Em,1));
+            e.Em.SetComponentData(native,new SkirmishCapacityComponent {FactionId=1,InfantryCap=12,InfantryReserved=-1});
+            Assert.IsFalse(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out _,out _));
+        }
+        [Test] public void NativePassengerPauseAndTerminalCleanup()
+        {
+            using var e=new Encounter();var native=Native(e);var flight=e.Commit();
+            var passenger=e.Em.GetBuffer<SupportPassengerReservationElement>(flight)[0].Passenger;
+            e.Approach(flight);e.DropAt(5);
+            var canopy=e.Em.GetComponentData<SupportPassengerCleanupComponent>(passenger).Canopy;
+            var session=e.Em.GetComponentData<SupportSessionComponent>(e.F.Root);session.Active=0;e.Em.SetComponentData(e.F.Root,session);
+            var lifecycle=e.F.World.CreateSystem<SupportPassengerLifecycleSystem>();lifecycle.Update(e.F.World.Unmanaged);
+            Assert.IsTrue(e.Em.Exists(passenger));Assert.IsTrue(e.Em.Exists(canopy));
+            var state=e.Em.GetComponentData<SkirmishExpandedSessionComponent>(native);state.Phase=Game.Skirmish.Contracts.SkirmishSessionPhase.Finished;e.Em.SetComponentData(native,state);
+            lifecycle.Update(e.F.World.Unmanaged);Assert.IsFalse(e.Em.Exists(canopy));lifecycle.Update(e.F.World.Unmanaged);Assert.IsFalse(e.Em.Exists(passenger));
+        }
+        [Test] public void NativeReleasedRiflesBindSquadAndReleaseCapacityOnce()
+        {
+            using var e=new Encounter();var native=Native(e);var flight=e.Commit();
+            var first=e.Em.GetBuffer<SupportPassengerReservationElement>(flight)[0].Passenger;
+            Assert.IsFalse(e.Em.HasComponent<CampaignMissionUnitRoleComponent>(first));
+            Assert.IsFalse(e.Em.HasComponent<SkirmishAttemptOwnedComponent>(first));
+            e.Approach(flight);e.DropAt(5);
+            Assert.IsTrue(e.Em.HasComponent<SkirmishSharedActorTag>(first));
+            Assert.IsTrue(SkirmishSharedCombatBinding.UsesSharedCommands(e.Em,first));
+            Assert.AreEqual(100,e.Em.GetComponentData<UnitHealth>(first).Max);
+            Assert.AreEqual(Game.Skirmish.Contracts.SkirmishRoleKind.Rifle,e.Em.GetComponentData<SkirmishUnitRoleComponent>(first).Role);
+            Assert.AreEqual(1,e.Em.GetBuffer<SkirmishArmyGroupRecord>(native).Length);
+            var cap=e.Em.GetComponentData<SkirmishCapacityComponent>(native);Assert.AreEqual(4,cap.InfantryLive);Assert.AreEqual(1,cap.SupplyLive);Assert.AreEqual(2,cap.InfantryReserved);
+            Assert.IsTrue(SupportLandingUtilitySystemHelper.CountPopulation(e.Em,e.F.Root,out var population,out _));Assert.AreEqual(9,population);
+            e.DropAt(5.7);var second=e.Em.GetBuffer<SupportPassengerReservationElement>(flight)[1].Passenger;
+            Assert.AreEqual(e.Em.GetComponentData<SkirmishArmyGroupMembershipComponent>(first).GroupId,e.Em.GetComponentData<SkirmishArmyGroupMembershipComponent>(second).GroupId);
+            Assert.AreNotEqual(e.Em.GetComponentData<SkirmishAttemptOwnedComponent>(first).StableObjectId,e.Em.GetComponentData<SkirmishAttemptOwnedComponent>(second).StableObjectId);
+            e.Em.SetComponentData(first,new UnitHealth {Max=100,Current=0});
+            Assert.IsTrue(SkirmishProductionService.TryReleaseDeath(e.Em,native,first));Assert.IsFalse(SkirmishProductionService.TryReleaseDeath(e.Em,native,first));
+            var after=e.Em.GetComponentData<SkirmishCapacityComponent>(native);
+            e.Em.DestroyEntity(first);var lifecycle=e.F.World.CreateSystem<SupportPassengerLifecycleSystem>();lifecycle.Update(e.F.World.Unmanaged);lifecycle.Update(e.F.World.Unmanaged);
+            Assert.AreEqual(after.InfantryLive,e.Em.GetComponentData<SkirmishCapacityComponent>(native).InfantryLive);Assert.AreEqual(after.SupplyLive,e.Em.GetComponentData<SkirmishCapacityComponent>(native).SupplyLive);
+        }
+        [Test] public void NativeExternalDestructionAndSupplyCapFailClosed()
+        {
+            using var e=new Encounter();var native=Native(e);var flight=e.Commit();e.Approach(flight);e.DropAt(5);
+            var first=e.Em.GetBuffer<SupportPassengerReservationElement>(flight)[0].Passenger;
+            e.Em.DestroyEntity(first);var lifecycle=e.F.World.CreateSystem<SupportPassengerLifecycleSystem>();lifecycle.Update(e.F.World.Unmanaged);lifecycle.Update(e.F.World.Unmanaged);
+            var cap=e.Em.GetComponentData<SkirmishCapacityComponent>(native);Assert.AreEqual(3,cap.InfantryLive);Assert.AreEqual(0,cap.SupplyLive);
+            cap.SupplyLive=100;e.Em.SetComponentData(native,cap);e.DropAt(6);
+            Assert.AreEqual(SupportExecutionPhase.PartiallyResolved,e.Em.GetBuffer<SupportReceiptElement>(e.F.Root)[0].Phase);
+            Assert.AreEqual(0,SupportFuelTransactionSystem.Available(e.Em,1));
+            Assert.AreEqual(3,e.Em.GetComponentData<SkirmishCapacityComponent>(native).InfantryLive);
+        }
+        [Test] public void NativeCapacityRecoveryCannotSilentlyLoseOwner()
+        {
+            using var e=new Encounter();var native=Native(e);var actor=e.Em.CreateEntity();
+            e.Em.AddComponentData(actor,new SkirmishSupportPassengerCapacity {Session=native,SessionId=e.Em.GetComponentData<SupportSessionComponent>(e.F.Root).SessionToken,FactionId=1,SupplyCost=1});
+            var ids=new System.Collections.Generic.Dictionary<Entity,string> {{actor,"mapped-actor"}};
+            var error=Assert.Throws<InvalidOperationException>(()=>SkirmishNativeCheckpointTransientState.Capture(e.Em,new System.Collections.Generic.List<Entity>(),ids,new System.Collections.Generic.HashSet<string> {"mapped-actor"},out _,out _));
+            StringAssert.Contains("NativeUnsupportedSupportCapacityRecovery",error.Message);
         }
         [Test] public void ManifestAndPopulationFailClosed()
         {

@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 namespace Game.Runtime
 {
-    public static class SupportParatrooperAdapterSystemHelper
+    public static partial class SupportParatrooperAdapterSystemHelper
     {
         public static void PreparePassengers(EntityManager em,Entity root,Entity flight,NativeList<int2> cells,NativeList<float3> positions)
         {
@@ -18,7 +18,7 @@ namespace Game.Runtime
                 var passenger=em.Instantiate(payload.InfantryPrefab);
                 em.SetComponentData(passenger,new Faction {Id=session.FactionId});
                 if(em.HasComponent<SelectedUnitTag>(passenger))em.RemoveComponent<SelectedUnitTag>(passenger);
-                em.AddComponentData(passenger,new CampaignMissionUnitRoleComponent {MissionRoleId="role.friendly.support",UnitGroupId="support.rifle",SessionToken=session.SessionToken});
+                if(!em.HasComponent<SkirmishSupportOwnerComponent>(root))em.AddComponentData(passenger,new CampaignMissionUnitRoleComponent {MissionRoleId="role.friendly.support",UnitGroupId="support.rifle",SessionToken=session.SessionToken});
                 em.AddComponent<SupportPassengerTransitTag>(passenger);
                 em.AddComponentData(passenger,new SupportPassengerOwnerComponent {Root=root,Flight=flight,SessionToken=session.SessionToken,AttemptOrdinal=session.AttemptOrdinal,LandingCell=cells[i],LandingPosition=positions[i]});
                 if(!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
@@ -63,9 +63,9 @@ namespace Game.Runtime
             var reason=failure;
             if(session.Active==0)return false;
             if(reason==SupportRejectionReason.None&&(!SupportAirValidationUtilitySystemHelper.SafeRoute(em,flight.Root,session,out var currentRoute,true,flight.Request.Position)||currentRoute.Version!=flight.RouteVersion))reason=SupportRejectionReason.NoSafeAirRoute;
-            int population=0;
-            if(reason==SupportRejectionReason.None&&!SupportLandingUtilitySystemHelper.CountPopulation(em,session.FactionId,out population))reason=SupportRejectionReason.NotReady;
-            else if(reason==SupportRejectionReason.None&&population>em.GetComponentData<SupportMissionPolicyComponent>(flight.Root).PopulationCeiling)reason=SupportRejectionReason.PopulationFull;
+            int population=0,ceiling=0;
+            if(reason==SupportRejectionReason.None&&!SupportLandingUtilitySystemHelper.CountPopulation(em,flight.Root,out population,out ceiling))reason=SupportRejectionReason.NotReady;
+            else if(reason==SupportRejectionReason.None&&population>ceiling)reason=SupportRejectionReason.PopulationFull;
             var reservations=em.GetBuffer<SupportPassengerReservationElement>(transport);
             for(int i=0;reason==SupportRejectionReason.None&&i<reservations.Length;i++)
             {
@@ -82,6 +82,7 @@ namespace Game.Runtime
                     SupportTargetValidationUtilitySystemHelper.ValidateGround(em,flight.Root,owner.LandingPosition)!=SupportRejectionReason.None)
                     reason=SupportRejectionReason.LandingBlocked;
             }
+            if(reason==SupportRejectionReason.None&&!CanBindNativePassenger(em,transport))reason=SupportRejectionReason.PopulationFull;
             if(reason==SupportRejectionReason.None&&flight.Phase==SupportExecutionPhase.Approaching&&!SupportFuelTransactionSystem.TryConsumeReserved(em,transport,session.FactionId))reason=SupportRejectionReason.InsufficientFuel;
             if(reason!=SupportRejectionReason.None)
             {
@@ -93,6 +94,8 @@ namespace Game.Runtime
                 if(!released)ecb.DestroyEntity(transport);
                 return false;
             }
+            if(!TryBindNativePassenger(em,transport,passenger))throw new System.InvalidOperationException("NativeSupportPassengerBindingChangedAfterValidation");
+            reservations=em.GetBuffer<SupportPassengerReservationElement>(transport);
             var selected=em.GetComponentData<SupportPassengerOwnerComponent>(passenger);cell=selected.LandingCell;selected.Released=1;em.SetComponentData(passenger,selected);
             for(int i=0;i<reservations.Length;i++)if(reservations[i].Passenger==passenger){var entry=reservations[i];entry.Released=1;reservations[i]=entry;break;}
             flight.Phase=SupportExecutionPhase.Released;flight.ReleasedAt=session.SimulationSeconds;em.SetComponentData(transport,flight);

@@ -11,6 +11,7 @@ namespace Game.Runtime
         private World world;
         private Entity owner, sidewalkOwner;
         private uint revision;
+        private uint sidewalkSourceSignature;
         private MapSurfaceComponent surface;
         private GridConfig grid;
         private bool[] mask, sidewalkMask, waterMask;
@@ -22,25 +23,34 @@ namespace Game.Runtime
             var current=em.GetComponentData<MapSurfaceComponent>(entity);
             uint version=em.HasComponent<MapSurfaceSceneOverlayRevision>(entity)
                 ? em.GetComponentData<MapSurfaceSceneOverlayRevision>(entity).Value : 0;
+            // Packed sidewalk owners can stream in after the surface owner.
+            // Surface revision alone does not describe that source census.
+            using var authoredSidewalks=em.CreateEntityQuery(ComponentType.ReadOnly<OperationMapSidewalkFootprint>());
+            using var authoredOwners=authoredSidewalks.ToEntityArray(Unity.Collections.Allocator.Temp);
+            uint currentSidewalkSignature=2166136261;
+            foreach(var sourceOwner in authoredOwners)
+            {
+                currentSidewalkSignature=unchecked((currentSidewalkSignature^(uint)sourceOwner.Index)*16777619);
+                currentSidewalkSignature=unchecked((currentSidewalkSignature^(uint)sourceOwner.Version)*16777619);
+                currentSidewalkSignature=unchecked((currentSidewalkSignature^(uint)em.GetBuffer<OperationMapSidewalkFootprint>(sourceOwner,true).Length)*16777619);
+            }
             if(world==em.World && owner==entity && revision==version && surface.SurfaceBlob==current.SurfaceBlob && surface.HasSurfaceData==current.HasSurfaceData &&
                 surface.CellSize==current.CellSize && math.all(surface.GridOrigin==current.GridOrigin) &&
                 grid.Width==currentGrid.Width && grid.Height==currentGrid.Height && grid.CellSize==currentGrid.CellSize &&
-                math.all(grid.Origin==currentGrid.Origin) && mask!=null) return;
+                math.all(grid.Origin==currentGrid.Origin) && sidewalkSourceSignature==currentSidewalkSignature && mask!=null) return;
             if(world!=em.World || !em.Exists(sidewalkOwner))
             {
                 using var sidewalkQuery=em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(),ComponentType.ReadOnly<GridRoadSidewalk>());
                 sidewalkOwner=sidewalkQuery.CalculateEntityCount()==1 ? sidewalkQuery.GetSingletonEntity() : Entity.Null;
             }
-            world=em.World;owner=entity;revision=version;surface=current;grid=currentGrid;
+            world=em.World;owner=entity;revision=version;surface=current;grid=currentGrid;sidewalkSourceSignature=currentSidewalkSignature;
             mask=new bool[grid.Width*grid.Height];
             waterMask=SkirmishWaterPlacement.CreateMask(em,grid);
             BuildingPlacementRoadSurfaceMask.Append(em,entity,grid,mask);
             sidewalkMask=new bool[mask.Length];
             var live=GetLiveSidewalks();
             if(live.IsCreated) for(int i=0;i<sidewalkMask.Length && i<live.Length;i++) sidewalkMask[i]=live[i].Value!=0;
-            using(var sidewalkQuery=em.CreateEntityQuery(ComponentType.ReadOnly<OperationMapSidewalkFootprint>()))
-            using(var owners=sidewalkQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
-                foreach(var mapOwner in owners)
+                foreach(var mapOwner in authoredOwners)
                     foreach(var footprint in em.GetBuffer<OperationMapSidewalkFootprint>(mapOwner,true))
                         AppendSidewalk(footprint);
             // Authored operation-map sidewalks can be visual meshes without GridRoadSidewalk records.

@@ -138,6 +138,7 @@ namespace Game.UI.Runtime
                 _buildingUiCommandSystem,
                 ResolveMatchHudRuntimeFeedback(),
                 _gameTextResolver);
+            _buildPlacementConfirmationBarView.SetFullMapOpen(_fullMapPopupView != null && _fullMapPopupView.IsOpen);
             _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
         }
 

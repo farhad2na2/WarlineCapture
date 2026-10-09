@@ -32,3 +32,10 @@ MonoBehaviour:
     EvidencePath: Design/AgentReports/SkirmishExpansion/S004/
     Notes: S004 Game View evidence + matching Regular Standard hashes. Established
       air flight/refuel and counted ARIA matrix still open.
+  - CatalogId: S005
+    DefinitionId: skirmish.s005
+    Status: 1
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S005/
+    Notes: Combined Arms Field candidate. Native journeys, all-role certification,
+      bilateral runway capacity, recovery and device acceptance required; asset existence
+      does not set Playable.

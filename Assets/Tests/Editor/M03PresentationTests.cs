@@ -126,7 +126,14 @@ public sealed class M03PresentationTests
                 Assert.GreaterOrEqual(utilities.min.y,rail.yMin+11.99f,"Utility row must fit inside ARIA.");
                 Assert.GreaterOrEqual(utilities.min.x,rail.xMin+19.99f);
                 Assert.LessOrEqual(utilities.max.x,rail.xMax-19.99f);
-                Assert.GreaterOrEqual(rail.yMin,BoundsIn(view.transform,dock.Minimap).max.y+11.99f,"ARIA must clear the minimap.");
+                var mapBounds=BoundsIn(view.transform,dock.Minimap);
+                // The shared minimap now occupies the left dock. Enforce actual
+                // rectangle clearance rather than requiring a vertical stack.
+                bool horizontalClear = rail.xMin >= mapBounds.max.x + 11.99f ||
+                    rail.xMax <= mapBounds.min.x - 11.99f;
+                bool verticalClear = rail.yMin >= mapBounds.max.y + 11.99f ||
+                    rail.yMax <= mapBounds.min.y - 11.99f;
+                Assert.IsTrue(horizontalClear || verticalClear,"ARIA must clear the minimap by at least 12 pixels.");
                 float previousBottom=utilities.max.y+12;
                 foreach(var button in utility.GetComponentsInChildren<UnityEngine.UI.Button>())
                 {

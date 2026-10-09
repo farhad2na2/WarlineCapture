@@ -261,10 +261,14 @@ namespace Game.Editor
         {
             int denseDirtRoadPartCount = inputs.prototypes.parts.Count(
                 value => value.rendererPath.StartsWith("Dirt[", StringComparison.Ordinal));
-            if (denseDirtRoadPartCount != 18)
+            // dense-city-v6 already disables these legacy Dirt renderers and
+            // authors FlatPaving/KerbPaving on the same existing roads. The
+            // current source inventory contains zero active Dirt rows; keeping
+            // the old18-part expectation would repack obsolete presentation.
+            if (denseDirtRoadPartCount != 0)
             {
                 throw new InvalidOperationException(
-                    $"Dense dirt-road material migration expected 18 logical parts, found " +
+                    $"Current dense-city paving contract expected zero legacy Dirt logical parts, found " +
                     $"{denseDirtRoadPartCount}.");
             }
             AssetIdentity[] meshIds = inputs.prototypes.parts

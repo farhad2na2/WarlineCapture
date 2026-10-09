@@ -145,6 +145,9 @@ namespace Game.Runtime
             }
 
             Entity projectile = ecb.CreateEntity();
+            if (em.HasComponent<SkirmishAttemptOwnedComponent>(launcherEntity))
+                ecb.AddComponent(projectile, new SkirmishNativeTransientOwner {
+                    SessionId = em.GetComponentData<SkirmishAttemptOwnedComponent>(launcherEntity).SessionId });
             ecb.AddComponent(projectile, LocalTransform.FromPositionRotation(sourcePosition, launchRotation));
             ecb.AddComponent(projectile, new GroundMissileProjectileComponent
             {

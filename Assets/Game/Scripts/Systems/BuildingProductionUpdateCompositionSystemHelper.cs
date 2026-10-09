@@ -17,18 +17,21 @@ namespace Game.Runtime
             public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
             public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
             public readonly BuildingProductionTransportPresentationSystemHelper.Context TransportContext;
+            internal readonly SkirmishNativeCheckpointPrefabRegistry CheckpointPrefabs;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
                 BuildingProductionQueueCompositionSystemHelper productionSystem,
                 BuildingProductionTransportPresentationSystemHelper transportSystem,
-                BuildingProductionTransportPresentationSystemHelper.Context transportContext)
+                BuildingProductionTransportPresentationSystemHelper.Context transportContext,
+                SkirmishNativeCheckpointPrefabRegistry checkpointPrefabs = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
                 ProductionSystem = productionSystem;
                 TransportSystem = transportSystem;
                 TransportContext = transportContext;
+                CheckpointPrefabs = checkpointPrefabs;
             }
         }
 

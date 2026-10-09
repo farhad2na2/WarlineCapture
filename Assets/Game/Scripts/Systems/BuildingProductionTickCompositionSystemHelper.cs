@@ -67,6 +67,12 @@ namespace Game.Runtime
             storage.FuelStorageCapacity = Math.Max(0, building.FuelStorageCapacity);
             storage.OilBarrelsPerDay = Math.Max(0f, building.OilBarrelsPerDay);
             storage.FuelBarrelsPerDay = Math.Max(0f, building.FuelBarrelsPerDay);
+            if (entityManager.HasComponent<BuildingResourceProductionProfileComponent>(building.CombatEntity))
+            {
+                var profile = entityManager.GetComponentData<BuildingResourceProductionProfileComponent>(building.CombatEntity);
+                storage.OilBarrelsPerDay = profile.OilPerPeriod;
+                storage.FuelBarrelsPerDay = profile.FuelPerPeriod;
+            }
             entityManager.SetComponentData(building.CombatEntity, storage);
 
             building.StoredOilBarrels = Math.Max(0f, storage.StoredOilBarrels);

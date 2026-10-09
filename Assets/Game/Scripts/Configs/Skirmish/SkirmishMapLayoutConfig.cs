@@ -88,6 +88,10 @@ namespace Game.Configs
         public string PlayerAnchorId;
         public string EnemyAnchorId;
         public string SourceHash;
+        public bool HasMeasuredDeployments;
+        public Vector2 PlayerDeployment;
+        public Vector2 EnemyDeployment;
+        public bool BindAllConfigurations;
 
         public bool IsValid =>
             ForwardMetres > 0f && AcrossMetres > 0f &&

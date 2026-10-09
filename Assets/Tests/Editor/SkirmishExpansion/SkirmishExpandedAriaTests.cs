@@ -19,11 +19,42 @@ namespace Game.Tests.Editor
     public sealed class SkirmishExpandedAriaTests
     {
         [Test]
-        public void AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault()
+        public void CombinedArmsPreservesStructureForceBeforeBuyingRifles()
         {
             var view = new AriaSkirmishObservation
             {
-                Active = true, ExpandedSession = true, AirProfile = true,
+                Active = true, ExpandedSession = true, AirProfile = true, CombinedArmsField = true,
+                Infantry = 12, OwnStructureAttackUnits = 4, CanAffordRocketeer = true, CanAffordRifle = true,
+                Time = 10, PlayerHealth = 800, EnemyHealth = 800,
+                Recruit = new AriaTouchTarget { Id = 80, Available = true },
+                RecruitRocketeer = new AriaTouchTarget { Id = 120, Available = true },
+                CloseDrawer = new AriaTouchTarget { Id = 9, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(120, output.TargetId, "Use the presented structure-capable squad before spending its budget on rifles.");
+            view.RocketeerRecruitPending = true;
+            view.DrawerOpen = true;
+            view.Time++;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(9, output.TargetId, "An accepted paid queue must close Build rather than queue another squad.");
+            view.RocketeerRecruitPending = false;
+            view.DrawerOpen = false;
+            view.OwnStructureAttackUnits = 8;
+            view.Infantry = 16;
+            view.Time++;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(80, output.TargetId, "A viable structure force can then receive rifle support.");
+        }
+        [TestCase(false)]
+        [TestCase(true)]
+        public void AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault(bool combinedArms)
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, CombinedArmsField = combinedArms,
                 Infantry = 16, Time = 10, PlayerHealth = 800, EnemyHealth = 800,
                 DefenseBuild = new AriaTouchTarget { Id = 50, Available = true },
                 FocusPlayer = new AriaTouchTarget { Id = 51, Available = true },
@@ -992,12 +1023,158 @@ namespace Game.Tests.Editor
             Assert.IsFalse(SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).CanBuildAirPad);
         }
 
+        [Test]
+        public void StrikeStatusIsPresentedToTheSharedAircraftReturnAndServicePlan()
+        {
+            using var world = new World(nameof(StrikeStatusIsPresentedToTheSharedAircraftReturnAndServicePlan));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out _);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var baseline = SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir);
+            var actor = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent),
+                typeof(UnitHealth), typeof(UnitAirComponent));
+            em.SetComponentData(actor, new SkirmishAttemptOwnedComponent
+            { SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId, FactionId = 1 });
+            em.SetComponentData(actor, new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.Strike });
+            em.SetComponentData(actor, new UnitHealth { Current = 300, Max = 300 });
+            em.SetComponentData(actor, new UnitAirComponent { HomeInitialized = 1 });
+            var landed = SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir);
+            Assert.AreEqual(baseline.OwnAttackAirLive + 1, landed.OwnAttackAirLive);
+            Assert.AreEqual(baseline.OwnAttackAirLanded + 1, landed.OwnAttackAirLanded);
+            em.SetComponentData(actor, new UnitAirComponent { HomeInitialized = 1, Airborne = 1 });
+            var active = SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir);
+            Assert.AreEqual(baseline.OwnAttackAirActive + 1, active.OwnAttackAirActive);
+            em.SetComponentData(actor, new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.TransportPlane });
+            Assert.AreEqual(baseline.OwnAttackAirLive,
+                SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).OwnAttackAirLive);
+        }
+
+        [Test]
+        public void AirSupplyBuysTwoPresentedTankersBeforeResearchWithoutStarvingTheAssault()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, CombinedArmsField = true,
+                Infantry = 20, OwnStructureAttackUnits = 8, LogisticsTruckCommitted = true,
+                CanAffordTanker = true, CanUpgradeReadiness = true, Time = 10,
+                PlayerHealth = 800, EnemyHealth = 800,
+                RecruitTanker = new AriaTouchTarget { Id = 601, Available = true },
+                UpgradeReadiness = new AriaTouchTarget { Id = 604, Available = true },
+                CanAffordRocketeer = true,
+                RecruitRocketeer = new AriaTouchTarget { Id = 602, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultIssued = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(601, output.TargetId);
+            view.TankersCommitted = 1;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(601, output.TargetId, "One pending/live Tanker still allows the second paid delivery.");
+            view.TankersCommitted = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(604, output.TargetId, "Two commitments end supply purchasing and allow research.");
+            view.TankersCommitted = 1;
+            view.CanAffordTanker = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(604, output.TargetId, "An unaffordable or capacity-blocked Tanker cannot be forced.");
+            view.CanAffordTanker = true;
+            view.OwnStructureAttackUnits = 4;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(602, output.TargetId, "Build the viable structure assault before spending its budget on Fuel transport.");
+        }
+
+        [Test]
+        public void PublicTankerCommitmentsCountOwnLiveAndPendingMembersWithoutMutatingStocks()
+        {
+            using var world = new World(nameof(PublicTankerCommitmentsCountOwnLiveAndPendingMembersWithoutMutatingStocks));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out _);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var attempt = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            int before = SkirmishMaterialsService.Read(em, session, 1);
+            int startingTankers = SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).TankersCommitted;
+            Assert.AreEqual(1, startingTankers, "The compiled Field package includes its real starting Tanker.");
+            var actor = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent), typeof(UnitHealth));
+            em.SetComponentData(actor, new SkirmishAttemptOwnedComponent { SessionId = attempt, FactionId = 1 });
+            em.SetComponentData(actor, new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.Tanker });
+            em.SetComponentData(actor, new UnitHealth { Current = 100, Max = 100 });
+            var receipts = em.GetBuffer<SkirmishProductionReservation>(session);
+            receipts.Add(new SkirmishProductionReservation
+            { ReservationId = 901, FactionId = 1, Role = SkirmishRoleKind.Tanker, MemberCount = 2,
+                DeliveredMembers = 1, Phase = SkirmishReservationPhase.Producing });
+            receipts.Add(new SkirmishProductionReservation
+            { ReservationId = 902, FactionId = 2, Role = SkirmishRoleKind.Tanker, MemberCount = 1,
+                Phase = SkirmishReservationPhase.Producing });
+            Assert.AreEqual(startingTankers + 2, SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).TankersCommitted);
+            Assert.AreEqual(before, SkirmishMaterialsService.Read(em, session, 1));
+            em.SetComponentData(actor, new UnitHealth { Current = 0, Max = 100 });
+            Assert.AreEqual(startingTankers + 1, SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).TankersCommitted,
+                "A lost Tanker must not suppress replacement recruitment.");
+            em.SetComponentData(actor, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(actor, new SkirmishAttemptOwnedComponent { SessionId = "different-attempt", FactionId = 1 });
+            Assert.AreEqual(startingTankers + 1, SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).TankersCommitted);
+        }
+
+        [Test]
+        public void VisibleAssaultAdvanceKeepsLongMarchActiveButAStoppedForceStillBlocks()
+        {
+            var view = new AriaSkirmishObservation
+            { Active = true, ExpandedSession = true, Infantry = 20, Time = 10,
+                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 400 };
+            var plan = new AriaSkirmishPlanComponent { LastProgressAt = 1, Infantry = 20, AssaultIssued = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(1, plan.LastProgressAt, "First observation establishes a baseline, not progress.");
+            view.Time = 175; view.NearestFriendlyObjectiveDistance = 250;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(175, plan.LastProgressAt);
+            view.Time = 340; view.NearestFriendlyObjectiveDistance = 80;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(340, plan.LastProgressAt);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked, touch.Phase);
+            view.Time = 521;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
+        }
+
+        [Test]
+        public void AssaultPagingJitterAndRetreatDoNotRenewTheBestApproach()
+        {
+            var view = new AriaSkirmishObservation
+            { Active = true, ExpandedSession = true, Infantry = 20, Time = 10,
+                AssaultDistanceVisible = true, NearestFriendlyObjectiveDistance = 100 };
+            var plan = new AriaSkirmishPlanComponent { LastProgressAt = 1, Infantry = 20, AssaultIssued = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            foreach (float distance in new[] { 99f, 140f, 100f, 99f })
+            {
+                view.Time += 30; view.ExpandedPageIndex = 1 - view.ExpandedPageIndex;
+                view.NearestFriendlyObjectiveDistance = distance;
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            }
+            Assert.AreEqual(1, plan.LastProgressAt);
+            Assert.AreEqual(100, plan.BestAssaultDistance);
+            view.Time = 182;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
+        }
+
         public static void RunFocusedValidation()
         {
             try
             {
                 var suite = new SkirmishExpandedAriaTests();
-                suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault();
+                suite.VisibleAssaultAdvanceKeepsLongMarchActiveButAStoppedForceStillBlocks();
+                suite.AssaultPagingJitterAndRetreatDoNotRenewTheBestApproach();
+                suite.StrikeStatusIsPresentedToTheSharedAircraftReturnAndServicePlan();
+                suite.AirSupplyBuysTwoPresentedTankersBeforeResearchWithoutStarvingTheAssault();
+                suite.PublicTankerCommitmentsCountOwnLiveAndPendingMembersWithoutMutatingStocks();
+                suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault(false);
+                suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault(true);
+                suite.CombinedArmsPreservesStructureForceBeforeBuyingRifles();
                 suite.FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity();
                 suite.SharedScoringUsesEligibilityAndHidesHostileCash();
                 suite.EnemyStrategyRecruitsThroughSharedProduceAndLeavesPlayerStocks();

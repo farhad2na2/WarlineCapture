@@ -27,19 +27,23 @@ namespace Game.Runtime
         }
         public static Entity ResolveAircraftPrefab(EntityManager em,FixedString64Bytes key)
         {
-            using var query=em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>(),ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-            if(query.CalculateEntityCount()!=1)return Entity.Null;
-            foreach(var entry in em.GetBuffer<UnitPrefabRegistryEntry>(query.GetSingletonEntity(),true))
-                if(em.Exists(entry.Prefab) && em.HasComponent<UnitSourcePrefabKey>(entry.Prefab) &&
-                   em.GetComponentData<UnitSourcePrefabKey>(entry.Prefab).Value.Equals(key))
-                {
-                    var model=em.HasComponent<UnitDetailedVisualReference>(entry.Prefab)
-                        ? em.GetComponentData<UnitDetailedVisualReference>(entry.Prefab).Root
-                        : em.HasComponent<UnitModelPrefabReference>(entry.Prefab)
-                            ? em.GetComponentData<UnitModelPrefabReference>(entry.Prefab).Prefab : Entity.Null;
-                    if(model!=Entity.Null && em.Exists(model))return entry.Prefab;
-                }
-            return Entity.Null;
+            using var query=em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            using var registries=query.ToEntityArray(Allocator.Temp);
+            Entity found=Entity.Null;
+            foreach(var registry in registries)
+                foreach(var entry in em.GetBuffer<UnitPrefabRegistryEntry>(registry,true))
+                    if(em.Exists(entry.Prefab) && em.HasComponent<Prefab>(entry.Prefab) && em.HasComponent<UnitSourcePrefabKey>(entry.Prefab) &&
+                       em.GetComponentData<UnitSourcePrefabKey>(entry.Prefab).Value.Equals(key))
+                    {
+                        var model=em.HasComponent<UnitDetailedVisualReference>(entry.Prefab)
+                            ? em.GetComponentData<UnitDetailedVisualReference>(entry.Prefab).Root
+                            : em.HasComponent<UnitModelPrefabReference>(entry.Prefab)
+                                ? em.GetComponentData<UnitModelPrefabReference>(entry.Prefab).Prefab : Entity.Null;
+                        if(model==Entity.Null || !em.Exists(model))continue;
+                        if(found!=Entity.Null && found!=entry.Prefab)return Entity.Null;
+                        found=entry.Prefab;
+                    }
+            return found;
         }
         // Embedded models must be cloned with their owning linked hierarchy so Entity references remap.
         // Strip the actor root before it can enter any gameplay query; only presentation survives.

@@ -36,7 +36,11 @@ namespace Game.Rendering
             {
                 All = new[]
                 {
-                    ComponentType.ReadOnly<AdditionalEntityParent>(),
+                    ComponentType.ReadOnly<AdditionalEntityParent>()
+                },
+                Any = new[]
+                {
+                    ComponentType.ReadOnly<MaterialMeshInfo>(),
                     ComponentType.ReadOnly<RenderMeshUnmanaged>()
                 },
                 Options = EntityQueryOptions.IncludeDisabledEntities |
@@ -66,17 +70,45 @@ namespace Game.Rendering
             });
         }
 
-        private static IReadOnlyList<SourcePartKey> RequireExactRenderParts(
+        private static bool HasConvertedRenderRepresentation(EntityManager em, Entity entity) =>
+            em.HasComponent<RenderMeshUnmanaged>(entity) ||
+            (em.HasComponent<MaterialMeshInfo>(entity) && em.HasComponent<RenderMeshArray>(entity));
+
+        internal static IReadOnlyList<SourcePartKey> RequireExactRenderParts(
             EntityManager entityManager,
             Entity renderEntity,
             IReadOnlyList<OperationMapRenderEligibleSourceRowBakingComponent> expectedRows)
         {
             if (!entityManager.Exists(renderEntity) ||
-                !entityManager.HasComponent<RenderMeshUnmanaged>(renderEntity))
+                !HasConvertedRenderRepresentation(entityManager, renderEntity))
             {
                 throw new InvalidOperationException(
                     "A converted additional source entity is missing its exact baking-time " +
                     "render representation.");
+            }
+            // Prefer the final packed representation when available.
+            if (entityManager.HasComponent<MaterialMeshInfo>(renderEntity) &&
+                entityManager.HasComponent<RenderMeshArray>(renderEntity))
+            {
+                var info = entityManager.GetComponentData<MaterialMeshInfo>(renderEntity);
+                var array = entityManager.GetSharedComponentManaged<RenderMeshArray>(renderEntity);
+                var parts = new List<SourcePartKey>();
+                if (info.HasMaterialMeshIndexRange)
+                {
+                    var range = info.MaterialMeshIndexRange;
+                    var indices = array.MaterialMeshIndices;
+                    if (indices == null || range.length <= 0 || range.start < 0 || range.end > indices.Length)
+                        throw new InvalidOperationException("Converted source has an invalid packed submesh range.");
+                    for (int i = range.start; i < range.end; i++)
+                    {
+                        var part = indices[i];
+                        parts.Add(RequirePackedRenderPart(array.MeshReferences[part.MeshIndex],
+                            array.MaterialReferences[part.MaterialIndex], part.SubMeshIndex, expectedRows));
+                    }
+                }
+                else
+                    parts.Add(RequirePackedRenderPart(array.GetMesh(info), array.GetMaterial(info), info.SubMesh, expectedRows));
+                return parts;
             }
             RenderMeshUnmanaged renderMesh =
                 entityManager.GetComponentData<RenderMeshUnmanaged>(renderEntity);
@@ -99,6 +131,21 @@ namespace Game.Rendering
                     "submesh rows; exact submesh ownership is required.");
             }
             return new[] { SourcePartKey.From(row) };
+        }
+
+        private static SourcePartKey RequirePackedRenderPart(UnityEngine.Mesh mesh, UnityEngine.Material material,
+            int subMesh, IReadOnlyList<OperationMapRenderEligibleSourceRowBakingComponent> expectedRows)
+        {
+            if (mesh == null || material == null)
+                throw new InvalidOperationException("Converted packed source has no resolvable mesh or material.");
+            OperationMapRenderEligibleSourceRowBakingComponent row = default;
+            int matches = 0;
+            foreach (var candidate in expectedRows)
+                if (candidate.Mesh == mesh && candidate.Material == material && candidate.SubMeshIndex == subMesh)
+                { row = candidate; matches++; }
+            if (matches != 1)
+                throw new InvalidOperationException($"Converted packed source matches {matches} exact logical submesh rows.");
+            return SourcePartKey.From(row);
         }
 
         internal static void RequireDeterministicStateOwnerIndices(

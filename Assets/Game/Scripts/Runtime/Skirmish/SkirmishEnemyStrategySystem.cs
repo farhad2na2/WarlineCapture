@@ -60,8 +60,10 @@ namespace Game.Runtime
             var current = em.HasComponent<SkirmishEnemyStrategyComponent>(session)
                 ? em.GetComponentData<SkirmishEnemyStrategyComponent>(session).Priority
                 : SkirmishStrategyPriority.None;
+            var readiness = SkirmishResearchService.TryReadState(em, session, 2, out var research)
+                ? research.Readiness : setup.Readiness;
             score = SkirmishStrategyScoring.ScoreBaseAssault(
-                perception, army, setup.Readiness, setup.RoleOverlays, current);
+                perception, army, readiness, setup.RoleOverlays, current);
             Execute(em, session, ref score, perception, army);
             return score;
         }

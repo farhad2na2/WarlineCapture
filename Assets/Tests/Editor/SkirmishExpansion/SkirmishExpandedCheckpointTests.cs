@@ -332,24 +332,26 @@ namespace Game.Tests.Editor
             em.GetBuffer<SkirmishTrackedUnit>(session).Add(new SkirmishTrackedUnit { Entity = Entity.Null, FactionId = 1 });
             Assert.IsTrue(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplay(
                 em, session, SkirmishAction.Replay));
-            Assert.AreEqual(0, em.CreateEntityQuery(typeof(SkirmishReturnRequest)).CalculateEntityCount());
-            Entity replayed = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
-            Assert.IsTrue(em.HasComponent<SkirmishExpandedReplayStartPending>(replayed));
-            Assert.AreEqual(1, em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).PlayRequested);
-            Assert.AreEqual(0, em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).SimulationActive,
-                "Replay must finish spawning before simulation resumes.");
-            Assert.AreEqual(0, em.GetBuffer<SkirmishTrackedUnit>(replayed).Length,
-                "Previous-attempt teardown must not count as new-attempt losses.");
-            Assert.IsFalse(em.HasComponent<SkirmishSharedMaterialsInitialized>(replayed));
-            Assert.IsFalse(em.HasComponent<SkirmishSharedSupplyInitialized>(replayed));
-            Assert.IsFalse(em.HasComponent<SkirmishSharedBuildingsReady>(replayed));
-            Assert.IsFalse(em.HasBuffer<SkirmishStartingBuildingRequest>(replayed));
-            string replayId = em.GetComponentData<SkirmishExpandedSessionComponent>(replayed).SessionId.ToString();
-            Assert.AreNotEqual(sourceId, replayId);
-            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
-                em, replayed, setup, out _, out _));
-            Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(replayed).Materials);
-            Assert.IsFalse(em.HasComponent<SkirmishResultComponent>(replayed));
+            using var returns = em.CreateEntityQuery(typeof(SkirmishReturnRequest));
+            Assert.AreEqual(1, returns.CalculateEntityCount());
+            var pending = returns.GetSingletonEntity();
+            var launch = em.GetComponentObject<SkirmishReplayLaunchRecord>(pending);
+            Assert.AreNotEqual(sourceId, launch.Payload.SessionId);
+            Assert.AreSame(setup, launch.Setup);
+            Assert.AreEqual(setup.Seed, launch.Payload.Seed);
+            Assert.AreEqual(setup.SizeId, launch.Payload.SizeId);
+            Assert.AreEqual(setup.DifficultyId, launch.Payload.DifficultyId);
+            Assert.AreEqual(sourceId, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString(),
+                "The old attempt must remain identifiable until match teardown completes.");
+            Assert.AreEqual(0, em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).PlayRequested);
+            Assert.IsTrue(em.HasComponent<SkirmishSharedSupplyInitialized>(session));
+            Assert.IsTrue(em.HasComponent<SkirmishSharedBuildingsReady>(session));
+            Assert.AreEqual(780, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.IsFalse(SkirmishCheckpointCompositionSystemHelper.TryReplayLive(em, session, out _),
+                "A native supply session must never take the ledger-only replay shortcut.");
+            Assert.IsTrue(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplay(
+                em, session, SkirmishAction.Restart));
+            Assert.AreEqual(1, returns.CalculateEntityCount(), "Repeated requests must not queue duplicate attempts.");
         }
 
         [Test]
@@ -387,11 +389,39 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishReasonCode.UnsupportedCapability, legacyBlocked);
         }
 
+        [Test]
+        public void FreshReplayResetsPersistentFactionBankAndEventHistory()
+        {
+            using var world = new World(nameof(FreshReplayResetsPersistentFactionBankAndEventHistory));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out var setup);
+            var bank = em.CreateEntity(typeof(FactionEconomy), typeof(FactionTacticalMaterialsComponent),
+                typeof(MaterialFabricationEconomyEventQueueComponent));
+            em.SetComponentData(bank, new FactionEconomy { FactionId = 1, Money = 1234 });
+            em.SetComponentData(bank, new FactionTacticalMaterialsComponent
+                { FactionId = 1, Current = 17, Capacity = 9999, LifetimeSpent = 883, LifetimeFabricated = 20, Version = 90 });
+            em.SetComponentData(bank, new MaterialFabricationEconomyEventQueueComponent { LastEventId = 87, Version = 5 });
+            em.AddBuffer<MaterialFabricationEconomyEventElement>(bank).Add(new MaterialFabricationEconomyEventElement
+                { EventId = 87, RuntimeBuildingId = 3, MaterialsProduced = 20 });
+            SkirmishMaterialsService.Initialize(em, session, setup);
+            Assert.AreEqual(bank, SkirmishMaterialsService.FindEconomy(em, 1));
+            var fresh = em.GetComponentData<FactionTacticalMaterialsComponent>(bank);
+            Assert.AreEqual(setup.MaterialsEach, fresh.Current);
+            Assert.AreEqual(setup.MaterialsCapacityEach, fresh.Capacity);
+            Assert.AreEqual(0, fresh.LifetimeSpent);
+            Assert.AreEqual(0, fresh.LifetimeFabricated);
+            Assert.AreEqual(1, fresh.Version);
+            Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(bank).Money);
+            Assert.AreEqual(0, em.GetComponentData<MaterialFabricationEconomyEventQueueComponent>(bank).LastEventId);
+            Assert.AreEqual(0, em.GetBuffer<MaterialFabricationEconomyEventElement>(bank).Length);
+        }
+
         public static void RunFocusedValidation()
         {
             try
             {
                 var suite = new SkirmishExpandedCheckpointTests();
+                suite.FreshReplayResetsPersistentFactionBankAndEventHistory();
                 suite.IncompleteNativeCheckpointIsRejectedBeforeAnyMutation();
                 suite.FirstCheckpointSystemRequestAttachesItsDocumentWithoutStructuralIterationFailure();
                 suite.SameSeedFreshAttemptsSettleDifferentOutcomesIndependently();
@@ -402,6 +432,8 @@ namespace Game.Tests.Editor
                 suite.ResultSettlesOnceAndReplayOpensFreshSession();
                 suite.LivePauseSettlesOnceAndReplayReseedsFreshSession();
                 suite.CustomAndLegacySessionsAreNotExpandedCompletion();
+                suite.FreshReplayPreservesEachRequestedMissionAndRejectsUnknownCatalog();
+                suite.IncompatibleFreshRestoreDoesNotCreateSessionOrTouchExistingAttempt();
                 Debug.Log("[SkirmishExpandedCheckpointTests] result=Passed");
             }
             catch (Exception exception)
@@ -409,6 +441,63 @@ namespace Game.Tests.Editor
                 Debug.LogError("[SkirmishExpandedCheckpointTests] result=Failed\n" + exception);
                 throw;
             }
+        }
+
+        [Test]
+        public void FreshReplayPreservesEachRequestedMissionAndRejectsUnknownCatalog()
+        {
+            LoadAuthored(out var authored, out var matrix, out _);
+            foreach (string catalogId in new[] { "S002", "S003", "S004", "S005" })
+            {
+                using var world = new World("replay-" + catalogId);
+                Assert.IsTrue(SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out var definition));
+                var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
+                var request = new SkirmishReplayRequest
+                {
+                    SourceSessionId = "previous-" + catalogId,
+                    CatalogId = catalogId,
+                    DifficultyId = SkirmishDifficultyId.Regular,
+                    SizeId = SkirmishSizeId.Standard,
+                    Seed = 104734,
+                    Mode = SkirmishReplayMode.FreshStart
+                };
+                Assert.IsTrue(SkirmishCheckpointCompositionSystemHelper.TryQueueFreshReplay(
+                    world.EntityManager, request, authored, matrix, manifest, out var payload, out var setup, out var reason),
+                    catalogId + ": " + reason);
+                Assert.AreEqual(catalogId, payload.CatalogId);
+                Assert.AreEqual(definition.DefinitionId, setup.DefinitionId);
+                Assert.AreNotEqual(request.SourceSessionId, payload.SessionId);
+            }
+            using var invalidWorld = new World("replay-unknown");
+            Assert.IsFalse(SkirmishCheckpointCompositionSystemHelper.TryQueueFreshReplay(
+                invalidWorld.EntityManager,
+                new SkirmishReplayRequest { CatalogId = "S999", Mode = SkirmishReplayMode.FreshStart },
+                authored, matrix, new SkirmishContentManifest(), out _, out _, out _));
+            using var sessions = invalidWorld.EntityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            Assert.AreEqual(0, sessions.CalculateEntityCount());
+        }
+
+        [Test]
+        public void IncompatibleFreshRestoreDoesNotCreateSessionOrTouchExistingAttempt()
+        {
+            using var source = new World("restore-preflight-source");
+            CompileAndSpawn(source.EntityManager, out var sourceSession, out _);
+            Assert.IsTrue(SkirmishCheckpointService.TryCapture(source.EntityManager, sourceSession, out var saved));
+            LoadAuthored(out var authored, out var matrix, out var manifest);
+            using var destination = new World("restore-preflight-destination");
+            int before = destination.EntityManager.UniversalQuery.CalculateEntityCount();
+            saved.Header.ContentVersion++;
+            saved.Payload.ContentVersion++;
+            Assert.IsFalse(SkirmishCheckpointCompositionSystemHelper.TryRestoreFreshSession(
+                destination.EntityManager, saved, authored, matrix, manifest, out var session, out _));
+            Assert.AreEqual(Entity.Null, session);
+            Assert.AreEqual(before, destination.EntityManager.UniversalQuery.CalculateEntityCount());
+            saved.Header.ContentVersion--;
+            saved.Payload.ContentVersion--;
+            var stock = source.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(sourceSession);
+            Assert.IsFalse(SkirmishCheckpointCompositionSystemHelper.TryRestoreFreshSession(
+                source.EntityManager, saved, authored, matrix, manifest, out _, out _));
+            Assert.AreEqual(stock.Materials, source.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(sourceSession).Materials);
         }
 
         private static void MutatePauseAndSpend(EntityManager em, Entity session)

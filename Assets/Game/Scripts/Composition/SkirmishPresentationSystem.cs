@@ -21,23 +21,21 @@ namespace Game.Composition
         private double startupBeganAt;
         protected override void OnUpdate()
         {
+            if (TryConsumePlayerResume()) return;
             using var returns=EntityManager.CreateEntityQuery(typeof(SkirmishReturnRequest));
             if(returns.CalculateEntityCount()==1)
             {
-                if(SkirmishLaunchProjection.TryGet(EntityManager,out var liveSession,out _) &&
-                   SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplayRequest(EntityManager,liveSession))
-                    EntityManager.DestroyEntity(returns.GetSingletonEntity());
-                else HandleReturn(returns.GetSingletonEntity());
+                HandleReturn(returns.GetSingletonEntity());
                 return;
             }
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
-            // Replay keeps the loaded scene, whose one-time loading gate has
-            // already completed. Arm only this pending fresh attempt after spawn;
-            // an ordinary pause or terminal state must never be resumed here.
+            // An explicit fresh launch or Continue waits for native loading.
+            // Clear this one-use marker after startup so later pauses stay paused.
             if (EntityManager.HasComponent<SkirmishExpandedReplayStartPending>(session) &&
                 match.Phase == SkirmishPhase.Playing && match.StartupFailure == SkirmishStartupFailureCode.None)
             {
+                SkirmishLaunchProjection.TryRequestPlay(EntityManager);
                 var replayScene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
                 if (replayScene != null && replayScene.GameplayStartComplete &&
                     SkirmishLaunchProjection.TryArmExpandedSimulation(EntityManager))
@@ -71,6 +69,8 @@ namespace Game.Composition
                 var action=requests[0].Action;requests.Clear();
                 if(action==SkirmishAction.FocusPlayer)Focus(match.PlayerMainBase,false,match.ScenarioIndex,false,s002Session);
                 else if(action==SkirmishAction.FocusEnemy)Focus(match.EnemyMainBase,false,match.ScenarioIndex,true,s002Session);
+                else if(action==SkirmishAction.SaveExit)
+                    SkirmishNativePlayerSaveService.TrySaveAndExit(EntityManager,session);
                 else if(action==SkirmishAction.Surrender&&match.Phase==SkirmishPhase.Playing)
                 {match.SurrenderRequested=1;EntityManager.SetComponentData(session,match);UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);}
                 else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||startupFailed||action==SkirmishAction.Restart))
@@ -95,6 +95,7 @@ namespace Game.Composition
                        EntityManager.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged!=0)
                     {
                         match.ResultSaved=1;EntityManager.SetComponentData(session,match);
+                        SkirmishNativePlayerSaveService.CompleteAttempt(match.SessionId.ToString());
                     }
                 }
                 else
@@ -170,7 +171,17 @@ namespace Game.Composition
             if(query.CalculateEntityCount()!=1)return false;
             bool basinOpening = opening && scenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
             bool s002Focus = s002Session;
-            bool s004Focus = Game.Runtime.SkirmishS004Environment.IsActive(EntityManager);
+            var campaignMap=Game.Runtime.SkirmishS004Environment.LoadMapForSession(EntityManager);
+            bool s004Focus = SkirmishS004CampaignLighting.Supports(campaignMap);
+            float campaignYaw=-35f;
+            float campaignHeight=60f;
+            if(s004Focus && campaignMap != null)
+                foreach(var camera in campaignMap.Cameras)
+                    if(camera.CameraId == campaignMap.BattleCameraId && camera.EulerAngles.y != 0)
+                    {
+                        campaignYaw=camera.EulerAngles.y;
+                        campaignHeight=Unity.Mathematics.math.clamp(camera.Position.y,55f,100f);
+                    }
             float s002Offset = enemy ? -30f : 30f;
             var focusPosition = EntityManager.GetComponentData<LocalTransform>(entity).Position;
             float openingDistance = 40f;
@@ -192,6 +203,8 @@ namespace Game.Composition
                     var candidate = EntityManager.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
                     if (!candidate.SessionId.Equals(owner.SessionId) || candidate.FactionId != owner.FactionId ||
                         EntityManager.GetComponentData<UnitHealth>(actor).Current <= 0) continue;
+                    if (EntityManager.GetComponentData<SkirmishUnitRoleComponent>(actor).Category ==
+                        Game.Skirmish.Contracts.SkirmishPopulationCategory.LogisticsSupport) continue;
                     var position = EntityManager.GetComponentData<LocalTransform>(actor).Position;
                     if (Unity.Mathematics.math.distancesq(position.xz, focusPosition.xz) > 80f * 80f) continue;
                     minimum = Unity.Mathematics.math.min(minimum, position);
@@ -200,14 +213,16 @@ namespace Game.Composition
                 focusPosition = (minimum + maximum) * .5f;
                 float extent = Unity.Mathematics.math.max(maximum.x - minimum.x, maximum.z - minimum.z);
                 openingDistance = Unity.Mathematics.math.clamp(extent * 1.3f + 30f, 60f, 180f);
-                if(s004Focus) openingDistance=Unity.Mathematics.math.clamp(openingDistance,55f,65f);
+                if(s004Focus) openingDistance=campaignHeight;
             }
+            float focusHeight = authoredOpening ? openingDistance : s004Focus ? campaignHeight : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55;
+            focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focusHeight);
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // S002 frames the Barracks and its deployment pad on every focus,
                 // including ARIA's subsequent public base-focus action.
-                Perspective=new Unity.Mathematics.float4(authoredOpening ? openingDistance : s004Focus ? 60 : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,s004Focus ? 50 : 58,s004Focus ? -35 : 0,s004Focus ? 50 : 60),
+                Perspective=new Unity.Mathematics.float4(focusHeight,s004Focus ? 50 : 58,s004Focus ? campaignYaw : 0,s004Focus ? 50 : 60),
                 World=focusPosition+
                     (s004Focus ? (enemy ? Unity.Mathematics.float3.zero : new Unity.Mathematics.float3(-12,0,-8)) :
                         authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
@@ -251,8 +266,16 @@ namespace Game.Composition
             if(shell.CurrentMode!=UiShellMode.MainMenu||SkirmishLaunchProjection.TryGet(EntityManager,out _,out _))return;
             if(request.Action==SkirmishAction.Replay||request.Action==SkirmishAction.Restart)
             {
-                var config=QuickGameConfig.Defaults;config.MapSeed=request.Seed;config.ScenarioIndex=request.ScenarioIndex;
-                if(!SkirmishLaunchProjection.TryQueue(EntityManager,config))return;
+                if (EntityManager.HasComponent<SkirmishReplayLaunchRecord>(entity))
+                {
+                    var launch = EntityManager.GetComponentObject<SkirmishReplayLaunchRecord>(entity);
+                    if (!SkirmishExpandedLaunchProjection.TryQueue(EntityManager, launch.Payload, launch.Setup)) return;
+                }
+                else
+                {
+                    var config=QuickGameConfig.Defaults;config.MapSeed=request.Seed;config.ScenarioIndex=request.ScenarioIndex;
+                    if(!SkirmishLaunchProjection.TryQueue(EntityManager,config))return;
+                }
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch,UIRoute.Match,false);
             }
             else
@@ -263,6 +286,50 @@ namespace Game.Composition
             }
             EntityManager.DestroyEntity(entity);returnStage=0;focusedSession=null;
         }
+        private bool TryConsumePlayerResume()
+        {
+            using var requests = EntityManager.CreateEntityQuery(typeof(SkirmishNativeResumeRequest));
+            if (requests.CalculateEntityCount() != 1) return false;
+            Entity entity = requests.GetSingletonEntity();
+            var request = EntityManager.GetComponentObject<SkirmishNativeResumeRequest>(entity);
+            bool failed = UnityEngine.Time.realtimeSinceStartupAsDouble > request.Deadline;
+            if (!failed && request.Session == Entity.Null)
+            {
+                var setup = request.Setup;
+                var payload = new Game.Skirmish.Contracts.SkirmishLaunchPayload {
+                    SessionId = request.Snapshot.SessionId, CatalogId = setup.CatalogId, DefinitionId = setup.DefinitionId,
+                    ContentVersion = setup.ContentVersion, AllConfigHashes = setup.SetupHash.ToString("X8"), MapId = setup.OperationMapId,
+                    LayoutId = setup.LayoutId, Seed = setup.Seed, SizeId = setup.SizeId, DifficultyId = setup.DifficultyId };
+                var preset = SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseScenarioIndex);
+                if (!SkirmishExpandedLaunchProjection.TryQueue(EntityManager, payload, setup, preset?.buildingPlacement?.UnitPrefabRegistryConfig)) failed = true;
+                else
+                {
+                    using var sessions = EntityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                    request.Session = sessions.GetSingletonEntity();
+                    if (!SkirmishNativeCheckpointRecoveryRunner.TryQueue(EntityManager, request.Session, request.Snapshot, setup)) failed = true;
+                    else EntityManager.GetComponentObject<SkirmishNativeCheckpointRecoveryRecord>(request.Session).ResumeAfterCommit = true;
+                }
+            }
+            if (failed)
+            {
+                if (EntityManager.Exists(request.Session))
+                {
+                    if (EntityManager.HasComponent<SkirmishNativeCheckpointRecoveryRecord>(request.Session))
+                        SkirmishNativeCheckpointTransientState.DestroyCreated(EntityManager,
+                            EntityManager.GetComponentObject<SkirmishNativeCheckpointRecoveryRecord>(request.Session).Transients);
+                    SkirmishNativeCheckpointStructureReconstruction.Cancel(EntityManager, request.Session);
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(EntityManager, EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(request.Session).SessionId);
+                    EntityManager.DestroyEntity(request.Session);
+                }
+                SkirmishNativePlayerSaveService.ReportResumeFailure(EntityManager);
+                Debug.LogWarning("[SkirmishPlayerResume] result=Failed reason=LaunchPreflightOrRouteFailed");
+                EntityManager.DestroyEntity(entity); return true;
+            }
+            if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch, UIRoute.Match, false)) return true;
+            Debug.Log("[SkirmishPlayerResume] phase=Queued session=" + request.Snapshot.SessionId);
+            EntityManager.DestroyEntity(entity); return true;
+        }
+
         protected override void OnDestroy(){if(view!=null)UnityEngine.Object.Destroy(view.gameObject);}
     }
 }

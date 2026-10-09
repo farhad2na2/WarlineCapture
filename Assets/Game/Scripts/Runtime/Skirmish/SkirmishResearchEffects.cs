@@ -13,8 +13,7 @@ namespace Game.Runtime
             if (!em.HasComponent<SkirmishResearchStateComponent>(session) ||
                 !em.HasComponent<SkirmishExpandedSessionComponent>(session))
                 return;
-            var research = em.GetComponentData<SkirmishResearchStateComponent>(session);
-            if (research.FactionId != factionId) return;
+            if (!SkirmishResearchService.TryReadState(em, session, factionId, out var research)) return;
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             SkirmishRoleOverlay[] overlays = ResolveOverlays(em, session);
             using var query = em.CreateEntityQuery(

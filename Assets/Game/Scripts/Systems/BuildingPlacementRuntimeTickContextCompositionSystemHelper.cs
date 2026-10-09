@@ -65,7 +65,13 @@ namespace Game.Runtime
                 source.FlushPendingMarkerRefresh,
                 source.EnqueueMapBuildingPlacements,
                 source.EnqueueMapVehiclePlacements,
-                () => _runtimeBoundaryPublishSystem.Update(source.BoundaryContext),
+                () =>
+                {
+                    _runtimeBoundaryPublishSystem.Update(source.BoundaryContext);
+                    // Loading publishes new functional owners while simulation
+                    // is still gated. Cached contexts must bind those owners too.
+                    _productionRuntimeTickSystem.BindCheckpointOwners(source.ProductionContext);
+                },
                 source.UpdateInput,
                 _diagnosticsSystem,
                 source.DiagnosticsContext);

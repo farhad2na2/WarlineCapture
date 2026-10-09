@@ -44,8 +44,7 @@ namespace Game.Runtime
             var session=em.GetComponentData<SupportSessionComponent>(flight.Root);
             if(!session.SessionToken.Equals(flight.Request.SessionToken)||session.AttemptOrdinal!=flight.Request.AttemptOrdinal)
             {Abort(em,entity,SupportRejectionReason.WrongAttempt);return;}
-            bool terminal=session.SessionToken.IsEmpty || em.HasComponent<CampaignMissionRuntimeComponent>(flight.Root) &&
-                em.GetComponentData<CampaignMissionRuntimeComponent>(flight.Root).Outcome!=Game.Missions.Contracts.MissionOutcomeKind.None;
+            bool terminal=SupportSessionUtility.IsTerminal(em,flight.Root,session);
             if(terminal){if(flight.Phase<SupportExecutionPhase.Released)Abort(em,entity,SupportRejectionReason.NotActive);else em.DestroyEntity(entity);return;}
             if(em.GetComponentData<SupportCatalogComponent>(flight.Root).Revision!=session.CatalogRevision ||
                em.HasComponent<CampaignMissionRuntimeComponent>(flight.Root)&&em.GetComponentData<CampaignMissionRuntimeComponent>(flight.Root).SourceVersion!=session.MissionSourceVersion)

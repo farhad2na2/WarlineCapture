@@ -15,9 +15,10 @@ namespace Game.Runtime
     public partial struct SupportSmokeSystem : ISystem
     {
         private NativeList<SupportSmokeZoneComponent> activeZones;
-        private EntityQuery missingCover;
+        private EntityQuery missingCover,sessionRoots;
         public void OnCreate(ref SystemState state)
         {
+            sessionRoots=state.GetEntityQuery(typeof(SupportSessionComponent));
             activeZones=new NativeList<SupportSmokeZoneComponent>(8,Allocator.Persistent);
             missingCover=state.GetEntityQuery(new EntityQueryDesc {All=new[]{ComponentType.ReadOnly<UnitGrid>(),ComponentType.ReadOnly<UnitHealth>(),ComponentType.ReadOnly<LocalTransform>()},None=new[]{ComponentType.ReadOnly<SupportRangedCoverComponent>()}});
         }
@@ -26,12 +27,18 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency.Complete();var em=state.EntityManager;
-            bool hasSession=SystemAPI.TryGetSingleton(out SupportSessionComponent session);
+            using var roots=sessionRoots.ToEntityArray(Allocator.Temp);
             activeZones.Clear();using var ecb=new EntityCommandBuffer(Allocator.Temp);
             foreach(var (zoneRef,entity) in SystemAPI.Query<RefRO<SupportSmokeZoneComponent>>().WithEntityAccess())
             {
                 var zone=zoneRef.ValueRO;
-                if(hasSession && session.SessionToken.Equals(zone.SessionToken) && session.AttemptOrdinal==zone.AttemptOrdinal && zone.ExpiresAt>session.SimulationSeconds)activeZones.Add(zone);
+                bool live=SupportSessionUtility.TrySmokeOwner(em,roots,zone,out var owner);
+                if(live)
+                {
+                    var session=em.GetComponentData<SupportSessionComponent>(owner);
+                    live=!SupportSessionUtility.IsTerminal(em,owner,session) && zone.ExpiresAt>session.SimulationSeconds;
+                }
+                if(live)activeZones.Add(zone);
                 else ecb.DestroyEntity(entity);
             }
             // Add derived cover only when an effect exists, avoiding structural work in ordinary missions.

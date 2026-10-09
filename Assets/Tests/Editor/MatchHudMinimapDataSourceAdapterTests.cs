@@ -194,6 +194,144 @@ public sealed class MatchHudMinimapDataSourceAdapterTests
         }
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void WideSurfacesRetainContinuousCoverageAndOneCellRoads(bool compact)
+    {
+        using var world = new World("MinimapContinuousCoverageTests");
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref var blob = ref builder.ConstructRoot<MapSurfaceBlob>();
+        const int width = 512;
+        blob.Dimensions = new int2(width, 1);
+        blob.CellSize = 1;
+        blob.RuntimeEncoding = compact ? MapSurfaceRuntimeEncoding.SingleLayerCompact : default;
+        var cells = builder.Allocate(ref blob.Cells, compact ? 0 : width);
+        var samples = builder.Allocate(ref blob.Samples, compact ? 0 : width);
+        var packed = builder.Allocate(ref blob.CompactSamples, compact ? width : 0);
+        builder.Allocate(ref blob.Connections, 0);
+        // The previous stride skipped this odd column and left gaps between
+        // the blocked cells on either side of it.
+        const int roadColumn = 129;
+        for (int x = 0; x < width; x++)
+        {
+            var kind = x == roadColumn ? MapSurfaceType.Road : MapSurfaceType.Blocked;
+            if (compact)
+                packed[x] = new MapSurfaceCompactSample { SurfaceType = kind, NormalY = 127 };
+            else
+            {
+                cells[x] = new MapSurfaceCell { FirstSurfaceIndex = x, SurfaceCount = 1 };
+                samples[x] = new MapSurfaceSample { Cell = new int2(x, 0), SurfaceType = kind };
+            }
+        }
+        var reference = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            CreateGrid(world.EntityManager);
+            var root = world.EntityManager.CreateEntity(typeof(MapSurfaceComponent));
+            world.EntityManager.SetComponentData(root, new MapSurfaceComponent
+            {
+                HasSurfaceData = 1, SurfaceBlob = reference, Dimensions = new int2(width, 1), CellSize = 1
+            });
+            var features = new System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel>();
+            new MatchHudMinimapDataSourceAdapter().GetSurfaceFeatures(
+                new MatchHudMinimapAreaModel(UnityEngine.Vector3.zero, width, 1), features);
+            Assert.That(features.Count, Is.EqualTo(3));
+            Assert.That(features[1].Kind, Is.EqualTo(MatchHudMinimapSurfaceFeatureKind.Road));
+            float edge = 0;
+            foreach (var feature in features)
+            {
+                Assert.That(feature.FillArea, Is.True);
+                Assert.That(feature.Center.x - feature.HalfExtents.x, Is.EqualTo(edge).Within(.001f));
+                edge = feature.Center.x + feature.HalfExtents.x;
+                Assert.That(feature.HalfExtents.y, Is.EqualTo(.5f));
+            }
+            Assert.That(edge, Is.EqualTo(width));
+            Assert.That(features[1].Center.x, Is.EqualTo(roadColumn + .5f));
+            Assert.That(features[1].HalfExtents.x, Is.EqualTo(.5f));
+        }
+        finally { World.DefaultGameObjectInjectionWorld = previous; reference.Dispose(); }
+    }
+
+    [Test]
+    public void SurfaceRectanglesMergeAndRefreshForBlobReplacementAndLiveOverlays()
+    {
+        using var world = new World("MinimapSurfaceCacheTests");
+        World previous = World.DefaultGameObjectInjectionWorld;
+        var blocked = CreateUniformSurface(512, 8, MapSurfaceType.Blocked);
+        var terrain = CreateUniformSurface(512, 8, MapSurfaceType.Terrain);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            CreateGrid(world.EntityManager);
+            var root = world.EntityManager.CreateEntity(typeof(MapSurfaceComponent));
+            var surface = new MapSurfaceComponent
+            {
+                HasSurfaceData = 1, SurfaceBlob = blocked, Dimensions = new int2(512, 8), CellSize = 1
+            };
+            world.EntityManager.SetComponentData(root, surface);
+            world.EntityManager.AddBuffer<MapSurfaceSceneOverlay>(root);
+            var adapter = new MatchHudMinimapDataSourceAdapter();
+            var features = new System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel>();
+            var area = new MatchHudMinimapAreaModel(UnityEngine.Vector3.zero, 512, 8);
+            adapter.GetSurfaceFeatures(area, features);
+            Assert.That(features.Count, Is.EqualTo(1));
+            Assert.That(features[0].Center, Is.EqualTo(new UnityEngine.Vector3(256, 0, 4)));
+            Assert.That(features[0].HalfExtents, Is.EqualTo(new UnityEngine.Vector2(256, 4)));
+            adapter.GetSurfaceFeatures(area, features);
+            Assert.That(features.Count, Is.EqualTo(1));
+            world.EntityManager.GetBuffer<MapSurfaceSceneOverlay>(root).Add(new MapSurfaceSceneOverlay
+            {
+                Center = new float3(10, 0, 4), HalfExtents = new float2(2, 2), SurfaceType = MapSurfaceType.BridgeDeck
+            });
+            adapter.GetSurfaceFeatures(area, features);
+            Assert.That(features.Count, Is.EqualTo(2));
+            Assert.That(features[1].Kind, Is.EqualTo(MatchHudMinimapSurfaceFeatureKind.Bridge));
+            surface.SurfaceBlob = terrain;
+            world.EntityManager.SetComponentData(root, surface);
+            adapter.GetSurfaceFeatures(area, features);
+            Assert.That(features.Count, Is.EqualTo(1));
+            Assert.That(features[0].Kind, Is.EqualTo(MatchHudMinimapSurfaceFeatureKind.Bridge));
+            world.EntityManager.GetBuffer<MapSurfaceSceneOverlay>(root).Clear();
+            adapter.GetSurfaceFeatures(area, features);
+            Assert.That(features, Is.Empty);
+        }
+        finally { World.DefaultGameObjectInjectionWorld = previous; blocked.Dispose(); terrain.Dispose(); }
+    }
+
+    private static BlobAssetReference<MapSurfaceBlob> CreateUniformSurface(int width, int height, MapSurfaceType kind)
+    {
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref var blob = ref builder.ConstructRoot<MapSurfaceBlob>();
+        blob.Dimensions = new int2(width, height);
+        blob.CellSize = 1;
+        blob.RuntimeEncoding = MapSurfaceRuntimeEncoding.SingleLayerCompact;
+        builder.Allocate(ref blob.Cells, 0);
+        builder.Allocate(ref blob.Samples, 0);
+        builder.Allocate(ref blob.Connections, 0);
+        var samples = builder.Allocate(ref blob.CompactSamples, width * height);
+        for (int i = 0; i < samples.Length; i++)
+            samples[i] = new MapSurfaceCompactSample { SurfaceType = kind, NormalY = 127 };
+        return builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
+    }
+
+    public static void RunFocusedValidation()
+    {
+        var tests = new MatchHudMinimapDataSourceAdapterTests();
+        tests.CompactPreparedSurfacesShowRoadsAndBridges();
+        tests.LayeredLegacySurfacesShowRoadsAndBridges();
+        tests.ActiveMapProjectionOverridesLegacyGridExtents();
+        tests.MissingActiveMapPreservesLegacyGridProjection();
+        tests.MismatchedGenerationPreservesLegacyGridProjection();
+        tests.RotatedProjectionPreservesLegacyGridUntilRasterSupportsRotation();
+        tests.MultipleActiveMapsPreserveLegacyGridProjection();
+        tests.WideSurfacesRetainContinuousCoverageAndOneCellRoads(true);
+        tests.WideSurfacesRetainContinuousCoverageAndOneCellRoads(false);
+        tests.SurfaceRectanglesMergeAndRefreshForBlobReplacementAndLiveOverlays();
+        UnityEngine.Debug.Log("[MatchHudMinimapDataSourceAdapterTests] result=Passed tests=10");
+    }
+
     private static void CreateGrid(EntityManager entityManager)
     {
         Entity grid = entityManager.CreateEntity(typeof(GridConfig));

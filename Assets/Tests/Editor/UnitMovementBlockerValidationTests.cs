@@ -15,6 +15,93 @@ using Game.Runtime.Pathfinding;
 
 public sealed class UnitMovementBlockerValidationTests
 {
+    public static void RunAuthoredBuildingBlockerFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitMovementBlockerValidationTests();
+            tests.AuthoredBuildingFoundationRejectsSpawnsAndReleasesOnlyItsOwnCells();
+            tests.UnitMovementTargetRejectsBuildingBlockerCells();
+            Debug.Log("[AuthoredBuildingBlockerValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[AuthoredBuildingBlockerValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void AuthoredBuildingFoundationRejectsSpawnsAndReleasesOnlyItsOwnCells()
+    {
+        using var world = new World("AuthoredBuildingFoundationValidation");
+        var em = world.EntityManager;
+        NativeArray<int> counts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendly = default;
+        try
+        {
+            CreateGrid(em, 24, 24, out counts, out blocked, out friendly);
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            var gridEntity = grids.GetSingletonEntity();
+            var grid = em.GetComponentData<GridConfig>(gridEntity);
+            var building = em.CreateEntity(typeof(StaticGridBlocker), typeof(GridBlockerSize),
+                typeof(UnitGrid), typeof(OperationMapBuildingComponent), typeof(RuntimeBuildingCombatInfo));
+            em.SetComponentData(building, new UnitGrid { Cell = new int2(8, 9) });
+            em.SetComponentData(building, new GridBlockerSize { Size = new int2(8, 6) });
+            em.SetComponentData(building, new RuntimeBuildingCombatInfo
+                { OriginCell = new int2(4, 6), FootprintCells = new int2(8, 6) });
+            var ordinary = em.CreateEntity(typeof(StaticGridBlocker), typeof(GridBlockerSize), typeof(UnitGrid));
+            em.SetComponentData(ordinary, new UnitGrid { Cell = new int2(16, 16) });
+            em.SetComponentData(ordinary, new GridBlockerSize { Size = new int2(2, 2) });
+            var system = world.CreateSystem<StaticGridBlockerUpdateSystem>();
+            system.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+            Assert.IsTrue(blocked.IsSet(6 * 24 + 4), "The foundation's south-west corner must block movement.");
+            Assert.IsTrue(blocked.IsSet(11 * 24 + 11));
+            Assert.IsFalse(blocked.IsSet(14 * 24 + 15), "The old centre-as-corner offset must not create phantom collision.");
+            Assert.IsTrue(blocked.IsSet(16 * 24 + 16), "Ordinary blockers retain their origin convention.");
+
+            using var occupied = new NativeBitArray(24 * 24, Allocator.Temp, NativeArrayOptions.ClearMemory);
+            var reserved = new NativeBitArray(24 * 24, Allocator.Temp, NativeArrayOptions.ClearMemory);
+            try
+            {
+                var rng = new Unity.Mathematics.Random(1337);
+                var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+                Assert.IsTrue(InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
+                    blocked, occupied, ref reserved, new int2(5, 7), 12, new int2(1, 1), false, out var spawn));
+                Assert.IsFalse(spawn.x >= 4 && spawn.x < 12 && spawn.y >= 6 && spawn.y < 12,
+                    "A spawn requested inside a source building must relocate outside its actual foundation.");
+                Assert.IsFalse(UnitGridMoveJob.CanOccupyMovementTarget(grid, walkable, blocked, friendly,
+                    new int2(5, 7), new int2(1, 1), new int2(3, 7), factionId: 1));
+            }
+            finally { reserved.Dispose(); }
+
+            var info = em.GetComponentData<RuntimeBuildingCombatInfo>(building);
+            info.OriginCell = new int2(2, 3);
+            em.SetComponentData(building, info);
+            system.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+            Assert.IsTrue(blocked.IsSet(3 * 24 + 2), "Restored source origins must update their collision bounds.");
+            Assert.IsFalse(blocked.IsSet(11 * 24 + 11), "Previous bounds must release when the authoritative origin changes.");
+            Assert.AreEqual(new int2(8, 9), em.GetComponentData<UnitGrid>(building).Cell,
+                "Collision repair must preserve the building's selection centre.");
+            em.RemoveComponent<StaticGridBlocker>(building);
+            system.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+            Assert.IsFalse(blocked.IsSet(3 * 24 + 2));
+            Assert.IsTrue(blocked.IsSet(16 * 24 + 16), "Removing one building must preserve another owner's collision.");
+        }
+        finally
+        {
+            if (friendly.IsCreated) friendly.Dispose();
+            if (blocked.IsCreated) blocked.Dispose();
+            if (counts.IsCreated) counts.Dispose();
+        }
+    }
+
     public static void RunBatchValidation()
     {
         try

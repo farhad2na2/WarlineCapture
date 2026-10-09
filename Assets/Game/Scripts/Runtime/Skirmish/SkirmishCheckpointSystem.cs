@@ -10,8 +10,10 @@ namespace Game.Runtime
     [UpdateBefore(typeof(SkirmishSessionCleanupSystem))]
     public partial struct SkirmishCheckpointSystem : ISystem
     {
+        private EntityQuery _sessions;
         public void OnCreate(ref SystemState state)
         {
+            _sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
         }
 
@@ -20,8 +22,7 @@ namespace Game.Runtime
             EntityManager em = state.EntityManager;
             // The first capture attaches a managed document component. Iterate a
             // snapshot so that structural change is legal on the first save too.
-            using var sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>())
-                .ToEntityArray(Allocator.Temp);
+            using var sessions = _sessions.ToEntityArray(Allocator.Temp);
             foreach (Entity entity in sessions)
             {
                 if (em.GetComponentData<SkirmishExpandedSessionComponent>(entity).IsLegacy != 0)

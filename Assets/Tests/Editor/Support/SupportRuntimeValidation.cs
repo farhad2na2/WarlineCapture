@@ -2,8 +2,11 @@
 using System;
 using Game.Components;
 using Game.Runtime;
+using Game.Missions.Contracts;
 using NUnit.Framework;
 using Unity.Mathematics;
+using Unity.Entities;
+using Game.UI.Shell.Ecs;
 using UnityEngine;
 namespace Game.Tests.Editor
 {
@@ -14,10 +17,130 @@ namespace Game.Tests.Editor
             try
             {
                 var tests=new SupportRuntimeValidation();tests.FuelCopiesCommitAtomically();tests.RejectionsLeaveCostsAndEffectsUnchanged();
-                tests.DuplicateAndCompetingRequestsSpendOnce();tests.ConsentBindsExactAction();tests.AuthoredFuelScopeExcludesDemoStock();
-                Debug.Log("[SupportRuntimeValidation] result=Passed tests=5");ValidationExit.Exit(0);
+                tests.DuplicateAndCompetingRequestsSpendOnce();tests.ConsentBindsExactAction();tests.AuthoredFuelScopeExcludesDemoStock();tests.FactionReadModelsKeepFuelSeparate();tests.MultipleSessionsProcessOwnRequestsOnce();tests.ReadModelUsesTransactionFuelScope();tests.SessionFuelScopesRemainIndependent();tests.SessionReservationsExcludeForeignScope();tests.ExplicitOwnerScopePrecedesInheritedCampaign();
+                Debug.Log("[SupportRuntimeValidation] result=Passed tests=11");ValidationExit.Exit(0);
             }
             catch(Exception ex){Debug.LogException(ex);Debug.LogError("[SupportRuntimeValidation] result=Failed");ValidationExit.Exit(1);throw;}
+        }
+        [Test] public void ExplicitOwnerScopePrecedesInheritedCampaign()
+        {
+            using var f=new SupportValidationFixture();
+            var own=f.Store(5);var unrelated=f.Store(100);
+            f.Em.AddComponentData(f.Root,new SupportFuelScopeComponent {Storage=own,Required=1});
+            var campaign=f.Em.CreateEntity();
+            f.Em.AddComponentData(campaign,new CampaignMissionRuntimeComponent {MissionId=CampaignMissionSequence.CitywideAlert,Phase=Game.Missions.Contracts.MissionPhaseKind.Engage});
+            Assert.IsTrue(CampaignCitywideFuelScope.TryGet(f.Em,out _,out _));
+            Assert.AreEqual(0,SupportFuelTransactionSystem.Available(f.Em,1));
+            Assert.AreEqual(5,SupportFuelTransactionSystem.Available(f.Em,f.Root,1));
+            Assert.AreEqual(SupportRejectionReason.None,SupportAbilityRequestSystem.Process(f.Em,f.Root,f.Request()));
+            Assert.AreEqual(4,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).StoredFuelBarrels);
+            var stock=f.Em.GetComponentData<BuildingResourceStorageComponent>(own);stock.OwnerFactionId=2;f.Em.SetComponentData(own,stock);
+            Assert.AreEqual(0,SupportFuelTransactionSystem.Available(f.Em,f.Root,1));
+            Assert.IsFalse(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,f.Root,1,1));
+            Assert.AreEqual(100,f.Em.GetComponentData<BuildingResourceStorageComponent>(unrelated).StoredFuelBarrels);
+        }
+        [Test] public void SessionFuelScopesRemainIndependent()
+        {
+            using var f=new SupportValidationFixture();
+            f.Em.AddComponent<SupportFuelAvailabilityComponent>(f.Root);
+            var other=f.Em.Instantiate(f.Root);
+            var own=f.Store(5,1,1);var second=f.Store(8,2,3);var unrelated=f.Store(100);
+            f.Em.AddComponentData(f.Root,new SupportFuelScopeComponent {Storage=own,Required=1});
+            f.Em.AddComponentData(other,new SupportFuelScopeComponent {Storage=second,Required=1});
+            var read=f.World.CreateSystem<UiSupportReadModelSystem>();read.Update(f.World.Unmanaged);
+            Assert.AreEqual(3,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.AreEqual(3,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Total);
+            // Same faction, different owners: only each owner's authored storage pays.
+            Assert.AreEqual(SupportRejectionReason.None,SupportAbilityRequestSystem.Process(f.Em,f.Root,f.Request()));
+            Assert.AreEqual(SupportRejectionReason.None,SupportAbilityRequestSystem.Process(f.Em,other,f.Request()));
+            read.Update(f.World.Unmanaged);
+            Assert.AreEqual(2,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.AreEqual(2,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Total);
+            Assert.AreEqual(4,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).StoredFuelBarrels);
+            Assert.AreEqual(7,f.Em.GetComponentData<BuildingResourceStorageComponent>(second).StoredFuelBarrels);
+            Assert.AreEqual(100,f.Em.GetComponentData<BuildingResourceStorageComponent>(unrelated).StoredFuelBarrels);
+            f.Em.DestroyEntity(own);read.Update(f.World.Unmanaged);
+            Assert.AreEqual(0,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.AreEqual(2,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Total);
+            Assert.IsFalse(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,f.Root,1,1));
+            Assert.IsTrue(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,other,1,2));
+            f.Em.DestroyEntity(other);
+            Assert.AreEqual(0,SupportFuelTransactionSystem.Available(f.Em,other,1));
+            Assert.IsFalse(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,other,1,1));
+        }
+        [Test] public void SessionReservationsExcludeForeignScope()
+        {
+            using var f=new SupportValidationFixture();var other=f.Em.Instantiate(f.Root);
+            var own=f.Store(6,1,1);var second=f.Store(20);var unrelated=f.Store(100);
+            f.Em.AddComponentData(f.Root,new SupportFuelScopeComponent {Storage=own,Required=1});
+            f.Em.AddComponentData(other,new SupportFuelScopeComponent {Storage=second,Required=1});
+            var flight=f.Em.CreateEntity();f.Em.AddBuffer<SupportFuelReservationElement>(flight);
+            Assert.IsFalse(SupportFuelTransactionSystem.TryReserve(f.Em,f.Root,flight,1,5,1));
+            Assert.AreEqual(0,f.Em.GetBuffer<SupportFuelReservationElement>(flight).Length);
+            Assert.AreEqual(1,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).ReservedFuelOutboundBarrels);
+            Assert.IsTrue(SupportFuelTransactionSystem.TryReserve(f.Em,f.Root,flight,1,3,1));
+            Assert.AreEqual(own,f.Em.GetBuffer<SupportFuelReservationElement>(flight)[0].SourceStorage);
+            Assert.AreEqual(1,SupportFuelTransactionSystem.Available(f.Em,f.Root,1));
+            Assert.AreEqual(20,SupportFuelTransactionSystem.Available(f.Em,other,1));
+            Assert.IsTrue(SupportFuelTransactionSystem.TryConsumeReserved(f.Em,flight,1));
+            Assert.AreEqual(3,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).StoredFuelBarrels);
+            SupportFuelTransactionSystem.ReleaseReserved(f.Em,flight);
+            Assert.AreEqual(1,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).ReservedFuelOutboundBarrels);
+            Assert.AreEqual(20,f.Em.GetComponentData<BuildingResourceStorageComponent>(second).StoredFuelBarrels);
+            Assert.AreEqual(100,f.Em.GetComponentData<BuildingResourceStorageComponent>(unrelated).StoredFuelBarrels);
+        }
+        [Test] public void FactionReadModelsKeepFuelSeparate()
+        {
+            using var f=new SupportValidationFixture();
+            f.Em.AddComponent<SupportFuelAvailabilityComponent>(f.Root);
+            var other=f.Em.Instantiate(f.Root);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(other);session.FactionId=2;f.Em.SetComponentData(other,session);
+            f.Store(10,3,4);
+            var enemy=f.Store(12,2,3);var stock=f.Em.GetComponentData<BuildingResourceStorageComponent>(enemy);stock.OwnerFactionId=2;f.Em.SetComponentData(enemy,stock);
+            var system=f.World.CreateSystem<UiSupportReadModelSystem>();system.Update(f.World.Unmanaged);
+            Assert.AreEqual(3,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.AreEqual(7,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Total);
+            Assert.IsTrue(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,2,2));system.Update(f.World.Unmanaged);
+            Assert.AreEqual(3,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.AreEqual(5,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Total);
+            var version=f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Version;system.Update(f.World.Unmanaged);
+            Assert.AreEqual(version,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(other).Version);
+        }
+        [Test] public void ReadModelUsesTransactionFuelScope()
+        {
+            using var f=new SupportValidationFixture();
+            f.Em.AddComponent<SupportFuelAvailabilityComponent>(f.Root);
+            var scoped=f.Store(8,2,3);f.Store(100);
+            f.Em.AddComponentData(f.Root,new SupportFuelScopeComponent {Storage=scoped,Required=1});
+            var system=f.World.CreateSystem<UiSupportReadModelSystem>();system.Update(f.World.Unmanaged);
+            Assert.AreEqual(3,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            f.Em.DestroyEntity(scoped);system.Update(f.World.Unmanaged);
+            Assert.AreEqual(0,f.Em.GetComponentData<SupportFuelAvailabilityComponent>(f.Root).Total);
+            Assert.IsFalse(SupportFuelTransactionSystem.TryConsumeImmediate(f.Em,1,1));
+        }
+        [Test] public void MultipleSessionsProcessOwnRequestsOnce()
+        {
+            using var f=new SupportValidationFixture();
+            var other=f.Em.Instantiate(f.Root);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(other);session.FactionId=2;f.Em.SetComponentData(other,session);
+            var own=f.Store(2);var enemy=f.Store(4);var stock=f.Em.GetComponentData<BuildingResourceStorageComponent>(enemy);stock.OwnerFactionId=2;f.Em.SetComponentData(enemy,stock);
+            f.Em.GetBuffer<SupportRequestElement>(f.Root).Add(f.Request());
+            f.Em.GetBuffer<SupportRequestElement>(other).Add(f.Request());
+            var system=f.World.CreateSystem<SupportAbilityRequestSystem>();system.Update(f.World.Unmanaged);
+            Assert.AreEqual(1,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).StoredFuelBarrels);
+            Assert.AreEqual(3,f.Em.GetComponentData<BuildingResourceStorageComponent>(enemy).StoredFuelBarrels);
+            foreach(var root in new[]{f.Root,other})
+            {
+                Assert.AreEqual(0,f.Em.GetBuffer<SupportRequestElement>(root).Length);
+                Assert.AreEqual(1,f.Em.GetBuffer<SupportReceiptElement>(root).Length);
+                Assert.AreEqual(SupportRejectionReason.None,f.Em.GetBuffer<SupportReceiptElement>(root)[0].Reason);
+                Assert.AreEqual(1,f.Em.GetBuffer<SupportAbilityStateElement>(root)[0].ChargesRemaining);
+                f.Em.GetBuffer<SupportRequestElement>(root).Add(f.Request());
+            }
+            system.Update(f.World.Unmanaged);
+            Assert.AreEqual(1,f.Em.GetComponentData<BuildingResourceStorageComponent>(own).StoredFuelBarrels);
+            Assert.AreEqual(3,f.Em.GetComponentData<BuildingResourceStorageComponent>(enemy).StoredFuelBarrels);
+            foreach(var root in new[]{f.Root,other})Assert.AreEqual(1,f.Em.GetBuffer<SupportReceiptElement>(root).Length);
         }
         [Test] public void FuelCopiesCommitAtomically()
         {

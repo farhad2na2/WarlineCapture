@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Game.Components;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
@@ -18,6 +19,29 @@ namespace Game.Editor
         private static uint nativeProductionReceipt;
         private static double nativeProductionDeadline, nextProductionTap;
         private static AriaTouchInputUiSystemHelper nativeProductionTouch;
+        private static bool nativeProductionRecovery;
+        private static string NativeProductionMarker => "[Skirmish" + catalogId + "ProductionProbe]";
+        private const string S005PaidSavePath = "Design/AgentReports/SkirmishExpansion/S005/native-paid-production-checkpoint-wire.json";
+
+        public static void RunS005ProductionCheckpointProbeAndExit()
+        {
+            nativeProductionRecovery = false;
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC", null);
+            Environment.SetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE", "1");
+            nativeProductionStage = 0;
+            RunS005StartupEn();
+        }
+
+        public static void RunS005PaidProductionRecoveryProbeAndExit()
+        {
+            string path = Path.GetFullPath(S005PaidSavePath);
+            if (!File.Exists(path)) throw new InvalidOperationException("Paid production diagnostic save missing.");
+            nativeProductionRecovery = true;
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC", path);
+            Environment.SetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE", "1");
+            nativeProductionStage = 0;
+            RunS005StartupEn();
+        }
 
         private static void StartNativeProductionProbe(Entity session)
         {
@@ -37,6 +61,7 @@ namespace Game.Editor
 
         public static void RunS003ProductionProbeAndExit()
         {
+            nativeProductionRecovery = false;
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG", "S003");
             Environment.SetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE", "1");
             nativeProductionStage = 0;
@@ -74,9 +99,34 @@ namespace Game.Editor
                                 SkirmishMaterialsService.Read(em, session, 1) != 230)
                             { EndProductionProbe(false, "paymentOrReceiptMismatch"); return; }
                             nativeProductionReceipt = receipt.ReservationId;
+                            if (catalogId == "S005")
+                            {
+                                if (nativeProductionRecovery)
+                                {
+                                    var recovery = em.GetComponentObject<SkirmishNativeCheckpointRecoveryRecord>(session);
+                                    if (!recovery.Complete || !string.IsNullOrEmpty(recovery.Failure))
+                                    { EndProductionProbe(false, "freshRecoveryIncomplete"); return; }
+                                }
+                                else
+                                {
+                                    var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                                    if (!SkirmishNativeCheckpointSnapshotService.TryCapture(em, session, out var snapshot, out var failure))
+                                    { EndProductionProbe(false, "paidCaptureRejected:" + failure); return; }
+                                    bool paidQueue = Array.Exists(snapshot.Actors, actor => actor.OldRuntimeBuildingId == receipt.ProducerRuntimeId && actor.Production != null &&
+                                        Array.Exists(actor.Production.Queue, item => item.ReceiptId == receipt.ReservationId &&
+                                            item.ReceiptOwner == "$session" && item.ReceiptAttempt == snapshot.SessionId &&
+                                            item.RemainingQuantity == 1 && item.PaidQuantity == 0 && item.RefundableMaterials == 0));
+                                    File.WriteAllText(Path.GetFullPath(S005PaidSavePath + ".staging.json"), JsonUtility.ToJson(snapshot, true));
+                                    if (!paidQueue || !SkirmishNativeCheckpointCodec.TryWriteAtomic(Path.GetFullPath(S005PaidSavePath), snapshot, setup) ||
+                                        !SkirmishNativeCheckpointCodec.TryRead(Path.GetFullPath(S005PaidSavePath), setup, out _))
+                                    { EndProductionProbe(false, "paidQueuePersistenceFailed"); return; }
+                                    Debug.Log(NativeProductionMarker + " phase=PaidCheckpoint persisted=1 paidQueue=1 actors=" + snapshot.Actors.Length +
+                                        " sources=" + snapshot.MapReferences.Length + " path=" + S005PaidSavePath);
+                                }
+                            }
                             nativeProductionStage = 2;
-                            ScreenCapture.CaptureScreenshot("/private/tmp/s003-production-paid.png");
-                            Debug.Log("[SkirmishS003ProductionProbe] phase=Paid materials=230 cost=220 receipt=" + receipt.ReservationId);
+                            ScreenCapture.CaptureScreenshot("/private/tmp/" + catalogId.ToLowerInvariant() + "-production-paid.png");
+                            Debug.Log(NativeProductionMarker + " phase=Paid materials=230 cost=220 receipt=" + receipt.ReservationId);
                             return;
                         }
                 if (nativeProductionTouch.IsBusy || now < nextProductionTap) return;
@@ -89,7 +139,7 @@ namespace Game.Editor
                 if (!nativeProductionTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime))
                 { EndProductionProbe(false, "touchRejected"); return; }
                 nextProductionTap = now + 1d;
-                Debug.Log("[SkirmishS003ProductionProbe] phase=Touch target=" + button.name + " point=" + point);
+                Debug.Log(NativeProductionMarker + " phase=Touch target=" + button.name + " point=" + point);
                 return;
             }
             var state = default(SkirmishProductionReservation);
@@ -113,7 +163,7 @@ namespace Game.Editor
             }
             if (delivered != 1 || state.DeliveredMembers != 1 || state.ProductionGroupId == 0)
             { EndProductionProbe(false, "deliveryCountMismatch"); return; }
-            ScreenCapture.CaptureScreenshot("/private/tmp/s003-production-delivered.png");
+            ScreenCapture.CaptureScreenshot("/private/tmp/" + catalogId.ToLowerInvariant() + "-production-delivered.png");
             nativeProductionStage = 3;
             nextProductionTap = now + 1d;
         }
@@ -136,9 +186,11 @@ namespace Game.Editor
 
         private static void EndProductionProbe(bool passed, string reason)
         {
-            Debug.Log("[SkirmishS003ProductionProbe] result=" + (passed ? "Passed" : "Failed") +
+            Debug.Log(NativeProductionMarker + " result=" + (passed ? "Passed" : "Failed") +
                 " reason=" + reason + " input=Touch samples=" + (nativeProductionTouch?.AcceptedSamples ?? 0) +
-                " acceptance=RecruitmentOnly");
+                " acceptance=RecruitmentOnly freshRecovery=" + (nativeProductionRecovery ? 1 : 0) + " normalInputRecovery=0 playerReady=0");
+            Environment.SetEnvironmentVariable("WARLINE_S003_PRODUCTION_PROBE", null);
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC", null);
             nativeProductionStage = 0;
             Finish(!passed, reason);
         }

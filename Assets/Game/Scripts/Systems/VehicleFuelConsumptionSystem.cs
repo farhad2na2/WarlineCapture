@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using Game.Components;
 
 namespace Game.Runtime
@@ -23,6 +24,10 @@ namespace Game.Runtime
             NativeArray<float> requestedExpandedFuelByFaction = new(FactionCapacity, Allocator.Temp);
             bool steelPush=CampaignSteelPushFuelScope.TryGet(state.EntityManager,out var steelReserve,out var steelRuntime);
             ComponentLookup<UnitAirMovement> airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
+            ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
+            var physicalGrids = SystemAPI.QueryBuilder().WithAll<GridConfig>().Build();
+            bool hasGrid = physicalGrids.CalculateEntityCount() == 1;
+            GridConfig physicalGrid = hasGrid ? physicalGrids.GetSingleton<GridConfig>() : default;
             ComponentLookup<SkirmishAttemptOwnedComponent> attemptLookup =
                 SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true);
             using var expanded = state.EntityManager.CreateEntityQuery(
@@ -46,7 +51,13 @@ namespace Game.Runtime
                     continue;
 
                 ref UnitFuelConsumptionState stateRw = ref consumptionState.ValueRW;
-                int2 cell = unitGrid.ValueRO.Cell;
+                bool isAircraft = airMovementLookup.HasComponent(entity);
+                // Runway approaches can fly beyond the ground grid. Its bounded
+                // membership cell then stays unchanged; charge the aircraft's
+                // actual travel without putting external cells into grid buffers.
+                int2 cell = isAircraft && hasGrid && physicalGrid.CellSize > 0 && transformLookup.HasComponent(entity)
+                    ? GridUtils.WorldToCell(physicalGrid, transformLookup[entity].Position)
+                    : unitGrid.ValueRO.Cell;
                 if (stateRw.Initialized == 0)
                 {
                     stateRw.LastCell = cell;
@@ -59,14 +70,14 @@ namespace Game.Runtime
                 if (movedCells <= 0)
                     continue;
 
-                bool isFuelUsingUnit = movement.ValueRO.UsesVehicleMotion != 0 || airMovementLookup.HasComponent(entity);
+                bool isFuelUsingUnit = movement.ValueRO.UsesVehicleMotion != 0 || isAircraft;
                 if (!isFuelUsingUnit)
                 {
                     stateRw.LastCell = cell;
                     continue;
                 }
 
-                float fuelPerCell = airMovementLookup.HasComponent(entity)
+                float fuelPerCell = isAircraft
                     ? math.max(0f, consumption.ValueRO.AirFuelPerCell)
                     : math.max(0f, consumption.ValueRO.GroundFuelPerCell);
                 float requestedFuel = movedCells * fuelPerCell;

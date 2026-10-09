@@ -20,6 +20,16 @@ namespace Game.Composition
         private Entity cachedMarkerBoundaryEntity = Entity.Null;
         private Entity cachedMapSurfaceEntity = Entity.Null;
         private Entity cachedOperationMapMetadataEntity = Entity.Null;
+        private readonly List<MatchHudMinimapSurfaceFeatureModel> cachedSurfaceFeatures = new();
+        private BlobAssetReference<MapSurfaceBlob> cachedSurfaceBlob;
+        private ulong cachedSurfaceWorld;
+        private Entity cachedSurfaceRoot;
+        private int2 cachedSurfaceDimensions;
+        private float3 cachedSurfaceOrigin;
+        private float cachedSurfaceCellSize;
+        private byte cachedSurfaceHasData;
+        private bool surfaceFeaturesCached;
+
 
         public bool TryGetGrid(out MatchHudMinimapGridModel grid)
         {
@@ -130,7 +140,7 @@ namespace Game.Composition
                 return;
             }
 
-            AppendSurfaceBlobFeatures(area, surface, features);
+            AppendCachedSurfaceFeatures(em.WorldUnmanaged.SequenceNumber, area, surface, features);
             if (hasSceneOverlays)
                 AppendSceneOverlayFeatures(area, sceneOverlays, features);
         }
@@ -326,6 +336,39 @@ namespace Game.Composition
             return true;
         }
 
+        private void AppendCachedSurfaceFeatures(ulong world, MatchHudMinimapAreaModel area,
+            MapSurfaceComponent surface, List<MatchHudMinimapSurfaceFeatureModel> features)
+        {
+            // Baked surface blobs are immutable. Scene overlays remain live and
+            // are appended separately, so dynamic placements still refresh.
+            if (!surfaceFeaturesCached || cachedSurfaceWorld != world || cachedSurfaceRoot != cachedMapSurfaceEntity ||
+                cachedSurfaceBlob != surface.SurfaceBlob || !math.all(cachedSurfaceDimensions == surface.Dimensions) ||
+                !math.all(cachedSurfaceOrigin == surface.GridOrigin) || cachedSurfaceCellSize != surface.CellSize ||
+                cachedSurfaceHasData != surface.HasSurfaceData)
+            {
+                cachedSurfaceFeatures.Clear();
+                AppendSurfaceBlobFeatures(new MatchHudMinimapAreaModel(
+                    new Vector3(surface.GridOrigin.x, surface.GridOrigin.y, surface.GridOrigin.z),
+                    surface.Dimensions.x * surface.CellSize, surface.Dimensions.y * surface.CellSize),
+                    surface, cachedSurfaceFeatures);
+                cachedSurfaceWorld = world;
+                cachedSurfaceRoot = cachedMapSurfaceEntity;
+                cachedSurfaceBlob = surface.SurfaceBlob;
+                cachedSurfaceDimensions = surface.Dimensions;
+                cachedSurfaceOrigin = surface.GridOrigin;
+                cachedSurfaceCellSize = surface.CellSize;
+                cachedSurfaceHasData = surface.HasSurfaceData;
+                surfaceFeaturesCached = true;
+            }
+            float padding = 2f * surface.CellSize;
+            var bounds = new Rect(area.Origin.x - padding, area.Origin.z - padding,
+                area.Width + padding * 2f, area.Height + padding * 2f);
+            foreach (var feature in cachedSurfaceFeatures)
+                if (bounds.Overlaps(new Rect(feature.Center.x - feature.HalfExtents.x,
+                    feature.Center.z - feature.HalfExtents.y, feature.HalfExtents.x * 2f, feature.HalfExtents.y * 2f)))
+                    features.Add(feature);
+        }
+
         private static void AppendSurfaceBlobFeatures(
             MatchHudMinimapAreaModel area,
             MapSurfaceComponent surface,
@@ -346,33 +389,57 @@ namespace Game.Composition
             int minY = math.clamp((int)math.floor((area.Origin.z - surface.GridOrigin.z) / surface.CellSize) - 2, 0, surface.Dimensions.y - 1);
             int maxY = math.clamp((int)math.ceil((area.Origin.z + area.Height - surface.GridOrigin.z) / surface.CellSize) + 2, 0, surface.Dimensions.y - 1);
 
-            int spanX = maxX - minX + 1;
-            int spanY = maxY - minY + 1;
-            int sampleStride = math.max(1, math.max(
-                (int)math.ceil(spanX / (float)MaxMinimapRasterSamplesPerAxis),
-                (int)math.ceil(spanY / (float)MaxMinimapRasterSamplesPerAxis)));
-
-            for (int y = minY; y <= maxY; y += sampleStride)
+            // Preserve actual cell coverage. Subsampling isolated dots left regular
+            // gaps and could omit a narrow road between sampled columns. Merge
+            // adjacent cells of the same kind into horizontal area runs instead.
+            var previousRow = new Dictionary<(int start, int end, MatchHudMinimapSurfaceFeatureKind kind), int>();
+            var currentRow = new Dictionary<(int start, int end, MatchHudMinimapSurfaceFeatureKind kind), int>();
+            for (int y = minY; y <= maxY; y++)
             {
-                for (int x = minX; x <= maxX; x += sampleStride)
+                currentRow.Clear();
+                int runStart = -1;
+                MatchHudMinimapSurfaceFeatureKind runKind = default;
+                for (int x = minX; x <= maxX + 1; x++)
                 {
-                    if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, new int2(x,y), out var cell) ||
-                        !TryResolveRasterSurfaceSample(ref blob, cell, out MapSurfaceSample sample) ||
-                        !TryResolveSurfaceFeatureKind(sample.SurfaceType, sample.Flags, out MatchHudMinimapSurfaceFeatureKind kind))
+                    MatchHudMinimapSurfaceFeatureKind kind = default;
+                    bool present = x <= maxX &&
+                        MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, new int2(x, y), out var cell) &&
+                        TryResolveRasterSurfaceSample(ref blob, cell, out MapSurfaceSample sample) &&
+                        TryResolveSurfaceFeatureKind(sample.SurfaceType, sample.Flags, out kind);
+                    if (runStart >= 0 && (!present || kind != runKind))
                     {
-                        continue;
+                        float width = (x - runStart) * surface.CellSize;
+                        var key = (runStart, x, runKind);
+                        int index;
+                        if (previousRow.TryGetValue(key, out index))
+                        {
+                            var previous = features[index];
+                            features[index] = new MatchHudMinimapSurfaceFeatureModel(
+                                previous.Center + new Vector3(0, 0, surface.CellSize * 0.5f),
+                                previous.HalfExtents + new Vector2(0, surface.CellSize * 0.5f),
+                                surface.CellSize, runKind, fillArea: true);
+                        }
+                        else
+                        {
+                            index = features.Count;
+                            features.Add(new MatchHudMinimapSurfaceFeatureModel(
+                                new Vector3(
+                                    surface.GridOrigin.x + runStart * surface.CellSize + width * 0.5f,
+                                    surface.GridOrigin.y,
+                                    surface.GridOrigin.z + (y + 0.5f) * surface.CellSize),
+                                new Vector2(width * 0.5f, surface.CellSize * 0.5f),
+                                surface.CellSize, runKind, fillArea: true));
+                        }
+                        currentRow.Add(key, index);
+                        runStart = -1;
                     }
-
-                    features.Add(new MatchHudMinimapSurfaceFeatureModel(
-                        new Vector3(
-                            surface.GridOrigin.x + (x + 0.5f) * surface.CellSize,
-                            surface.GridOrigin.y,
-                            surface.GridOrigin.z + (y + 0.5f) * surface.CellSize),
-                        new Vector2(surface.CellSize * 0.5f, surface.CellSize * 0.5f),
-                        surface.CellSize,
-                        kind,
-                        fillArea: false));
+                    if (present && runStart < 0)
+                    {
+                        runStart = x;
+                        runKind = kind;
+                    }
                 }
+                (previousRow, currentRow) = (currentRow, previousRow);
             }
         }
 

@@ -143,9 +143,15 @@ namespace Game.UI.Runtime
             {
                 view.OwnMaterials = model.OwnMaterials;
                 view.CanAffordRifle = model.CanAffordRifle;
+                view.CombinedArmsField = model.CombinedArmsField;
+                view.CanAffordRocketeer = model.CanAffordRocketeer;
+                view.RocketeerRecruitPending = model.RocketeerRecruitPending;
+                view.OwnStructureAttackUnits = model.OwnStructureAttackUnits;
                 view.CanAffordAntiAir = model.CanAffordAntiAir;
                 view.CanAffordLogisticsTruck = model.CanAffordLogisticsTruck;
                 view.LogisticsTruckCommitted = model.LogisticsTruckCommitted;
+                view.CanAffordTanker = model.CanAffordTanker;
+                view.TankersCommitted = model.TankersCommitted;
                 view.RifleRecruitPending = model.RifleRecruitPending;
                 view.AirProfile = model.AirProfile;
                 view.OwnDefenseTowers = model.OwnDefenseTowers;
@@ -165,10 +171,12 @@ namespace Game.UI.Runtime
                 view.CanBuildAirPad = model.CanBuildAirPad;
                 var openBuild = ObserveWatchButton(_commandControlsView?.BuildButton);
                 view.Recruit = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_02_Alt_04") : openBuild;
+                view.RecruitRocketeer = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Ghillie_Male_01") : openBuild;
                 view.RecruitAntiAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Air") : openBuild;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;
+                view.RecruitTanker = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tanker") : openBuild;
                 if (UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness))
                 {
                     view.CanUpgradeReadiness = readiness.CanUpgrade;
@@ -272,6 +280,8 @@ namespace Game.UI.Runtime
                 if (d < 50 * 50) assault++;
                 if (d < distance) { distance = d; nearest = ally.Model.Position; }
             }
+            view.AssaultDistanceVisible = distance < float.MaxValue;
+            view.NearestFriendlyObjectiveDistance = view.AssaultDistanceVisible ? Mathf.Sqrt(distance) : 0f;
             int required = view.EnemyHealth > 0 && view.EnemyHealth <= 400
                 ? 1 : Mathf.Max(4, Mathf.Min(8, view.SelectedCount));
             view.AssaultAtBase = assault >= required;

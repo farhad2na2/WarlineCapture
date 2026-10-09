@@ -383,6 +383,7 @@ namespace Game.Runtime
                 }
 
                 var requestSpawnContext = runtimeSpawnContext;
+                int grantBuildingRejected = 0, grantSurfaceRejected = 0, grantSidewalkRejected = 0, grantOriginalRejected = 0;
                 if (startingGrant && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
                 {
                     using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
@@ -399,17 +400,18 @@ namespace Game.Runtime
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
-                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) return false;
+                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; return false; }
                         bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
                         if(authoredRoad||water)
-                        {if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
+                        {grantSurfaceRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
                         var sidewalks = _skirmishRoads.GetSidewalks();
                         for (int y = rect.yMin; y < rect.yMax; y++)
                             for (int x = rect.xMin; x < rect.xMax; x++)
                                 if (x < 0 || y < 0 || x >= g.Width || y >= g.Height ||
                                     sidewalks != null && sidewalks[y * g.Width + x])
-                                {if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
+                                {grantSidewalkRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
                         bool valid=originalContext.IsPlacementValid(d,origin,footprint,rotated,g,roads,blockers);
+                        if (!valid) grantOriginalRejected++;
                         if(!valid&&citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=original-placement-context rect={rect}");
                         return valid;
                     });
@@ -427,15 +429,18 @@ namespace Game.Runtime
                         _skirmishRoads.Ensure(em, surfaces, skirmishGrid);
                         var rect = runtimeSpawnContext.GetEffectivePlacementRect(definition,
                             new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y), skirmishGrid, request.RotateVertical != 0);
-                        bool roadOverlap = _skirmishRoads.Overlaps(skirmishGrid, rect.position, rect.size) ||
-                            _skirmishRoads.OverlapsWater(skirmishGrid, rect.position, rect.size);
+                        bool authoredRoadOverlap = _skirmishRoads.Overlaps(skirmishGrid, rect.position, rect.size);
+                        bool waterOverlap = _skirmishRoads.OverlapsWater(skirmishGrid, rect.position, rect.size);
+                        bool roadOverlap = authoredRoadOverlap || waterOverlap;
+                        Vector2Int rejectedSidewalkCell = new(-1, -1);
                         var sidewalks = _skirmishRoads.GetSidewalks();
                         for (int y = rect.yMin; !roadOverlap && y < rect.yMax; y++)
                             for (int x = rect.xMin; x < rect.xMax; x++)
                                 if (x < 0 || y < 0 || x >= skirmishGrid.Width || y >= skirmishGrid.Height ||
-                                    sidewalks != null && sidewalks[y * skirmishGrid.Width + x]) { roadOverlap = true; break; }
+                                    sidewalks != null && sidewalks[y * skirmishGrid.Width + x]) { roadOverlap = true; rejectedSidewalkCell = new(x, y); break; }
                         if (roadOverlap)
                         {
+                            UnityEngine.Debug.LogWarning($"[ExactBuildingPlacement] failed building={request.BuildingId} origin={request.PreferredOrigin} configured={definition.FootprintCells} rect={rect} road={authoredRoadOverlap} water={waterOverlap} sidewalkOrBounds={rejectedSidewalkCell}");
                             request.Status = BuildingRuntimeSpawnRequest.Failed;
                             request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
                             WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
@@ -498,6 +503,8 @@ namespace Game.Runtime
                 request.Status = placed
                     ? BuildingRuntimeSpawnRequest.Succeeded
                     : BuildingRuntimeSpawnRequest.Failed;
+                if (!placed && startingGrant)
+                    UnityEngine.Debug.LogWarning($"[StartingGrantPlacement] failed building={request.BuildingId} faction={request.FactionId} sourceBuildings={grantBuildingRejected} roadOrWater={grantSurfaceRejected} sidewalkOrBounds={grantSidewalkRejected} originalContext={grantOriginalRejected}");
                 if (placed)
                     _forcePublishNextUpdate = true;
                 request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;

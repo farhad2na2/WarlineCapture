@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
+using Game.Tactical.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -17,9 +18,15 @@ namespace Game.Runtime
         public const float ArriveDistance = 0.35f;
 
         public static bool AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
+            => AssignIntent(em, unit, destination, order, out _);
+
+        public static bool AssignIntent(EntityManager em, Entity unit, float3 destination,
+            SkirmishGroupOrderKind order, out TacticalCommandResult result)
         {
+            bool hadIntent = em.HasComponent<SkirmishMoveIntentComponent>(unit);
+            var savedIntent = hadIntent ? em.GetComponentData<SkirmishMoveIntentComponent>(unit) : default;
             bool sameDestination = false;
-            if (em.HasComponent<SkirmishMoveIntentComponent>(unit))
+            if (hadIntent)
             {
                 SkirmishMoveIntentComponent previous = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
                 sameDestination = previous.Active != 0 && previous.Order == order &&
@@ -41,16 +48,16 @@ namespace Game.Runtime
             else
                 em.AddComponentData(unit, intent);
 
-            if (em.HasComponent<HoldPositionOrderTag>(unit) && order != SkirmishGroupOrderKind.Hold)
-                em.RemoveComponent<HoldPositionOrderTag>(unit);
-
-            // Repeating the same order must not restart a route that is already walking.
-            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination);
+            // A rejected command leaves the existing intent and Hold state intact.
+            result = TacticalCommandResult.Success();
+            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination, out result);
             if (!accepted)
             {
-                intent.Active = 0;
-                em.SetComponentData(unit, intent);
+                if (hadIntent) em.SetComponentData(unit, savedIntent);
+                else em.RemoveComponent<SkirmishMoveIntentComponent>(unit);
             }
+            else if (em.HasComponent<HoldPositionOrderTag>(unit) && order != SkirmishGroupOrderKind.Hold)
+                em.RemoveComponent<HoldPositionOrderTag>(unit);
             return accepted;
         }
 
@@ -198,7 +205,7 @@ namespace Game.Runtime
             intent.DestinationZ = live.z;
             intent.Active = active;
             em.SetComponentData(unit, intent);
-            TryReuseSharedPath(em, unit, live);
+            TryReuseSharedPath(em, unit, live, out _);
         }
 
         public static float3 DefaultAdvance(EntityManager em, Entity session)
@@ -334,20 +341,31 @@ namespace Game.Runtime
                 : InfantryMetersPerSecond;
         }
 
-        private static bool TryReuseSharedPath(EntityManager em, Entity unit, float3 destination)
+        private static bool TryReuseSharedPath(EntityManager em, Entity unit, float3 destination,
+            out TacticalCommandResult result)
         {
+            result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
             if (!em.HasComponent<UnitMove>(unit))
-                return !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+            {
+                bool fixture = !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+                if (fixture) result = TacticalCommandResult.Success();
+                return fixture;
+            }
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if (grids.IsEmptyIgnoreFilter)
-                return !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+            {
+                bool fixture = !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
+                if (fixture) result = TacticalCommandResult.Success();
+                return fixture;
+            }
             GridConfig grid = grids.GetSingleton<GridConfig>();
             int2 cell = GridUtils.WorldToCell(grid, destination);
             if (IsRegistryUnit(em, unit))
             {
-                return IssueRegistryPath(em, unit, cell);
+                return IssueRegistryPath(em, unit, cell, out result);
             }
 
+            result = TacticalCommandResult.Success();
             var request = new UnitPathRequest { Goal = cell };
             if (em.HasComponent<UnitPathRequest>(unit))
                 em.SetComponentData(unit, request);
@@ -362,7 +380,12 @@ namespace Game.Runtime
         }
 
         private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
+            => IssueRegistryPath(em, unit, cell, out _);
+
+        private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell,
+            out TacticalCommandResult result)
         {
+            result = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetUnreachable);
             if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
             {
                 if (em.GetComponentData<SkirmishMoveIntentComponent>(unit).Order == SkirmishGroupOrderKind.Attack)
@@ -371,12 +394,19 @@ namespace Game.Runtime
                     if (grids.CalculateEntityCount() != 1) return false;
                     using var units = new NativeList<Entity>(1, Allocator.Temp);
                     units.Add(unit);
-                    return AttackMoveSystem.IssueUnits(em, units.AsArray(), em.GetComponentData<Faction>(unit).Id,
-                        cell, GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell), Time.frameCount).Accepted;
+                    result = AttackMoveSystem.IssueUnits(em, units.AsArray(), em.GetComponentData<Faction>(unit).Id,
+                        cell, GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell), Time.frameCount);
+                    return result.Accepted;
                 }
-                return UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, unit, cell);
+                int requestId = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(em, unit, cell);
+                UnitMoveOrderRequestSystem.ProcessPendingRequests(em);
+                if (!UnitMoveOrderRequestSystem.TryGetResult(em, requestId, out var receipt)) return false;
+                result = receipt.Issued != 0 ? TacticalCommandResult.Success()
+                    : TacticalCommandResult.Rejected((TacticalCommandReasonCode)receipt.RejectionReasonCode);
+                return result.Accepted;
             }
             new UnitMoveOrderSystem().IssueImmediateMoveCommand(em, unit, cell);
+            result = TacticalCommandResult.Success();
             return true;
         }
 

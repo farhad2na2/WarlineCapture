@@ -7,6 +7,12 @@ using Unity.Entities;
 
 namespace Game.Composition
 {
+    public sealed class SkirmishReplayLaunchRecord : IComponentData
+    {
+        public SkirmishLaunchPayload Payload;
+        public SkirmishResolvedSetup Setup;
+    }
+
     public static class SkirmishCheckpointCompositionSystemHelper
     {
         public static bool TryRestoreFreshSession(
@@ -28,6 +34,21 @@ namespace Game.Composition
                 reason = SkirmishReasonCode.UnsupportedCapability;
                 return false;
             }
+
+            // Compatibility is a read-only gate. Do not queue a scene/session or
+            // replace another attempt before the saved setup has been checked.
+            using var existingSessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            if (existingSessions.CalculateEntityCount() != 0 ||
+                document.Payload.SessionId != document.Header.SessionId ||
+                document.Payload.CatalogId != document.Header.CatalogId ||
+                document.Payload.DefinitionId != document.Header.DefinitionId ||
+                document.Payload.SetupHash != document.Header.SetupHash ||
+                document.Payload.ContentVersion != document.Header.ContentVersion ||
+                !SkirmishExpansionCatalogFactory.TryGetDefinition(authored, document.Header.CatalogId, out var definition) ||
+                !SkirmishSetupCompiler.TryCompile(definition, document.Payload.DifficultyId,
+                    document.Payload.SizeId, document.Payload.Seed, manifest, matrix, out var checkedSetup, out _) ||
+                !SkirmishCheckpointCodec.IsCompatible(document.Header, checkedSetup))
+                return false;
 
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
@@ -106,11 +127,12 @@ namespace Game.Composition
             payload = null;
             setup = null;
             reason = SkirmishReasonCode.IncompatibleSave;
-            if (request == null || request.Mode != SkirmishReplayMode.FreshStart)
+            if (request == null || request.Mode != SkirmishReplayMode.FreshStart ||
+                !SkirmishExpansionCatalogFactory.TryGetDefinition(authored, request.CatalogId, out var definition))
                 return false;
 
             if (!SkirmishSetupCompiler.TryCompile(
-                    authored.DefinitionS002,
+                    definition,
                     request.DifficultyId,
                     request.SizeId,
                     request.Seed,
@@ -132,7 +154,10 @@ namespace Game.Composition
         public static bool TryReplayLive(EntityManager em, Entity session, out string newSessionId)
         {
             newSessionId = string.Empty;
-            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+            // In-place replay is only safe for ledger-only worlds. Native buildings,
+            // stores, wrecks and source-scene state require the match unload boundary.
+            if (em.HasComponent<SkirmishSharedSupplyInitialized>(session) ||
+                !SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
                 !em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
                 em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup == null)
                 return false;
@@ -178,7 +203,23 @@ namespace Game.Composition
                 return false;
             if (action != SkirmishAction.Replay && action != SkirmishAction.Restart)
                 return false;
-            TryReplayLive(em, session, out _);
+            if (!em.HasComponent<SkirmishResolvedSetupRecord>(session)) return false;
+            var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            if (setup == null || !em.HasComponent<SkirmishMatchState>(session)) return false;
+            using var pending = em.CreateEntityQuery(typeof(SkirmishReturnRequest));
+            if (!pending.IsEmptyIgnoreFilter) return true;
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            var match = em.GetComponentData<SkirmishMatchState>(session);
+            var payload = SkirmishReplayService.CreateFreshLaunch(new SkirmishReplayRequest
+            {
+                SourceSessionId = state.SessionId.ToString(), CatalogId = state.CatalogId.ToString(),
+                DifficultyId = state.DifficultyId, SizeId = state.SizeId, Seed = state.Seed,
+                Mode = SkirmishReplayMode.FreshStart
+            }, setup);
+            var request = em.CreateEntity(typeof(SkirmishReturnRequest));
+            em.SetComponentData(request, new SkirmishReturnRequest
+                { Action = action, Seed = match.Seed, ScenarioIndex = match.ScenarioIndex });
+            em.AddComponentObject(request, new SkirmishReplayLaunchRecord { Payload = payload, Setup = setup });
             return true;
         }
 
@@ -189,7 +230,7 @@ namespace Game.Composition
             if (!em.HasComponent<SkirmishExpandedReplayRequest>(session) ||
                 em.GetComponentData<SkirmishExpandedReplayRequest>(session).Requested == 0)
                 return false;
-            return TryReplayLive(em, session, out _);
+            return TryConsumeExpandedReplay(em, session, SkirmishAction.Replay);
         }
 
         public static bool TrySettleExpandedPresentation(EntityManager em, Entity session)
@@ -236,6 +277,7 @@ namespace Game.Composition
             RemoveIfPresent<SkirmishExpandedReplayRequest>(em, session);
             RemoveIfPresent<SkirmishResolvedSetupComponent>(em, session);
             RemoveIfPresent<SkirmishResearchStateComponent>(em, session);
+            RemoveIfPresent<SkirmishEnemyResearchStateComponent>(em, session);
             if (em.HasBuffer<SkirmishResearchQueueItem>(session))
                 em.GetBuffer<SkirmishResearchQueueItem>(session).Clear();
             if (em.HasBuffer<SkirmishProductionReservation>(session))

@@ -17,6 +17,85 @@ public sealed class SelectionCommandRequestResultContractTests
     private string previousLocale;
     [SetUp] public void SetLocale() { previousLocale = Game.Configs.GameLocalization.CurrentLocaleCode; Game.Configs.GameLocalization.SetLocale("en", false); }
     [TearDown] public void RestoreLocale() => Game.Configs.GameLocalization.SetLocale(previousLocale, false);
+    public static void RunRunwayDeliveryFlightRecoveryValidation()
+    {
+        try
+        {
+            var tests = new SelectionCommandRequestResultContractTests();
+            for (int command = 0; command < 3; command++)
+                tests.UnitAirMovementSystem_DeliveryTaxiPreservesParkingAndQueuedCommand(command);
+            tests.UnitAirMovementSystem_OffsetRunwayRollReachesLiftoff(1f / 60f, .9f);
+            tests.UnitAirMovementSystem_OffsetRunwayRollReachesLiftoff(1f / 30f, 1.5f);
+            foreach (float heading in new[] { 0f, 90f, 180f, 270f })
+                foreach (float step in new[] { 1f / 60f, 1f / 30f, .1f, -1f })
+                    tests.UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(step, heading);
+            tests.UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon();
+            tests.UnitAirMovementSystem_RunwayTakeoffRollPitchesNoseUp();
+            tests.UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd();
+            tests.UnitAirMovementSystem_FixedWingAttackAfterTakeoffUsesGradualTurn();
+            tests.UnitAirMovementSystem_FixedWingAttackManeuverTransitionsToFinalPass();
+            tests.UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight();
+            tests.UnitAirMovementSystem_FixedWingMoveOrderFromParkedTakesOffAndCompletes();
+            tests.UnitAirMovementSystem_FixedWingReturnHomeCompletesRunwayApproach();
+            tests.UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox();
+            Game.Tests.Editor.SkirmishNativeCheckpointPartsTests.RunFocusedValidation();
+            Debug.Log("[RunwayDeliveryFlightRecoveryValidation] result=Passed flightCases=30 checkpointCases=10");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RunwayDeliveryFlightRecoveryValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunRunwayDeliveryCommandValidation()
+    {
+        try
+        {
+            var tests = new SelectionCommandRequestResultContractTests();
+            tests.UnitAirMovementSystem_DeliveryTaxiPreservesParkingAndQueuedCommand(0);
+            tests.UnitAirMovementSystem_DeliveryTaxiPreservesParkingAndQueuedCommand(1);
+            tests.UnitAirMovementSystem_DeliveryTaxiPreservesParkingAndQueuedCommand(2);
+            Debug.Log("[RunwayDeliveryCommandValidation] result=Passed cases=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RunwayDeliveryCommandValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunRunwayTakeoffArrivalValidation()
+    {
+        try
+        {
+            var tests = new SelectionCommandRequestResultContractTests();
+            tests.UnitAirMovementSystem_OffsetRunwayRollReachesLiftoff(1f / 60f, .9f);
+            tests.UnitAirMovementSystem_OffsetRunwayRollReachesLiftoff(1f / 30f, 1.5f);
+            foreach (float heading in new[] { 0f, 90f, 180f, 270f })
+            {
+                tests.UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(1f / 60f, heading);
+                tests.UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(1f / 30f, heading);
+                tests.UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(.1f, heading);
+                tests.UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(-1f, heading);
+            }
+            tests.UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon();
+            tests.UnitAirMovementSystem_RunwayTakeoffRollPitchesNoseUp();
+            tests.UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd();
+            Debug.Log("[RunwayTakeoffArrivalValidation] result=Passed cases=18 regressions=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RunwayTakeoffArrivalValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
     public static void RunFixedWingManeuverValidation()
     {
         try
@@ -37,6 +116,96 @@ public sealed class SelectionCommandRequestResultContractTests
             UnityEngine.Debug.LogError("[FixedWingManeuverValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    public static void RunLongRunwayReturnValidation()
+    {
+        int cases = 0, failures = 0;
+        var tests = new SelectionCommandRequestResultContractTests();
+        foreach (float runwayHeading in new[] { 0f, 90f })
+            foreach (float heading in new[] { 0f, 90f, 180f, 270f })
+                foreach (float step in new[] { 1f / 30f, .1f })
+                    foreach (int entry in new[] { 0, 1, 2, 3 })
+                    {
+                        cases++;
+                        try { tests.UnitAirMovementSystem_StrikeReturnsToLongRunway(step, runwayHeading, heading, entry); }
+                        catch (Exception exception)
+                        {
+                            failures++;
+                            Debug.LogError("[LongRunwayReturnCase] result=Failed runwayHeading=" + runwayHeading +
+                                " heading=" + heading + " step=" + step + " entry=" + entry + " reason=" + exception.Message);
+                        }
+                    }
+        if (failures != 0)
+        {
+            Debug.LogError("[LongRunwayReturnValidation] result=Failed cases=" + cases + " failures=" + failures);
+            ValidationExit.Failed();
+            return;
+        }
+        tests.UnitAirMovementSystem_FixedWingReturnHomeCompletesRunwayApproach();
+        tests.UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox();
+        Debug.Log("[LongRunwayReturnValidation] result=Passed cases=" + cases + " legacyRegressions=2");
+        ValidationExit.Passed();
+    }
+
+    [TestCase(1f / 30f, 0f, 90f, 0)]
+    [TestCase(.1f, 90f, 180f, 1)]
+    [TestCase(.1f, 0f, 270f, 2)]
+    [TestCase(1f / 30f, 90f, 0f, 3)]
+    public void UnitAirMovementSystem_StrikeReturnsToLongRunway(float step, float runwayHeading, float heading, int entry)
+    {
+        // Use the paid S005 Strike's native speed, runway length and taxi speed.
+        // This isolated runtime check does not certify a normal-input mission.
+        using World world = new("StrikeLongRunwayReturn");
+        EntityManager em = world.EntityManager;
+        Entity gridEntity = CreateAirMovementGrid(em);
+        var grid = new GridConfig { Width = 2048, Height = 1024, CellSize = 1f, Origin = float3.zero };
+        em.SetComponentData(gridEntity, grid);
+        quaternion runwayRotation = quaternion.RotateY(math.radians(runwayHeading));
+        float3 threshold = new(1100.5f, .79416418f, 450.5f);
+        float3 runwayDirection = math.rotate(runwayRotation, new float3(0, 0, 1));
+        float3 sideways = math.rotate(runwayRotation, new float3(1, 0, 0));
+        float3 runwayEnd = threshold + runwayDirection * 210.11f;
+        float3 home = threshold + runwayDirection * 65f + sideways * 5f;
+        float2 offset = new[] { new float2(200, 400), new float2(6, 60), new float2(-150, -80), new float2(0, 450) }[entry];
+        float3 start = threshold + runwayDirection * offset.x + sideways * offset.y;
+        start.y += 28f;
+        Entity aircraft = CreateSelectedScanCapableUnit(em, GridUtils.WorldToCell(grid, start));
+        em.SetComponentData(aircraft, new UnitMove
+        { Speed = 36f, WalkSpeed = 36f, RoadSpeedMultiplier = 1f, ArriveDistance = .1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 28f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = home, HomeCell = GridUtils.WorldToCell(grid, home), HomeInitialized = 1,
+            UsesRunway = 1, Airborne = 1, ReturningHome = 1,
+            RunwayTakeoffPosition = threshold, RunwayTakeoffCell = GridUtils.WorldToCell(grid, threshold),
+            RunwayLandingPosition = runwayEnd, RunwayLandingCell = GridUtils.WorldToCell(grid, runwayEnd)
+        });
+        em.SetComponentData(aircraft, LocalTransform.FromPositionRotationScale(start,
+            quaternion.RotateY(math.radians(heading)), 1f));
+        SystemHandle movement = world.CreateSystem<UnitAirMovementSystem>();
+        double elapsed = 0;
+        bool capturedApproach = false, observedLanding = false;
+        for (int frame = 1; elapsed < 180d; frame++)
+        {
+            elapsed += step;
+            world.SetTime(new TimeData(elapsed, step));
+            movement.Update(world.Unmanaged);
+            var air = em.GetComponentData<UnitAirComponent>(aircraft);
+            capturedApproach |= air.ReturnApproachInitialized != 0;
+            observedLanding |= air.LandingRolling != 0;
+            if (air.Airborne != 0 || air.ReturningHome != 0 || air.LandingRolling != 0) continue;
+            Assert.IsTrue(capturedApproach && observedLanding, "Return must capture the approach and roll along the runway.");
+            Assert.Less(math.distance(em.GetComponentData<LocalTransform>(aircraft).Position, home), 1.5f);
+            Debug.Log("[LongRunwayReturnCase] result=Passed runwayHeading=" + runwayHeading + " heading=" + heading +
+                " step=" + step + " entry=" + entry + " elapsed=" + elapsed);
+            return;
+        }
+        var finalAir = em.GetComponentData<UnitAirComponent>(aircraft);
+        var finalPose = em.GetComponentData<LocalTransform>(aircraft);
+        Assert.Fail("Long-runway return did not finish in 180 seconds: position=" + finalPose.Position +
+            " airborne=" + finalAir.Airborne + " returning=" + finalAir.ReturningHome +
+            " approach=" + finalAir.ReturnApproachInitialized + " phase=" + finalAir.AttackRunActive);
     }
 
     public static void RunBoardFeedbackValidation()
@@ -3246,6 +3415,167 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(0, air.ReturningHome);
         Assert.IsTrue(em.HasComponent<UnitTarget>(scanner));
         Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(2)]
+    public void UnitAirMovementSystem_DeliveryTaxiPreservesParkingAndQueuedCommand(int command)
+    {
+        using World world = new("DeliveryTaxiQueuedCommand");
+        EntityManager em = world.EntityManager;
+        Entity gridEntity = CreateAirMovementGrid(em);
+        em.SetComponentData(gridEntity, new GridConfig
+        { Width = 2048, Height = 1024, CellSize = 1f, Origin = float3.zero });
+        float3 parking = new(837.5f, .82416415f, 709.5f);
+        int2 parkingCell = new(837, 709);
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(832, 670));
+        em.SetComponentData(aircraft, new UnitMove
+        { Speed = 36f, WalkSpeed = 36f, RoadSpeedMultiplier = 1f, ArriveDistance = .1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 28f, RunwayTaxiSpeed = 15f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = parking, HomeCell = parkingCell, HomeInitialized = 1,
+            UsesRunway = 1,
+            RunwayTakeoffPosition = new float3(832.32f, .82416415f, 767.67f),
+            RunwayTakeoffCell = new int2(832, 767),
+            RunwayLandingPosition = new float3(832.34f, .82416415f, 670.62f),
+            RunwayLandingCell = new int2(832, 670)
+        });
+        em.SetComponentData(aircraft, LocalTransform.FromPosition(new float3(832.34f, parking.y, 670.62f)));
+        em.AddComponent<UnitSpawnTransitTag>(aircraft);
+        em.AddComponentData(aircraft, new UnitTarget { Cell = parkingCell });
+        int2 queuedGoal = new(1402, 635);
+        if (command == 1)
+            UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, aircraft, queuedGoal);
+        else if (command == 2)
+        {
+            em.RemoveComponent<UnitTarget>(aircraft);
+            em.AddComponent<HoldPositionOrderTag>(aircraft);
+        }
+        SystemHandle movement = world.CreateSystem<UnitAirMovementSystem>();
+        for (int frame = 1; frame <= 80; frame++)
+        {
+            world.SetTime(new TimeData(frame * .1d, .1f));
+            movement.Update(world.Unmanaged);
+            if (em.HasComponent<UnitSpawnTransitTag>(aircraft)) continue;
+            Assert.Less(math.distance(em.GetComponentData<LocalTransform>(aircraft).Position, parking), .15f,
+                "A queued player command must not replace the production parking destination.");
+            Assert.Less(math.distance(em.GetComponentData<UnitAirComponent>(aircraft).HomePosition, parking), .15f);
+            if (command == 1)
+            {
+                Assert.IsTrue(em.HasComponent<UnitTarget>(aircraft), "Keep the queued player destination after parking.");
+                Assert.AreEqual(queuedGoal, em.GetComponentData<UnitTarget>(aircraft).Cell);
+                Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(aircraft));
+            }
+            else if (command == 2)
+                Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(aircraft));
+            else
+                Assert.IsFalse(em.HasComponent<UnitTarget>(aircraft), "Clear the completed internal taxi order.");
+            return;
+        }
+        Assert.Fail("Production taxi must finish at its assigned parking slot within eight seconds, despite queued player input.");
+    }
+
+    [TestCase(1f / 60f, 0f)]
+    [TestCase(1f / 30f, 180f)]
+    [TestCase(.1f, 90f)]
+    [TestCase(-1f, 270f)]
+    public void UnitAirMovementSystem_ParkedStrikeCompletesRunwayRoll(float deltaTime, float heading)
+    {
+        // Native689: parking is south of the taxi threshold. Taxiing north
+        // leaves the jet facing opposite its southbound runway roll.
+        using World world = new("ParkedStrikeRunwayRoll");
+        EntityManager em = world.EntityManager;
+        Entity gridEntity = CreateAirMovementGrid(em);
+        em.SetComponentData(gridEntity, new GridConfig
+        { Width = 2048, Height = 1024, CellSize = 1f, Origin = float3.zero });
+        float3 parking = new(837.5f, .82416415f, 709.5f);
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(837, 709));
+        em.SetComponentData(aircraft, new UnitMove
+        { Speed = 36f, WalkSpeed = 36f, RoadSpeedMultiplier = 1f, ArriveDistance = .1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 28f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = parking, HomeCell = new int2(837, 709), HomeInitialized = 1,
+            UsesRunway = 1,
+            RunwayTakeoffPosition = new float3(832.32257f, .79416418f, 774.675f),
+            RunwayTakeoffCell = new int2(832, 774),
+            RunwayLandingPosition = new float3(832.35736f, .79416418f, 564.565f),
+            RunwayLandingCell = new int2(832, 564)
+        });
+        em.SetComponentData(aircraft, LocalTransform.FromPositionRotationScale(
+            parking, quaternion.RotateY(math.radians(heading)), 1f));
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(1402, 635) });
+        em.AddComponent<ManualMoveOrderTag>(aircraft);
+        SystemHandle movement = world.CreateSystem<UnitAirMovementSystem>();
+        double elapsed = 0;
+        for (int frame = 1; elapsed < 45d; frame++)
+        {
+            float step = deltaTime > 0 ? deltaTime :
+                new[] { .017f, .023f, .049f, .031f, .067f, .041f, .019f }[frame % 7];
+            elapsed += step;
+            world.SetTime(new TimeData(elapsed, step));
+            movement.Update(world.Unmanaged);
+            var air = em.GetComponentData<UnitAirComponent>(aircraft);
+            var pose = em.GetComponentData<LocalTransform>(aircraft);
+            if (air.Airborne != 0)
+            {
+                Assert.AreEqual(0, air.TakeoffRolling);
+                Assert.Greater(pose.Position.z, air.RunwayLandingPosition.z,
+                    "Liftoff must happen with runway remaining.");
+                Assert.Greater(pose.Position.y, air.RunwayTakeoffPosition.y + 1f);
+                return;
+            }
+            Assert.GreaterOrEqual(pose.Position.z, air.RunwayLandingPosition.z - 1f,
+                "Ground-roll arrival missed its liftoff point and ran past the runway.");
+        }
+        Assert.Fail("Paid fixed-wing taxi and ground roll must reach liftoff within 45 seconds.");
+    }
+
+    [TestCase(1f / 60f, .9f)]
+    [TestCase(1f / 30f, 1.5f)]
+    public void UnitAirMovementSystem_OffsetRunwayRollReachesLiftoff(float deltaTime, float offset)
+    {
+        using World world = new("OffsetRunwayRoll");
+        EntityManager em = world.EntityManager;
+        CreateAirMovementGrid(em);
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(20, 24));
+        em.SetComponentData(aircraft, new UnitMove
+        { Speed = 36f, WalkSpeed = 36f, RoadSpeedMultiplier = 1f, ArriveDistance = .1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 28f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = new float3(20f, 0f, 30f), HomeCell = new int2(20, 30), HomeInitialized = 1,
+            UsesRunway = 1, TakeoffRolling = 1,
+            RunwayTakeoffPosition = new float3(20f, 0f, 50f), RunwayTakeoffCell = new int2(20, 50),
+            RunwayLandingPosition = new float3(20f, 0f, 10f), RunwayLandingCell = new int2(20, 10)
+        });
+        // The native failed roll passed the liftoff station with about one metre
+        // of lateral drift. The nose-up pose realigns heading every frame, so
+        // chasing a single point can miss arrival even inside the runway.
+        em.SetComponentData(aircraft, LocalTransform.FromPositionRotationScale(
+            new float3(20f + offset, 0f, 27f), quaternion.RotateY(math.PI), 1f));
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(40, 40) });
+        em.AddComponent<ManualMoveOrderTag>(aircraft);
+        SystemHandle movement = world.CreateSystem<UnitAirMovementSystem>();
+        for (int frame = 1; frame <= (int)math.ceil(3f / deltaTime); frame++)
+        {
+            world.SetTime(new TimeData(frame * (double)deltaTime, deltaTime));
+            movement.Update(world.Unmanaged);
+            var air = em.GetComponentData<UnitAirComponent>(aircraft);
+            var pose = em.GetComponentData<LocalTransform>(aircraft);
+            if (air.Airborne != 0)
+            {
+                Assert.AreEqual(0, air.TakeoffRolling);
+                Assert.Greater(pose.Position.z, air.RunwayLandingPosition.z);
+                Assert.Greater(pose.Position.y, 1f);
+                return;
+            }
+            Assert.GreaterOrEqual(pose.Position.z, air.RunwayLandingPosition.z,
+                "A small lateral offset must not send ground roll past the runway.");
+        }
+        Assert.Fail("Runway roll missed its liftoff station because it chased a single point.");
     }
 
     [Test]

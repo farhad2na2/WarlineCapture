@@ -147,6 +147,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.08235294, g: 0.13725491, b: 0.15294118, a: 0.9882353}
   topRightColor: {r: 0.05882353, g: 0.11372549, b: 0.12941177, a: 0.9882353}
   bottomLeftColor: {r: 0.015686275, g: 0.039215688, b: 0.047058824, a: 1}
@@ -369,10 +370,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LOADING REQUIRED DATA
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bb65f60bb475e6d4c888be804e4dab98, type: 2}
-  m_sharedMaterial: {fileID: -3822719863950179524, guid: bb65f60bb475e6d4c888be804e4dab98, type: 2}
+  m_text: "\uFEA9\uFEAD \uFEA3\uFE8E\uFEDD \uFE91\uFE8E\uFEAD\uFB94\uFEAC\uFE8D\uFEAD\uFBFC
+    \uFEA9\uFE8D\uFEA9\uFEE9\uFEEB\uFE8E\uFBFC \uFEFB\uFEAF\uFEE1"
+  m_isRightToLeft: 1
+  m_fontAsset: {fileID: 11400000, guid: 15a37dd92cdf54f419eb634937a005e2, type: 2}
+  m_sharedMaterial: {fileID: -7137636540071003996, guid: 15a37dd92cdf54f419eb634937a005e2, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -399,11 +401,11 @@ MonoBehaviour:
   m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 30
+  m_fontSizeMax: 30
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -675,6 +677,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.07450981, g: 0.12156863, b: 0.13725491, a: 0.972549}
   topRightColor: {r: 0.05882353, g: 0.105882354, b: 0.12156863, a: 0.972549}
   bottomLeftColor: {r: 0.023529412, g: 0.050980393, b: 0.0627451, a: 0.9882353}
@@ -1820,6 +1823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.07450981, g: 0.12156863, b: 0.13725491, a: 0.972549}
   topRightColor: {r: 0.05882353, g: 0.105882354, b: 0.12156863, a: 0.972549}
   bottomLeftColor: {r: 0.023529412, g: 0.050980393, b: 0.0627451, a: 0.9882353}
@@ -1936,7 +1940,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 4, y: 0}
-  m_SizeDelta: {x: 1085, y: 27}
+  m_SizeDelta: {x: 1080.52, y: 27}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8631875488602352671
 CanvasRenderer:
@@ -1966,6 +1970,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.16862746, g: 0.8901961, b: 0.9019608, a: 1}
   topRightColor: {r: 0.09803922, g: 0.827451, b: 0.85490197, a: 1}
   bottomLeftColor: {r: 0, g: 0.5647059, b: 0.65882355, a: 1}
@@ -2189,6 +2194,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.07450981, g: 0.12156863, b: 0.13725491, a: 0.972549}
   topRightColor: {r: 0.05882353, g: 0.105882354, b: 0.12156863, a: 0.972549}
   bottomLeftColor: {r: 0.023529412, g: 0.050980393, b: 0.0627451, a: 0.9882353}
@@ -2411,6 +2417,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.07450981, g: 0.12156863, b: 0.13725491, a: 0.972549}
   topRightColor: {r: 0.07450981, g: 0.12156863, b: 0.13725491, a: 0.972549}
   bottomLeftColor: {r: 0.023529412, g: 0.050980393, b: 0.0627451, a: 0.9882353}
@@ -2557,6 +2564,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0, g: 0, b: 0, a: 0.34}
   topRightColor: {r: 0, g: 0, b: 0, a: 0.34}
   bottomLeftColor: {r: 0, g: 0, b: 0, a: 0}
@@ -3951,6 +3959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.047058824, g: 0.08627451, b: 0.09803922, a: 1}
   topRightColor: {r: 0.047058824, g: 0.08627451, b: 0.09803922, a: 1}
   bottomLeftColor: {r: 0.015686275, g: 0.039215688, b: 0.047058824, a: 1}
@@ -4098,6 +4107,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.08627451, g: 0.13333334, b: 0.14901961, a: 0.9882353}
   topRightColor: {r: 0.050980393, g: 0.09803922, b: 0.11372549, a: 0.9882353}
   bottomLeftColor: {r: 0.019607844, g: 0.047058824, b: 0.05882353, a: 0.9882353}
@@ -5009,7 +5019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBindingView
-  localizationKey: 
+  localizationKey: ui.brand.warline_capture
   englishFallback: WARLINE CAPTURE
   observeRuntimeSourceChanges: 1
   minimumPresentationSize: 30

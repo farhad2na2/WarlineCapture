@@ -752,7 +752,7 @@ namespace Game.Runtime
             }
 
             storage = entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
-            SyncResourceStorageMetadata(building, ref storage);
+            SyncResourceStorageMetadata(entityManager, building, ref storage);
             return true;
         }
 
@@ -812,6 +812,7 @@ namespace Game.Runtime
         }
 
         private static void SyncResourceStorageMetadata(
+            EntityManager entityManager,
             RuntimeBuildingEntity building,
             ref BuildingResourceStorageComponent storage)
         {
@@ -821,6 +822,12 @@ namespace Game.Runtime
             storage.FuelStorageCapacity = Mathf.Max(0, building.FuelStorageCapacity);
             storage.OilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
             storage.FuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
+            if (entityManager.HasComponent<BuildingResourceProductionProfileComponent>(building.CombatEntity))
+            {
+                var profile = entityManager.GetComponentData<BuildingResourceProductionProfileComponent>(building.CombatEntity);
+                storage.OilBarrelsPerDay = profile.OilPerPeriod;
+                storage.FuelBarrelsPerDay = profile.FuelPerPeriod;
+            }
         }
 
         public bool IsResourceStorageBuilding(IResourceBuilding building)

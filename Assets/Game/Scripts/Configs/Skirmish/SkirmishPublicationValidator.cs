@@ -17,6 +17,8 @@ namespace Game.Configs
         public bool EdgeFixtures;
         public bool RecoveryEvidence;
         public bool DeviceEvidence;
+        public bool RoleLifecycleEvidence;
+        public bool AircraftCapacityEvidence;
         public bool AssetExists;
     }
 
@@ -62,7 +64,7 @@ namespace Game.Configs
 
             string catalogId = FirstNonEmpty(row.CatalogId, definition?.CatalogId, setup?.CatalogId);
             string definitionId = FirstNonEmpty(row.DefinitionId, definition?.DefinitionId, setup?.DefinitionId);
-            if (catalogId != S002CatalogId && catalogId != S003CatalogId && catalogId != S004CatalogId)
+            if (catalogId != S002CatalogId && catalogId != S003CatalogId && catalogId != S004CatalogId && catalogId != "S005")
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InvalidIdentity, "catalogId", catalogId));
                 return false;
@@ -126,6 +128,15 @@ namespace Game.Configs
                     SkirmishReasonCode.MissingReadiness,
                     "evidence",
                     "Manual, ARIA, edge, recovery and device evidence are required."));
+                return true;
+            }
+
+            if (catalogId == "S005" && (!evidence.RoleLifecycleEvidence || !evidence.AircraftCapacityEvidence))
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.MissingReadiness,
+                    "combinedArms",
+                    "S005 requires certified role lifecycles and bilateral aircraft clearance/capacity for this compiled setup."));
                 return true;
             }
 

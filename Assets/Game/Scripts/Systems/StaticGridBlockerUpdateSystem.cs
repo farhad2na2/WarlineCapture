@@ -66,9 +66,9 @@ namespace Game.Runtime
             }
         }
 
-        private static void ComputeBounds(in UnitGrid unitGrid, in GridBlockerSize size, out int2 min, out int2 max)
+        private static void ComputeBounds(int2 origin, in GridBlockerSize size, out int2 min, out int2 max)
         {
-            min = unitGrid.Cell;
+            min = origin;
             int2 s = size.Size;
             if (s.x < 1) s.x = 1;
             if (s.y < 1) s.y = 1;
@@ -101,6 +101,8 @@ namespace Game.Runtime
             var blocked = blockerDataRw.ValueRW.Blocked;
             var friendlyPassFactionIds = blockerDataRw.ValueRW.FriendlyPassFactionIds;
             var friendlyPassLookup = SystemAPI.GetComponentLookup<FriendlyPassGridBlocker>(true);
+            var authoredBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true);
+            var buildingInfoLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true);
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -110,7 +112,11 @@ namespace Game.Runtime
                          .WithNone<StaticBlockerPrevBounds>()
                          .WithEntityAccess())
             {
-                ComputeBounds(unitGrid.ValueRO, size.ValueRO, out var min, out var max);
+                // Authored map buildings use UnitGrid for their selection centre.
+                // Their authoritative foundation origin is stored separately.
+                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
+                    ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
+                ComputeBounds(origin, size.ValueRO, out var min, out var max);
                 byte friendlyPassFactionId = GetFriendlyPassFactionId(friendlyPassLookup, entity);
                 ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1);
                 if (friendlyPassFactionId != byte.MaxValue)
@@ -128,7 +134,9 @@ namespace Game.Runtime
                          .WithAll<StaticGridBlocker>()
                          .WithEntityAccess())
             {
-                ComputeBounds(unitGrid.ValueRO, size.ValueRO, out var min, out var max);
+                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
+                    ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
+                ComputeBounds(origin, size.ValueRO, out var min, out var max);
                 int2 oldMin = prev.ValueRO.Min;
                 int2 oldMax = prev.ValueRO.Max;
                 byte oldFriendlyPassFactionId = prev.ValueRO.FriendlyPassFactionId;

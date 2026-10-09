@@ -164,13 +164,12 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < CaptureResolution; x++)
                 {
                     float vertical = y / (float)(CaptureResolution - 1);
-                    int ripple = ((x * 17 + y * 31) & 15) - 8;
+                    int ripple = Mathf.RoundToInt((Mathf.PerlinNoise(x * 0.025f, y * 0.025f) - 0.5f) * 4f);
                     int ridge = Mathf.RoundToInt(Mathf.Sin((x * 0.025f) + (y * 0.013f)) * 7f);
                     pixels[x + y * CaptureResolution] = LerpColor(RasterBackgroundA, RasterBackgroundB, vertical, ripple + ridge);
                 }
             }
 
-            DrawRasterGrid(pixels);
             _rasterBasePixels = pixels;
             return _rasterBasePixels;
         }

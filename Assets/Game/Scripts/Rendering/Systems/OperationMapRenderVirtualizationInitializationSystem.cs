@@ -226,7 +226,7 @@ namespace Game.Rendering
                     out OperationMapRenderCellEnvelope materializedEnvelope))
             {
                 throw new InvalidOperationException(
-                    "Render virtualization camera envelope is invalid.");
+                    $"Render virtualization camera envelope is invalid. position={camera.Position} rotation={camera.Rotation.value} determinant={math.determinant(camera.ViewProjection)} projection={camera.Projection}");
             }
             bool guardContainsRequired = _hasGuardEnvelope != 0 &&
                 OperationMapRenderGuardEnvelopeDecision.Contains(
@@ -356,9 +356,16 @@ namespace Game.Rendering
             }
 
             float determinant = math.determinant(camera.ViewProjection);
-            if (!math.isfinite(determinant) || math.abs(determinant) < 1e-8f)
+            // A wide orthographic camera has a small, valid determinant.
+            // Reject singular/nonfinite matrices rather than a scale-dependent cutoff.
+            if (!math.isfinite(determinant) || determinant == 0f)
                 return false;
             float4x4 inverseViewProjection = math.inverse(camera.ViewProjection);
+            if (!math.all(math.isfinite(inverseViewProjection.c0)) ||
+                !math.all(math.isfinite(inverseViewProjection.c1)) ||
+                !math.all(math.isfinite(inverseViewProjection.c2)) ||
+                !math.all(math.isfinite(inverseViewProjection.c3)))
+                return false;
             bool found = false;
             for (int y = -1; y <= 1; y += 2)
             {

@@ -364,11 +364,13 @@ def roster_audit():
       'Veh_Drone':'role.drone','Veh_Jet_02':'role.fighter','Veh_Jet_01':'role.strike',
       'Veh_Plane_Transport':'role.transport_plane','Veh_Truck_Tray':'role.logistics_truck;role.convoy_objective',
       'Veh_Truck_Tanker':'role.tanker'}
-    structures={'Building_Barrack','Helipad','Airport','Building_Satelite_Dish','OilPump','OilRefinery','OilRefinery_Big','Fuel_Bladder','Ammunition_Depot','GuardTower','GuardTower_Big','Road_Barrier','Wall_Dirt_Straight','Wall_Fence_Straight'}
+    structures={'Building_Barrack','GroundStaging','Helipad','Airport','Building_Satelite_Dish','OilPump','OilRefinery','OilRefinery_Big','Fuel_Bladder','Ammunition_Depot','GuardTower','GuardTower_Big','Road_Barrier','Wall_Dirt_Straight','Wall_Fence_Straight'}
     result=[]
     for kind,pattern,prefix in [('Unit','Prefab_UnitGrid*.asset','Prefab_UnitGrid_'),('Building','Prefab_BuildingDefinition*.asset','Prefab_BuildingDefinition_')]:
         paths=sorted((REPO/'Assets/Game/Configs/Prefabs').glob(pattern))
-        assert len(paths)==(51 if kind=='Unit' else 23),(kind,len(paths))
+        # 2026-10-06 re-audit: the authored shared Ground Staging definition
+        # supplements the original 23 building sources; certification stays Pending.
+        assert len(paths)==(51 if kind=='Unit' else 24),(kind,len(paths))
         for p in paths:
             raw=p.read_bytes();s=raw.decode('utf-8');name=re.search(r'^  displayName: (.*)',s,re.M)
             key=p.stem.removeprefix(prefix).removesuffix('_Config')
@@ -416,7 +418,7 @@ def main():
     if args.packets_only:
         print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 campaignReusePlans=120 futureMapPlans=114 codedMapExclusions=6 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
     else:
-        print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=74 mode='+('write' if args.write else 'check'))
+        print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=75 mode='+('write' if args.write else 'check'))
     print('Documentation generation/consistency only; no Unity, gameplay, ARIA or device acceptance was executed.')
 
 if __name__=='__main__': main()

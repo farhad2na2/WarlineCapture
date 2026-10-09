@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
+using Game.Components;
 
 namespace Game.Runtime
 {
@@ -73,6 +74,26 @@ namespace Game.Runtime
                 OilBarrelsPerFuelBarrel = oilBarrelsPerFuelBarrel;
                 TryGetEntityManager = tryGetEntityManager;
             }
+        }
+
+        internal void BindCheckpointOwners(Context context)
+        {
+            var production = context.ProductionUpdateContext;
+            if (production.TransportSystem == null || context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager em)) return;
+            void Bind(RuntimeBuildingEntity building)
+            {
+                if (building == null || !em.Exists(building.CombatEntity) ||
+                    !em.HasComponent<SkirmishNativeBuildingCheckpointRecord>(building.CombatEntity)) return;
+                production.TransportSystem.BindCheckpointProductionOwner(production.TransportContext, building,
+                    em.GetComponentObject<SkirmishNativeBuildingCheckpointRecord>(building.CombatEntity), production.CheckpointPrefabs);
+            }
+            if (context.RuntimeBuildingMap != null)
+            {
+                foreach (var pair in context.RuntimeBuildingMap) Bind(pair.Value);
+            }
+            else if (context.RuntimeBuildings != null)
+                foreach (var pair in context.RuntimeBuildings) Bind(pair.Value);
         }
 
         public bool ProcessPendingProductions(Context context)

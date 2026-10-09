@@ -70,7 +70,19 @@ public sealed class StartThroughM02LocalizationTests
             Assert.That(bound.Contains(text), Is.True, text.name + ": " + source);
             matched++;
         }
-        Assert.That(matched, Is.GreaterThanOrEqualTo(40), "Do not silently lose identity/guidance binding coverage.");
+        // The comic presentation replaced the old guidance surface. Guard the
+        // current semantic content instead of counting labels from that layout.
+        Assert.That(matched, Is.GreaterThan(0));
+        V3UiLocalizationCatalogBuilder.ValidateFirstLaunchStaticBindings();
+        var authored = prefab.GetComponentsInChildren<TMP_Text>(true)
+            .Select(t => t is RTLTextMeshPro rtl ? rtl.OriginalText : t.text).ToHashSet();
+        foreach (string identity in new[] { "MIRA ALAVI", "JALIL OKAFOR", "SAMIRA KHALID",
+                     "DALIA RAHIM", "KENJI SATO", "IRINA PETROVA", "CALLSIGN",
+                     "CHOOSE YOUR COMMANDER IDENTITY" })
+            Assert.That(authored.Contains(identity), Is.True, "Missing commander identity content: " + identity);
+        for (int i = 0; i < targets.arraySize; i++)
+            Assert.That(targets.GetArrayElementAtIndex(i).objectReferenceValue, Is.Not.Null,
+                "Stale narrative localization reference at " + i);
     }
 
     [Test] public void FarsiLoadingTipStaysAgainstItsLabel()
@@ -156,6 +168,15 @@ public sealed class StartThroughM02LocalizationTests
         Assert.That(UiLocalizedText.SelectionLabel("ECHO-7"), Is.EqualTo("ECHO-7"));
         NoLatinWords(UiLocalizedText.PlacementStatus("Barracks: Valid placement (1006,330) 40x20"));
         NoLatinWords(UiLocalizedText.PlacementStatus("Blocked by road or blocker (1006,330) 40x20"));
+        Assert.That(UiLocalizedText.PlacementStatus("Valid placement (1006,330) 40x20"),
+            Is.EqualTo(GameLocalization.Get("build.placement.status.valid_ground")));
+        Assert.That(UiLocalizedText.PlacementStatus("Blocked by road or blocker (1006,330) 40x20"),
+            Is.EqualTo(GameLocalization.Get("ui.v3.invalid_placement.378003ae89")));
+        GameLocalization.SetLocale("en", false);
+        Assert.That(UiLocalizedText.PlacementStatus("Barracks: Valid placement (1006,330) 40x20"),
+            Is.EqualTo("Barracks: VALID GROUND"));
+        Assert.That(UiLocalizedText.PlacementStatus("Blocked by road or blocker (1006,330) 40x20"),
+            Is.EqualTo("INVALID PLACEMENT"));
     }
 
     [Test] public void ProductionQueueReplacesItsAuthoredPlaceholderWithTheLocalizedUnitName()
@@ -217,6 +238,18 @@ public sealed class StartThroughM02LocalizationTests
     {
         V3UiLocalizationCatalogBuilder.ApplyConfiguredUiStrings();
         RunFocusedValidation();
+    }
+
+    public static void RunPlacementValidation()
+    {
+        var fixture = new StartThroughM02LocalizationTests();
+        try
+        {
+            fixture.SetUp();
+            fixture.BuildingAndRecruitmentMessagesTranslateMetadataAndAllResourceFailures();
+            Debug.Log("[PlayerPlacementLocalization] result=Passed locales=en,fa-IR coordinatesHidden=1");
+        }
+        finally { fixture.TearDown(); }
     }
 
     public static void RunFocusedValidation()

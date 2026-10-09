@@ -12,6 +12,9 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency.Complete();var em=state.EntityManager;var ecb=new EntityCommandBuffer(Allocator.Temp);
+            foreach(var (capacity,entity) in SystemAPI.Query<RefRO<SkirmishSupportPassengerCapacity>>().WithOptions(EntityQueryOptions.IncludeDisabledEntities).WithEntityAccess())
+                if(!em.HasComponent<UnitHealth>(entity))
+                {SupportParatrooperAdapterSystemHelper.ReleaseDestroyedNativePassenger(em,capacity.ValueRO);ecb.RemoveComponent<SkirmishSupportPassengerCapacity>(entity);}
             foreach(var (cleanup,entity) in SystemAPI.Query<RefRO<SupportPassengerCleanupComponent>>().WithNone<SupportPassengerOwnerComponent>().WithOptions(EntityQueryOptions.IncludeDisabledEntities).WithEntityAccess())
             {
                 if(em.Exists(cleanup.ValueRO.Canopy))ecb.DestroyEntity(cleanup.ValueRO.Canopy);
@@ -21,7 +24,7 @@ namespace Game.Runtime
             {
                 var owner=reference.ValueRO;
                 bool valid=em.Exists(owner.Root)&&em.HasComponent<SupportSessionComponent>(owner.Root);
-                if(valid){var session=em.GetComponentData<SupportSessionComponent>(owner.Root);valid=session.SessionToken.Equals(owner.SessionToken)&&session.AttemptOrdinal==owner.AttemptOrdinal;}
+                if(valid){var session=em.GetComponentData<SupportSessionComponent>(owner.Root);valid=session.SessionToken.Equals(owner.SessionToken)&&session.AttemptOrdinal==owner.AttemptOrdinal&&!SupportSessionUtility.IsTerminal(em,owner.Root,session);}
                 if(!valid){if(em.HasComponent<SupportPassengerCleanupComponent>(entity)){var canopy=em.GetComponentData<SupportPassengerCleanupComponent>(entity).Canopy;if(em.Exists(canopy))ecb.DestroyEntity(canopy);ecb.RemoveComponent<SupportPassengerCleanupComponent>(entity);}ecb.DestroyEntity(entity);continue;}
                 if(owner.Released==0||owner.Landed!=0||em.HasComponent<UnitTransportParachuteDropComponent>(entity)||em.HasComponent<UnitTransportCargoDropComponent>(entity)||em.HasComponent<UnitTransportAirdropSettleComponent>(entity))continue;
                 owner.Landed=1;reference.ValueRW=owner;ecb.RemoveComponent<SupportPassengerTransitTag>(entity);

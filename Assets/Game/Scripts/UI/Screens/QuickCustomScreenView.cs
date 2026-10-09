@@ -54,6 +54,17 @@ namespace Game.UI.Runtime
         private IQuickCustomGameConfigStore _configStore;
         private IMatchLaunchCommand _launchCommand;
 
+        private void Update()
+        {
+            if (baseAssaultPreset && _selectedScenarioId == "S005" && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
+                PresentResumeFailure();
+        }
+
+        private void PresentResumeFailure() => UiLocalizedText.Set(scenarioDescription,
+            GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode
+                ? "ادامهٔ نبرد ممکن نشد. دوباره تلاش کن یا یک نبرد جدید شروع کن."
+                : "Could not continue this match. Try again or start a new match.");
+
         private void Awake()
         {
             WireEvents();
@@ -182,25 +193,28 @@ namespace Game.UI.Runtime
                     var binding = mapNameText.GetComponent<V3LocalizedTextBindingView>() ??
                                   mapNameText.gameObject.AddComponent<V3LocalizedTextBindingView>();
                     binding.ConfigureFontBounds(12f, 22f);
+                    // Match the shared responsive frame for every selected mission.
+                    // Legacy stretch anchors otherwise place text behind the library.
+                    var titleRect = mapNameText.rectTransform;
+                    titleRect.anchorMin = titleRect.anchorMax = new Vector2(0f, 1f);
+                    titleRect.pivot = new Vector2(0f, 1f);
+                    titleRect.anchoredPosition = new Vector2(8f, 0f);
+                    titleRect.sizeDelta = new Vector2(784f, 54f);
+                    var previewRect = titleRect.parent.Find("MapPreviewClip") as RectTransform;
+                    if (previewRect != null)
+                    {
+                        previewRect.anchorMin = previewRect.anchorMax = new Vector2(0f, 1f);
+                        previewRect.pivot = new Vector2(0f, 1f);
+                    }
                     if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
                     {
-                        // The responsive frame supplies a fixed-width title slot.
-                        // Older setup authoring left this label horizontally stretched.
-                        var titleRect = mapNameText.rectTransform;
-                        titleRect.anchorMin = titleRect.anchorMax = new Vector2(0f, 1f);
-                        titleRect.pivot = new Vector2(0f, 1f);
-                        titleRect.anchoredPosition = new Vector2(8f, 0f);
-                        titleRect.sizeDelta = new Vector2(784f, 54f);
-                        var previewRect = titleRect.parent.Find("MapPreviewClip") as RectTransform;
-                        if (previewRect != null)
-                        {
-                            previewRect.anchorMin = previewRect.anchorMax = new Vector2(0f, 1f);
-                            previewRect.pivot = new Vector2(0f, 1f);
-                        }
                         UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
                             ? "S004 · حملهٔ هوایی به پایگاه" : "S004 · Air-mobile base assault");
                         mapNameText.overflowMode = TextOverflowModes.Overflow;
                     }
+                    else if (selected.ScenarioId == "S005")
+                        UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
+                            ? "S005 · حمله با نیروهای ترکیبی" : "S005 · Combined-arms base assault");
                     else if (!string.IsNullOrEmpty(titleKey))
                     {
                         binding.Configure(titleKey, titleEnglish, false);
@@ -284,6 +298,12 @@ namespace Game.UI.Runtime
                 if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable)
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;
+                if (_savedMatchAvailable)
+                {
+                    if (!UiShellRuntimeGateway.TryResumeSavedSkirmish(_selectedScenarioId))
+                        PresentResumeFailure();
+                    return;
+                }
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
@@ -315,6 +335,12 @@ namespace Game.UI.Runtime
 
         private void ResetToDefaults()
         {
+            if (baseAssaultPreset && _savedMatchAvailable)
+            {
+                if (!UiShellRuntimeGateway.TryDiscardSavedSkirmish(_selectedScenarioId)) return;
+                PresentScenarioChoices();
+                return;
+            }
             flowSystem.ResetToDefaults(this, _configStore);
         }
 

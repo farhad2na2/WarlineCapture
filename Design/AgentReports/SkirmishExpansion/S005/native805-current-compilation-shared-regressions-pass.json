@@ -1,0 +1,15 @@
+{
+  "result": "PassedFocusedSharedRegressions",
+  "sourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-805-verified-global-shared-regressions-pre-source-manifest.json",
+  "postSourceManifest": "final-805-verified-global-shared-regressions-closed-post-source-manifest.json",
+  "log": "native-805-verified-global-shared-regressions.log",
+  "wrapperExitCode": 0,
+  "requiredPassMarker": "[SharedOilAndAirFuelValidation] result=Passed oilCases=2 logisticsRegressions=55 economyRegressions=7 fuelContextCases=3 approachCases=2 existingFuelRegressions=8",
+  "compilerErrorsObserved": 0,
+  "groupedCases": 77,
+  "normalMissionCertified": false,
+  "completeFixedWingCycleCertified": false,
+  "playerReady": false
+}

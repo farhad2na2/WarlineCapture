@@ -19,6 +19,30 @@ public sealed class RtsSelectionInputSystemTests
     private World _previousWorld;
     private World _testWorld;
 
+    public static void RunAircraftReturnParkingValidation()
+    {
+        try
+        {
+            RunCase(test => test.ReturnToBaseCommandSystem_StartsNativeLandingWithoutParkingMovePass(1f / 30f));
+            RunCase(test => test.ReturnToBaseCommandSystem_StartsNativeLandingWithoutParkingMovePass(.1f));
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsFocusedPlayerUnitToRespawnSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsProducedUnitToProducingBuildingSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_RejectsWhenNoOwnedHomeSpawnPointExists());
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsSelectedPlayerUnitsWhenFocusedUnitMissing());
+            RunCase(test => test.ReturnToBaseCommandSystem_RejectsWithoutSelectedPlayerUnit());
+            RunCase(test => test.ReturnToBaseCommandSystem_RecordsTouchReceiptAndDirectViolation());
+            RunCase(test => test.ReturnToBaseCommandSystem_InterruptsSkirmishAircraftAttack());
+            Debug.Log("[AircraftReturnParkingValidation] result=Passed cases=2 commandRegressions=7");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[AircraftReturnParkingValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -2114,11 +2138,78 @@ public sealed class RtsSelectionInputSystemTests
         var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
         Assert.AreEqual(0, intent.Active);
         Assert.AreEqual(Entity.Null, intent.AttackTarget);
-        Assert.AreEqual(new int2(7, 9), em.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.IsFalse(em.HasComponent<UnitTarget>(unit), "Native Return owns landing and taxi instead of a new move pass.");
+        Assert.AreEqual(new int2(7, 9), em.GetComponentData<UnitAirComponent>(unit).HomeCell);
         Assert.AreEqual(1, em.GetComponentData<UnitAirComponent>(unit).ReturningHome);
         Assert.AreEqual(0, em.GetComponentData<UnitCombat>(unit).AutoEngage);
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
         Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit));
+    }
+
+    [TestCase(1f / 30f)]
+    [TestCase(.1f)]
+    public void ReturnToBaseCommandSystem_StartsNativeLandingWithoutParkingMovePass(float step)
+    {
+        // Native785: Return inserted a move pass over parking before the runway
+        // approach, burning scarce Fuel even though combat was already stopped.
+        var em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: false);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(12, 14));
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        { Width = 2048, Height = 1024, CellSize = 1, Origin = float3.zero });
+        Entity unit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove),
+            typeof(UnitAirMovement), typeof(UnitAirComponent), typeof(UnitCombat),
+            typeof(LocalTransform), typeof(UnitTarget), typeof(AttackMoveOrder));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(1390, 690) });
+        em.SetComponentData(unit, new UnitMove { Speed = 36, WalkSpeed = 36, RoadSpeedMultiplier = 1, ArriveDistance = .05f });
+        em.SetComponentData(unit, new UnitAirMovement { CruiseHeight = 28, RunwayTaxiSpeed = 5 });
+        float3 home = new(1374.5f, .82416415f, 189.5f);
+        em.SetComponentData(unit, new UnitAirComponent
+        {
+            HomeInitialized = 1, HomePosition = home, HomeCell = new int2(1374, 189),
+            Airborne = 1, UsesRunway = 1, AttackRunActive = 3, AttackManeuverTurnSign = -1,
+            AttackPassGoalCell = new int2(1402, 635),
+            AttackRunExitPosition = new float3(1376.31775f, 29.759838f, 747.06036f),
+            RunwayTakeoffPosition = new float3(1309.32507f, .79416418f, 184.32256f),
+            RunwayTakeoffCell = new int2(1309, 184),
+            RunwayLandingPosition = new float3(1519.43494f, .79416418f, 184.35732f),
+            RunwayLandingCell = new int2(1519, 184),
+            FixedWingCruiseY = 29.759838f, FixedWingCruiseYInitialized = 1
+        });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(unit, new UnitTarget { Cell = new int2(1402, 635) });
+        em.SetComponentData(unit, LocalTransform.FromPositionRotationScale(
+            new float3(1390.18982f, 29.759838f, 690.63153f),
+            new quaternion(-.00000036142f, -.12023522f, .00000298414f, .9927454f), 1));
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        Assert.IsTrue(input.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, frame: 501));
+        Assert.IsTrue(RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(em, unit,
+            out _, out bool accepted, out _, out int issued));
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(1, issued);
+        SystemHandle movement = _testWorld.CreateSystem<UnitAirMovementSystem>();
+        bool observedLanding = false;
+        double elapsed = 0;
+        for (int frame = 1; elapsed < 180; frame++)
+        {
+            elapsed += step;
+            _testWorld.SetTime(new Unity.Core.TimeData(elapsed, step));
+            movement.Update(_testWorld.Unmanaged);
+            var air = em.GetComponentData<UnitAirComponent>(unit);
+            var pose = em.GetComponentData<LocalTransform>(unit);
+            if (frame == 1)
+                Assert.IsTrue(air.ReturnApproachInitialized != 0 || air.AttackRunActive >= 4,
+                    "Return must begin the native runway approach on its first movement frame, rather than an extra move pass. phase=" + air.AttackRunActive);
+            observedLanding |= air.LandingRolling != 0;
+            if (air.Airborne != 0 || air.ReturningHome != 0 || air.LandingRolling != 0) continue;
+            Assert.IsTrue(observedLanding, "Return must land on the runway before taxiing to parking.");
+            Assert.Less(math.distance(pose.Position, home), 1.5f);
+            Debug.Log("[AircraftReturnParkingCase] result=Passed step=" + step + " elapsed=" + elapsed);
+            return;
+        }
+        Assert.Fail("Return must finish landing and taxi home within 180 seconds.");
     }
 
     [Test]

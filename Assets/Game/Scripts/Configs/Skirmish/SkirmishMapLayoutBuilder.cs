@@ -177,12 +177,15 @@ namespace Game.Configs
             layout.ApplyWorldBinding(DesertBaseWorldBinding);
         }
 
-        public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup)
+        public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup, SkirmishMapLayoutConfig layout = null)
         {
             return setup != null &&
-                   (setup.CatalogId == "S002" || setup.CatalogId == "S003" || setup.CatalogId == "S004") &&
-                   setup.DifficultyId == SkirmishDifficultyId.Regular &&
-                   setup.SizeId == SkirmishSizeId.Standard;
+                   new SkirmishCatalogId(setup.CatalogId).IsValid &&
+                   setup.OperationMapId == DesertBaseMapId &&
+                   setup.LayoutId == DesertBaseLayoutId &&
+                   ((setup.DifficultyId == SkirmishDifficultyId.Regular &&
+                   setup.SizeId == SkirmishSizeId.Standard) ||
+                    (layout != null && layout.WorldBinding.HasMeasuredDeployments && layout.WorldBinding.BindAllConfigurations));
         }
 
         public static void BindRegularStandard(
@@ -196,7 +199,7 @@ namespace Game.Configs
                 return;
             }
 
-            if (!ShouldBindRegularStandard(setup))
+            if (!ShouldBindRegularStandard(setup, layout))
                 return;
 
             if (!SkirmishMapLayoutValidation.TryValidateDesertBaseAssault(layout, reasons))

@@ -122,22 +122,18 @@ namespace Game.Runtime
                     ecb.DestroyEntity(visual);
             }
 
-            foreach (var (request, transportTransform, passengers, transport) in
-                     SystemAPI.Query<RefRW<UnitTransportAirdropRequest>, RefRO<LocalTransform>, DynamicBuffer<UnitTransportPassengerElement>>()
-                         .WithEntityAccess())
+            // Native Support binds a released rifle to its squad/combat owner here.
+            // Snapshot transport IDs so those structural changes cannot invalidate a query iterator.
+            using(var requests=em.CreateEntityQuery(typeof(UnitTransportAirdropRequest),typeof(LocalTransform),typeof(UnitTransportPassengerElement)))
+            using(var transports=requests.ToEntityArray(Allocator.Temp))
+            foreach(var transport in transports)
             {
-                ProcessAirdropRequest(
-                    em,
-                    ecb,
-                    ref request.ValueRW,
-                    transportTransform.ValueRO,
-                    passengers,
-                    transport,
-                    now,
-                    grid,
-                    walkable.AsNativeArray(),
-                    blockerData.Blocked,
-                    occupancyData.Occupied);
+                if(!em.Exists(transport)||!em.HasComponent<UnitTransportAirdropRequest>(transport))continue;
+                var request=em.GetComponentData<UnitTransportAirdropRequest>(transport);
+                ProcessAirdropRequest(em,ecb,ref request,em.GetComponentData<LocalTransform>(transport),
+                    em.GetBuffer<UnitTransportPassengerElement>(transport),transport,now,grid,
+                    em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray(),blockerData.Blocked,occupancyData.Occupied);
+                em.SetComponentData(transport,request);
             }
 
             ecb.Playback(em);
@@ -192,7 +188,7 @@ namespace Game.Runtime
                 : new int2(1, 1);
             int2 landingCell;
             if(support)
-            {if(!SupportParatrooperAdapterSystemHelper.BeforeDrop(em,ecb,transport,passenger,grid,_gridQuery.GetSingletonEntity(),out landingCell))return;}
+            {if(!SupportParatrooperAdapterSystemHelper.BeforeDrop(em,ecb,transport,passenger,grid,_gridQuery.GetSingletonEntity(),out landingCell))return;passengers=em.GetBuffer<UnitTransportPassengerElement>(transport);}
             else if (!TryFindLandingCell(
                     grid,
                     walkable,
@@ -244,6 +240,12 @@ namespace Game.Runtime
 
             RestorePassengerForDrop(em, ecb, passenger, landingCell, startPosition);
             Entity visualEntity = SpawnDropVisual(em, ecb, visualPrefab, passengerKind, startPosition);
+            if (em.HasComponent<UnitSourcePrefabKey>(transport))
+                ecb.AddComponent(visualEntity, new UnitTransportDropVisualSource {
+                    CarrierSourceKey = em.GetComponentData<UnitSourcePrefabKey>(transport).Value, PassengerKind = passengerKind });
+            if (em.HasComponent<SkirmishAttemptOwnedComponent>(passenger))
+                ecb.AddComponent(visualEntity, new SkirmishNativeTransientOwner {
+                    SessionId = em.GetComponentData<SkirmishAttemptOwnedComponent>(passenger).SessionId });
             if (em.HasComponent<SupportPassengerOwnerComponent>(passenger))
                 ecb.AddComponent(passenger, new SupportPassengerCleanupComponent {Canopy = visualEntity});
             if (passengerKind == UnitTransportPassengerKind.Vehicle)

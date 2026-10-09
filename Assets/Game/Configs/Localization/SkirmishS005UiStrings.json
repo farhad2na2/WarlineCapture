@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "key": "skirmish.s005.title",
+      "source": "Desert Base · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرا · حمله به پایگاه · نیروهای ترکیبی · پایگاه میدانی"
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.brief",
+      "source": "Scout the highway with your car and infantry. Keep rocketeers near the base. Push with armor after upgrading readiness, or build a Helipad for air support. Protect your original Barracks.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با خودروی زرهی و پیاده بزرگراه را شناسایی کن. راکت‌اندازها را نزدیک پایگاه نگه دار. پس از ارتقای آمادگی با زرهی پیشروی کن، یا برای پشتیبانی هوایی پد بالگرد بساز. از سربازخانه اصلی محافظت کن."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.objective",
+      "source": "Destroy the original enemy Barracks while your original Barracks survives.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.warning.offensive_air",
+      "source": "Start at Field readiness. Anti-air is available immediately. Tanks, heavy APCs and helicopters need Established readiness; siege and jets need Full Arsenal. Aircraft also need the appropriate built facility.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با آمادگی میدانی شروع کن. پدافند هوایی از ابتدا در دسترس است. تانک، نفربر سنگین و بالگرد به آمادگی برقرار نیاز دارند؛ موشک‌انداز زمینی و جت به زرادخانه کامل. هواگردها به تأسیسات ساخته‌شده مناسب نیز نیاز دارند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.warning.replacement_base",
+      "source": "A replacement Barracks does not replace the original main base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه جایگزین جای پایگاه اصلی اولیه را نمی‌گیرد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.victory",
+      "source": "The original enemy Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.defeat",
+      "source": "The original player Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی بازیکن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.draw_bases",
+      "source": "Both original Barracks were destroyed on the same tick.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو سربازخانه اصلی در همان تیک نابود شدند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.draw_deadline",
+      "source": "Both original Barracks were still standing at the deadline.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در موعد مقرر هنوز هر دو سربازخانه اصلی پابرجا بودند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.surrender",
+      "source": "Surrender accepted.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تسلیم پذیرفته شد."
+        }
+      ]
+    }
+  ]
+}

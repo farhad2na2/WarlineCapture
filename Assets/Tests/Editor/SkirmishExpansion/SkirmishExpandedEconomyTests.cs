@@ -394,6 +394,82 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void FactionResearchChargesAndUpgradesOnlyItsOwner()
+        {
+            using var world = new World(nameof(FactionResearchChargesAndUpgradesOnlyItsOwner));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            var player = FirstRole(em, SkirmishRoleKind.Rifle, 1);
+            var enemy = FirstRole(em, SkirmishRoleKind.Rifle, 2);
+            int playerDamage = em.GetComponentData<SkirmishRoleOverlayComponent>(player).Damage;
+            int enemyDamage = em.GetComponentData<SkirmishRoleOverlayComponent>(enemy).Damage;
+            em.AddComponentData(player, new UnitAttack { Damage = playerDamage });
+            em.AddComponentData(enemy, new UnitAttack { Damage = enemyDamage });
+            int playerMaterials = SkirmishMaterialsService.Read(em, session, 1);
+            int enemyMaterials = SkirmishMaterialsService.Read(em, session, 2);
+            Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.InfantryWeapons, 1, out var p));
+            Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.InfantryWeapons, 2, out var e));
+            Assert.AreNotEqual(p.ResearchId, e.ResearchId);
+            Assert.AreEqual(playerMaterials - p.MaterialsCost, SkirmishMaterialsService.Read(em, session, 1));
+            Assert.AreEqual(enemyMaterials - e.MaterialsCost, SkirmishMaterialsService.Read(em, session, 2));
+            Assert.IsTrue(SkirmishResearchService.TryStart(em, session, e.ResearchId, out _));
+            Assert.IsTrue(SkirmishResearchService.TryComplete(em, session, e.ResearchId, out var completed));
+            Assert.AreEqual(1, completed.LevelAfter);
+            Assert.AreEqual(playerDamage, em.GetComponentData<UnitAttack>(player).Damage);
+            Assert.AreEqual(SkirmishResearchCosts.Scale(enemyDamage, 110), em.GetComponentData<UnitAttack>(enemy).Damage);
+            Assert.IsFalse(SkirmishResearchService.HasCompleted(em, session, SkirmishResearchKind.InfantryWeapons, 1));
+            Assert.IsTrue(SkirmishResearchService.HasCompleted(em, session, SkirmishResearchKind.InfantryWeapons, 2));
+            Assert.IsTrue(SkirmishResearchService.TryStart(em, session, p.ResearchId, out _));
+            Assert.IsTrue(SkirmishResearchService.TryComplete(em, session, p.ResearchId, out _));
+            Assert.AreEqual(SkirmishResearchCosts.Scale(playerDamage, 110), em.GetComponentData<UnitAttack>(player).Damage);
+            Assert.IsFalse(SkirmishResearchService.TryComplete(em, session, e.ResearchId, out _));
+            Assert.AreEqual(SkirmishResearchCosts.Scale(enemyDamage, 110), em.GetComponentData<UnitAttack>(enemy).Damage);
+        }
+
+        [Test]
+        public void PaidEnemyReadinessDoesNotUnlockPlayerOrChangePlayerPrice()
+        {
+            using var world = new World(nameof(PaidEnemyReadinessDoesNotUnlockPlayerOrChangePlayerPrice));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out _);
+            Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.Readiness, 2, out var e));
+            Assert.AreEqual(SkirmishResearchCosts.ReadinessEstablishedMaterials, e.MaterialsCost);
+            Assert.IsTrue(SkirmishResearchService.TryStart(em, session, e.ResearchId, out _));
+            Assert.IsTrue(SkirmishResearchService.TryComplete(em, session, e.ResearchId, out var completed));
+            Assert.AreEqual(SkirmishReadinessStage.Established, completed.ReadinessAfter);
+            Assert.IsTrue(SkirmishResearchService.TryReadState(em, session, 1, out var pState));
+            Assert.IsTrue(SkirmishResearchService.TryReadState(em, session, 2, out var eState));
+            Assert.AreEqual(SkirmishReadinessStage.Field, pState.Readiness);
+            Assert.AreEqual(SkirmishReadinessStage.Established, eState.Readiness);
+            var army = SkirmishArmyProfileConfig.ResolveCached(SkirmishArmyProfileId.AirMobile);
+            var enemyAir = SkirmishProductionService.EvaluateQueue(em, session, SkirmishRoleIds.AttackHeliLight, 1, army, 2);
+            var playerAir = SkirmishProductionService.EvaluateQueue(em, session, SkirmishRoleIds.AttackHeliLight, 1, army, 1);
+            Assert.AreEqual(SkirmishReasonCode.MissingProducer, enemyAir.Reason);
+            Assert.AreEqual(SkirmishReasonCode.MissingReadiness, playerAir.Reason);
+            Assert.IsTrue(SkirmishResearchService.CanQueue(em, session, SkirmishResearchKind.Readiness, 1, out var p, out _));
+            Assert.AreEqual(SkirmishResearchCosts.ReadinessEstablishedMaterials, p.MaterialsCost);
+            Assert.IsFalse(SkirmishResearchService.CanQueue(em, session, SkirmishResearchKind.Readiness, 0, out var invalid, out _));
+            Assert.AreEqual("faction", invalid.Field);
+            Assert.AreEqual(450, SkirmishMaterialsService.Read(em, session, 1));
+        }
+
+        [Test]
+        public void LegacyCheckpointWithoutEnemyResearchUsesCompiledOpeningStage()
+        {
+            using var world = new World(nameof(LegacyCheckpointWithoutEnemyResearchUsesCompiledOpeningStage));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out _);
+            em.RemoveComponent<SkirmishEnemyResearchStateComponent>(session);
+            var p = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            p.Readiness = SkirmishReadinessStage.FullArsenal; p.InfantryWeapons = 1;
+            em.SetComponentData(session, p);
+            Assert.IsTrue(SkirmishResearchService.TryReadState(em, session, 2, out var e));
+            Assert.AreEqual(SkirmishReadinessStage.Field, e.Readiness);
+            Assert.AreEqual(0, e.InfantryWeapons);
+            Assert.IsFalse(em.HasComponent<SkirmishEnemyResearchStateComponent>(session), "Eligibility must remain read-only.");
+        }
+
+        [Test]
         public void CategoryResearchFromStagingAndHqAppliesOnce()
         {
             using var world = new World(nameof(CategoryResearchFromStagingAndHqAppliesOnce));
@@ -906,6 +982,9 @@ namespace Game.Tests.Editor
                 suite.MidProduceCancelRefundsReservedThenSeventyFivePercent();
                 suite.FailedDispatchAndProducerDestructionUseSpecifiedRefunds();
                 suite.CategoryResearchFromStagingAndHqAppliesOnce();
+                suite.FactionResearchChargesAndUpgradesOnlyItsOwner();
+                suite.PaidEnemyReadinessDoesNotUnlockPlayerOrChangePlayerPrice();
+                suite.LegacyCheckpointWithoutEnemyResearchUsesCompiledOpeningStage();
                 suite.QueuedReadinessStartsAndCompletesThroughTickWithoutManualStart();
                 suite.ReplacementHqCanResearchWithoutBecomingVictoryBase();
                 suite.S003AirMobileAaGatePadReadinessAndMissingPadRefund();

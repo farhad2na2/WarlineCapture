@@ -1,0 +1,515 @@
+# S005 current acceptance
+
+**In progress. Not player-ready.** Current source fingerprint is `729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711`; it includes all source extensions in Assets/Packages/ProjectSettings and all 562 material hashes. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
+
+S005 reuses the existing Campaign dense-city physical source. Both logical deployments now use the southern town frontage (935,650 / 1387.8,650), retaining 452.8m separation, scenario budgets and Standard/Regular defaults. The residential quarter failed legal full-barracks placement. The logical deployment edits preserved the physical scene. Four shared ground materials were subsequently updated for the palette described below.
+
+## Current technical status
+
+Native740 failed the aircraft deadline and provided a read-only proof that the full-unit query shared the movement change filter: 12 filtered actors versus 53 live tracked actors. Focused741 reproduced stationary occupancy disappearing during normal updates. Focused742 passed seven regressions after independently owning the full membership query, reconciling same-count actor replacement, and rebuilding when the grid entity changes. Current logistics regressions and the normal-input aircraft retry remain pending. Native733 combat recovery and native729 boarding/unload remain historical evidence after these shared runtime changes. Full mission/player readiness is pending.
+
+
+Shared runway liftoff, paid delivery parking with queued Move/Hold commands, and preservation of mid-taxi delivery state through Save/Continue passed 30 flight and 10 checkpoint focused cases (native acceptance remains separate). Native696 demonstrated real takeoff, fire and return on an earlier candidate, but second-sortie refueling missed the deadline. Native698 exposed the delivery taxi command race now fixed. Native704 failed camera visibility before Airport purchase; all 100 contacts ended cleanly and source was unchanged. Native705 completed paid parking, takeoff, native fire, home touchdown and refueling, but missed the second-sortie reserve before the deadline. Native706–708 did not close air timing. Native709 completed paid parking, takeoff/fire/Return/home landing/refueling but missed second-sortie reserve before Draw1080.005. Fresh baseline710/712 won in English;711/713 lost in Farsi around155s. Focused714 reproduced Combined Arms skipping the existing opening-defense sequence;715 passed after the shared planner exclusion was removed. Native716 won in Farsi at238.565s after a bounded cancelled defense attempt; no paid tower was observed. Native716–721 completed the earlier planner-source three-seed/two-locale ARIA sample: six normal-speed native wins, frozen result/Adjust Setup return, strict contact audits and actual wrapper0. Native723/724 also completed basic Save/Continue wins in English and Farsi before the terminal-clock fix. These are historical proofs after the latest shared runtime change. Native725 showed boarded recovery, unload, victory and return, but was not accepted because its terminal clock flag was stale and its actual wrapper exit was not retained. Focused726 reproduced that defect; focused727 passes the shared clock fix. Native728 is repeating boarded recovery/manual gameplay with strengthened terminal checks. Remaining lifecycle/air/recovery/device gates and final-source native refresh remain pending. The physical Campaign source, mission budgets, rates, caps and deadlines remain unchanged.
+
+Native688 complete boarded recovery/manual win, native670–675 ARIA matrix, native676–677 basic Save/Continue wins, and native680 Farsi manual win are retained as prior-candidate evidence. Final source-matched baseline refresh remains pending after required runtime fixes settle.
+
+Native686 passed the focused paid Heavy APC boarding → Save → Continue → unload case: four passengers restored/unloaded, paid receipt and attempt preserved, old physical actors removed, 54/54 contacts ended, wrapper exit 0 and identical complete pre/post source fingerprints. This is explicitly not a complete match or counted win. Native682–684 partial recovery observations and failed resumed manual journeys remain preserved. The latest manual camera correction still needs its native journey check.
+
+Remaining baseline work includes enabled-role producer/lifecycle/service evidence, aircraft timing/return/refuel/second sortie and bilateral capacity, additional transient recovery, final source-matched checks, and separate device/player acceptance. Visual review is deferred by the owner. Only Standard/Regular is exposed; hidden size/difficulty presets remain uncertified.
+
+The full Support rollout policy explicitly permits an otherwise accepted no-Support baseline to release independently. Native Support policy integration and with-Support certification remain unfinished, with Support denied in the observed attempt. No Support capability is certified by these wins.
+
+The following sections and appended run records preserve historical evidence; the compact current authority remains `TECHNICAL_READINESS_CURRENT.json`.
+
+## Historical automated validation
+
+- Shared authored-building blockers now use the foundation origin rather than the selection centre. Focused 562 and movement regressions 563 passed; that candidate’s native opening actor centres avoid all 4,931 refined source foundations (centre check only).
+- Shared map-edge focus: focused600 passed seven regressions (four edge targets, clipping/continued dragging, existing stationary tap and real-drag behavior). Native601 paid Airport construction passed through normal input; full match remains pending.
+- Logical rebuild 568 preserved scenario bytes and passed all 12 setup configurations and existing mission regressions.
+- Shared helicopter delivery search covers 96 cells and completes a perimeter before yielding, preserving collision, terrain and clearance checks. Focused 570 passed three tests, lifecycle/rope/departure regressions 571 passed, and final-source matrix 572 passed.
+
+## Historical native normal-input evidence
+
+Native573, English seed 104734, passed Menu → S005 → ARIA Play/Confirm → paid recruitment/delivery → base assault → Victory → frozen result → Adjust Setup. Victory at 218.505 seconds; player base 800 HP, enemy base 0, 24 surviving units. All 46 contacts completed with no input errors. Repository wrapper exit=0; independent pre/post source hashes matched. See `native573-town-frontage-normal-aria-result-return-pass.json` and `native573-touch-contact-audit.json`.
+
+At native573, all 562 material hashes matched. After the later four-material palette update, native593 and read-only598 confirmed the palette remained unchanged. The physical source scene SHA remains `77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40`, and scenario asset SHA remains `470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c`.
+
+## Historical pending-gate records
+
+X38 requires three Regular seeds in EN and FA with at least two wins per locale. One English and one Farsi seed passed complete resumed normal-input journeys on the preceding candidate; current-source and additional seeds remain pending. Additional exposed difficulty/size certification remains pending and uncertified combinations remain gated.
+
+X37/X39: manual win and two viable approaches, full enabled-role native producer/combat/service/transport evidence, bilateral aircraft capacity and paid return/refuel/second-sortie cycle, fresh native Save/Continue, objective loss/edge fixtures, localization, visual/performance review, and separate real player/device acceptance remain open. A normal-input win does not certify these gates.
+
+Checkpoint capture 559 (historical source) included 46 actors, 4,931 map references and two banks; persistence/decoding/fresh recovery were not certified. The historical native573 opening screenshot is `s005-aria-live-104734-en-aa30c41fa6944465acc233c7680aca82.jsonl.opening.png`; approved mockup direction does not establish implemented visual acceptance.
+
+## Preserved failures
+
+Native549–554: enemy starting economy source fit. Matrix556: overlapping staging/infantry pads. Native561: displaced source building blockers and inside-foundation spawn. Native565: pending paid rocketeer delivery. Native566/567: enemy barracks source-fit failure (43,525 building / 7,100 road-water rejections). Native569: 14-building frontage startup passed, but helicopter dispatch remained blocked; run aborted with failure evidence and matching pre/post hash. All logs and failures remain. Earlier details are in `acceptance-history-through-native573.md` and `acceptance-history-before-native561.md`.
+
+Native574 retained Farsi defeat at 144.803 seconds; all 56 contacts completed, no contact errors, same source hash, localized frozen result/Adjust Setup passed. It is not a counted win. Native575 will test real Save & Exit / Continue, followed by a resumed normal mission.
+
+Native575 Save & Exit failed before disk persistence because the codec still required cell-based map IDs. Capture/recovery already used persistent source IDs. Registering `OperationMapBuildingIdentity` in checkpoint parts and validating aliases against those serialized parts repairs the mismatch while preserving duplicate, compatibility and legacy-reference rejection. Automated codec 576 (3), snapshot 577 (7), preparation 578 (3), commit 579 (3) passed. Native persistence/fresh recovery remains pending.
+
+Native581: real Save & Exit persisted schema 7 and normal Continue was touched. Fresh reconstruction failed `NativePhysicalMapAmbiguous`; a remaining preflight built legacy cell-based aliases. Source pre/post `cdfe2fb4b53f6be19348d903b999cb72a5df5ad9d2c97a13f2945118bfe9a553` matched. No recovery or resumed match certified. The remaining alias caller is now corrected; dedicated preflight tests and another native retry are pending.
+
+Native582 persistent-source reconstruction preflight passed three tests. Native583 persisted schema 7, passed Continue touch and source-ID census, then failed exact player-refinery reconstruction. Camera envelope errors also occurred during fresh recovery. The owned run was aborted through the authorized harness; wrapper exit=1 and independent pre/post source hashes matched. See `native583-persisted-save-refinery-reconstruction-failure.json`. Exact placement/camera diagnostics are being added; recovery remains uncertified.
+
+Native584 diagnostic retry: matching pre/post source `0c291f41db2a0d2682d76db6027aa9938541abc5fb8509bec1fb7c7b27378b59`, wrapper exit=1. Eight recovery placements were rejected by sidewalk masks (roads and water clear). The cache lacked packed-sidewalk source census invalidation. The render error used a valid wide orthographic planning camera (determinant 1.85956e-9), rejected by a scale-dependent 1e-8 cutoff. Shared cache/camera repairs and meaningful late-loading/orthographic/singular-matrix regressions are compiling. Neither repair is native-certified yet. See `native584-placement-camera-diagnosis.json`.
+
+Focused585 delayed-sidewalk cache regression passed (1 test), wrapper exit=0 and exact pass marker. Focused586 render virtualization suite passed (13 tests), including the native wide orthographic planning-camera matrix and singular-matrix rejection, wrapper exit=0 and exact pass marker. Native Save/Continue retry follows; automated checks do not certify recovery.
+
+Native587 complete PASS on current `956db3d5e328f281a0d25dc50d317dd926b3b2f1c2c906b8e1aa8f4b86ab2224`: native Menu → launch → paid Anti-Air queue (220) → Pause / Save & Exit → cleanup → Continue → exact same-attempt fresh recovery → ARIA Play/Confirm → resumed Victory at 214.559 seconds, player base 800 HP → frozen result → Adjust Setup. All 56 native contacts ended, no contact errors or runtime exceptions. Wrapper/log exits=0; independent pre/post source hashes matched. Save schema 7, paid receipt and normal clock/speed preserved; 4,977 old physical entities gone. See `native587-fresh-save-continue-resumed-victory.json` and `native587-touch-contact-audit.json`. The resumed-opening capture still shows the loading transition and is not visual acceptance evidence.
+
+Native588 Farsi seed104734 complete fresh Save/Continue and resumed normal-input ARIA PASS on `956db3d5e328f281a0d25dc50d317dd926b3b2f1c2c906b8e1aa8f4b86ab2224`: Victory 210.684 seconds, player base800, localized frozen result and Adjust Setup passed. All58 contacts ended, no input errors, wrapper/log exits0, independent source unchanged. See `native588-fresh-save-continue-fa-resumed-victory.json`. Shared fixed-daylight settings were observed overwritten after scene initialization (fog=true, dark ambient), despite day/night visuals disabled. An environment ownership repair is compiling; native587/588 will be preceding-candidate evidence after that change.
+
+Focused589 retained failed edit-mode disposal assertion (late restore itself passed); fixture now explicitly invokes the play-mode disposal callback. Focused590 passed shared fixed-daylight late-restore and previous-environment restoration; wrapper/log exits0. Native591 startup/map capture is running on source `49fb6cc91c6b60f70f2775743e8c198dd89724b89b22f10f79ec9f6c4a89c247`; visual review and full current-source gameplay remain pending.
+
+Native591 fixed-daylight startup/capture passed with matching source, brighter buildings/ground, frontage density still below mockup. Native592 applied shared pale-sand/worn-earth/scrub palette to exactly4 existing ground materials; other558 materials, physical scene and scenario SHA unchanged. Native593 native startup/capture passed (32 units /14 facilities), matching source `5d3ab5e2564d215f068b28984c0c1833f674cef8d626752f8fa70e88998a2249` and all562 material hashes unchanged during run. Captures `native591-fixed-daylight-opening.png` and `native593-shared-sand-scrub-opening.png`; diagnostic staging remains separate from recovery/full-match acceptance. Actual visual acceptance and frontage density remain pending. Native594 will test paid Airport construction on existing legal source geometry.
+
+Native594 failed before Airport: all24 fabrication-site samples skipped before any ground touch. Wrapper exit1; independent pre/post source matched5d3ab5e. This is an unresolved visible-site setup interaction, not a global physical source-fit failure. Failure preserved in `native594-paid-industry-visible-site-failure.json`. Native595 closes the catalog through its normal close control while preserving the placement preview and records why each skipped point is unusable. Player readiness remains pending.
+
+Native595 failed after14 actual fabrication ground touches; nearby guessed samples still did not produce a valid placement. Pre/post source7c1a77a matched, wrapper exit1. UI obstruction and off-screen diagnostics preserved. Native596 replaces guessed offsets with read-only full native-validator candidates and uses normal full-map camera gestures with a no-troop-command assertion. This is validation-driver work; no map, budget or actor injection.
+
+Native596 wrapper dispatch failed during domain reload before an ownership log existed (exit6); dispatch JSON retained. Editor ready state verified, same wrapper/method retried as native597. No source edits between independent prehash and retry.
+
+Native597 paid fabrication setup passed: two normal100-material depots, actual ground/Confirm touches, no command from full-map camera guidance. Both readiness upgrades purchased normally. Native validator found8 Airport candidates. First site stayed occluded/off-screen after3 camera gestures; wrapper exit1, independent pre/post773d39c matched. No Airport/full-match certification. Failure preserved; next driver retains candidate orientation and continues after per-site visibility exhaustion.
+
+Native598 retained real Defeat206.9542s during research/economy setup, before Airport. Paid fabrication passed again. Wrapper exit1; independent pre/post1f6e51a matched. Next native599 uses a closer supporting defensive line through normal player orders (24m /6m spread), preserving mission balance/budgets/geometry. No current-source Airport or complete match certified.
+
+Native599 closer normal-input defense held495.4976s; paid fabrication and both readiness upgrades passed. Eight native Airport candidates each exhausted3 camera attempts. Read-only projection confirms edge targets under/outside HUD; oil source/trucks alive and supplying. Wrapper exit1; pre/post6ee2bae matched. Shared map-edge drag repair now compiling with four-edge focus/clipping/continued-drag regressions. Physical source-fit and full match remain uncertified.
+
+Focused600 shared map tap/drag regressions passed7, wrapper/log exit0 and exact markers. Camera focus can reach all four map edges; displayed outline is clipped while logical footprint/grab offset remain stable through multiple drag samples. Existing padded-edge/stationary-inside/real-drag click suppression passed. Native601 paid Airport retry running on9560906d; automated checks alone do not certify player readiness.
+
+Native601 PASS: normal100-material depots, both paid readiness upgrades, correctly oriented Airport preview, one normal full-map edge gesture, first ground-site touch and Confirm committed a live native Airport producer. Camera focus added no troop orders. Wrapper/log exit0; independent pre/post9560906d matched. `native601-paid-airport-shared-edge-focus-pass.json` and contact audit preserved. Fixed-wing flight/paid return/refuel, bilateral capacity, full current-source matches and visual/device acceptance remain pending. Actual committed screenshot still shows sparse edge frontage; construction pass is not charming-map acceptance.
+
+Native602 FAILED943.5074s at setup-step0 watchdog: oil trucks3, tanker fleet, extra100-material Oil Pump and three100-material depots purchased normally; final readiness/Airport/Strike lifecycle not reached. Sourcepre/post9560906d matched, wrapper exit1. Periodic read-only bank/storage/fabrication/usable-fuel and actor-hauling diagnostics are being added; no budgets, costs, research times, clock or source geometry weakened. `native602-paid-strike-research-economy-timeout.json` and touch audit preserved.
+
+Native603 read-only material audit found `_SandPaletteStrength=0` on all four shared ground materials, both in serialized files and the live Editor. The earlier592 helper pass marker did not independently verify persisted activation. Other palette settings remain saved, but effective palette activation and implemented visual acceptance are unverified. A save/reimport verification is required after the running gameplay fixture ends.
+
+Native603 FAILED: paid Oil Pump and3 depots constructed, first240-material readiness upgrade purchased. All3 living Oil trucks stopped moving after close industry placement; fabrication reached700 then deliveries/output stopped for multiple minutes with available Oil and Fuel. Authorized owned abort saved failure at591.9443s, wrapper1, independent6153a6bd pre/post matched. All84 native contacts ended without errors. Service-lane obstruction is the current hypothesis; next driver keeps8 cells between paid industry and existing buildings/units. No native routing repair or full-match acceptance claimed. See `native603-paid-industry-logistics-stall.json`.
+
+Focused604 shared ground palette PASS: all4 materials now serialize strength0.9 and retain it after forced reimport in edit mode. Helper rejects Play mode and missing shader properties, verifies both live imported value and saved bytes. Wrapper/log0 and exact pass markers. This corrects the earlier unverified activation claim; native visual capture remains pending.
+
+Native605 FAILED before new industry spacing: enemy destroyed Fuel Bladder, native Tanker catalog correctly reported missing Fuel Bladder, input driver kept retrying unavailable production. Owned abort preserved failure, independent232fb7f7 pre/post and all562 material hashes matched; strength0.9 persisted through Play. Next driver covers southern economy yard with two normal rifle orders and normally purchases/places a replacement Fuel Bladder if lost. Render audit identified one whole-map SmallRubble mesh:6,367,660 vertices /5,877,840 triangles; spatial rendering optimization pending. See `native605-fuel-storage-loss.json`.
+
+Native606 retained real Defeat172.275s on96ab0584, matching independent pre/post and wrapper1. Split south-yard defense lost HQ; paid Oil Pump with8-cell service clearance constructed normally, later depots/recovery/aircraft not reached. This tactic is rejected. Stronger HQ defense remains the basis for the next retry with paid Fuel Bladder recovery. Shared micro-rubble rendering cost is also being addressed before new acceptance.
+
+Focused607 conservation/invalid-fan/texture rejection tests passed2. Focused608 optimized the existing shared micro-rubble asset in edit mode:489,820 scatter centers and asset GUID preserved after save/reimport, triangle count5,877,840→1,959,280; original asset backup recorded. Physical source scene and gameplay placements untouched. Focused609 strict source parity/deterministic render database rebuild is running; native appearance/performance and current-source gameplay remain pending.
+
+Focused609 strict render database source parity/determinism PASS:124167 rows,59503 eligible,64664 resident,0 removed,7291 slots,38839 placements,9492 prototypes and15036 parts. Physical source scene/S005 scenario SHA and all562 material hashes unchanged. Current candidate full native English journey610 follows.
+
+Native610 current-source English104734 PASS: normal Menu/S005/ARIA consent, paid recruitment, Victory236.985s (player800/enemy0,23 living player units), frozen result and Adjust Setup return. Wrapper/log0, independent54c86e64 pre/post and all562 material hashes matched. All107 contacts ended,0 errors,0 ARIA receipt violations. Render log shows~5.5M triangles but low Editor FPS remains; opening captures pale variation and sparse frontage, not accepted mockup density. See `native610-shared-rubble-aria-en-victory.json`. Further seeds/locales/roles/manual/recovery/visual/device gates remain pending.
+
+Native611 current-source Farsi104734 PASS: normal Menu/S005/ARIA consent, paid recruitment, Victory216.89s (player800/enemy0,24 living player units), localized frozen result and Adjust Setup return. Wrapper/log0, independent54c86e64 pre/post and all562 material hashes matched. All41 contacts ended,0 errors,48 accepted commands,0 receipt violations. See native611-shared-rubble-aria-fa-victory.json. One full seed now passed in both locales; broader gates remain pending.
+
+Owner deferred visual review until technical readiness (2026-10-07). Shared-map appearance changes are paused while gameplay acceptance proceeds. Native612 ended with physical-input interruption (57 contacts ended; intervention audit retained), wrapper1, independent54c86e64 pre/post match. Before interruption, Tanker requests reported missing Fuel Bladder while logical fuel identity health500 and native fuel storage9 continued deliveries. Do not infer destroyed storage from that catalog message. Native613 adds observation of authoritative native producer definitions, lifecycle and catalog failure; startup compilation repairs are retained in the same log and no native pass is claimed.
+
+Native614 FAILED: authoritative diagnostics prove Ground Staging id3 was destroyed by rocketeers attacking from cells986–987 while the guard line was behind the producer. Fuel Bladder id9 remained healthy500 and receiving fuel; the catalog mislabeled the abstract missing producer with legacy Fuel Bladder. All57 contacts ended without input errors. Independent pre78296f07/posta8c9015f did not match; startup/import writes to the TMP fallback font and Entities client settings were observed and no current-source acceptance is claimed. Owned abort preserved the failure. The production message now resolves the expanded recipe producer first, preserving legacy fallback. Ground Staging is not requestable in the current catalog; the proposed rebuild driver was removed to preserve rules. Next strategy uses normal guard orders44m aheadHQ and promptly fails if Ground Staging is lost. Focused615 fixture failed because it omitted Field readiness; corrected fixture616 is running.
+
+Focused616 PASS3: expanded Tanker missing producer names Ground Staging before the legacy Fuel Bladder definition; legacy world receives no override; existing recipe conservation passes. Wrapper0 and exact marker verified. Native617 forward producer-defense paid Strike journey started on3a8a290394589d7ae0f8943b39ad0cd02a4085e9b7e1e3084449daff81158b8e with per-file independent baseline and all materials tracked. No readiness, budget, construction availability or geometry changes.
+
+Native617 FAILED at setup watchdog, native elapsed806.1135s, wrapper2. Normal paid logistics3+3, extra OilPump100, three depots100 each, both upgrades240+480, Airport native construction and Strike520 receipt1006/native runway home passed scoped observations. First sortie was not reached. All117 contacts ended,0 input errors. Independent pre/post3a8a2903 and every source/material manifest entry matched. Primary trace is empty on this manual/scoped failure; companion evidence and log retained. The synchronous placement search scanned59147 positions per industry purchase, blocking simulation while wall-time watchdog advanced. Next qualification search yields across player frames and samples nearby fully validated sites; gameplay costs, deadlines and geometry remain unchanged.
+
+Focused618 compile and three producer-message tests PASS, wrapper0/exact marker. Qualification placement search now uses nearby coarse origins, full native legality and eight-cell service clearance, yields within an8ms/128-sample frame budget, and takes at most32 legal candidate samples. Partial scans are explicitly labeled; no global capacity claim. Native619 retry starts on6faf5d61251773fea3707abb5f1148951ace0d95e00bd0d2aaaedb85e5b97a5e.
+
+Native619 FAILED: real normal-time Draw before refuel reserve/second sortie. Strike520 receipt1006 had native runway home, actual airborne firing, normal Return, native touchdown/home fuel16. Additional fuel did not reach round-trip reserve while3 Oil trucks/3 Tankers kept moving. Wrapper2; exact pre/post6faf5d61 and every source/material entry matched. Input audit retained. Search yielded successfully (308/519/666/774 industry samples vs59147 previously; Airport5779 over1558 frames). Next driver purchases an additional existing regular refinery160 and uses2 Tankers, saving140 in recruitment and reducing fleet fuel drain; the6 logistics cap, source army, per-refinery recipe,18-minute match and all production costs remain unchanged. Full flight cycle remains uncertified.
+
+Focused620 compile/producer regressions PASS3, wrapper0/exact marker. New qualification strategy buys the existing regular refinery160 and2 Tankers, while keeping3 Oil trucks,3 paid depots, six-logistics cap and fixed per-refinery recipe. Corrected paid-building evidence labels to actual40/100/160 cost per selected kind. Native621 starts on673bb90fc2893ccf53adb658a6edc2213940b1fcffa409ce2c8799d92c8f6c58; native refuel/second sortie remain pending.
+
+Native621 incomplete/missing-pass failure: Editor orderly shutdown after latest economy445.2472s, wrapper0 but no flight-cycle completion marker. Cause not established, no crash/fatal marker. Extra refinery160 native construction/production and first readiness upgrade240 observed. Fleet had3 Oil trucks and2 Tankers including a living starter Tanker, rather than two new paid Tankers. Exact per-file source/material pre/post673bb90f matched. Input audit and partial trace retained. Native622 retries the same unchanged candidate.
+
+Owner paused work. Native622 exited0 before mission entry, with orderly shutdown and no required completion marker; not a pass. CLI/process inspection found no active Warline validation Editor or native622 wrapper. No Unity process was terminated by the agent. Source/post manifest retained as final-622-paused-post. Resume from the paid refinery flight-cycle gate; visuals deferred.
+
+Native623 resumed: same source673bb90f verified before launch. Paid refinery / aircraft refuel and second-sortie normal-input qualification running. Native621/622 incomplete exits remain failures; visual review deferred.
+
+Native623 FAILED: normal18-minute Draw, wrapper2, source673bb90f and full per-file/material manifest unchanged. Paid extra refinery160 / Airport300 / Strike520 receipt1004, native launch, fuel exhausted before any native firing. Automatic return observed; normal Return/touchdown/refuel/second sortie not certified. Contact audit retained. Reserve estimate omits runway approach trajectory; additional refinery production alone did not resolve usable fuel delivery. The Editor exited through its failure path before the authorized abort could connect.
+
+Focused624 PASS3 producer regressions and qualification compilation, wrapper0, exact marker. Source8ad5ba9d changes only the tanker count and Editor reserve estimator from native623; native625 now running. Full flight, current-source matches and remaining readiness gates are pending.
+
+Native625 FAILED: normal18-minute Draw, wrapper2, source8ad5ba9d unchanged including full material manifest. Paid refinery/Airport/Strike1006, three living tankers, but conservative launch reserve never met; usable fuel plateaued near900. Extra refinery stored384fuel at983s. Native truck consumption0.05fuel/cell and8-barrel payload recorded read-only. Next normal-input strategy purchases40-material receiving Fuel Bladder near the extra refinery, preserving native legality/service lanes/budgets.
+
+Focused626 PASS3 producer regressions; revised normal paid40-material local Fuel Bladder strategy compiled, wrapper0 and exact marker. Native625 source/material manifest unchanged, all129 native contacts ended without input errors. Next native627 remains unproven.
+
+Native627 running on independently fingerprinted3ab3466c candidate. Normal local40-material Fuel Bladder strategy; no prices/rates/clock/physical source changes. Visual review remains deferred.
+
+Native627 FAILED: normal18-minute Draw, wrapper2, source3ab3466c and all material/source hashes unchanged. Normal40-material local Fuel Bladder built; received176fuel by817s. Strike1006 launched with1075fuel, fired natively, normal Return accepted, actual home touchdown166fuel. Reserve recovery/second sortie failed before Draw. Next qualification uses existing normal fabrication production toggle after buying the jet, and buys third tanker after fabrication expansion. No gameplay rule/budget/source changes.
+
+Focused628 FAILED compilation: missed Game.Composition import in qualification file; wrapper0 without required pass marker is not a pass. Import corrected; Safe Mode prompt handled and owned focused Editor exited. Focused629 reruns compilation/producer regressions on corrected source. Native627 retained135/135 ended native contacts, no input audit errors.
+
+Focused629 startup FAILED before tests: Unity Corrupted Library Detected dialog. Built-in Rebuild Library selected; verified waiting Bash wrapper85928 stopped after inspecting non-killing trap so its600s timeout cannot terminate rebuilding Editor85935. No Unity/Hub/licensing termination or IPC reset. Source candidate must be freshly fingerprinted after rebuild before native qualification.
+
+Library rebuild completed and corrected compilation/producer PASS3 observed in629; its interrupted wrapper is not counted as a clean validation pass. Fresh focused630 rerun launched for normal wrapper-exit evidence. Source/material comparison follows before native631.
+
+Focused630 clean PASS3, wrapper0 and exact marker after Library rebuild. Source0a1cf531 differs from627 only in two Editor qualification files; all materials/source assets unchanged. Native631 now running normal staged tanker purchases and fabrication pause through existing player control after paid aircraft delivery.
+
+Native631 FAILED: normalDefeat145.9222s, wrapper2, source0a1cf531 full source/material manifest unchanged. Post-rebuild native performance5–6FPS; first setup economy sample7.2377match seconds. Guard stalled after first squad-card touch (1setupcontact,0acceptedcommands); cause not isolated. Cold-start performance/input remain pending. Editor exited through failure path before authorized abort connection. Native632 repeats unchanged candidate after completed import/cache warmup to isolate startup effects.
+
+Native632 FAILED qualification watchdog1080wall seconds before Airport completion; latest simulation economy sample1067.4813232421875s, not a Draw. Source0a1cf531 and all material/file hashes unchanged; defense/paid industry normal input progressed after completed import. Alternate live legal placement/haul allocation delayed materials and depleted fuel; advanced-air8–12min target missed. No Strike or production-pause/refuel/second-sortie evidence. Preserve failed source-fit/timing gate; continue unaffected current-source normal ARIA matrix and fresh recovery.
+
+Native633 current-source English seed130368 PASS: normal ARIA journey, Victory215.776s, player HQ800/enemy0,23 living units; frozen result/Adjust Setup return, countedWin1, normal speed and wrapper0. All53 native contacts ended without errors. Independent0a1cf531 pre/post full source/material manifests match. Remaining matrix, recovery, aircraft timing/refuel/capacity and device gates remain pending.
+
+Native634 current-source Farsi seed130368 PASS: normal ARIA Victory217.527s, playerHQ800/enemy0,23 units; frozen localized result/Adjust Setup return, normal speed, countedWin1, wrapper0. Full source/material manifests unchanged. All57 touch contacts ended, no input audit errors. Current-source seed130368 now passed both locales; remaining seeds/recovery/aircraft/device gates pending.
+
+Native635 FAILED recovery step4 watchdog, wrapper2. Paid purchase/Save Exit reached saved setup; Continue contact dispatched/Began/Ended but native screen remained Menu with enabled Continue. No restored match observed. Full source/material0a1cf531 manifest unchanged; all13 contacts ended. Driver currently advances on dispatch; add settled-position observation and normal touch retry when setup remains visible, then requalify. No production recovery pass claimed.
+
+Focused636 compile/producer regressions PASS3, wrapper0. New source45fec66e changes only Editor Save/Continue driver; all runtime/physical/material assets unchanged. Native637 reruns English paid purchase/Save Exit/Continue/resumed match. Native633/634 wins retain exact old-source provenance, not relabeled as45fec66e acceptance.
+
+Native637 current45fec66e English104734 fresh Save/Continue + resumed Victory PASS: normal220-material AntiAir receipt, same attempt/clock,4977 old physical entities gone; resumed Victory214.228s playerHQ800/enemyHQ destroyed, frozen result/Adjust Setup. Wrapper0/countWin1/normalSpeed1. All58 contacts ended without audit errors; full independent source/material manifests unchanged. This qualifies scoped basic recovery, not boarded/transient/full-role/device acceptance. Native638 Farsi basic recovery follows.
+
+Native638 current45fec66e Farsi104734 fresh Save/Continue/resumed Victory PASS:220-material AntiAir receipt/attempt/clock restored,4977 old physical entities gone. Victory213.700s, playerHQ800/enemyHQ destroyed; frozen localized result/Adjust Setup. Wrapper0/countedWin1/normalSpeed1, all57 paired contacts, no audit errors; full per-file/material manifest unchanged. Both locales basic recovery passed; other role/transient/flight/device gates remain pending.
+
+Native639 FAILED win gate: real Defeat217.759s, enemyHQ206, playerHQ destroyed; normal frozen result/Adjust Setup passed, wrapper2. Source45fec66e and all source/material manifest unchanged. Read-only native six-vehicle spawn searches sampled rear cells for both factions without live state edits; six sites each admitted six3x3 footprints. Snapshot legality does not prove opening/path/capacity. All55 contacts paired, audit errors=[]. Native starting vehicle pad is aheadHQ; next logical pad correction must preserve physical source/scenario budgets and be qualified natively.
+
+Config640 rear vehicle-pad authoring PASS marker/wrapper0: two S005 logical pads moved behindHQ on unchanged Campaign geometry. Focused641 FAILED compilation: test enum used Vehicle rather than existing Ground; corrected and Safe Mode handled, owned focused Editor exited normally. Focused642 corrected all12 setup regression validation running. final642 pre fingerprint was taken during correction and is not a valid native prehash; final643 corrected pre replaces it.
+
+Focused642 startup encountered native Corrupted Library dialog before checks. Built-in Rebuild Library selected. Owned waiting wrapper306/Editor316 verified; wrapper600s timeout being monitored so import is not interrupted. No process terminated or IPC/licensing recovery performed. Post-import source fingerprint required before native acceptance.
+
+Focused642 waiting Bash wrapper306 stopped after verifying its exact command, Editor316 parentage and non-killing TERM trap; no signal sent to Unity/Hub. Built-in Library rebuild continues. Wrapper interrupted: no clean focused pass may be claimed even if corrected checks later complete.
+
+Built-in Library rebuild642 completed, owned Editor316 exited normally through -quit. Corrected all12 Combined Arms/setup/existing mission regression PASS markers observed, but interrupted wrapper is not a clean validation pass. No Unity/Hub process terminated. Stable initial-placement regression follows before runtime correction.
+
+Focused643 reproduces the real native fallback placement bug: seed104734 actor identity held constant; unrelated entity allocation changes cell29,27 to20,22. Wrapper0 without pass marker remains FAILED. No compile errors or cache recovery. Runtime placement now derives RNG from mission seed/stable actor identity/grid cell, preserving native legality, occupancy and budgets. Focused644 regression rerun pending; no native new-source pass claimed. final642-post-rebuild fingerprint was completed while test insertion proceeded and is not used as a native boundary proof.
+
+Focused644 seeded-placement regression PASS across3seeds×3allocation layouts, checkpoint actor spawn2 PASS, wrapper0. Clean focused645 all12 setup configurations/existing missions PASS, wrapper0. Candidate2953728b changes only S005 logical layout, its Editor builder, placement runtime and regression tests relative45fec66e; all material/physical/source assets elsewhere unchanged. Native646 current English seed130368 opening/ARIA/result/return follows.
+
+Native646: current-source English seed130368 normal Victory at217.111s, own HQ800; frozen result and Adjust Setup passed, wrapper0, 62/62 contacts ended, exact pre/post source and material manifests unchanged. Technical readiness remains pending.
+
+Native647: current-source Farsi seed130368 normal Victory at224.744s, own HQ800; frozen result and Adjust Setup passed, wrapper0, all 60 contacts ended, exact pre/post source and material manifests unchanged. Aircraft cycle and remaining acceptance gates are pending.
+
+Native648: failed advanced-air timing strategy on current source. At755.665s R2 research paid720, only100M available, no Airport/Strike; industry hauling starvation persisted despite healthy rear logistics. Previously authorized abort preserved evidence; no normal Draw or cycle pass claimed. Exact pre/post full source/material manifests unchanged. Next qualification ranks refinery placement against oil supply.
+
+Qualification-only revision5739769c: refinery search now focuses newest oil source, fuel storage focuses refinery; paid native UI and legality remain mandatory. Exactly two Editor qualification files changed; runtime/config/Campaign scene/materials unchanged. Focused649 deterministic allocation/checkpoint spawn checks and compile passed with wrapper0. Prior646/647 wins retain their original full fingerprint; exact current-source matrix pending. Native650 launched to test the revised supply strategy.
+
+Native650: wrapper2 qualification watchdog. Paid native Airport construction and Strike520M receipt1005/runway delivery passed; no launch or complete cycle. R2 and construction timing exceed8–12min target. Driver stage2 repeatedly tapped Select, requiring explicitSelect instead of accepting normal neutral None selection. Airport search exhausted5779 candidates to find8, waiting for32; fix to bounded fallback set pending. One read-only CLI search-state inspection recorded; no injection. Exact pre/post full source/material manifests unchanged.
+
+Focused651: neutral None/Select building selection, building-centre candidate ranking, and three legal Airport fallback sites compile cleanly; deterministic allocation/checkpoint spawn regressions passed, wrapper0. Two Editor driver files changed; runtime/config/physical source/materials unchanged. Native652 launched; all flight/timing gates remain pending until observed.
+
+Native652 failed at stage2 fabrication world selection: neutral selection progressed into normal camera gestures, but three attempts could not expose an unobscured target. Paid Airport/Strike receipt1005/runway delivery passed; first field just over13min misses8–12min target. No launch/fire/return cycle claimed. Exact pre/post full source/material manifests unchanged, wrapper2. Next: short native factory pause/resume input probe with screen/occlusion evidence, instead of another full industry buildup to diagnose selection.
+
+Native654 short factory-input probe selected the real factory via world touch, then failed180s watchdog because driver never scrolled the existing selection-panel ScrollRect. PassengerChip firstHit=Map while its centre was below the visible panel. No pause/resume claimed; wrapper2, exact pre/post full source/material manifests unchanged. This isolates missing driver scrolling rather than proving a broken native production control.
+
+Native656 Passed: real factory id11 selected via world touch; selection-panel ScrollRect gesture exposed production control; normal pause and resume taps changed native flags0 then1. Four paired gameplay gestures plus six menu contacts, no input errors, wrapper0, exact pre/post full source/material manifests unchanged. Scoped input control pass only; full mission/air cycle pending. Next short probe will reproduce Airport-camera-to-factory transition using public camera controls.
+
+Native658 Passed: public Airport-area map camera excursion and Your Base camera return issued zero troop orders; native factory world selection, ScrollRect, pause0/resume1 observed through normal input. Eight paired gameplay gestures plus five menu contacts; wrapper0, exact pre/post full source/material manifests unchanged. Screenshots saved. Scoped camera/production-controls pass; full air lifecycle pending. Native659 started with these fixes and current source.
+
+Native659 FAILED: real18-minute Draw before jet launch; paid Strike native runway delivery and all4 fabrication Pause controls observed. Native camera guidance added0 troop commands.140/140contacts ended,0audit errors; wrapper2; exact full3ab523ac source/material pre/post manifests matched. Advanced-air timing missed. Read-only diagnostics retained:3tankers stationary for minutes with active haul orders/no path; pending path flag1. Shared hauler early-return may starve updates while snapshot-only jobs continually reschedule; regression/native verification pending. No cycle/readiness claim.
+
+Focused660 reproduced pending-path tanker dispatch failure (wrapper0 but missing required PASS; retained failure). After removing obsolete shared hauler busy guard, focused661 PASS3 dispatch/conservation/manual-order cases; focused662 PASS55 existing resource/logistics checks. Native acceptance remains pending. Currentsource 25c87d32bc68ed35e9aef564ce54126f84c7a4723ed002e840777b493a5b00ec; no fixed economics/physical geometry changes. Native663 paid Strike cycle starts on this candidate.
+
+Native663 FAILED diagnostic abort, notDraw: repeated native tanker paths requested919,602/919,606 resolve to alternate915,603/915,605; next haul tick cancels active path because alternate differs from requested approach. Read-only bounded static footprint connectivity succeeded (occupancy ignored, notnative path proof). Existing move trace toggled on/off only; no gameplay intervention.98/98contacts ended,0errors; wrapper2; full25c87d32 pre/post manifests/materials equal. Shared pending-job regressions passed but full air cycle unresolved. Next isolated alternate-goal regression before narrow shared fix.
+
+Focused664 reproduced active native alternate-goal path cancellation. Focused665 PASS6 alternate-path preservation/exhaustion retry + pending-job dispatch/fuel conservation/manual-order cases; focused666 PASS55 existing resource/logistics checks. Shared fix preserves unfinished alternate paths; normal building approach/transfer checks stay authoritative. Currentsource 8b484f38d22d527f00574291bf3e60d5ba533265571d23261f0d1effdf15174a; Native667 paid Strike cycle begins. Player/technical readiness remains false.
+
+Native667 FAILED advanced-air timing; authorized diagnostic abort, notDraw. Shared hauling fixes have native movement evidence:all3tankers move69–101m by503.7s; R2paid by503.7s (~150s earlier than659). No diagnostic intervention;117/117contacts ended,0errors;wrapper2; full8b484f38 pre/post manifests/materials equal. ThirdFactory887.5,670 occupies closer refinery plot; actual refinery918.5,709.5/localStore889,707. Next: ordinary purchase sequence warm1Fab→Refinery→localFuelStore→remainingFabs. Same budget/cost/cap/physical map. No readiness claim.
+
+Focused668 compile/deterministic placement+checkpoint PASS; currentsource e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602. Editor-only purchase order now OilPump→warm1Fab→Refinery→localFuelStore→remaining2Fabs. All4factories/2refineries/2stores/3OilTrucks/3Tankers remain normal purchases; normal construction total600. Native669 begins; no timing/cycle/readiness claim yet. Shared runtime regressions665/666 and native667 hauling movement remain prior full-source evidence with unchanged runtime.
+
+Native669 FAILED timing; authorized diagnostic abort, notDraw. Supply-relative refinery930.5,685.5/store929,707 shorten fuel route but industry/research still late. Paid Strike520M receipt1005/native runway delivery and all4 fabrication Pause toggles observed through normal input; no flight cycle. Latest economy1006.707s/M30/fuel878.65.160/160contacts ended,0errors; wrapper2; full e479e153 pre/post source/material manifests equal. Preserve air timing/source-fit gate. Continue current-source native seed/locale matrix + fresh recovery; no readiness claim.
+
+Native670 PASS currentsourcee479e153 ARIA en seed104734: Victory229.698s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 64/64contacts ended,0errors; full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native671 PASS currentsourcee479e153 ARIA fa-IR seed104734: Victory231.321s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 63/64contacts ended;1native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native672 PASS currentsourcee479e153 ARIA en seed130368: Victory223.191s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 65/66contacts ended;1native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native673 PASS currentsourcee479e153 ARIA fa-IR seed130368: Victory224.008s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 66/66contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native674 PASS currentsourcee479e153 ARIA en seed155926: Victory218.574s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 54/54contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native675 PASS currentsourcee479e153 ARIA fa-IR seed155926: Victory217.829s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 52/53contacts ended;1native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native676 PASS currentsourcee479e153 SaveContinue en seed104734: Victory214.961s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 72/72contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native677 PASS currentsourcee479e153 SaveContinue fa-IR seed104734: Victory218.492s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 72/73contacts ended;1native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native678 FAILED INFRASTRUCTURE: disk-full IOException truncated actor evidence; no manual readiness pass claimed. Owned Editor exited2 after disk-full alert recovery. Full source/material manifests unchanged. Removed only verified ignored obsolete generated app and Android IL2CPP/managed intermediates (4,355,345,812 bytes); source, evidence, APK and Unity caches preserved. Native679 repeats the manual-controls journey after recovery.
+
+Native679 retained REAL DEFEAT at156.529s, HQ-1/800. 189/189 recorded contacts ended, zero input errors; frozen result/Main Menu return passed, wrapper2. Full source/material manifests unchanged. Qualification recorded65 accepted AttackMove orders but0 acknowledgments: first rifle group traveled~400m, other combat groups remained idle. Manual checker waited for the structure-only AttackOrderMask after ground AttackMove; acknowledgment correction pending.
+
+Current full source 76373a937df917e5e2a616ea9ba932f240e481f41de9a0943871c7ae1908bdfd: only ManualProbe.cs qualification acknowledgment changed (+1580 bytes); all shipping runtime/config files, physical map and materials unchanged. Prior e479 six-win baseline and EN/FA recovery retained as runtime-equivalent evidence; final exact-source refresh remains pending. Native680 repeats the failed manual journey with the correction.
+
+Native680 PASS current-source Farsi manual-controls driver: Victory 166.169s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native681 failed after restoring four passengers: unloading stalled following a selection touch. Wrapper exit 2 and unchanged source manifest retained. Qualification driver now verifies native selection and scrolls passenger controls through ordinary touch; shipping runtime, mission configuration and physical map unchanged. Native682 pending.
+
+Support scope correction: the full rollout policy (Design/Roadmap/Support/PLAN.md, Ordered extension tasks) explicitly permits an otherwise accepted no-Support baseline to release independently. Native683 observed Support denied with no native policy owner. This is an unfinished planned extension, not alone a baseline-release runtime defect. Support certification remains pending before any exposure; no with-Support readiness claimed.
+
+Native684 ended through the authorized abort method as disk fell to 1.5 GiB; wrapper exit 2 and identical pre/post full source retained. Four paid passengers restored/unloaded (49 native recovery gestures), 87/87 total contacts Ended with no pairing errors; full resumed match did not finish. An ordinary ground target was behind V3GradientLayer, now addressed in the Editor driver via public full-map camera touches. A dedicated focused recovery mode explicitly records completeMatchCertified=0 and countedWin=0. Latest source has not yet run in Unity. Only four Editor qualification files differ from native680; shipping runtime/config/physical map and all materials are identical. No active validation Editor remains from this run. Native686 waits for sufficient disk capacity.
+
+## Disk cleanup and focused recovery, 2026-10-08
+
+Removed 9.75 GiB of verified generated Chrome, Rider index/cache and Unity Burst JIT caches while their applications were closed. Source, Git history, Codex conversation records and validation evidence were preserved. Disk free space after the native686 run is about 56 GiB. See `disk-cleanup-2026-10-08.json` and `native686-focused-paid-boarded-passenger-recovery-pass.json`.
+
+Native687 failed after passenger recovery: full-map camera popup remained open while the manual driver re-entered squad selection. Wrapper exit 2, 65/65 contacts ended, unchanged pre/post full source, one read-only CLI diagnosis. Retained in native687-boarded-pass-manual-popup-stall-failure.json. Native688 now validates the Editor-only modal continuation fix. No readiness claimed.
+
+Native688 PASS current-source en boarded recovery and manual-controls driver: Victory 470.879s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native689 tests a different paid aircraft strategy (two factories, four oil trucks/two tankers), retaining all gameplay costs, rates, starting resources, caps, deadline and Campaign geometry. Only Editor qualification code changes. Native688 full recovery/manual Victory remains runtime-equivalent evidence; final exact full-source refresh remains pending after qualification changes settle.
+
+Native689 failed at the match deadline after paid Airport/Strike delivery and launch. The jet remained TakeoffRolling=1/Airborne=0 and travelled beyond the runway to z=-2259 without firing. Retained in native689-paid-strike-runaway-takeoff-failure.json; no flight-cycle pass claimed. Isolated taxi-to-roll regression tests690 is running before a shared movement fix. Source fingerprint refresh is pending this new test.
+
+Tests690 and tests691 passed basic taxi/heading/frame-time cases but did not reproduce the native overrun. Tests692 reproduced the small-lateral-offset roll failure (required pass marker absent; failure marker present, despite process exit 0). Shared UnitAirMovementSystem now recognizes crossing the liftoff station inside a narrow corridor before runway end. Tests693 is running. Prior native baseline/manual recovery evidence is retained as prior-candidate evidence after this runtime change; no current-source readiness claimed.
+
+Native695 is running the shared takeoff fix with early factory purchase, unchanged normal budgets and four oil trucks/two tankers. Shared runtime fix has 27 regression passes (focused693-694-shared-runway-liftoff-pass.json); full native flight cycle remains pending.
+
+
+Native695 ended at the 1080-second deadline before aircraft launch; its unchanged-source failure evidence is retained. Native696 uses the opening refinery and fuel store, two total factories and three Oil trucks/three Tankers through normal paid purchases. The shared runway fix remains under native validation. Full current source: 18cc506d8293e092cce0a5dc97493956cad53067c7edcceccffba061a4f21e45. No readiness claim.
+
+
+Native696: native takeoff, firing, Return and touchdown observed; fuel rose from 593 at touchdown to 809 before deadline. The full cycle failed before second launch. Wrapper exit 2, all 106 contacts ended, full pre/post source unchanged. Native697 tests the opening Oil pump only, saving 100 construction materials; the original round-trip reserve and second HQ sortie requirement remain. Current source 4c38cc6b2276677e607b5e25bc940e4e20ad6e41a214eeafe6586481a7fd1cd9.
+
+
+Native697 stopped at 812.1497 seconds after a PhysicalTakeover event. All 96 contacts paired, but strict input audit failed due to one physical intervention; wrapper exit 2. Full source unchanged. Native698 is a same-source replay, using the complete native697 closed-post manifest as its pre-run reference. No first-cycle or readiness pass is claimed from native697.
+
+
+Native698 retained as failed: the produced Strike was commanded while delivery transit remained active, temporarily configured runway/home persisted, and the fuel pool reached zero during return. All 100 recorded contacts ended cleanly; wrapper exit 2; full source unchanged. Focused699 reproduced the overwritten taxi goal, focused701 passed three corrected taxi cases. Focused702 reproduced loss of the transit flag across checkpoint serialization. The shared parking/queued-command fix and checkpoint tag codec are now under focused703 (30 flight + 10 checkpoint cases). Current source 0b1962986b15fb05bfc723535dff7d0dcbf8a2b8011033db9c29ed2755c93d5d. Native confirmation remains pending.
+
+Native704: failed before Airport purchase. Three native-valid sites exhausted camera visibility retries; this does not establish physical source-fit failure. Wrapper exited 2 after the authorized abort; all 100 contacts ended with no audit errors. Full source remained 0b1962986b15fb05bfc723535dff7d0dcbf8a2b8011033db9c29ed2755c93d5d. Shared parking fixes remain pending native flight confirmation. See native704-airport-camera-placement-failure.json.
+
+Native705: paid Airport and Strike (receipt1005/cost520), assigned parking completion, initialized runway, normal takeoff/native fire/home touchdown and refueling observed. Fuel at touchdown412; second-sortie reserve was not reached before deadline Draw1080.02. Wrapper2; all97 contacts ended cleanly; complete source unchanged. Camera placement succeeded this time; intermittent camera failure is not declared fixed. See native705-paid-strike-parking-flight-return-refuel-deadline-failure.json.
+
+Native706 interrupted at60.68s by PhysicalTakeover. All32 recorded contacts paired, but strict audit failed intervention errors. Complete source unchanged. Wrapper exit unavailable after pause; Editor closure verified. No new industry or flight acceptance. Native707 reruns the same candidate.
+
+Native707: failed qualification deadline before first-sortie reserve. Airport/Strike paid and native parking completed. Costs2480; factories3/OilPumps2/refineries2; fuel store remained original. All127 contacts ended with no errors; wrapper2; source unchanged. Read-only orders show long original-source/refinery/fuel-store routes; no permanent hauler movement fault established. See native707-paid-industry-long-haul-first-sortie-fuel-failure.json.
+
+Native708 failed Draw1080.013 before first-sortie reserve. Paid parking passed; all127 contacts ended cleanly; wrapper2 and source unchanged. Building positions/ownership verified by read-only observation. Nearby store received fuel, but materials timing and long Oil routes remained inadequate. Failed read-only queries retained; no gameplay mutations. See native708-local-store-long-oil-routes-fuel-deadline-failure.json.
+
+Native709 closed FAILED: paid parking, native takeoff/fire, normal Return, home touchdown at fuel336 and refueling observed; second-sortie reserve not reached before Draw1080.005. Wrapper2; 115/115 paired contacts, zero pairing errors; no terminal success. Full source/material manifests unchanged626c833f. Air timing remains unresolved. Next: fresh current-source baseline and recovery, no readiness claim.
+
+Native710 PASS currentsource626c833f ARIA en seed104734: Victory223.645s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 62/63contacts ended;1native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native711 current-source Farsi seed104734 FAILED: Defeat155.248s, own HQ destroyed, enemy HQ800. Attack receipts verified and native army paths progressed; no permanent path failure established. Result frozen/Adjust Setup return passed; 43/43 paired contacts, zero errors; wrapper2; full source/material manifests unchanged626c833f. Retain loss in three-seed/two-locale sample; gate requires at least two wins per locale and remains pending.
+
+Native712 PASS currentsource626c833f ARIA en seed130368: Victory215.701s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 63/63contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native713 Farsi seed130368 FAILED Defeat155.134s, own HQ destroyed/enemy HQ800. Normal-speed result/Adjust Setup return passed, strict contacts 49/49 with zero errors; actual wrapper2; source/materials unchanged626c833f. Two Farsi losses leave the minimum two-win locale gate open. Shared opening-defense investigation follows before another identical attempt.
+
+Focused714 RED reproduced Combined Arms skipping visible defense (expected focus51, actual0). Focused715 GREEN passed Expanded ARIA and harness suites, actual wrapper0, full pre/post source/material manifests equalba35c99a. Shared planner uses existing normal paid/bounded opening defense for Combined Arms; no costs, budgets, physical source or map assets changed. Native effectiveness/complete mission readiness still pending.
+
+Native716 PASS currentsourceba35c99a ARIA fa-IR seed104734: Victory238.565s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 65/65contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native717 PASS currentsourceba35c99a ARIA fa-IR seed130368: Victory244.304s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 73/73contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native718 PASS currentsourceba35c99a ARIA fa-IR seed155926: Victory242.141s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 68/68contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native719 PASS currentsourceba35c99a ARIA en seed104734: Victory253.246s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 70/70contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native720 PASS currentsourceba35c99a ARIA en seed130368: Victory245.313s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 74/74contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native721 PASS currentsourceba35c99a ARIA en seed155926: Victory238.772s, HQ800/-1; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 69/69contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Current-source baseline716–721 PASSED: three seeds × EN/FA, six wins238–253s, all player HQ800; all touch contacts ended without audit errors; native result/return and actual wrapper0; full source/material manifests equalba35c99a. Proof: current-standard-regular-aria-matrix-716-721-pass.json. This closes the minimum Regular/Standard ARIA sample only, not full player readiness or the 20-seed stress/device/lifecycle gates.
+
+Native722 public Save/Continue FAILED driver timeoutstep3. Continue retry during asynchronous setup teardown left the driver waiting for no session after native ExitMenu/EnterMatchHud completed. No native recovery acceptance claimed. Eleven contacts paired without errors; actual wrapper2; full source/material manifests unchangedba35c99a. Fix driver transition, preserve all recovery checks, rerun native.
+
+Candidate723 changes only the Editor validation driver to observe an accepted Continue after retry. Full source69efe763; all shipping runtime/config/map/material hashes equal baseline716–721. Those six wins remain separately recorded shipping-equivalent evidence, not an exact-full-source claim. Current native recovery and final exact-source refresh remain pending.
+
+Native723 PASS currentsource69efe763 SaveContinue en seed104734: Victory231.329s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 78/78contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+Native724 PASS currentsource69efe763 SaveContinue fa-IR seed104734: Victory229.134s, HQ800/0; normal-speed frozen result/Adjust Setup return/countWin1, wrapper0. 80/80contacts ended;0native Finished/no-command cancellations;0errors. Full source/material manifests unchanged. Full mission readiness gates remain pending.
+
+2026-10-09: Native725 is NOT accepted: its native boarded recovery, victory and return markers passed, but final clockPaused=0 and the prior wrapper PTY exit was not persisted. All evidence retained. Focused726 reproduces the same-update clock defect; focused727 objective suite passes the shared fix. Current source b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54 requires fresh native acceptance; previous victories remain historical.
+
+Native729 PASS current-source en boarded recovery and manual-controls driver: Victory 477.067s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native730 PASS current-source fa-IR manual-controls driver: Victory 164.737s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native729 PASS: paid Heavy APC boarding4 → public Save/Continue → unload4 → manual Victory477.067s → clockPaused1/frozen result/Main Menu, wrapper0, strict contacts0errors, identical full source. Native730 PASS: Farsi manual Victory164.737s, localized result, clockPaused1, Main Menu, wrapper0, strict0errors, identical source. Native731 FAIL: full-map panel blocked Pause after combat; match finished before save. Native732 changes only the Editor recovery driver to close the map normally and reject Finished before saving. Shipping runtime/config/map/materials unchanged from729/730; those proofs are runtime-equivalent, not exact-current-full-source.
+
+Native732 scoped combat Save/Continue PASS: saved226.7849s after native HQ damage, paid APC/same attempt retained, 4,971 old physical entities removed, receipt0violations; native Victory235.8595 and frozen result/Main Menu passed. Full run rejected by reset post-Continue manual audit (no new attack before preserved orders won). Native733 retains the verified real command stream only for the same recovered attempt, with strict completed-gesture/receipt checks. It also prepares a normal-price 3 Oil/3 Tanker air comparison because native709 ended with1,316 fuel waiting in refineries. These are Editor-only qualification changes; all shipping sources/config/maps/materials are unchanged. Native qualification remains pending.
+
+Native733 PASS current-source en manual-controls driver: Victory 235.298s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native734 failed on unchanged source: paid Strike completed parking, takeoff, native fire, Return and home landing. Fuel rose from 406 at landing to 418.39 at the last economy sample, below the second-sortie reserve before the 1080-second Draw. Actual wrapper exit 2 is persisted. All 117 recorded contacts completed with no audit errors. This scoped air qualification is not a complete-match certificate. Paid tankers were stationary with active haul phases in late samples; their exact movement/approach state remains to be diagnosed. See `native734-three-oil-three-tanker-native-flight-return-second-sortie-deadline-failure.json`.
+
+Shared service-approach fix (source `162af97548a94c4b21429212d8ee45005c3b08500f5ddf32739a2879296bfd38`): RED735 reproduced selection of a clear cell that cannot satisfy loading arrival. GREEN736 passed 8 service/active-path cases and all 55 existing resource/logistics cases, with actual wrapper exit 0 and unchanged full pre/post source manifests. Physical maps, configurations and all 562 materials are unchanged. Native734 causation and current-source full mission acceptance remain pending. Prior native733 combat victory is preserved as prior-source evidence.
+
+Native737 failed: paid Strike took off and fired, but return had not reached home before Draw. Actual wrapper exit2/full source unchanged/strict contacts clean. Tankers stalled; read-only observations captured missing paid-vehicle occupancy while live footprints existed. Service-range fix remains focused-passed but does not close the air gate. See `native737-service-approach-native-air-return-deadline-failure.json`.
+
+Focused738 reproduced a bay overlapping a live hard vehicle with missing occupancy bits. Shared fix739 reuses native live-footprint clearance; all 9 approach/path cases and 55 existing resource/logistics cases passed, with actual wrapper exit0 and full unchanged source. The underlying occupancy-cache cause is unresolved; native confirmation and player readiness remain pending.
+
+Native740 failed at Draw during Return after paid native Strike fire. Full source unchanged, actual wrapper exit2 and clean paired-contact audit preserved. All three tankers moved in late samples. Read-only inspection confirmed shared occupancy query alias: filtered tracked12 vs all53. This is a shared navigation defect, not a closed mission gate. See `native740-live-vehicle-service-bay-native-air-return-deadline-failure.json` and `native740-confirmed-shared-occupancy-query-filter-alias.json`.
+
+
+Focused741–742: preserved expected failed regression followed by seven passing occupancy cases, actual wrapper exit 0, identical complete pre/post fingerprints. See `focused741-742-shared-occupancy-membership-pass.json` and `source-delta-742-shared-occupancy-membership-fix.json`. Only the shared occupancy system and its tests changed from source739; Campaign geometry, all materials, mission bindings and gameplay budgets remain unchanged. Native confirmation is pending.
+
+Focused743 passed nine service-bay/active-path cases and 55 existing resource/logistics regressions on the unchanged742 source. Native744 is now validating the normal paid Strike lifecycle on that source; no native lifecycle pass is claimed while it runs.
+
+Native744 closed failed: normal paid Strike delivery, takeoff, fire and Return passed their scoped observations, but Draw1080 preceded home touchdown and second sortie. Actual wrapper2, all117 contacts ended with no errors, full source unchanged. Live readonly observations confirmed distinct occupancy queries tracking all actors and valid records/bits for all three tankers. Next qualification uses legal forward Airport placement near the midpoint of public objective positions; shipping runtime, maps, budgets, flight reserve and rules are unchanged.
+
+Native745 preserved failed Draw during Return: actual wrapper2, all117 contacts ended, no errors, full source unchanged. The midpoint search tested1948 candidates and found three legal samples in the same western strip; the coarse search was not exhausted and does not establish global impossibility. Native746 adds a normal-input strategy: own truck selection and own factory tap, then observes native delivery acknowledgment. No order, cargo, reservation or resource is injected; default shipping logistics, geometry and budgets remain unchanged. Current-source native outcome is pending.
+
+Native746 stopped at the factory supply acknowledgment watchdog, actual wrapper2, all80 contacts ended with no errors and full source unchanged. No supply assignment or air readiness was certified. The validation selection state began before the outer fleet target increased to three Tankers; the747 driver now waits for all three purchases before starting it and logs pending selection/route state on failure. Shipping runtime, map and budgets remain unchanged. Native747 is running.
+
+Native747 preserved13 normal-input factory assignments to both factories, then failed while selecting a moving truck: watchdog step0, truckSelected=false. Actual wrapper2, all264 contacts ended with no errors, full source unchanged; no full mission certified. Native748 selects trucks using existing public squad cards and searches normal paid factory sites near the Oil source, retaining native placement checks and costs. The ineffective forward Airport search is removed from the final driver. No shipping runtime, source geometry, materials or mission budgets changed in these driver updates.
+
+
+Native748 closed with actual wrapper exit 2 and full pre/post source equality. Fifteen normal supply assignments were observed, but the subsequent native factory order was not acknowledged (destination remained refinery16); route failure count1. Failure/contact evidence retained in `native748-close-factory-supply-ack-watchdog-failure.json`. Native749 adds bounded normal selection/tap retries in the Editor driver only. Shipping runtime, mission configuration, Campaign geometry and all 562 materials remain unchanged. Aircraft/complete match/current role readiness remain pending.
+
+
+Native749 closed with actual wrapper exit2/full source unchanged. Normal paid Strike520 receipt1005 completed parking, takeoff, native firing, normal Return and native touchdown at home; positive Fuel recovery followed (305 at touchdown,334.21 last sample). Second full round-trip reserve and second sortie did not complete before the qualification watchdog. Route failures0; complete match/player readiness not claimed. Strict native contact audit retained. Proof: `native749-native-strike-landing-second-reserve-timeout-failure.json`.
+
+Native750 PASS current-source en manual-controls driver: Victory 180.576s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native751 PASS current-source fa-IR manual-controls driver: Victory 169.534s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+
+Native750 (actual seed130368) EN manual combat Save/Continue and Native751 (seed104734) FA manual full Victory/frozen result/MainMenu passed with actual wrapper0 and zero strict contact errors. New752 read-only Airport-source-fit driver changes only two Editor files; full delta verifies shipping runtime/configuration/physical source/all562 materials unchanged. The two manual proofs are retained as identical-shipping-gameplay evidence, not relabeled as exact new full-source victories. Full bilateral aircraft capacity/second sortie and other acceptance gates remain pending.
+
+Native752 failed compilation, then its repaired read-only scan timed out. Its source changed during the failed session; it is not unchanged-source qualification. Native753 uses a clean full-source manifest, coarse 32-cell sampling and a separate 600-second diagnostic watchdog. This does not change the 18-minute match or establish bilateral aircraft capacity. The English750 and Persian751 manual victories remain shipping-equivalent; two Editor diagnostic files differ.
+
+Native753 failed after the opening inventory assertion was repeated during ongoing native combat (14 structures became13); no completed source-fit marker. Full pre/post unchanged and actual wrapper2 retained. Native754 audits the opening once before its first scan frame, then observes the live scene without requiring opening actors to remain alive. No simulation freeze or shipping gameplay change.
+
+Native754 completed4096 coarse physical-map samples with582 native-valid sites,0 completely within current S005 playable bounds and0 playable non-overlapping pairs. Actual wrapper0 and full source unchanged. The32-cell raster missed historically committed legal Airport sites; no exhaustive impossibility, bilateral capacity, victory or readiness claim. Finer logical-playable-only scan follows.
+
+Native755 completed7776 finer playable samples:8 native-valid fully bounded Airport sites,17 non-overlapping footprint pairs. Actual wrapper0 and complete source pre/post unchanged. Existing physical map and logical bounds unchanged. Candidates include western runway (825.5,671) and southern strips (1399,177.5),(1415,177.5),(1687,177.5). Necessary source-fit candidates found; simultaneous placement, bilateral aircraft capacity and full flight cycles remain pending. Sites were sampled at different live times, so joint native placement must revalidate occupancy.
+
+Native756 PASS current-source en boarded recovery and manual-controls driver: Victory 474.957s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native756 current normal boarded recovery passed: paid APC280, four restored/unloaded passengers, same attempt and receipt, resumed Victory474.957sec, frozen terminal and MAIN MENU return; actualwrapper0 and fullsource unchanged. Input audit errors0,240 completed contacts plus one explicit native-Finished cancellation with no accepted command. A subsequent Editor-only joint-placement probe preserves shipping equivalence; no full22-role or device acceptance claim.
+
+Native757 normal joint airport placement failed: first paid300 western Airport committed; second native candidates1399/1415/1687 atz177.5 accepted by source validator but nine public full-map tap attempts could not bring them into view. Actualwrapper2, fullsourceunchanged, input pairing auditerrors0. Joint/bilateral placement remains pending; investigate normal map-edge camera navigation before changing gameplay or geometry.
+
+Shared full-map edge defect reproduced by native758 observation and focused759 RED regression (actualwrapper0 but requiredPASS absent). Full-map image now usesFitInParent to preserve the complete interactive projection; builder updated, compact map policy preserved. Shared shipping UI changed, so earlier EN/FA and boarded manual victories are retained as prior-candidate journeys, not current UI qualification. Physical map, logical bounds, budgets and duration unchanged.
+
+Focused760 GREEN passed12 map tap/drag/edge clipping/compact policy cases with actualwrapper0, requiredPASS marker and fullsource unchanged. Native southern camera, joint construction, complete current normal journeys and shared affected Campaign regressions pending.
+
+Native762 current shared-map camera fix passed normal menu entry and southern camera tap. Target1399,177.5 hitMap, emitted nativeFocus0.56,0.03 and appeared atscreen1199.92,540.02 withpositiveDepth84.85; troopcommandsadded0. Actualwrapper0, complete source unchanged, strictinputauditerrors0. Scoped camera proof; joint construction and complete mission remain separate. Native761 menuControlsTimeout failure retained.
+
+Native763 joint paid Airport construction still failed with placement preview active; first300 Airport committed and native second sites accepted, but southern map gestures did not achieve visibility. Shared full-map ordinary camera native762 remains passed; investigate preview/overlay-specific interaction. Actualwrapper2, fullsourceunchanged and touchauditerrors0 retained. No joint or bilateral capacity acceptance.
+
+Native764 confirmed pending placement intercepted southern map touches (`PlacementBarPanel`, no focus event). Shared placement HUD now suppresses its controls and validity panel while the full map is open, preserving the preview and restoring controls when it closes. Focused767 passed all five placement tests on unchanged full source. Native768 passed actual normal-menu/Build/full-map touch/Close input: first hit `Map`, southern target visible, preview preserved, controls restored and zero troop commands added. Its wrapper exited 0, full PRE/POST source manifests matched and touch audit had no errors. Failed focused765 (old status casing assertion) and focused766 (Edit Mode fixture had no rendered raycast hits) are preserved. Native769 joint paid Airport construction is running; joint construction, bilateral air capacity, full current-source journeys and player readiness remain pending.
+
+Native769 PASS: normal touch input paid and committed two living same-faction Airports at (825.5,671) and (1399,177.5), cost300 each, with normal industry/readiness setup. Wrapper0, unchanged full source/material manifests and zero contact-audit errors. This is joint construction proof, not bilateral faction parking/taxi/flight capacity, a full-match outcome, or player readiness.
+
+Native770 PASS current-source en manual-controls driver: Victory 182.295s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native771 PASS current-source Persian checkpoint/ARIA recovery: paid220 receipt and same attempt preserved; ARIA Play/Confirm used through normal touch; Victory236.386s at normal speed; frozen result and ADJUST SETUP return passed. Wrapper0, unchanged full source/material manifests and clean complete contact audit. This recovery includes a pre-ARIA player purchase and does not count toward fresh ARIA seed baseline or Persian manual-control acceptance. Agent inspected the native Persian HUD; owner visual/device acceptance remains separate and pending.
+
+Native772 PASS current-source fa-IR manual-controls driver: Victory 167.333s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native773 PASS fresh ARIA en seed104734: Victory241.211s at normal speed; native menu/Play consent, frozen result/return and touch audit passed, actual wrapper0 and unchanged full source. Fresh seed matrix remains separate from recovery journeys and final player/device acceptance.
+
+Native774 retained normal fresh Persian seed104734 Defeat181.483s (own base destroyed, enemy base intact). ARIA recorded its assault as issued; native result/ADJUST SETUP return, normal speed, all contact audits and unchanged full source passed; actual wrapper2 correctly represents the failed win gate. This failed seed remains in the fresh baseline and is not replaced by the successful Persian recovery or manual journeys. Remaining fixed seeds proceed on the same source; no gameplay changes or loss deletion.
+
+Native775 PASS fresh ARIA en seed130368: Victory247.017s at normal speed; native menu/Play consent, frozen result/return and touch audit passed, actual wrapper0 and unchanged full source. Fresh seed matrix remains separate from recovery journeys and final player/device acceptance.
+
+Native776 PASS fresh ARIA fa-IR seed130368: Victory248.742s at normal speed; native menu/Play consent, frozen result/return and touch audit passed, actual wrapper0 and unchanged full source. Fresh seed matrix remains separate from recovery journeys and final player/device acceptance.
+
+Native777 PASS fresh ARIA en seed155926: Victory235.255s at normal speed; native menu/Play consent, frozen result/return and touch audit passed, actual wrapper0 and unchanged full source. Fresh seed matrix remains separate from recovery journeys and final player/device acceptance.
+
+Native778 PASS fresh ARIA fa-IR seed155926: Victory237.776s at normal speed; native menu/Play consent, frozen result/return and touch audit passed, actual wrapper0 and unchanged full source. Fresh seed matrix remains separate from recovery journeys and final player/device acceptance.
+
+Current fixed fresh ARIA seed baseline native773–778 complete on exact source729448e4: English3/3 wins; Persian2/3 wins with first-seed Defeat retained. All six actual menu/Play/normal-speed/result/return and contact audits passed, with wrapper0 for wins and wrapper2 for the retained native Defeat, and unchanged full source/material manifests. Meets the two-wins-per-locale baseline threshold. No recovery/manual wins substituted; this is not the separate twenty-seed family stress result, full role/air-capacity certification, or player/device acceptance.
+
+Native779 PASS current-source en boarded recovery and manual-controls driver: Victory 466.718s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+### Native780 current paid Strike cycle — failed
+
+Actual wrapper exit2; complete PRE/POST source unchanged (`729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711`). Normal paid Airport/Strike, native firing and landing passed as scoped progress; faction fuel recovered from420 to574 before the normal1080-second Draw. Second-sortie reserve was not met. All290 recorded contacts ended; no terminal return contacts, no complete-match certification. Failure and touch/economy evidence retained in `native780-current-paid-strike-second-sortie-deadline-failure.json`.
+
+### Native781 qualification strategy
+
+Running the paid third-factory setup with match elapsed/fuel reserve observations. Exact full source `d1781e9588c3f9aadb0331f070946890f1ef0548bcc903e47733116ad4eae7df`; full delta verifies only two Editor harness files changed. Shipping runtime, configurations, materials and physical maps are identical to the retained729448 manual/ARIA baseline cohort. Those original proofs retain their original full hash; they are runtime-equivalent evidence, not rewritten exact-source wins.
+
+### Native781 three-factory strategy — failed
+
+Actual wrapper exit2; complete PRE/POST source unchanged. Paid Strike delivery was earlier than780; three normal factories were paused, but fuel stayed below the unchanged960 reserve. Wall watchdog fired before first sortie; no native Draw/flight/landing or full-cycle pass is claimed. All290 recorded contacts ended without violations. Failure `native781-paid-third-factory-fuel-reserve-watchdog-failure.json` and live own-faction route observations retained.
+
+### Native782 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`c3e491210ef01a4f4d591d2f60212274fe6cbe79454a154e340dcab89ffcc36f`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native782-normal-paid-strike-cycle-failure.json`.
+
+### Native783 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`1330384d9754106f80e43bfd60870d4a5b060b57888f6bc79949bea4865b3a06`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native783-normal-paid-strike-cycle-failure.json`.
+
+### Native 784: isolated long-runway return regression
+
+64 Strike-speed/long-runway approach cases and two legacy regressions passed through the macOS GUI wrapper (actual exit 0). Complete PRE/POST source manifests are identical (`ea04ecb617b699cc1bab65b4eec46095440fd0d1bdd2a5b2ba3164f99ec72196`). This isolates flat-surface runtime return behavior; it does not replace normal-input mission qualification. Four persistent-allocation diagnostics from this focused run are retained in the proof/log. No shipping runtime or map changes.
+
+### Native785 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`4c26481e6d737a52e3f46297f4cd42640c040581985c4bb70c10700496259f07`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native785-normal-paid-strike-cycle-failure.json`.
+
+### Native785–789: aircraft Return defect isolated and fixed
+
+Native785 paid Strike fired, landed and parked with fuel40, but repeat sortie timed out at elapsed1064.382/fuel307/reserve869. Three physical local Fuel deliveries and own-air read-only observations are retained. The original Return command added a parking Move pass before its landing maneuver. Native786 reproduced that; native787 exposed an overly broad proximity assertion that also rejected a valid go-around. The corrected regression on the exact original runtime failed in native788 (first movement phase2). The fixed runtime then passed native789: two recorded-state landing/taxi cases plus seven existing Return command regressions, actual wrapper0 and matching full PRE/POST source `8ab55d8032a70ea4a63ccf0f89f30d523195df16a5939fe8734bdebe2e7e6ef6`.
+
+Initialized aircraft Return now clears movement and delegates directly to native landing/taxi, preserving an ongoing return maneuver. No physical map, config, material, resource rate, price, budget or deadline was changed. This shipping runtime change still needs a normal-input mission confirmation; retained baseline wins keep their original hashes. Repeat sortie, bilateral capacity, all roles and broader mission/device gates remain pending.
+
+### Native790 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`9cde6a8019fdfe4514d6961d3b1c642cb3ac264b69d3d030ea04b48b840772d1`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Normal paid four-Tanker fleet transition timed out.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native790-normal-paid-strike-cycle-failure.json`.
+
+Native790 follow-up: the four-Tanker transition failed before any flight. The native empty-Oil-truck Destroy released its support slot (2 Oil trucks/3 Tankers observed); the Editor driver then alternated CloseButton and BuildCommand because stage2 closed the drawer before the fleet purchase helper ran. No fourth-Tanker purchase or normal aircraft Return verification is claimed. Correct the driver drawer lifetime and repeat with unchanged shipping rules.
+
+### Native791 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`398315782ea0ec0fc01d7f64e4b7cd48e0a1b38427e8a39cd8747e8ea47df659`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native791-normal-paid-strike-cycle-failure.json`.
+
+Native792 controlled movement/fuel regression failed on the unchanged native791 shipping runtime: physical cell832,1024 vs stale UnitGrid832,1023; expectedFuel372.25, actual372.0. Actual wrapper0 with FAILED marker and absent requiredPASS is a failed validation. Full PRE/POST source identical. Proof `native792-runway-approach-fuel-accounting-control-failure.json`. Isolated reproduction does not certify a native mission.
+
+Native793: aircraft world-position fuel fix passed complete recorded runway approach at30Hz/10Hz (88.4seconds;342/113frames outside ground grid;655.5/654Fuel charged) and8existing fuel/safety/ground regressions. Actual wrapper0 plus requiredPASS, identical full PRE/POST source. Proof `native793-aircraft-world-position-fuel-focused-pass.json`; shipping delta `source-delta-793-aircraft-world-position-fuel-accounting-fix.json`. Normal-input confirmation and complete mission readiness remain pending.
+
+### Native794 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`8e76d0663f634280e2bf3f31dfd08e6b58c7d3837c820d2e207d5ab412310710`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native794-normal-paid-strike-cycle-failure.json`.
+
+Native794 failed before aircraft purchase: driver800-Materials combined reserve was unreachable at stock790/cap800 under full50-Materials batches. Normal Strike520 was affordable; this is a qualification-driver ordering error, not a mission capacity defect. Full source frozen through actual wrapper2 and full POST. Native4factories/2pumps/2refineries/2stores and existing southernAirport construction passed scope only. Correct sequential purchasing; reproduce inbound-reservation demand mismatch separately.
+
+Native795 controlled actual-route regression failed on unchanged native794 runtime: automatic Oil route selects already-committed refineryId2 instead of waiting factoryId4. Actual wrapper0, FAILED marker and absent requiredPASS; full PRE/POST identical. Proof `native795-incoming-oil-reservation-demand-control-failure.json`. Fix secondary demand accounting to match existing incoming-reservation batch priority; no rates/budgets/map changes.
+
+### Native796 — focused shared Oil and aircraft-fuel regressions passed
+
+Source `f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448`; full PRE/POST identical, wrapper0 and all required pass markers present. Both faction Oil-route reservation cases, 55 logistics/production, 7 economy, 3 grid-context, 2 full recorded runway approach and 8 fuel cases passed. Driver corrected to sequential affordable purchases; native mission confirmation pending. Existing map, materials, budgets, rates, deadlines and support capacity preserved. This focused pass does not establish player readiness. Proof: `native796-shared-oil-air-fuel-regression-pass.json`.
+
+### Native797 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`f58ae1200e0537c452163bcab1ec8fdab74ed4cf675420d7b103e66be618a448`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native797-normal-paid-strike-cycle-failure.json`.
+
+Native797 clarification: bounded validation wall watchdog fired; no terminal Draw claimed. Four factories/two pumps/two refineries/two stores, paid Strike520 parking, normal four-Tanker fleet within six slots and two physical local Fuel deliveries passed as partial evidence. Aircraft never launched. Last recorded usable Fuel1242.3. Selection helper lacked backward paging after selecting a last-page Tanker; native confirmation of driver correction pending. Optional own-route CLI inspection failed due Pipeline port conflict; CUA read timed out, neither changed gameplay.
+
+### Native798 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`e35ea8533c2eca91a52f436419a4df39747afedf43575592f356ecbe9fb9a817`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Ground Staging destroyed during paid aircraft setup; native production cannot continue.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native798-normal-paid-strike-cycle-failure.json`.
+
+Native798 failed during setup: enemy destroyed Ground Staging after last diagnostic97.866s. Paid four-factory/four-Oil setup observed; Airport site-revalidation and backward aircraft selection were not reached and remain unverified. Owner-map geometry, roster, budgets and rates unchanged; next normal-input strategy uses all presented combat squads and the own actual producer position. Failure retained; no first flight/readiness claimed.
+
+### Native799 — menu input launch failed
+
+Full PRE/POST unchanged (`31eab475b92bb49c3fa2d6b94d49dccf476cb527b060be91083cd53f046f10d2`), actual wrapper2. Menu watchdog at step1; no mission census, no defence/flight verification. Retain failed attempt; no licensing-block claim. Driver currently advances after touch dispatch without observing the menu transition; stable touch/transition retries are the next correction. Proof `native799-normal-menu-launch-failure.json`.
+
+### Native800 — driver compilation failure, candidate disqualified
+
+Original source `588d279fce9cce68cd30b896d41c37b2037716798d55c13b2ceede9fdba7f704` failedCS0234 in the added menu native-session check. Full failed-candidate source snapshot equals original PRE. No mission census or native playthrough occurred. Namespace is verified as Game.Composition and corrected; current independent source `792cb736578cb585c5f92a92ff93794d184c351ddb67445b5da13ad1c18cef70` is unqualified. Compiler repair explicitly invalidates this wrapper run; no immutable-run/native acceptance credit claimed. PID22844 belongs only to this launched project/log/executeMethod; owner permission requested before terminating it under AGENTS.md:30. Hub and the unrelated MenuUiUx Editor remain untouched.
+
+### Native800 closure and fresh candidate preparation
+
+Owned Editor and wrapper are no longer running. The original execution session and exit artifact are unavailable; no exit code is inferred. Compilation failure remains disqualified. User authorized closing only the owned failed Editor, but no termination was needed. Concurrent surface/shader/material edits are recorded in `source-delta-801-concurrent-surface-work.json`; gameplay scripts and physical scene remain unchanged in that delta. A new full candidate manifest is required before native801.
+
+### Native801 clean corrected compilation — menu failure
+
+Actual wrapper2, unchanged full PRE/POST source `f6bc5ad610c44b95802d903d7d3357132cb8dbb23001717bac4d7650d9e1f81e`. Corrected compilation passed. Normal Skirmish Touch completed native route transition to QuickCustomSetup, but scenario selection timed out at step1. No mission census or aircraft evidence. Proof `native801-normal-menu-launch-failure.json`. Next run will capture actual menu controls, hit targets and scroll state to diagnose this observed failure.
+
+### Native802 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`175e3a0f2573ce07780dc888a21735e5953cdf848ee33d4e0b0a4bf432e54b60`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native802-normal-paid-strike-cycle-failure.json`.
+
+Native802 failure refinement: the exact paid aircraft was selected and fired. ReturnSector Touch was recorded, but the command stream contains no ReturnToBase receipt. The driver advanced to its return stage without actual acceptance; the aircraft continued attacking and exhausted Fuel. The next driver requires settled Return UI, a verified native receipt, attack clearing and disabled AutoEngage before counting Return. This is a driver repair; shipping gameplay remains unchanged.
+
+### Native803 compilation failure — disqualified
+
+New Return-driver Button field lacked UnityEngine.UI import. Full failed candidate snapshot matches original PRE `358ea09a1a4d192f631472c6449ff9ddb7b03ba1854930c47f7fc7495d75781e`. Import corrected; current source `58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5` is uncompiled/unqualified. Owned failed Editor PID79965 remains awaiting scoped close approval as required by AGENTS.md. No mission or Return proof accepted.
+
+### Native803 closure
+
+Owned compile-failed Editor no longer exists; no termination performed. Original wrapper exit unavailable, no code inferred. Corrected source 58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5 will be compiled through a fresh focused GUI-wrapper run before another long mission test.
+
+### Native804 corrected compilation; executeMethod failed
+
+Unity compiled with no C# errors, full PRE/POST unchanged (58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5). Wrapper exit0, but namespaced method class was absent: actual test class is in the global namespace. No required marker, so regression validation failed. Correct verified method is BuildingResourceProductionEcsSystemTests.RunSharedOilAndAirFuelValidation.
+
+### Native805 corrected source compilation and shared regressions — passed
+
+Actual wrapper0 and exact required marker: [SharedOilAndAirFuelValidation] result=Passed oilCases=2 logisticsRegressions=55 economyRegressions=7 fuelContextCases=3 approachCases=2 existingFuelRegressions=8. Full PRE/POST identical (58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5). No C# compiler errors. All77 grouped cases passed. This certifies compilation and scoped shared Oil/Fuel regressions only; native Return/landing/refuel/second sortie and full mission readiness remain pending.

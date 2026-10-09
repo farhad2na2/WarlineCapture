@@ -12,6 +12,53 @@ namespace Game.Tests.Editor
     public sealed class SkirmishSharedCombatTests
     {
         [Test]
+        public void CommandedSiegeUsesNativeOrdersAndRejectsIllegalTargets()
+        {
+            foreach (string condition in new[] { "legal", "enemy-command", "hidden", "friendly", "neutral", "other-attempt", "air", "too-close", "too-far", "hold", "dead", "paused", "no-target" })
+            {
+                using var world = new World("siege-" + condition);
+                var em = world.EntityManager;
+                var id = new FixedString64Bytes("siege-native-command");
+                var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+                em.SetComponentData(session, new SkirmishExpandedSessionComponent { SessionId = id });
+                var grid = em.CreateEntity(typeof(GridConfig));
+                em.SetComponentData(grid, new GridConfig { Width = 100, Height = 100, CellSize = 1 });
+                byte shooterFaction = condition == "enemy-command" ? (byte)2 : (byte)1;
+                var target = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(UnitHealth), typeof(LocalTransform));
+                em.SetComponentData(target, new SkirmishAttemptOwnedComponent {
+                    SessionId = condition == "other-attempt" ? new FixedString64Bytes("another-attempt") : id,
+                    IsStructure = condition == "air" ? (byte)0 : (byte)1,
+                    FactionId = condition == "friendly" ? shooterFaction : condition == "neutral" ? (byte)0 : (byte)(3 - shooterFaction) });
+                em.SetComponentData(target, new UnitHealth { Current = condition == "dead" ? 0 : 100, Max = 100 });
+                em.SetComponentData(target, LocalTransform.FromPosition(new float3(condition == "too-close" ? 2 : condition == "too-far" ? 60 : 30, 0, 0)));
+                if (condition == "air") em.AddComponentData(target, new SkirmishUnitRoleComponent { Category = SkirmishPopulationCategory.Air });
+                if (condition != "hidden") SkirmishFogService.Reveal(em, target);
+                var unit = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishSharedActorTag),
+                    typeof(SkirmishMoveIntentComponent), typeof(SkirmishRoleOverlayComponent), typeof(UnitHealth), typeof(LocalTransform),
+                    typeof(SkirmishUnitRoleComponent), typeof(GroundMissileLauncherComponent), typeof(GroundMissileLauncherStateComponent));
+                em.SetComponentData(unit, new SkirmishAttemptOwnedComponent { SessionId = id, FactionId = shooterFaction });
+                em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+                em.SetComponentData(unit, LocalTransform.Identity);
+                em.SetComponentData(unit, new SkirmishUnitRoleComponent { Role = SkirmishRoleKind.Siege, Category = SkirmishPopulationCategory.Ground });
+                em.SetComponentData(unit, new GroundMissileLauncherComponent { MinRange = 24, MaxRange = 48, Damage = 40, PrepareSeconds = 3, ReloadSeconds = 8 });
+                em.SetComponentData(unit, new SkirmishRoleOverlayComponent { Damage = 40, RangeWorld = 48, TargetDomains = SkirmishTargetDomain.Structure | SkirmishTargetDomain.Ground });
+                em.SetComponentData(unit, new SkirmishMoveIntentComponent { Order = SkirmishGroupOrderKind.Attack, AttackTarget = condition == "no-target" ? Entity.Null : target });
+                if (condition == "hold") em.AddComponent<HoldPositionOrderTag>(unit);
+                Assert.AreEqual(0, SkirmishExpandedEngagementService.Step(em, session, 1, condition == "paused"));
+                bool legal = condition == "legal" || condition == "enemy-command";
+                Assert.AreEqual(legal, em.HasComponent<EngageTarget>(unit), condition);
+                Assert.AreEqual(condition == "dead" ? 0 : 100, em.GetComponentData<UnitHealth>(target).Current, "The bridge must never apply damage: " + condition);
+                if (!legal) continue;
+                var engagement = em.GetComponentData<EngageTarget>(unit);
+                Assert.AreEqual(target, engagement.Target);
+                Assert.AreEqual(1, engagement.IsCommanded);
+                em.SetComponentData(unit, new GroundMissileLauncherStateComponent { Phase = (byte)GroundMissileLauncherPhase.Preparing, TargetEntity = target, Timer = 2.25f });
+                Assert.AreEqual(0, SkirmishExpandedEngagementService.Step(em, session, 1, false));
+                Assert.AreEqual(2.25f, em.GetComponentData<GroundMissileLauncherStateComponent>(unit).Timer, "Repeated Attack intent must not restart preparation.");
+            }
+        }
+
+        [Test]
         public void RuntimeActorAndLinkedVisualSurviveSourceSceneUnload()
         {
             using var world = new World(nameof(RuntimeActorAndLinkedVisualSurviveSourceSceneUnload));

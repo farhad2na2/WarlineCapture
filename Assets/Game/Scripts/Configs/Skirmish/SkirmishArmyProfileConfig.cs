@@ -32,6 +32,7 @@ namespace Game.Configs
 
         private static SkirmishArmyProfileConfig cachedGround;
         private static SkirmishArmyProfileConfig cachedAir;
+        private static SkirmishArmyProfileConfig cachedCombined;
 
         public static SkirmishArmyProfileConfig ResolveCached(SkirmishArmyProfileId id)
         {
@@ -39,6 +40,8 @@ namespace Game.Configs
                 return Cache(ref cachedGround, static profile => profile.ConfigureGroundManeuver());
             if (id == SkirmishArmyProfileId.AirMobile)
                 return Cache(ref cachedAir, static profile => profile.ConfigureAirMobile());
+            if (id == SkirmishArmyProfileId.CombinedArms)
+                return Cache(ref cachedCombined, static profile => profile.ConfigureCombinedArms());
             return null;
         }
 
@@ -124,6 +127,17 @@ namespace Game.Configs
                 SkirmishRoleIds.Siege
             };
             contentVersion = 1;
+        }
+
+        public void ConfigureCombinedArms()
+        {
+            ConfigureGroundManeuver();
+            var roles = new System.Collections.Generic.List<string>(allowedRoleIds);
+            roles.AddRange(excludedRoleIds);
+            profileId = "C";
+            kind = SkirmishArmyProfileId.CombinedArms;
+            allowedRoleIds = roles.ToArray();
+            excludedRoleIds = Array.Empty<string>();
         }
 
         public bool Allows(string roleId)

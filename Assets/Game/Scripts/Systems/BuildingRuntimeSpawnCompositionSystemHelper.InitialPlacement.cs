@@ -68,6 +68,7 @@ namespace Game.Runtime
                 if (clampedPreferred != preferredOrigin) { if(citywideDiagnostic)Debug.LogError("[CitywidePlacement] reject=clamped-preferred");return false; }
                 maxSearchRadius = 0;
             }
+            int cachedRejected = 0, placementRejected = 0;
             for (int radius = 0; radius <= maxSearchRadius; radius++)
             {
                 for (int dy = -radius; dy <= radius; dy++)
@@ -82,6 +83,7 @@ namespace Game.Runtime
                         if (!BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) && context.HasCachedInvalidCellInFootprint != null &&
                             context.HasCachedInvalidCellInFootprint(candidateRect.position, candidateRect.size))
                         {
+                            cachedRejected++;
                             if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             if(citywideDiagnostic)LogCitywidePlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             continue;
@@ -89,6 +91,7 @@ namespace Game.Runtime
 
                         if (!context.IsPlacementValid(definition, candidate, placementFootprint, rotateVertical, grid, roads, blockerData))
                         {
+                            placementRejected++;
                             if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"placement-validation");
                             if(citywideDiagnostic)LogCitywidePlacementCells(context,definition,candidateRect,grid,roads,blockerData,"placement-validation");
                             if(citywideDiagnostic&&definition.Prefab?.name=="Building_Citywide_ReserveDepot")
@@ -102,6 +105,7 @@ namespace Game.Runtime
                 }
             }
 
+            Debug.LogWarning($"[BuildingInitialPlacement] failed prefab={definition.Prefab?.name} preferred={preferredOrigin} footprint={placementFootprint} effectiveRect={preferredPlacementRect} searchRadius={maxSearchRadius} cachedRejected={cachedRejected} placementRejected={placementRejected}");
             return false;
         }
         private static void SurveyCitywideReserveCandidates(Context context,GridConfig grid,DynamicBuffer<GridRoad> roads,

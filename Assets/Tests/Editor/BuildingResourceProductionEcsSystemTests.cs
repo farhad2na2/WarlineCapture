@@ -9,6 +9,168 @@ using UnityEngine;
 
 public sealed class BuildingResourceProductionEcsSystemTests
 {
+    public static void RunSharedOilAndAirFuelValidation()
+    {
+        try
+        {
+            ValidationExit.ClearLastExitCode();
+            RunIncomingOilReservationDemandValidation();
+            Assert.AreEqual(0, ValidationExit.LastExitCode, "Oil route and production regressions must pass.");
+            ValidationExit.ClearLastExitCode();
+            VehicleFuelConsumptionSystemTests.RunFuelGridContextValidation();
+            Assert.AreEqual(0, ValidationExit.LastExitCode, "Aircraft Fuel and preserved grid accounting regressions must pass.");
+            Debug.Log("[SharedOilAndAirFuelValidation] result=Passed oilCases=2 logisticsRegressions=55 economyRegressions=7 fuelContextCases=3 approachCases=2 existingFuelRegressions=8");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SharedOilAndAirFuelValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunIncomingOilReservationDemandValidation()
+    {
+        try
+        {
+            var tests = new BuildingResourceProductionEcsSystemTests();
+            tests.AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory(1);
+            tests.AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory(2);
+            ValidationExit.ClearLastExitCode();
+            RunFocusedValidation();
+            Assert.AreEqual(0, ValidationExit.LastExitCode, "Existing55 logistics/production regressions must pass.");
+            Game.Tests.Editor.SkirmishFacilityEconomyProfileTests.RunFocusedValidation();
+            Debug.Log("[IncomingOilReservationDemandValidation] result=Passed cases=2 logisticsRegressions=55 economyRegressions=7");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[IncomingOilReservationDemandValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [TestCase(1)]
+    [TestCase(2)]
+    public void AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory(byte faction)
+    {
+        // Native794: two factories hold8 Oil while a refinery with26 Oil
+        // and16 physically reserved inbound still attracts spare trucks.
+        using var world = new World(nameof(AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory));
+        var em = world.EntityManager;
+        var attempt = new FixedString64Bytes("committed-oil-demand");
+        em.SetComponentData(em.CreateEntity(typeof(SkirmishExpandedSessionComponent)),
+            new SkirmishExpandedSessionComponent { SessionId = attempt });
+        var pump = CreateResourceBuilding(em, 1, faction, new Vector2Int(8, 8), 200, 0, 120, 0, 200, 0);
+        var refinery = CreateResourceBuilding(em, 2, faction, new Vector2Int(12, 8), 5000, 5000, 0, 120, 26, 0);
+        var funded = CreateResourceBuilding(em, 3, faction, new Vector2Int(16, 8), 24, 0, 0, 0, 2, 0);
+        var waiting = CreateResourceBuilding(em, 4, faction, new Vector2Int(24, 8), 24, 0, 0, 0, 8, 0);
+        AddMaterialFabricationInput(em, funded, productionEnabled: true);
+        AddMaterialFabricationInput(em, waiting, productionEnabled: true);
+        foreach (var factory in new[] { funded, waiting })
+        {
+            var recipe = em.GetComponentData<MaterialFabricationComponent>(factory.CombatEntity);
+            recipe.OilConsumedPerCycle = 10;
+            em.SetComponentData(factory.CombatEntity, recipe);
+        }
+        foreach (var building in new[] { pump, refinery, funded, waiting })
+            em.AddComponentData(building.CombatEntity, new SkirmishAttemptOwnedComponent { SessionId = attempt, FactionId = faction });
+        em.AddComponentData(refinery.CombatEntity, new BuildingResourceProductionProfileComponent
+            { OilPerFuelBatch = 30, FuelPerBatch = 60, FuelBatchSeconds = 30 });
+        var stock = em.GetComponentData<BuildingResourceStorageComponent>(funded.CombatEntity);
+        stock.ReservedOilInboundBarrels = 8;
+        em.SetComponentData(funded.CombatEntity, stock);
+        var refineryStock = em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+        refineryStock.ReservedOilInboundBarrels = 16;
+        em.SetComponentData(refinery.CombatEntity, refineryStock);
+        var buildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            { { pump.Id, pump }, { refinery.Id, refinery }, { funded.Id, funded }, { waiting.Id, waiting } };
+        var context = CreateAutomaticRouteContext(buildings);
+        Assert.IsTrue(BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+            context, em, CreateTestGrid(), faction, new int2(8, 8), ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+            8, out var source, out var destination));
+        Assert.AreSame(pump, source);
+        Assert.AreSame(waiting, destination,
+            "A refinery with a committed full batch must let the next truck finish an unfunded factory batch. selectedId=" + destination?.Id);
+        // Canceling the refinery's real inbound commitment must restore its
+        // priority after the already-funded Materials batch, without a cheat.
+        refineryStock.ReservedOilInboundBarrels = 0;
+        em.SetComponentData(refinery.CombatEntity, refineryStock);
+        Assert.IsTrue(BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+            context, em, CreateTestGrid(), faction, new int2(8, 8), ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+            8, out _, out destination));
+        Assert.AreSame(refinery, destination, "A genuinely unfunded refinery keeps the documented next-batch priority.");
+        Debug.Log("[IncomingOilReservationDemandCase] result=Passed faction=" + faction + " preservesMaterialsThenRefineryBatch=1");
+    }
+
+    public static void RunServiceApproachValidation()
+    {
+        try
+        {
+            var tests = new BuildingResourceProductionEcsSystemTests();
+            tests.FuelLogisticsApproach_AvoidsLiveVehicleWhenOccupancyHasNotCaughtUp();
+            tests.FuelLogisticsApproach_RejectsClearCellsOutsideTransferRange(1);
+            tests.FuelLogisticsApproach_RejectsClearCellsOutsideTransferRange(4);
+            tests.AutomaticHauler_PreservesActiveAlternateGoalPath("Unit_Veh_Truck_Tray");
+            tests.AutomaticHauler_PreservesActiveAlternateGoalPath("Unit_Veh_Truck_Tanker");
+            tests.AutomaticFuelLogisticsTray_ReissuesMoveWhenTargetHasNoActivePath();
+            tests.AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild(true);
+            tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand(true);
+            tests.AutomaticFuelLogisticsManualMove_IsNotOverridden(true);
+            Debug.Log("[ServiceApproachValidation] result=Passed cases=9 nativeMissionAcceptance=Pending");
+            RunFocusedValidation();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ServiceApproachValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunAlternateHaulerPathValidation()
+    {
+        try
+        {
+            var tests = new BuildingResourceProductionEcsSystemTests();
+            tests.AutomaticHauler_PreservesActiveAlternateGoalPath("Unit_Veh_Truck_Tray");
+            tests.AutomaticHauler_PreservesActiveAlternateGoalPath("Unit_Veh_Truck_Tanker");
+            tests.AutomaticFuelLogisticsTray_ReissuesMoveWhenTargetHasNoActivePath();
+            tests.AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild(true);
+            tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand(true);
+            tests.AutomaticFuelLogisticsManualMove_IsNotOverridden(true);
+            Debug.Log("[AlternateHaulerPathValidation] result=Passed cases=6 nativeMissionAcceptance=Pending");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[AlternateHaulerPathValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunPendingPathHaulerValidation()
+    {
+        try
+        {
+            var tests = new BuildingResourceProductionEcsSystemTests();
+            tests.AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild(true);
+            tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand(true);
+            tests.AutomaticFuelLogisticsManualMove_IsNotOverridden(true);
+            Debug.Log("[PendingPathHaulerValidation] result=Passed cases=3 nativeMissionAcceptance=Pending");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[PendingPathHaulerValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         var tests = new BuildingResourceProductionEcsSystemTests();
@@ -2064,6 +2226,102 @@ public sealed class BuildingResourceProductionEcsSystemTests
     }
 
     [Test]
+    public void FuelLogisticsApproach_AvoidsLiveVehicleWhenOccupancyHasNotCaughtUp()
+    {
+        using var world = new World(nameof(FuelLogisticsApproach_AvoidsLiveVehicleWhenOccupancyHasNotCaughtUp));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity source = CreateResourceBuilding(
+                em, 46, 1, new Vector2Int(20, 20), 100, 0, 80f, 0f, 40f, 0f);
+            var buildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { source.Id, source }
+            };
+            var context = CreateBridgeCycleContext(em, gridEntity, buildings);
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            int2 footprint = new(3, 3);
+            int2 reference = new(4, 20);
+            Assert.IsTrue(bridge.TryGetRuntimeBuildingApproachCell(
+                context, source, footprint, reference, out int2 initialGoal));
+
+            // A native vehicle now occupies that bay before its footprint is
+            // reflected in the grid bitset (as observed in native737).
+            Entity parkedVehicle = em.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint));
+            em.SetComponentData(parkedVehicle, new UnitGrid { Cell = initialGoal });
+            em.SetComponentData(parkedVehicle, new UnitFootprint { Size = footprint });
+            Assert.IsFalse(occupied.IsSet(GridUtils.CellToIndex(initialGoal, 48)));
+            Assert.IsTrue(bridge.TryGetRuntimeBuildingApproachCell(
+                context, source, footprint, reference, out int2 nextGoal));
+            Assert.IsFalse(UnitFootprintUtility.Overlaps(nextGoal, footprint, initialGoal, footprint),
+                "A service bay must respect the live hard vehicle footprint used by native pathfinding, even if the bitset lags.");
+            Assert.IsTrue(bridge.IsRuntimeBuildingApproachCell(context, source, nextGoal, footprint));
+
+            em.DestroyEntity(parkedVehicle);
+            Assert.IsTrue(bridge.TryGetRuntimeBuildingApproachCell(
+                context, source, footprint, reference, out int2 reopenedGoal));
+            Assert.AreEqual(initialGoal, reopenedGoal, "The nearest bay must become available after its vehicle leaves.");
+        }
+        finally
+        {
+            if (blocked.IsCreated) blocked.Dispose();
+            if (occupied.IsCreated) occupied.Dispose();
+        }
+    }
+
+    [TestCase(1)]
+    [TestCase(4)]
+    public void FuelLogisticsApproach_RejectsClearCellsOutsideTransferRange(int footprintSize)
+    {
+        var world = new World(nameof(FuelLogisticsApproach_RejectsClearCellsOutsideTransferRange));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity source = CreateResourceBuilding(
+                em, 46, 1, new Vector2Int(20, 20), 100, 0, 80f, 0f, 40f, 0f);
+            var buildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { source.Id, source }
+            };
+            var context = CreateBridgeCycleContext(em, gridEntity, buildings);
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            int2 footprint = new(footprintSize, footprintSize);
+            int2 reference = new(4, 20);
+
+            // Leave distant traversable ground, but close every usable loading bay.
+            // A distant parking cell is not a service approach: the arrival check
+            // would refuse to load there even after a successful native path.
+            for (int y = 12; y <= 29; y++)
+                for (int x = 12; x <= 29; x++)
+                    blocked.Set(y * 48 + x, true);
+            Assert.IsFalse(bridge.TryGetRuntimeBuildingApproachCell(
+                context, source, footprint, reference, out _),
+                "A clear cell outside transfer range must not start a haul that cannot load.");
+
+            // Temporary congestion must recover when a real loading bay reopens.
+            for (int y = 12; y <= 29; y++)
+                for (int x = 12; x <= 29; x++)
+                    blocked.Set(y * 48 + x, false);
+            Assert.IsTrue(bridge.TryGetRuntimeBuildingApproachCell(
+                context, source, footprint, reference, out int2 goal));
+            Assert.IsTrue(bridge.IsRuntimeBuildingApproachCell(context, source, goal, footprint),
+                "Every selected service approach must satisfy the actual transfer arrival rules.");
+        }
+        finally
+        {
+            if (blocked.IsCreated) blocked.Dispose();
+            if (occupied.IsCreated) occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
     public void FuelLogisticsApproach_UsesEffectiveRunwayPlacementRect()
     {
         var world = new World(nameof(FuelLogisticsApproach_UsesEffectiveRunwayPlacementRect));
@@ -2198,8 +2456,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
     }
 
-    [Test]
-    public void AutomaticFuelLogisticsManualMove_IsNotOverridden()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void AutomaticFuelLogisticsManualMove_IsNotOverridden(bool hasPendingPathJob = false)
     {
         var world = new World(nameof(AutomaticFuelLogisticsManualMove_IsNotOverridden));
         NativeBitArray blocked = default;
@@ -2248,7 +2507,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
                 CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
 
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 0f);
 
             Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(seededTray));
             Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(seededTray));
@@ -2339,8 +2598,93 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
     }
 
-    [Test]
-    public void AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild()
+    [TestCase("Unit_Veh_Truck_Tray")]
+    [TestCase("Unit_Veh_Truck_Tanker")]
+    public void AutomaticHauler_PreservesActiveAlternateGoalPath(string sourceKey)
+    {
+        var world = new World(nameof(AutomaticHauler_PreservesActiveAlternateGoalPath));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                37,
+                1,
+                new Vector2Int(8, 10),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                38,
+                1,
+                new Vector2Int(20, 10),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity seededTray = CreateFuelLogisticsHauler(
+                em,
+                sourceKey,
+                1,
+                new int2(4, 12));
+            int2 staleGoal = new(7, 10);
+            int2 alternateGoal = new(6, 10);
+            em.AddComponentData(seededTray, new UnitTarget { Cell = alternateGoal });
+            em.AddComponentData(seededTray, new UnitResourceHaulOrder
+            {
+                SourceBuildingId = oilPump.Id,
+                DestinationBuildingId = refinery.Id,
+                TargetCell = staleGoal,
+                Phase = (byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource,
+                ResourceKind = (byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil
+            });
+            em.AddComponentData(seededTray, new UnitPathFollow { PathIndex = 0 });
+            em.AddComponentData(seededTray, new UnitPathRange { Start = 0, Length = 2 });
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            for (int tick = 0; tick < 3; tick++)
+                bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: tick * .1f);
+            Assert.IsFalse(em.HasComponent<UnitPathRequest>(seededTray), "An active native alternate path must not be replaced each hauling tick.");
+            Assert.AreEqual(alternateGoal, em.GetComponentData<UnitTarget>(seededTray).Cell);
+            Assert.AreEqual(2, em.GetComponentData<UnitPathRange>(seededTray).Length);
+            Assert.AreEqual(staleGoal, em.GetComponentData<UnitResourceHaulOrder>(seededTray).TargetCell);
+
+            em.RemoveComponent<UnitPathFollow>(seededTray);
+            em.RemoveComponent<UnitPathRange>(seededTray);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: .4f);
+            Assert.IsTrue(em.HasComponent<UnitPathRequest>(seededTray), "Retry the building approach once the alternate path is exhausted.");
+            Assert.AreEqual(em.GetComponentData<UnitResourceHaulOrder>(seededTray).TargetCell,
+                em.GetComponentData<UnitPathRequest>(seededTray).Goal);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild(bool hasPendingPathJob = false)
     {
         var world = new World(nameof(AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild));
         NativeBitArray blocked = default;
@@ -2385,7 +2729,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
                 CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
 
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 0f);
 
             Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(seededTanker));
             Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(seededTanker));
@@ -3224,8 +3568,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
     }
 
-    [Test]
-    public void AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand(bool hasPendingPathJob = false)
     {
         var world = new World(nameof(AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand));
         NativeBitArray blocked = default;
@@ -3270,7 +3615,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
                 CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
 
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 0f);
 
             Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(hauler));
             Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(hauler));
@@ -3281,9 +3626,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
             MoveHaulerToOrderTarget(em, hauler, order);
 
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.2f);
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.3f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 0.1f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 0.2f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 1.3f);
 
             UnitResourceHauler cargo = em.GetComponentData<UnitResourceHauler>(hauler);
             BuildingResourceStorageComponent sourceStorage =
@@ -3298,9 +3643,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, order.Phase);
             MoveHaulerToOrderTarget(em, hauler, order);
 
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.4f);
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.5f);
-            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 2.6f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 1.4f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 1.5f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: hasPendingPathJob, now: 2.6f);
 
             cargo = em.GetComponentData<UnitResourceHauler>(hauler);
             destinationStorage = em.GetComponentData<BuildingResourceStorageComponent>(fuelBladder.CombatEntity);

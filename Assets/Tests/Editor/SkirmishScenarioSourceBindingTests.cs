@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
+using Game.Runtime;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -18,8 +19,13 @@ public sealed class SkirmishScenarioSourceBindingTests
         tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(false, false, true);
         tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(true, false, false);
         tests.DesertBaseStandaloneSourceRequiresExactSelectedMetadata(false, true, false);
-        return "[SkirmishScenarioSourceBinding] result=Passed cases=6";
+        tests.ExpandedSessionReusesSelectedMapInsteadOfLegacyPreset(false, false, true);
+        tests.ExpandedSessionReusesSelectedMapInsteadOfLegacyPreset(true, false, false);
+        tests.ExpandedSessionReusesSelectedMapInsteadOfLegacyPreset(false, true, false);
+        return "[SkirmishScenarioSourceBinding] result=Passed cases=9";
     }
+
+    public static void RunSelectedSourceValidation() => Debug.Log(RunFocusedValidation());
 
     [TestCase(false, false, true)]
     [TestCase(true, false, false)]
@@ -58,10 +64,30 @@ public sealed class SkirmishScenarioSourceBindingTests
     [TestCase(true, false, false)]
     [TestCase(false, true, false)]
     public void ReusesOnlySelectedExactPhysicalSource(bool staleContent, bool wrongScenario, bool expected)
+        => ValidateSelectedSource(staleContent, wrongScenario, expected, false);
+
+    [TestCase(false, false, true)]
+    [TestCase(true, false, false)]
+    [TestCase(false, true, false)]
+    public void ExpandedSessionReusesSelectedMapInsteadOfLegacyPreset(bool staleContent, bool wrongScenario, bool expected)
+        => ValidateSelectedSource(staleContent, wrongScenario, expected, true);
+
+    private void ValidateSelectedSource(bool staleContent, bool wrongScenario, bool expected, bool expanded)
     {
         var preset = SkirmishPresetConfig.Load(1);
         Assert.NotNull(preset);
-        var logical = Object.Instantiate(preset.operationMap);
+        var selected = preset.operationMap;
+        if (expanded)
+        {
+            Assert.IsTrue(SkirmishExpansionCatalogConfig.Load().TryGetDefinition("S005", out var definition));
+            selected = definition.CampaignMap;
+            var legacyPreset = SkirmishPresetConfig.Load(7);
+            string legacyMapId = legacyPreset != null && legacyPreset.operationMap != null
+                ? legacyPreset.operationMap.OperationMapId : SkirmishLaunchProjection.OperationMapId;
+            Assert.AreNotEqual(legacyMapId, selected.OperationMapId,
+                "Regression must exercise a session map different from the legacy preset.");
+        }
+        var logical = Object.Instantiate(selected);
         var physical = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
             "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset");
         using var world = new World("Skirmish source binding validation");
@@ -77,13 +103,20 @@ public sealed class SkirmishScenarioSourceBindingTests
             Assert.IsTrue(logical.TryCreatePersistentMetadataBlob(out blob,out string error),error);
             var em = world.EntityManager;
             var match = em.CreateEntity(typeof(SkirmishMatchState));
-            em.SetComponentData(match,new SkirmishMatchState { ScenarioIndex = 1 });
+            em.SetComponentData(match,new SkirmishMatchState { ScenarioIndex = expanded ? 7 : 1 });
+            if (expanded)
+            {
+                em.AddComponentData(match, new SkirmishExpandedSessionComponent { IsLegacy = 0 });
+                em.AddComponentObject(match, new SkirmishResolvedSetupRecord
+                    { Setup = new SkirmishResolvedSetup { CatalogId = "S005" } });
+            }
             var root = em.CreateEntity(typeof(OperationMapRootComponent),typeof(ActiveOperationMapComponent),typeof(OperationMapMetadataComponent));
             em.SetComponentData(root,new ActiveOperationMapComponent
             {
                 OperationMapId = new FixedString64Bytes(logical.OperationMapId),
-                MissionId = new FixedString64Bytes("skirmish.city_crossroads"),
-                ScenarioId = new FixedString64Bytes(wrongScenario ? "scenario.skirmish.wrong" : "scenario.skirmish.city_crossroads"),
+                MissionId = new FixedString64Bytes(expanded ? SkirmishLaunchProjection.MissionId : "skirmish.city_crossroads"),
+                ScenarioId = new FixedString64Bytes(wrongScenario ? "scenario.skirmish.wrong" :
+                    expanded ? SkirmishLaunchProjection.ScenarioId : "scenario.skirmish.city_crossroads"),
                 Generation = 3, SchemaVersion = logical.SchemaVersion, ContentVersion = logical.ContentVersion
             });
             em.SetComponentData(root,new OperationMapMetadataComponent { Blob=blob,Generation=3 });

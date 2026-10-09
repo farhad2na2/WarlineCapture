@@ -229,6 +229,14 @@ namespace Game.Configs
             AddForce(forces, definition, 2, SkirmishRoleIds.AntiAir, vector.EnemyAa, "staging.enemy", reasons);
             AddForce(forces, definition, 2, SkirmishRoleIds.TransportHeli, vector.EnemyTransportHeli, "staging.enemy", reasons);
 
+            // The matrix's support counts are real starting actors, separate
+            // from combat Supply. One Tanker and the remaining Oil trucks are
+            // the authored extraction/conversion/delivery chain for each side.
+            AddForce(forces, definition, 1, SkirmishRoleIds.Tanker, vector.PlayerLogisticsSupport > 0 ? 1 : 0, "staging.player", reasons);
+            AddForce(forces, definition, 1, SkirmishRoleIds.LogisticsTruck, System.Math.Max(0, vector.PlayerLogisticsSupport - 1), "staging.player", reasons);
+            AddForce(forces, definition, 2, SkirmishRoleIds.Tanker, vector.EnemyLogisticsSupport > 0 ? 1 : 0, "staging.enemy", reasons);
+            AddForce(forces, definition, 2, SkirmishRoleIds.LogisticsTruck, System.Math.Max(0, vector.EnemyLogisticsSupport - 1), "staging.enemy", reasons);
+
             Tally(forces, 1, out setup.PlayerInfantry, out setup.PlayerGround, out setup.PlayerAir, out setup.PlayerCombat, out setup.PlayerSupply);
             Tally(forces, 2, out setup.EnemyInfantry, out setup.EnemyGround, out setup.EnemyAir, out setup.EnemyCombat, out setup.EnemySupply);
             setup.PlayerLogisticsSupport = vector.PlayerLogisticsSupport;
@@ -292,7 +300,9 @@ namespace Game.Configs
             setup.ObjectiveKey = definition.ObjectiveKey ?? string.Empty;
             setup.ResultVictoryKey = definition.ResultVictoryKey ?? string.Empty;
             setup.ResultDefeatKey = definition.ResultDefeatKey ?? string.Empty;
-            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
+            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.CombinedArms
+                ? SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice()
+                : definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
                 ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
                 : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();

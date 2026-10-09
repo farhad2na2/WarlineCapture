@@ -21,6 +21,53 @@ namespace Game.Editor.MapVariants
         private const string Art = "Assets/Game/Art/MapBeautify/DenseCity";
         private const string LayerName = "BeautifyDenseCityDetails";
 
+        public static void RefreshSharedGroundPalette()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("Shared ground palette must be saved and verified outside Play mode.");
+            string[] names = { "OutskirtsSand", "Warm_PolygonMilitary_GroundVariation",
+                "Warm_GroundVariation_PolygonMilitary_Mat_03_A", "Warm_GroundVariation_PolygonMilitary_Mat_04_A" };
+            var materials = names.Select(name => AssetDatabase.LoadAssetAtPath<Material>($"{Art}/{name}.mat")).ToArray();
+            if (materials.Any(m => m == null || m.shader == null || m.shader.name != "Game/Environment/GroundMacroVariation"))
+                throw new InvalidOperationException("Shared dense-city ground material contract changed.");
+            foreach (var material in materials)
+            {
+                if (!material.HasProperty("_SandPaletteStrength"))
+                    throw new InvalidOperationException("Landscape palette shader property has not imported.");
+                ConfigureSharedSandPalette(material);
+                AssetDatabase.SaveAssetIfDirty(material);
+                string path = AssetDatabase.GetAssetPath(material);
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                var persisted = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (persisted == null || Mathf.Abs(persisted.GetFloat("_SandPaletteStrength") - .9f) > .0001f ||
+                    !System.Text.RegularExpressions.Regex.IsMatch(File.ReadAllText(path),
+                        @"_SandPaletteStrength:\s*0\.9(?:0*)\s"))
+                    throw new InvalidOperationException("Shared landscape palette did not persist: " + path);
+            }
+            Debug.Log("[SharedDenseCityGroundPalette] result=Passed materials=4 persistedAfterReimport=1 paletteStrength=0.9 geometryUnchanged=1 sharedCampaignSource=1");
+        }
+
+        private static void ConfigureSharedSandPalette(Material material)
+        {
+            // Separate broad pale sand, worn earth and muted scrub fields from
+            // the small stone texture, rather than multiplying everything brown.
+            material.SetFloat("_SandPaletteStrength", .9f);
+            material.SetColor("_SandDryColor", new Color(.88f, .78f, .59f));
+            material.SetColor("_SandWornColor", new Color(.65f, .58f, .45f));
+            material.SetColor("_SandScrubColor", new Color(.58f, .63f, .45f));
+            material.SetFloat("_SandScrubCoverage", .35f);
+            material.SetColor("_MacroTintA", new Color(.96f, .94f, .89f));
+            material.SetColor("_MacroTintB", new Color(1.07f, 1.02f, .94f));
+            material.SetFloat("_MacroStrength", .4f);
+            material.SetFloat("_MacroScale", .027f);
+            material.SetFloat("_GroundDetailStrength", .45f);
+            material.SetFloat("_GroundDetailTiling", .11f);
+            material.SetFloat("_GroundDetailNormalStrength", .5f);
+            material.SetFloat("_DetailStrength", .055f);
+            material.SetFloat("_EnvironmentReflections", 0f);
+            EditorUtility.SetDirty(material);
+        }
+
         public static void BuildVisuals()
         {
             var pins = AssetDatabase.FindAssets("t:OperationMapDefinition", new[] { "Assets/Game/Configs/OperationMaps" })
@@ -345,6 +392,7 @@ namespace Game.Editor.MapVariants
             material.SetFloat("_BaseColorInfluence",1f);
             if(strength<.5f) { material.SetFloat("_MacroStrength",.15f); material.SetFloat("_GroundDetailTiling",.5f); }
             if(name=="CityStreetAsphalt") ConfigureRoadWear(material);
+            if(name=="OutskirtsSand") ConfigureSharedSandPalette(material);
             return material;
         }
         private static Material SandMaterial(Material source)
@@ -355,6 +403,7 @@ namespace Game.Editor.MapVariants
             {
                 m.SetColor("_MacroTintA", new Color(1f, .86f, .61f)); m.SetColor("_MacroTintB", new Color(.81f, .67f, .43f));
                 MapVariantBeautify.ConfigureGroundDetail(m, .85f);
+                ConfigureSharedSandPalette(m);
             }
             EditorUtility.SetDirty(m); return m;
         }

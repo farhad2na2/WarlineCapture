@@ -373,6 +373,16 @@ namespace Game.Configs
                 out reasons);
         }
 
+        public static bool TryCaptureCatalog(
+            SkirmishExpansionAuthoredSet authored, string catalogId,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix, SkirmishDifficultyId difficulty,
+            SkirmishSizeId size, int seed, out SkirmishAcceptanceCensus census,
+            out List<SkirmishCompileReason> reasons)
+        {
+            SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out var definition);
+            return TryCaptureDefinition(authored, definition, catalogId, matrix, difficulty, size, seed, out census, out reasons);
+        }
+
         public static bool TryCapture(
             SkirmishExpansionAuthoredSet authored,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,

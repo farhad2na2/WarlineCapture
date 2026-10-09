@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
 using Game.Runtime;
@@ -28,6 +29,7 @@ namespace Game.Editor
         private static double terminalDestinationVisibleSince;
         private static AriaTouchInputUiSystemHelper terminalTouch;
         private static int terminalInterventions, terminalUnexpectedSamples;
+        private static readonly List<Entity> terminalOldBattlefield = new();
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
@@ -37,6 +39,17 @@ namespace Game.Editor
             terminalMatch = match;
             terminalSession = session;
             terminalAttempt = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            terminalOldBattlefield.Clear();
+            using (var oldState = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                Any = new[] { ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),
+                    ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+                    ComponentType.ReadOnly<BuildingResourceStorageComponent>(),
+                    ComponentType.ReadOnly<OperationMapBuildingComponent>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities
+            }))
+            using (var entities = oldState.ToEntityArray(Allocator.Temp))
+                foreach (var entity in entities) terminalOldBattlefield.Add(entity);
             terminalAction = Environment.GetEnvironmentVariable("WARLINE_TERMINAL_ACTION") ?? "MAIN MENU";
             if (terminalAction != "MAIN MENU" && terminalAction != "REPLAY" && terminalAction != "ADJUST SETUP")
                 throw new ArgumentException("Unsupported terminal action: " + terminalAction);
@@ -77,6 +90,12 @@ namespace Game.Editor
                         DesignatedBaseHp(em, session, 1) != terminalPlayerHp || DesignatedBaseHp(em, session, 2) != terminalEnemyHp ||
                         SkirmishLaunchProjection.IsSimulationActive(em))
                     { EndTerminalProbe(false, "terminalNotFrozen"); return; }
+                    if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                    {
+                        var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                        if (clock.Playing != 0 || clock.Paused == 0)
+                        { EndTerminalProbe(false, "terminalClockNotFrozen"); return; }
+                    }
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
                     if (UiShellRuntimeGateway.Localization.IsRightToLeft)
                     {
@@ -96,6 +115,9 @@ namespace Game.Editor
                         : terminalAction == "RETRY" ? "Retry" : "Leave";
                     var button = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult/" + actionObject)?.GetComponent<Button>();
                     if (!TryPresentedButtonPoint(button, out var point)) return;
+                    // Retain the delayed, verified terminal state as well as the
+                    // first finish observation before leaving the match.
+                    AppendTrace(em, session, in match, false, terminalElapsed);
                     ScreenCapture.CaptureScreenshot(prefix + "-result.png");
                     terminalTouch = new AriaTouchInputUiSystemHelper();
                     if (!terminalTouch.Start() || !terminalTouch.TryGesture(point, point, .15f, 0f, Time.unscaledTime))
@@ -118,6 +140,27 @@ namespace Game.Editor
                             SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, replay, in replayMatch) > 10f ||
                             DesignatedBaseHp(em, replay, 1) <= 0 || DesignatedBaseHp(em, replay, 2) <= 0)
                         { EndTerminalProbe(false, "replayNotFresh"); return; }
+                        foreach (var oldEntity in terminalOldBattlefield)
+                            if (em.Exists(oldEntity))
+                            {
+                                using var types = em.GetComponentTypes(oldEntity);
+                                Debug.LogError("[SkirmishNativeReplayLeak] entity=" + oldEntity + " name=" + em.GetName(oldEntity) +
+                                    " types=" + string.Join(",", types.ToArray()));
+                                EndTerminalProbe(false, "replayRetainedBattlefieldEntity:" + oldEntity); return;
+                            }
+                        var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(replay).Setup;
+                        using var structures = em.CreateEntityQuery(typeof(RuntimeBuildingCombatInfo), typeof(SkirmishAttemptOwnedComponent));
+                        using var banks = em.CreateEntityQuery(typeof(FactionTacticalMaterialsComponent));
+                        if (structures.CalculateEntityCount() != setup.Structures.Length || banks.CalculateEntityCount() != 2 ||
+                            !em.HasComponent<SkirmishSharedSupplyInitialized>(replay) ||
+                            !NativeStartupRosterMatches(em, replay, setup, out _, out _))
+                        { EndTerminalProbe(false, "replayRosterOrStoresNotFresh"); return; }
+                        var playerBank = SkirmishMaterialsService.FindEconomy(em, 1);
+                        var balance = em.GetComponentData<FactionTacticalMaterialsComponent>(playerBank);
+                        if (balance.Current != setup.MaterialsEach || balance.Capacity != setup.MaterialsCapacityEach ||
+                            balance.LifetimeSpent != 0 || balance.LifetimeFabricated != 0 || balance.LifetimeImported != 0 ||
+                            balance.LifetimeRewarded != 0 || balance.LifetimeExported != 0)
+                        { EndTerminalProbe(false, "replayPlayerBankNotReset"); return; }
                     }
                     else
                     {
@@ -148,6 +191,14 @@ namespace Game.Editor
                     { terminalDestinationVisibleSince = 0d; return; }
                     if (terminalDestinationVisibleSince == 0d) terminalDestinationVisibleSince = now;
                     if (now - terminalDestinationVisibleSince < 2d) return;
+                    if (terminalAction == "REPLAY")
+                    {
+                        SkirmishLaunchProjection.TryGet(em, out var fresh, out _);
+                        Debug.Log("[SkirmishNativeReplayConservation] result=Passed removedOldEntities=" + terminalOldBattlefield.Count +
+                            " oil=" + SkirmishStartingSupplyService.ReadOil(em, fresh, 1) +
+                            " fuel=" + SkirmishStartingSupplyService.ReadFuel(em, fresh, 1) +
+                            " materials=" + SkirmishMaterialsService.Read(em, fresh, 1));
+                    }
                     ScreenCapture.CaptureScreenshot(prefix + "-destination.png");
                     terminalStep = 2;
                     terminalDue = now + 1d;

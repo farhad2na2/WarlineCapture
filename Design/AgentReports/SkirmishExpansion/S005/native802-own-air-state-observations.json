@@ -1,0 +1,2740 @@
+{
+  "readOnly": true,
+  "ownFactionOnly": true,
+  "rows": [
+    {
+      "elapsed": 657.354,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 667.336,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 677.413,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 687.448,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 697.991,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 708.046,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 718.065,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 728.741,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 739.233,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 766.377,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 0
+    },
+    {
+      "elapsed": 776.4,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 786.417,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 796.411,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 806.453,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 816.531,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 826.49,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 836.536,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 846.573,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 856.551,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 866.62,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 876.64,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 886.642,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.6601809859275818,
+            "z": 0.0,
+            "w": 0.7511065602302551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 0,
+      "selected": 1
+    },
+    {
+      "elapsed": 896.695,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 0,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 0,
+        "AttackManeuverTurnSign": 0,
+        "AttackPassGoalCell": {
+          "x": 0,
+          "y": 0
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "FixedWingCruiseY": 0.0,
+        "FixedWingCruiseYInitialized": 0
+      },
+      "pose": {
+        "Position": {
+          "x": 1359.661865234375,
+          "y": 0.7941641807556152,
+          "z": 188.34226989746094
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.0,
+            "y": -0.7352570295333862,
+            "z": 0.0,
+            "w": 0.6777883768081665
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 906.788,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1390.385009765625,
+          "y": 30.56694221496582,
+          "z": 688.1234741210938
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1490.123779296875,
+          "y": 30.56694221496582,
+          "z": 256.719482421875
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": -0.004458730109035969,
+            "y": -0.11333385854959488,
+            "z": 0.03905746713280678,
+            "w": 0.992779016494751
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 916.776,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1390.385009765625,
+          "y": 30.56694221496582,
+          "z": 688.1234741210938
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1409.397216796875,
+          "y": 30.56694221496582,
+          "z": 607.1041870117188
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.004682655446231365,
+            "y": -0.07389778643846512,
+            "z": -0.06306620687246323,
+            "w": 0.9952586889266968
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 926.772,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 1,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1448.5201416015625,
+          "y": 30.56694221496582,
+          "z": 607.2484130859375
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1338.7593994140625,
+          "y": 30.56694221496582,
+          "z": 674.3714599609375
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 1.1037354852305725e-06,
+            "y": 0.871968686580658,
+            "z": 6.19685692981875e-07,
+            "w": 0.4895615875720978
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 936.872,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 2,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1549.607666015625,
+          "y": 30.56694221496582,
+          "z": 550.4974365234375
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1611.5267333984375,
+          "y": 30.56694221496582,
+          "z": 612.5319213867188
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": -0.058852922171354294,
+            "y": -0.21964208781719208,
+            "z": 0.2520389258861542,
+            "w": 0.940622091293335
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 946.902,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1237.1619873046875,
+          "y": 30.56694221496582,
+          "z": 585.5692749023438
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1263.4390869140625,
+          "y": 30.56694221496582,
+          "z": 589.6593017578125
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 9.840631491897511e-07,
+            "y": 0.7595385909080505,
+            "z": -8.427431907875871e-07,
+            "w": -0.65046226978302
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 956.944,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": 1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1454.364013671875,
+          "y": 30.56694221496582,
+          "z": 620.4624633789062
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1435.9256591796875,
+          "y": 30.56694221496582,
+          "z": 624.8591918945312
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": -3.619866674853256e-06,
+            "y": 0.7848414182662964,
+            "z": -2.8581821425177623e-06,
+            "w": 0.6196967959403992
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 966.937,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 1,
+        "AttackManeuverTurnSign": -1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1264.956787109375,
+          "y": 30.56694221496582,
+          "z": 507.23028564453125
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1518.7325439453125,
+          "y": 30.56694221496582,
+          "z": 655.408203125
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 2.8551212380989455e-06,
+            "y": 0.8679800033569336,
+            "z": -1.6335062582584214e-06,
+            "w": -0.4965991675853729
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 977.018,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 1,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 2,
+        "AttackManeuverTurnSign": 1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1239.6776123046875,
+          "y": 30.56694221496582,
+          "z": 492.49481201171875
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1210.01513671875,
+          "y": 30.56694221496582,
+          "z": 541.0507202148438
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": 0.04071200639009476,
+            "y": -0.1519392728805542,
+            "z": -0.2555970251560211,
+            "w": 0.9539010524749756
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": {
+        "Cell": {
+          "x": 1402,
+          "y": 635
+        }
+      },
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 0,
+      "attackMove": 1,
+      "selected": 1
+    },
+    {
+      "elapsed": 986.988,
+      "air": {
+        "HomePosition": {
+          "x": 1375.5,
+          "y": 0.8241641521453857,
+          "z": 189.5
+        },
+        "HomeCell": {
+          "x": 1375,
+          "y": 189
+        },
+        "HomeInitialized": 1,
+        "ReturningHome": 0,
+        "Airborne": 1,
+        "UsesRunway": 1,
+        "TakeoffRolling": 0,
+        "LandingRolling": 0,
+        "AttackRunActive": 4,
+        "AttackManeuverTurnSign": 1,
+        "AttackPassGoalCell": {
+          "x": 1402,
+          "y": 635
+        },
+        "ReturnApproachInitialized": 0,
+        "RunwayTakeoffPosition": {
+          "x": 1310.3250732421875,
+          "y": 0.7941641807556152,
+          "z": 184.3225555419922
+        },
+        "RunwayTakeoffCell": {
+          "x": 1310,
+          "y": 184
+        },
+        "RunwayLandingPosition": {
+          "x": 1520.4349365234375,
+          "y": 0.7941641807556152,
+          "z": 184.35731506347656
+        },
+        "RunwayLandingCell": {
+          "x": 1520,
+          "y": 184
+        },
+        "AttackRunExitPosition": {
+          "x": 1669.4039306640625,
+          "y": 30.56694221496582,
+          "z": 184.3819580078125
+        },
+        "FixedWingCruiseY": 30.56694221496582,
+        "FixedWingCruiseYInitialized": 1
+      },
+      "pose": {
+        "Position": {
+          "x": 1470.576416015625,
+          "y": 30.56694221496582,
+          "z": 635.035400390625
+        },
+        "Scale": 1.0,
+        "Rotation": {
+          "value": {
+            "x": -9.822081210586475e-07,
+            "y": 0.707048237323761,
+            "z": -9.823705795497517e-07,
+            "w": 0.7071652412414551
+          }
+        }
+      },
+      "move": {
+        "Speed": 36.0,
+        "WalkSpeed": 36.0,
+        "RoadSpeedMultiplier": 1.0,
+        "ArriveDistance": 0.05000000074505806
+      },
+      "target": null,
+      "combat": {
+        "AggroRangeCells": 22,
+        "ChaseBreakDistance": 310.0,
+        "CanAttack": 1,
+        "AutoEngage": 1
+      },
+      "engage": 1,
+      "attackMove": 0,
+      "selected": 1
+    }
+  ],
+  "normalMissionCertified": false
+}

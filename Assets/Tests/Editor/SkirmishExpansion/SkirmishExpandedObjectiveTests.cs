@@ -34,7 +34,10 @@ namespace Game.Tests.Editor
             using var world = new World(nameof(ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup));
             var em = world.EntityManager;
             var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent),
-                typeof(SkirmishObjectiveStateComponent), typeof(SkirmishMatchState));
+                typeof(SkirmishObjectiveStateComponent), typeof(SkirmishMatchState),
+                typeof(SkirmishObjectiveClockComponent));
+            em.SetComponentData(session, new SkirmishObjectiveClockComponent
+                { Playing = 1, Paused = 0, ElapsedSeconds = 42f });
             em.AddBuffer<SkirmishTrackedUnit>(session);
             em.SetComponentData(session, new SkirmishExpandedSessionComponent
                 { SessionId = "loss-test", Phase = SkirmishSessionPhase.Playing });
@@ -69,6 +72,13 @@ namespace Game.Tests.Editor
             Assert.AreEqual(1, result.EnemyUnitsLost);
             Assert.AreEqual(0, result.PlayerBuildingsLost);
             Assert.AreEqual(1, result.EnemyBuildingsLost);
+            var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            Assert.AreEqual(0, clock.Playing, "The terminal transition must stop the clock in the same update.");
+            Assert.AreEqual(1, clock.Paused, "A frozen result must publish a paused clock before UI observation.");
+            Assert.AreEqual(42f, clock.ElapsedSeconds);
+            world.GetOrCreateSystem<SkirmishObjectiveFactProjectionSystem>().Update(world.Unmanaged);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishObjectiveClockComponent>(session).Paused,
+                "Later fact projection must preserve the terminal clock even without a gameplay singleton.");
             em.DestroyEntity(survivor);
             system.Update(world.Unmanaged);
             Assert.AreEqual(1, em.GetComponentData<SkirmishMatchState>(session).PlayerUnitsLost,

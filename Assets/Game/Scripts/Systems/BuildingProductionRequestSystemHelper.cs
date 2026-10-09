@@ -830,7 +830,7 @@ namespace Game.Runtime
             if (building == null || spawnUnitPrefab == null)
                 return false;
 
-            return CanQueueTransportForAnyProducer(context, spawnUnitPrefab, transportSettings, logReason) &&
+            return CanQueueTransportForAnyProducer(context, spawnUnitPrefab, transportSettings, logReason, BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(building)) &&
                    HasAvailableProductionSlotForRequest(context, building);
         }
 
@@ -838,7 +838,8 @@ namespace Game.Runtime
             Context context,
             GameObject spawnUnitPrefab,
             BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings,
-            bool logReason)
+            bool logReason,
+            byte requestingFaction)
         {
             if (transportSettings.TransportPrefab == null)
                 return true;
@@ -847,7 +848,7 @@ namespace Game.Runtime
                 transportSettings.Mode == ProductionTransportMode.Plane &&
                 (context.RuntimeBuildings == null ||
                  context.RunwaySystem == null ||
-                 !context.RunwaySystem.HasAvailableAirportRunway(context.RuntimeBuildings)))
+                 !context.RunwaySystem.HasAvailableAirportRunway(context.RuntimeBuildings, requestingFaction)))
             {
                 if (logReason)
                     context.LogWarning?.Invoke($"[BuildingSpawn] No airport runway is available for '{spawnUnitPrefab.name}'.");
@@ -1730,7 +1731,7 @@ namespace Game.Runtime
 
             BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings =
                 ResolveProductionTransportSettings(context, unitPrefab);
-            if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
+            if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false, FactionIdentity.PlayerFactionId))
                 return false;
 
             if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
@@ -2026,7 +2027,7 @@ namespace Game.Runtime
 
             BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings =
                 ResolveProductionTransportSettings(context, unitPrefab);
-            if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
+            if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false, factionId))
                 return false;
 
             if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
@@ -2242,7 +2243,8 @@ namespace Game.Runtime
                     out _,
                     out Vector3 runwayCenter,
                     out _,
-                    out _))
+                    out _,
+                    BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(producerBuilding)))
             {
                 runwayCenter.y = 0f;
                 return runwayCenter;

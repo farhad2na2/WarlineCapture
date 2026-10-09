@@ -54,6 +54,7 @@ namespace Game.UI.Runtime
         private Canvas _cachedCanvas;
         private BuildPlacementValidityPanelView _validityPanel;
         private BuildPlacementConfirmationBarDesignLayoutView _designLayout;
+        private bool _fullMapOpen;
 
         public RectTransform Root => root != null ? root : transform as RectTransform;
         public TMP_Text TitleText => titleText;
@@ -71,6 +72,12 @@ namespace Game.UI.Runtime
         public Sprite MaterialsIconSprite => materialsIconSprite;
         public bool HasPendingPlacement =>
             _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
+
+        public void SetFullMapOpen(bool isOpen)
+        {
+            _fullMapOpen = isOpen;
+            Refresh(force: true);
+        }
 
         private void Awake()
         {
@@ -217,7 +224,9 @@ namespace Game.UI.Runtime
 
             _nextRefreshAt = Time.unscaledTime + RefreshIntervalSeconds;
             bool hasPlacement = _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
-            if (!hasPlacement)
+            // The full map owns navigation input. Keep the placement preview alive,
+            // but remove its foreground controls until the map closes.
+            if (!hasPlacement || _fullMapOpen)
             {
                 _validityPanel?.ApplyValidityState(false, false);
                 Hide();

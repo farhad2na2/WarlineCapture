@@ -126,6 +126,38 @@ namespace Game.Runtime
 
                 ObserveVtolFlight(ref stateRw, position.y, groundY, transitLookup.HasComponent(entity));
 
+                if (transitLookup.HasComponent(entity) && stateRw.UsesRunway != 0)
+                {
+                    // A newly delivered runway aircraft has an assigned parking
+                    // home. Player orders may queue during taxi, but cannot turn
+                    // their destination into the taxi goal or the aircraft home.
+                    bool parked = FlyTowards(
+                        ref transform.ValueRW, ref unitGrid.ValueRW, grid,
+                        math.max(.01f, airMovement.ValueRO.RunwayTaxiSpeed), dt,
+                        groundY, stateRw.HomePosition, false);
+                    stateRw.ReturningHome = 0;
+                    stateRw.Airborne = 0;
+                    stateRw.TakeoffRolling = 0;
+                    stateRw.LandingRolling = 0;
+                    stateRw.AttackRunActive = 0;
+                    stateRw.ReturnApproachInitialized = 0;
+                    ResetFixedWingCruiseState(ref stateRw);
+                    if (parked)
+                    {
+                        ecb.RemoveComponent<UnitSpawnTransitTag>(entity);
+                        // Remove the internal delivery order while preserving a
+                        // queued player destination and its manual-order marker.
+                        if (targetLookup.HasComponent(entity) &&
+                            targetLookup[entity].Cell.Equals(stateRw.HomeCell) &&
+                            !state.EntityManager.HasComponent<ManualMoveOrderTag>(entity))
+                            ecb.RemoveComponent<UnitTarget>(entity);
+                        if (state.EntityManager.HasComponent<UnitPathRequest>(entity) &&
+                            state.EntityManager.GetComponentData<UnitPathRequest>(entity).Goal.Equals(stateRw.HomeCell))
+                            ecb.RemoveComponent<UnitPathRequest>(entity);
+                    }
+                    continue;
+                }
+
                 if (ropeDisembarkLookup.HasComponent(entity))
                 {
                     float hoverY = ResolveAirCruiseY(
@@ -1252,6 +1284,7 @@ namespace Game.Runtime
             float deltaTime,
             float runwayGroundY)
         {
+            float3 liftoffPosition = ResolveRunwayLiftoffPosition(state, grid);
             bool reachedLiftoffPoint = SteerTowards(
                 ref transform,
                 ref unitGrid,
@@ -1259,9 +1292,27 @@ namespace Game.Runtime
                 math.max(0.01f, move.Speed),
                 deltaTime,
                 runwayGroundY,
-                ResolveRunwayLiftoffPosition(state, grid),
+                liftoffPosition,
                 false,
                 3.25f);
+
+            // Nose-up presentation keeps the runway heading during ground roll.
+            // With slight lateral drift, steering can pass the liftoff point
+            // without entering its one-frame arrival radius. Recognize crossing
+            // the station inside the runway corridor, before its far threshold.
+            if (!reachedLiftoffPoint && TryResolveRunwayDirection(state, out float3 direction, out float length))
+            {
+                float3 fromStart = transform.Position - state.RunwayTakeoffPosition;
+                fromStart.y = 0f;
+                float travelled = math.dot(fromStart, direction);
+                float3 liftoffDelta = liftoffPosition - state.RunwayTakeoffPosition;
+                liftoffDelta.y = 0f;
+                float liftoffDistance = math.dot(liftoffDelta, direction);
+                float3 lateral = fromStart - direction * travelled;
+                float corridor = math.max(.05f, grid.CellSize * 2f);
+                reachedLiftoffPoint = travelled >= liftoffDistance && travelled <= length &&
+                    math.lengthsq(lateral) <= corridor * corridor;
+            }
 
             ApplyRunwayTakeoffPitch(ref transform, state, grid, reachedLiftoffPoint ? 1f : 0f);
             if (reachedLiftoffPoint)

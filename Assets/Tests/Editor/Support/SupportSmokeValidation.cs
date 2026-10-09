@@ -4,6 +4,8 @@ using Game.Components;
 using Game.Runtime;
 using NUnit.Framework;
 using Unity.Core;
+using Unity.Collections;
+using Game.Rendering;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -14,9 +16,45 @@ namespace Game.Tests.Editor
     {
         public static void RunFocusedValidation()
         {
-            try{var t=new SupportSmokeValidation();t.CoverResetsAndNeverStacks();t.RealShotsAndObservationsAgree(false);t.RealShotsAndObservationsAgree(true);t.BuildingDefenseUsesSameMitigation();
-                Debug.Log("[SupportSmokeValidation] result=Passed tests=4");ValidationExit.Exit(0);}
+            try{var t=new SupportSmokeValidation();t.CoverResetsAndNeverStacks();t.RealShotsAndObservationsAgree(false);t.RealShotsAndObservationsAgree(true);t.BuildingDefenseUsesSameMitigation();t.MultipleOwnersKeepIndependentSmokeClocks();t.SmokePresentationUsesOwningConfig();
+                Debug.Log("[SupportSmokeValidation] result=Passed tests=6");ValidationExit.Exit(0);}
             catch(Exception ex){Debug.LogException(ex);Debug.LogError("[SupportSmokeValidation] result=Failed");ValidationExit.Exit(1);throw;}
+        }
+        [Test] public void SmokePresentationUsesOwningConfig()
+        {
+            using var f=new SupportValidationFixture();var other=f.Em.Instantiate(f.Root);
+            var one=new GameObject("SmokeOwnerOne");var two=new GameObject("SmokeOwnerTwo");
+            try
+            {
+                f.Em.AddComponentData(f.Root,new SupportSmokeVisualConfigComponent {Prefab=one});
+                f.Em.AddComponentData(other,new SupportSmokeVisualConfigComponent {Prefab=two});
+                using var query=f.Em.CreateEntityQuery(typeof(SupportSessionComponent));using var roots=query.ToEntityArray(Allocator.Temp);
+                var zone=new SupportSmokeZoneComponent {Root=f.Root,SessionToken="support-test",AttemptOrdinal=1};
+                Assert.AreSame(one,SupportSmokePresentationSystem.ResolvePrefab(f.Em,roots,zone));
+                zone.Root=other;Assert.AreSame(two,SupportSmokePresentationSystem.ResolvePrefab(f.Em,roots,zone));
+                zone.Root=Entity.Null;Assert.IsNull(SupportSmokePresentationSystem.ResolvePrefab(f.Em,roots,zone),"An ambiguous legacy attempt must not borrow a visual config.");
+                zone.Root=other;zone.AttemptOrdinal=2;Assert.IsNull(SupportSmokePresentationSystem.ResolvePrefab(f.Em,roots,zone));
+            }
+            finally {UnityEngine.Object.DestroyImmediate(one);UnityEngine.Object.DestroyImmediate(two);}
+        }
+        [Test] public void MultipleOwnersKeepIndependentSmokeClocks()
+        {
+            using var f=new SupportValidationFixture();var other=f.Em.Instantiate(f.Root);
+            var session=f.Em.GetComponentData<SupportSessionComponent>(other);session.FactionId=2;session.SimulationSeconds=5;f.Em.SetComponentData(other,session);
+            Entity Zone(Entity root,float x)
+            {var entity=f.Em.CreateEntity(typeof(SupportSmokeZoneComponent));f.Em.SetComponentData(entity,new SupportSmokeZoneComponent {Root=root,SessionToken="support-test",AttemptOrdinal=1,Center=new float3(x,0,0),RadiusSquared=4,ExpiresAt=15,DirectDamagePermille=650});return entity;}
+            var ownZone=Zone(f.Root,0);var otherZone=Zone(other,20);var ownUnit=f.Unit(float3.zero,1);var otherUnit=f.Unit(new float3(20,0,0),2);
+            var system=f.World.CreateSystem<SupportSmokeSystem>();system.Update(f.World.Unmanaged);
+            Assert.IsTrue(f.Em.Exists(ownZone));Assert.IsTrue(f.Em.Exists(otherZone));
+            Assert.AreEqual(650,f.Em.GetComponentData<SupportRangedCoverComponent>(ownUnit).DirectDamagePermille);
+            Assert.AreEqual(650,f.Em.GetComponentData<SupportRangedCoverComponent>(otherUnit).DirectDamagePermille);
+            session=f.Em.GetComponentData<SupportSessionComponent>(f.Root);session.SimulationSeconds=15;f.Em.SetComponentData(f.Root,session);
+            session=f.Em.GetComponentData<SupportSessionComponent>(other);session.Active=0;f.Em.SetComponentData(other,session);system.Update(f.World.Unmanaged);
+            Assert.IsFalse(f.Em.Exists(ownZone));Assert.IsTrue(f.Em.Exists(otherZone),"Pausing one owner preserves its live effect.");
+            Assert.AreEqual(1000,f.Em.GetComponentData<SupportRangedCoverComponent>(ownUnit).DirectDamagePermille);
+            Assert.AreEqual(650,f.Em.GetComponentData<SupportRangedCoverComponent>(otherUnit).DirectDamagePermille);
+            f.Em.DestroyEntity(other);system.Update(f.World.Unmanaged);Assert.IsFalse(f.Em.Exists(otherZone));
+            Assert.AreEqual(1000,f.Em.GetComponentData<SupportRangedCoverComponent>(otherUnit).DirectDamagePermille);
         }
         [Test] public void CoverResetsAndNeverStacks()
         {

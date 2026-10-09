@@ -41,7 +41,7 @@ First demonstrable slice: expanded S001 with Standard ground control/economy/Bas
 - Create the proposed `Game.Skirmish.Contracts` boundary and typed IDs/enums/payloads listed there. Define reason codes for unsupported role/map/size/difficulty, insufficient Materials/Fuel/capacity, missing producer/readiness, stale command, blocked spawn and incompatible save.
 - Use [ROSTER_SOURCE_AUDIT](ROSTER_SOURCE_AUDIT.csv) as the source inventory, not a certification list. Resolve each actual prefab/config reference and verify the claimed existing producer before implementing its adapter. Do not infer abilities from names.
 - Deliver a baseline report with compiler/architecture status, three legacy smoke results, source/config hashes, target device identity and the performance measurements required by ACCEPTANCE. If the current tree cannot compile, isolate the owner/failure before attributing it to this expansion.
-- Close when contracts have no UI/runtime dependency cycle, the 74 inventoried configurations have explicit dispositions, and reproducible probes report actual entities and counters. A missing capability becomes a named SK-02–11 task; it is not an invitation to ask the user to redesign the mode.
+- Close when contracts have no UI/runtime dependency cycle, the 75 inventoried configurations have explicit dispositions, and reproducible probes report actual entities and counters. A missing capability becomes a named SK-02–11 task; it is not an invitation to ask the user to redesign the mode.
 
 ## SK-01 — typed definitions, compiler and launch
 

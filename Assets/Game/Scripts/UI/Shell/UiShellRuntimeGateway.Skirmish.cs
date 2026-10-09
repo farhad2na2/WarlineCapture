@@ -3,6 +3,10 @@ namespace Game.UI.Runtime
 {
     public static partial class UiShellRuntimeGateway
     {
+        public static bool HasSavedSkirmish(string catalogId) => current is IUiSkirmishGateway gateway && gateway.HasSavedSkirmish(catalogId);
+        public static bool TryConsumeSkirmishResumeFailure() => current is IUiSkirmishGateway gateway && gateway.TryConsumeSkirmishResumeFailure();
+        public static bool TryResumeSavedSkirmish(string catalogId) => current is IUiSkirmishGateway gateway && gateway.TryResumeSavedSkirmish(catalogId);
+        public static bool TryDiscardSavedSkirmish(string catalogId) => current is IUiSkirmishGateway gateway && gateway.TryDiscardSavedSkirmish(catalogId);
         public static bool TryReadSkirmishReadiness(out UiSkirmishReadinessModel model)
         {
             model = default;

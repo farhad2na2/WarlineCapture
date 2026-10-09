@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Runtime;
 using Unity.Entities;
+using Unity.Collections;
 using Unity.Mathematics;
 namespace Game.UI.Shell.Ecs
 {
@@ -8,20 +9,26 @@ namespace Game.UI.Shell.Ecs
     [UpdateBefore(typeof(AssistantCommandIntentSystem))]
     public partial struct AssistantSupportIntentSystem : ISystem
     {
-        public void OnCreate(ref SystemState state)=>state.RequireForUpdate<SupportSessionComponent>();
+        private EntityQuery sessionRoots;
+        public void OnCreate(ref SystemState state)
+        {
+            sessionRoots=state.GetEntityQuery(typeof(SupportSessionComponent),typeof(SupportProposalComponent),typeof(SupportPreviewComponent),typeof(SupportInputStateComponent));
+            state.RequireForUpdate(sessionRoots);
+        }
         public void OnUpdate(ref SystemState state)
         {
-            if(!SystemAPI.TryGetSingletonEntity<SupportSessionComponent>(out var root))return;
-            var em=state.EntityManager;
+            state.Dependency.Complete();var em=state.EntityManager;
+            using var roots=sessionRoots.ToEntityArray(Allocator.Temp);
+            bool hasPlayer=SupportSessionUtility.TryPlayer(em,roots,out var root);
             foreach(var (requests,results) in SystemAPI.Query<DynamicBuffer<AssistantCommandIntentRequestElement>,DynamicBuffer<AssistantCommandIntentResultElement>>())
             {
                 for(int i=requests.Length-1;i>=0;i--)
                 {
                     var request=requests[i];
                     if(request.Kind==AssistantCommandIntentKind.StopAssistantControl)
-                    {var p=em.GetComponentData<SupportProposalComponent>(root);p.Declined=p.Consumed=1;em.SetComponentData(root,p);continue;}
+                    {if(hasPlayer){var p=em.GetComponentData<SupportProposalComponent>(root);p.Declined=p.Consumed=1;em.SetComponentData(root,p);}continue;}
                     if(request.Kind<AssistantCommandIntentKind.ProposeSupport || request.Kind>AssistantCommandIntentKind.ShowSupportTarget)continue;
-                    var reason=Process(em,root,request);requests.RemoveAt(i);
+                    var reason=hasPlayer?Process(em,root,request):SupportRejectionReason.NotReady;requests.RemoveAt(i);
                     if(results.Length>=16)results.RemoveAt(0);
                     results.Add(new AssistantCommandIntentResultElement {RequestId=request.RequestId,Kind=request.Kind,
                         Status=reason==0?AssistantCommandIntentStatus.Accepted:AssistantCommandIntentStatus.Rejected,ReasonCode=(int)reason,

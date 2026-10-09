@@ -27,6 +27,7 @@ public sealed class UnitMoveOrderSystemTests
         {
             RunCase(test => test.AttackMove_ResumesAfterCombatAndExplicitMoveCancelsDestination());
             RunCase(test => test.RegistryAttackIntentLeavesTravelAndCombatToSharedOwners());
+            RunCase(test => test.NativeAirAttackPreservesFuelRejectionAndExistingHold());
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
             RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
             RunCase(test => test.IssueImmediateMoveCommand_GroundUnitWritesTargetPathRequestAndManualTag());
@@ -46,7 +47,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=21");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=22");
         }
         catch (System.Exception ex)
         {
@@ -522,6 +523,58 @@ public sealed class UnitMoveOrderSystemTests
         SkirmishWorldMovementService.ClearIntent(em, unit);
         Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit));
         Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+    }
+
+    [Test]
+    public void NativeAirAttackPreservesFuelRejectionAndExistingHold()
+    {
+        CreateGrid(32, 32);
+        var em = _entityManager;
+        var id = new FixedString64Bytes("air-fuel-rejection");
+        var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+        em.SetComponentData(session, new SkirmishExpandedSessionComponent
+        { SessionId = id, Phase = Game.Skirmish.Contracts.SkirmishSessionPhase.Playing });
+        em.AddBuffer<SkirmishArmyGroupRecord>(session);
+        var unit = em.CreateEntity(typeof(Faction), typeof(UnitMove), typeof(UnitGrid), typeof(UnitFootprint),
+            typeof(UnitAttack), typeof(UnitCombat), typeof(UnitHealth), typeof(LocalTransform),
+            typeof(UnitAirMovement), typeof(UnitAirComponent), typeof(UnitFuelConsumption),
+            typeof(SkirmishSharedActorTag), typeof(CombatTargetPolicy), typeof(SkirmishAttemptOwnedComponent),
+            typeof(SkirmishArmyGroupMembershipComponent), typeof(HoldPositionOrderTag), typeof(SkirmishMoveIntentComponent));
+        em.SetComponentData(unit, new Faction { Id = 1 });
+        em.SetComponentData(unit, new UnitMove { Speed = 5, WalkSpeed = 5, RoadSpeedMultiplier = 1 });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        em.SetComponentData(unit, new UnitFootprint { Size = new int2(1) });
+        em.SetComponentData(unit, new UnitHealth { Current = 240, Max = 240 });
+        em.SetComponentData(unit, new UnitAttack { Damage = 10, Range = 3 });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1 });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(2.5f, 0, 2.5f)));
+        em.SetComponentData(unit, new UnitFuelConsumption { Enabled = 1, AirFuelPerCell = 2 });
+        em.SetComponentData(unit, new SkirmishAttemptOwnedComponent { SessionId = id, FactionId = 1 });
+        var oldIntent = new SkirmishMoveIntentComponent
+        { Order = Game.Skirmish.Contracts.SkirmishGroupOrderKind.Hold, DestinationX = 5, DestinationZ = 6 };
+        em.SetComponentData(unit, oldIntent);
+        var target = em.CreateEntity(typeof(Faction), typeof(UnitHealth), typeof(LocalTransform),
+            typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishContactSightComponent));
+        em.SetComponentData(target, new Faction { Id = 2 });
+        em.SetComponentData(target, new UnitHealth { Current = 800, Max = 800 });
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(20.5f, 0, 20.5f)));
+        em.SetComponentData(target, new SkirmishAttemptOwnedComponent { SessionId = id, FactionId = 2, IsStructure = 1 });
+        em.SetComponentData(target, new SkirmishContactSightComponent { Sight = Game.Skirmish.Contracts.SkirmishContactSight.Visible });
+        using var selected = new NativeArray<Entity>(new[] { unit }, Allocator.Temp);
+        var rejected = new UnitTargetOrderSystem().IssueAttackTarget(em, selected, target);
+        Assert.IsFalse(rejected.CommandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.InsufficientFuel, rejected.CommandResult.ReasonCode);
+        Assert.AreEqual(oldIntent, em.GetComponentData<SkirmishMoveIntentComponent>(unit));
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit));
+        Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
+        var supply = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(supply, new BuildingResourceStorageComponent
+        { OwnerFactionId = 1, FuelStorageCapacity = 100, StoredFuelBarrels = 100 });
+        var accepted = new UnitTargetOrderSystem().IssueAttackTarget(em, selected, target);
+        Assert.IsTrue(accepted.CommandResult.Accepted);
+        Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+        Assert.IsTrue(em.HasComponent<UnitTarget>(unit));
     }
 
     [Test]

@@ -8,16 +8,25 @@ namespace Game.Runtime
     [UpdateBefore(typeof(SupportSmokeSystem))]
     public partial struct SupportAbilityRequestSystem : ISystem
     {
-        public void OnCreate(ref SystemState state) => state.RequireForUpdate<SupportRequestElement>();
+        private EntityQuery requestRoots;
+        public void OnCreate(ref SystemState state)
+        {
+            requestRoots=state.GetEntityQuery(typeof(SupportSessionComponent),typeof(SupportRequestElement));
+            state.RequireForUpdate(requestRoots);
+        }
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency.Complete();
-            if(!SystemAPI.TryGetSingletonEntity<SupportSessionComponent>(out var root))return;
-            var requests=state.EntityManager.GetBuffer<SupportRequestElement>(root);
-            while(requests.Length>0)
+            using var roots=requestRoots.ToEntityArray(Allocator.Temp);
+            foreach(var root in roots)
             {
-                var request=requests[0];requests.RemoveAt(0);Process(state.EntityManager,root,request);
-                requests=state.EntityManager.GetBuffer<SupportRequestElement>(root);
+                var requests=state.EntityManager.GetBuffer<SupportRequestElement>(root);
+                while(requests.Length>0)
+                {
+                    var request=requests[0];requests.RemoveAt(0);Process(state.EntityManager,root,request);
+                    // Process may instantiate effects and invalidate buffer handles.
+                    requests=state.EntityManager.GetBuffer<SupportRequestElement>(root);
+                }
             }
         }
         public static SupportRejectionReason Process(EntityManager em, Entity root, in SupportRequestElement request)
@@ -61,10 +70,10 @@ namespace Game.Runtime
                     RouteVersion=route.Version,Damage=definition.Damage,FactionId=session.FactionId});
 
             }
-            else { effect=em.CreateEntity();em.AddComponentData(effect,new SupportSmokeZoneComponent { SessionToken=session.SessionToken,AttemptOrdinal=session.AttemptOrdinal,
+            else { effect=em.CreateEntity();em.AddComponentData(effect,new SupportSmokeZoneComponent { Root=root,SessionToken=session.SessionToken,AttemptOrdinal=session.AttemptOrdinal,
                 Center=request.Position,RadiusSquared=definition.Radius*definition.Radius,ExpiresAt=session.SimulationSeconds+definition.DurationSeconds,DirectDamagePermille=definition.DirectDamagePermille }); }
-            if(!(flight?SupportFuelTransactionSystem.TryReserve(em,effect,session.FactionId,definition.FuelCost,request.RequestId):
-                SupportFuelTransactionSystem.TryConsumeImmediate(em,session.FactionId,definition.FuelCost)))
+            if(!(flight?SupportFuelTransactionSystem.TryReserve(em,root,effect,session.FactionId,definition.FuelCost,request.RequestId):
+                SupportFuelTransactionSystem.TryConsumeImmediate(em,root,session.FactionId,definition.FuelCost)))
             { SupportParatrooperAdapterSystemHelper.DestroyUnreleased(em,effect);SupportSupplyAdapterSystemHelper.DestroyUnreleased(em,effect);em.DestroyEntity(effect);return Reject(em,root,request,SupportRejectionReason.InsufficientFuel); }
             if(!flight && definition.VisualPrefab!=Entity.Null && em.Exists(definition.VisualPrefab))
             {

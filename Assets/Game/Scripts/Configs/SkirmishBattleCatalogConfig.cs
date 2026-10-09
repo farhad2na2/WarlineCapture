@@ -52,8 +52,38 @@ namespace Game.Configs
 
         public IReadOnlyList<SkirmishBattleCatalogEntry> Entries => entries;
 
-        public static SkirmishBattleCatalogConfig Load() =>
-            Resources.Load<SkirmishBattleCatalogConfig>(ResourceName);
+        public static SkirmishBattleCatalogConfig Load()
+        {
+#if UNITY_EDITOR
+            if (editorValidationCatalog != null) return editorValidationCatalog;
+#endif
+            return Resources.Load<SkirmishBattleCatalogConfig>(ResourceName);
+        }
+
+#if UNITY_EDITOR
+        private static SkirmishBattleCatalogConfig editorValidationCatalog;
+
+        /// <summary>Expose an unpublished candidate to native Editor input tests without changing the shipped catalog.</summary>
+        public static IDisposable UseEditorValidationCatalog(SkirmishBattleCatalogConfig candidate)
+        {
+            if (candidate == null || editorValidationCatalog != null)
+                throw new InvalidOperationException("A single non-null Editor validation catalog is required.");
+            editorValidationCatalog = candidate;
+            return new EditorValidationCatalogScope(candidate);
+        }
+
+        private sealed class EditorValidationCatalogScope : IDisposable
+        {
+            private SkirmishBattleCatalogConfig candidate;
+            public EditorValidationCatalogScope(SkirmishBattleCatalogConfig value) => candidate = value;
+            public void Dispose()
+            {
+                if (candidate == null) return;
+                if (editorValidationCatalog == candidate) editorValidationCatalog = null;
+                candidate = null;
+            }
+        }
+#endif
 
         public void Configure(SkirmishBattleCatalogEntry[] configured)
         {

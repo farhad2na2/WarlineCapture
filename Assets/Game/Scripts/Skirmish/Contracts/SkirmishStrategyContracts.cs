@@ -86,9 +86,13 @@ namespace Game.Skirmish.Contracts
         public bool GroupControlAvailable;
         public bool CanAffordRifle;
         public bool CanAffordRocketeer;
+        public bool RocketeerRecruitPending;
+        public int OwnStructureAttackUnits;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
+        public bool CanAffordTanker;
+        public int TankersCommitted;
         public bool CanBuildAirPad;
         public bool PadReady;
         public bool AirQueueOffered;

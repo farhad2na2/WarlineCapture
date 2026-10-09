@@ -35,6 +35,10 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(20, setup.PlayerInfantry);
         Assert.AreEqual(3, setup.PlayerGround);
         Assert.AreEqual(23, setup.PlayerCombat);
+        Assert.AreEqual(1, Count(setup, 1, SkirmishRoleKind.Tanker));
+        Assert.AreEqual(2, Count(setup, 1, SkirmishRoleKind.LogisticsTruck));
+        Assert.AreEqual(1, Count(setup, 2, SkirmishRoleKind.Tanker));
+        Assert.AreEqual(2, Count(setup, 2, SkirmishRoleKind.LogisticsTruck));
         Assert.AreEqual(34, setup.PlayerSupply);
         Assert.AreEqual(900, setup.MaterialsEach);
         Assert.AreEqual(240, setup.OilEach);
@@ -154,7 +158,7 @@ public sealed class SkirmishExpandedDefinitionTests
             SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex,
             airMobile.NormalizeForBaseAssault().ScenarioIndex);
         var unknown = QuickGameConfig.Defaults;
-        unknown.ScenarioIndex = 7;
+        unknown.ScenarioIndex = 8;
         Assert.AreEqual(0, unknown.NormalizeForBaseAssault().ScenarioIndex);
         unknown.ScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex;
         Assert.AreEqual(SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex,
@@ -241,7 +245,8 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(0, visualPending);
         Assert.IsTrue(AllStartingForcesHavePrefabKeys(setup));
         using var keyed = em.CreateEntityQuery(typeof(UnitSourcePrefabKey), typeof(SkirmishUnitRoleComponent));
-        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround,
+        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround +
+            setup.PlayerLogisticsSupport + setup.EnemyLogisticsSupport,
             keyed.CalculateEntityCount());
         var capacity = em.GetComponentData<SkirmishCapacityComponent>(session);
         Assert.AreEqual(setup.PlayerInfantry, capacity.InfantryLive);
@@ -249,9 +254,14 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(setup.PlayerSupply, capacity.SupplyLive);
 
         using var units = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent));
-        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround,
+        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround +
+            setup.PlayerLogisticsSupport + setup.EnemyLogisticsSupport,
             units.CalculateEntityCount());
         Assert.AreEqual(12, CountOwnedRole(em, 1, SkirmishRoleKind.Rifle));
+        Assert.AreEqual(1, CountOwnedRole(em, 1, SkirmishRoleKind.Tanker));
+        Assert.AreEqual(2, CountOwnedRole(em, 1, SkirmishRoleKind.LogisticsTruck));
+        Assert.AreEqual(1, CountOwnedRole(em, 2, SkirmishRoleKind.Tanker));
+        Assert.AreEqual(2, CountOwnedRole(em, 2, SkirmishRoleKind.LogisticsTruck));
 
         using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
         int applied = Game.Runtime.SkirmishRosterProjectionSystem.Apply(

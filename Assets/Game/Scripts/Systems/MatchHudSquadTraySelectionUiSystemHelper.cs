@@ -62,6 +62,25 @@ namespace Game.Runtime
 
         public MatchHudSquadTraySlot ActiveSlot => _activeSlot;
 
+        public void SynchronizeExpandedSelection(Context context, EntityManager em)
+        {
+            context.EnsureSelectionDependencies?.Invoke(em);
+            _selected.Clear();
+            using var query = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(Faction));
+            using var selected = query.ToEntityArray(Allocator.Temp);
+            foreach (var entity in selected)
+                if (FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) &&
+                    SkirmishArmyGroupSystem.IsAlive(em, entity))
+                    _selected.Add(entity);
+
+            context.ClearSelectedBuilding?.Invoke();
+            context.SelectionStateCompositionSystemHelper.CacheSelectedMoveEntities(em, _selected);
+            context.FocusedUnitLifecycleCompositionSystemHelper.ApplySelectionFocus(
+                em, context.SelectionStateCompositionSystemHelper, _selected, _selected.Count,
+                (entityManager, entity) => context.ApplyHudSelection?.Invoke(entityManager, entity),
+                count => context.ApplyHudSquadSelection?.Invoke(count));
+        }
+
         public void ClearActiveSlot(IMatchHudSquadTrayView view)
         {
             _activeSlot = MatchHudSquadTraySlot.None;

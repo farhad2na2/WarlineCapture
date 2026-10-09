@@ -54,6 +54,59 @@ namespace Game.Runtime
             }
             return true;
         }
+        // Native population comes from the production ledger, including queued members.
+        // Support passengers not yet promoted to that ledger retain their own capacity hold.
+        public static bool CountPopulation(EntityManager em,Entity root,out int total,out int ceiling)
+        {
+            total=0;ceiling=0;
+            if(!em.Exists(root)||!em.HasComponent<SupportSessionComponent>(root)||!em.HasComponent<SupportMissionPolicyComponent>(root))return false;
+            var session=em.GetComponentData<SupportSessionComponent>(root);
+            ceiling=em.GetComponentData<SupportMissionPolicyComponent>(root).PopulationCeiling;
+            if(ceiling<=0||SupportSessionUtility.IsTerminal(em,root,session))return false;
+            if(!em.HasComponent<SkirmishSupportOwnerComponent>(root))return CountPopulation(em,session.FactionId,out total);
+            var nativeOwner=em.GetComponentData<SkirmishSupportOwnerComponent>(root);
+            if(!em.HasComponent<SkirmishResolvedSetupRecord>(nativeOwner.Session))return false;
+            var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(nativeOwner.Session).Setup;
+            if(setup==null||setup.InfantryCapEach<=0)return false;
+            int live,reserved,cap;
+            if(session.FactionId==1&&em.HasComponent<SkirmishCapacityComponent>(nativeOwner.Session))
+            {
+                var ledger=em.GetComponentData<SkirmishCapacityComponent>(nativeOwner.Session);
+                if(ledger.FactionId!=1)return false;
+                live=ledger.InfantryLive;reserved=ledger.InfantryReserved;cap=ledger.InfantryCap;
+            }
+            else if(session.FactionId==2&&em.HasComponent<SkirmishEnemyCapacityComponent>(nativeOwner.Session))
+            {
+                var ledger=em.GetComponentData<SkirmishEnemyCapacityComponent>(nativeOwner.Session);
+                live=ledger.InfantryLive;reserved=ledger.InfantryReserved;cap=ledger.InfantryCap;
+            }
+            else return false;
+            if(live<0||reserved<0||cap!=setup.InfantryCapEach)return false;
+            ceiling=math.min(ceiling,cap);long count=(long)live+reserved;
+            using var passengers=em.CreateEntityQuery(new EntityQueryDesc {
+                All=new[]{ComponentType.ReadOnly<SupportPassengerOwnerComponent>(),ComponentType.ReadOnly<UnitHealth>(),ComponentType.ReadOnly<Faction>()},
+                Options=EntityQueryOptions.IncludeDisabledEntities});
+            using var entities=passengers.ToEntityArray(Allocator.Temp);
+            foreach(var passenger in entities)
+            {
+                var hold=em.GetComponentData<SupportPassengerOwnerComponent>(passenger);
+                if(!hold.SessionToken.Equals(session.SessionToken)||hold.AttemptOrdinal!=session.AttemptOrdinal||
+                    em.GetComponentData<Faction>(passenger).Id!=session.FactionId||em.GetComponentData<UnitHealth>(passenger).Current<=0)continue;
+                if(!em.Exists(hold.Root)||!em.HasComponent<SkirmishSupportOwnerComponent>(hold.Root))return false;
+                var owner=em.GetComponentData<SkirmishSupportOwnerComponent>(hold.Root);
+                if(owner.Session!=nativeOwner.Session||!owner.SessionId.Equals(nativeOwner.SessionId))return false;
+                if(em.HasComponent<SkirmishAttemptOwnedComponent>(passenger))
+                {
+                    var actor=em.GetComponentData<SkirmishAttemptOwnedComponent>(passenger);
+                    if(!actor.SessionId.Equals(session.SessionToken)||actor.FactionId!=session.FactionId||actor.IsStructure!=0||
+                        !em.HasComponent<SkirmishUnitRoleComponent>(passenger)||em.GetComponentData<SkirmishUnitRoleComponent>(passenger).Category!=Game.Skirmish.Contracts.SkirmishPopulationCategory.Infantry)return false;
+                    // Native actors are already included by their live/reserved ledger owner.
+                    continue;
+                }
+                count++;
+            }
+            if(count>int.MaxValue)return false;total=(int)count;return true;
+        }
         public static SupportRejectionReason PlanParatroopers(EntityManager em,Entity root,in SupportRequestElement request,NativeList<int2> cells,NativeList<float3> positions)
         {
             if(request.TargetKind!=SupportTargetKind.LandingZone||request.Target!=Entity.Null)return SupportRejectionReason.InvalidTargetType;
@@ -65,8 +118,9 @@ namespace Game.Runtime
                em.GetComponentData<UnitMovementBehavior>(payload.InfantryPrefab).UsesVehicleMotion!=0||em.HasComponent<UnitAirMovement>(payload.InfantryPrefab)||
                payload.ParachutePrefab==Entity.Null||!em.Exists(payload.ParachutePrefab))return SupportRejectionReason.NotReady;
             var session=em.GetComponentData<SupportSessionComponent>(root);
-            if(!CountPopulation(em,session.FactionId,out int population))return SupportRejectionReason.NotReady;
-            if((long)population+payload.InfantryCount>policy.PopulationCeiling)return SupportRejectionReason.PopulationFull;
+            if(!CountPopulation(em,root,out int population,out int ceiling))return SupportRejectionReason.NotReady;
+            if((long)population+payload.InfantryCount>ceiling)return SupportRejectionReason.PopulationFull;
+            if(!SupportParatrooperAdapterSystemHelper.CanBindNativeManifest(em,root,payload.InfantryCount))return SupportRejectionReason.NotReady;
             if(!TryGrid(em,out var gridEntity,out var grid))return SupportRejectionReason.NotReady;
             using(var surface=em.CreateEntityQuery(typeof(MapSurfaceComponent)))if(surface.CalculateEntityCount()!=1)return SupportRejectionReason.NotReady;
             int2 center=GridUtils.WorldToCell(grid,request.Position),footprint=em.GetComponentData<UnitFootprint>(payload.InfantryPrefab).Size;

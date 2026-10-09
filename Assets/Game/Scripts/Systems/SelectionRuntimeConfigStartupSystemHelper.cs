@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using Game.Configs;
+using Game.Components;
+using Unity.Entities;
 
 namespace Game.Runtime
 {
@@ -46,6 +48,39 @@ namespace Game.Runtime
         public State CreateState(RTSSelectionSystemConfig config, Camera fallbackWorldCamera)
         {
             return CreateStateFromConfig(config, fallbackWorldCamera);
+        }
+
+        public static bool TryApplySharedAirfieldCamera(EntityManager em, ref State state, out int generation)
+        {
+            generation = -1;
+            using var query = em.CreateEntityQuery(typeof(ActiveOperationMapComponent), typeof(OperationMapMetadataComponent));
+            if (query.CalculateEntityCount() != 1) return false;
+            var metadata = query.GetSingleton<OperationMapMetadataComponent>();
+            if (!metadata.Blob.IsCreated || metadata.PhysicalSourceValidated == 0) return false;
+            ref var map = ref metadata.Blob.Value;
+            const string source = "opmap.skirmish.cityedgeairfield_prepared";
+            if (map.OperationMapId.ToString() != source && map.SourceOperationMapId.ToString() != source) return false;
+            for (int i = 0; i < map.Cameras.Length; i++)
+            {
+                ref var camera = ref map.Cameras[i];
+                if (!camera.Id.Equals(map.BattleCameraId) || camera.IsOrthographic != 0) continue;
+                Vector3 angles = ((Quaternion)camera.Rotation).eulerAngles;
+                if (!float.IsFinite(camera.Position.y) || camera.Position.y <= 0 ||
+                    !float.IsFinite(angles.x) || !float.IsFinite(angles.y) ||
+                    !float.IsFinite(camera.FieldOfView) || camera.FieldOfView <= 1 || camera.FieldOfView >= 179) return false;
+                state.NormalModeZoomHeight = Mathf.Clamp(camera.Position.y, state.MinZoomHeight, state.MaxZoomHeight);
+                float buildMaximum = Mathf.Max(state.MaxZoomHeight, state.BuildModeZoomHeight);
+                state.BuildModeZoomHeight = Mathf.Clamp(Mathf.Max(state.BuildModeZoomHeight,
+                    state.NormalModeZoomHeight * 1.15f), state.MinZoomHeight, buildMaximum);
+                state.NormalModePitch = state.BuildModePitch = angles.x;
+                state.NormalModeYaw = state.BuildModeYaw = angles.y;
+                state.NormalModeFieldOfView = camera.FieldOfView;
+                state.BuildModeFieldOfView = Mathf.Max(state.BuildModeFieldOfView, camera.FieldOfView);
+                state.FullscreenIsoYaw = angles.y;
+                generation = metadata.Generation;
+                return true;
+            }
+            return false;
         }
 
         public static State CreateStateFromConfig(RTSSelectionSystemConfig config, Camera fallbackWorldCamera)
@@ -169,5 +204,8 @@ namespace Game.Runtime
             return string.Equals(forced, "1", StringComparison.Ordinal) ||
                    string.Equals(forced, "true", StringComparison.OrdinalIgnoreCase);
         }
+
+        public static float ClampAuthoredFocusHeight(float height) =>
+            ShouldApplyMobileCameraLimits() ? Mathf.Min(height, MobileMaxZoomHeightCap) : height;
     }
 }

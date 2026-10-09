@@ -13,6 +13,52 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
 {
     private World _world;
 
+    public static void RunStreamedSidewalkCacheValidation()
+    {
+        try
+        {
+            new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredSidewalkCache_TracksLateSourceOwnersAndBufferPublication();
+            Debug.Log("[StreamedSidewalkCacheValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[StreamedSidewalkCacheValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void AuthoredSidewalkCache_TracksLateSourceOwnersAndBufferPublication()
+    {
+        using var world = new World("Delayed packed sidewalk source");
+        var em = world.EntityManager;
+        em.CreateEntity(typeof(MapSurfaceComponent));
+        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+        var grid = new GridConfig { Width = 32, Height = 32, CellSize = 1 };
+        var cache = new BuildingPlacementAuthoredRoadCache();
+        cache.Ensure(em, surfaces, grid);
+        Assert.That(cache.GetSidewalks()[5 * 32 + 5], Is.False);
+        var source = em.CreateEntity();
+        em.AddBuffer<OperationMapSidewalkFootprint>(source);
+        cache.Ensure(em, surfaces, grid);
+        em.GetBuffer<OperationMapSidewalkFootprint>(source).Add(new OperationMapSidewalkFootprint
+        {
+            WorldToLocal = Unity.Mathematics.float4x4.identity,
+            LocalMin = new Unity.Mathematics.float3(5, 0, 5),
+            LocalMax = new Unity.Mathematics.float3(7, 1, 7),
+            WorldMin = new Unity.Mathematics.float3(5, 0, 5),
+            WorldMax = new Unity.Mathematics.float3(7, 1, 7)
+        });
+        cache.Ensure(em, surfaces, grid);
+        Assert.That(cache.GetSidewalks()[5 * 32 + 5], Is.True, "Late baked sidewalks must block initial placement.");
+        Assert.That(cache.GetSidewalks()[7 * 32 + 7], Is.False);
+        em.DestroyEntity(source);
+        cache.Ensure(em, surfaces, grid);
+        Assert.That(cache.GetSidewalks()[5 * 32 + 5], Is.False, "Removed source must not leave a stale reservation.");
+    }
+
     public static void RunPlacementCommandRequestValidation()
     {
         try

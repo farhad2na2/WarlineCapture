@@ -91,8 +91,9 @@ namespace Game.UI.Shell.Ecs
 
         private static int AirBit(in SkirmishPresentedSlot slot, int index)
         {
-            return slot.Occupied && (slot.Role == Game.Skirmish.Contracts.SkirmishRoleKind.AttackHeliLight ||
-                slot.Role == Game.Skirmish.Contracts.SkirmishRoleKind.AttackHeli) ? 1 << index : 0;
+            return slot.Occupied &&
+                Game.Skirmish.Contracts.SkirmishRoleIds.Category(slot.Role) == Game.Skirmish.Contracts.SkirmishPopulationCategory.Air &&
+                SkirmishExpandedPresentedOrders.IsAssaultRole(slot.Role) ? 1 << index : 0;
         }
     }
 }

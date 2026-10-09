@@ -51,11 +51,17 @@ namespace Game.Editor
             ExpectedUnsupportedAttachmentRenderRowRemoval +
             ExpectedDetachedElevatedBuildingPropRenderRowRemoval +
             ExpectedCourtyardNetRenderRowRemoval;
+        // Existing dense-city-v6 presentation is already authored in the shared
+        // Campaign scene. Read-only source-fit522/523 reconciled its material-row
+        // delta: generated scenery +48400, building decoration +847, accepted
+        // market stock +44. Preserve the earlier removal ledger and geometry.
+        internal const int ExpectedExistingBeautifyRenderRowAddition = 48400 + 847 + 44;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
             ExpectedCorrectedLayoutRenderRowRemoval +
-            ExpectedRetainedRooftopSupportRenderRowAddition;
+            ExpectedRetainedRooftopSupportRenderRowAddition +
+            ExpectedExistingBeautifyRenderRowAddition;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -204,8 +210,40 @@ namespace Game.Editor
             }
         }
 
+        private static void RequireCurrentSourceBranchReconciliation(List<Row> rows)
+        {
+            var expected = new Dictionary<string, int>(StringComparer.Ordinal)
+            {
+                ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10842,
+                ["AuthoredOperationMapEntityPresentation/GameplayBuildings"] = 1584,
+                ["AuthoredOperationMapEntityPresentation/GameplayVehicles"] = 340,
+                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597,
+                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings"] = 12781,
+                ["CityCrossroads_NorthCourtyard"] = 23
+            };
+            var actual = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var row in rows)
+            {
+                string path = GetPath(row.Renderer.transform);
+                string branch = expected.Keys.FirstOrDefault(key => path == key || path.StartsWith(key + "/", StringComparison.Ordinal));
+                if (branch == null) throw new InvalidOperationException("Unreconciled source render branch: " + path);
+                actual.TryGetValue(branch, out int count); actual[branch] = count + 1;
+            }
+            foreach (var branch in expected)
+                if (!actual.TryGetValue(branch.Key, out int count) || count != branch.Value)
+                    throw new InvalidOperationException($"Current source branch {branch.Key}: {count} != {branch.Value}.");
+        }
+
         private static InventoryReport Build(Scene scene)
         {
+            // Pin the independently inspected existing source revision. A later
+            // scene change requires its own reconciliation, even if row totals
+            // happen to remain equal.
+            using (var stream = File.OpenRead(scene.path))
+            using (var hash = System.Security.Cryptography.SHA256.Create())
+                if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
+                    "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40")
+                    throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
                 .Where(renderer => renderer.enabled && renderer.gameObject.activeInHierarchy)
@@ -361,7 +399,8 @@ namespace Game.Editor
                 HistoricalPackedRenderRowCount - rows.Count !=
                     ExpectedEmbeddedDestroyedDuplicateRowRemoval +
                     ExpectedCorrectedLayoutRenderRowRemoval -
-                    ExpectedRetainedRooftopSupportRenderRowAddition)
+                    ExpectedRetainedRooftopSupportRenderRowAddition -
+                    ExpectedExistingBeautifyRenderRowAddition)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +
@@ -370,8 +409,10 @@ namespace Game.Editor
                     $"historical={HistoricalPackedRenderRowCount}, " +
                     $"expectedDuplicateRemoval={ExpectedEmbeddedDestroyedDuplicateRowRemoval}, " +
                     $"expectedCorrectedLayoutRemoval={ExpectedCorrectedLayoutRenderRowRemoval}, " +
-                    $"expectedSupportAddition={ExpectedRetainedRooftopSupportRenderRowAddition}.");
+                    $"expectedSupportAddition={ExpectedRetainedRooftopSupportRenderRowAddition}, " +
+                    $"expectedExistingBeautifyAddition={ExpectedExistingBeautifyRenderRowAddition}.");
             }
+            RequireCurrentSourceBranchReconciliation(rows);
             if (eligibleStableOwnerJoined != eligible)
             {
                 throw new InvalidOperationException(

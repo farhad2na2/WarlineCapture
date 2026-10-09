@@ -116,13 +116,61 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
             Assert.IsFalse(view.ConfirmButton.interactable);
             Assert.IsTrue(view.ValidityPanel.IsVisible);
             Assert.IsFalse(aria.activeSelf);
-            StringAssert.Contains("INVALID", view.StatusText.text);
+            StringAssert.Contains("invalid", view.StatusText.text.ToLowerInvariant());
             Assert.AreEqual(310f, view.Root.rect.height, 0.01f);
 
             view.BindRuntimeCommands(null);
             Assert.IsFalse(view.ValidityPanel.IsVisible);
             Assert.IsTrue(aria.activeSelf);
             Assert.IsTrue(threat.activeSelf);
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
+    }
+
+    [Test]
+    public void FullMapNavigation_PreservesPreviewAndRestoresPlacementControls()
+    {
+        GameObject canvasObject = new("PlacementMapCanvas", typeof(RectTransform), typeof(Canvas));
+        try
+        {
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            BuildPlacementConfirmationBarView view = BuildPlacementConfirmationBarView.Ensure(RequirePrefab(), (RectTransform)canvas.transform);
+            var command = new PreviewBuildingCommand(false);
+            view.BindRuntimeCommands(command);
+            Canvas.ForceUpdateCanvases();
+            CanvasGroup group = view.GetComponent<CanvasGroup>();
+            Assert.NotNull(group);
+            Assert.IsTrue(group.blocksRaycasts);
+            Assert.AreEqual(1f, group.alpha);
+
+            view.SetFullMapOpen(true);
+            // A normal refresh while the preview is invalid must not revive its overlays.
+            view.BindRuntimeCommands(command);
+            Canvas.ForceUpdateCanvases();
+            Assert.IsFalse(group.blocksRaycasts);
+            Assert.IsFalse(group.interactable);
+            Assert.AreEqual(0f, group.alpha);
+            Assert.IsTrue(view.HasPendingPlacement);
+            Assert.IsFalse(view.ValidityPanel.IsVisible);
+            Assert.AreEqual(0, command.CancelCalls);
+            Assert.AreEqual(0, command.ConfirmCalls);
+
+            view.SetFullMapOpen(false);
+            Canvas.ForceUpdateCanvases();
+            Assert.IsTrue(group.blocksRaycasts);
+            Assert.IsTrue(group.interactable);
+            Assert.AreEqual(1f, group.alpha);
+            Assert.IsTrue(view.ValidityPanel.IsVisible);
+            Assert.IsTrue(view.RotateButton.IsInteractable());
+            Assert.IsTrue(view.CancelButton.IsInteractable());
+            Assert.IsFalse(view.ConfirmButton.IsInteractable());
+            Assert.IsTrue(view.HasPendingPlacement);
+            Assert.AreEqual(0, command.CancelCalls);
+            Assert.AreEqual(0, command.ConfirmCalls);
         }
         finally
         {
@@ -140,6 +188,7 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
             tests.RuntimeMount_UsesV3FullWidthTargetFootprint(); passed++;
             tests.Prefab_PreservesAllThreePlacementActionsAndUltrawideLayout(); passed++;
             tests.RuntimeState_ValidInvalidAndClosedSwapTargetPanelsAndConfirmState(); passed++;
+            tests.FullMapNavigation_PreservesPreviewAndRestoresPlacementControls(); passed++;
             Debug.Log($"[BuildPlacementConfirmationBarV3Validation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -161,6 +210,8 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
     private sealed class PreviewBuildingCommand : IBuildingUiCommand
     {
         private readonly bool canConfirm;
+        public int CancelCalls { get; private set; }
+        public int ConfirmCalls { get; private set; }
 
         public PreviewBuildingCommand(bool canConfirmPlacement)
         {
@@ -196,8 +247,8 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
         }
 
         public bool CancelProduction(int buildingId, int pendingProductionIndex) => false;
-        public bool ConfirmBuildingPlacement() => canConfirm;
-        public void CancelBuildingPlacement() { }
+        public bool ConfirmBuildingPlacement() { ConfirmCalls++; return canConfirm; }
+        public void CancelBuildingPlacement() { CancelCalls++; }
         public bool RotateBuildingPlacement() => true;
     }
 }

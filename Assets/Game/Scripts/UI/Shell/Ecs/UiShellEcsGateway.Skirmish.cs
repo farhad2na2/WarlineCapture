@@ -52,6 +52,20 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        bool IUiSkirmishGateway.HasSavedSkirmish(string catalogId) => Game.Runtime.SkirmishNativePlayerSaveService.HasSaved(catalogId);
+        bool IUiSkirmishGateway.TryConsumeSkirmishResumeFailure()
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            return world != null && world.IsCreated && Game.Runtime.SkirmishNativePlayerSaveService.TryConsumeResumeFailure(world.EntityManager);
+        }
+        bool IUiSkirmishGateway.TryDiscardSavedSkirmish(string catalogId) => Game.Runtime.SkirmishNativePlayerSaveService.TryDiscard(catalogId);
+        bool IUiSkirmishGateway.TryResumeSavedSkirmish(string catalogId)
+        {
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated || !Game.Runtime.SkirmishNativePlayerSaveService.TryRequestResume(world.EntityManager, catalogId)) return false;
+            return true;
+        }
+
         bool IUiSkirmishGateway.TryReadSkirmish(out UiSkirmishModel model)
         {
             model=default;
@@ -133,6 +147,8 @@ namespace Game.UI.Shell.Ecs
             model=new UiSkirmishModel
             {
                 ScenarioIndex=match.ScenarioIndex,
+                CanSaveMatch=Game.Runtime.SkirmishNativePlayerSaveService.CanSave(em, session),
+                SaveFailed=Game.Runtime.SkirmishNativePlayerSaveService.HasSaveFailed(em, session),
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
                 InfantryCount=infantry, PlayerHealth=playerHealth, EnemyHealth=enemyHealth,
                 Expanded=expanded, PlayerDesignatedAlive=playerAlive, EnemyDesignatedAlive=enemyAlive,
@@ -159,14 +175,24 @@ namespace Game.UI.Shell.Ecs
                 var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
                 if (setup != null)
                 {
+                    if (!string.IsNullOrEmpty(setup.TitleKey)) model.MissionTitle = setup.CatalogId == "S005"
+                        ? GameText.Get("ui.skirmish.s005.mission_name", GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode ? "میدان رزم ترکیبی" : "COMBINED ARMS FIELD")
+                        : GameText.Get(setup.TitleKey, setup.CatalogId);
                     var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
                         SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
                     model.OwnMaterials = publicView.OwnMaterials;
                     model.CanAffordRifle = publicView.CanAffordRifle;
+                    model.CombinedArmsField = setup.ArmyProfileId == Game.Skirmish.Contracts.SkirmishArmyProfileId.CombinedArms &&
+                        setup.StartPackageId == Game.Skirmish.Contracts.SkirmishStartPackageId.FieldBase;
+                    model.CanAffordRocketeer = publicView.CanAffordRocketeer;
+                    model.RocketeerRecruitPending = publicView.RocketeerRecruitPending;
+                    model.OwnStructureAttackUnits = publicView.OwnStructureAttackUnits;
                     model.CanAffordAntiAir = publicView.CanAffordAntiAir;
                     model.CanAffordLogisticsTruck = publicView.CanAffordLogisticsTruck;
                     model.CanBuildAirPad = publicView.CanBuildAirPad;
                     model.LogisticsTruckCommitted = publicView.LogisticsTruckCommitted;
+                    model.CanAffordTanker = publicView.CanAffordTanker;
+                    model.TankersCommitted = publicView.TankersCommitted;
                     model.RifleRecruitPending = publicView.RifleRecruitPending;
                     model.AirProfile = publicView.AirProfile;
                     model.OwnDefenseTowers = publicView.OwnDefenseTowers;

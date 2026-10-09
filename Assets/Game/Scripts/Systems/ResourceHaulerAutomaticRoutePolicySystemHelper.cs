@@ -365,12 +365,84 @@ namespace Game.Runtime
                     context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate),
                     aiInput)
                 : 0;
-            starvationPriority = storedOil + 0.0001f < requiredOil ? 1 : 0;
+            float committedOil = storedOil;
+            if (TryResolveExpandedOilDemand(em, candidate, loadAmount,
+                    out int expandedPriority, out float expandedRequiredOil))
+            {
+                strategicPriority = expandedPriority;
+                requiredOil = expandedRequiredOil;
+                if (em.HasComponent<BuildingResourceStorageComponent>(candidate.CombatEntity))
+                {
+                    var stock = em.GetComponentData<BuildingResourceStorageComponent>(candidate.CombatEntity);
+                    // Use the same physically reserved batch for secondary
+                    // demand as for strategic priority; a funded refinery must
+                    // not attract spare trucks while other inputs are short.
+                    committedOil = math.max(0, storedOil - stock.ReservedOilOutboundBarrels) +
+                        math.max(0, stock.ReservedOilInboundBarrels);
+                }
+            }
+            starvationPriority = committedOil + 0.0001f < requiredOil ? 1 : 0;
             float freeCapacity = context.ResourceHaulerUtilitySystemHelper.GetReceivingFreeCapacity(
                 em,
                 candidate,
                 ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
             freeCapacityRatio = freeCapacity / math.max(1f, candidate.OilStorageCapacity);
+        }
+
+        internal static bool TryResolveExpandedOilDemand(EntityManager em, RuntimeBuildingEntity candidate,
+            float loadAmount, out int priority, out float requiredOil)
+        {
+            priority = 0;
+            requiredOil = loadAmount;
+            if (candidate == null || !em.Exists(candidate.CombatEntity) ||
+                !em.HasComponent<SkirmishAttemptOwnedComponent>(candidate.CombatEntity)) return false;
+            var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate.CombatEntity);
+            if (owner.CapacityReleased != 0 || owner.FactionId != candidate.OwnerFactionId) return false;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            using var roots = sessions.ToEntityArray(Unity.Collections.Allocator.Temp);
+            bool expanded = false;
+            foreach (var root in roots)
+            {
+                var state = em.GetComponentData<SkirmishExpandedSessionComponent>(root);
+                expanded |= state.IsLegacy == 0 && state.SessionId.Equals(owner.SessionId);
+            }
+            if (!expanded) return false;
+
+            bool fabrication = TryGetMaterialFabrication(em, candidate, out var recipe) && recipe.ProductionEnabled != 0;
+            var profile = em.HasComponent<BuildingResourceProductionProfileComponent>(candidate.CombatEntity)
+                ? em.GetComponentData<BuildingResourceProductionProfileComponent>(candidate.CombatEntity) : default;
+            if (!fabrication && profile.OilPerFuelBatch <= 0) return false;
+            requiredOil = math.max(loadAmount, fabrication ? recipe.OilConsumedPerCycle : profile.OilPerFuelBatch);
+
+            // Keep one Materials batch funded, then feed the full refinery batch.
+            // Incoming reservations count so several trucks do not all choose the same unfunded depot.
+            bool materialsFunded = false;
+            using var factories = em.CreateEntityQuery(typeof(MaterialFabricationComponent),
+                typeof(BuildingResourceStorageComponent), typeof(SkirmishAttemptOwnedComponent));
+            using var entities = factories.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                var factoryOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                var factory = em.GetComponentData<MaterialFabricationComponent>(entity);
+                if (factoryOwner.CapacityReleased != 0 || factoryOwner.FactionId != owner.FactionId ||
+                    !factoryOwner.SessionId.Equals(owner.SessionId) || factory.OwnerFactionId != owner.FactionId ||
+                    factory.ProductionEnabled == 0 || factory.OilConsumedPerCycle <= 0 ||
+                    em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0) continue;
+                var stock = em.GetComponentData<BuildingResourceStorageComponent>(entity);
+                materialsFunded |= math.max(0, stock.StoredOilBarrels - stock.ReservedOilOutboundBarrels) +
+                    math.max(0, stock.ReservedOilInboundBarrels) + 0.0001f >= factory.OilConsumedPerCycle;
+            }
+            if (fabrication) priority = materialsFunded ? 0 : 2;
+            else if (em.HasComponent<BuildingResourceStorageComponent>(candidate.CombatEntity))
+            {
+                var stock = em.GetComponentData<BuildingResourceStorageComponent>(candidate.CombatEntity);
+                float committedOil = math.max(0, stock.StoredOilBarrels - stock.ReservedOilOutboundBarrels) +
+                    math.max(0, stock.ReservedOilInboundBarrels);
+                bool outputRoom = stock.FuelStorageCapacity - stock.StoredFuelBarrels - stock.ReservedFuelInboundBarrels +
+                    0.0001f >= profile.FuelPerBatch;
+                priority = committedOil + 0.0001f < profile.OilPerFuelBatch && outputRoom ? 1 : 0;
+            }
+            return true;
         }
 
         private static bool IsBetterOilDestinationCandidate(

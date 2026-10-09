@@ -89,6 +89,10 @@ namespace Game.Runtime
             IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
             SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
             SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig = SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
+            SelectionRuntimeConfigStartupSystemHelper.State defaultRuntimeConfig = runtimeConfig;
+            int authoredCameraGeneration = -1;
+            bool hasAuthoredCameraProfile = false;
+            float nextAuthoredCameraCheck = 0f;
             var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem(entityManager);
             var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper(entityManager);
             var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputCompositionSystemHelper();
@@ -379,14 +383,20 @@ namespace Game.Runtime
                         runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                         if (TryGetExpandedSession(out Entity session) &&
                             SkirmishExpandedPresentedOrders.TryClearSelection(entityManager, session))
+                        {
                             matchHudSquadTraySelectionSystem.ClearActiveSlot(view);
+                            matchHudSquadTraySelectionSystem.SynchronizeExpandedSelection(
+                                CreateSquadTraySelectionContext(), entityManager);
+                        }
                     });
                     pagination.ConfigureExpandedGroupSelection(groupId =>
                     {
                         selectionUiCommand.CaptureUiClickSequence();
                         runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                        if (TryGetExpandedSession(out Entity session))
-                            SkirmishExpandedPresentedOrders.TryPresentedGroup(entityManager, session, groupId);
+                        if (TryGetExpandedSession(out Entity session) &&
+                            SkirmishExpandedPresentedOrders.TryPresentedGroup(entityManager, session, groupId))
+                            matchHudSquadTraySelectionSystem.SynchronizeExpandedSelection(
+                                CreateSquadTraySelectionContext(), entityManager);
                     });
                 }
 
@@ -997,6 +1007,33 @@ namespace Game.Runtime
 
             RtsSelectionRuntimeCameraSystemHelper.Context GetRuntimeCameraContext()
             {
+                // The logical map can become ready after selection initializes.
+                // Keep Build, zoom and squad focus on its authored camera axes;
+                // the generic selection asset otherwise rotates this shared map.
+                if (Time.unscaledTime >= nextAuthoredCameraCheck)
+                {
+                    nextAuthoredCameraCheck = Time.unscaledTime + .25f;
+                    var profile = defaultRuntimeConfig;
+                    int generation = -1;
+                    bool found = TryGetEntityManager(out var cameraEm) &&
+                        SelectionRuntimeConfigStartupSystemHelper.TryApplySharedAirfieldCamera(cameraEm, ref profile, out generation);
+                    if (found && (!hasAuthoredCameraProfile || authoredCameraGeneration != generation))
+                    {
+                        runtimeConfig = profile;
+                        authoredCameraGeneration = generation;
+                        hasAuthoredCameraProfile = true;
+                        hasRuntimeCameraContext = false;
+                        selectionUiCamera.ApplyRuntimeCameraProfile(profile);
+                    }
+                    else if (!found && hasAuthoredCameraProfile)
+                    {
+                        runtimeConfig = defaultRuntimeConfig;
+                        hasAuthoredCameraProfile = false;
+                        authoredCameraGeneration = -1;
+                        hasRuntimeCameraContext = false;
+                        selectionUiCamera.ApplyRuntimeCameraProfile(runtimeConfig);
+                    }
+                }
                 if (!hasRuntimeCameraContext)
                 {
                     runtimeCameraContext = CreateRuntimeCameraContext();

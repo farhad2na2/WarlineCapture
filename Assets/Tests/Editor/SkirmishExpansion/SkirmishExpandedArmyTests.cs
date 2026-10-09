@@ -25,7 +25,9 @@ namespace Game.Tests.Editor
             CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
             Assert.IsTrue(setup.SharedFog);
             Assert.IsTrue(setup.DevelopmentFullVision);
-            Assert.AreEqual(8, SkirmishArmyGroupSystem.CountFactionGroups(em, session, 1));
+            Assert.AreEqual(11, SkirmishArmyGroupSystem.CountFactionGroups(em, session, 1));
+            Assert.AreEqual(1, CountPlayerGroups(em, session, SkirmishRoleKind.Tanker));
+            Assert.AreEqual(2, CountPlayerGroups(em, session, SkirmishRoleKind.LogisticsTruck));
             Assert.AreEqual(3, CountPlayerGroups(em, session, SkirmishRoleKind.Rifle));
             Assert.AreEqual(1, CountPlayerGroups(em, session, SkirmishRoleKind.Gunner));
             Assert.AreEqual(1, CountPlayerGroups(em, session, SkirmishRoleKind.Rocketeer));
@@ -104,7 +106,10 @@ namespace Game.Tests.Editor
             int selectedBeforePaging = SkirmishArmySelectionService.SelectedLivingCount(em, session);
             Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
             Assert.AreEqual(selectedBeforePaging, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            Assert.AreEqual(selectedBeforePaging, SkirmishArmySelectionService.SelectedLivingCount(em, session));
             Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1));
             selection.SelectSlot(context, tray, MatchHudSquadTraySlot.AttackHelicopter); // Tank on page two
             Assert.Greater(SkirmishArmySelectionService.SelectedLivingCount(em, session), selectedBeforePaging);
             Assert.IsTrue(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, 2, out var representative));
@@ -376,6 +381,51 @@ namespace Game.Tests.Editor
             }
         }
 
+        [Test]
+        public void PublicAircraftMaskIncludesStrikeAcrossPagesAndExcludesNonAssaultAircraft()
+        {
+            var previousWorld = World.DefaultGameObjectInjectionWorld;
+            using var world = new World(nameof(PublicAircraftMaskIncludesStrikeAcrossPagesAndExcludesNonAssaultAircraft));
+            try
+            {
+                World.DefaultGameObjectInjectionWorld = world;
+                Game.UI.Shell.Ecs.UiShellEcsGateway.RegisterAsRuntimeGateway();
+                var em = world.EntityManager;
+                var session = em.CreateEntity(typeof(SkirmishMatchState),
+                    typeof(SkirmishExpandedSessionComponent), typeof(SkirmishArmySelectionComponent));
+                em.SetComponentData(session, new SkirmishArmySelectionComponent { PageSize = 5 });
+                var groups = em.AddBuffer<SkirmishArmyGroupRecord>(session);
+                var roles = new[] { SkirmishRoleKind.AttackHeliLight, SkirmishRoleKind.AttackHeli,
+                    SkirmishRoleKind.TransportHeli, SkirmishRoleKind.Fighter, SkirmishRoleKind.TransportPlane,
+                    SkirmishRoleKind.Strike, SkirmishRoleKind.Drone, SkirmishRoleKind.Tank };
+                for (int i = 0; i < roles.Length; i++)
+                    groups.Add(new SkirmishArmyGroupRecord { GroupId = (uint)(i + 1),
+                        FactionId = 1, Role = roles[i], AliveCount = 1 });
+                var strike = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent),
+                    typeof(SkirmishArmyGroupMembershipComponent), typeof(UnitHealth));
+                em.SetComponentData(strike, new SkirmishAttemptOwnedComponent { FactionId = 1 });
+                em.SetComponentData(strike, new SkirmishArmyGroupMembershipComponent { GroupId = 6 });
+                em.SetComponentData(strike, new UnitHealth { Current = 100, Max = 100 });
+                Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TryReadExpandedSquadPage(out var first));
+                Assert.AreEqual(3, first.AirMask, "only the two attack helicopters on page one");
+                Assert.AreEqual(8, first.TotalGroups);
+                Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TryChangeExpandedSquadPage(1));
+                Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TryReadExpandedSquadPage(out var second));
+                Assert.AreEqual(1, second.PageIndex);
+                Assert.AreEqual(1, second.AirMask, "Strike is selectable; Drone and Tank are excluded");
+                Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TrySelectExpandedPresentedSlot(0));
+                Assert.IsTrue(Game.UI.Runtime.UiShellRuntimeGateway.TryReadExpandedSquadPage(out var selected));
+                Assert.AreEqual(1, selected.SelectedMask);
+                Assert.AreEqual(1, selected.SelectedGroups);
+                Assert.IsTrue(em.HasComponent<SelectedUnitTag>(strike));
+            }
+            finally
+            {
+                World.DefaultGameObjectInjectionWorld = previousWorld;
+                Game.UI.Shell.Ecs.UiShellEcsGateway.RegisterAsRuntimeGateway();
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -391,6 +441,7 @@ namespace Game.Tests.Editor
                 suite.ArmyDrawerProjectsCurrentPlayerPage();
                 suite.PresentedHealthTracksDamageAndExcludesOtherAttempts();
                 suite.DeadGroupsDoNotHideSurvivorsOrLeaveAnInvalidPage();
+                suite.PublicAircraftMaskIncludesStrikeAcrossPagesAndExcludesNonAssaultAircraft();
                 Debug.Log("[SkirmishExpandedArmyTests] result=Passed");
             }
             catch (Exception exception)

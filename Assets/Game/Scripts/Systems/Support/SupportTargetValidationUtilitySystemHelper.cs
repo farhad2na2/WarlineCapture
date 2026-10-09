@@ -60,7 +60,7 @@ namespace Game.Runtime
                 var landing=SupportSupplyAdapterSystemHelper.Plan(em,root,request,out _,out _);if(landing!=SupportRejectionReason.None)return landing;
             }
             else return SupportRejectionReason.NotReady;
-            if(SupportFuelTransactionSystem.Available(em,session.FactionId)<definition.FuelCost) return SupportRejectionReason.InsufficientFuel;
+            if(SupportFuelTransactionSystem.Available(em,root,session.FactionId)<definition.FuelCost) return SupportRejectionReason.InsufficientFuel;
             if(checkConsent && request.Source==SupportRequestSource.Aria)
             {
                 if(!em.HasComponent<SupportProposalComponent>(root)) return SupportRejectionReason.ConsentRequired;

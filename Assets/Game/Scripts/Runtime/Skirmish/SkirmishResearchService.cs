@@ -19,8 +19,49 @@ namespace Game.Runtime
                 });
             }
 
+            if (!em.HasComponent<SkirmishEnemyResearchStateComponent>(session))
+                em.AddComponentData(session, new SkirmishEnemyResearchStateComponent { State =
+                    new SkirmishResearchStateComponent { FactionId = 2,
+                        Readiness = setup != null ? setup.Readiness : SkirmishReadinessStage.Field } });
+
             if (!em.HasBuffer<SkirmishResearchQueueItem>(session))
                 em.AddBuffer<SkirmishResearchQueueItem>(session);
+        }
+
+        // Faction two owns a separate state. Missing legacy enemy state means the
+        // compiled opening stage, never the player’s paid progress. This read is pure.
+        public static bool TryReadState(EntityManager em, Entity session, byte factionId,
+            out SkirmishResearchStateComponent state)
+        {
+            state = default;
+            if (factionId != 1 && factionId != 2 || !em.Exists(session) ||
+                !em.HasComponent<SkirmishResearchStateComponent>(session)) return false;
+            if (factionId == 1)
+            {
+                state = em.GetComponentData<SkirmishResearchStateComponent>(session);
+                return state.FactionId == 1;
+            }
+            if (em.HasComponent<SkirmishEnemyResearchStateComponent>(session))
+            {
+                state = em.GetComponentData<SkirmishEnemyResearchStateComponent>(session).State;
+                return state.FactionId == 2;
+            }
+            var setup = em.HasComponent<SkirmishResolvedSetupRecord>(session)
+                ? em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup : null;
+            state = new SkirmishResearchStateComponent { FactionId = 2,
+                Readiness = setup != null ? setup.Readiness : SkirmishReadinessStage.Field };
+            return true;
+        }
+
+        private static void WriteState(EntityManager em, Entity session, SkirmishResearchStateComponent state)
+        {
+            if (state.FactionId == 1) em.SetComponentData(session, state);
+            else
+            {
+                var enemy = new SkirmishEnemyResearchStateComponent { State = state };
+                if (em.HasComponent<SkirmishEnemyResearchStateComponent>(session)) em.SetComponentData(session, enemy);
+                else em.AddComponentData(session, enemy);
+            }
         }
 
         // Read-only eligibility used by the visible readiness control and ARIA.
@@ -139,13 +180,20 @@ namespace Game.Runtime
                 return false;
             }
 
+            if (!TryReadState(em, session, item.FactionId, out _))
+            {
+                decision.Reason = SkirmishReasonCode.UnsupportedCapability;
+                decision.Field = "faction";
+                return false;
+            }
+
             item.Phase = SkirmishResearchPhase.Completed;
             item.RemainingSeconds = 0f;
             DynamicBuffer<SkirmishResearchQueueItem> completed = em.GetBuffer<SkirmishResearchQueueItem>(session);
             completed[index] = item;
             Grant(em, session, item);
             SkirmishResearchEffects.ApplyCompleted(em, session, item.FactionId);
-            var state = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            TryReadState(em, session, item.FactionId, out var state);
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.Phase = SkirmishResearchPhase.Completed;
@@ -245,11 +293,9 @@ namespace Game.Runtime
             return completed;
         }
 
-        public static bool HasCompleted(EntityManager em, Entity session, SkirmishResearchKind kind)
+        public static bool HasCompleted(EntityManager em, Entity session, SkirmishResearchKind kind, byte factionId = 1)
         {
-            if (!em.HasComponent<SkirmishResearchStateComponent>(session))
-                return false;
-            var state = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            if (!TryReadState(em, session, factionId, out var state)) return false;
             return LevelOf(state, kind) != 0;
         }
 
@@ -273,7 +319,12 @@ namespace Game.Runtime
                 return false;
             }
 
-            var state = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            if (!TryReadState(em, session, factionId, out var state))
+            {
+                decision.Reason = SkirmishReasonCode.UnsupportedCapability;
+                decision.Field = "faction";
+                return false;
+            }
             if (kind != SkirmishResearchKind.Readiness && state.Readiness < SkirmishReadinessStage.Established)
             {
                 decision.Reason = SkirmishReasonCode.MissingReadiness;
@@ -368,7 +419,7 @@ namespace Game.Runtime
 
         private static void Grant(EntityManager em, Entity session, SkirmishResearchQueueItem item)
         {
-            var state = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            TryReadState(em, session, item.FactionId, out var state);
             if (item.Kind == SkirmishResearchKind.Readiness)
             {
                 if (state.Readiness < SkirmishReadinessStage.Established)
@@ -382,7 +433,7 @@ namespace Game.Runtime
                 state.VehicleProtection = 1;
             else if (item.Kind == SkirmishResearchKind.AircraftEfficiency)
                 state.AircraftEfficiency = 1;
-            em.SetComponentData(session, state);
+            WriteState(em, session, state);
         }
 
         private static byte LevelOf(SkirmishResearchStateComponent state, SkirmishResearchKind kind)

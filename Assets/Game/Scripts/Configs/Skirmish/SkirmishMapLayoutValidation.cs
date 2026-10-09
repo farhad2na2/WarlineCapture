@@ -183,6 +183,19 @@ namespace Game.Configs
             float playerZ = campaignAirfield ? 540f : DesertBasePlayerDeploymentZ;
             float enemyX = campaignAirfield ? 902.8f : DesertBaseEnemyDeploymentX;
             float enemyZ = campaignAirfield ? 540f : DesertBaseEnemyDeploymentZ;
+            if (layout.WorldBinding.HasMeasuredDeployments)
+            {
+                var binding = layout.WorldBinding;
+                playerX = binding.PlayerDeployment.x;
+                playerZ = binding.PlayerDeployment.y;
+                enemyX = binding.EnemyDeployment.x;
+                enemyZ = binding.EnemyDeployment.y;
+                if (string.IsNullOrEmpty(binding.SourceHash) || binding.SourceHash.Length != 64 ||
+                    !InsideMapBounds(playerX, playerZ, 0f, 0f) || !InsideMapBounds(enemyX, enemyZ, 0f, 0f) ||
+                    float.IsNaN(playerX) || float.IsNaN(playerZ) || float.IsNaN(enemyX) || float.IsNaN(enemyZ))
+                    reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientAnchor,
+                        "worldBinding", "Measured deployments require a pinned source hash and finite in-map coordinates."));
+            }
             if (layout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig playerBase) &&
                 layout.TryProjectToMap(playerBase.NormalizedU, playerBase.NormalizedV, out float px, out float pz) &&
                 (Abs(px - playerX) > WorldBindingEpsilon ||

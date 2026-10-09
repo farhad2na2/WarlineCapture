@@ -1,16 +1,22 @@
 namespace Game.UI.Contracts
 {
-    public enum UiSkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart }
+    public enum UiSkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart, SaveExit }
     public struct UiSkirmishModel
     {
         public bool Finished, Paused, StartupFailed;
+        public bool CanSaveMatch, SaveFailed;
         public string Infantry;
+        public string MissionTitle;
         // Numeric mirrors of the displayed counts, at the same visible precision.
         public int ScenarioIndex;
         public int InfantryCount, PlayerHealth, EnemyHealth;
         public bool Expanded, PlayerDesignatedAlive, EnemyDesignatedAlive;
         public bool CanAffordRifle, CanAffordAntiAir, PadPresent, ReadinessEligible, CanQueueAir;
+        public bool CombinedArmsField, CanAffordRocketeer, RocketeerRecruitPending;
+        public int OwnStructureAttackUnits;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
+        public bool CanAffordTanker;
+        public int TankersCommitted;
         public bool CanBuildAirPad;
         public bool AirRecruitPending;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
@@ -57,6 +63,10 @@ namespace Game.UI.Contracts
     {
         bool TryReadSkirmish(out UiSkirmishModel model);
         bool TryRequestSkirmish(UiSkirmishAction action);
+        bool HasSavedSkirmish(string catalogId) => false;
+        bool TryConsumeSkirmishResumeFailure() => false;
+        bool TryResumeSavedSkirmish(string catalogId) => false;
+        bool TryDiscardSavedSkirmish(string catalogId) => false;
     }
 
     public interface IUiExpandedSkirmishCommandGateway

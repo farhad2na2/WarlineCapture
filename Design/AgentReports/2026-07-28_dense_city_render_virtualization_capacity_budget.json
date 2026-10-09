@@ -11,19 +11,19 @@
     "observedMaterializedEnvelopeOrientationCount": 2,
     "canonicalSampleCount": 14592,
     "policyCount": 4,
-    "placementCount": 40567,
-    "provisionalMapMmiEntityBudget": 40567,
+    "placementCount": 38839,
+    "provisionalMapMmiEntityBudget": 38839,
     "mapMmiEntityLimit": 24000,
     "provisionalMapMmiEntityBudgetWithinLimit": false,
-    "totalPeakRequiredPartRows": 6442,
-    "totalProvisionalActiveProxySlots": 7732,
+    "totalPeakRequiredPartRows": 6074,
+    "totalProvisionalActiveProxySlots": 7291,
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "89dbc4b045be3ea34f8f154ebbfaa6705f4be83652711f7e478188baf2497356",
-    "prototypeRecipesSha256": "75376158635f910413225d4eb390c2f3702a40fef517b49580b1fe4cfbf255e5",
-    "logicalPlacementsSha256": "35991a9ea17069bc1d366a40f1eda18eb6c16a3b0ba180eb1c1c7545c9916218",
-    "spatialCellsSha256": "e5f79eaebe9157ccef0b7b66a38ae027ec5c7c75dc8b9645c824f0731a940cee",
+    "sourceRowsSha256": "92994a827e058f933bd6a910c2054e354c3afde8ab8c8e0692be6f9eabd6a403",
+    "prototypeRecipesSha256": "d005cbf136c6f9a84b39bccadd900b65813658b54d2b684921681c8442c9bebd",
+    "logicalPlacementsSha256": "bc74f0d69bdbb2a728757d85a6edf3e4835fa4dd3d5b4ab517a6b0f690539140",
+    "spatialCellsSha256": "19959dd58c1a4904e1f3aeb52a2ac5c746890bd6eb0cf74593b440eeb1fd2897",
     "capacityByPolicy": [
         {
             "policyBucket": "OpaqueShadowsOn",
@@ -32,10 +32,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 4074,
-            "peakSampleIdentity": "grid-cell:65:24:materialized=9x12",
-            "capacity": 4889,
-            "headroomCount": 815
+            "peakRequiredPartRows": 3782,
+            "peakSampleIdentity": "grid-cell:66:24:materialized=12x9",
+            "capacity": 4539,
+            "headroomCount": 757
         },
         {
             "policyBucket": "OpaqueShadowsOff",
@@ -44,10 +44,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 2,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 1851,
+            "peakRequiredPartRows": 2226,
             "peakSampleIdentity": "grid-cell:57:26:materialized=9x12",
-            "capacity": 2222,
-            "headroomCount": 371
+            "capacity": 2672,
+            "headroomCount": 446
         },
         {
             "policyBucket": "AlphaClippedShadowsOn",
@@ -56,10 +56,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 495,
-            "peakSampleIdentity": "grid-cell:36:40:materialized=9x12",
-            "capacity": 594,
-            "headroomCount": 99
+            "peakRequiredPartRows": 44,
+            "peakSampleIdentity": "grid-cell:68:23:materialized=9x12",
+            "capacity": 53,
+            "headroomCount": 9
         },
         {
             "policyBucket": "AlphaClippedShadowsOff",

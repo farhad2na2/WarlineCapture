@@ -138,14 +138,16 @@ namespace Game.Configs
         {
             runId = null;
             string catalog = string.IsNullOrEmpty(catalogId) ? SkirmishAcceptanceCensusCapture.CatalogId : catalogId;
-            bool seedOk = catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
+            bool seedOk = catalog == "S005" ? Array.IndexOf(SkirmishS005FirstVisit.RegularStandardSeeds, seed) >= 0
+                : catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
                 ? SkirmishAcceptanceCensusCapture.IsS004RegularStandardSeed(seed)
                 : catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
                 ? SkirmishAcceptanceCensusCapture.IsS003RegularStandardSeed(seed)
                 : SkirmishAcceptanceCensusCapture.IsRegularStandardAriaSeed(seed);
             if (!seedOk)
             {
-                error = catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
+                error = catalog == "S005" ? "First-visit ARIA seed must be 104734, 130368 or 155926."
+                    : catalog == SkirmishAcceptanceCensusCapture.S004CatalogId
                     ? "First-visit ARIA seed must be 104733, 130367 or 155925."
                     : catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
                     ? "First-visit ARIA seed must be 104732, 130366 or 155924."
@@ -186,6 +188,13 @@ namespace Game.Configs
                 return false;
             }
 
+            if (facts.Aborted)
+            {
+                result = ResultAbort;
+                error = null;
+                return true;
+            }
+
             if (facts.MatchFinished)
             {
                 if (IsMatchOutcome(facts.MatchOutcome))
@@ -199,13 +208,6 @@ namespace Game.Configs
                 return false;
             }
 
-            if (facts.Aborted)
-            {
-                result = ResultAbort;
-                error = null;
-                return true;
-            }
-
             error = "The match has not finished.";
             return false;
         }
@@ -216,6 +218,7 @@ namespace Game.Configs
                    facts.MatchFinished &&
                    string.Equals(facts.MatchOutcome, ResultVictory, StringComparison.Ordinal) &&
                    !facts.ForcedVictory &&
+                   !facts.Aborted &&
                    facts.NormalSpeed &&
                    facts.InputViolations == 0 &&
                    facts.HumanInterventions == 0;

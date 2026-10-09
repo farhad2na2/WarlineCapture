@@ -89,6 +89,10 @@ namespace Game.Composition
             else
                 em.AddComponentObject(entity, new SkirmishResolvedSetupRecord { Setup = setup });
 
+            // A visible S005 Launch/Continue action starts the short match once
+            // native loading completes. It must not depend on an Editor harness.
+            if (payload.CatalogId == "S005" && !em.HasComponent<SkirmishExpandedReplayStartPending>(entity))
+                em.AddComponent<SkirmishExpandedReplayStartPending>(entity);
             if (registry != null)
                 SkirmishVisualSpawnService.BindSceneRegistry(em, entity, registry);
             return true;
@@ -101,6 +105,8 @@ namespace Game.Composition
             var catalog = SkirmishBattleCatalogConfig.Load();
             if (catalog != null && catalog.TryGet(catalogId, out var entry) && entry.IsPlayable)
                 return entry.PlayableScenarioIndex;
+            if (catalogId == "S005")
+                return SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;
             if (operationMapId == "opmap.skirmish.city_crossroads")
                 return SkirmishPresetConfig.CityCrossroadsScenarioIndex;
             return SkirmishPresetConfig.DesertBaseScenarioIndex;

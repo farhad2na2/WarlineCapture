@@ -7,7 +7,7 @@ namespace Game.UI.Runtime
     {
         // Exactly the markers rendered on the player’s map, never the simulation roster.
         internal MatchHudMinimapProjectionGrid PresentedProjection;
-        internal bool TryGetPresentedMapPoint(Vector3 world, Camera eventCamera, out Vector2 point)
+        public bool TryGetPresentedMapPoint(Vector3 world, Camera eventCamera, out Vector2 point)
         {
             point = default;
             if (MapRect == null || PresentedProjection.Width <= 0 || PresentedProjection.Height <= 0 ||

@@ -14,6 +14,64 @@ public sealed class GameLocalizationCatalogTests
 
     private GameLocalizationCatalog catalog;
 
+    public static void RunSkirmishButtonLocaleValidation()
+    {
+        var tests = new GameLocalizationCatalogTests();
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        var shippedCatalog = UnityEditor.AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+            "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset");
+        try
+        {
+            tests.SetUp();
+            tests.SkirmishButtonDefault_SurvivesPersianRenderedTextAndLocaleChange();
+            Debug.Log("[SkirmishButtonLocaleValidation] result=Passed authoredSource=Preserved localeSwitch=Passed");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SkirmishButtonLocaleValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+        finally
+        {
+            tests.TearDown();
+            GameLocalization.Initialize(shippedCatalog, previousLocale, persist: false);
+        }
+    }
+
+    [Test]
+    public void SkirmishButtonDefault_SurvivesPersianRenderedTextAndLocaleChange()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
+        var label = new GameObject("Skirmish button", typeof(RectTransform), typeof(TextMeshProUGUI));
+        var binding = label.AddComponent<V3LocalizedTextBindingView>();
+        try
+        {
+            binding.Configure("ui.continue", "CONTINUE", observeRuntimeChanges: false);
+            EditModeViewLifecycle.Invoke(binding, "OnEnable");
+            binding.ApplyLocalization();
+            var text = label.GetComponent<TMP_Text>();
+            Assert.AreNotEqual("CONTINUE", text.text, "Reproduce a button initialized in Persian.");
+            var method = typeof(QuickCustomScreenView).GetMethod("AuthoredButtonDefault",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            Assert.NotNull(method);
+            var source = (string)method.Invoke(null, new object[] {text, "PLAY"});
+            Assert.AreEqual("CONTINUE", source, "Use authored source instead of shaped Persian.");
+            UiLocalizedText.Set(text, "Dynamic panel"); // saved-match override
+            UiLocalizedText.Set(text, source); // return to ordinary launch
+            GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
+            Assert.AreEqual("CONTINUE", text.text);
+            Assert.IsFalse(text.isRightToLeftText);
+            Assert.AreEqual("DEFAULTS", method.Invoke(null, new object[] {null, "DEFAULTS"}));
+        }
+        finally
+        {
+            EditModeViewLifecycle.Invoke(binding, "OnDisable");
+            Object.DestroyImmediate(label);
+        }
+    }
+
     [UnityEditor.MenuItem("Game/Validation/Run Persian Navigation Focused")]
     public static void RunPersianNavigationFocusedValidation()
     {

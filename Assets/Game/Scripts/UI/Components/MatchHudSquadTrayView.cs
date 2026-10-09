@@ -191,7 +191,7 @@ namespace Game.UI.Runtime
                     if(cards[i].PortraitImage!=null)
                     { cards[i].PortraitImage.sprite=campaignPortraits[i]; cards[i].PortraitImage.enabled=true; }
                 foreach (var card in cards) if (card != null)
-                { if (card.OrdinalBadge != null) card.OrdinalBadge.gameObject.SetActive(false); if (card.SelectedCheck != null) card.SelectedCheck.SetActive(false); if (card.AliveCountLabel != null) card.AliveCountLabel.gameObject.SetActive(false); }
+                { if (card.Button != null) card.Button.gameObject.SetActive(true); if (card.OrdinalBadge != null) card.OrdinalBadge.gameObject.SetActive(false); if (card.SelectedCheck != null) card.SelectedCheck.SetActive(false); if (card.AliveCountLabel != null) card.AliveCountLabel.gameObject.SetActive(false); }
                 Array.Clear(_displayedGroupIds, 0, _displayedGroupIds.Length);
                 HidePagination();
                 skirmishPortraitsApplied=false;
@@ -241,6 +241,8 @@ namespace Game.UI.Runtime
                     if (!TryGetCard(i, out Card card) || card.Button == null)
                         continue;
                     bool visible = availability.GetCard(i).Visible;
+                    if (expandedSkirmish && card.Button.gameObject.activeSelf != visible)
+                        card.Button.gameObject.SetActive(visible);
                     if (!visible)
                     {
                         card.Button.interactable = false;

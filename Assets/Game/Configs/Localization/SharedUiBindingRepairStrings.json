@@ -1,0 +1,144 @@
+{
+  "entries": [
+    {
+      "key": "ui.brand.warline_capture",
+      "source": "WARLINE CAPTURE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "وارلاین کپچر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.search_hint",
+      "source": "Search battles (S001, Desert, BA, …)",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جست‌وجوی نبردها (S001، صحرا، حمله به پایگاه، …)"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.authored_count",
+      "source": "SHOWING 120 OF 120 BATTLES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نمایش ۱۲۰ از ۱۲۰ نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.squad.authored_page",
+      "source": "SQUADS 1–5 OF 12",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه‌های ۱–۵ از ۱۲"
+        }
+      ]
+    },
+    {
+      "key": "ui.squad.authored_units",
+      "source": "8 units",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۸ نیرو"
+        }
+      ]
+    },
+    {
+      "key": "ui.operations.armored_corridor",
+      "source": "ARMORED CORRIDOR",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذرگاه زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.specialist",
+      "source": "SPECIALIST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "متخصص"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.soldier",
+      "source": "SOLDIER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سرباز"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.civilian",
+      "source": "CIVILIAN",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "غیرنظامی"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.contractor",
+      "source": "CONTRACTOR",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیمانکار"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.vehicle",
+      "source": "VEHICLE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خودرو"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.aircraft",
+      "source": "AIRCRAFT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هواگرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.transport_vehicle",
+      "source": "TRANSPORT VEHICLE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خودروی ترابری"
+        }
+      ]
+    },
+    {
+      "key": "ui.unit.type.transport_aircraft",
+      "source": "TRANSPORT AIRCRAFT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هواگرد ترابری"
+        }
+      ]
+    }
+  ]
+}

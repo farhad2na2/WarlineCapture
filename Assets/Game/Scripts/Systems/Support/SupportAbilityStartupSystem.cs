@@ -22,8 +22,25 @@ namespace Game.Runtime
             {
                 var session=sessionRef.ValueRO;
                 session.Active=1;
+                if(em.HasComponent<SkirmishSupportOwnerComponent>(entity))
+                {
+                    var owner=em.GetComponentData<SkirmishSupportOwnerComponent>(entity);
+                    session.Active=0;
+                    if(session.TestEncounter==0 && session.FactionId>=1 && session.FactionId<=2 &&
+                        !SupportSessionUtility.IsTerminal(em,entity,session))
+                    {
+                        var native=em.GetComponentData<SkirmishExpandedSessionComponent>(owner.Session);
+                        bool playing=native.Phase==Game.Skirmish.Contracts.SkirmishSessionPhase.Playing && native.SpawnComplete!=0;
+                        if(em.HasComponent<SkirmishObjectiveClockComponent>(owner.Session))
+                        {
+                            var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(owner.Session);
+                            playing &= clock.Playing!=0 && clock.Paused==0;
+                        }
+                        session.Active=(byte)(playing && session.CatalogRevision==catalogRef.ValueRO.Revision ? 1 : 0);
+                    }
+                }
                 // A test grant changes availability, never the real campaign attempt or phase.
-                if(session.TestEncounter==0 || em.HasComponent<CampaignMissionRuntimeComponent>(entity))
+                else if(session.TestEncounter==0 || em.HasComponent<CampaignMissionRuntimeComponent>(entity))
                 {
                     if(!em.HasComponent<CampaignMissionRuntimeComponent>(entity)) { session.Active=0; sessionRef.ValueRW=session; continue; }
                     var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(entity);

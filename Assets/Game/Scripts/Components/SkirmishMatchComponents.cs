@@ -30,7 +30,7 @@ namespace Game.Components
     public struct SkirmishSceneryNormalized : IComponentData { }
 
     public struct SkirmishSquadMember : IComponentData { public byte Slot; }
-    public enum SkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart }
+    public enum SkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart, SaveExit }
     public struct SkirmishActionRequest : IBufferElementData { public SkirmishAction Action; }
     public struct SkirmishTrackedUnit : IBufferElementData
     { public Entity Entity; public byte FactionId; public byte Building; }

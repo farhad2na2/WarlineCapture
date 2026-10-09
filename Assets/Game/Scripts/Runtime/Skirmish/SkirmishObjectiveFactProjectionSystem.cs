@@ -48,8 +48,10 @@ namespace Game.Runtime
                     continue;
                 SkirmishObjectiveClockComponent clock = em.GetComponentData<SkirmishObjectiveClockComponent>(entity);
                 bool playing = session.Phase == SkirmishSessionPhase.Playing;
+                bool terminal = session.Phase is SkirmishSessionPhase.Finished
+                    or SkirmishSessionPhase.Failed or SkirmishSessionPhase.Cleaning;
                 clock.Playing = (byte)(playing ? 1 : 0);
-                clock.Paused = (byte)(paused ? 1 : 0);
+                clock.Paused = (byte)(paused || terminal ? 1 : 0);
                 if (clock.DeadlineSeconds <= 0 &&
                     em.HasComponent<SkirmishResolvedSetupComponent>(entity))
                 {

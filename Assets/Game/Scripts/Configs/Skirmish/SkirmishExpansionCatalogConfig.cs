@@ -95,6 +95,10 @@ namespace Game.Configs
                     case "S003":
                         set.DefinitionS003 = definition;
                         break;
+                    case "S005":
+                        set.DefinitionS005 = definition;
+                        set.ArmyCombined = definition.ArmyProfileConfig;
+                        break;
                     case "S004":
                         set.DefinitionS004 = definition;
                         break;

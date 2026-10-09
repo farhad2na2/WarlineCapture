@@ -78,6 +78,11 @@ namespace Game.Runtime
             }
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
+            if (em.HasComponent<SkirmishNativeCheckpointRecoveryRecord>(entity))
+            {
+                SkirmishNativeCheckpointRecoveryRunner.Step(em, entity, setup);
+                return;
+            }
             if (Application.isPlaying && !SkirmishStartingBuildingsService.Step(em, entity, setup, out var buildingReason))
             {
                 if (buildingReason != SkirmishReasonCode.None)
@@ -395,7 +400,7 @@ namespace Game.Runtime
                         : force.SpawnWorldX != 0f || force.SpawnWorldZ != 0f
                             ? new Vector3(force.SpawnWorldX, 0f, force.SpawnWorldZ)
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
-                if (!TryPlaceOnMap(em, owned, position))
+                if (!TryPlaceOnMap(em, owned, position, setup?.Seed ?? 0))
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
@@ -450,7 +455,7 @@ namespace Game.Runtime
             return lookup;
         }
 
-        private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position)
+        private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed)
         {
             var pos = new float3(position.x, position.y, position.z);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
@@ -481,7 +486,16 @@ namespace Game.Runtime
                                     if (GridUtils.InBounds(new int2(x, y), grid.Width, grid.Height))
                                         reserved.Set(y * grid.Width + x, true);
                         }
-                        var rng = new Unity.Mathematics.Random(math.max(1u, math.hash(new int3(cell, entity.Index))));
+                        // Entity indices depend on loading/allocation order and
+                        // must not change a seeded mission's starting positions.
+                        if (!em.HasComponent<SkirmishAttemptOwnedComponent>(entity)) return false;
+                        var stableId = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).StableObjectId;
+                        if (stableId.Length == 0) return false;
+                        uint placementSeed = 2166136261u ^ unchecked((uint)missionSeed);
+                        for (int i = 0; i < stableId.Length; i++)
+                            placementSeed = unchecked((placementSeed ^ stableId[i]) * 16777619u);
+                        placementSeed = math.hash(new uint3(unchecked((uint)cell.x), unchecked((uint)cell.y), placementSeed));
+                        var rng = new Unity.Mathematics.Random(math.max(1u, placementSeed));
                         int2 footprint = em.HasComponent<UnitFootprint>(entity)
                             ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
                         if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
@@ -562,7 +576,7 @@ namespace Game.Runtime
                     LogisticsQueues = 1
                 });
             }
-
+            SkirmishFacilityEconomyProfile.Apply(em, owned, sessionId, structure.StructureId);
         }
 
         // Called only by the player construction commit, never by a census of
@@ -589,13 +603,25 @@ namespace Game.Runtime
             var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(building);
             owner.StableObjectId = new FixedString64Bytes("constructed." + info.RuntimeBuildingId);
             em.SetComponentData(building, owner);
+            // The commit adopts this actor before NativeProduction's census.
+            // That census skips already-owned actors, so native construction
+            // must establish the shared actor identity here as well.
+            if (SkirmishNativeProduction.TrySession(em, out var nativeSession) &&
+                em.GetComponentData<SkirmishExpandedSessionComponent>(nativeSession).SessionId.Equals(state.SessionId) &&
+                !em.HasComponent<SkirmishSharedActorTag>(building))
+                em.AddComponent<SkirmishSharedActorTag>(building);
             SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, building);
             return true;
         }
 
         public static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)
         {
-            using EntityQuery query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishNativeCheckpointTransientState.DestroySession(em, sessionId);
+            using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IgnoreComponentEnabledState
+            });
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {

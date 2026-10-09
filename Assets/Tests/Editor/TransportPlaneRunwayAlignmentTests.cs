@@ -1,4 +1,5 @@
 using Game.Configs;
+using System.Collections.Generic;
 using Game.Components;
 using Game.Editor;
 using Game.Runtime;
@@ -19,13 +20,65 @@ namespace Game.Tests.Editor
         private const float RootCenterTolerance = 0.25f;
         private const float RunwayCenterlineTolerance = 0.35f;
 
+        public static void RunFactionValidation()
+        {
+            new TransportPlaneRunwayAlignmentTests().ProductionRunwaysExcludeTheOpposingFaction();
+            Debug.Log("[ProductionRunwayOwnership] result=Passed factions=2 hostileRunwayRejected=1 neutralCompatibility=Preserved");
+        }
+
+        [Test]
+        public void ProductionRunwaysExcludeTheOpposingFaction()
+        {
+            using var world = new Unity.Entities.World("RunwayOwnership");
+            var runwaySystem = world.GetOrCreateSystemManaged<BuildingRunwaySystem>();
+            var playerRoot = new GameObject("PlayerAirport");
+            var enemyRoot = new GameObject("EnemyAirport");
+            try
+            {
+                playerRoot.transform.position = new Vector3(100, 0, 0);
+                var player = new RuntimeBuildingEntity { Id = 1, Instance = playerRoot,
+                    HasOwnerFaction = true, OwnerFactionId = 1,
+                    Definition = new BuildingDefinition { HasRunway = true } };
+                var enemy = new RuntimeBuildingEntity { Id = 2, Instance = enemyRoot,
+                    HasOwnerFaction = true, OwnerFactionId = 2,
+                    Definition = new BuildingDefinition { HasRunway = true } };
+                var airports = new Dictionary<int, RuntimeBuildingEntity> { [1] = player, [2] = enemy };
+                Assert.IsTrue(runwaySystem.TryGetNearestAirportRunway(airports, Vector3.zero,
+                    out var selected, out _, out _, out _, 1));
+                Assert.AreSame(player, selected, "The nearer enemy airport cannot receive player production.");
+                Assert.IsTrue(runwaySystem.TryGetNearestAirportRunway(airports, playerRoot.transform.position,
+                    out selected, out _, out _, out _, 2));
+                Assert.AreSame(enemy, selected, "Ownership applies to both factions.");
+                airports.Remove(1);
+                Assert.IsFalse(runwaySystem.HasAvailableAirportRunway(airports, 1));
+                Assert.IsFalse(runwaySystem.TryGetNearestAirportRunway(airports, Vector3.zero,
+                    out selected, out _, out _, out _, 1));
+                Assert.IsNull(selected);
+                enemy.OwnerFactionId = FactionIdentity.NeutralFactionId;
+                Assert.AreEqual(FactionIdentity.PlayerFactionId, BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(enemy));
+                Assert.IsTrue(runwaySystem.HasAvailableAirportRunway(airports, 1));
+                Assert.IsTrue(runwaySystem.HasAvailableAirportRunway(airports, 2));
+                enemy.OwnerFactionId = 2;
+                enemy.HasOwnerFaction = false;
+                Assert.IsTrue(runwaySystem.HasAvailableAirportRunway(airports, 1));
+                enemy.IsDestroyed = true;
+                Assert.IsFalse(runwaySystem.HasAvailableAirportRunway(airports, 1));
+            }
+            finally
+            {
+                Object.DestroyImmediate(playerRoot);
+                Object.DestroyImmediate(enemyRoot);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             TransportPlaneRunwayAlignmentTests tests = new();
             tests.TransportPlaneVisualBoundsAreCenteredOnRunwayRoot();
             tests.BakedTransportPlanePlacementsUseRunwayRootAsWorldCenter();
             tests.MapAuthoredAirportRunwayWorldDataUsesLiveRunwayMarkers();
-            Debug.Log("[TransportPlaneRunwayAlignmentValidation] result=Passed tests=3");
+            tests.ProductionRunwaysExcludeTheOpposingFaction();
+            Debug.Log("[TransportPlaneRunwayAlignmentValidation] result=Passed tests=4");
         }
 
         [Test]

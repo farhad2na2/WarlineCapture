@@ -19,6 +19,9 @@ namespace Game.Runtime
         private readonly ResourceHaulerAIOilAllocationPolicySystemHelper _aiOilAllocationPolicy = new();
         private readonly FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper _fuelLogisticsTelemetry = new();
         private readonly WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent> _moveOrderQueueQueryCache = new(readOnly: true);
+        private World _approachQueryWorld;
+        private EntityQuery _approachUnitsQuery;
+        private bool _approachQueryCreated;
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
@@ -105,8 +108,10 @@ namespace Game.Runtime
 
         public void UpdateResourceHaulers(Context context, bool hasPendingPathJob, float now)
         {
-            if (hasPendingPathJob)
-                return;
+            // PathfindBatchJob reads system-owned grid/request snapshots, not live
+            // ECS state. Waiting for a globally idle path queue starves hauling
+            // when consecutive batches are scheduled. Existing matching-request
+            // checks discard results superseded by a new hauling destination.
             if (context.ResourceHaulerUtilitySystemHelper == null)
                 return;
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
@@ -732,6 +737,8 @@ namespace Game.Runtime
 
             RectInt buildingRect = context.GetEffectivePlacementRect(building, grid);
             return TryFindBuildingApproachCell(
+                em,
+                Entity.Null,
                 grid,
                 walkable,
                 blockerData.Blocked,
@@ -1129,6 +1136,11 @@ namespace Game.Runtime
             int2 unitMin = UnitFootprintUtility.GetMinCell(currentCell, clampedFootprint);
             RectInt unitRect = new(unitMin.x, unitMin.y, clampedFootprint.x, clampedFootprint.y);
             RectInt buildingRect = context.GetEffectivePlacementRect(building, grid);
+            return IsBuildingServiceApproach(unitRect, buildingRect);
+        }
+
+        private static bool IsBuildingServiceApproach(RectInt unitRect, RectInt buildingRect)
+        {
             if (unitRect.Overlaps(buildingRect))
                 return false;
 
@@ -1195,7 +1207,7 @@ namespace Game.Runtime
                 return false;
 
             RectInt buildingRect = context.GetEffectivePlacementRect(building, grid);
-            if (!TryFindBuildingApproachCell(grid, walkable, blockerData.Blocked, occupied, buildingRect, unitFootprint, referenceCell, out goal))
+            if (!TryFindBuildingApproachCell(em, unit, grid, walkable, blockerData.Blocked, occupied, buildingRect, unitFootprint, referenceCell, out goal))
                 return false;
 
             if (em.HasComponent<EngageTarget>(unit))
@@ -1227,10 +1239,21 @@ namespace Game.Runtime
                 return true;
             }
 
-            if (!em.HasComponent<UnitTarget>(entity) ||
-                !em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal))
-            {
+            if (!em.HasComponent<UnitTarget>(entity))
                 return false;
+
+            if (!em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal))
+            {
+                // Native pathfinding can choose a nearby clear endpoint when the
+                // requested building approach is occupied. Let that path finish;
+                // replacing it every haul tick prevents the vehicle from moving.
+                // Once exhausted, retry the real approach and preserve the normal
+                // arrival/transfer checks rather than unloading at an alternate.
+                if (!em.HasComponent<UnitPathFollow>(entity) || !em.HasComponent<UnitPathRange>(entity))
+                    return false;
+                var follow = em.GetComponentData<UnitPathFollow>(entity);
+                var range = em.GetComponentData<UnitPathRange>(entity);
+                return follow.PathIndex >= 0 && follow.PathIndex < range.Length;
             }
 
             return em.HasComponent<UnitPathFollow>(entity) ||
@@ -1492,7 +1515,28 @@ namespace Game.Runtime
             SetOrAddResourceHaulReservation(em, entity, reservation);
         }
 
-        private static bool TryFindBuildingApproachCell(
+        private EntityQuery GetApproachUnitsQuery(EntityManager em)
+        {
+            World world = em.World;
+            if (_approachQueryCreated && _approachQueryWorld == world)
+                return _approachUnitsQuery;
+            if (_approachQueryCreated && _approachQueryWorld != null && _approachQueryWorld.IsCreated)
+                _approachUnitsQuery.Dispose();
+            _approachQueryWorld = world;
+            // Match native pathfinding's live footprint snapshot. The grid
+            // bitset may not yet include a freshly produced vehicle.
+            _approachUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitFootprint>() },
+                None = new[] { ComponentType.ReadOnly<StaticGridBlocker>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>() }
+            });
+            _approachQueryCreated = true;
+            return _approachUnitsQuery;
+        }
+
+        private bool TryFindBuildingApproachCell(
+            EntityManager em,
+            Entity movingEntity,
             in GridConfig grid,
             in NativeArray<GridWalkable> walkable,
             in NativeBitArray blocked,
@@ -1503,10 +1547,16 @@ namespace Game.Runtime
             out int2 goal)
         {
             goal = default;
-            int maxRadius = math.max(grid.Width, grid.Height);
+            EntityQuery liveQuery = GetApproachUnitsQuery(em);
+            using var liveEntities = liveQuery.ToEntityArray(Allocator.Temp);
+            using var liveGrids = liveQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
+            using var liveFootprints = liveQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
             int bestScore = int.MaxValue;
             bool found = false;
             int2 clampedUnitFootprint = UnitFootprintUtility.ClampSize(unitFootprint);
+            // Search all centers whose footprint can reach a real service bay.
+            // Farther parking cells cannot satisfy loading/unloading arrival.
+            int maxRadius = math.min(math.max(grid.Width, grid.Height), math.cmax(clampedUnitFootprint) + 2);
 
             for (int extraRadius = 1; extraRadius <= maxRadius; extraRadius++)
             {
@@ -1517,16 +1567,16 @@ namespace Game.Runtime
 
                 for (int x = minX; x <= maxX; x++)
                 {
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, x, minY, ref bestScore, ref goal, ref found);
+                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, liveEntities, liveGrids, liveFootprints, movingEntity, buildingRect, clampedUnitFootprint, referenceCell, x, minY, ref bestScore, ref goal, ref found);
                     if (maxY != minY)
-                        TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, x, maxY, ref bestScore, ref goal, ref found);
+                        TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, liveEntities, liveGrids, liveFootprints, movingEntity, buildingRect, clampedUnitFootprint, referenceCell, x, maxY, ref bestScore, ref goal, ref found);
                 }
 
                 for (int y = minY + 1; y < maxY; y++)
                 {
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, minX, y, ref bestScore, ref goal, ref found);
+                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, liveEntities, liveGrids, liveFootprints, movingEntity, buildingRect, clampedUnitFootprint, referenceCell, minX, y, ref bestScore, ref goal, ref found);
                     if (maxX != minX)
-                        TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, maxX, y, ref bestScore, ref goal, ref found);
+                        TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, liveEntities, liveGrids, liveFootprints, movingEntity, buildingRect, clampedUnitFootprint, referenceCell, maxX, y, ref bestScore, ref goal, ref found);
                 }
 
                 if (found)
@@ -1541,6 +1591,10 @@ namespace Game.Runtime
             in NativeArray<GridWalkable> walkable,
             in NativeBitArray blocked,
             in NativeBitArray occupied,
+            NativeArray<Entity> liveEntities,
+            NativeArray<UnitGrid> liveGrids,
+            NativeArray<UnitFootprint> liveFootprints,
+            Entity movingEntity,
             RectInt buildingRect,
             int2 unitFootprint,
             int2 referenceCell,
@@ -1556,10 +1610,17 @@ namespace Game.Runtime
             int2 candidateCell = new(x, y);
             int2 candidateMin = UnitFootprintUtility.GetMinCell(candidateCell, unitFootprint);
             RectInt unitRect = new(candidateMin.x, candidateMin.y, unitFootprint.x, unitFootprint.y);
-            if (unitRect.Overlaps(buildingRect))
+            if (!IsBuildingServiceApproach(unitRect, buildingRect))
                 return;
 
             if (!UnitFootprintUtility.CanPlace(grid, walkable, blocked, default, occupied, candidateCell, unitFootprint, referenceCell, 0))
+                return;
+
+            if (!UnitPathPlacementValidation.CanPlaceForPathing(
+                    grid, walkable, blocked, default, occupied,
+                    liveEntities, liveGrids, liveFootprints, default, movingEntity,
+                    candidateCell, unitFootprint, referenceCell,
+                    unitFootprint.x > 1 || unitFootprint.y > 1, false, 0))
                 return;
 
             int score = math.abs(referenceCell.x - x) + math.abs(referenceCell.y - y);

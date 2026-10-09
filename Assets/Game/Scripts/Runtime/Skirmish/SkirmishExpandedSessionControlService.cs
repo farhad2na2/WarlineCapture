@@ -120,7 +120,15 @@ namespace Game.Runtime
             if (result.SaveAcknowledged != 0)
                 match.ResultSaved = 1;
             if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
-                match.ElapsedSeconds = em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+            {
+                // Publish the frozen clock with the result. Simulation/UI may stop
+                // before another fact-projection update can observe the new phase.
+                var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                clock.Playing = 0;
+                clock.Paused = 1;
+                em.SetComponentData(session, clock);
+                match.ElapsedSeconds = clock.ElapsedSeconds;
+            }
             em.SetComponentData(session, match);
         }
 

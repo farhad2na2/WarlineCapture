@@ -1,0 +1,108 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildConnectedGround
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CityEdgeAirfield","result":"Passed","sourceHashBefore":"ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe","sourceHashAfter":"ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/DistrictMask.asset","connectedTexels":37270,"protectedRoadTexels":138160,"groundMaterials":2,"squareMetresAdded":19958.921875}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"RefineryDistrict","result":"Passed","sourceHashBefore":"44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108","sourceHashAfter":"44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/DistrictMask.asset","connectedTexels":25059,"protectedRoadTexels":94428,"groundMaterials":2,"squareMetresAdded":13419.6572265625}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"AshLinePort","result":"Passed","sourceHashBefore":"8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9","sourceHashAfter":"8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/DistrictMask.asset","connectedTexels":23142,"protectedRoadTexels":109205,"groundMaterials":2,"squareMetresAdded":12393.060546875}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH04M04GroundedSignal","result":"Passed","sourceHashBefore":"f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e","sourceHashAfter":"f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/DistrictMask.asset","connectedTexels":11866,"protectedRoadTexels":81323,"groundMaterials":2,"squareMetresAdded":7441.62109375}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH04M05ArmorBreak","result":"Passed","sourceHashBefore":"0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c","sourceHashAfter":"0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/DistrictMask.asset","connectedTexels":13905,"protectedRoadTexels":145322,"groundMaterials":2,"squareMetresAdded":7659.4619140625}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH05M01CitywideAlert","result":"Passed","sourceHashBefore":"ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5","sourceHashAfter":"ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/DistrictMask.asset","connectedTexels":1422,"protectedRoadTexels":74050,"groundMaterials":2,"squareMetresAdded":848.3917236328125}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH05M02TrustUnderFire","result":"Passed","sourceHashBefore":"4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253","sourceHashAfter":"4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/DistrictMask.asset","connectedTexels":5240,"protectedRoadTexels":99953,"groundMaterials":2,"squareMetresAdded":2686.5234375}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH05M03NetworkCollapse","result":"Passed","sourceHashBefore":"478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b","sourceHashAfter":"478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/DistrictMask.asset","connectedTexels":983,"protectedRoadTexels":61931,"groundMaterials":2,"squareMetresAdded":586.4761352539063}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH05M04LastCorridor","result":"Passed","sourceHashBefore":"9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85","sourceHashAfter":"9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/DistrictMask.asset","connectedTexels":992,"protectedRoadTexels":61931,"groundMaterials":2,"squareMetresAdded":591.845703125}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"CH05M05CommandNode","result":"Passed","sourceHashBefore":"6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5","sourceHashAfter":"6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5","mask":"Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/DistrictMask.asset","connectedTexels":786,"protectedRoadTexels":61931,"groundMaterials":2,"squareMetresAdded":468.9422607421875}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] {"map":"DenseCity","result":"Passed","sourceHashBefore":"40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6","sourceHashAfter":"40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6","mask":"Assets/Game/Art/MapBeautify/DenseCity/DistrictSurfaceMask.asset","connectedTexels":18634,"protectedRoadTexels":350901,"groundMaterials":4,"squareMetresAdded":18634.0}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapConnectedGround] result=Passed maps=11 sceneGeometryAndGameplay=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildConnectedGround () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.ConnectedGround.cs:106)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildConnectedGround
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_a137ab1e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

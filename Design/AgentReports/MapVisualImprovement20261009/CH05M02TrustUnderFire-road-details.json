@@ -1,0 +1,11 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "beforeHash": "7d111d9d86678aea758b6f971775b5da7983be617685022f83fc5478049b208f",
+    "afterHash": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+    "protectedSceneHash": "df0947b7b6f0c1564a33374a4cff8f90f14fc0b4d3d06806b42c3304eedfbe57",
+    "roadPieces": 212,
+    "runwayPieces": 0,
+    "originalTriangles": 34264,
+    "newTriangles": 34264
+}

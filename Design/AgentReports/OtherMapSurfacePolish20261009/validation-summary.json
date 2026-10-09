@@ -15,7 +15,7 @@
   "validationLog": "warline-other-map-final-03.log",
   "normalInputMissionPlaythrough": "Not performed for this surface pass",
   "androidDeviceAcceptance": "Pending",
-  "publication": "Earlier S005/shared dense-city changes merged via PR #58 and pulled into main. This additional ten-map pass remains on T7 branch codex/other-map-surface-polish for review.",
+  "publication": "Published by PR #59, main merge 7bba4c19748f9b52da6712a312511b5c1ffb9855; pulled into main checkout.",
   "knownLimits": [
     "Existing sculpted dirt-track geometry retained.",
     "Historical Citywide Alert source-preservation receipt already differed for two shared scene files before this pass; it was not rewritten."

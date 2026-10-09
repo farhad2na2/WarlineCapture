@@ -1,0 +1,11 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "sourceHashBefore": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+    "sourceHashAfter": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/DistrictMask.asset",
+    "connectedTexels": 37270,
+    "protectedRoadTexels": 138160,
+    "groundMaterials": 2,
+    "squareMetresAdded": 19958.921875
+}

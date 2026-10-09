@@ -1,0 +1,11 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "d6f03e14e02b53b1047f7449bb083b5b0eb47eafa9529587e23091b0ca4e171f",
+    "afterHash": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+    "protectedSceneHash": "9d0379bd8900d5088bb18d5efb4624c599cff254774f3b15df2cfc218f5dea81",
+    "roadPieces": 116,
+    "runwayPieces": 2,
+    "originalTriangles": 19316,
+    "newTriangles": 18972
+}

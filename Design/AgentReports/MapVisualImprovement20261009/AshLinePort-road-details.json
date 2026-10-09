@@ -1,0 +1,11 @@
+{
+    "map": "AshLinePort",
+    "result": "Passed",
+    "beforeHash": "31ac0295429314db6aff1ebf817c2e78cda221c6919afb87074210bb413d866a",
+    "afterHash": "8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9",
+    "protectedSceneHash": "9ad09fe59030e8db6e0b4780fc49e1ebea83d27f5d0aa23314c87ea6ab490410",
+    "roadPieces": 216,
+    "runwayPieces": 0,
+    "originalTriangles": 34904,
+    "newTriangles": 34904
+}

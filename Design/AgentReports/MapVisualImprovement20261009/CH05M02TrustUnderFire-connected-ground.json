@@ -1,0 +1,11 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "sourceHashBefore": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+    "sourceHashAfter": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/DistrictMask.asset",
+    "connectedTexels": 5240,
+    "protectedRoadTexels": 99953,
+    "groundMaterials": 2,
+    "squareMetresAdded": 2686.5234375
+}

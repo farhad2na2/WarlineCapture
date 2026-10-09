@@ -1,0 +1,11 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "beforeHash": "2ac4a5a2cae0352380283a4fd59d3b269e1f6d2e766776cdda615aaafa10d605",
+    "afterHash": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+    "protectedSceneHash": "95d8533b1c27c1a6b225629943c1f5813090fcfbc27ce5f454b142b7203f97c0",
+    "roadPieces": 140,
+    "runwayPieces": 0,
+    "originalTriangles": 24335,
+    "newTriangles": 24335
+}

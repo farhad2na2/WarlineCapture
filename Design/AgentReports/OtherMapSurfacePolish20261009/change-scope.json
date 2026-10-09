@@ -2,7 +2,7 @@
   "branch": "codex/other-map-surface-polish",
   "publishedEarlierPR": "https://github.com/farhad2na2/WarlineCapture/pull/58",
   "publishedEarlierMainCommit": "024768787b6a05e590bd2cffa9ca59c8985fb6bd",
-  "newPassPublished": false,
+  "newPassPublished": true,
   "scenes": [
     "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
     "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity",
@@ -158,5 +158,6 @@
     "baseline-scenes/",
     "unlit-capture-evidence/"
   ],
-  "notes": "Other agent work remains separate. Saved scene changes are limited to renderer material references."
+  "notes": "Other agent work remains separate. Saved scene changes are limited to renderer material references.",
+  "newPassPR": "https://github.com/farhad2na2/WarlineCapture/pull/59"
 }

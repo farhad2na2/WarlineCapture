@@ -1,0 +1,11 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "beforeHash": "4d67b69a5397478b115246d17b9a10ec172731d8b229e4df5a916c2d50f10152",
+    "afterHash": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+    "protectedSceneHash": "49d20ec488ad5cd3994a7146c63553806dd46d15423e58a32d1901c096e20b0f",
+    "roadPieces": 140,
+    "runwayPieces": 0,
+    "originalTriangles": 24335,
+    "newTriangles": 24335
+}

@@ -1,0 +1,11 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "4d0cd41aaa9de74eba4f6520434aad9296f8c76fa141bf96a9d0960845f5f550",
+    "afterHash": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+    "protectedSceneHash": "a780b0435dfc27cf3f737f4af491de4dc6ad4b6bbe0d13b897579036e3fb4f78",
+    "roadPieces": 413,
+    "runwayPieces": 2,
+    "originalTriangles": 67438,
+    "newTriangles": 67094
+}

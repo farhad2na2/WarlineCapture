@@ -1,0 +1,11 @@
+{
+    "map": "AshLinePort",
+    "result": "Passed",
+    "sourceHashBefore": "8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9",
+    "sourceHashAfter": "8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/DistrictMask.asset",
+    "connectedTexels": 23142,
+    "protectedRoadTexels": 109205,
+    "groundMaterials": 2,
+    "squareMetresAdded": 12393.060546875
+}

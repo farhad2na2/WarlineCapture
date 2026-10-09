@@ -62,9 +62,9 @@ Material:
     - _MacroContrastHigh: 0.8
     - _MacroContrastLow: 0.1
     - _MacroScale: 0.027
-    - _MacroStrength: 0.4
+    - _MacroStrength: 0.22
     - _SandPaletteStrength: 1
-    - _SandScrubCoverage: 0.19
+    - _SandScrubCoverage: 0.1
     - _Smoothness: 0.04
     m_Colors:
     - _BaseColor: {r: 1.12, g: 1.08, b: 0.96, a: 1}
@@ -73,9 +73,9 @@ Material:
     - _DistrictSurfaceRect: {r: 322, g: 397, b: 781, a: 421}
     - _MacroTintA: {r: 0.96, g: 0.94, b: 0.89, a: 1}
     - _MacroTintB: {r: 1.07, g: 1.02, b: 0.94, a: 1}
-    - _SandDryColor: {r: 0.82, g: 0.73, b: 0.56, a: 1}
-    - _SandScrubColor: {r: 0.62, g: 0.63, b: 0.48, a: 1}
-    - _SandWornColor: {r: 0.62, g: 0.56, b: 0.45, a: 1}
+    - _SandDryColor: {r: 0.78, g: 0.73, b: 0.62, a: 1}
+    - _SandScrubColor: {r: 0.7, g: 0.68, b: 0.56, a: 1}
+    - _SandWornColor: {r: 0.67, g: 0.62, b: 0.53, a: 1}
     - _SpecColor: {r: 0.08, g: 0.075, b: 0.06, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

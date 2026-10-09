@@ -1,0 +1,11 @@
+{
+  "step": 1,
+  "pr": 59,
+  "before": "81569142da64c1b199f6b48af05575e4b10095d7",
+  "after": "7bba4c19748f9b52da6712a312511b5c1ffb9855",
+  "dirtyTrackedPreserved": {
+    "Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json": "8e09fb461f82ce0353f900796474479f8ef9eabd02f76a5d54d0e15d1cd23f87",
+    "Design/AgentReports/SkirmishExpansion/S005/role-lifecycle-current-qualification-plan.json": "db46ba320677df57ef995ddb41ff16e6150db1f91b5f0c9f2bd20b6f07259d04"
+  },
+  "untrackedPathsPreserved": 7112
+}

@@ -1,0 +1,11 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "sourceHashBefore": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+    "sourceHashAfter": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/DistrictMask.asset",
+    "connectedTexels": 13905,
+    "protectedRoadTexels": 145322,
+    "groundMaterials": 2,
+    "squareMetresAdded": 7659.4619140625
+}

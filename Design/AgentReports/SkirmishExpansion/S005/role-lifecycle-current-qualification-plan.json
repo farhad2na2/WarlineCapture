@@ -320,10 +320,10 @@
         "refuel/rearm where supported"
       ],
       "currentSourceCertified": false,
-      "stage": "Native834 failed; native evidence retained, no cycle pass claim.",
+      "stage": "Native838 failed; native evidence retained, no cycle pass claim.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "scopedNativeProgress": "native780-current-paid-strike-second-sortie-deadline-failure.json",
-      "scopedNativeProof": "native834-normal-paid-strike-cycle-failure.json"
+      "scopedNativeProof": "native838-normal-paid-strike-cycle-failure.json"
     },
     {
       "role": "TransportPlane",
@@ -407,7 +407,7 @@
   "currentRecoveryStagingCertified": false,
   "latestNativeStatus": "Native790 fleet purchase driver watchdog before flight; native791 repeats after driver drawer lifetime correction.",
   "latestRetainedFailure": "native790-normal-paid-strike-cycle-failure.json",
-  "currentSourceFingerprint": "final-834-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-838-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
   "latestNativeOutcomePass": "native490-aria-menu-result-return-pass.json",
   "historicalStatusAliases": {
     "currentNativeCaptureRun": "native467 paid Strike cycle with full-batch refinery supply and safe reserve",
@@ -435,7 +435,7 @@
   "historicalCurrentSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
   "historicalCurrentSourceFingerprint": "final-505-shared-frontage-and-evidence-pre-independent-fingerprint.json",
   "latestStatus": "Native830 passed current-source starting/paid building clearance with wrapper0, 20 buildings and 107 clean contacts. Complete role, aircraft, recovery, ARIA and cleanup gates remain open.",
-  "currentNativeStatus": "Native834 failed; native evidence retained, no cycle pass claim.",
+  "currentNativeStatus": "Native838 failed; native evidence retained, no cycle pass claim.",
   "proofApplicability": {
     "earlierFullSource": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "delta": "source-delta-796-shared-oil-air-fuel-and-sequential-purchases.json",

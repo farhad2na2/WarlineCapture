@@ -16,7 +16,9 @@ Native833 failed the paid Strike cycle before takeoff; supply vehicles remained 
 
 Focused835 reproduced the missing route before the runtime correction (wrapper exit0, required pass marker absent, explicitly a failed validation). A hauler-only retry now uses a stronger goal heuristic after the normal search exhausts its work allowance. It retains the existing limit per search, geometry/surface/occupancy checks and service destination; it may choose a longer route and adds one bounded attempt. No physical map, gameplay resource/rate/cap or match deadline changed. Focused836 passed all3 captured routes and3 existing detour cases; focused837 passed shared mixed-unit/long-distance/performance checks (16 measured samples, p95/p99 10.27ms,0 managed allocations). Complete source/material PRE/POST matched. Persistent-allocation shutdown warnings remain open and are not called solved.
 
-Native838 is repeating the normal-input paid-air lifecycle on this frozen source. A focused route or performance pass does not certify native mission readiness.
+Native838 closed on this same frozen source with no C# compiler errors. Both factions and all21 actual military buildings, including the paid Airport and six industry buildings, passed the road/sidewalk/tree/standing-scenery geometry inspection. No60-second hauler travel stalls were observed in its periodic actor trace; normal local fuel deliveries and a paid four-Tanker fleet were recorded. All303 contacts ended cleanly and source/material PRE/POST matched. This is scoped placement/movement evidence, not a complete match pass.
+
+The full aircraft cycle failed before first takeoff: last progress at1074.866s had455 stored fuel against the probe's conservative879 reserve. Actual wrapper exit2 and the generic player-probe timeout marker are retained. Fuel components were read without changing gameplay (8-barrel cargo,0.05 fuel/cell); service detours/net supply delivery and the normal construction/fleet sequence need investigation on existing Campaign geometry. No budgets, rates, caps, deadline or acceptance requirements were changed. Current observations: `native838-current-placement-and-hauler-movement-observations.json`.
 
 ## Prior technical status (historical)
 
@@ -579,3 +581,7 @@ Actual wrapper2; full PRE/POST source unchanged (`6ffb349e4b56a5eeb41f0a7bd97bc9
 ### Native834 normal paid fixed-wing cycle — failed
 
 Actual wrapper2; full PRE/POST source unchanged (`6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869`). Cycle failed: required pass marker absent. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native834-normal-paid-strike-cycle-failure.json`.
+
+### Native838 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native838-normal-paid-strike-cycle-failure.json`.

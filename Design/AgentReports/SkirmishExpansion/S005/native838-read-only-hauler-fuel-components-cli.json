@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em = Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; using var q = em.CreateEntityQuery(Unity.Entities.ComponentType.ReadOnly<Game.Components.UnitResourceHauler>(), Unity.Entities.ComponentType.ReadOnly<Game.Components.UnitFuelConsumption>(), Unity.Entities.ComponentType.ReadOnly<Game.Components.Faction>()); using var es = q.ToEntityArray(Unity.Collections.Allocator.Temp); var lines = new System.Text.StringBuilder(); foreach(var e in es) { if(em.GetComponentData<Game.Components.Faction>(e).Id != 1) continue; lines.AppendLine(e.ToString()+\" fuel=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitFuelConsumption>(e))+\" capacity=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitResourceHauler>(e))); } return lines.ToString();"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Entity(850:77) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":0.0,\"CargoFuelBarrels\":0.0}\nEntity(848:123) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":0.0,\"CargoFuelBarrels\":0.0}\nEntity(981:11) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":8.0,\"CargoFuelBarrels\":0.0}\nEntity(978:21) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":0.0,\"CargoFuelBarrels\":0.0}\nEntity(847:19) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":0.0,\"CargoFuelBarrels\":0.0}\nEntity(1371:575) fuel={\"GroundFuelPerCell\":0.05000000074505806,\"AirFuelPerCell\":0.0,\"Enabled\":1} capacity={\"BarrelCapacity\":8,\"FillDurationSeconds\":2.0,\"UnloadDurationSeconds\":1.5,\"CargoOilBarrels\":8.0,\"CargoFuelBarrels\":0.0}\n"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

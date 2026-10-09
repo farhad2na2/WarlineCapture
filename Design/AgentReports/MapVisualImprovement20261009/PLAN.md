@@ -53,7 +53,7 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 
 - Earlier shared desert/dense-city road and district surface foundation: PR [#58](https://github.com/farhad2na2/WarlineCapture/pull/58), merged as `024768787b6a05e590bd2cffa9ca59c8985fb6bd` and pulled to main.
 - Ten-map surface foundation: native detail review complete; saved scene/material validation passed for 10 scenes and 50 materials. Scene differences are material references only. Full normal-input mission and Android acceptance remain pending. Evidence: `../OtherMapSurfacePolish20261009/validation-summary.json`.
-- Four visual passes have native asset/capture evidence. Dense-city render-cache integration passed; final publication is tracked below; normal-input and Android acceptance are separate gates.
+- Four visual passes have native asset/capture evidence. Dense-city render-cache integration and final publication are complete; results are recorded below; normal-input and Android acceptance are separate gates.
 
 ### Step 1 published
 
@@ -95,4 +95,11 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 
 ### Dense-city render integration
 
-The dense city is the only one of these eleven sources with an explicit virtualized render database. Native source edits require regenerated material and placement records for the match to display the new art. `dense-render-cache-source-reconciliation.json` links the exact published PR59–61 source to the final native receipts, retaining gameplay/collision/ownership records and accounting for PR60's one extra runway marking material slot. The fresh source-parity and deterministic database build passed (`warline-map-dense-cache-details-01.log`, wrapper and native exit 0), with no removed source rows. Another task is editing the same generated data on main; preserve its source changes and coordinate the final checkout synchronization.
+The dense city is the only one of these eleven sources with an explicit virtualized render database. Native source edits require regenerated material and placement records for the match to display the new art. `dense-render-cache-source-reconciliation.json` links the exact published PR59–61 source to the final native receipts, retaining gameplay/collision/ownership records and accounting for PR60's one extra runway marking material slot. The fresh source-parity and deterministic database build passed (`warline-map-dense-cache-details-01.log`, wrapper and native exit 0), with no removed source rows. Main integrated the new cache while retaining the concurrent placement fixes. All 169 published files were independently verified byte-for-byte against T7 after reconciliation; the final fast-forward-only pull reported the checkout up to date.
+
+### Step 4 published
+
+- Commit `cfca98cdb734bc78342150d418eba5416f628f3e`; PR [#62](https://github.com/farhad2na2/WarlineCapture/pull/62); main merge `f9181fa18f221d5ecbdf6a4890427853f8391cd0`.
+- Main incorporated the merge and retained its concurrent placement-fix commit (`a1dca424c8b0b474d0a311410bf770f7c18f3e95` at verification). The guarded sync detected another task's staged cache changes and stopped without modifying them; that task completed its own reconciliation. This task verified all 169 published scene, asset, cache, source and evidence files against T7, then confirmed the main pull was up to date.
+- All four planned visual passes are published. T7's Editor is back at the original Menu scene. Temporary bootstrap and unused empty output folder were removed; the machine-local Pipeline port setting remains uncommitted.
+- Native visual/source/cache validation passed. Full normal-input mission acceptance and Android GPU/player acceptance remain separate pending gates. Retained layout findings are listed above.

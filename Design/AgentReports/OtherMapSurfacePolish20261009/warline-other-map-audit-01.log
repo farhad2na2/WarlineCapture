@@ -1,0 +1,111 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.AuditAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CityEdgeAirfield result=Passed renderers=25127 surfaces=3948
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=RefineryDistrict result=Passed renderers=24996 surfaces=3350
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=AshLinePort result=Passed renderers=31295 surfaces=3671
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH04M04GroundedSignal result=Passed renderers=18200 surfaces=3946
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH04M05ArmorBreak result=Passed renderers=11580 surfaces=2273
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH05M01CitywideAlert result=Passed renderers=4666 surfaces=1385
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH05M02TrustUnderFire result=Passed renderers=10373 surfaces=2260
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH05M03NetworkCollapse result=Passed renderers=4644 surfaces=1385
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH05M04LastCorridor result=Passed renderers=4643 surfaces=1385
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] map=CH05M05CommandNode result=Passed renderers=4055 surfaces=1385
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:45)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceAudit] result=Passed maps=10
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:Run (bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:47)
+Game.Editor.MapVariants.OtherMapSurfacePolish:AuditAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.AuditAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_e6148f8a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

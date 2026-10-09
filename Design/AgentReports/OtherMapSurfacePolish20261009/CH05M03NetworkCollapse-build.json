@@ -1,0 +1,15 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "beforeSha256": "520136f04026ab2c5780f399c18be1afe0898fb9a2691606a2084ea677478d4b",
+    "afterSha256": "4d67b69a5397478b115246d17b9a10ec172731d8b229e4df5a916c2d50f10152",
+    "nonMaterialSha256": "09ec9ee3afa3413fc63c2fb88d2cb495b13aa7d7ed17a33b0dc2b79250edfda1",
+    "groundRenderers": 509,
+    "padRenderers": 0,
+    "roadRenderers": 872,
+    "stoneZones": 36,
+    "clayZones": 20,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 512
+}

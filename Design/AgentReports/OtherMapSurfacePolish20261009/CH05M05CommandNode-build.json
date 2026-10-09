@@ -1,0 +1,15 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "beforeSha256": "82e3ed777d5df16c2c80850b81368b82576f18fc597dbdaa8cc06650e538ce28",
+    "afterSha256": "2ac4a5a2cae0352380283a4fd59d3b269e1f6d2e766776cdda615aaafa10d605",
+    "nonMaterialSha256": "3475bc71abb4a9aab415508b56aa80f7cd557d05a041bf9796f05d9001b70a02",
+    "groundRenderers": 509,
+    "padRenderers": 0,
+    "roadRenderers": 872,
+    "stoneZones": 31,
+    "clayZones": 16,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 512
+}

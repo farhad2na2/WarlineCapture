@@ -1,0 +1,15 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeSha256": "acb2c59e55cca78e16007fedb1d373a5e5e47fbd7c09c1b70b4e721b7125c48d",
+    "afterSha256": "4d0cd41aaa9de74eba4f6520434aad9296f8c76fa141bf96a9d0960845f5f550",
+    "nonMaterialSha256": "3dfbccb47dc66afaab55f93884018708f3b0edd3ce18cd1bfd0100f0d34a841d",
+    "groundRenderers": 6,
+    "padRenderers": 24,
+    "roadRenderers": 2687,
+    "stoneZones": 295,
+    "clayZones": 108,
+    "concreteZones": 9,
+    "maskWidth": 2048,
+    "maskHeight": 1024
+}

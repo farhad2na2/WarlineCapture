@@ -1,0 +1,15 @@
+{
+    "map": "CH05M04LastCorridor",
+    "result": "Passed",
+    "beforeSha256": "30a916d9785761a2df4c20311aea7a31b42252de44dacf12b027a95d571577c3",
+    "afterSha256": "98fda82b92f39ae2f6ca922841795301b8d76bc5749bc2474dafc74798dbaeb4",
+    "nonMaterialSha256": "f9eaff98a85348af14dd3cc4fbf1fb6746d5924adc282f8859982cb3e6c26e6e",
+    "groundRenderers": 509,
+    "padRenderers": 0,
+    "roadRenderers": 872,
+    "stoneZones": 37,
+    "clayZones": 21,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 512
+}

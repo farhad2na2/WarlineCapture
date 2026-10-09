@@ -1,0 +1,16 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeSha256": "236326c4e9d1ad15966429b070a28d87ab1a82ce89b7793b57ce5390850686b8",
+    "afterSha256": "94f263a8d241d1698529372303ac60e224f75ac24e7a6d5a34d0944f3f30a3d1",
+    "nonMaterialSha256": "988279218d544503573a5bbc6b0da271edf779b8b8428f774cd9be924ee9c9bf",
+    "groundRenderers": 21,
+    "padRenderers": 21,
+    "roadRenderers": 4094,
+    "stoneZones": 519,
+    "clayZones": 180,
+    "concreteZones": 7,
+    "maskWidth": 1024,
+    "maskHeight": 1024,
+    "padZones": 4
+}

@@ -1,0 +1,41 @@
+{
+  "result": "Passed",
+  "maps": 10,
+  "surfaceMaterials": 50,
+  "nativeDetailCapturesReviewed": 10,
+  "sceneChanges": "Renderer material references and material prefab overrides only. Every other serialized scene property matches its baseline hash.",
+  "surfaceWork": [
+    "World-projected soil variation with rotated/offset samples",
+    "Limestone and selected terracotta residential paving",
+    "Concrete service slabs with joints and wear",
+    "Continuous asphalt and limestone sidewalk materials",
+    "Sand-overlay transitions follow existing industrial pad bounds"
+  ],
+  "captureCorrection": "CH05M01, CH05M03, CH05M04 and CH05M05 bindings contain no sun. Corrected capture loads authored Match scene lighting; both before and after were regenerated. The game lighting assets were not changed. Overview captures disable distance fog/post processing for inspection.",
+  "validationLog": "warline-other-map-final-03.log",
+  "normalInputMissionPlaythrough": "Not performed for this surface pass",
+  "androidDeviceAcceptance": "Pending",
+  "publication": "Earlier S005/shared dense-city changes merged via PR #58 and pulled into main. This additional ten-map pass remains on T7 branch codex/other-map-surface-polish for review.",
+  "knownLimits": [
+    "Existing sculpted dirt-track geometry retained.",
+    "Historical Citywide Alert source-preservation receipt already differed for two shared scene files before this pass; it was not rewritten."
+  ],
+  "failedEvidence": [
+    "warline-other-map-build-01.log",
+    "warline-other-map-final-01.log",
+    "warline-other-map-final-02.log",
+    "unlit-capture-evidence/"
+  ],
+  "mapReceipts": [
+    "AshLinePort-build.json",
+    "CH04M04GroundedSignal-build.json",
+    "CH04M05ArmorBreak-build.json",
+    "CH05M01CitywideAlert-build.json",
+    "CH05M02TrustUnderFire-build.json",
+    "CH05M03NetworkCollapse-build.json",
+    "CH05M04LastCorridor-build.json",
+    "CH05M05CommandNode-build.json",
+    "CityEdgeAirfield-build.json",
+    "RefineryDistrict-build.json"
+  ]
+}

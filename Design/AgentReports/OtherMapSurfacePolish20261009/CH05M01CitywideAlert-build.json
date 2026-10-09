@@ -1,0 +1,15 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "result": "Passed",
+    "beforeSha256": "51063c6984b6a5e6aa8df8f16af82032235d2374da4f9fcb609d8d906b2528c6",
+    "afterSha256": "054146196732181062047badfdb3ca43d327f8621e64dcb1176e31eef22607c2",
+    "nonMaterialSha256": "46f158ece04547ea7239f51d47a2c7ef4c935eae6a08a1519affdaa0c8aed668",
+    "groundRenderers": 509,
+    "padRenderers": 0,
+    "roadRenderers": 872,
+    "stoneZones": 44,
+    "clayZones": 21,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 512
+}

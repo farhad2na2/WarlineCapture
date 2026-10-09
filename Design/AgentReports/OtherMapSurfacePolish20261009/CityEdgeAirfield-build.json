@@ -1,0 +1,16 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeSha256": "63e6007ed8e222fe846a1083f4ccf1078c8d8d1cc507bd4f341b3dc8371ce8b4",
+    "afterSha256": "d6f03e14e02b53b1047f7449bb083b5b0eb47eafa9529587e23091b0ca4e171f",
+    "nonMaterialSha256": "5ab881168c4ce875d6def395ff68a41dd1c9ac8c4a3f1fd6433e5f856f4e3caa",
+    "groundRenderers": 14,
+    "padRenderers": 3,
+    "roadRenderers": 4677,
+    "stoneZones": 726,
+    "clayZones": 243,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 1024,
+    "padZones": 2
+}

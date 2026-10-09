@@ -1,0 +1,16 @@
+{
+    "map": "AshLinePort",
+    "result": "Passed",
+    "beforeSha256": "0f96c4db1233267cb2404d198119327a70d222226b3ebd05241b17f72b1b4a5a",
+    "afterSha256": "31ac0295429314db6aff1ebf817c2e78cda221c6919afb87074210bb413d866a",
+    "nonMaterialSha256": "baa0d684a7c9f78cce10efa4d2d257e4e20fc3126a0c5a71cf69db0fb1eccb27",
+    "groundRenderers": 16,
+    "padRenderers": 9,
+    "roadRenderers": 4239,
+    "stoneZones": 470,
+    "clayZones": 161,
+    "concreteZones": 16,
+    "maskWidth": 1024,
+    "maskHeight": 1024,
+    "padZones": 10
+}

@@ -1,0 +1,120 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildDistrictDetails
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:DistrictTint (UnityEngine.Material,int,bool) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:69)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:151)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CityEdgeAirfield result=Passed groups=40 movedProps=149 buildings=224 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=RefineryDistrict result=Passed groups=40 movedProps=92 buildings=139 containers=795 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=AshLinePort result=Passed groups=40 movedProps=102 buildings=166 containers=5035 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH04M04GroundedSignal result=Passed groups=4 movedProps=64 buildings=4 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH04M05ArmorBreak result=Passed groups=22 movedProps=126 buildings=403 containers=1510 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH05M01CitywideAlert result=Passed groups=1 movedProps=2 buildings=18 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH05M02TrustUnderFire result=Passed groups=3 movedProps=6 buildings=128 containers=4715 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH05M03NetworkCollapse result=Passed groups=1 movedProps=2 buildings=16 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH05M04LastCorridor result=Passed groups=1 movedProps=2 buildings=16 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=CH05M05CommandNode result=Passed groups=1 movedProps=2 buildings=10 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] map=DenseCity result=Passed groups=40 movedProps=59 buildings=1577 containers=0 newRenderers=0 newTriangles=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:165)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapDistrictDetails] result=Passed maps=11 gameplayAndCollision=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDistrictDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs:167)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildDistrictDetails
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_f074b37a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

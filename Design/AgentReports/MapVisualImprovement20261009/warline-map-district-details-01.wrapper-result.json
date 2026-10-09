@@ -1,0 +1,6 @@
+{
+  "wrapperExitCode": 124,
+  "nativeReceiptExitCode": 0,
+  "result": "Failed: wrapper timeout",
+  "detail": "Native pass completed after wrapper timeout. Retain this failure; require a fresh successful wrapper run before publication."
+}

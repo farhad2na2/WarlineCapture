@@ -1,0 +1,2549 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+    "afterHash": "fa2faaf5a3afc9b588efbbd80eadb33c17186f0c07414705b1e1400fc5472000",
+    "protectedSceneHash": "0a37dc737ebcbac24130f44be846e238e10c103924ab86cfb6f8459ae8f70049",
+    "groups": 40,
+    "buildingRenderers": 224,
+    "variedContainers": 0,
+    "renderersBefore": 25127,
+    "renderersAfter": 25127,
+    "trianglesBefore": 16335637,
+    "trianglesAfter": 16335637,
+    "moves": [
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 532.6118774414063,
+                "y": 0.0,
+                "z": 571.4636840820313
+            },
+            "after": {
+                "x": 532.6118774414063,
+                "y": 0.0,
+                "z": 579.2691040039063
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 345284257,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 746.60595703125,
+                "y": 0.0,
+                "z": 568.1035766601563
+            },
+            "after": {
+                "x": 746.60595703125,
+                "y": 0.0,
+                "z": 579.3427124023438
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1467299801,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 557.675537109375,
+                "y": 0.0,
+                "z": 570.9052734375
+            },
+            "after": {
+                "x": 557.675537109375,
+                "y": 0.0,
+                "z": 578.9825439453125
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 644923244,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 750.8297729492188,
+                "y": 0.0,
+                "z": 572.435302734375
+            },
+            "after": {
+                "x": 750.8297729492188,
+                "y": 0.0,
+                "z": 579.328125
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 614078516,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 584.0548095703125,
+                "y": 0.0,
+                "z": 569.6546020507813
+            },
+            "after": {
+                "x": 584.0548095703125,
+                "y": 0.0,
+                "z": 579.1920776367188
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1802234704,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 715.0667724609375,
+                "y": 0.0,
+                "z": 570.6290893554688
+            },
+            "after": {
+                "x": 715.0667724609375,
+                "y": 0.0,
+                "z": 579.0386352539063
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 999822094,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 637.3155517578125,
+                "y": 0.0,
+                "z": 551.6410522460938
+            },
+            "after": {
+                "x": 637.3155517578125,
+                "y": 0.0,
+                "z": 540.7759399414063
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 316903654,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 509.08038330078127,
+                "y": 0.0,
+                "z": 543.6675415039063
+            },
+            "after": {
+                "x": 509.08038330078127,
+                "y": 0.0,
+                "z": 541.0984497070313
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1661327005,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 615.8685913085938,
+                "y": 0.0,
+                "z": 575.5817260742188
+            },
+            "after": {
+                "x": 615.8685913085938,
+                "y": 0.0,
+                "z": 578.9219360351563
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 1043819379,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 583.9739379882813,
+                "y": 0.0,
+                "z": 573.4600219726563
+            },
+            "after": {
+                "x": 583.9739379882813,
+                "y": 0.0,
+                "z": 586.7521362304688
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 819932059,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 774.6514892578125,
+                "y": 0.0,
+                "z": 546.5423583984375
+            },
+            "after": {
+                "x": 774.6514892578125,
+                "y": 0.0,
+                "z": 541.0257568359375
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 27969606,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 548.0036010742188,
+                "y": 0.0,
+                "z": 575.2380981445313
+            },
+            "after": {
+                "x": 548.0036010742188,
+                "y": 0.0,
+                "z": 584.3471069335938
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 12007186,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 515.4636840820313,
+                "y": 0.0,
+                "z": 569.336181640625
+            },
+            "after": {
+                "x": 515.4636840820313,
+                "y": 0.0,
+                "z": 579.111572265625
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 612917927,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 895.7189331054688,
+                "y": 0.0,
+                "z": 559.7396240234375
+            },
+            "after": {
+                "x": 911.8482055664063,
+                "y": 0.0,
+                "z": 559.7396240234375
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1282393072,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 794.44482421875,
+                "y": 0.0,
+                "z": 573.9556274414063
+            },
+            "after": {
+                "x": 794.44482421875,
+                "y": 0.0,
+                "z": 579.4923706054688
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 199374896,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 634.3318481445313,
+                "y": 0.0,
+                "z": 575.5159301757813
+            },
+            "after": {
+                "x": 634.3318481445313,
+                "y": 0.0,
+                "z": 579.1674194335938
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 610873389,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 669.1808471679688,
+                "y": 0.0,
+                "z": 568.6072998046875
+            },
+            "after": {
+                "x": 669.1808471679688,
+                "y": 0.0,
+                "z": 579.3035888671875
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 934785120,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 897.02734375,
+                "y": 0.0,
+                "z": 567.4022216796875
+            },
+            "after": {
+                "x": 897.02734375,
+                "y": 0.0,
+                "z": 579.510986328125
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 392849833,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 610.0408325195313,
+                "y": 0.0,
+                "z": 545.338623046875
+            },
+            "after": {
+                "x": 610.0408325195313,
+                "y": 0.0,
+                "z": 540.7442626953125
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 935556372,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 822.7451171875,
+                "y": 0.0,
+                "z": 570.6946411132813
+            },
+            "after": {
+                "x": 822.7451171875,
+                "y": 0.0,
+                "z": 579.0430297851563
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 237685090,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 493.0562744140625,
+                "y": 0.0,
+                "z": 556.6651000976563
+            },
+            "after": {
+                "x": 488.08203125,
+                "y": 0.0,
+                "z": 556.6651000976563
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 307948665,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 703.1875610351563,
+                "y": 0.0,
+                "z": 559.941650390625
+            },
+            "after": {
+                "x": 703.1875610351563,
+                "y": 0.0,
+                "z": 540.760498046875
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 70229170,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 588.5882568359375,
+                "y": 0.0,
+                "z": 551.7333374023438
+            },
+            "after": {
+                "x": 588.5882568359375,
+                "y": 0.0,
+                "z": 579.5183715820313
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1959595365,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 678.819091796875,
+                "y": 0.0,
+                "z": 543.83447265625
+            },
+            "after": {
+                "x": 678.819091796875,
+                "y": 0.0,
+                "z": 540.851318359375
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 94107669,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 630.239501953125,
+                "y": 0.0,
+                "z": 574.0380859375
+            },
+            "after": {
+                "x": 630.239501953125,
+                "y": 0.0,
+                "z": 579.025634765625
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1300331714,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 674.649658203125,
+                "y": 0.0,
+                "z": 552.3475952148438
+            },
+            "after": {
+                "x": 674.649658203125,
+                "y": 0.0,
+                "z": 540.5669555664063
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 769192316,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 499.5228576660156,
+                "y": 0.0,
+                "z": 565.1011352539063
+            },
+            "after": {
+                "x": 485.3365783691406,
+                "y": 0.0,
+                "z": 565.1011352539063
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 516838357,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 494.8614196777344,
+                "y": 0.0,
+                "z": 566.4415893554688
+            },
+            "after": {
+                "x": 494.8614196777344,
+                "y": 0.0,
+                "z": 579.1441040039063
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1237086988,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 805.5013427734375,
+                "y": 0.0,
+                "z": 549.9740600585938
+            },
+            "after": {
+                "x": 805.5013427734375,
+                "y": 0.0,
+                "z": 540.6614379882813
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 119123581,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 691.5304565429688,
+                "y": 0.0,
+                "z": 560.0836791992188
+            },
+            "after": {
+                "x": 691.5304565429688,
+                "y": 0.0,
+                "z": 579.4398803710938
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 118910925,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 717.1676025390625,
+                "y": 0.0,
+                "z": 557.3565063476563
+            },
+            "after": {
+                "x": 717.1676025390625,
+                "y": 0.0,
+                "z": 535.7394409179688
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 111493511,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 534.866455078125,
+                "y": 0.0,
+                "z": 563.628662109375
+            },
+            "after": {
+                "x": 534.866455078125,
+                "y": 0.0,
+                "z": 579.02587890625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 2109977579,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 742.2703857421875,
+                "y": 0.0,
+                "z": 567.9793701171875
+            },
+            "after": {
+                "x": 742.2703857421875,
+                "y": 0.0,
+                "z": 579.5257568359375
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1880093587,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 777.6458740234375,
+                "y": 0.0,
+                "z": 545.9789428710938
+            },
+            "after": {
+                "x": 777.6458740234375,
+                "y": 0.0,
+                "z": 540.7247924804688
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1378434252,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 676.0221557617188,
+                "y": 0.0,
+                "z": 555.2055053710938
+            },
+            "after": {
+                "x": 676.0221557617188,
+                "y": 0.0,
+                "z": 537.7874145507813
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1257597645,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 591.8953247070313,
+                "y": 0.0,
+                "z": 548.8997802734375
+            },
+            "after": {
+                "x": 591.8953247070313,
+                "y": 0.0,
+                "z": 540.5513916015625
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 397230988,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 813.2239990234375,
+                "y": 0.0,
+                "z": 548.2140502929688
+            },
+            "after": {
+                "x": 813.2239990234375,
+                "y": 0.0,
+                "z": 540.7866821289063
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1726092857,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 889.1676025390625,
+                "y": 0.0,
+                "z": 553.0404663085938
+            },
+            "after": {
+                "x": 889.1676025390625,
+                "y": 0.0,
+                "z": 540.6348266601563
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1176188154,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 639.450439453125,
+                "y": 0.0,
+                "z": 558.6851196289063
+            },
+            "after": {
+                "x": 639.450439453125,
+                "y": 0.0,
+                "z": 540.6613159179688
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1225706225,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 827.1239624023438,
+                "y": 0.0,
+                "z": 562.2920532226563
+            },
+            "after": {
+                "x": 827.1239624023438,
+                "y": 0.0,
+                "z": 540.7157592773438
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1408627367,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 574.8408203125,
+                "y": 0.0,
+                "z": 559.1241455078125
+            },
+            "after": {
+                "x": 574.8408203125,
+                "y": 0.0,
+                "z": 540.3809814453125
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1582121405,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 592.8305053710938,
+                "y": 0.0,
+                "z": 572.1050415039063
+            },
+            "after": {
+                "x": 592.8305053710938,
+                "y": 0.0,
+                "z": 579.4169311523438
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 364685689,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 771.05810546875,
+                "y": 0.0,
+                "z": 558.8449096679688
+            },
+            "after": {
+                "x": 771.05810546875,
+                "y": 0.0,
+                "z": 540.4046020507813
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 386956531,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 910.6827392578125,
+                "y": 0.0,
+                "z": 570.5294799804688
+            },
+            "after": {
+                "x": 912.8187255859375,
+                "y": 0.0,
+                "z": 570.5294799804688
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 370425399,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 889.99609375,
+                "y": 0.0,
+                "z": 567.1856689453125
+            },
+            "after": {
+                "x": 889.99609375,
+                "y": 0.0,
+                "z": 579.5050048828125
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 274049425,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 819.7059936523438,
+                "y": 0.0,
+                "z": 550.7100219726563
+            },
+            "after": {
+                "x": 819.7059936523438,
+                "y": 0.0,
+                "z": 537.9613647460938
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 2019787141,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 602.493408203125,
+                "y": 0.0,
+                "z": 548.4768676757813
+            },
+            "after": {
+                "x": 602.493408203125,
+                "y": 0.0,
+                "z": 534.7584838867188
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 410411380,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 768.563232421875,
+                "y": 0.0,
+                "z": 550.4752807617188
+            },
+            "after": {
+                "x": 768.563232421875,
+                "y": 0.0,
+                "z": 534.7964477539063
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 575738880,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 628.2845458984375,
+                "y": 0.0,
+                "z": 570.58984375
+            },
+            "after": {
+                "x": 628.2845458984375,
+                "y": 0.0,
+                "z": 582.302978515625
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 711399093,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 822.4240112304688,
+                "y": 0.0,
+                "z": 554.3458251953125
+            },
+            "after": {
+                "x": 822.4240112304688,
+                "y": 0.0,
+                "z": 532.276611328125
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 596327785,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 511.2914123535156,
+                "y": 0.0,
+                "z": 562.7120361328125
+            },
+            "after": {
+                "x": 511.2914123535156,
+                "y": 0.0,
+                "z": 584.74560546875
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 1282827996,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 489.3256530761719,
+                "y": 0.0,
+                "z": 564.2633056640625
+            },
+            "after": {
+                "x": 489.3256530761719,
+                "y": 0.0,
+                "z": 580.2520751953125
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 1735123853,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 709.0037231445313,
+                "y": -0.029999999329447748,
+                "z": 427.933349609375
+            },
+            "after": {
+                "x": 699.8473510742188,
+                "y": -0.030000001192092897,
+                "z": 432.64215087890627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 105029959,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 696.3733520507813,
+                "y": -0.022328762337565423,
+                "z": 417.320068359375
+            },
+            "after": {
+                "x": 684.1205444335938,
+                "y": -0.022328734397888185,
+                "z": 407.3984375
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1699225084,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 700.7845458984375,
+                "y": -0.029999999329447748,
+                "z": 411.92730712890627
+            },
+            "after": {
+                "x": 699.7574462890625,
+                "y": -0.030000001192092897,
+                "z": 407.39837646484377
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 422752323,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 684.6260375976563,
+                "y": -0.029999999329447748,
+                "z": 410.7465515136719
+            },
+            "after": {
+                "x": 699.1224975585938,
+                "y": -0.030000001192092897,
+                "z": 410.9984436035156
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1561124761,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 748.6114501953125,
+                "y": -0.029999999329447748,
+                "z": 453.8445129394531
+            },
+            "after": {
+                "x": 734.5157470703125,
+                "y": -0.030000001192092897,
+                "z": 429.9206237792969
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1282618277,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 754.4046630859375,
+                "y": -0.029999999329447748,
+                "z": 416.2310791015625
+            },
+            "after": {
+                "x": 748.4446411132813,
+                "y": -0.029999971389770509,
+                "z": 429.9219665527344
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 88291401,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 661.84423828125,
+                "y": -0.018269209191203119,
+                "z": 410.27850341796877
+            },
+            "after": {
+                "x": 674.5199584960938,
+                "y": -0.01826918125152588,
+                "z": 411.1032409667969
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 567742071,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 674.818603515625,
+                "y": -0.029999999329447748,
+                "z": 407.7596740722656
+            },
+            "after": {
+                "x": 674.046875,
+                "y": -0.030000001192092897,
+                "z": 414.6560974121094
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1297198649,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 673.5911254882813,
+                "y": -0.029999999329447748,
+                "z": 405.3930969238281
+            },
+            "after": {
+                "x": 674.1030883789063,
+                "y": -0.030000001192092897,
+                "z": 418.2561340332031
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1688532516,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 712.738525390625,
+                "y": -0.018269209191203119,
+                "z": 382.38897705078127
+            },
+            "after": {
+                "x": 723.3340454101563,
+                "y": -0.01826918125152588,
+                "z": 386.2323303222656
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 333572506,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 706.9566650390625,
+                "y": -0.029999999329447748,
+                "z": 389.9314880371094
+            },
+            "after": {
+                "x": 722.854736328125,
+                "y": -0.030000001192092897,
+                "z": 389.7868347167969
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1890158149,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 708.6121826171875,
+                "y": -0.029999999329447748,
+                "z": 395.1398010253906
+            },
+            "after": {
+                "x": 709.1495361328125,
+                "y": -0.029999971389770509,
+                "z": 389.7782897949219
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1375392159,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 687.876708984375,
+                "y": -0.029999999329447748,
+                "z": 376.38311767578127
+            },
+            "after": {
+                "x": 703.6034545898438,
+                "y": -0.029999971389770509,
+                "z": 370.6417541503906
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 950213553,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 706.0396118164063,
+                "y": -0.029999999329447748,
+                "z": 372.2414855957031
+            },
+            "after": {
+                "x": 703.8436889648438,
+                "y": -0.030000001192092897,
+                "z": 374.2413024902344
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1795177625,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 689.1527099609375,
+                "y": -0.029999999329447748,
+                "z": 364.4998779296875
+            },
+            "after": {
+                "x": 703.3221435546875,
+                "y": -0.030000001192092897,
+                "z": 377.84130859375
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1621010702,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 761.9740600585938,
+                "y": -0.022328762337565423,
+                "z": 424.984619140625
+            },
+            "after": {
+                "x": 769.5269165039063,
+                "y": -0.022328734397888185,
+                "z": 422.6806640625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1377823272,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 765.0546875,
+                "y": -0.029999999329447748,
+                "z": 411.4605407714844
+            },
+            "after": {
+                "x": 767.7286376953125,
+                "y": -0.030000001192092897,
+                "z": 415.4806823730469
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 210690039,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 769.638427734375,
+                "y": -0.029999999329447748,
+                "z": 418.279052734375
+            },
+            "after": {
+                "x": 767.591796875,
+                "y": -0.029999971389770509,
+                "z": 419.0823974609375
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1353322118,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 785.8129272460938,
+                "y": -0.018269209191203119,
+                "z": 437.0079345703125
+            },
+            "after": {
+                "x": 786.5767211914063,
+                "y": -0.01826918125152588,
+                "z": 433.9582824707031
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 157999176,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 788.5367431640625,
+                "y": -0.018269209191203119,
+                "z": 426.65301513671877
+            },
+            "after": {
+                "x": 786.6367797851563,
+                "y": -0.01826918125152588,
+                "z": 437.4950256347656
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 415208883,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 618.913818359375,
+                "y": -0.029999999329447748,
+                "z": 422.27105712890627
+            },
+            "after": {
+                "x": 628.84765625,
+                "y": -0.030000001192092897,
+                "z": 429.92059326171877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 601764794,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 634.1255493164063,
+                "y": -0.029999999329447748,
+                "z": 428.6320495605469
+            },
+            "after": {
+                "x": 615.6425170898438,
+                "y": -0.030000001192092897,
+                "z": 429.9206237792969
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 527195979,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 644.733154296875,
+                "y": -0.029999999329447748,
+                "z": 421.3183898925781
+            },
+            "after": {
+                "x": 649.3602905273438,
+                "y": -0.029999971389770509,
+                "z": 410.3439636230469
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 387135012,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 651.4505615234375,
+                "y": -0.029999999329447748,
+                "z": 401.78668212890627
+            },
+            "after": {
+                "x": 648.9866943359375,
+                "y": -0.030000001192092897,
+                "z": 413.943603515625
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1494075767,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 641.9310302734375,
+                "y": -0.029999999329447748,
+                "z": 422.4437255859375
+            },
+            "after": {
+                "x": 638.518798828125,
+                "y": -0.030000001192092897,
+                "z": 406.74359130859377
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2081906203,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 673.1376342773438,
+                "y": -0.018269209191203119,
+                "z": 381.2190246582031
+            },
+            "after": {
+                "x": 667.9314575195313,
+                "y": -0.01826918125152588,
+                "z": 369.9267272949219
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 91267045,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 673.3333129882813,
+                "y": -0.018269209191203119,
+                "z": 384.6573486328125
+            },
+            "after": {
+                "x": 667.9327392578125,
+                "y": -0.01826918125152588,
+                "z": 373.5268249511719
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1561634662,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 678.3057861328125,
+                "y": -0.029999999329447748,
+                "z": 389.31414794921877
+            },
+            "after": {
+                "x": 682.3453369140625,
+                "y": -0.030000001192092897,
+                "z": 377.112060546875
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1184017993,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 742.3073120117188,
+                "y": -0.018269209191203119,
+                "z": 385.9920654296875
+            },
+            "after": {
+                "x": 750.5880737304688,
+                "y": -0.01826918125152588,
+                "z": 395.4495849609375
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1263061915,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 744.7577514648438,
+                "y": -0.029999999329447748,
+                "z": 385.1446228027344
+            },
+            "after": {
+                "x": 736.2992553710938,
+                "y": -0.030000001192092897,
+                "z": 388.2990417480469
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1121482347,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 744.67724609375,
+                "y": -0.029999999329447748,
+                "z": 383.7768249511719
+            },
+            "after": {
+                "x": 736.392333984375,
+                "y": -0.030000001192092897,
+                "z": 391.8990783691406
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2015749692,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 663.1307983398438,
+                "y": -0.018269209191203119,
+                "z": 369.08880615234377
+            },
+            "after": {
+                "x": 675.3502807617188,
+                "y": -0.01826918125152588,
+                "z": 357.5379333496094
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1146489289,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 603.9584350585938,
+                "y": -0.029999999329447748,
+                "z": 419.2916259765625
+            },
+            "after": {
+                "x": 608.3591918945313,
+                "y": -0.030000001192092897,
+                "z": 430.309814453125
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 688871643,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 790.5234985351563,
+                "y": -0.029999999329447748,
+                "z": 422.7175598144531
+            },
+            "after": {
+                "x": 789.2957153320313,
+                "y": -0.030000001192092897,
+                "z": 419.4109191894531
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1765609497,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 787.8035278320313,
+                "y": -0.029999999329447748,
+                "z": 420.16558837890627
+            },
+            "after": {
+                "x": 789.6915893554688,
+                "y": -0.030000001192092897,
+                "z": 423.01092529296877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 231009635,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 785.8854370117188,
+                "y": -0.022328762337565423,
+                "z": 424.13067626953127
+            },
+            "after": {
+                "x": 787.4337768554688,
+                "y": -0.022328734397888185,
+                "z": 426.61090087890627
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1710995168,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 772.514404296875,
+                "y": -0.029999999329447748,
+                "z": 392.2835388183594
+            },
+            "after": {
+                "x": 773.2698974609375,
+                "y": -0.030000001192092897,
+                "z": 389.1136779785156
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 246169280,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 775.1397094726563,
+                "y": -0.029999999329447748,
+                "z": 390.45526123046877
+            },
+            "after": {
+                "x": 773.633544921875,
+                "y": -0.029999971389770509,
+                "z": 392.71246337890627
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 143840350,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 774.3218994140625,
+                "y": -0.029999999329447748,
+                "z": 376.9036865234375
+            },
+            "after": {
+                "x": 773.8072509765625,
+                "y": -0.030000001192092897,
+                "z": 396.313720703125
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1619009504,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 648.6871337890625,
+                "y": -0.029999999329447748,
+                "z": 368.2903137207031
+            },
+            "after": {
+                "x": 657.7979736328125,
+                "y": -0.030000001192092897,
+                "z": 370.4017028808594
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1411150981,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 650.7113647460938,
+                "y": -0.029999999329447748,
+                "z": 367.3393249511719
+            },
+            "after": {
+                "x": 658.2870483398438,
+                "y": -0.029999971389770509,
+                "z": 374.00341796875
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1629679755,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 646.0048217773438,
+                "y": -0.029999999329447748,
+                "z": 368.8496398925781
+            },
+            "after": {
+                "x": 657.9453735351563,
+                "y": -0.030000001192092897,
+                "z": 377.6016540527344
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 54818361,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 614.27685546875,
+                "y": -0.029999999329447748,
+                "z": 400.6772766113281
+            },
+            "after": {
+                "x": 620.2275390625,
+                "y": -0.030000001192092897,
+                "z": 402.4387512207031
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 171628293,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 607.2427978515625,
+                "y": -0.029999999329447748,
+                "z": 406.12884521484377
+            },
+            "after": {
+                "x": 620.1727294921875,
+                "y": -0.030000001192092897,
+                "z": 406.03875732421877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 390651352,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 615.5007934570313,
+                "y": -0.029999999329447748,
+                "z": 412.8622131347656
+            },
+            "after": {
+                "x": 620.1476440429688,
+                "y": -0.030000001192092897,
+                "z": 409.6387634277344
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 288833193,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 628.70263671875,
+                "y": -0.029999999329447748,
+                "z": 390.4589538574219
+            },
+            "after": {
+                "x": 637.5169677734375,
+                "y": -0.030000001192092897,
+                "z": 379.9369201660156
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1852976359,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 635.3596801757813,
+                "y": -0.018269209191203119,
+                "z": 389.5128479003906
+            },
+            "after": {
+                "x": 637.3213500976563,
+                "y": -0.01826918125152588,
+                "z": 383.5162658691406
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 305354541,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 632.175537109375,
+                "y": -0.029999999329447748,
+                "z": 391.68292236328127
+            },
+            "after": {
+                "x": 636.9302978515625,
+                "y": -0.030000001192092897,
+                "z": 387.13690185546877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 315422904,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 699.6137084960938,
+                "y": -0.029999999329447748,
+                "z": 305.5036926269531
+            },
+            "after": {
+                "x": 706.8403930664063,
+                "y": -0.030000001192092897,
+                "z": 307.5923156738281
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1795827862,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 701.0126953125,
+                "y": -0.029999999329447748,
+                "z": 318.5780029296875
+            },
+            "after": {
+                "x": 706.3577880859375,
+                "y": -0.030000001192092897,
+                "z": 311.19232177734377
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1953739741,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 695.3976440429688,
+                "y": -0.029999999329447748,
+                "z": 302.48211669921877
+            },
+            "after": {
+                "x": 706.2984008789063,
+                "y": -0.030000001192092897,
+                "z": 314.79229736328127
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1519103163,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 821.0084228515625,
+                "y": -0.029999999329447748,
+                "z": 436.84228515625
+            },
+            "after": {
+                "x": 820.0987548828125,
+                "y": -0.030000001192092897,
+                "z": 432.64215087890627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 27162189,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 818.762451171875,
+                "y": -0.029999999329447748,
+                "z": 434.7638244628906
+            },
+            "after": {
+                "x": 819.6898193359375,
+                "y": -0.029999971389770509,
+                "z": 436.2507629394531
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 805444116,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 756.4920654296875,
+                "y": -0.029999999329447748,
+                "z": 362.3893737792969
+            },
+            "after": {
+                "x": 753.936279296875,
+                "y": -0.029999971389770509,
+                "z": 356.48809814453127
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1359650647,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 748.8345336914063,
+                "y": -0.029999999329447748,
+                "z": 384.2173156738281
+            },
+            "after": {
+                "x": 753.5834350585938,
+                "y": -0.030000001192092897,
+                "z": 360.07940673828127
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2024259114,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 575.6843872070313,
+                "y": -0.029999999329447748,
+                "z": 414.7245178222656
+            },
+            "after": {
+                "x": 564.7465209960938,
+                "y": -0.030000001192092897,
+                "z": 431.7284851074219
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 744326947,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 565.8171997070313,
+                "y": -0.029999999329447748,
+                "z": 454.8335876464844
+            },
+            "after": {
+                "x": 564.7415161132813,
+                "y": -0.030000001192092897,
+                "z": 435.3285217285156
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1586052453,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 789.1486206054688,
+                "y": -0.029999999329447748,
+                "z": 411.52734375
+            },
+            "after": {
+                "x": 780.7302856445313,
+                "y": -0.030000001192092897,
+                "z": 390.8392333984375
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 249496903,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 783.3723754882813,
+                "y": -0.029999999329447748,
+                "z": 411.0874328613281
+            },
+            "after": {
+                "x": 781.3164672851563,
+                "y": -0.030000001192092897,
+                "z": 394.4393005371094
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 421365543,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 781.3421020507813,
+                "y": -0.029999999329447748,
+                "z": 411.4574279785156
+            },
+            "after": {
+                "x": 781.3538208007813,
+                "y": -0.030000001192092897,
+                "z": 398.0392761230469
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 186861899,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 593.8728637695313,
+                "y": -0.029999999329447748,
+                "z": 402.8504638671875
+            },
+            "after": {
+                "x": 595.2576904296875,
+                "y": -0.029999971389770509,
+                "z": 400.12164306640627
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 988295282,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 585.8637084960938,
+                "y": -0.018269209191203119,
+                "z": 391.6356506347656
+            },
+            "after": {
+                "x": 595.3250732421875,
+                "y": -0.01826918125152588,
+                "z": 403.74786376953127
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 739928227,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 579.9765014648438,
+                "y": -0.018269209191203119,
+                "z": 415.2652587890625
+            },
+            "after": {
+                "x": 595.4187622070313,
+                "y": -0.01826918125152588,
+                "z": 407.26922607421877
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1822430143,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 819.4962158203125,
+                "y": -0.029999999329447748,
+                "z": 398.6461486816406
+            },
+            "after": {
+                "x": 825.3075561523438,
+                "y": -0.029999971389770509,
+                "z": 414.39068603515627
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1757608451,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 643.2301025390625,
+                "y": -0.029999999329447748,
+                "z": 330.1579895019531
+            },
+            "after": {
+                "x": 649.6012573242188,
+                "y": -0.029999971389770509,
+                "z": 329.9293212890625
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 979354724,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 678.0927734375,
+                "y": -0.029999999329447748,
+                "z": 320.80413818359377
+            },
+            "after": {
+                "x": 678.0572509765625,
+                "y": -0.029999971389770509,
+                "z": 314.1454772949219
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1324317614,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 679.9881591796875,
+                "y": -0.018269209191203119,
+                "z": 318.4967346191406
+            },
+            "after": {
+                "x": 678.1705322265625,
+                "y": -0.01826918125152588,
+                "z": 317.77679443359377
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 853447657,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 662.969970703125,
+                "y": -0.029999999329447748,
+                "z": 306.35589599609377
+            },
+            "after": {
+                "x": 677.7811279296875,
+                "y": -0.030000001192092897,
+                "z": 321.34613037109377
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1899869800,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 710.3057861328125,
+                "y": -0.029999999329447748,
+                "z": 300.9735107421875
+            },
+            "after": {
+                "x": 709.532958984375,
+                "y": -0.030000001192092897,
+                "z": 301.58453369140627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 625553360,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 725.7760009765625,
+                "y": -0.029999999329447748,
+                "z": 314.308349609375
+            },
+            "after": {
+                "x": 709.0985107421875,
+                "y": -0.030000001192092897,
+                "z": 305.1845703125
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 123245746,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 722.8380126953125,
+                "y": -0.029999999329447748,
+                "z": 317.989990234375
+            },
+            "after": {
+                "x": 709.6077880859375,
+                "y": -0.030000001192092897,
+                "z": 308.7845458984375
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1385138618,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 605.316650390625,
+                "y": -0.029999999329447748,
+                "z": 390.06427001953127
+            },
+            "after": {
+                "x": 609.6904907226563,
+                "y": -0.029999971389770509,
+                "z": 378.8387451171875
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 872760759,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 607.9414672851563,
+                "y": -0.029999999329447748,
+                "z": 388.9989013671875
+            },
+            "after": {
+                "x": 609.3947143554688,
+                "y": -0.030000001192092897,
+                "z": 382.43902587890627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2074906674,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 601.7490844726563,
+                "y": -0.022328762337565423,
+                "z": 374.4814453125
+            },
+            "after": {
+                "x": 611.7642211914063,
+                "y": -0.022328734397888185,
+                "z": 386.0390625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1523727134,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 532.4330444335938,
+                "y": -0.029999999329447748,
+                "z": 416.81951904296877
+            },
+            "after": {
+                "x": 548.3374633789063,
+                "y": -0.029999971389770509,
+                "z": 436.996337890625
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1489541525,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 533.8308715820313,
+                "y": -0.029999999329447748,
+                "z": 414.1012878417969
+            },
+            "after": {
+                "x": 548.0656127929688,
+                "y": -0.030000001192092897,
+                "z": 433.4050598144531
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 439617918,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 793.23876953125,
+                "y": -0.029999999329447748,
+                "z": 360.34356689453127
+            },
+            "after": {
+                "x": 784.5722045898438,
+                "y": -0.029999971389770509,
+                "z": 369.608642578125
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1399909345,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 782.9547119140625,
+                "y": -0.029999999329447748,
+                "z": 375.939697265625
+            },
+            "after": {
+                "x": 784.612060546875,
+                "y": -0.029999971389770509,
+                "z": 373.2008972167969
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 2130462292,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 815.5779418945313,
+                "y": -0.029999999329447748,
+                "z": 359.291015625
+            },
+            "after": {
+                "x": 784.9042358398438,
+                "y": -0.030000001192092897,
+                "z": 366.0
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1076534514,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 755.93505859375,
+                "y": -0.029999999329447748,
+                "z": 318.52630615234377
+            },
+            "after": {
+                "x": 765.73779296875,
+                "y": -0.030000001192092897,
+                "z": 330.309814453125
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1829767975,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 574.576171875,
+                "y": -0.029999999329447748,
+                "z": 400.0199279785156
+            },
+            "after": {
+                "x": 575.54541015625,
+                "y": -0.030000001192092897,
+                "z": 403.8356628417969
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1236564502,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 565.2523193359375,
+                "y": -0.029999999329447748,
+                "z": 371.1745300292969
+            },
+            "after": {
+                "x": 575.1060791015625,
+                "y": -0.030000001192092897,
+                "z": 407.4356994628906
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1476110878,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 535.6985473632813,
+                "y": -0.029999999329447748,
+                "z": 389.1275634765625
+            },
+            "after": {
+                "x": 574.9675903320313,
+                "y": -0.030000001192092897,
+                "z": 411.03570556640627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1714384959,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 844.6820068359375,
+                "y": -0.029999999329447748,
+                "z": 407.95037841796877
+            },
+            "after": {
+                "x": 845.7291259765625,
+                "y": -0.030000001192092897,
+                "z": 411.53436279296877
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1258156309,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 849.320068359375,
+                "y": -0.029999999329447748,
+                "z": 394.3563537597656
+            },
+            "after": {
+                "x": 858.2581787109375,
+                "y": -0.030000001192092897,
+                "z": 415.1343688964844
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2064580839,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 832.0331420898438,
+                "y": -0.029999999329447748,
+                "z": 404.0285949707031
+            },
+            "after": {
+                "x": 858.3687133789063,
+                "y": -0.030000001192092897,
+                "z": 418.7344055175781
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1154226616,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 658.3961791992188,
+                "y": -0.018269209191203119,
+                "z": 310.3979187011719
+            },
+            "after": {
+                "x": 662.3804931640625,
+                "y": -0.01826918125152588,
+                "z": 303.3996276855469
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1760756860,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 665.4423828125,
+                "y": -0.029999999329447748,
+                "z": 301.4078674316406
+            },
+            "after": {
+                "x": 662.039794921875,
+                "y": -0.030000001192092897,
+                "z": 307.0506286621094
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 315424198,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 652.4126586914063,
+                "y": -0.018269209191203119,
+                "z": 315.42352294921877
+            },
+            "after": {
+                "x": 648.887939453125,
+                "y": -0.01826918125152588,
+                "z": 303.4243469238281
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1423163600,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 742.08544921875,
+                "y": -0.022328762337565423,
+                "z": 312.4278259277344
+            },
+            "after": {
+                "x": 753.12060546875,
+                "y": -0.022328734397888185,
+                "z": 300.8666076660156
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 306013012,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 749.945556640625,
+                "y": -0.029999999329447748,
+                "z": 316.3056945800781
+            },
+            "after": {
+                "x": 751.332275390625,
+                "y": -0.030000001192092897,
+                "z": 304.4666442871094
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1171287171,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 782.2130126953125,
+                "y": -0.029999999329447748,
+                "z": 320.7840881347656
+            },
+            "after": {
+                "x": 775.2138671875,
+                "y": -0.030000001192092897,
+                "z": 330.3097839355469
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 714283868,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 831.8809204101563,
+                "y": -0.029999999329447748,
+                "z": 369.565185546875
+            },
+            "after": {
+                "x": 824.1549682617188,
+                "y": -0.030000001192092897,
+                "z": 366.40386962890627
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1916007137,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 837.8433837890625,
+                "y": -0.029999999329447748,
+                "z": 370.4266052246094
+            },
+            "after": {
+                "x": 823.604248046875,
+                "y": -0.030000001192092897,
+                "z": 370.0038757324219
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 533376496,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 571.8999633789063,
+                "y": -0.029999999329447748,
+                "z": 363.26470947265627
+            },
+            "after": {
+                "x": 584.8710327148438,
+                "y": -0.030000001192092897,
+                "z": 365.33367919921877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1694137353,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 578.6283569335938,
+                "y": -0.022328762337565423,
+                "z": 378.0127258300781
+            },
+            "after": {
+                "x": 585.1974487304688,
+                "y": -0.022328734397888185,
+                "z": 372.5337219238281
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1371865255,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 592.9729614257813,
+                "y": -0.018269209191203119,
+                "z": 374.97674560546877
+            },
+            "after": {
+                "x": 572.5602416992188,
+                "y": -0.01826918125152588,
+                "z": 365.3088684082031
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 2043555290,
+            "prefabTransformId": 4572491030229316
+        }
+    ]
+}

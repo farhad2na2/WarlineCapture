@@ -1,0 +1,2158 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+    "afterHash": "265bce63b31e5715de7a8d2dfbebf3f39bc24ff244ac447e7e56e048f624c6e3",
+    "protectedSceneHash": "31da7b1593fb0da1048baf9aa3303308e26f6a20c73ecc7f59694230cc5a71d2",
+    "groups": 22,
+    "buildingRenderers": 403,
+    "variedContainers": 1510,
+    "renderersBefore": 11580,
+    "renderersAfter": 11580,
+    "trianglesBefore": 9306895,
+    "trianglesAfter": 9306895,
+    "moves": [
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1528.2618408203125,
+                "y": 0.0,
+                "z": 287.7401123046875
+            },
+            "after": {
+                "x": 1528.2618408203125,
+                "y": 0.0,
+                "z": 274.9932861328125
+            },
+            "transformId": 1737706783,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1755.7247314453125,
+                "y": 0.0,
+                "z": 290.4822692871094
+            },
+            "after": {
+                "x": 1755.7247314453125,
+                "y": 0.0,
+                "z": 275.0327453613281
+            },
+            "transformId": 1088085319,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1623.3533935546875,
+                "y": 0.0,
+                "z": 304.53961181640627
+            },
+            "after": {
+                "x": 1623.3533935546875,
+                "y": 0.0,
+                "z": 312.910888671875
+            },
+            "transformId": 423528457,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1621.3692626953125,
+                "y": 0.0,
+                "z": 282.9314270019531
+            },
+            "after": {
+                "x": 1621.3692626953125,
+                "y": 0.0,
+                "z": 274.8783264160156
+            },
+            "transformId": 254467256,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1673.28125,
+                "y": 0.0,
+                "z": 278.9844055175781
+            },
+            "after": {
+                "x": 1673.28125,
+                "y": 0.0,
+                "z": 312.9035339355469
+            },
+            "transformId": 1057688941,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1521.2188720703125,
+                "y": 0.0,
+                "z": 292.1633605957031
+            },
+            "after": {
+                "x": 1512.3660888671875,
+                "y": 0.0,
+                "z": 292.1633605957031
+            },
+            "transformId": 1307652196,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1931.572509765625,
+                "y": 0.0,
+                "z": 295.8010559082031
+            },
+            "after": {
+                "x": 1936.037353515625,
+                "y": 0.0,
+                "z": 295.8010559082031
+            },
+            "transformId": 169025887,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1707.754150390625,
+                "y": 0.0,
+                "z": 295.08160400390627
+            },
+            "after": {
+                "x": 1707.754150390625,
+                "y": 0.0,
+                "z": 312.96221923828127
+            },
+            "transformId": 264025180,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1705.8004150390625,
+                "y": 0.0,
+                "z": 281.2984313964844
+            },
+            "after": {
+                "x": 1705.8004150390625,
+                "y": 0.0,
+                "z": 274.6148376464844
+            },
+            "transformId": 1601031255,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1803.8709716796875,
+                "y": 0.0,
+                "z": 278.31622314453127
+            },
+            "after": {
+                "x": 1803.8709716796875,
+                "y": 0.0,
+                "z": 274.96282958984377
+            },
+            "transformId": 1907207195,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1760.304443359375,
+                "y": 0.0,
+                "z": 297.2503967285156
+            },
+            "after": {
+                "x": 1760.304443359375,
+                "y": 0.0,
+                "z": 313.1792907714844
+            },
+            "transformId": 1627357799,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1535.0789794921875,
+                "y": 0.0,
+                "z": 299.0809020996094
+            },
+            "after": {
+                "x": 1535.0789794921875,
+                "y": 0.0,
+                "z": 317.9865417480469
+            },
+            "transformId": 2139029078,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1516.20166015625,
+                "y": 0.0,
+                "z": 308.3676452636719
+            },
+            "after": {
+                "x": 1516.20166015625,
+                "y": 0.0,
+                "z": 313.1131286621094
+            },
+            "transformId": 1903614306,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1535.053955078125,
+                "y": 0.0,
+                "z": 301.6722717285156
+            },
+            "after": {
+                "x": 1512.030517578125,
+                "y": 0.0,
+                "z": 301.6722717285156
+            },
+            "transformId": 1267119190,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1558.152099609375,
+                "y": 0.0,
+                "z": 287.6117248535156
+            },
+            "after": {
+                "x": 1558.152099609375,
+                "y": 0.0,
+                "z": 275.0943298339844
+            },
+            "transformId": 37610150,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1767.4476318359375,
+                "y": 0.0,
+                "z": 292.52935791015627
+            },
+            "after": {
+                "x": 1767.4476318359375,
+                "y": 0.0,
+                "z": 274.6571044921875
+            },
+            "transformId": 408138302,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1552.1337890625,
+                "y": 0.0,
+                "z": 292.46026611328127
+            },
+            "after": {
+                "x": 1552.1337890625,
+                "y": 0.0,
+                "z": 274.95220947265627
+            },
+            "transformId": 154997838,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1928.87255859375,
+                "y": 0.0,
+                "z": 279.9261779785156
+            },
+            "after": {
+                "x": 1928.87255859375,
+                "y": 0.0,
+                "z": 274.9812316894531
+            },
+            "transformId": 1205027313,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1906.248291015625,
+                "y": 0.0,
+                "z": 279.38458251953127
+            },
+            "after": {
+                "x": 1906.248291015625,
+                "y": 0.0,
+                "z": 274.90557861328127
+            },
+            "transformId": 1535597866,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1754.3055419921875,
+                "y": 0.0,
+                "z": 277.1981506347656
+            },
+            "after": {
+                "x": 1754.3055419921875,
+                "y": 0.0,
+                "z": 272.5552673339844
+            },
+            "transformId": 2022086757,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1824.91845703125,
+                "y": 0.0,
+                "z": 305.95074462890627
+            },
+            "after": {
+                "x": 1824.91845703125,
+                "y": 0.0,
+                "z": 313.08782958984377
+            },
+            "transformId": 1323642607,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1833.9013671875,
+                "y": 0.0,
+                "z": 286.5339660644531
+            },
+            "after": {
+                "x": 1833.9013671875,
+                "y": 0.0,
+                "z": 274.7996520996094
+            },
+            "transformId": 320172418,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1791.453369140625,
+                "y": 0.0,
+                "z": 302.5475769042969
+            },
+            "after": {
+                "x": 1791.453369140625,
+                "y": 0.0,
+                "z": 313.0743713378906
+            },
+            "transformId": 59866177,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1530.046875,
+                "y": 0.0,
+                "z": 305.3592834472656
+            },
+            "after": {
+                "x": 1530.046875,
+                "y": 0.0,
+                "z": 313.1153259277344
+            },
+            "transformId": 891272089,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1692.6475830078125,
+                "y": 0.0,
+                "z": 306.948486328125
+            },
+            "after": {
+                "x": 1692.6475830078125,
+                "y": 0.0,
+                "z": 312.9632568359375
+            },
+            "transformId": 2026372530,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1614.636474609375,
+                "y": 0.0,
+                "z": 304.3706359863281
+            },
+            "after": {
+                "x": 1614.636474609375,
+                "y": 0.0,
+                "z": 313.0552673339844
+            },
+            "transformId": 1739131373,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1913.50537109375,
+                "y": 0.0,
+                "z": 292.703857421875
+            },
+            "after": {
+                "x": 1913.50537109375,
+                "y": 0.0,
+                "z": 274.561279296875
+            },
+            "transformId": 1261173016,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1733.168212890625,
+                "y": 0.0,
+                "z": 296.31219482421877
+            },
+            "after": {
+                "x": 1733.168212890625,
+                "y": 0.0,
+                "z": 313.39093017578127
+            },
+            "transformId": 1652525421,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1679.32275390625,
+                "y": 0.0,
+                "z": 301.04742431640627
+            },
+            "after": {
+                "x": 1679.32275390625,
+                "y": 0.0,
+                "z": 313.31671142578127
+            },
+            "transformId": 2056995797,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1532.444091796875,
+                "y": 0.0,
+                "z": 282.92449951171877
+            },
+            "after": {
+                "x": 1532.444091796875,
+                "y": 0.0,
+                "z": 274.82855224609377
+            },
+            "transformId": 1607568726,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1668.00830078125,
+                "y": 0.0,
+                "z": 288.86065673828127
+            },
+            "after": {
+                "x": 1668.00830078125,
+                "y": 0.0,
+                "z": 313.08172607421877
+            },
+            "transformId": 1753874141,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1678.227294921875,
+                "y": 0.0,
+                "z": 299.0234069824219
+            },
+            "after": {
+                "x": 1678.227294921875,
+                "y": 0.0,
+                "z": 274.7182922363281
+            },
+            "transformId": 1505704819,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1829.1378173828125,
+                "y": 0.0,
+                "z": 292.40362548828127
+            },
+            "after": {
+                "x": 1829.1378173828125,
+                "y": 0.0,
+                "z": 274.88287353515627
+            },
+            "transformId": 625106877,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1750.021484375,
+                "y": 0.0,
+                "z": 305.83038330078127
+            },
+            "after": {
+                "x": 1750.021484375,
+                "y": 0.0,
+                "z": 313.157958984375
+            },
+            "transformId": 697352902,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1713.7366943359375,
+                "y": 0.0,
+                "z": 280.4385681152344
+            },
+            "after": {
+                "x": 1713.7366943359375,
+                "y": 0.0,
+                "z": 269.6276550292969
+            },
+            "transformId": 1366398872,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1714.6011962890625,
+                "y": 0.0,
+                "z": 304.9124755859375
+            },
+            "after": {
+                "x": 1714.6011962890625,
+                "y": 0.0,
+                "z": 313.1739501953125
+            },
+            "transformId": 572362076,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1587.688232421875,
+                "y": 0.0,
+                "z": 296.42547607421877
+            },
+            "after": {
+                "x": 1587.688232421875,
+                "y": 0.0,
+                "z": 312.9129638671875
+            },
+            "transformId": 539165659,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1822.0155029296875,
+                "y": 0.0,
+                "z": 279.1964416503906
+            },
+            "after": {
+                "x": 1822.0155029296875,
+                "y": 0.0,
+                "z": 275.0022888183594
+            },
+            "transformId": 1203766614,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1829.0936279296875,
+                "y": 0.0,
+                "z": 277.2606506347656
+            },
+            "after": {
+                "x": 1829.0936279296875,
+                "y": 0.0,
+                "z": 272.3903503417969
+            },
+            "transformId": 818992746,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1652.527587890625,
+                "y": 0.0,
+                "z": 300.71343994140627
+            },
+            "after": {
+                "x": 1652.527587890625,
+                "y": 0.0,
+                "z": 313.47833251953127
+            },
+            "transformId": 1080963754,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1674.698486328125,
+                "y": 0.0,
+                "z": 290.8311462402344
+            },
+            "after": {
+                "x": 1674.698486328125,
+                "y": 0.0,
+                "z": 274.8801574707031
+            },
+            "transformId": 2056754188,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1789.7340087890625,
+                "y": 0.0,
+                "z": 281.90338134765627
+            },
+            "after": {
+                "x": 1789.7340087890625,
+                "y": 0.0,
+                "z": 274.925048828125
+            },
+            "transformId": 410306714,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1540.1883544921875,
+                "y": 0.0,
+                "z": 280.93505859375
+            },
+            "after": {
+                "x": 1540.1883544921875,
+                "y": 0.0,
+                "z": 274.73052978515627
+            },
+            "transformId": 729825746,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1840.0196533203125,
+                "y": 0.0,
+                "z": 293.86285400390627
+            },
+            "after": {
+                "x": 1840.0196533203125,
+                "y": 0.0,
+                "z": 313.62457275390627
+            },
+            "transformId": 27264972,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1727.7928466796875,
+                "y": 0.0,
+                "z": 306.10235595703127
+            },
+            "after": {
+                "x": 1727.7928466796875,
+                "y": 0.0,
+                "z": 313.32196044921877
+            },
+            "transformId": 126299376,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1546.2208251953125,
+                "y": 0.0,
+                "z": 306.335205078125
+            },
+            "after": {
+                "x": 1546.2208251953125,
+                "y": 0.0,
+                "z": 313.44512939453127
+            },
+            "transformId": 430237692,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1748.4578857421875,
+                "y": 0.0,
+                "z": 298.361083984375
+            },
+            "after": {
+                "x": 1748.4578857421875,
+                "y": 0.0,
+                "z": 315.80615234375
+            },
+            "transformId": 1233138275,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1571.26904296875,
+                "y": 0.0,
+                "z": 297.2533874511719
+            },
+            "after": {
+                "x": 1571.26904296875,
+                "y": 0.0,
+                "z": 313.4129943847656
+            },
+            "transformId": 1522879496,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1620.1708984375,
+                "y": 0.0,
+                "z": 288.167236328125
+            },
+            "after": {
+                "x": 1620.1708984375,
+                "y": 0.0,
+                "z": 272.33642578125
+            },
+            "transformId": 1203047469,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1727.8546142578125,
+                "y": 0.0,
+                "z": 286.5180358886719
+            },
+            "after": {
+                "x": 1727.8546142578125,
+                "y": 0.0,
+                "z": 274.4669494628906
+            },
+            "transformId": 1842928095,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1927.753662109375,
+                "y": 0.0,
+                "z": 301.6542053222656
+            },
+            "after": {
+                "x": 1936.103271484375,
+                "y": 0.0,
+                "z": 301.6542053222656
+            },
+            "transformId": 1005814779,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1932.128662109375,
+                "y": 0.0,
+                "z": 287.2903137207031
+            },
+            "after": {
+                "x": 1935.855224609375,
+                "y": 0.0,
+                "z": 287.2903137207031
+            },
+            "transformId": 1663421524,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1626.22998046875,
+                "y": 0.0,
+                "z": 291.6435546875
+            },
+            "after": {
+                "x": 1626.22998046875,
+                "y": 0.0,
+                "z": 274.337890625
+            },
+            "transformId": 1224979999,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1630.4967041015625,
+                "y": 0.0,
+                "z": 305.5977478027344
+            },
+            "after": {
+                "x": 1630.4967041015625,
+                "y": 0.0,
+                "z": 313.1194763183594
+            },
+            "transformId": 906654419,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1779.9132080078125,
+                "y": 0.0,
+                "z": 307.7489013671875
+            },
+            "after": {
+                "x": 1779.9132080078125,
+                "y": 0.0,
+                "z": 313.4847412109375
+            },
+            "transformId": 1926513985,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1526.6768798828125,
+                "y": 0.0,
+                "z": 294.37310791015627
+            },
+            "after": {
+                "x": 1511.9676513671875,
+                "y": 0.0,
+                "z": 294.37310791015627
+            },
+            "transformId": 1632791617,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1902.278564453125,
+                "y": 0.0,
+                "z": 279.10577392578127
+            },
+            "after": {
+                "x": 1902.278564453125,
+                "y": 0.0,
+                "z": 274.81793212890627
+            },
+            "transformId": 1779457441,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1813.051513671875,
+                "y": 0.0,
+                "z": 298.4378967285156
+            },
+            "after": {
+                "x": 1813.051513671875,
+                "y": 0.0,
+                "z": 313.2854919433594
+            },
+            "transformId": 2064701373,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1799.1473388671875,
+                "y": 0.0,
+                "z": 278.3450622558594
+            },
+            "after": {
+                "x": 1799.1473388671875,
+                "y": 0.0,
+                "z": 274.7892761230469
+            },
+            "transformId": 2069784280,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1673.2752685546875,
+                "y": 0.0,
+                "z": 301.739501953125
+            },
+            "after": {
+                "x": 1509.5782470703125,
+                "y": 0.0,
+                "z": 301.739501953125
+            },
+            "transformId": 661609442,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1795.386474609375,
+                "y": 0.0,
+                "z": 307.74072265625
+            },
+            "after": {
+                "x": 1795.386474609375,
+                "y": 0.0,
+                "z": 313.3125
+            },
+            "transformId": 1348155825,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1784.726806640625,
+                "y": 0.0,
+                "z": 287.73046875
+            },
+            "after": {
+                "x": 1784.726806640625,
+                "y": 0.0,
+                "z": 274.4620361328125
+            },
+            "transformId": 706323835,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1727.8731689453125,
+                "y": 0.0,
+                "z": 294.9521789550781
+            },
+            "after": {
+                "x": 1727.8731689453125,
+                "y": 0.0,
+                "z": 315.9168395996094
+            },
+            "transformId": 1130032478,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1834.5570068359375,
+                "y": 0.0,
+                "z": 307.8525695800781
+            },
+            "after": {
+                "x": 1834.5570068359375,
+                "y": 0.0,
+                "z": 313.8047180175781
+            },
+            "transformId": 1058152659,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1530.949951171875,
+                "y": 0.0,
+                "z": 296.5779113769531
+            },
+            "after": {
+                "x": 1530.949951171875,
+                "y": 0.0,
+                "z": 316.3288269042969
+            },
+            "transformId": 1527006500,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1656.615234375,
+                "y": 0.0,
+                "z": 300.1487731933594
+            },
+            "after": {
+                "x": 1656.615234375,
+                "y": 0.0,
+                "z": 313.6517639160156
+            },
+            "transformId": 497981875,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1711.95458984375,
+                "y": 0.0,
+                "z": 289.552001953125
+            },
+            "after": {
+                "x": 1711.95458984375,
+                "y": 0.0,
+                "z": 316.7371826171875
+            },
+            "transformId": 2067264125,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1675.7191162109375,
+                "y": 0.0,
+                "z": 309.01513671875
+            },
+            "after": {
+                "x": 1675.7191162109375,
+                "y": 0.0,
+                "z": 271.4068603515625
+            },
+            "transformId": 1230472815,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1906.27734375,
+                "y": 0.0,
+                "z": 293.1186828613281
+            },
+            "after": {
+                "x": 1906.27734375,
+                "y": 0.0,
+                "z": 313.9255065917969
+            },
+            "transformId": 1348426359,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1770.266357421875,
+                "y": 0.0,
+                "z": 278.0549011230469
+            },
+            "after": {
+                "x": 1770.266357421875,
+                "y": 0.0,
+                "z": 274.2157287597656
+            },
+            "transformId": 402465814,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1562.2125244140625,
+                "y": 0.0,
+                "z": 299.4184265136719
+            },
+            "after": {
+                "x": 1562.2125244140625,
+                "y": 0.0,
+                "z": 313.4359436035156
+            },
+            "transformId": 1005702512,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1580.3087158203125,
+                "y": 0.0,
+                "z": 280.8680725097656
+            },
+            "after": {
+                "x": 1580.3087158203125,
+                "y": 0.0,
+                "z": 274.2431335449219
+            },
+            "transformId": 1293625106,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1624.6114501953125,
+                "y": 0.0,
+                "z": 280.5894775390625
+            },
+            "after": {
+                "x": 1624.6114501953125,
+                "y": 0.0,
+                "z": 269.1524658203125
+            },
+            "transformId": 1469971593,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1731.8504638671875,
+                "y": 0.0,
+                "z": 299.3993225097656
+            },
+            "after": {
+                "x": 1731.8504638671875,
+                "y": 0.0,
+                "z": 321.0410461425781
+            },
+            "transformId": 122900301,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1684.26904296875,
+                "y": 0.0,
+                "z": 277.7391662597656
+            },
+            "after": {
+                "x": 1684.26904296875,
+                "y": 0.0,
+                "z": 273.6551818847656
+            },
+            "transformId": 2103955154,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1675.0357666015625,
+                "y": 0.0,
+                "z": 281.4971923828125
+            },
+            "after": {
+                "x": 1511.5352783203125,
+                "y": 0.0,
+                "z": 281.4971923828125
+            },
+            "transformId": 1608626379,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1763.51953125,
+                "y": 0.0,
+                "z": 306.9927978515625
+            },
+            "after": {
+                "x": 1763.51953125,
+                "y": 0.0,
+                "z": 313.53216552734377
+            },
+            "transformId": 2011439766,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1774.9786376953125,
+                "y": 0.0,
+                "z": 308.4150085449219
+            },
+            "after": {
+                "x": 1774.9786376953125,
+                "y": 0.0,
+                "z": 313.5465393066406
+            },
+            "transformId": 15525052,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1522.333740234375,
+                "y": 0.0,
+                "z": 306.5489807128906
+            },
+            "after": {
+                "x": 1522.333740234375,
+                "y": 0.0,
+                "z": 314.2418518066406
+            },
+            "transformId": 2038820575,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1926.38232421875,
+                "y": 0.0,
+                "z": 284.2414855957031
+            },
+            "after": {
+                "x": 1936.58544921875,
+                "y": 0.0,
+                "z": 284.2414855957031
+            },
+            "transformId": 1006034269,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1809.05810546875,
+                "y": 0.0,
+                "z": 279.1552734375
+            },
+            "after": {
+                "x": 1809.05810546875,
+                "y": 0.0,
+                "z": 274.1162109375
+            },
+            "transformId": 1864931696,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Rock_Flat_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 1739.2001953125,
+                "y": 0.0,
+                "z": 298.38720703125
+            },
+            "after": {
+                "x": 1739.2001953125,
+                "y": 0.0,
+                "z": 320.6168212890625
+            },
+            "transformId": 1445278113,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1366.0103759765625,
+                "y": -0.018269209191203119,
+                "z": 418.0247802734375
+            },
+            "after": {
+                "x": 1398.209716796875,
+                "y": -0.01826918125152588,
+                "z": 413.9417724609375
+            },
+            "transformId": 1668020594,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1362.215087890625,
+                "y": -0.018269209191203119,
+                "z": 414.6907958984375
+            },
+            "after": {
+                "x": 1394.6151123046875,
+                "y": -0.01826918125152588,
+                "z": 393.4669189453125
+            },
+            "transformId": 1707885667,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1366.2557373046875,
+                "y": -0.018269209191203119,
+                "z": 422.83587646484377
+            },
+            "after": {
+                "x": 1394.616943359375,
+                "y": -0.01826918125152588,
+                "z": 397.13751220703127
+            },
+            "transformId": 1094131861,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1357.14892578125,
+                "y": -0.018269209191203119,
+                "z": 430.85430908203127
+            },
+            "after": {
+                "x": 1416.1563720703125,
+                "y": -0.01826918125152588,
+                "z": 402.555908203125
+            },
+            "transformId": 333722019,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1495.4034423828125,
+                "y": -0.029999999329447748,
+                "z": 434.3834228515625
+            },
+            "after": {
+                "x": 1451.0322265625,
+                "y": -0.029999971389770509,
+                "z": 416.51324462890627
+            },
+            "transformId": 1786476563,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1507.3006591796875,
+                "y": -0.029999999329447748,
+                "z": 401.4569091796875
+            },
+            "after": {
+                "x": 1450.642578125,
+                "y": -0.029999971389770509,
+                "z": 398.84130859375
+            },
+            "transformId": 1111324240,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1199.8037109375,
+                "y": -0.029999999329447748,
+                "z": 415.45751953125
+            },
+            "after": {
+                "x": 1213.1884765625,
+                "y": -0.029999971389770509,
+                "z": 396.39129638671877
+            },
+            "transformId": 58165159,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1213.1021728515625,
+                "y": -0.029999999329447748,
+                "z": 388.65313720703127
+            },
+            "after": {
+                "x": 1213.3280029296875,
+                "y": -0.030000001192092897,
+                "z": 400.0
+            },
+            "transformId": 617462024,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1184.6854248046875,
+                "y": -0.018269209191203119,
+                "z": 414.68402099609377
+            },
+            "after": {
+                "x": 1213.286865234375,
+                "y": -0.01826918125152588,
+                "z": 403.64947509765627
+            },
+            "transformId": 1678015651,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1678.5709228515625,
+                "y": -0.018269209191203119,
+                "z": 507.02459716796877
+            },
+            "after": {
+                "x": 1658.43359375,
+                "y": -0.01826918125152588,
+                "z": 557.9252319335938
+            },
+            "transformId": 1546196061,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1169.0255126953125,
+                "y": -0.029999999329447748,
+                "z": 414.144775390625
+            },
+            "after": {
+                "x": 1185.3280029296875,
+                "y": -0.030000001192092897,
+                "z": 396.4000244140625
+            },
+            "transformId": 551772982,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1168.5032958984375,
+                "y": -0.029999999329447748,
+                "z": 419.8917236328125
+            },
+            "after": {
+                "x": 1185.3280029296875,
+                "y": -0.030000001192092897,
+                "z": 400.0
+            },
+            "transformId": 352025188,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1156.3643798828125,
+                "y": -0.029999999329447748,
+                "z": 420.20751953125
+            },
+            "after": {
+                "x": 1184.9205322265625,
+                "y": -0.030000001192092897,
+                "z": 403.5999755859375
+            },
+            "transformId": 1917468256,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1134.1514892578125,
+                "y": -0.029999999329447748,
+                "z": 385.3841552734375
+            },
+            "after": {
+                "x": 1156.8218994140625,
+                "y": -0.030000001192092897,
+                "z": 396.4000244140625
+            },
+            "transformId": 1356360657,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1149.14794921875,
+                "y": -0.018269209191203119,
+                "z": 420.1859130859375
+            },
+            "after": {
+                "x": 1157.2445068359375,
+                "y": -0.01826918125152588,
+                "z": 399.9505615234375
+            },
+            "transformId": 1474244531,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1117.2353515625,
+                "y": -0.029999999329447748,
+                "z": 419.89056396484377
+            },
+            "after": {
+                "x": 1157.34228515625,
+                "y": -0.030000001192092897,
+                "z": 403.60003662109377
+            },
+            "transformId": 811849232,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1116.570556640625,
+                "y": -0.029999999329447748,
+                "z": 648.8250122070313
+            },
+            "after": {
+                "x": 1146.5379638671875,
+                "y": -0.029999971389770509,
+                "z": 652.2232055664063
+            },
+            "transformId": 321284234,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1123.3218994140625,
+                "y": -0.022328762337565423,
+                "z": 640.9678344726563
+            },
+            "after": {
+                "x": 1148.5836181640625,
+                "y": -0.022328734397888185,
+                "z": 655.8231811523438
+            },
+            "transformId": 2018909281,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1150.3126220703125,
+                "y": -0.029999999329447748,
+                "z": 649.3126831054688
+            },
+            "after": {
+                "x": 1146.537841796875,
+                "y": -0.029999971389770509,
+                "z": 659.4231567382813
+            },
+            "transformId": 1888553711,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1114.9420166015625,
+                "y": -0.029999999329447748,
+                "z": 445.6993408203125
+            },
+            "after": {
+                "x": 1129.171875,
+                "y": -0.029999971389770509,
+                "z": 396.4000244140625
+            },
+            "transformId": 2029131578,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1107.86962890625,
+                "y": -0.029999999329447748,
+                "z": 445.47161865234377
+            },
+            "after": {
+                "x": 1128.82177734375,
+                "y": -0.030000001192092897,
+                "z": 400.0
+            },
+            "transformId": 410074648,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1096.671630859375,
+                "y": -0.018269209191203119,
+                "z": 444.1326904296875
+            },
+            "after": {
+                "x": 1129.2845458984375,
+                "y": -0.01826918125152588,
+                "z": 403.578857421875
+            },
+            "transformId": 1629876770,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1045.3128662109375,
+                "y": -0.029999999329447748,
+                "z": 399.3681640625
+            },
+            "after": {
+                "x": 1101.1885986328125,
+                "y": -0.029999971389770509,
+                "z": 396.40875244140627
+            },
+            "transformId": 1890540425,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1042.3055419921875,
+                "y": -0.029999999329447748,
+                "z": 412.4254150390625
+            },
+            "after": {
+                "x": 1101.189208984375,
+                "y": -0.029999971389770509,
+                "z": 400.0
+            },
+            "transformId": 1516581426,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1044.5924072265625,
+                "y": -0.018269209191203119,
+                "z": 432.75604248046877
+            },
+            "after": {
+                "x": 1101.244384765625,
+                "y": -0.01826918125152588,
+                "z": 403.55059814453127
+            },
+            "transformId": 208938954,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1803.400634765625,
+                "y": -0.029999999329447748,
+                "z": 514.5721435546875
+            },
+            "after": {
+                "x": 1765.6072998046875,
+                "y": -0.029999971389770509,
+                "z": 541.1578369140625
+            },
+            "transformId": 636956188,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1773.3587646484375,
+                "y": -0.029999999329447748,
+                "z": 495.8984375
+            },
+            "after": {
+                "x": 1765.6077880859375,
+                "y": -0.029999971389770509,
+                "z": 544.7665405273438
+            },
+            "transformId": 1305667366,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1754.1094970703125,
+                "y": -0.018269209191203119,
+                "z": 495.74603271484377
+            },
+            "after": {
+                "x": 1765.610595703125,
+                "y": -0.01826918125152588,
+                "z": 548.3367309570313
+            },
+            "transformId": 670383416,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1051.0667724609375,
+                "y": -0.022328762337565423,
+                "z": 447.86199951171877
+            },
+            "after": {
+                "x": 1073.0069580078125,
+                "y": -0.022328734397888185,
+                "z": 396.39996337890627
+            },
+            "transformId": 47224293,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1071.0986328125,
+                "y": -0.022328762337565423,
+                "z": 450.14068603515627
+            },
+            "after": {
+                "x": 1042.7822265625,
+                "y": -0.022328734397888185,
+                "z": 396.39996337890627
+            },
+            "transformId": 2107554010,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1061.146240234375,
+                "y": -0.029999999329447748,
+                "z": 452.60980224609377
+            },
+            "after": {
+                "x": 1073.342041015625,
+                "y": -0.030000001192092897,
+                "z": 403.60003662109377
+            },
+            "transformId": 991458380,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1834.1094970703125,
+                "y": -0.018269209191203119,
+                "z": 515.0256958007813
+            },
+            "after": {
+                "x": 1803.88623046875,
+                "y": -0.01826918125152588,
+                "z": 567.3809204101563
+            },
+            "transformId": 1119273705,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1032.9703369140625,
+                "y": -0.029999999329447748,
+                "z": 707.3565063476563
+            },
+            "after": {
+                "x": 1033.3956298828125,
+                "y": -0.029999971389770509,
+                "z": 679.865478515625
+            },
+            "transformId": 582721599,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1032.30078125,
+                "y": -0.029999999329447748,
+                "z": 657.9989624023438
+            },
+            "after": {
+                "x": 1033.12744140625,
+                "y": -0.030000001192092897,
+                "z": 683.4741821289063
+            },
+            "transformId": 145542749,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1015.149658203125,
+                "y": -0.029999999329447748,
+                "z": 655.0687866210938
+            },
+            "after": {
+                "x": 1033.534912109375,
+                "y": -0.030000001192092897,
+                "z": 687.0742797851563
+            },
+            "transformId": 1388797350,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1917.287841796875,
+                "y": -0.018269209191203119,
+                "z": 510.31732177734377
+            },
+            "after": {
+                "x": 1899.3785400390625,
+                "y": -0.01826918125152588,
+                "z": 564.8844604492188
+            },
+            "transformId": 1059179660,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1932.4365234375,
+                "y": -0.029999999329447748,
+                "z": 511.047119140625
+            },
+            "after": {
+                "x": 1910.49072265625,
+                "y": -0.029999971389770509,
+                "z": 540.4037475585938
+            },
+            "transformId": 342962576,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 963.1380615234375,
+                "y": -0.029999999329447748,
+                "z": 733.9007568359375
+            },
+            "after": {
+                "x": 982.7952880859375,
+                "y": -0.030000001192092897,
+                "z": 715.4647216796875
+            },
+            "transformId": 502490152,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 986.209716796875,
+                "y": -0.029999999329447748,
+                "z": 700.589111328125
+            },
+            "after": {
+                "x": 982.7952880859375,
+                "y": -0.030000001192092897,
+                "z": 719.064697265625
+            },
+            "transformId": 105432026,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 935.73828125,
+                "y": -0.018269209191203119,
+                "z": 713.885986328125
+            },
+            "after": {
+                "x": 983.2601318359375,
+                "y": -0.01826918125152588,
+                "z": 722.7142333984375
+            },
+            "transformId": 605515206,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1949.1103515625,
+                "y": -0.018269209191203119,
+                "z": 503.7208251953125
+            },
+            "after": {
+                "x": 1980.5718994140625,
+                "y": -0.01826918125152588,
+                "z": 508.7779541015625
+            },
+            "transformId": 537699651,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1929.48828125,
+                "y": -0.029999999329447748,
+                "z": 498.03515625
+            },
+            "after": {
+                "x": 1980.6444091796875,
+                "y": -0.029999971389770509,
+                "z": 512.3285522460938
+            },
+            "transformId": 1025747445,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1939.691650390625,
+                "y": -0.018269209191203119,
+                "z": 464.37493896484377
+            },
+            "after": {
+                "x": 1992.9278564453125,
+                "y": -0.01826918125152588,
+                "z": 477.75958251953127
+            },
+            "transformId": 1431369946,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1937.40283203125,
+                "y": -0.029999999329447748,
+                "z": 400.59326171875
+            },
+            "after": {
+                "x": 1991.2178955078125,
+                "y": -0.029999971389770509,
+                "z": 407.85693359375
+            },
+            "transformId": 1906644164,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

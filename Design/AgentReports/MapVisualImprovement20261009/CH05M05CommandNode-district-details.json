@@ -1,0 +1,50 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "beforeHash": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+    "afterHash": "9277a5d2befecb231d8c95b33d2add3e65a8c115d15bc0c1cae2ae024d433c79",
+    "protectedSceneHash": "366c21600a4e22a43b5cfa34fcdbaa6e71b695a02341ca76d9c663eed39d128a",
+    "groups": 1,
+    "buildingRenderers": 10,
+    "variedContainers": 0,
+    "renderersBefore": 4055,
+    "renderersAfter": 4055,
+    "trianglesBefore": 2168333,
+    "trianglesAfter": 2168333,
+    "moves": [
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Powerpole_01 (20)",
+            "reason": "street pole clearance",
+            "before": {
+                "x": 1160.990234375,
+                "y": 0.07000003010034561,
+                "z": 511.469970703125
+            },
+            "after": {
+                "x": 1160.990234375,
+                "y": 0.06999993324279785,
+                "z": 503.27728271484377
+            },
+            "transformId": 160931419,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 882.6799926757813,
+                "y": 1.159999966621399,
+                "z": 387.8199462890625
+            },
+            "after": {
+                "x": 907.258056640625,
+                "y": 1.159999966621399,
+                "z": 355.1398620605469
+            },
+            "transformId": 1513157557,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

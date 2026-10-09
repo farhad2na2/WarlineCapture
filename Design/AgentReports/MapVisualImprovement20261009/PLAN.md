@@ -66,3 +66,11 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 - Lowered inappropriate dirt-strip relief on 1,989 pieces, rebuilt eight runway sections with continuous straight surfaces and aligned markings. Preserved exact XZ footprints, authored ramps, transforms, collision and mission data. Road triangle count fell from 336,056 to 334,680.
 - Connected small gaps between existing paved frontages while protecting road coverage, reduced yellow-green ground contrast, and added sparse concrete fractures and worn limestone sets. No extra scene objects.
 - Eleven native source/capture checks and the connected-ground checks passed. See `step2-validation.json` and `step2-gallery.html`. Full normal-input missions and Android acceptance remain pending.
+
+- Step 2 published: commit `f1ec95e833b49fabefc9855ea0cae7fbd6af226e`, PR [#60](https://github.com/farhad2na2/WarlineCapture/pull/60), main merge `ce537469aeaa6b9d58bc2a07b449d5e341d6980e`. Main fast-forwarded; ten unrelated dirty files hash-verified unchanged and all 7,170 untracked paths preserved.
+
+### Step 3 validated
+
+- City and industrial detail: 193 groups, 2,701 buildingRenderers, 12,055 variedContainers, 606 movedProps.
+- All eleven native scene checks passed. Renderers and triangles unchanged. Recorded decorative transforms and material references are the only source changes; collision, gameplay data, building placements and authored lighting retained.
+- Evidence: `step3-validation.json`, native receipts, full wrapper logs and `step3-gallery.html`. Normal-input mission and Android acceptance remain pending.

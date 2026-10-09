@@ -1,0 +1,118 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "beforeHash": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+    "afterHash": "68577e50cf2a71f5eafa8f9d9bcda43795c47edfef9c30f8db86853430a9d6b7",
+    "protectedSceneHash": "faca561fa4a1d716007e53db72f6c4034fc019b7ebd84a92d0c8d012bbdf9762",
+    "groups": 3,
+    "buildingRenderers": 128,
+    "variedContainers": 4715,
+    "renderersBefore": 10373,
+    "renderersAfter": 10373,
+    "trianglesBefore": 8017300,
+    "trianglesAfter": 8017300,
+    "moves": [
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 971.5762329101563,
+                "y": -0.018269209191203119,
+                "z": 396.17633056640627
+            },
+            "after": {
+                "x": 927.6305541992188,
+                "y": -0.01826918125152588,
+                "z": 363.2044677734375
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 277907435,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 970.805419921875,
+                "y": -0.029999999329447748,
+                "z": 402.0226745605469
+            },
+            "after": {
+                "x": 927.7033081054688,
+                "y": -0.029999971389770509,
+                "z": 366.7550354003906
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1490713958,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 971.1383666992188,
+                "y": -0.018269209191203119,
+                "z": 430.17755126953127
+            },
+            "after": {
+                "x": 984.1943969726563,
+                "y": -0.01826918125152588,
+                "z": 369.15911865234377
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 662321156,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 962.0309448242188,
+                "y": -0.018269209191203119,
+                "z": 613.4658203125
+            },
+            "after": {
+                "x": 981.1171264648438,
+                "y": -0.01826918125152588,
+                "z": 623.4798583984375
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 2070707568,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 984.8255004882813,
+                "y": 1.007130742073059,
+                "z": 657.1196899414063
+            },
+            "after": {
+                "x": 981.1730346679688,
+                "y": 1.0071306228637696,
+                "z": 627.0391845703125
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1063548798,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_AshLinePort/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 953.612060546875,
+                "y": -0.018269209191203119,
+                "z": 601.5676879882813
+            },
+            "after": {
+                "x": 981.1171875,
+                "y": -0.01826918125152588,
+                "z": 630.6798706054688
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 550101407,
+            "prefabTransformId": 4572491030229316
+        }
+    ]
+}

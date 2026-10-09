@@ -1,0 +1,1580 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeHash": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+    "afterHash": "97836ca7f406dfb6ba295cab39cd8698f0649566d53060e83ef05db5af311991",
+    "protectedSceneHash": "faf2a3aa538ab1bbe28ac864d8a0ea3a35c9137c0af5141091fdc05af59d463d",
+    "groups": 40,
+    "buildingRenderers": 139,
+    "variedContainers": 795,
+    "renderersBefore": 24996,
+    "renderersAfter": 24996,
+    "trianglesBefore": 14932269,
+    "trianglesAfter": 14932269,
+    "moves": [
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 737.2103881835938,
+                "y": -0.029999999329447748,
+                "z": 398.2192687988281
+            },
+            "after": {
+                "x": 748.3279418945313,
+                "y": -0.030000001192092897,
+                "z": 410.3999938964844
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 170597566,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 751.7466430664063,
+                "y": -0.029999999329447748,
+                "z": 414.1956787109375
+            },
+            "after": {
+                "x": 748.3987426757813,
+                "y": -0.030000001192092897,
+                "z": 414.0
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 392593404,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 751.9716796875,
+                "y": -0.022328762337565423,
+                "z": 416.9732971191406
+            },
+            "after": {
+                "x": 750.2176513671875,
+                "y": -0.022328734397888185,
+                "z": 417.6000061035156
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 324235676,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 657.8959350585938,
+                "y": -0.029999999329447748,
+                "z": 399.4355163574219
+            },
+            "after": {
+                "x": 688.4197387695313,
+                "y": -0.030000001192092897,
+                "z": 369.9206237792969
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1916065971,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 741.3374633789063,
+                "y": -0.029999999329447748,
+                "z": 397.74713134765627
+            },
+            "after": {
+                "x": 716.1680297851563,
+                "y": -0.030000001192092897,
+                "z": 376.11322021484377
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1734093853,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 747.5313110351563,
+                "y": -0.029999999329447748,
+                "z": 400.9333801269531
+            },
+            "after": {
+                "x": 716.2293090820313,
+                "y": -0.030000001192092897,
+                "z": 379.7132263183594
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1433258452,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 725.7510375976563,
+                "y": -0.029999999329447748,
+                "z": 325.7324523925781
+            },
+            "after": {
+                "x": 716.7203979492188,
+                "y": -0.030000001192092897,
+                "z": 372.5132751464844
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 172524216,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 734.1123046875,
+                "y": -0.029999999329447748,
+                "z": 327.2292785644531
+            },
+            "after": {
+                "x": 722.140380859375,
+                "y": -0.030000001192092897,
+                "z": 360.0793762207031
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1781244251,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 751.4231567382813,
+                "y": -0.029999999329447748,
+                "z": 397.8214111328125
+            },
+            "after": {
+                "x": 757.6959838867188,
+                "y": -0.030000001192092897,
+                "z": 371.728515625
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1138831874,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 752.0032348632813,
+                "y": -0.029999999329447748,
+                "z": 405.70166015625
+            },
+            "after": {
+                "x": 757.7077026367188,
+                "y": -0.030000001192092897,
+                "z": 375.3284912109375
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1822145272,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 764.5610961914063,
+                "y": -0.029999999329447748,
+                "z": 401.8612976074219
+            },
+            "after": {
+                "x": 740.0796508789063,
+                "y": -0.030000001192092897,
+                "z": 371.7285461425781
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 973146441,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 674.4960327148438,
+                "y": -0.029999999329447748,
+                "z": 325.23638916015627
+            },
+            "after": {
+                "x": 686.0341186523438,
+                "y": -0.029999971389770509,
+                "z": 327.8637390136719
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1325404884,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 671.678955078125,
+                "y": -0.018269209191203119,
+                "z": 325.5099182128906
+            },
+            "after": {
+                "x": 685.9481201171875,
+                "y": -0.01826918125152588,
+                "z": 331.4996337890625
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1614235528,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 680.2411499023438,
+                "y": -0.018269209191203119,
+                "z": 697.0785522460938
+            },
+            "after": {
+                "x": 694.9285278320313,
+                "y": -0.01826918125152588,
+                "z": 666.4959106445313
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 504206528,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 677.2465209960938,
+                "y": -0.029999999329447748,
+                "z": 699.7140502929688
+            },
+            "after": {
+                "x": 694.5559692382813,
+                "y": -0.030000001192092897,
+                "z": 670.0452270507813
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 570609640,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 640.9905395507813,
+                "y": -0.029999999329447748,
+                "z": 699.696533203125
+            },
+            "after": {
+                "x": 694.8524780273438,
+                "y": -0.029999971389770509,
+                "z": 673.6460571289063
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1637248927,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 668.3125,
+                "y": -0.029999999329447748,
+                "z": 613.590087890625
+            },
+            "after": {
+                "x": 670.7635498046875,
+                "y": -0.030000001192092897,
+                "z": 645.85400390625
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 11676387,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 655.3748779296875,
+                "y": -0.029999999329447748,
+                "z": 614.3617553710938
+            },
+            "after": {
+                "x": 670.20654296875,
+                "y": -0.030000001192092897,
+                "z": 649.4539184570313
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1084224984,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 649.1853637695313,
+                "y": -0.029999999329447748,
+                "z": 615.7316284179688
+            },
+            "after": {
+                "x": 670.7732543945313,
+                "y": -0.030000001192092897,
+                "z": 653.0538940429688
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1334444035,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 749.7108154296875,
+                "y": -0.029999999329447748,
+                "z": 600.19482421875
+            },
+            "after": {
+                "x": 746.8499755859375,
+                "y": -0.030000001192092897,
+                "z": 645.611328125
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 264663250,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 711.5974731445313,
+                "y": -0.029999999329447748,
+                "z": 603.6378173828125
+            },
+            "after": {
+                "x": 729.0524291992188,
+                "y": -0.030000001192092897,
+                "z": 645.6114501953125
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 581553810,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 771.5297241210938,
+                "y": -0.022328762337565423,
+                "z": 607.7246704101563
+            },
+            "after": {
+                "x": 746.9360961914063,
+                "y": -0.022328734397888185,
+                "z": 652.8113403320313
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1756958528,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 666.576904296875,
+                "y": -0.029999999329447748,
+                "z": 326.6839599609375
+            },
+            "after": {
+                "x": 682.0560913085938,
+                "y": -0.029999971389770509,
+                "z": 330.3011169433594
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 2008745080,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 662.946044921875,
+                "y": -0.022328762337565423,
+                "z": 324.69061279296877
+            },
+            "after": {
+                "x": 659.8887939453125,
+                "y": -0.022328734397888185,
+                "z": 358.271484375
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1078538212,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 725.7684936523438,
+                "y": -0.018269209191203119,
+                "z": 323.29815673828127
+            },
+            "after": {
+                "x": 727.6727905273438,
+                "y": -0.01826918125152588,
+                "z": 316.84210205078127
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 631038644,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 720.8143920898438,
+                "y": -0.029999999329447748,
+                "z": 312.34100341796877
+            },
+            "after": {
+                "x": 727.1829223632813,
+                "y": -0.030000001192092897,
+                "z": 320.39031982421877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1301101181,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 734.8638305664063,
+                "y": -0.029999999329447748,
+                "z": 323.54864501953127
+            },
+            "after": {
+                "x": 727.1654663085938,
+                "y": -0.030000001192092897,
+                "z": 323.99029541015627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1388018397,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 661.0263061523438,
+                "y": -0.029999999329447748,
+                "z": 315.1326904296875
+            },
+            "after": {
+                "x": 681.0012817382813,
+                "y": -0.029999971389770509,
+                "z": 306.3023986816406
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1481481377,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 659.6294555664063,
+                "y": -0.029999999329447748,
+                "z": 303.60223388671877
+            },
+            "after": {
+                "x": 681.2389526367188,
+                "y": -0.030000001192092897,
+                "z": 309.8936767578125
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 351661079,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 724.0006713867188,
+                "y": -0.029999999329447748,
+                "z": 302.0011291503906
+            },
+            "after": {
+                "x": 680.8757934570313,
+                "y": -0.030000001192092897,
+                "z": 313.4936828613281
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1197936676,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 567.336669921875,
+                "y": -0.029999999329447748,
+                "z": 415.214599609375
+            },
+            "after": {
+                "x": 569.642822265625,
+                "y": -0.030000001192092897,
+                "z": 410.4000244140625
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 414451030,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 586.4188842773438,
+                "y": -0.029999999329447748,
+                "z": 397.1753234863281
+            },
+            "after": {
+                "x": 569.9776000976563,
+                "y": -0.030000001192092897,
+                "z": 413.9999694824219
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 249780532,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 568.5814208984375,
+                "y": -0.029999999329447748,
+                "z": 406.38238525390627
+            },
+            "after": {
+                "x": 570.0794677734375,
+                "y": -0.030000001192092897,
+                "z": 417.60003662109377
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2146897762,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 612.9517211914063,
+                "y": -0.029999999329447748,
+                "z": 394.92449951171877
+            },
+            "after": {
+                "x": 615.9335327148438,
+                "y": -0.030000001192092897,
+                "z": 369.92059326171877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1601484509,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 799.2556762695313,
+                "y": -0.029999999329447748,
+                "z": 398.3158874511719
+            },
+            "after": {
+                "x": 791.9795532226563,
+                "y": -0.030000001192092897,
+                "z": 369.9206237792969
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1354572206,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 763.2518920898438,
+                "y": -0.029999999329447748,
+                "z": 408.9960632324219
+            },
+            "after": {
+                "x": 778.0620727539063,
+                "y": -0.030000001192092897,
+                "z": 369.9206237792969
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 805294339,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 781.5342407226563,
+                "y": -0.022328762337565423,
+                "z": 612.705322265625
+            },
+            "after": {
+                "x": 795.0372924804688,
+                "y": -0.022328734397888185,
+                "z": 637.807373046875
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 832289224,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 796.97607421875,
+                "y": -0.022328762337565423,
+                "z": 600.760498046875
+            },
+            "after": {
+                "x": 773.05322265625,
+                "y": -0.022328734397888185,
+                "z": 634.2073974609375
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 82102650,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 826.3106079101563,
+                "y": -0.018269209191203119,
+                "z": 613.639404296875
+            },
+            "after": {
+                "x": 793.0054321289063,
+                "y": -0.01826918125152588,
+                "z": 634.228515625
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1272933386,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 646.8284301757813,
+                "y": -0.029999999329447748,
+                "z": 308.01666259765627
+            },
+            "after": {
+                "x": 682.5899047851563,
+                "y": -0.030000001192092897,
+                "z": 300.01214599609377
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 1823532612,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 658.5321044921875,
+                "y": -0.029999999329447748,
+                "z": 326.5191650390625
+            },
+            "after": {
+                "x": 682.4586791992188,
+                "y": -0.029999971389770509,
+                "z": 303.6036376953125
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1180234450,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 659.7890625,
+                "y": -0.018269209191203119,
+                "z": 328.5235900878906
+            },
+            "after": {
+                "x": 662.7432861328125,
+                "y": -0.01826918125152588,
+                "z": 300.06072998046877
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 843786139,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 615.679931640625,
+                "y": -0.029999999329447748,
+                "z": 613.5935668945313
+            },
+            "after": {
+                "x": 618.5009765625,
+                "y": -0.030000001192092897,
+                "z": 647.0558471679688
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 767404562,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 605.6133422851563,
+                "y": -0.018269209191203119,
+                "z": 612.1141357421875
+            },
+            "after": {
+                "x": 618.4446411132813,
+                "y": -0.01826918125152588,
+                "z": 650.634765625
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 983023018,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 647.02294921875,
+                "y": -0.029999999329447748,
+                "z": 612.7090454101563
+            },
+            "after": {
+                "x": 618.1943359375,
+                "y": -0.030000001192092897,
+                "z": 654.2557983398438
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2100748271,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 758.5095825195313,
+                "y": -0.029999999329447748,
+                "z": 312.6048583984375
+            },
+            "after": {
+                "x": 759.8739624023438,
+                "y": -0.030000001192092897,
+                "z": 310.7545166015625
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2123584736,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 748.7428588867188,
+                "y": -0.029999999329447748,
+                "z": 310.1188049316406
+            },
+            "after": {
+                "x": 759.9891357421875,
+                "y": -0.030000001192092897,
+                "z": 314.3545227050781
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 176355163,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 756.3842163085938,
+                "y": -0.018269209191203119,
+                "z": 317.97808837890627
+            },
+            "after": {
+                "x": 747.4774780273438,
+                "y": -0.01826918125152588,
+                "z": 307.20611572265627
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 683739966,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 829.2684936523438,
+                "y": -0.022328762337565423,
+                "z": 612.115966796875
+            },
+            "after": {
+                "x": 811.7582397460938,
+                "y": -0.022328734397888185,
+                "z": 638.455078125
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1531396719,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 809.8895874023438,
+                "y": -0.022328762337565423,
+                "z": 589.1962890625
+            },
+            "after": {
+                "x": 811.7582397460938,
+                "y": -0.022328734397888185,
+                "z": 645.655029296875
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 729647688,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 807.1264038085938,
+                "y": -0.029999999329447748,
+                "z": 577.6411743164063
+            },
+            "after": {
+                "x": 797.7376098632813,
+                "y": -0.030000001192092897,
+                "z": 645.6550903320313
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1350030586,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 798.940673828125,
+                "y": -0.029999999329447748,
+                "z": 326.20977783203127
+            },
+            "after": {
+                "x": 798.21875,
+                "y": -0.030000001192092897,
+                "z": 360.07940673828127
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 717511469,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 629.3612670898438,
+                "y": -0.029999999329447748,
+                "z": 312.005859375
+            },
+            "after": {
+                "x": 646.9225463867188,
+                "y": -0.030000001192092897,
+                "z": 307.3929443359375
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 556570608,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 634.3643798828125,
+                "y": -0.029999999329447748,
+                "z": 320.1509704589844
+            },
+            "after": {
+                "x": 647.4554443359375,
+                "y": -0.030000001192092897,
+                "z": 310.9929504394531
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 2137243982,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 627.7379760742188,
+                "y": -0.029999999329447748,
+                "z": 309.9037170410156
+            },
+            "after": {
+                "x": 646.9563598632813,
+                "y": -0.030000001192092897,
+                "z": 314.5929260253906
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1555566018,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 607.5430297851563,
+                "y": -0.018269209191203119,
+                "z": 324.6275634765625
+            },
+            "after": {
+                "x": 601.115478515625,
+                "y": -0.01826918125152588,
+                "z": 329.19219970703127
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1177777287,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 860.0850219726563,
+                "y": -0.029999999329447748,
+                "z": 407.8003845214844
+            },
+            "after": {
+                "x": 823.9301147460938,
+                "y": -0.030000001192092897,
+                "z": 370.3098449707031
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 416045486,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 583.1253662109375,
+                "y": -0.029999999329447748,
+                "z": 694.5895385742188
+            },
+            "after": {
+                "x": 633.2742919921875,
+                "y": -0.030000001192092897,
+                "z": 682.9380493164063
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 283976183,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 577.1580810546875,
+                "y": -0.029999999329447748,
+                "z": 699.5765991210938
+            },
+            "after": {
+                "x": 633.7012939453125,
+                "y": -0.029999971389770509,
+                "z": 686.5294799804688
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1415696295,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 801.1386108398438,
+                "y": -0.029999999329447748,
+                "z": 329.54095458984377
+            },
+            "after": {
+                "x": 801.5147094726563,
+                "y": -0.030000001192092897,
+                "z": 329.92059326171877
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 450298175,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 787.6654663085938,
+                "y": -0.029999999329447748,
+                "z": 327.39276123046877
+            },
+            "after": {
+                "x": 787.9400024414063,
+                "y": -0.030000001192092897,
+                "z": 329.92059326171877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1601850108,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 623.1300659179688,
+                "y": -0.029999999329447748,
+                "z": 307.59185791015627
+            },
+            "after": {
+                "x": 624.0127563476563,
+                "y": -0.030000001192092897,
+                "z": 304.88580322265627
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 66554954,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 624.9907836914063,
+                "y": -0.029999999329447748,
+                "z": 307.5555725097656
+            },
+            "after": {
+                "x": 623.3788452148438,
+                "y": -0.030000001192092897,
+                "z": 308.4858093261719
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2082446267,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 626.4657592773438,
+                "y": -0.018269209191203119,
+                "z": 307.1990966796875
+            },
+            "after": {
+                "x": 623.847412109375,
+                "y": -0.01826918125152588,
+                "z": 312.03485107421877
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 308731427,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 576.9008178710938,
+                "y": -0.018269209191203119,
+                "z": 326.9108581542969
+            },
+            "after": {
+                "x": 578.1495361328125,
+                "y": -0.01826918125152588,
+                "z": 329.2278747558594
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 600796618,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 565.1146850585938,
+                "y": -0.029999999329447748,
+                "z": 394.0018310546875
+            },
+            "after": {
+                "x": 551.0864868164063,
+                "y": -0.030000001192092897,
+                "z": 369.920654296875
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1952171115,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 564.7222900390625,
+                "y": -0.029999999329447748,
+                "z": 396.7825012207031
+            },
+            "after": {
+                "x": 551.0408935546875,
+                "y": -0.030000001192092897,
+                "z": 373.5205993652344
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1531364193,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 569.697998046875,
+                "y": -0.029999999329447748,
+                "z": 401.0527038574219
+            },
+            "after": {
+                "x": 551.468505859375,
+                "y": -0.030000001192092897,
+                "z": 377.1206359863281
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 906038774,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 592.525634765625,
+                "y": -0.029999999329447748,
+                "z": 300.04742431640627
+            },
+            "after": {
+                "x": 600.5001220703125,
+                "y": -0.030000001192092897,
+                "z": 301.17596435546877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1262153372,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 595.1421508789063,
+                "y": -0.029999999329447748,
+                "z": 310.0260009765625
+            },
+            "after": {
+                "x": 600.8093872070313,
+                "y": -0.029999971389770509,
+                "z": 304.7748107910156
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 711585626,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 597.3763427734375,
+                "y": -0.029999999329447748,
+                "z": 310.43695068359377
+            },
+            "after": {
+                "x": 600.4288330078125,
+                "y": -0.030000001192092897,
+                "z": 308.37591552734377
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1897390402,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 812.517578125,
+                "y": -0.029999999329447748,
+                "z": 302.6085205078125
+            },
+            "after": {
+                "x": 810.9166870117188,
+                "y": -0.029999971389770509,
+                "z": 301.85565185546877
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 454876087,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 794.4824829101563,
+                "y": -0.029999999329447748,
+                "z": 308.5613098144531
+            },
+            "after": {
+                "x": 810.6968383789063,
+                "y": -0.030000001192092897,
+                "z": 305.4557189941406
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1359177191,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 805.0574340820313,
+                "y": -0.029999999329447748,
+                "z": 323.1659240722656
+            },
+            "after": {
+                "x": 795.5665893554688,
+                "y": -0.030000001192092897,
+                "z": 301.8556823730469
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 56350551,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 848.826171875,
+                "y": -0.018269209191203119,
+                "z": 331.8159484863281
+            },
+            "after": {
+                "x": 870.7222900390625,
+                "y": -0.01826918125152588,
+                "z": 351.7451171875
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1945963921,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 846.8679809570313,
+                "y": -0.029999999329447748,
+                "z": 332.61297607421877
+            },
+            "after": {
+                "x": 870.2942504882813,
+                "y": -0.030000001192092897,
+                "z": 355.39764404296877
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1732692130,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 848.9150390625,
+                "y": -0.029999999329447748,
+                "z": 329.8668518066406
+            },
+            "after": {
+                "x": 870.212890625,
+                "y": -0.030000001192092897,
+                "z": 358.9976501464844
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 2016763499,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 842.8023071289063,
+                "y": -0.022328762337565423,
+                "z": 322.7415466308594
+            },
+            "after": {
+                "x": 844.9791870117188,
+                "y": -0.022328734397888185,
+                "z": 329.9206237792969
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1218639052,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 836.3662109375,
+                "y": -0.029999999329447748,
+                "z": 321.3761901855469
+            },
+            "after": {
+                "x": 831.0011596679688,
+                "y": -0.029999971389770509,
+                "z": 329.9210205078125
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1075878388,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 835.7000122070313,
+                "y": -0.029999999329447748,
+                "z": 319.8177795410156
+            },
+            "after": {
+                "x": 831.2664184570313,
+                "y": -0.030000001192092897,
+                "z": 333.5205993652344
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1886060372,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 494.7138366699219,
+                "y": -0.029999999329447748,
+                "z": 380.2708740234375
+            },
+            "after": {
+                "x": 513.322509765625,
+                "y": -0.030000001192092897,
+                "z": 369.18023681640627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1172356699,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 867.62939453125,
+                "y": -0.022328762337565423,
+                "z": 692.453369140625
+            },
+            "after": {
+                "x": 828.1103515625,
+                "y": -0.022328734397888185,
+                "z": 696.5064697265625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 892610083,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 566.4071044921875,
+                "y": -0.022328762337565423,
+                "z": 315.2350769042969
+            },
+            "after": {
+                "x": 578.8489990234375,
+                "y": -0.022328734397888185,
+                "z": 311.3312072753906
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1668905928,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 578.353515625,
+                "y": -0.018269209191203119,
+                "z": 316.90625
+            },
+            "after": {
+                "x": 567.7279663085938,
+                "y": -0.01826918125152588,
+                "z": 311.38153076171877
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 2043732342,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 584.3917236328125,
+                "y": -0.029999999329447748,
+                "z": 308.3058776855469
+            },
+            "after": {
+                "x": 578.6361083984375,
+                "y": -0.030000001192092897,
+                "z": 304.1311340332031
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1715278998,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 898.564697265625,
+                "y": -0.029999999329447748,
+                "z": 399.03753662109377
+            },
+            "after": {
+                "x": 905.87646484375,
+                "y": -0.029999971389770509,
+                "z": 383.361328125
+            },
+            "transformId": 4353113926493982,
+            "instanceId": 1296868451,
+            "prefabTransformId": 4353113926493982
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 902.3815307617188,
+                "y": -0.018269209191203119,
+                "z": 400.5346984863281
+            },
+            "after": {
+                "x": 893.2062377929688,
+                "y": -0.01826918125152588,
+                "z": 376.1736755371094
+            },
+            "transformId": 4572491030229316,
+            "instanceId": 1623782042,
+            "prefabTransformId": 4572491030229316
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 862.1207885742188,
+                "y": -0.029999999329447748,
+                "z": 414.71697998046877
+            },
+            "after": {
+                "x": 893.5650024414063,
+                "y": -0.030000001192092897,
+                "z": 383.35260009765627
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1492534292,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 490.2076721191406,
+                "y": -0.029999999329447748,
+                "z": 384.0027770996094
+            },
+            "after": {
+                "x": 507.2207946777344,
+                "y": -0.030000001192092897,
+                "z": 369.9206237792969
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1817461365,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Pallet_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 487.10028076171877,
+                "y": -0.029999999329447748,
+                "z": 380.8121032714844
+            },
+            "after": {
+                "x": 493.53509521484377,
+                "y": -0.030000001192092897,
+                "z": 369.9206237792969
+            },
+            "transformId": 4445907069830034,
+            "instanceId": 339836374,
+            "prefabTransformId": 4445907069830034
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 537.615234375,
+                "y": -0.029999999329447748,
+                "z": 325.8530578613281
+            },
+            "after": {
+                "x": 544.4393310546875,
+                "y": -0.030000001192092897,
+                "z": 330.3097839355469
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 822297078,
+            "prefabTransformId": 4221889356610708
+        },
+        {
+            "path": "Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 539.4234619140625,
+                "y": -0.029999999329447748,
+                "z": 324.20501708984377
+            },
+            "after": {
+                "x": 527.7342529296875,
+                "y": -0.030000001192092897,
+                "z": 330.309814453125
+            },
+            "transformId": 4221889356610708,
+            "instanceId": 1831003760,
+            "prefabTransformId": 4221889356610708
+        }
+    ]
+}

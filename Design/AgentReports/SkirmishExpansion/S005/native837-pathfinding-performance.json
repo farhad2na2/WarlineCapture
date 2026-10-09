@@ -1,0 +1,14 @@
+{
+  "result": "completed",
+  "warmupScenarios": 4,
+  "measuredScenarios": 16,
+  "averageMs": 10.21,
+  "p95Ms": 10.27,
+  "p99Ms": 10.27,
+  "maxMs": 10.27,
+  "maxAllocatedBytesCurrentThread": 0,
+  "maxUpdates": 9,
+  "maxPathPoolCells": 10,
+  "manualInfantryRequests": 4,
+  "longDistanceVehicleRequests": 1
+}

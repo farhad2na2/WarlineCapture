@@ -1,0 +1,12 @@
+{
+  "result": "FailedAsExpectedBeforeRuntimeCorrection",
+  "sourceHash": "c3685a894497cefcc1731c4b9eabaf8d292cefaa0b2c1cb3581073a4bd80adf3",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 0,
+  "requiredPassMarkerPresent": false,
+  "failure": "Pathfinding did not complete within 128 updates; request consumed without a path to the actual goal",
+  "log": "native-835-captured-depot-regression-baseline.log",
+  "preSourceManifest": "final-835-captured-depot-regression-pre-source-manifest.json",
+  "postSourceManifest": "final-835-captured-depot-regression-closed-post-source-manifest.json",
+  "missionPlayerReady": false
+}

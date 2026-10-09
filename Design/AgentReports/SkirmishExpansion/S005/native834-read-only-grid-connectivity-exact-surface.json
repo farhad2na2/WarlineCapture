@@ -1,0 +1,352 @@
+{
+  "scope": "Bounded offline diagnostic from read-only live snapshot; not a mission acceptance test",
+  "frame": 32511,
+  "minX": 700,
+  "minY": 450,
+  "width": 450,
+  "height": 450,
+  "modes": [
+    {
+      "mode": "walkable",
+      "components": 1,
+      "actors": [
+        {
+          "entity": "Entity(849:55)",
+          "cell": {
+            "x": 975,
+            "y": 724
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(981:11)",
+          "cell": {
+            "x": 882,
+            "y": 603
+          },
+          "goal": {
+            "x": 905,
+            "y": 601
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(978:21)",
+          "cell": {
+            "x": 975,
+            "y": 712
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(1097:129)",
+          "cell": {
+            "x": 857,
+            "y": 623
+          },
+          "goal": {
+            "x": 850,
+            "y": 607
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(2619:19)",
+          "cell": {
+            "x": 905,
+            "y": 606
+          },
+          "goal": {
+            "x": 923,
+            "y": 624
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(847:19)",
+          "cell": {
+            "x": 940,
+            "y": 684
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 200704,
+          "goalComponentSize": 200704,
+          "goalComponentTouchesRegionBoundary": true
+        }
+      ]
+    },
+    {
+      "mode": "walkableAndDynamic",
+      "components": 3,
+      "actors": [
+        {
+          "entity": "Entity(849:55)",
+          "cell": {
+            "x": 975,
+            "y": 724
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(981:11)",
+          "cell": {
+            "x": 882,
+            "y": 603
+          },
+          "goal": {
+            "x": 905,
+            "y": 601
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(978:21)",
+          "cell": {
+            "x": 975,
+            "y": 712
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(1097:129)",
+          "cell": {
+            "x": 857,
+            "y": 623
+          },
+          "goal": {
+            "x": 850,
+            "y": 607
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(2619:19)",
+          "cell": {
+            "x": 905,
+            "y": 606
+          },
+          "goal": {
+            "x": 923,
+            "y": 624
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(847:19)",
+          "cell": {
+            "x": 940,
+            "y": 684
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 3,
+          "startComponent": 1,
+          "goalComponent": 1,
+          "connectedWithinRegion": true,
+          "startComponentSize": 168051,
+          "goalComponentSize": 168051,
+          "goalComponentTouchesRegionBoundary": true
+        }
+      ]
+    },
+    {
+      "mode": "walkableDynamicAndPrimaryWheeledSurface",
+      "components": 78,
+      "actors": [
+        {
+          "entity": "Entity(849:55)",
+          "cell": {
+            "x": 975,
+            "y": 724
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(981:11)",
+          "cell": {
+            "x": 882,
+            "y": 603
+          },
+          "goal": {
+            "x": 905,
+            "y": 601
+          },
+          "phase": 1,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(978:21)",
+          "cell": {
+            "x": 975,
+            "y": 712
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 1,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(1097:129)",
+          "cell": {
+            "x": 857,
+            "y": 623
+          },
+          "goal": {
+            "x": 850,
+            "y": 607
+          },
+          "phase": 3,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(2619:19)",
+          "cell": {
+            "x": 905,
+            "y": 606
+          },
+          "goal": {
+            "x": 923,
+            "y": 624
+          },
+          "phase": 3,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        },
+        {
+          "entity": "Entity(847:19)",
+          "cell": {
+            "x": 940,
+            "y": 684
+          },
+          "goal": {
+            "x": 932,
+            "y": 621
+          },
+          "phase": 3,
+          "startComponent": 2,
+          "goalComponent": 2,
+          "connectedWithinRegion": true,
+          "startComponentSize": 134826,
+          "goalComponentSize": 134826,
+          "goalComponentTouchesRegionBoundary": true
+        }
+      ]
+    }
+  ]
+}

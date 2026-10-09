@@ -1,0 +1,365 @@
+{
+  "scope": "Offline replay with uniform traversal costs; does not certify live pathfinding or mission readiness",
+  "results": [
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 180,
+      "expansions": 24386,
+      "cost": 2308,
+      "steps": 210
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 180,
+      "expansions": 10582,
+      "cost": 2402,
+      "steps": 211
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 3,
+      "padding": 180,
+      "expansions": 5565,
+      "cost": 2444,
+      "steps": 210
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 4,
+      "padding": 180,
+      "expansions": 3414,
+      "cost": 2500,
+      "steps": 218
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 40,
+      "expansions": 16639,
+      "cost": 2308,
+      "steps": 210
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 48,
+      "expansions": 19481,
+      "cost": 2308,
+      "steps": 210
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 64,
+      "expansions": 23205,
+      "cost": 2308,
+      "steps": 210
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 724
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 64,
+      "expansions": 10582,
+      "cost": 2402,
+      "steps": 211
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 180,
+      "expansions": 21681,
+      "cost": 2212,
+      "steps": 202
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 180,
+      "expansions": 10044,
+      "cost": 2290,
+      "steps": 203
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 3,
+      "padding": 180,
+      "expansions": 5558,
+      "cost": 2326,
+      "steps": 201
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 4,
+      "padding": 180,
+      "expansions": 3407,
+      "cost": 2376,
+      "steps": 208
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 40,
+      "expansions": 15146,
+      "cost": 2212,
+      "steps": 202
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 48,
+      "expansions": 17780,
+      "cost": 2212,
+      "steps": 202
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 64,
+      "expansions": 21183,
+      "cost": 2212,
+      "steps": 202
+    },
+    {
+      "start": {
+        "x": 975,
+        "y": 712
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 64,
+      "expansions": 10044,
+      "cost": 2290,
+      "steps": 203
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 180,
+      "expansions": 13912,
+      "cost": 1784,
+      "steps": 162
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 180,
+      "expansions": 7111,
+      "cost": 1784,
+      "steps": 162
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 3,
+      "padding": 180,
+      "expansions": 4801,
+      "cost": 1866,
+      "steps": 165
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 4,
+      "padding": 180,
+      "expansions": 3533,
+      "cost": 1916,
+      "steps": 172
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 40,
+      "expansions": 8067,
+      "cost": 1784,
+      "steps": 162
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 48,
+      "expansions": 10021,
+      "cost": 1784,
+      "steps": 162
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 1,
+      "padding": 64,
+      "expansions": 12881,
+      "cost": 1784,
+      "steps": 162
+    },
+    {
+      "start": {
+        "x": 940,
+        "y": 684
+      },
+      "goal": {
+        "x": 932,
+        "y": 621
+      },
+      "heuristicWeight": 2,
+      "padding": 64,
+      "expansions": 7111,
+      "cost": 1784,
+      "steps": 162
+    }
+  ]
+}

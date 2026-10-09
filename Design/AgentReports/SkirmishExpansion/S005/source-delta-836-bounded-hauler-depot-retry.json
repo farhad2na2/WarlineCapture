@@ -1,0 +1,16 @@
+{
+  "beforeSourceHash": "6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869",
+  "afterSourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+  "changedSourceFiles": [
+    "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs",
+    "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs"
+  ],
+  "physicalSceneUnchanged": true,
+  "materialsUnchanged": true,
+  "regressionFixture": "Tools/CI/Fixtures/s005-refinery-detour-grid.json",
+  "scope": "One bounded weighted-search retry only for detailed resource haulers after expansion-limit failure; normal successful searches and other units unchanged",
+  "tradeoff": "One additional bounded search; route optimality is relaxed during that retry. Existing per-search 12000-expansion ceiling remains.",
+  "focusedCases": 9,
+  "normalInputStatus": "Pending native838",
+  "playerReady": false
+}

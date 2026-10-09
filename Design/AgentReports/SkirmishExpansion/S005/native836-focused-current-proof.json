@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-836-hauler-depot-retry-pre-source-manifest.json",
+  "postSourceManifest": "final-836-captured-depot-route-correction-closed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-836-captured-depot-route-correction.log",
+  "requiredPassMarker": "[HaulerDepotMazeValidation] result=Passed tests=6",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [
+    "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+  ]
+}

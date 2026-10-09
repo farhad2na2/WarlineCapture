@@ -3,15 +3,15 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869",
-  "sourceFingerprint": "final-832-integrated-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
+  "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+  "sourceFingerprint": "final-837-hauler-pathfinding-performance-closed-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
   "visualReview": "Owner deferred until technical readiness",
   "deviceAcceptance": "Pending",
-  "focusedCurrentProof": "focused767-placement-map-preview-preservation-pass.json",
-  "activeRun": null,
-  "activeLog": null,
+  "focusedCurrentProof": "native836-focused-current-proof.json",
+  "activeRun": "native838",
+  "activeLog": "native-838-current-manual-en-seed155926.log",
   "nativeCurrentSource": [],
   "priorCandidateRecovery": {
     "sourceHash": "45fec66e1f6c98ae3aae21e18b7923ad31ab2b8bcb8c2db3e7cff07460773420",
@@ -63,8 +63,8 @@
   "priorNativeFactoryControl": [
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
-  "activeScope": null,
-  "nextWork": "Shared placement correction passed current-source normal construction. Continue aircraft refuel/second sortie, mission recovery/role/ARIA gates and cleanup/performance qualification.",
+  "activeScope": "RunS005EditorStrikeCycleProbe",
+  "nextWork": "Complete native838 normal-input aircraft validation on frozen current source. Placement is qualified separately; full role/recovery/ARIA/Campaign and device gates remain open.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -140,8 +140,8 @@
   },
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Aircraft refuel/second sortie, recovery, roles, ARIA and cleanup/performance qualification"
+    "status": "Running",
+    "scope": "RunS005EditorStrikeCycleProbe"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -157,7 +157,7 @@
   "currentManualControlsProof": null,
   "currentBoardedRecoveryProofs": [],
   "sourceFingerprintPending": false,
-  "latestRuntimeChange": "source-delta-796-shared-oil-air-fuel-and-sequential-purchases.json",
+  "latestRuntimeChange": "source-delta-836-bounded-hauler-depot-retry.json",
   "priorCandidateBoardedManualProof": "native688-current-boarded-savecontinue-manual-en-seed155926-victory.json",
   "focusedRunwayRegressions": "focused693-694-shared-runway-liftoff-pass.json",
   "latestNativeAircraftProgress": {
@@ -421,12 +421,12 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-832-integrated-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native806-normal-paid-strike-input-interruption-source-drift-failure.json",
+  "currentSourceFingerprint": "final-834-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native834-normal-paid-strike-cycle-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
-  "activePreManifest": null,
+  "activePreManifest": "final-837-hauler-pathfinding-performance-closed-post-source-manifest.json",
   "latestSourceFitFailure": "native753-readonly-scan-opening-roster-drift-failure.json",
   "latestSourceFitDiagnostic": "native755-readonly-playable-air-fit-completed.json",
   "sourceFitNecessaryGate": {
@@ -468,7 +468,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native806-normal-paid-strike-input-interruption-source-drift-failure.json",
+  "latestAircraftFailure": "native834-normal-paid-strike-cycle-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,
@@ -569,7 +569,7 @@
   "concurrentSurfaceDelta": "source-delta-801-concurrent-surface-work.json",
   "currentCompilationProof": "native831-integrated-pr62-placement-compile-pass.json",
   "commitCheckpoint": {
-    "commit": "81569142da64c1b199f6b48af05575e4b10095d7",
+    "commit": "02d9a9b4f348389e1a684d51d524310acf276d13",
     "remote": "origin/main",
     "pushVerified": true
   },
@@ -591,5 +591,48 @@
   "latestConfirmedSharedPlacementDefectsStatus": "Shared placement correction passed integrated native starting14 and paid20 buildings; Campaign normal journeys remain a separate pending gate",
   "latestShippingPlacementChange": "Shared roads/sidewalk whole-cell clearance, packed and legacy trees/solid props, every legacy mesh range, and cold ordinary-player cache initialization.",
   "priorNativePlacementClearanceBeforePr62": "native830-current-native-starting-paid-clearance-pass.json",
-  "currentIntegratedPlacementAcceptance": "Passed native831 compilation/10 focused cases and native832 normal starting/paid construction; complete mission and device acceptance remain pending"
+  "currentIntegratedPlacementAcceptance": "Passed native831 compilation/10 focused cases and native832 normal starting/paid construction; complete mission and device acceptance remain pending",
+  "latestObservedHaulerStalls": "native833-read-only-hauler-travel-stalls.json",
+  "focusedNative836": {
+    "result": "Passed",
+    "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-836-hauler-depot-retry-pre-source-manifest.json",
+    "postSourceManifest": "final-836-captured-depot-route-correction-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-836-captured-depot-route-correction.log",
+    "requiredPassMarker": "[HaulerDepotMazeValidation] result=Passed tests=6",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [
+      "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+    ]
+  },
+  "focusedNative837": {
+    "result": "Passed",
+    "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-836-captured-depot-route-correction-closed-post-source-manifest.json",
+    "postSourceManifest": "final-837-hauler-pathfinding-performance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-837-hauler-correction-pathfinding-performance.log",
+    "requiredPassMarker": "[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [
+      "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+    ]
+  },
+  "haulerPathCorrection": {
+    "nativeReproduction": "native834-normal-paid-strike-cycle-failure.json",
+    "focusedBaselineFailure": "native835-captured-depot-regression-baseline-failure.json",
+    "focusedCorrection": "native836-focused-current-proof.json",
+    "sharedPerformance": "native837-focused-current-proof.json",
+    "normalInputFollowUp": "native838",
+    "status": "FocusedPassedNativePending"
+  }
 }

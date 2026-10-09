@@ -1,0 +1,131 @@
+{
+  "result": "ObservedProlongedHaulerTravelStalls",
+  "observationOnly": true,
+  "rootCauseConfirmed": false,
+  "noRuntimeMutation": true,
+  "log": "native-834-current-manual-en-seed155926.log",
+  "actorTrace": "s005-aria-live-155926-en-eea73926d8f44f12b812196ed216c459.jsonl.actors.jsonl",
+  "stalls": [
+    {
+      "id": "production.1004.0",
+      "role": "Tanker",
+      "start": 414.75738525390625,
+      "end": 474.8637390136719,
+      "stationarySeconds": 60.106353759765625,
+      "samples": 5,
+      "firstObservation": {
+        "elapsed": 414.75738525390625,
+        "id": "production.1004.0",
+        "role": "Tanker",
+        "faction": 1,
+        "position": {
+          "x": 975.026611328125,
+          "y": 0.00917959213256836,
+          "z": 724.4920043945312
+        },
+        "health": 160.0,
+        "speed": 8.0,
+        "pathIndex": -1,
+        "pathLength": 0,
+        "frame": 22463,
+        "retryResumeFrame": 0,
+        "hasGrid": true,
+        "hasTarget": false,
+        "hasPathRequest": false,
+        "hasPathFollow": false,
+        "hasPathRange": false,
+        "hasRetryCooldown": false,
+        "hasLongDistanceMove": false,
+        "gridCell": {
+          "x": 975,
+          "y": 724
+        },
+        "targetCell": {
+          "x": 0,
+          "y": 0
+        },
+        "requestedGoal": {
+          "x": 0,
+          "y": 0
+        },
+        "haulGoal": {
+          "x": 932,
+          "y": 621
+        },
+        "longDistanceGoal": {
+          "x": 0,
+          "y": 0
+        },
+        "haulActionEndsAt": 0.0,
+        "engaged": false,
+        "stationary": false,
+        "air": false,
+        "hauling": true,
+        "haulSource": 7,
+        "haulDestination": 9,
+        "haulPhase": 1,
+        "haulStatus": 2,
+        "haulReason": 0,
+        "cargoOil": 0.0,
+        "cargoFuel": 0.0
+      },
+      "lastObservation": {
+        "elapsed": 474.8637390136719,
+        "id": "production.1004.0",
+        "role": "Tanker",
+        "faction": 1,
+        "position": {
+          "x": 975.026611328125,
+          "y": 0.00917959213256836,
+          "z": 724.4920043945312
+        },
+        "health": 160.0,
+        "speed": 8.0,
+        "pathIndex": -1,
+        "pathLength": 0,
+        "frame": 25056,
+        "retryResumeFrame": 0,
+        "hasGrid": true,
+        "hasTarget": false,
+        "hasPathRequest": false,
+        "hasPathFollow": false,
+        "hasPathRange": false,
+        "hasRetryCooldown": false,
+        "hasLongDistanceMove": false,
+        "gridCell": {
+          "x": 975,
+          "y": 724
+        },
+        "targetCell": {
+          "x": 0,
+          "y": 0
+        },
+        "requestedGoal": {
+          "x": 0,
+          "y": 0
+        },
+        "haulGoal": {
+          "x": 932,
+          "y": 621
+        },
+        "longDistanceGoal": {
+          "x": 0,
+          "y": 0
+        },
+        "haulActionEndsAt": 0.0,
+        "engaged": false,
+        "stationary": false,
+        "air": false,
+        "hauling": true,
+        "haulSource": 7,
+        "haulDestination": 9,
+        "haulPhase": 1,
+        "haulStatus": 2,
+        "haulReason": 0,
+        "cargoOil": 0.0,
+        "cargoFuel": 0.0
+      }
+    }
+  ],
+  "playerReady": false
+}

@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current source fingerprint is `6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869`. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current source fingerprint is `cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3`. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city physical source. Both logical deployments now use the southern town frontage (935,650 / 1387.8,650), retaining 452.8m separation, scenario budgets and Standard/Regular defaults. The residential quarter failed legal full-barracks placement. The logical deployment edits preserved the physical scene. Four shared ground materials were subsequently updated for the palette described below.
 
@@ -9,6 +9,14 @@ S005 reuses the existing Campaign dense-city physical source. Both logical deplo
 Native831 compiled the integrated PR62 candidate with no C# compiler errors and passed all10 shared placement regression cases. Native832 passed normal menu launch and construction of six paid industry buildings. Both factions were inspected: all14 starting and20 total military structures clear roads, sidewalks, trees and standing scenery. All114 recorded native contacts ended without errors. Actual wrapper exit0; full source and material PRE/POST are identical. Opening and paid-construction screenshots were inspected. Proof: `native832-integrated-native-starting-paid-clearance-pass.json`.
 
 This correction applies to shared Campaign, Skirmish and Operations placement; no physical map or gameplay budget was altered by it. Full aircraft refuel/second-sortie, recovery, role, ARIA, cleanup/performance, affected Campaign journeys and device/player gates remain open. Owner visual review remains deferred.
+
+## Current hauler-path qualification
+
+Native833 failed the paid Strike cycle before takeoff; supply vehicles remained stationary for minutes. Native834 preserved normal-input reproduction and read-only movement/grid diagnosis: repeated matching requests for the refinery service bay exhausted the 12,000-expansion search. The captured geometry is connected, but forces a substantial industrial detour. The owned failing validation was ended through its authorized abort method; all recorded contacts ended and source/material PRE/POST matched. Both failures are retained.
+
+Focused835 reproduced the missing route before the runtime correction (wrapper exit0, required pass marker absent, explicitly a failed validation). A hauler-only retry now uses a stronger goal heuristic after the normal search exhausts its work allowance. It retains the existing limit per search, geometry/surface/occupancy checks and service destination; it may choose a longer route and adds one bounded attempt. No physical map, gameplay resource/rate/cap or match deadline changed. Focused836 passed all3 captured routes and3 existing detour cases; focused837 passed shared mixed-unit/long-distance/performance checks (16 measured samples, p95/p99 10.27ms,0 managed allocations). Complete source/material PRE/POST matched. Persistent-allocation shutdown warnings remain open and are not called solved.
+
+Native838 is repeating the normal-input paid-air lifecycle on this frozen source. A focused route or performance pass does not certify native mission readiness.
 
 ## Prior technical status (historical)
 
@@ -563,3 +571,11 @@ Before pushing, origin/main advanced to f9181fa18 (shared natural/landscape fini
 ### Integrated native832 placement verification — passed, scoped
 
 The combined PR62 source6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869 passed native831 compilation/all10 focused cases and native832 normal starting/paid construction. Native832 audited14 starting and20 total buildings across both factions, including three newly purchased fabrication depots, an oil pump, refinery and fuel bladder. Geometry reports passed;114 contacts completed without errors; wrapper0 and full source/material PRE/POST identical. Native screenshots were inspected. Native830 remains prior-source evidence. No complete match, counted win, Campaign journey or device acceptance is claimed.
+
+### Native833 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native833-normal-paid-strike-cycle-failure.json`.
+
+### Native834 normal paid fixed-wing cycle — failed
+
+Actual wrapper2; full PRE/POST source unchanged (`6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869`). Cycle failed: required pass marker absent. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native834-normal-paid-strike-cycle-failure.json`.

@@ -134,6 +134,22 @@ namespace Game.Runtime
                 return;
             }
 
+            // A nearby industrial bay can require a much longer detour through
+            // the town. Repeating the same exhausted search leaves automatic
+            // haulers stationary forever. Keep the normal route first, then
+            // make one goal-directed retry within the same per-search limit.
+            // This trades shortest-route optimality for reaching the real bay;
+            // every footprint, surface and occupancy check still applies.
+            bool detailedHaulerSearch = CheapSegmentModes.IsCreated && CheapSegmentModes[index] == 3;
+            if (detailedHaulerSearch && FailureCodes[index] == 9 &&
+                TryWritePath(index, movingEntity, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize,
+                    start, goal, footprintSize, isVehicle, manualMove, cheapSegmentMode, factionId, searchEpoch + 1, 2))
+            {
+                Status[index] = 1;
+                Output.EndForEachIndex();
+                return;
+            }
+
             int2 searchCenter = goal;
             if (!GridUtils.InBounds(searchCenter, Grid.Width, Grid.Height))
             {
@@ -293,7 +309,7 @@ namespace Game.Runtime
                 IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
         }
 
-        private bool TryWritePath(int index, Entity movingEntity, Entity ignoredOccupancyEntity, int2 ignoredOccupancyCell, int2 ignoredOccupancySize, int2 start, int2 goal, int2 footprintSize, bool isVehicle, bool manualMove, bool cheapSegmentMode, byte factionId, int searchEpoch)
+        private bool TryWritePath(int index, Entity movingEntity, Entity ignoredOccupancyEntity, int2 ignoredOccupancyCell, int2 ignoredOccupancySize, int2 start, int2 goal, int2 footprintSize, bool isVehicle, bool manualMove, bool cheapSegmentMode, byte factionId, int searchEpoch, int heuristicWeight = 1)
         {
             if (!GridUtils.InBounds(goal, Grid.Width, Grid.Height))
             {
@@ -376,7 +392,7 @@ namespace Game.Runtime
             InitializeScratchNode(threadOffset, startIndex, searchEpoch);
             ScratchGScore[threadOffset + startIndex] = 0;
             int heapCount = 0;
-            HeapPush(threadOffset, ref heapCount, PackHeapEntry(HeuristicOctile(start, goal), startIndex));
+            HeapPush(threadOffset, ref heapCount, PackHeapEntry(heuristicWeight * HeuristicOctile(start, goal), startIndex));
             int expansions = 0;
             int maxExpansions = isVehicle
                 ? (manualMove || CheapSegmentModes.IsCreated && CheapSegmentModes[index] == 3 ? VehicleManualMaxAStarExpansions : VehicleMaxAStarExpansions)
@@ -512,7 +528,7 @@ namespace Game.Runtime
                     ScratchGScore[threadOffset + nextIndex] = tentative;
 
                     if (heapCount < GridSize)
-                        HeapPush(threadOffset, ref heapCount, PackHeapEntry(tentative + HeuristicOctile(nextCell, goal), nextIndex));
+                        HeapPush(threadOffset, ref heapCount, PackHeapEntry(tentative + heuristicWeight * HeuristicOctile(nextCell, goal), nextIndex));
                 }
             }
 

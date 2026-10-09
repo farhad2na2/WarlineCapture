@@ -102,6 +102,106 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
 
     [Test] public void AutomaticHaulerReachesLoadingBayBeyond128Cells()=>AssertHaulerDetour(false);
     [Test] public void ManualHaulerRerouteDetoursWithoutAutomaticOrder()=>AssertHaulerDetour(true);
+
+    public static void RunHaulerDepotMazeValidation()
+    {
+        try
+        {
+            var tests = new UnitPathfindingFocusedPerformanceValidation();
+            tests.HaulerReachesRefineryThroughCapturedCampaignGeometry(975, 724);
+            tests.HaulerReachesRefineryThroughCapturedCampaignGeometry(975, 712);
+            tests.HaulerReachesRefineryThroughCapturedCampaignGeometry(940, 684);
+            tests.AutomaticHaulerReachesLoadingBayBeyond128Cells();
+            tests.ManualHaulerRerouteDetoursWithoutAutomaticOrder();
+            tests.SkirmishVehicleCanDetourAroundABlockInsteadOfRepeatingNearbyFallbacks();
+            Debug.Log("[HaulerDepotMazeValidation] result=Passed tests=6 capturedCampaignRoutes=3 actualGoals=3 expansionBudgetsUnchanged=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            Debug.LogError("[HaulerDepotMazeValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    [Serializable]
+    private sealed class CapturedHaulerGrid
+    {
+        public int minX, minY, width, height;
+        public string[] rows;
+    }
+
+    [TestCase(975, 724)]
+    [TestCase(975, 712)]
+    [TestCase(940, 684)]
+    public void HaulerReachesRefineryThroughCapturedCampaignGeometry(int worldX, int worldY)
+    {
+        // This is captured traversal data for a regression, not a new runtime map.
+        // Each real stalled truck must reach its service bay through the existing
+        // town's narrow detour within the unchanged per-request work allowance.
+        string fixturePath = Path.Combine(Application.dataPath, "../Tools/CI/Fixtures/s005-refinery-detour-grid.json");
+        var captured = JsonUtility.FromJson<CapturedHaulerGrid>(File.ReadAllText(fixturePath));
+        Assert.AreEqual(captured.height, captured.rows.Length);
+        var world = new World("CapturedCampaignRefineryDetour");
+        var em = world.EntityManager;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        var grid = CreateGrid(em, captured.width, captured.height, out var counts, out var blocked, out var occupied, out var friendly, out var pool);
+        var units = new NativeArray<Entity>(1, Allocator.Temp);
+        try
+        {
+            var walkable = em.GetBuffer<GridWalkable>(grid);
+            const string encoding = "0123456789abcdefghijklmnopqrstuv";
+            for (int y = 0; y < captured.height; y++)
+            {
+                Assert.AreEqual(captured.width, captured.rows[y].Length);
+                for (int x = 0; x < captured.width; x++)
+                {
+                    int flags = encoding.IndexOf(captured.rows[y][x]);
+                    Assert.GreaterOrEqual(flags, 0);
+                    int index = y * captured.width + x;
+                    walkable[index] = new GridWalkable { Value = (byte)((flags & 17) == 0 ? 1 : 0) };
+                    blocked.Set(index, (flags & 2) != 0);
+                }
+            }
+            var start = new int2(worldX - captured.minX, worldY - captured.minY);
+            var goal = new int2(932 - captured.minX, 621 - captured.minY);
+            units[0] = CreatePathfindingUnit(em, 1, start, goal, true, false);
+            em.SetComponentData(units[0], new UnitFootprint { Size = new int2(3, 3) });
+            em.RemoveComponent<ManualMoveOrderTag>(units[0]);
+            em.AddComponent<UnitResourceHauler>(units[0]);
+            em.AddComponent<UnitResourceHaulOrder>(units[0]);
+            var system = world.CreateSystem<UnitPathfindingSystem>();
+            RunPathfindingUntilComplete(world, em, system, units);
+            var range = em.GetComponentData<UnitPathRange>(units[0]);
+            var cells = em.GetComponentData<PathPoolComponent>(grid).Cells;
+            Assert.AreEqual(goal, cells[range.Start + range.Length - 1], "A nearby fallback cannot unload at the refinery.");
+            Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(units[0]));
+            for (int i = 1; i < range.Length; i++)
+                AssertCapturedHaulerSegmentClear(em, grid, blocked, friendly, occupied, cells[range.Start + i - 1], cells[range.Start + i]);
+            Debug.Log($"[HaulerDepotMazeValidation] route=({worldX},{worldY})->(932,621) actualGoal=1 pathPoints={range.Length}");
+        }
+        finally
+        {
+            em.CompleteAllTrackedJobs();
+            units.Dispose(); world.Dispose(); pool.Dispose(); friendly.Dispose(); occupied.Dispose(); blocked.Dispose(); counts.Dispose();
+        }
+    }
+
+    private static void AssertCapturedHaulerSegmentClear(EntityManager em, Entity gridEntity, NativeBitArray blocked,
+        NativeArray<byte> friendly, NativeBitArray occupied, int2 start, int2 goal)
+    {
+        var grid = em.GetComponentData<GridConfig>(gridEntity);
+        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        int steps = math.max(math.abs(goal.x - start.x), math.abs(goal.y - start.y));
+        for (int i = 0; i <= steps; i++)
+        {
+            var cell = (int2)math.round(math.lerp((float2)start, (float2)goal, steps == 0 ? 0f : (float)i / steps));
+            Assert.IsTrue(UnitFootprintUtility.CanPlace(grid, walkable, blocked, friendly, occupied, cell, new int2(3, 3), cell, 1),
+                $"Returned path segment crosses occupied geometry at {cell}.");
+        }
+    }
+
     private static void AssertHaulerDetour(bool manual)
     {
         var world=new World("ResourceHaulerIndustrialDetour");

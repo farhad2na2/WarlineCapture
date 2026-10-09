@@ -1,10 +1,16 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current source fingerprint is `729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711`; it includes all source extensions in Assets/Packages/ProjectSettings and all 562 material hashes. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current source fingerprint is `6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869`. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city physical source. Both logical deployments now use the southern town frontage (935,650 / 1387.8,650), retaining 452.8m separation, scenario budgets and Standard/Regular defaults. The residential quarter failed legal full-barracks placement. The logical deployment edits preserved the physical scene. Four shared ground materials were subsequently updated for the palette described below.
 
-## Current technical status
+## Current placement qualification
+
+Native831 compiled the integrated PR62 candidate with no C# compiler errors and passed all10 shared placement regression cases. Native832 passed normal menu launch and construction of six paid industry buildings. Both factions were inspected: all14 starting and20 total military structures clear roads, sidewalks, trees and standing scenery. All114 recorded native contacts ended without errors. Actual wrapper exit0; full source and material PRE/POST are identical. Opening and paid-construction screenshots were inspected. Proof: `native832-integrated-native-starting-paid-clearance-pass.json`.
+
+This correction applies to shared Campaign, Skirmish and Operations placement; no physical map or gameplay budget was altered by it. Full aircraft refuel/second-sortie, recovery, role, ARIA, cleanup/performance, affected Campaign journeys and device/player gates remain open. Owner visual review remains deferred.
+
+## Prior technical status (historical)
 
 Native740 failed the aircraft deadline and provided a read-only proof that the full-unit query shared the movement change filter: 12 filtered actors versus 53 live tracked actors. Focused741 reproduced stationary occupancy disappearing during normal updates. Focused742 passed seven regressions after independently owning the full membership query, reconciling same-count actor replacement, and rebuilding when the grid entity changes. Current logistics regressions and the normal-input aircraft retry remain pending. Native733 combat recovery and native729 boarding/unload remain historical evidence after these shared runtime changes. Full mission/player readiness is pending.
 
@@ -549,3 +555,11 @@ Native826 failed in the mission library before placement; the normal-input navig
 The corrected scoped finish path preserves complete manual mission/result criteria and explicitly publishes completeMatchCertified=0 and countedWin=0. Native829 compiled without C# errors and passed all10 focused cases. Native830 then passed the complete scoped normal-input journey: menu/scroll/S005/launch; starting14 buildings across both factions; three paid fabrication depots, one oil pump, one refinery and one fuel bladder; final audit of all20 living military structures against actual road, sidewalk and tree/solid-scenery geometry. Both geometry reports passed, all107 native contacts ended with zero errors, actual wrapper0 and the full source/material PRE/POST are identical (9d99dbab01c04c4f89dd7413d769138a9f9b7cc4c3a6b104767ea4fb2f07f555). Existing shared Campaign geometry and gameplay budgets are unchanged by the placement correction.
 
 The current opening and paid-construction native screenshots were inspected. Owner visual-direction acceptance remains deferred; this is not a full mission, role/aircraft lifecycle or real device/player certificate. The native log also reports3 persistent allocations at shutdown, retained for the open cleanup/performance qualification. S005 remains InProgress, technicallyReady=false and playerReady=false. Authoritative proof: native830-current-native-starting-paid-clearance-pass.json.
+
+### PR62 integration and current-candidate qualification
+
+Before pushing, origin/main advanced to f9181fa18 (shared natural/landscape finish). Rebased the placement commit onto it and preserved its newer validated scene pin, exact row ledger and all eight current render-packaging inputs/outputs when resolving overlaps. No placement runtime/test fix was replaced. Native830 remains exact proof for its prior9d99 source; the combined source6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869 is being recompiled and construction-tested. No prior-source win or placement result is relabeled as an exact combined-candidate pass. The native822 reconciliation tool now pins its reviewed historical scene revision so later landscape edits cannot change that retained receipt.
+
+### Integrated native832 placement verification — passed, scoped
+
+The combined PR62 source6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869 passed native831 compilation/all10 focused cases and native832 normal starting/paid construction. Native832 audited14 starting and20 total buildings across both factions, including three newly purchased fabrication depots, an oil pump, refinery and fuel bladder. Geometry reports passed;114 contacts completed without errors; wrapper0 and full source/material PRE/POST identical. Native screenshots were inspected. Native830 remains prior-source evidence. No complete match, counted win, Campaign journey or device acceptance is claimed.

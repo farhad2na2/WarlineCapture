@@ -1,0 +1,13 @@
+{
+  "result": "PassedFocusedSharedPlacement",
+  "wrapperExit": 0,
+  "sourceHash": "6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-831-integrated-pr62-placement-pre-source-manifest.json",
+  "postManifest": "final-831-integrated-placement-focused-closed-post-source-manifest.json",
+  "cases": 10,
+  "failures": 0,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

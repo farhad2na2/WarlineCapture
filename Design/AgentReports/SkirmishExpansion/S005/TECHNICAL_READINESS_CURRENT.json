@@ -3,10 +3,10 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "9d99dbab01c04c4f89dd7413d769138a9f9b7cc4c3a6b104767ea4fb2f07f555",
-  "sourceFingerprint": "final-830-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
+  "sourceHash": "6ffb349e4b56a5eeb41f0a7bd97bc9517ae5bd4fe09bdb1a2c82aaf24a865869",
+  "sourceFingerprint": "final-832-integrated-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
-  "physicalSourceSceneSha256": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
+  "physicalSourceSceneSha256": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
   "visualReview": "Owner deferred until technical readiness",
   "deviceAcceptance": "Pending",
   "focusedCurrentProof": "focused767-placement-map-preview-preservation-pass.json",
@@ -140,8 +140,8 @@
   },
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
-    "status": "Running",
-    "scope": "RunS005EditorPaidBuildingClearanceProbe"
+    "status": "Pending",
+    "scope": "Aircraft refuel/second sortie, recovery, roles, ARIA and cleanup/performance qualification"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -421,7 +421,7 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-830-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-832-integrated-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
   "latestAircraftProgress": "native806-normal-paid-strike-input-interruption-source-drift-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
@@ -567,27 +567,29 @@
   ],
   "activeCandidateInvalidated": null,
   "concurrentSurfaceDelta": "source-delta-801-concurrent-surface-work.json",
-  "currentCompilationProof": "native829-current-placement-scoped-completion-compile-pass.json",
+  "currentCompilationProof": "native831-integrated-pr62-placement-compile-pass.json",
   "commitCheckpoint": {
     "commit": "81569142da64c1b199f6b48af05575e4b10095d7",
     "remote": "origin/main",
     "pushVerified": true
   },
   "latestConfirmedSharedPlacementDefects": "native807-shared-placement-old-runtime-control-failure.json",
-  "latestFocusedPlacementClearanceProof": "native829-current-placement-scoped-completion-compile-pass.json",
+  "latestFocusedPlacementClearanceProof": "native831-integrated-pr62-placement-compile-pass.json",
   "latestCompilationRunFailure": "native809-native-audit-compile-wrapper-resource-failure.json",
   "latestNativePlacementClearanceFailure": "native811-native-clearance-audit-combined-visual-bounds-failure.json",
   "latestBroadPrefabFootprintFailure": "native812-broad-prefab-clinic-footprint-audit-failure.json",
   "latestWrapperPreflightFailure": "native813-hub-closed-wrapper-preflight-failure.json",
-  "latestNativeStartingPlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
+  "latestNativeStartingPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
   "latestNativePaidPlacementFailure": "native817-paid-factory-vegetation-overlap-failure.json",
   "activeSourceRepair": null,
   "latestCompilationFailure": "native818-nunit-api-compiler-failure-owned-wrapper-timeout.json",
   "latestNativeFailure": "native828-paid-placement-clearance-scoped-completion-failure.json",
   "latestRenderPackagingProof": "native824-current-shared-map-render-packaging-pass.json",
-  "latestCompilationProof": "native829-current-placement-scoped-completion-compile-pass.json",
-  "latestNativePaidPlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
-  "latestNativePlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
-  "latestConfirmedSharedPlacementDefectsStatus": "Shared correction accepted for native starting and paid buildings by native830; Campaign normal journeys remain a separate pending gate.",
-  "latestShippingPlacementChange": "Shared roads/sidewalk whole-cell clearance, packed and legacy trees/solid props, every legacy mesh range, and cold ordinary-player cache initialization."
+  "latestCompilationProof": "native831-integrated-pr62-placement-compile-pass.json",
+  "latestNativePaidPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
+  "latestNativePlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
+  "latestConfirmedSharedPlacementDefectsStatus": "Shared placement correction passed integrated native starting14 and paid20 buildings; Campaign normal journeys remain a separate pending gate",
+  "latestShippingPlacementChange": "Shared roads/sidewalk whole-cell clearance, packed and legacy trees/solid props, every legacy mesh range, and cold ordinary-player cache initialization.",
+  "priorNativePlacementClearanceBeforePr62": "native830-current-native-starting-paid-clearance-pass.json",
+  "currentIntegratedPlacementAcceptance": "Passed native831 compilation/10 focused cases and native832 normal starting/paid construction; complete mission and device acceptance remain pending"
 }

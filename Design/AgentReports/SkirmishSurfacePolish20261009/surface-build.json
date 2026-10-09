@@ -1,0 +1,12 @@
+{
+    "result": "Passed",
+    "sourceSceneSha256Before": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+    "sourceSceneSha256After": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+    "roadTiles": 5758,
+    "previousDirtPieces": 4116,
+    "concreteZones": 4,
+    "limestoneZones": 2082,
+    "tileZones": 708,
+    "groundMaterials": 4,
+    "scope": "Shared dense-city presentation assets; no scene, navigation, building, objective or budget changes."
+}

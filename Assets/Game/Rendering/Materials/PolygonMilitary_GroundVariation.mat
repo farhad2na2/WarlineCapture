@@ -36,32 +36,47 @@ Material:
         m_Texture: {fileID: 2800000, guid: af0e6581e0b64911b4e7274573bd4667, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DistrictSurfaceMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _GreenDetailMap:
         m_Texture: {fileID: 2800000, guid: 69f24f4c3ee64cf79184d114ba68f01a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BaseColorInfluence: 1
+    - _DetailAntiRepeat: 1
     - _DetailFadeEnd: 120
     - _DetailFadeStart: 40
     - _DetailScale: 0.48
     - _DetailStrength: 0.035
     - _DirtShoulderTintStrength: 0
     - _DirtShoulderWarmthThreshold: 0.08
+    - _DistrictSurfaceStrength: 0
+    - _EnvironmentReflections: 0
     - _GreenPatchThreshold: 0.47
     - _GroundDetailNormalStrength: 0.24
-    - _GroundDetailStrength: 0.38
-    - _GroundDetailTiling: 0.052
-    - _MacroContrastHigh: 0.82
-    - _MacroContrastLow: 0.18
-    - _MacroScale: 0.018
-    - _MacroStrength: 0.573
+    - _GroundDetailStrength: 0.3
+    - _GroundDetailTiling: 0.085
+    - _MacroContrastHigh: 0.8
+    - _MacroContrastLow: 0.1
+    - _MacroScale: 0.027
+    - _MacroStrength: 0.4
+    - _SandPaletteStrength: 1
+    - _SandScrubCoverage: 0.19
     - _Smoothness: 0.08
     m_Colors:
     - _BaseColor: {r: 1.12, g: 1.08, b: 0.96, a: 1}
     - _DirtShoulderColorScale: {r: 1, g: 1, b: 1, a: 1}
-    - _MacroTintA: {r: 1, g: 0.83, b: 0.48, a: 1}
-    - _MacroTintB: {r: 0.62, g: 0.78, b: 0.36, a: 1}
+    - _DistrictSurfaceConstant: {r: 0, g: 0, b: 0, a: 0}
+    - _DistrictSurfaceRect: {r: 0, g: 0, b: 2048, a: 1024}
+    - _MacroTintA: {r: 0.96, g: 0.94, b: 0.89, a: 1}
+    - _MacroTintB: {r: 1.07, g: 1.02, b: 0.94, a: 1}
+    - _SandDryColor: {r: 0.82, g: 0.73, b: 0.56, a: 1}
+    - _SandScrubColor: {r: 0.62, g: 0.63, b: 0.48, a: 1}
+    - _SandWornColor: {r: 0.62, g: 0.56, b: 0.45, a: 1}
     - _SpecColor: {r: 0.08, g: 0.075, b: 0.06, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -1,0 +1,20 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.SkirmishSurfacePolish.ValidateAssets
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_386e1c50/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishSurfaceValidation] result=Passed shader=Compiled mask=2048x1024 concretePixels=4148 stonePixels=194951 tilePixels=66807 vertices=137471 triangles=70227 sourceScene=Unchanged nativeVisualReview=6Views fullMission=Pending device=Pending
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.SkirmishSurfacePolish:ValidateAssets () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Validation.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_386e1c50/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.SkirmishSurfacePolish.ValidateAssets
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_386e1c50/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

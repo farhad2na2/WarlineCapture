@@ -1,0 +1,12 @@
+{
+  "result": "FailedAuditModelRead",
+  "sourceHash": "240cd76b7ae4061fddb1b764f7fa2f9c81f4b3f8c055ac967e2a7c5181927bda",
+  "sourceUnchanged": true,
+  "wrapperExit": 2,
+  "log": "native-811-current-manual-en-seed155926.log",
+  "pre": "final-811-shared-native-starting-placement-pre-source-manifest.json",
+  "post": "final-811-native-starting-placement-audit-failed-closed-post-source-manifest.json",
+  "failure": "Military model bounds unavailable:3 (Ground Staging combined visual). First8 supply buildings inspected without detected road/sidewalk/standing-scenery overlaps; all14 starting buildings and32 units present. Need measured definition/template bounds for combined native models.",
+  "nativePlacementCertified": false,
+  "playerReady": false
+}

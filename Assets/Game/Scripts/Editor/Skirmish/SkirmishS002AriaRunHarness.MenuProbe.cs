@@ -33,6 +33,18 @@ namespace Game.Editor
         public static void RunS005EditorAriaFaSeed2() => RunEditorJourney("fa-IR", false, false, "S005", 130368);
         public static void RunS005EditorAriaFaSeed3() => RunEditorJourney("fa-IR", false, false, "S005", 155926);
         public static void RunS005EditorManualFa() => RunEditorJourney("fa-IR", true, false, "S005");
+        public static void RunS005EditorPlacementClearanceProbe()
+        {
+            RunEditorJourney("en", false, false, "S005", 155926);
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", "1");
+        }
+        public static void RunS005EditorPaidBuildingClearanceProbe()
+        {
+            RunS005EditorStrikeCycleProbe();
+            Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", "1");
+        }
         private static void RunEditorJourney(string language, bool manual, bool stopProbe=false, string selectedCatalog="S004", int selectedSeed=0)
         {
             if (selectedCatalog == "S005")
@@ -72,6 +84,8 @@ namespace Game.Editor
             // A reused Editor retains process environment between validations.
             // A normal mission journey must not inherit a previous diagnostic.
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_PLAYER_RESUME_PROBE", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_COMBAT_RESUME_PROBE", null);
@@ -204,9 +218,19 @@ namespace Game.Editor
                     var rect = scroll.viewport;
                     var canvas = scroll.GetComponentInParent<Canvas>();
                     var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
-                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .2f)));
-                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .2f)));
-                    if (menuTouch.TryGesture(from, to, .12f, .45f, Time.unscaledTime))
+                    // Follow the actual card position. A one-direction swipe
+                    // can overshoot a short target row or start at retained scroll.
+                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .4f)));
+                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .4f)));
+                    foreach (var card in buttons)
+                        if (card.name == "ScenarioCard_" + catalogId)
+                        {
+                            var cardRect = (RectTransform)card.transform;
+                            var point = RectTransformUtility.WorldToScreenPoint(camera, cardRect.TransformPoint(cardRect.rect.center));
+                            if (point.y > (from.y + to.y) * .5f) (from, to) = (to, from);
+                            break;
+                        }
+                    if (menuTouch.TryGesture(from, to, .15f, .75f, Time.unscaledTime))
                         menuDue = EditorApplication.timeSinceStartup + 1d;
                     return;
                 }

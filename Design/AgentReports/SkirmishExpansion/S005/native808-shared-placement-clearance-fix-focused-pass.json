@@ -1,0 +1,13 @@
+{
+  "result": "PassedFocused",
+  "sourceHash": "0982549926e1a3c54443f038f0f6ddf6cbec5f8dbb678599dc17a5d40722f864",
+  "sourceUnchanged": true,
+  "preManifest": "final-808-shared-placement-clearance-fix-pre-source-manifest.json",
+  "postManifest": "final-808-shared-placement-clearance-fix-closed-post-source-manifest.json",
+  "log": "native-808-shared-placement-clearance-fix.log",
+  "wrapperExit": 0,
+  "marker": "[SharedSceneryClearanceValidation] result=Passed cases=6 failures=0 nativePlacementAcceptance=Pending",
+  "cases": 6,
+  "scope": "Ordinary sidewalk rejection, tall packed tree/prop clearance in Skirmish and non-Skirmish worlds, ground-cover and adjacent clear ground preserved, streamed sidewalk source changes. Native placements and full mission still pending.",
+  "playerReady": false
+}

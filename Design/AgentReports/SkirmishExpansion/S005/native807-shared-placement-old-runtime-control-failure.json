@@ -1,0 +1,21 @@
+{
+  "result": "FailedExpectedOldRuntimeControl",
+  "sourceHash": "5f4edc2b6204d436b1fea081e275f31e7d03bc5b39b4dcd11fd38a38cbc5512f",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "log": "native-807-shared-placement-old-runtime-control.log",
+  "preManifest": "final-807-shared-placement-old-runtime-control-pre-source-manifest.json",
+  "postManifest": "final-807-shared-placement-old-runtime-control-closed-post-source-manifest.json",
+  "markers": [
+    "[SharedSceneryClearanceValidation] case=ordinary-sidewalk result=Failed",
+    "[SharedSceneryClearanceValidation] case=skirmish-tree result=Failed",
+    "[SharedSceneryClearanceValidation] case=campaign-tree result=Failed",
+    "[SharedSceneryClearanceValidation] case=skirmish-prop result=Failed",
+    "[SharedSceneryClearanceValidation] case=campaign-prop result=Failed",
+    "[SharedSceneryClearanceValidation] case=streamed-sidewalk result=Passed",
+    "[SharedSceneryClearanceValidation] result=Failed cases=6 failures=5 nativePlacementAcceptance=Pending"
+  ],
+  "compilerErrors": false,
+  "nativeMissionAcceptance": false,
+  "playerReady": false
+}

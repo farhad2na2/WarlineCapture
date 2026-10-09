@@ -3,10 +3,10 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "58e784bdb20ec251ea09b461bc31f258237684e06cfdf57220827bd69a3f88e5",
-  "sourceFingerprint": "final-805-verified-global-shared-regressions-closed-post-independent-fingerprint.json",
+  "sourceHash": "9d99dbab01c04c4f89dd7413d769138a9f9b7cc4c3a6b104767ea4fb2f07f555",
+  "sourceFingerprint": "final-830-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
-  "physicalSourceSceneSha256": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+  "physicalSourceSceneSha256": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
   "visualReview": "Owner deferred until technical readiness",
   "deviceAcceptance": "Pending",
   "focusedCurrentProof": "focused767-placement-map-preview-preservation-pass.json",
@@ -64,7 +64,7 @@
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
   "activeScope": null,
-  "nextWork": "Commit/push validated source candidate, then native paid Strike cycle requiring Return receipt, home landing/refuel/second sortie. Remaining recovery/capacity/roles/full journeys open.",
+  "nextWork": "Shared placement correction passed current-source normal construction. Continue aircraft refuel/second sortie, mission recovery/role/ARIA gates and cleanup/performance qualification.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -141,7 +141,7 @@
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
     "status": "Running",
-    "scope": "RunS005EditorStrikeCycleProbe"
+    "scope": "RunS005EditorPaidBuildingClearanceProbe"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -421,8 +421,8 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-805-verified-global-shared-regressions-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native802-normal-paid-strike-cycle-failure.json",
+  "currentSourceFingerprint": "final-830-native-starting-paid-clearance-closed-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native806-normal-paid-strike-input-interruption-source-drift-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
@@ -468,7 +468,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native803-initial-compilation-failure.json",
+  "latestAircraftFailure": "native806-normal-paid-strike-input-interruption-source-drift-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,
@@ -567,5 +567,27 @@
   ],
   "activeCandidateInvalidated": null,
   "concurrentSurfaceDelta": "source-delta-801-concurrent-surface-work.json",
-  "currentCompilationProof": "native805-current-compilation-shared-regressions-pass.json"
+  "currentCompilationProof": "native829-current-placement-scoped-completion-compile-pass.json",
+  "commitCheckpoint": {
+    "commit": "81569142da64c1b199f6b48af05575e4b10095d7",
+    "remote": "origin/main",
+    "pushVerified": true
+  },
+  "latestConfirmedSharedPlacementDefects": "native807-shared-placement-old-runtime-control-failure.json",
+  "latestFocusedPlacementClearanceProof": "native829-current-placement-scoped-completion-compile-pass.json",
+  "latestCompilationRunFailure": "native809-native-audit-compile-wrapper-resource-failure.json",
+  "latestNativePlacementClearanceFailure": "native811-native-clearance-audit-combined-visual-bounds-failure.json",
+  "latestBroadPrefabFootprintFailure": "native812-broad-prefab-clinic-footprint-audit-failure.json",
+  "latestWrapperPreflightFailure": "native813-hub-closed-wrapper-preflight-failure.json",
+  "latestNativeStartingPlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
+  "latestNativePaidPlacementFailure": "native817-paid-factory-vegetation-overlap-failure.json",
+  "activeSourceRepair": null,
+  "latestCompilationFailure": "native818-nunit-api-compiler-failure-owned-wrapper-timeout.json",
+  "latestNativeFailure": "native828-paid-placement-clearance-scoped-completion-failure.json",
+  "latestRenderPackagingProof": "native824-current-shared-map-render-packaging-pass.json",
+  "latestCompilationProof": "native829-current-placement-scoped-completion-compile-pass.json",
+  "latestNativePaidPlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
+  "latestNativePlacementClearance": "native830-current-native-starting-paid-clearance-pass.json",
+  "latestConfirmedSharedPlacementDefectsStatus": "Shared correction accepted for native starting and paid buildings by native830; Campaign normal journeys remain a separate pending gate.",
+  "latestShippingPlacementChange": "Shared roads/sidewalk whole-cell clearance, packed and legacy trees/solid props, every legacy mesh range, and cold ordinary-player cache initialization."
 }

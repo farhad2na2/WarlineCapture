@@ -13,6 +13,210 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
 {
     private World _world;
 
+    public static void RunSharedSceneryClearanceValidation()
+    {
+        int failures = 0;
+        var cases = new (string Name, Action Run)[] {
+            ("ordinary-sidewalk", () => new BuildingPlacementValidationUtilitySystemHelperTests().OrdinaryPlacement_ReservesAuthoredSidewalks()),
+            ("skirmish-tree", () => ValidatePackedSceneryClearance(true, DenseCityPresentationSemanticCategory.Vegetation)),
+            ("campaign-tree", () => ValidatePackedSceneryClearance(false, DenseCityPresentationSemanticCategory.Vegetation)),
+            ("skirmish-prop", () => ValidatePackedSceneryClearance(true, DenseCityPresentationSemanticCategory.Prop)),
+            ("campaign-prop", () => ValidatePackedSceneryClearance(false, DenseCityPresentationSemanticCategory.Prop)),
+            ("streamed-sidewalk", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredSidewalkCache_TracksLateSourceOwnersAndBufferPublication()),
+            ("sidewalk-edges-and-rotation", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredSidewalk_ReservesOverlappingCellEdgesWithoutRotatedEmptyCorners()),
+            ("multi-mesh-scenery", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredScenery_ReservesEveryStandingMeshInRange()),
+            ("cold-player-placement-boundary", () => new BuildingPlacementValidationUtilitySystemHelperTests().OrdinaryPlayerPlacement_RejectsSceneryWithoutStartingGrantCache()),
+            ("combined-native-model-bounds", () => new BuildingPlacementValidationUtilitySystemHelperTests().CombinedNativeModelBounds_IncludeDisabledActiveSourcesAndPlacementOffset())
+        };
+        foreach (var test in cases)
+        {
+            try { test.Run(); Debug.Log("[SharedSceneryClearanceValidation] case=" + test.Name + " result=Passed"); }
+            catch (Exception ex) { failures++; Debug.LogException(ex); Debug.LogError("[SharedSceneryClearanceValidation] case=" + test.Name + " result=Failed"); }
+        }
+        Debug.Log("[SharedSceneryClearanceValidation] result=" + (failures == 0 ? "Passed" : "Failed") +
+            " cases=" + cases.Length + " failures=" + failures + " nativePlacementAcceptance=Pending");
+        if (failures == 0) ValidationExit.Passed(); else ValidationExit.Failed();
+    }
+
+    [Test]
+    public void OrdinaryPlacement_ReservesAuthoredSidewalks()
+    {
+        using var world = new World("Ordinary military building sidewalk rejection");
+        var em = world.EntityManager;
+        em.CreateEntity(typeof(MapSurfaceComponent));
+        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+        var grid = new GridConfig { Width = 32, Height = 32, CellSize = 1 };
+        var source = em.CreateEntity();
+        em.AddBuffer<OperationMapSidewalkFootprint>(source).Add(new OperationMapSidewalkFootprint {
+            WorldToLocal = Unity.Mathematics.float4x4.identity,
+            LocalMin = new Unity.Mathematics.float3(5, 0, 5), LocalMax = new Unity.Mathematics.float3(7, 1, 7),
+            WorldMin = new Unity.Mathematics.float3(5, 0, 5), WorldMax = new Unity.Mathematics.float3(7, 1, 7)
+        });
+        var cache = new BuildingPlacementAuthoredRoadCache(); cache.Ensure(em, surfaces, grid);
+        var reserved = new bool[grid.Width * grid.Height]; cache.AppendTo(reserved);
+        Assert.That(reserved[5 * grid.Width + 5], Is.True, "The ordinary placement prefix must reserve sidewalks, not only road-gate orientation.");
+        Assert.That(cache.Overlaps(grid, new Vector2Int(5, 5), Vector2Int.one), Is.True,
+            "Final validation must reject a sidewalk even before the prefix is built.");
+        Assert.That(reserved[9 * grid.Width + 9], Is.False, "Adjacent free ground remains buildable.");
+    }
+
+    [TestCase(true, DenseCityPresentationSemanticCategory.Vegetation)]
+    [TestCase(false, DenseCityPresentationSemanticCategory.Vegetation)]
+    [TestCase(true, DenseCityPresentationSemanticCategory.Prop)]
+    [TestCase(false, DenseCityPresentationSemanticCategory.Prop)]
+    public void PackedScenery_ReservesSolidObjectsInEveryMode(bool skirmish, DenseCityPresentationSemanticCategory category)
+        => ValidatePackedSceneryClearance(skirmish, category);
+
+    [Test]
+    public void CombinedNativeModelBounds_IncludeDisabledActiveSourcesAndPlacementOffset()
+    {
+        var root=new GameObject("Combined model placement wrapper");
+        var mesh=new Mesh {bounds=new Bounds(new Vector3(7,1,3.5f),new Vector3(14,2,7))};
+        try
+        {
+            var visual=new GameObject("Active geometry source");visual.transform.SetParent(root.transform,false);
+            visual.transform.localPosition=new Vector3(-7,0,-3.5f);
+            visual.AddComponent<MeshFilter>().sharedMesh=mesh;visual.AddComponent<MeshRenderer>().enabled=false;
+            Assert.That(BuildingModelBounds.TryMeasure(root,out _),Is.False);
+            Assert.That(BuildingModelBounds.TryMeasure(root,out var actual,true),Is.True);
+            Assert.That(actual.center,Is.EqualTo(new Vector3(0,1,0)),"Read the placed visual offset instead of treating prefab bounds as wrapper coordinates.");
+            Assert.That(actual.size,Is.EqualTo(new Vector3(14,2,7)));
+            visual.SetActive(false);
+            Assert.That(BuildingModelBounds.TryMeasure(root,out _,true),Is.False,"Inactive/destroyed visual variants are not part of the native intact model.");
+        }
+        finally {UnityEngine.Object.DestroyImmediate(root);UnityEngine.Object.DestroyImmediate(mesh);}
+    }
+
+    [Test]
+    public void OrdinaryPlayerPlacement_RejectsSceneryWithoutStartingGrantCache()
+    {
+        using var world=new World("Ordinary player placement without a starting grant cache");
+        var previous=World.DefaultGameObjectInjectionWorld;
+        World.DefaultGameObjectInjectionWorld=world;
+        try
+        {
+            var em=world.EntityManager;
+            em.CreateEntity(typeof(MapSurfaceComponent));
+            var grid=new GridConfig {Width=32,Height=32,CellSize=1};
+            var roadsOwner=em.CreateEntity();var roads=em.AddBuffer<GridRoad>(roadsOwner);roads.ResizeUninitialized(grid.Width*grid.Height);
+            for(int i=0;i<roads.Length;i++) roads[i]=default;
+            var sidewalk=em.AddBuffer<OperationMapSidewalkFootprint>(em.CreateEntity());
+            sidewalk.Add(new OperationMapSidewalkFootprint {
+                WorldToLocal=Unity.Mathematics.float4x4.identity,
+                LocalMin=new Unity.Mathematics.float3(5,0,5),LocalMax=new Unity.Mathematics.float3(7,1,7),
+                WorldMin=new Unity.Mathematics.float3(5,0,5),WorldMax=new Unity.Mathematics.float3(7,1,7)});
+            using var builder=new BlobBuilder(Allocator.Temp);
+            ref var root=ref builder.ConstructRoot<OperationMapRenderDatabaseBlob>();
+            var prototypes=builder.Allocate(ref root.Prototypes,1);
+            prototypes[0]=new OperationMapRenderPrototypeBlob {CombinedLocalBounds=new OperationMapRenderBoundsBlob {
+                Center=new Unity.Mathematics.float3(0,4,0),Extents=new Unity.Mathematics.float3(2,4,2)}};
+            var placements=builder.Allocate(ref root.Placements,1);
+            placements[0]=new OperationMapRenderPlacementBlob {PrototypeIndex=0,SemanticCategory=DenseCityPresentationSemanticCategory.Vegetation,
+                WorldMatrix=Unity.Mathematics.float4x4.Translate(new Unity.Mathematics.float3(16,0,16))};
+            using var blob=builder.CreateBlobAssetReference<OperationMapRenderDatabaseBlob>(Allocator.Persistent);
+            em.SetComponentData(em.CreateEntity(typeof(OperationMapRenderDatabaseComponent)),new OperationMapRenderDatabaseComponent {Blob=blob});
+            var source=new BuildingGameplaySourceCompositionSystemHelper();
+            bool Validate(Vector2Int origin) => source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
+                source,null,origin,Vector2Int.one,false,grid,em.GetBuffer<GridRoad>(roadsOwner),default,
+                (_,__,cell,___,____)=>new RectInt(cell,Vector2Int.one),(_,__)=>false);
+            Assert.That(source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.AuthoredBuildings.IsReady,Is.False);
+            Assert.That(Validate(new Vector2Int(16,16)),Is.False,"The actual ordinary placement boundary must initialize scenery rejection, without a prior grant/batch.");
+            Assert.That(Validate(new Vector2Int(5,5)),Is.False,"The same ordinary boundary must initialize sidewalks.");
+            Assert.That(Validate(new Vector2Int(28,28)),Is.True,"A clear site remains legal after cache initialization.");
+        }
+        finally {World.DefaultGameObjectInjectionWorld=previous;}
+    }
+
+    [Test]
+    public void AuthoredSidewalk_ReservesOverlappingCellEdgesWithoutRotatedEmptyCorners()
+    {
+        using var world = new World("Sidewalk edge and rotation clearance"); var em = world.EntityManager;
+        em.CreateEntity(typeof(MapSurfaceComponent));
+        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+        var grid = new GridConfig { Width=32, Height=32, CellSize=1 };
+        var source = em.CreateEntity(); var buffer = em.AddBuffer<OperationMapSidewalkFootprint>(source);
+        buffer.Add(new OperationMapSidewalkFootprint {
+            WorldToLocal=Unity.Mathematics.float4x4.identity,
+            LocalMin=new Unity.Mathematics.float3(5.85f,0,5), LocalMax=new Unity.Mathematics.float3(6.15f,1,7),
+            WorldMin=new Unity.Mathematics.float3(5.85f,0,5), WorldMax=new Unity.Mathematics.float3(6.15f,1,7)
+        });
+        var cache=new BuildingPlacementAuthoredRoadCache(); cache.Ensure(em,surfaces,grid);
+        Assert.That(cache.Overlaps(grid,new Vector2Int(5,5),Vector2Int.one),Is.True,"A curb crossing a cell edge must block placement even outside its centre.");
+        Assert.That(cache.Overlaps(grid,new Vector2Int(6,5),Vector2Int.one),Is.True);
+        buffer=em.GetBuffer<OperationMapSidewalkFootprint>(source);buffer.Clear();
+        var matrix=Unity.Mathematics.float4x4.TRS(new Unity.Mathematics.float3(8,0,8),
+            Unity.Mathematics.quaternion.RotateY(Unity.Mathematics.math.PI*.25f),new Unity.Mathematics.float3(1));
+        buffer.Add(new OperationMapSidewalkFootprint {
+            WorldToLocal=Unity.Mathematics.math.inverse(matrix),
+            LocalMin=new Unity.Mathematics.float3(-3,0,-.1f), LocalMax=new Unity.Mathematics.float3(3,1,.1f),
+            WorldMin=new Unity.Mathematics.float3(5.8f,0,5.8f), WorldMax=new Unity.Mathematics.float3(10.2f,1,10.2f)
+        });
+        // Publish a source revision because the existing owner/buffer length is unchanged.
+        em.AddComponentData(surfaces.GetSingletonEntity(),new MapSurfaceSceneOverlayRevision {Value=1});
+        cache.Ensure(em,surfaces,grid);
+        Assert.That(cache.Overlaps(grid,new Vector2Int(7,8),Vector2Int.one),Is.True);
+        Assert.That(cache.Overlaps(grid,new Vector2Int(6,6),Vector2Int.one),Is.False,"Empty corners of a rotated sidewalk's AABB remain buildable.");
+    }
+
+    [Test]
+    public void AuthoredScenery_ReservesEveryStandingMeshInRange()
+    {
+        using var world=new World("Multi-mesh authored scenery clearance");var em=world.EntityManager;
+        var ground=new Mesh {name="SM_Prop_GroundCover",bounds=new Bounds(Vector3.zero,new Vector3(2,.1f,2))};
+        var tree=new Mesh {name="SM_Tree_Palm",bounds=new Bounds(new Vector3(0,2,0),new Vector3(2,4,2))};
+        var prop=new Mesh {name="SM_Prop_Crate",bounds=new Bounds(new Vector3(6,.25f,0),new Vector3(2,.5f,2))};
+        try
+        {
+            var entity=em.CreateEntity(typeof(Unity.Transforms.LocalToWorld),typeof(Unity.Rendering.MaterialMeshInfo));
+            em.SetComponentData(entity,new Unity.Transforms.LocalToWorld {Value=Unity.Mathematics.float4x4.TRS(
+                new Unity.Mathematics.float3(10,0,10),Unity.Mathematics.quaternion.identity,new Unity.Mathematics.float3(1,4,1))});
+            em.SetComponentData(entity,Unity.Rendering.MaterialMeshInfo.FromMaterialMeshIndexRange(0,3));
+            em.AddSharedComponentManaged(entity,new Unity.Rendering.RenderMeshArray(Array.Empty<Material>(),new[]{ground,tree,prop},new[]{
+                new Unity.Rendering.MaterialMeshIndex {MeshIndex=0},new Unity.Rendering.MaterialMeshIndex {MeshIndex=1},new Unity.Rendering.MaterialMeshIndex {MeshIndex=2}}));
+            var reader=Game.Rendering.RenderBoundsPresentation.Create();
+            Assert.That(reader.CountAuthoredBuildingGeometry(em),Is.EqualTo(1));
+            var bounds=new NativeList<Bounds>(Allocator.Temp);
+            try
+            {
+                reader.CollectAuthoredBuildingBounds(em,ref bounds);
+                Assert.That(bounds.Length,Is.EqualTo(1));
+                Assert.That(bounds[0].Contains(new Vector3(10,8,10)),Is.True,"A tree after the first flat mesh must reserve its actual bounds.");
+                Assert.That(bounds[0].Contains(new Vector3(16,1,10)),Is.True,"Every standing mesh in a range must be included, using world scale.");
+            }
+            finally {bounds.Dispose();}
+        }
+        finally {UnityEngine.Object.DestroyImmediate(ground);UnityEngine.Object.DestroyImmediate(tree);UnityEngine.Object.DestroyImmediate(prop);}
+    }
+
+    private static void ValidatePackedSceneryClearance(bool skirmish, DenseCityPresentationSemanticCategory category)
+    {
+        using var world = new World("Packed solid scenery clearance"); var em = world.EntityManager;
+        if (skirmish) em.CreateEntity(typeof(SkirmishMatchState));
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref var root = ref builder.ConstructRoot<OperationMapRenderDatabaseBlob>();
+        var prototypes = builder.Allocate(ref root.Prototypes, 2);
+        prototypes[0] = new OperationMapRenderPrototypeBlob { CombinedLocalBounds = new OperationMapRenderBoundsBlob {
+            Center = new Unity.Mathematics.float3(0, 4, 0), Extents = new Unity.Mathematics.float3(2, 4, 2) } };
+        prototypes[1] = new OperationMapRenderPrototypeBlob { CombinedLocalBounds = new OperationMapRenderBoundsBlob {
+            Center = new Unity.Mathematics.float3(0, .05f, 0), Extents = new Unity.Mathematics.float3(2, .05f, 2) } };
+        var placements = builder.Allocate(ref root.Placements, 2);
+        placements[0] = new OperationMapRenderPlacementBlob { PrototypeIndex = 0, SemanticCategory = category,
+            WorldMatrix = Unity.Mathematics.float4x4.Translate(new Unity.Mathematics.float3(10, 0, 10)) };
+        placements[1] = new OperationMapRenderPlacementBlob { PrototypeIndex = 1, SemanticCategory = DenseCityPresentationSemanticCategory.Vegetation,
+            WorldMatrix = Unity.Mathematics.float4x4.Translate(new Unity.Mathematics.float3(24, 0, 24)) };
+        using var blob = builder.CreateBlobAssetReference<OperationMapRenderDatabaseBlob>(Allocator.Persistent);
+        var source = em.CreateEntity(typeof(OperationMapRenderDatabaseComponent));
+        em.SetComponentData(source, new OperationMapRenderDatabaseComponent { Blob = blob });
+        var grid = new GridConfig { Width = 32, Height = 32, CellSize = 1 };
+        var cache = new BuildingPlacementAuthoredBuildingCache(); cache.Ensure(em, grid);
+        Assert.That(cache.IsReady, Is.True, "Packed scenery must protect Campaign and Operations as well as Skirmish.");
+        Assert.That(cache.Overlaps(grid, new Vector2Int(10, 10), Vector2Int.one), Is.True,
+            "Military foundations cannot contain an existing tree or solid prop.");
+        Assert.That(cache.Overlaps(grid, new Vector2Int(24, 24), Vector2Int.one), Is.False,
+            "Ground cover does not reserve a full building site.");
+        Assert.That(cache.Overlaps(grid, new Vector2Int(28, 28), Vector2Int.one), Is.False);
+    }
+
     public static void RunStreamedSidewalkCacheValidation()
     {
         try

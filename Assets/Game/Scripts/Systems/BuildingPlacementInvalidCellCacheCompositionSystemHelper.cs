@@ -18,9 +18,29 @@ namespace Game.Runtime
         private bool _hasPlacementInvalidPrefix;
         private int _placementInvalidPrefixWidth;
         private int _placementInvalidPrefixHeight;
+        private World _authoredGeometryWorld;
+        private GridConfig _authoredGeometryGrid;
+        private int _authoredGeometryFrame = -1;
 
         internal void Clear()
         {
+            _hasPlacementInvalidPrefix = false;
+            _authoredGeometryFrame = -1;
+        }
+
+        internal void EnsureAuthoredGeometry(EntityManager em, EntityQuery surfaceQuery, GridConfig grid)
+        {
+            // Preview searches validate many candidates in one frame. Initialize
+            // the actual player cache once per frame, rather than relying on the
+            // separate starting-grant cache or scanning every renderer per candidate.
+            if (_authoredGeometryWorld == em.World && _authoredGeometryFrame == Time.frameCount &&
+                _authoredGeometryGrid.Width == grid.Width && _authoredGeometryGrid.Height == grid.Height &&
+                _authoredGeometryGrid.CellSize == grid.CellSize && _authoredGeometryGrid.Origin.Equals(grid.Origin)) return;
+            RoadSurfaces.Ensure(em, surfaceQuery, grid);
+            AuthoredBuildings.Ensure(em, grid);
+            _authoredGeometryWorld = em.World;
+            _authoredGeometryGrid = grid;
+            _authoredGeometryFrame = Time.frameCount;
             _hasPlacementInvalidPrefix = false;
         }
 
@@ -39,8 +59,7 @@ namespace Game.Runtime
             startupSystem.FillRoadFootprintMask(grid, roadMask);
             if(tryGetEntityManager(out var em))
             {
-                RoadSurfaces.Ensure(em,ecsQuerySystem.SurfaceQuery,grid);
-                AuthoredBuildings.Ensure(em,grid);
+                EnsureAuthoredGeometry(em,ecsQuerySystem.SurfaceQuery,grid);
             }
             AuthoredBuildings.AppendTo(roadMask);
             RoadSurfaces.AppendTo(roadMask);

@@ -1,0 +1,19 @@
+{
+  "result": "FailedNativePaidPlacement",
+  "sourceHash": "8627be69de12dc6dcec71d08da75d4e20fa146f80c3695eccd539d842b951604",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "wrapperExit": 2,
+  "pre": "final-816-edge-range-clearance-closed-post-source-manifest.json",
+  "post": "final-817-paid-building-vegetation-overlap-failed-closed-post-source-manifest.json",
+  "log": "native-817-current-manual-en-seed155926.log",
+  "nativeGeometryReport": "s005-aria-live-155926-en-ea9220d673704720b7d28a0a940399c6.jsonl.placement-clearance-paid.json",
+  "inputAudit": "native817-touch-contact-audit.json",
+  "recordedContacts": 110,
+  "allRecordedContactsEnded": true,
+  "failure": "Paid factory15 intersects Vegetation placement5676 at(913.60,573.9254). Native audit rejected after normal industry purchases. Shared final player placement did not reserve this scenery.",
+  "normalInput": true,
+  "budgetsUnchanged": true,
+  "sourceGeometryModified": false,
+  "playerReady": false
+}

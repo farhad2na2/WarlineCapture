@@ -1,0 +1,10 @@
+{
+  "result": "FailedWrapperPreflight",
+  "wrapperExit": 65,
+  "logCreated": false,
+  "UnityStarted": false,
+  "failure": "Restricted process view could not observe Unity Hub; wrapper failed preflight before launching Unity. Hub confirmed running outside sandbox (PID629). Same checked GUI wrapper rerun with process visibility.",
+  "countsAsPass": false,
+  "hubActuallyClosedConfirmed": false,
+  "rerun": "native814"
+}

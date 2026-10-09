@@ -124,6 +124,10 @@ namespace Game.Runtime
             GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant)
         {
+            if (!source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out var em)) return false;
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
+            source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.EnsureAuthoredGeometry(
+                em, source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery, grid);
             RectInt footprint = definition != null && getEffectivePlacementRect != null
                 ? getEffectivePlacementRect(source, definition, originCell, grid, rotateVertical)
                 : new RectInt(originCell, footprintCells);

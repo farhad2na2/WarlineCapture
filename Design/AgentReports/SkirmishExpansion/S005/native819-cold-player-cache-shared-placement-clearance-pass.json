@@ -1,0 +1,15 @@
+{
+  "result": "PassedFocusedPlacement",
+  "sourceHash": "bd8dcfb0ccbedd007ddcd2a13d265adab615b677035aca59aaf950394dfbef57",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "wrapperExit": 0,
+  "log": "native-819-corrected-player-cache-boundary-focused.log",
+  "pre": "final-818-compiler-api-repair-timeout-closed-post-source-manifest.json",
+  "post": "final-819-cold-player-cache-focused-closed-post-source-manifest.json",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=9 failures=0 nativePlacementAcceptance=Pending",
+  "cases": 9,
+  "compilerErrors": false,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

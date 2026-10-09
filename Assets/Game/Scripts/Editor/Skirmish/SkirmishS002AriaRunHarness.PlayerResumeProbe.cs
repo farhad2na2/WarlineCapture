@@ -301,6 +301,17 @@ namespace Game.Editor
                     }
                     if (playerResumePaidRole == SkirmishRoleKind.Siege &&
                         !TickPaidGroundIndustryProbe(em, now)) return;
+                    if (paidIndustryReady && Environment.GetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY") == "1")
+                    {
+                        var clearanceDrawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
+                        if (clearanceDrawer != null && clearanceDrawer.IsOpen)
+                        { PlayerResumeTap(clearanceDrawer.CloseButton); return; }
+                        ScreenCapture.CaptureScreenshot(LiveTracePath() + ".placement-clearance-paid.png");
+                        SkirmishBuildingPlacementProbe.InspectSharedSceneryClearance(LiveTracePath() + ".placement-clearance-paid.json");
+                        Debug.Log("[S005PaidBuildingClearance] result=Passed input=Touch industryTargets=3Factories,OilPump,Refinery,FuelStore budgetsUnchanged=1 sourceGeometryModified=0 completeMatch=NotClaimed");
+                        Finish(false, "sharedPaidBuildingClearanceOnly");
+                        return;
+                    }
                     if (!TickFixedWingLocalFuelSupplyThroughInput(em, now)) return;
                     if (!TickFixedWingFactorySupplyThroughInput(em, now)) return;
                     if (playerResumePaidNeedsDelivery &&

@@ -774,6 +774,13 @@ namespace Game.Editor
                         Finish(true, "incompletePackedRenderInitialization");
                         return;
                     }
+                    if (Environment.GetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY") == "1" &&
+                        Environment.GetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE") == "1")
+                    {
+                        ScreenCapture.CaptureScreenshot(LiveTracePath() + ".placement-clearance-starting.png");
+                        SkirmishBuildingPlacementProbe.InspectSharedSceneryClearance(LiveTracePath() + ".placement-clearance.json");
+                        Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", null);
+                    }
                     if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
                     {
                         if (elapsed < 2f) { next = now + 0.5d; return; }
@@ -857,6 +864,12 @@ namespace Game.Editor
                         }
                         if (!invalid && Environment.GetEnvironmentVariable("WARLINE_S003_NATIVE_REVIEW") == "1" &&
                             !CaptureNativeReview(now)) return;
+                        if (!invalid && Environment.GetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE") == "1")
+                        {
+                            ScreenCapture.CaptureScreenshot(LiveTracePath() + ".placement-clearance-starting.png");
+                            SkirmishBuildingPlacementProbe.InspectSharedSceneryClearance(LiveTracePath() + ".placement-clearance.json");
+                            Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", null);
+                        }
                         Finish(invalid, "sharedStartupDiagnostic");
                         return;
                     }
@@ -1270,6 +1283,19 @@ namespace Game.Editor
                 UiShellRuntimeGateway.StopAriaPlay();
                 EditorApplication.ExitPlaymode();
                 RequestQuitIfAsked(abort ? 2 : 0);
+                return;
+            }
+
+            if (Environment.GetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY") == "1")
+            {
+                bool passed = !abort && abortReason == "sharedPaidBuildingClearanceOnly";
+                Debug.Log("[S005PaidBuildingClearanceCompletion] result=" + (passed ? "Passed" : "Failed") +
+                    " reason=" + abortReason + " codeHash=" + currentSourceHash +
+                    " scope=NativeStartingAndPaidBuildingClearance completeMatchCertified=0 countedWin=0");
+                Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", null);
+                AriaCommandEvidence.End();
+                EditorApplication.ExitPlaymode();
+                RequestQuitIfAsked(passed ? 0 : 2);
                 return;
             }
 

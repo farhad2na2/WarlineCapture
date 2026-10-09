@@ -1,0 +1,7 @@
+{
+  "cliExit": 0,
+  "stdout": "{\n  \"success\": true,\n  \"command\": \"command eval\",\n  \"data\": {\n    \"command\": \"eval\",\n    \"parameters\": {\n      \"code\": \"var p=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(\\\"Assets/Game/Prefabs/Buildings/CH03M04EvidenceChain/EvidenceChain_Clinic.prefab\\\"); if(p==null)throw new System.InvalidOperationException(\\\"Clinic missing\\\"); var a=p.GetComponent<Game.Authoring.BuildingDefinitionAuthoring>(); if(!Game.Runtime.BuildingModelBounds.TryMeasure(p,out var b))throw new System.InvalidOperationException(\\\"Measured clinic bounds unavailable\\\"); return \\\"clinic=\\\"+p.name+\\\" configured=\\\"+a.ConfiguredFootprintCells+\\\" model=\\\"+b+\\\" enclosingCells=\\\"+Game.Runtime.BuildingModelBounds.EnclosingCells(b)+\\\" readOnly=1\\\";\"\n    },\n    \"result\": {\n      \"output\": null,\n      \"diagnostics\": [],\n      \"success\": true,\n      \"result\": \"clinic=EvidenceChain_Clinic configured=(14, 12) model=Center: (1.65, 1.47, -1.20), Extents: (3.21, 1.82, 4.05) enclosingCells=(7, 9) readOnly=1\"\n    },\n    \"target\": {\n      \"host\": \"127.0.0.1\",\n      \"port\": 7801,\n      \"projectPath\": \"/Users/farhad/Projects/WarlineCapture\"\n    },\n    \"success\": true\n  },\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+  "stderr": "",
+  "readOnly": true,
+  "scope": "Prefab measurement only; no placement or readiness claim"
+}

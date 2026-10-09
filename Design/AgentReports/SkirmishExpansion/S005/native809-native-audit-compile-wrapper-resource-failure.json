@@ -1,0 +1,13 @@
+{
+  "result": "FailedWrapperExit",
+  "sourceHash": "240cd76b7ae4061fddb1b764f7fa2f9c81f4b3f8c055ac967e2a7c5181927bda",
+  "sourceUnchanged": true,
+  "wrapperExit": 128,
+  "pre": "final-809-native-clearance-audit-compile-pre-source-manifest.json",
+  "post": "final-809-native-clearance-audit-compile-closed-post-source-manifest.json",
+  "log": "native-809-native-clearance-audit-compile.log",
+  "compilerErrors": false,
+  "focusedMarkerObserved": "[SharedSceneryClearanceValidation] result=Passed cases=6 failures=0 nativePlacementAcceptance=Pending",
+  "wrapperFailure": "fork: Resource temporarily unavailable; actual wrapper128 even though focused marker passed; rerun required",
+  "countsAsPassedValidation": false
+}

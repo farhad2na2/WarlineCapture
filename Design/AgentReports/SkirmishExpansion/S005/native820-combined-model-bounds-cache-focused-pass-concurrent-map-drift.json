@@ -1,0 +1,637 @@
+{
+  "result": "PassedFocusedTestsWithConcurrentMapDrift",
+  "sourceHashPre": "7cb505db2c0d2311e9923a870c0927ae4d36b8d19d78aa99481007f901524b57",
+  "postSourceHash": "41217970a8da5bcf6fb58d202b2645619a93ec861f033636188baf7e64162a78",
+  "sourceUnchanged": false,
+  "sourceDelta": {
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building2.mat.meta": {
+      "pre": null,
+      "post": "e54fec28fc550de90849aeaf38781628a2c2f1767543b540ae86f15098a96505"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2cb95328624a60646b268e3777b9d76f_Building0.mat.meta": {
+      "pre": null,
+      "post": "1b9b3e9caeca6380cf88b84528b6fc128129bce4fe2c30551799484966755452"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette.meta": {
+      "pre": null,
+      "post": "6619070c3dab9fdc1ccadc115a2f401a2ed8ad7c2b5583e12ff635b69527f32d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building0.mat.meta": {
+      "pre": null,
+      "post": "490912443db2b8b1e790bfd5b20193320e7fd7d93495f29188760cb55a03bd1f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building2.mat.meta": {
+      "pre": null,
+      "post": "44c4a3fed8a575e825a6e325b8160105c2475d8b32165db845d16a77b8191e7f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building2.mat.meta": {
+      "pre": null,
+      "post": "e97a2b0e485ec63cbcd311995aaa342b8d30e2400da9043c9be29d7125040af0"
+    },
+    "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity": {
+      "pre": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+      "post": "fa2faaf5a3afc9b588efbbd80eadb33c17186f0c07414705b1e1400fc5472000"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container0.mat.meta": {
+      "pre": null,
+      "post": "269c6ea804acaef88e16f297ee37ff7352d41fc9bee5df46d644d661bb64b523"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building1.mat.meta": {
+      "pre": null,
+      "post": "33359ec285ddbb0c59d6f40ce0d56fc01b8a5bc3d4b5bed2f0bfb668fa5e6b5b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building1.mat.meta": {
+      "pre": null,
+      "post": "688b87acc3efbe1b1a640992f5ef2043bdaccedeba405e259fb567be36e4167a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building1.mat.meta": {
+      "pre": null,
+      "post": "4488ae498940cbcb4e91dc0008be704613eeee8c10bb043a2b96d16ef17ad4b1"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity": {
+      "pre": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+      "post": "ed8947714837b099ad296284823357c38060ced5fbac0caff532bafe83d6e37f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building2.mat.meta": {
+      "pre": null,
+      "post": "b07dea24fc7f1297641fcc6fd199c829d90e21c2c1ad7944340afd8e2ff934a8"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building1.mat.meta": {
+      "pre": null,
+      "post": "704aeee38617a29c43e6307362f977f3fc47282af0fe94baf406c97a429b7454"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building0.mat.meta": {
+      "pre": null,
+      "post": "8895590a9dcb4598fe5e8228632111f8d85b8ef31a7b3ea0377933e67813e25b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container0.mat.meta": {
+      "pre": null,
+      "post": "2d24cb97ed86f89ddd0e55e06787d577d4be20218a299198476ebe43531b89da"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building1.mat.meta": {
+      "pre": null,
+      "post": "db8fcd309fc1d5c2e75ef03b90ac1647c7027ad22b5c8e13baa148745c95268d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building1.mat.meta": {
+      "pre": null,
+      "post": "2664cdcbee5f655b4bcea2e7432ce94e49251a453b0ab60140f12c65275dea76"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/1c6b09dc0beb04f4096a077d49af6fa5_Building0.mat.meta": {
+      "pre": null,
+      "post": "f3d9a3231c8ca5345866d3a8679b7a0ba53ab08be02be605d458fc7bc6e2f151"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building1.mat.meta": {
+      "pre": null,
+      "post": "88831ff3f9d8c528f6d40ca134cddd472e6f7cd2595c8b54e0554dbef30af8dc"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building2.mat.meta": {
+      "pre": null,
+      "post": "5817420e7409060d449e2e80a7fa5aa93b5f69469d067783e102b752227727d3"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building2.mat.meta": {
+      "pre": null,
+      "post": "d1a11712c122adce7f933b009009deb87f9f212bd6c3494d6d81230ec3638748"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/PreparedEntities.unity": {
+      "pre": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+      "post": "68577e50cf2a71f5eafa8f9d9bcda43795c47edfef9c30f8db86853430a9d6b7"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building0.mat.meta": {
+      "pre": null,
+      "post": "a381e6e07bb9c7ad380f5ba58a69a831c2bc05e3fef44ab64b7cc45c0c690418"
+    },
+    "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity": {
+      "pre": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+      "post": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building1.mat.meta": {
+      "pre": null,
+      "post": "f9ddbf70ba963569fb606f560b7fd8afbf4f7ef5bb17cd2f0e74e83c3998087e"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building0.mat.meta": {
+      "pre": null,
+      "post": "6367b1609108546e14f7ffa2c66ea2e09e84eb469c99258799bf16e2b0509df4"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container2.mat.meta": {
+      "pre": null,
+      "post": "05d1f916a7b3fe49260c12192bc1e70ab5d62aa4b818bba03f2bb89c6a88171c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/1c6b09dc0beb04f4096a077d49af6fa5_Building1.mat.meta": {
+      "pre": null,
+      "post": "ff0affd69a4d202702b06335e316e2a193f3ec92eb1be5d543f92d967cb2882a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building0.mat.meta": {
+      "pre": null,
+      "post": "da3da4c4217b3ac797159f3313629f174d3c99633a55a5cae684060b41e99a3d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building1.mat.meta": {
+      "pre": null,
+      "post": "c6e9fbb704c295e4a013097750e958c17ff2073b11a88c19c122fd249c177487"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building0.mat.meta": {
+      "pre": null,
+      "post": "96e4750c438508a344aab682ff01c5647753a86d12491b7c25b4cddc759bebc5"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building2.mat.meta": {
+      "pre": null,
+      "post": "3e4e6ee70ee143be371478003b92c0962682c7efe8d98062167d2c072b83206d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building0.mat.meta": {
+      "pre": null,
+      "post": "c33abe30e5f295a1dac122e02ebfbebdbaffb7fb1b3becddb2b691c85ae37188"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building2.mat.meta": {
+      "pre": null,
+      "post": "12ccdf00cc744e1ad5b66929d4788e6f840d89be4f78d6886d1fee1f1ed63df2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building1.mat.meta": {
+      "pre": null,
+      "post": "ab0ed7a5570edfac671adf62a4e46c3a36f8c5e298818911433a4834311f4e0e"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building0.mat.meta": {
+      "pre": null,
+      "post": "942e56ca7ed1445aaa6439d83d99eb50cbbac71d6f9985e1819b14215c3fbc6d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building0.mat.meta": {
+      "pre": null,
+      "post": "d087505c5a654491d199e94560778d79d5141c697c30a2cc64a2d888bdce439a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building0.mat.meta": {
+      "pre": null,
+      "post": "74d1280c06e2240b5860433c6aea13b1aea61a5a3515be1e4791064ddc0fb7ee"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container1.mat.meta": {
+      "pre": null,
+      "post": "2b2a133656b61468ff9ad00b09523f7ede2bd8aae146049357cf8eb2bee051c1"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building2.mat.meta": {
+      "pre": null,
+      "post": "65cca198ada4294505ae611eb3ef401b9c302ed825b41204b8feb99e51da06dc"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container2.mat.meta": {
+      "pre": null,
+      "post": "26624d7d0dcdeb5a0a6f27332da3e2be66bebe6a136923f2d45505801a040c64"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building2.mat.meta": {
+      "pre": null,
+      "post": "3696f950be09ac2e93884a41b418810f42ef79b8692b41904959ad12adcd9ee9"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container1.mat.meta": {
+      "pre": null,
+      "post": "7c134476e70d08a213a72a790b41d89319219ac8915b7108b9c04e0b6c17a13a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building1.mat.meta": {
+      "pre": null,
+      "post": "cab889012daea72569830fd4cfc7707d7bfac2dcb537da01ef4329c918c6b6b7"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building1.mat.meta": {
+      "pre": null,
+      "post": "e5fa2a00c1ff37367e083fe99aa86ce36c66fc448b06dcef0ff0825e3dda4271"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building2.mat.meta": {
+      "pre": null,
+      "post": "b1b9d10454b41ecebbcb89371d3725fef1a026e3643fb5b6cb2517a6b61d5770"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity": {
+      "pre": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+      "post": "cf2c8bd423d15f92ce6ed8ef381c57fd492a477646b05186ee4c9479c7fa4903"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building1.mat.meta": {
+      "pre": null,
+      "post": "8f6ef902616c799944182383379d6f0a0dd25e6fc8b39c2b50b3c99913f41ac2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building2.mat.meta": {
+      "pre": null,
+      "post": "e98421df4853ef298c594e7411acc8a906d2f7f8791f37802afb3e5eb38fe45e"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building0.mat.meta": {
+      "pre": null,
+      "post": "cacb729f702ac99ca030ffc132225c3ebf8efe617a1216a9fca26ffa5bde962d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building2.mat.meta": {
+      "pre": null,
+      "post": "74d2d1272bcc138e5828dda0d9c50bd924124834697b08013252f780bda8f71c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building0.mat.meta": {
+      "pre": null,
+      "post": "1cf5e816672b680753ee2c8cf1eb28199ee7a8cb484f910bdc36e8946f1fddde"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building1.mat.meta": {
+      "pre": null,
+      "post": "4faf5c8ec4ecc6c85e3d00ceb6aadfa5ce349de4fa4dab8a23cc5ca9f6ad7e71"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2cb95328624a60646b268e3777b9d76f_Building2.mat.meta": {
+      "pre": null,
+      "post": "461d705ffdf003d7fb85cd0e26fc418342bf3f9dde1dbca828e0510a80e40274"
+    },
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs": {
+      "pre": null,
+      "post": "a6cff19569aa66d39b8790b68f3464c655d6de62836beff35d29052282e56f13"
+    },
+    "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity": {
+      "pre": "8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9",
+      "post": "09785b8074e4f2dcd256b860972b0e3b7252b6e0b319a5004c978d89cd1637d5"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building2.mat.meta": {
+      "pre": null,
+      "post": "6cafc9dc020e9a39469eba00c4cda274b839e5b38e91494019602563088daa72"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container0.mat.meta": {
+      "pre": null,
+      "post": "b476736a7d243401f53b3051770f3c194133fa6cb697800c5536af7f93bd2d09"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building0.mat.meta": {
+      "pre": null,
+      "post": "a0873c5ce22da838bdee9ceca2002aaf86fdf14be68d2747bf7acf46b55e5da0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building1.mat.meta": {
+      "pre": null,
+      "post": "eb3976a500aa698f20e17a5ece33e73c9e77c25d83db895b48ce3bf87df6a90c"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity": {
+      "pre": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+      "post": "7c588bc6f933337e047ab791c399c62115deb0683c85176c1e68f46647e79b90"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building0.mat.meta": {
+      "pre": null,
+      "post": "3eea3a7b8a5f8e3aaaced412ebf8983b471cdb1e449d147ebe9c2c0873a97293"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building2.mat.meta": {
+      "pre": null,
+      "post": "fe8dca7f09a75cf53add42aeebcfa59d6cbec60d1c57b21b0356c5175873a682"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container2.mat.meta": {
+      "pre": null,
+      "post": "e0186ff6979d66850bbbb810430bbc87dad70f1a6fb2f9752c6a87d4f9c81825"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building1.mat.meta": {
+      "pre": null,
+      "post": "a79016b566e618bf0e32955ffedb60a7a0500b35dbe53e96dff8979f5dff6b31"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity": {
+      "pre": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+      "post": "265bce63b31e5715de7a8d2dfbebf3f39bc24ff244ac447e7e56e048f624c6e3"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building1.mat.meta": {
+      "pre": null,
+      "post": "2d22bdb73b9760f111fc1fdbeec753be5c27313f7a6db24d5192338532f27097"
+    },
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.DistrictProps.cs.meta": {
+      "pre": null,
+      "post": "5095ef0c16e589f36715f0d8d1f15051450134d4bce069bb124e547d8d0dd075"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building2.mat.meta": {
+      "pre": null,
+      "post": "d1d28a7f3c0b59369e28edc7da63dee01dbc442fb566fac48134c5d38e692bf3"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container1.mat.meta": {
+      "pre": null,
+      "post": "8f876fe870112c00d8e19ec6f981ebe575d4468fb17a91562ca2bed1f71d4e95"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity": {
+      "pre": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+      "post": "9277a5d2befecb231d8c95b33d2add3e65a8c115d15bc0c1cae2ae024d433c79"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container2.mat.meta": {
+      "pre": null,
+      "post": "3f13539f79e34174924ab9e81e1a341128230363c9eb793cc0a279f45648154b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building2.mat.meta": {
+      "pre": null,
+      "post": "d3d072421e551d0c0f783a20993962bb2d20f0da27bc7714178aa9d248b89438"
+    },
+    "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity": {
+      "pre": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+      "post": "97836ca7f406dfb6ba295cab39cd8698f0649566d53060e83ef05db5af311991"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building0.mat.meta": {
+      "pre": null,
+      "post": "58e2bfd2ef15fdb77f30cf27fc6be8fab0112981cb5152a68689bd8f5b673fcb"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building0.mat.meta": {
+      "pre": null,
+      "post": "31e61f63ad009f4ae43dcbc742397f9b4a9daf01a9538e951c74225b00b091e1"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building0.mat.meta": {
+      "pre": null,
+      "post": "1b88784ea51f15fc52d51f0b660566822ef9ee8314a60fa5f807f4c3554a2cbd"
+    },
+    "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity": {
+      "pre": "9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85",
+      "post": "a1dbe29d983e2ad1b0c9cfda8632b884ba16da9ab92ee92f8060494c0effccdf"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container0.mat.meta": {
+      "pre": null,
+      "post": "84244b4528cb75e88dbcae1357b28dc3c7444a7d5c6fa625fc4435e63990164a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building0.mat.meta": {
+      "pre": null,
+      "post": "5a0491b6ae8bcc4daab53080a91f864668eb24081a285e4785e99670c2d62d19"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building1.mat.meta": {
+      "pre": null,
+      "post": "c117ba45c54f1a0c5e3fdc8a4ea110a2f643982157bcaa17ef60bf8a4f2e249f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container1.mat.meta": {
+      "pre": null,
+      "post": "dcfc2c6b99f1cadede1c1d7e7f13d1dcbf2cdfc45753ac96216a075c1d879ac5"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building2.mat.meta": {
+      "pre": null,
+      "post": "b3b795e980857c635efa445406f1c214d3543ec290387e27b5285e5ff3e28d3b"
+    }
+  },
+  "materialDelta": {
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building1.mat": {
+      "pre": null,
+      "post": "cbcc673a67d9a18afbc2c262a80162c77b1553d704027a449fa86ada35735bd8"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container1.mat": {
+      "pre": null,
+      "post": "836c5f916081d1bba4d0cb4f9fe648268b4fad769fd392e4f4c0e3b285178d35"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building1.mat": {
+      "pre": null,
+      "post": "1c00ba8d15f48fe69843bbfb47d3ae86c3613dbc59d547843470bea725e20b94"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building0.mat": {
+      "pre": null,
+      "post": "4d5a5b6c89a21fad077db29534f601d527238ce5ffd71416343bc7fcd91c23d6"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container0.mat": {
+      "pre": null,
+      "post": "c0a54ecd19ee85073f5b7794e4b0d4dbbad758bb14c41a060d165a0487eab3f4"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building0.mat": {
+      "pre": null,
+      "post": "e67fa49c2bac48742181cfcc64f060a85cb9de78fe1dbcf4a7996343dc774880"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building2.mat": {
+      "pre": null,
+      "post": "ad2e0f18cf83243f4d0655d5207feba3e7ea4c98cbaff64120f1bdd0a889a9b2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building2.mat": {
+      "pre": null,
+      "post": "d324d5bb7fab4a6d07c1b4e8ef8d748b6e589ade071ce822cfbeede7ec98fbce"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building2.mat": {
+      "pre": null,
+      "post": "792ef3be77f37803a2c7997efc0f15c682fccfe03767660a8a383e46949ce0a2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container2.mat": {
+      "pre": null,
+      "post": "5c301a09f6086298a85e8584bd6bd72aba7093eae29fadf827ad7b14c459dbce"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building2.mat": {
+      "pre": null,
+      "post": "3ae03a82d38c45c4ee17ed2263fa443bc90ecb70f2f98962a6e114b81e9b3a06"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building1.mat": {
+      "pre": null,
+      "post": "c0586f8dab1250defc2a64fabf9040e4ee070951f73f96ae0cd7ab692e2fed5a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building1.mat": {
+      "pre": null,
+      "post": "02e89c1dad1b5770287e9eda32bb26ba03361d1638cbe4b35f7dd4912a9ddc17"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container2.mat": {
+      "pre": null,
+      "post": "215d39725b40269647fb4c3e221e243c0e4254e03957d98a920bc786e4eb3ccb"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building2.mat": {
+      "pre": null,
+      "post": "a4b1521adff2f8d2838beaf8d9e3708db1ddcbbb805268b931bbd5b027937db4"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building1.mat": {
+      "pre": null,
+      "post": "dc4168e6557afacd929662faaf32769869ac178acb0aa14918acb5c2d5e31d66"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building2.mat": {
+      "pre": null,
+      "post": "e804cea1c0a9b427dbfef54ddf1416442bb281fa15966144eaec0c596c099618"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building1.mat": {
+      "pre": null,
+      "post": "651748de51744df95c92324bf40d0d9441e4b2743b0f48685199145a62597f84"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building0.mat": {
+      "pre": null,
+      "post": "6992d55f64b9074ab1c311fb7387a0cdc90e6394bf1762b5c506620fd419e44e"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building0.mat": {
+      "pre": null,
+      "post": "6d058825784cf5c8fcd678db78d3db85000408dc29d9f77b1ab6ec50d6a73bd8"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/d688ab17c5b4b5544abd374deb0c17ed_Building2.mat": {
+      "pre": null,
+      "post": "6efd7cce672f6f1455e1924b601ba790039e3f0868376d10753d63810232cab1"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building0.mat": {
+      "pre": null,
+      "post": "d715624f99683fd3457ef46371fb73176914eab9d5c3f51fa95200469105f2f0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building0.mat": {
+      "pre": null,
+      "post": "254a13658d9754a25b6a6ac3e04880e923f60b5bee8aa231e9a6ec7b6f795608"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container0.mat": {
+      "pre": null,
+      "post": "5e1044763f2527e991d1943b1f6df7eaae1c27bcd32a33cc45269f66be8080f6"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building1.mat": {
+      "pre": null,
+      "post": "6fe1c54956f920fd04c73e8df0c469baacf03ac7c242e885322acf5f9a3ca434"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building1.mat": {
+      "pre": null,
+      "post": "f038a0e7cb61090cbfeb08c9e087dcc7f79be00f5e5385af2e3448656d90274a"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building2.mat": {
+      "pre": null,
+      "post": "9a88a136c9434ceb7d128e98a3fbd529fd13a418c907eddb57490877ba167790"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building0.mat": {
+      "pre": null,
+      "post": "660314c7c9070a9d573a061784407fa964e14ee58e5dd6c23d265651c2a16183"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c0949687d30c74ca3b5f933d68fbd88f_Building1.mat": {
+      "pre": null,
+      "post": "6957255980531bf619e99af656c3db2e737cc6802a71de7a3ab8b2826feea801"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container1.mat": {
+      "pre": null,
+      "post": "3d1fcb9208a250351cb4aba6e021e16da1e6740ca7693a79c0a8bcc5bd4bfc23"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building1.mat": {
+      "pre": null,
+      "post": "5eed03e72dd69179736315136c336db8b99a90adf817e5eb6cc9dee412f805cb"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building2.mat": {
+      "pre": null,
+      "post": "faf71edd9a9ec008ab53a8d2f25e5378b6dbaa564d9c7067a5f59b7c7e5c8a75"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building2.mat": {
+      "pre": null,
+      "post": "a8f7f805412d3c12d2e7261f28d81d18c0296e63f99876b736312fd0f16376d2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/28053772e042a4ad19cd1e62c348a9ef_Building0.mat": {
+      "pre": null,
+      "post": "ed517d241e7dc5aeb3e25c078ed8952ca0d9058f594e2a2d6837ba5e2eb0e13f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building0.mat": {
+      "pre": null,
+      "post": "b5c652fcf014e7c3cf89fe9642ab2f81c3f35e2c5e8932f897fd13efd4251259"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/1c6b09dc0beb04f4096a077d49af6fa5_Building0.mat": {
+      "pre": null,
+      "post": "4930d0d75b3f4b87794b4a79bfcf06e7e2fb90712ea2c99c232784015a47bae0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building0.mat": {
+      "pre": null,
+      "post": "0ec016d80eb71dad038892d37e16ee67e0f4cb847edf311527c09d6f671b06cf"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building1.mat": {
+      "pre": null,
+      "post": "df58f151f5d26a6c0d280ab46be0fff18c55139aeee2d8aa36631d22825993a9"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/42d0533a20b5a41e0b1391c0ca8660d0_Building2.mat": {
+      "pre": null,
+      "post": "ce5a96276f28974c0e07dc1826af00db2f1b9c96a93567433bea4d6ffe5c788f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2333bdab552ad4b138be0d14e5094c0d_Building2.mat": {
+      "pre": null,
+      "post": "952bfd313cc6de0a9e7a7898888e84b816c185672da267209bef6f035305ce35"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building2.mat": {
+      "pre": null,
+      "post": "c3a6b01d660a92ec29e7512827aa01b9148aa07ad3d9e30d5271ba707ed5622c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/e14749e23c1b64c0493721aaf371a8ae_Building0.mat": {
+      "pre": null,
+      "post": "80d64cdb597a1480983e1a58586962db374cd92143259acf10c29543662abb70"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building0.mat": {
+      "pre": null,
+      "post": "b46398b7eeff6a04a6deaebb9bd20bf2abad94671bf0ad5cb1c52a7a6e6c6496"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building2.mat": {
+      "pre": null,
+      "post": "b6256012f4191a1212a7a80e232713f7e4b6201585bc0ab4e42b7c782a531a25"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container0.mat": {
+      "pre": null,
+      "post": "3f8c3f62b474bdd04bf31f4f1cde5353a0d5480de5d2f914de0fd45c65cf74ea"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/c726a01b0ee89c84d9b406ebbca1fbeb_Building0.mat": {
+      "pre": null,
+      "post": "8ffd24f7e2e1bd3fb583f4de7966d5de6222a2012a0a693e7ac96d4c6421205e"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building1.mat": {
+      "pre": null,
+      "post": "868bd483d5948e835d6a07a3910f9463950bfcc46773df9b1465c3d97f424d0f"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/76331eb5b23be29489a77e9480fe74cc_Building0.mat": {
+      "pre": null,
+      "post": "dbffa87cf0adbde9e825e50f177026c6c24db501ef8d3306c2ff593d04767d72"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building0.mat": {
+      "pre": null,
+      "post": "7e04d5039c5c43860dc821cfb44d8baeef2b5cfc3cd3ead08ec4c5dd8a3d96c4"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/b0b9ef5d7a42e427babca22c405ecbdb_Container1.mat": {
+      "pre": null,
+      "post": "cc3c3ca0bffc6454f29712536d94bdc8f807be70640b433caabd4e181ea60f7b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building1.mat": {
+      "pre": null,
+      "post": "a29d5e741879fa8c6e7006b7583334e2ba5abfd36a544283823869c85f1a0931"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2cb95328624a60646b268e3777b9d76f_Building2.mat": {
+      "pre": null,
+      "post": "b49097e24059d19ff7d4169c02f2ee7bf1dc643725d8c793bc53ba5e7917fca2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/607ac1ca371b942b99f5b38ba589d12d_Building2.mat": {
+      "pre": null,
+      "post": "7b844ba0655dda0219edd34ed3edbb44bb81a49b3df3487534a4b1c78b90b192"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Building1.mat": {
+      "pre": null,
+      "post": "f4e99e91799ff2c801359e28beed980b2acd736478e022fedbb989907c5e5771"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4fd88e508c1ba4b82aa96b418f1b426b_Container2.mat": {
+      "pre": null,
+      "post": "ce17be32002acc472ba33625b9c9dacb92c8196bb5ecfed49f6ecb83c0993fce"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/deeb3b67f97ecce46b14722f9cde4e99_Building2.mat": {
+      "pre": null,
+      "post": "625f7b87f1fa93a7be13474a80eead0edfeccc8f0a0ecf8698954feb7a4ae1f0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building2.mat": {
+      "pre": null,
+      "post": "429c53a0e23e6bc9ccda3f697dbcfe1c707f3a96e1db0e85ed4551f734dceccb"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/1c6b09dc0beb04f4096a077d49af6fa5_Building1.mat": {
+      "pre": null,
+      "post": "403c28adbf4ac1e6fc46b0b5438879cd5e1f9f3167c315a1603fd996fd28732b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container0.mat": {
+      "pre": null,
+      "post": "c4157ad3c7a4d16baeb7d900c30666d070fa3ab90ae62021a40475194e012340"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/03e5a9944852c475987259cd260d608c_Building1.mat": {
+      "pre": null,
+      "post": "bc16ce68ba7da68ce814c45d0611311056fd476c2f781083aa009ea92d42d441"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building0.mat": {
+      "pre": null,
+      "post": "e425c53059338a70304b99d3981695a19d9bb9b8db28bc02c0b16871178ee2d7"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/6487453456f55495a85cab7b38eaece4_Building1.mat": {
+      "pre": null,
+      "post": "0c7d9e5f8a8e44cf85081157e9b21c393cbe4c07f44d394094309ce9f774866c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/2cb95328624a60646b268e3777b9d76f_Building0.mat": {
+      "pre": null,
+      "post": "fc117bcd05ddb10dbe3163c7aabe7b4651591fe062a2efdd8009781343a9af3d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/a74066172cf19cd4bacae3c6600a7217_Container1.mat": {
+      "pre": null,
+      "post": "da40a6dd6ad7f600f5ced8fd0d8383eaa84de90232fe8d24195f5f85bf3c0969"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/34691ed82538d45798996d26805b8d52_Container2.mat": {
+      "pre": null,
+      "post": "7ffcbdea7456eb8626359d9168c871454d64648b3a2ef485fe78ff98a5e76be3"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/ba0cb8ac3ac1542a9a9752ffdf1ef66e_Building1.mat": {
+      "pre": null,
+      "post": "e3401c40e9aaac3fadd94f10e7d21d02235a1de72150c38a309b9d09a95ddee0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/4e47f2459a3ed4f338dbef1e5b487e80_Building1.mat": {
+      "pre": null,
+      "post": "0ac59cf4865e28251eb86233b5afccd1990822da2c54d5a0dc08942216859647"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/cee1bea9fb2214c89b13d5a8997b3930_Building0.mat": {
+      "pre": null,
+      "post": "1185453aa17262f78d318b1a634f2160c48199c3bb18697804e0d98bf7c29c31"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/8dc323c1ab67edb4a958718017f2f640_Building2.mat": {
+      "pre": null,
+      "post": "2e0a55e7de6332272613f080b41e423b5b2547c7bda506de7dead167634116c7"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/DistrictPalette/48843a2db7a47754f9c8d6ae390ebf4b_Building0.mat": {
+      "pre": null,
+      "post": "93733514ed9d9d4748d7de00ab78a8b31753545b3b9e0b1a50bfe86a76e5bdc1"
+    }
+  },
+  "shippingRuntimeAndTestSourcesUnchanged": true,
+  "wrapperExit": 0,
+  "log": "native-820-combined-model-bounds-player-cache-focused.log",
+  "pre": "final-820-native-combined-bounds-and-player-cache-pre-source-manifest.json",
+  "post": "final-820-combined-model-bounds-cache-closed-post-source-manifest.json",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=10 failures=0 nativePlacementAcceptance=Pending",
+  "cases": 10,
+  "compilerErrors": false,
+  "countsForExactCurrentCandidate": false,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

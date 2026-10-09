@@ -1,0 +1,41 @@
+{
+  "result": "PassedNativeStartingAndPaidBuildingClearance",
+  "wrapperExit": 0,
+  "sourceHash": "9d99dbab01c04c4f89dd7413d769138a9f9b7cc4c3a6b104767ea4fb2f07f555",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-829-scoped-placement-focused-closed-post-source-manifest.json",
+  "postManifest": "final-830-native-starting-paid-clearance-closed-post-source-manifest.json",
+  "startingBuildings": 14,
+  "paidBuildings": 20,
+  "factions": 2,
+  "normalPaidConstruction": [
+    "3 fabrication depots",
+    "oil pump",
+    "oil refinery",
+    "fuel bladder"
+  ],
+  "geometryResults": {
+    "roads": "Clear",
+    "sidewalks": "Clear",
+    "treesAndStandingScenery": "Clear"
+  },
+  "input": "Normal presented menu/touch/build controls",
+  "touchContacts": 107,
+  "touchErrors": 0,
+  "trace": "s005-aria-live-155926-en-6059ceb1bc2b4996a3b00b9ffce32192.jsonl",
+  "screenshots": [
+    "s005-aria-live-155926-en-6059ceb1bc2b4996a3b00b9ffce32192.jsonl.save-step-0.png",
+    "s005-aria-live-155926-en-6059ceb1bc2b4996a3b00b9ffce32192.jsonl.placement-clearance-paid.png"
+  ],
+  "budgetsUnchanged": true,
+  "physicalSourcesModifiedByPlacementFix": false,
+  "completeMatchCertified": false,
+  "countedWin": 0,
+  "visualDirectionOwnerReview": "Deferred",
+  "deviceAcceptance": "Pending",
+  "otherNativeDiagnostics": [
+    "3 persistent allocations reported on shutdown; mission cleanup/performance qualification remains open"
+  ],
+  "playerReady": false
+}

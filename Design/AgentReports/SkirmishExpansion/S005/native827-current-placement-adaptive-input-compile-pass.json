@@ -1,0 +1,13 @@
+{
+  "result": "PassedFocusedSharedPlacement",
+  "wrapperExit": 0,
+  "sourceHash": "9434109b2b1c551bf03a8b52019c380d9411227321f2c1a0add3dcab40dea7f6",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-827-adaptive-native-menu-scroll-pre-source-manifest.json",
+  "postManifest": "final-827-adaptive-menu-placement-focused-closed-post-source-manifest.json",
+  "cases": 10,
+  "failures": 0,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

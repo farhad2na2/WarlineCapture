@@ -6,13 +6,16 @@ namespace Game.Runtime
     public static class BuildingModelBounds
     {
         public static bool TryMeasure(GameObject root, out Bounds bounds)
+            => TryMeasure(root, out bounds, false);
+
+        public static bool TryMeasure(GameObject root, out Bounds bounds, bool includeDisabledSourceRenderers)
         {
             bounds = default;
             if (root == null) return false;
             bool found = false;
             foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
-                if (!renderer.enabled || !IsActiveBelow(renderer.transform, root.transform)) continue;
+                if (!includeDisabledSourceRenderers && !renderer.enabled || !IsActiveBelow(renderer.transform, root.transform)) continue;
                 Bounds local;
                 if (renderer is SkinnedMeshRenderer skin && skin.sharedMesh != null) local = skin.localBounds;
                 else if (renderer is MeshRenderer && renderer.TryGetComponent<MeshFilter>(out var filter) && filter.sharedMesh != null)

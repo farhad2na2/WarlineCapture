@@ -1,0 +1,25 @@
+{
+  "result": "Passed",
+  "beforeSceneHash": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+  "afterSceneHash": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
+  "baselineCommit": "81569142",
+  "approvedVisualCommits": [
+    "421384875",
+    "f1ec95e83",
+    "089ee8fb0"
+  ],
+  "receipt": "Design/AgentReports/MapVisualImprovement20261009/DenseCity-district-details.json",
+  "objectRecordsBefore": 458785,
+  "objectRecordsAfter": 458785,
+  "changedRecords": 1887,
+  "unreconciledRecords": [],
+  "allowedDifferences": [
+    "MeshRenderer material slots",
+    "MeshFilter visual mesh references",
+    "prefab material/visual mesh overrides",
+    "59 render-only prop moves named by merged district receipt"
+  ],
+  "geometryAndGameplayProtected": true,
+  "physicalMapReauthored": false,
+  "playerReady": false
+}

@@ -1,0 +1,20 @@
+{
+  "result": "PassedRenderSourceParityAndDeterminism",
+  "wrapperExit": 0,
+  "sourceDelta": [
+    "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset"
+  ],
+  "materialsUnchanged": true,
+  "postSourceHash": "6a476ca985496711e6bb87a25785dd6115593fd7a9124bd6c75a8fd83a1d7ffd",
+  "preManifest": "final-824-reviewed-runway-material-row-render-refresh-pre-source-manifest.json",
+  "postManifest": "final-824-refreshed-shared-render-database-stable-closed-post-source-manifest.json",
+  "sourceRows": 124168,
+  "eligibleRows": 59503,
+  "residentRows": 64665,
+  "removedRows": 0,
+  "placements": 38839,
+  "capacitySlots": 7291,
+  "contentHash": "764e5f3c1314adace8adc6e5d1d9460d0711b0eed178896c2f995edd6675f345",
+  "physicalScenesUnchanged": true,
+  "playerReady": false
+}

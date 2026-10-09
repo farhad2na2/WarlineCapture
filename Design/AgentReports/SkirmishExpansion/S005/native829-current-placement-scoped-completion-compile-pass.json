@@ -1,0 +1,13 @@
+{
+  "result": "PassedFocusedSharedPlacement",
+  "wrapperExit": 0,
+  "sourceHash": "9d99dbab01c04c4f89dd7413d769138a9f9b7cc4c3a6b104767ea4fb2f07f555",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-829-scoped-placement-completion-pre-source-manifest.json",
+  "postManifest": "final-829-scoped-placement-focused-closed-post-source-manifest.json",
+  "cases": 10,
+  "failures": 0,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

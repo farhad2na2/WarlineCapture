@@ -1,0 +1,25 @@
+{
+  "result": "FailedPrefabFootprintAudit",
+  "sourceHash": "9cfef79ebbc0d515a140fc880cbb4a9e734a955bb3f18dfa8508a202d94d1cdb",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "log": "native-812-corrected-native-bounds-prefab-audit.log",
+  "pre": "final-812-corrected-native-bounds-prefab-audit-pre-source-manifest.json",
+  "post": "final-812-prefab-audit-clinic-failed-closed-post-source-manifest.json",
+  "failure": "EvidenceChain_Clinic: footprint must enclose the model with less than one cell of rounding.",
+  "compilerErrors": false,
+  "requiredPassMarkerPresent": false,
+  "nativePlacementCertified": false,
+  "playerReady": false,
+  "readOnlyBoundsFollowup": "native817-readonly-clinic-bounds-observation.json",
+  "configuredSize": [
+    14,
+    12
+  ],
+  "measuredEnclosingCells": [
+    7,
+    9
+  ],
+  "configuredSizeSmallerThanMeasuredSize": false,
+  "interpretation": "Strict exact-rounding audit failed on a larger authored Clinic reservation; this measurement does not show the under-sized military placement observed by the owner. Authored Campaign footprint/binding preserved. Broad audit still failed."
+}

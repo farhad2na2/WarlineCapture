@@ -23,25 +23,55 @@ namespace Game.Rendering
         public int CountAuthoredBuildingGeometry(EntityManager manager)
         {
             using var query = AuthoredBuildingGeometry(manager);
-            return query.CalculateEntityCount();
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            int count = 0;
+            foreach (var entity in entities)
+                if (TryReadPlacementSceneryBounds(manager, entity, out _)) count++;
+            return count;
         }
         public void CollectAuthoredBuildingBounds(EntityManager manager, ref NativeList<Bounds> results)
         {
             using var query = AuthoredBuildingGeometry(manager);
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var matrices = query.ToComponentDataArray<LocalToWorld>(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
-                var materialMesh = manager.GetComponentData<MaterialMeshInfo>(entities[i]);
-                if (materialMesh.HasMaterialMeshIndexRange) continue;
-                var mesh = manager.GetSharedComponentManaged<RenderMeshArray>(entities[i]).GetMesh(materialMesh);
-                if (mesh == null || !mesh.name.StartsWith("SM_Bld_", System.StringComparison.Ordinal) ||
-                    mesh.name.Contains("Destroyed")) continue;
-                var local = mesh.bounds;
-                var bounds = AABB.Transform(matrices[i].Value, new AABB { Center = local.center, Extents = local.extents });
-                if (bounds.Extents.y < 1f) continue;
-                results.Add(new Bounds(bounds.Center, bounds.Extents * 2f));
+                if (TryReadPlacementSceneryBounds(manager, entities[i], out var bounds)) results.Add(bounds);
             }
+        }
+
+        private static bool TryReadPlacementSceneryBounds(EntityManager manager, Entity entity, out Bounds bounds)
+        {
+            bounds = default;
+            var materialMesh = manager.GetComponentData<MaterialMeshInfo>(entity);
+            var array = manager.GetSharedComponentManaged<RenderMeshArray>(entity);
+            var matrix = manager.GetComponentData<LocalToWorld>(entity).Value;
+            bool found = false;
+            if (materialMesh.HasMaterialMeshIndexRange)
+            {
+                var range = materialMesh.MaterialMeshIndexRange;
+                // GetMesh returns only the first mesh of a range. Reserve every
+                // standing part, including trees behind a flat ground-cover mesh.
+                for (int i = range.start; i < range.end; i++)
+                    AppendPlacementSceneryBounds(array.MeshReferences[array.MaterialMeshIndices[i].MeshIndex], matrix, ref bounds, ref found);
+            }
+            else AppendPlacementSceneryBounds(array.GetMesh(materialMesh), matrix, ref bounds, ref found);
+            return found;
+        }
+
+        private static void AppendPlacementSceneryBounds(Mesh mesh, float4x4 matrix, ref Bounds bounds, ref bool found)
+        {
+            if (mesh == null || mesh.name.Contains("Destroyed")) return;
+            string name = mesh.name;
+            if (!(name.StartsWith("SM_Bld_", System.StringComparison.Ordinal) ||
+                 name.IndexOf("Tree", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 name.IndexOf("Palm", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 name.StartsWith("SM_Prop_", System.StringComparison.Ordinal))) return;
+            var local = mesh.bounds;
+            var world = AABB.Transform(matrix, new AABB { Center = local.center, Extents = local.extents });
+            if (world.Extents.y < .5f || !math.all(math.isfinite(world.Center)) || !math.all(math.isfinite(world.Extents))) return;
+            var current = new Bounds(world.Center, world.Extents * 2f);
+            if (found) bounds.Encapsulate(current); else bounds = current;
+            found = true;
         }
 
         public void CollectWaterFootprints(EntityManager manager, ref NativeList<RenderSurfaceFootprint> results)

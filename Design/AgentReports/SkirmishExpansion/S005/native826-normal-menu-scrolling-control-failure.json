@@ -1,0 +1,12 @@
+{
+  "result": "FailedNormalMenuControlsTimeout",
+  "wrapperExit": 2,
+  "sourceHash": "676e5f6558fecbbd596ccc505a7dad9f0fef34b7c37d033623ad40a852e4a69f",
+  "preManifest": "final-825-current-shared-placement-focused-closed-post-source-manifest.json",
+  "postManifest": "final-826-normal-menu-controls-timeout-stable-closed-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "failure": "controlsTimeout step=1; S005 card above viewport after one-direction scroll",
+  "placementValidationReached": false,
+  "playerReady": false
+}

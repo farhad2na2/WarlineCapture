@@ -1,0 +1,11 @@
+{
+  "result": "FailedSourceRevisionGuard",
+  "wrapperExit": 0,
+  "requiredMarkerFound": false,
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "renderDatabaseRefreshed": false,
+  "preManifest": "final-821-packed-render-initialization-failed-closed-post-source-manifest.json",
+  "postManifest": "final-822-shared-render-revision-guard-failed-closed-post-source-manifest.json",
+  "playerReady": false
+}

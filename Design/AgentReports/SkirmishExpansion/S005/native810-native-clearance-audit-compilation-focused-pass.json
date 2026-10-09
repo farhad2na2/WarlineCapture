@@ -1,0 +1,12 @@
+{
+  "result": "PassedCompilationAndFocusedCases",
+  "sourceHash": "240cd76b7ae4061fddb1b764f7fa2f9c81f4b3f8c055ac967e2a7c5181927bda",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "log": "native-810-native-clearance-audit-compile-rerun.log",
+  "preManifest": "final-809-native-clearance-audit-compile-closed-post-source-manifest.json",
+  "postManifest": "final-810-native-clearance-audit-compile-rerun-closed-post-source-manifest.json",
+  "marker": "[SharedSceneryClearanceValidation] result=Passed cases=6 failures=0 nativePlacementAcceptance=Pending",
+  "scope": "Native clearance audit compiled and6 shared sidewalk/tree/prop behavior cases passed. Actual native map placements and full match still pending.",
+  "playerReady": false
+}

@@ -1,0 +1,33 @@
+{
+  "recordedContacts": 279,
+  "completedContacts": 279,
+  "phases": {
+    "Menu": 5,
+    "PlayerResume": 274
+  },
+  "terminalCancellations": [],
+  "errors": [
+    {
+      "driver": [
+        5,
+        1
+      ],
+      "reason": "unexpected input, intervention or receipt violation"
+    },
+    {
+      "driver": [
+        5,
+        1
+      ],
+      "reason": "PhysicalTakeover"
+    }
+  ],
+  "strictRecordedContacts": false,
+  "strictAllContactsEnded": false,
+  "nativeMenuContactsRecorded": true,
+  "terminalContactsRecorded": false,
+  "completeMatchCertified": false,
+  "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+  "trace": "s005-aria-live-155926-en-93b23de09e144ea2b6e450993a63343e.jsonl.touch.jsonl",
+  "sha256": "8c3c4626be6ef04eddba6fc963f02e8dd67f7e9f6df70e610aa11bbab63dccb5"
+}

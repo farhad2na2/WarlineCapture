@@ -1,0 +1,20 @@
+{
+  "result": "FailedScopedCompletionClassification",
+  "wrapperExit": 2,
+  "sourceHash": "9434109b2b1c551bf03a8b52019c380d9411227321f2c1a0add3dcab40dea7f6",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-827-adaptive-menu-placement-focused-closed-post-source-manifest.json",
+  "postManifest": "final-828-native-placement-scoped-completion-failed-closed-post-source-manifest.json",
+  "startingGeometryResult": "Passed",
+  "startingBuildings": 14,
+  "paidGeometryResult": "Passed",
+  "paidBuildings": 20,
+  "touchContacts": 107,
+  "touchErrors": 0,
+  "trace": "s005-aria-live-155926-en-a7b20513929b4c5eb5929987456099b1.jsonl",
+  "failure": "FinishEvidence incorrectly applies complete manual victory criteria to scoped construction diagnostic",
+  "countsForAcceptedNativePass": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

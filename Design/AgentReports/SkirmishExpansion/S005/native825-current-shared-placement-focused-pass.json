@@ -1,0 +1,14 @@
+{
+  "result": "PassedFocusedSharedPlacement",
+  "wrapperExit": 0,
+  "sourceHash": "676e5f6558fecbbd596ccc505a7dad9f0fef34b7c37d033623ad40a852e4a69f",
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "preManifest": "final-825-starting-and-paid-clearance-current-pre-source-manifest.json",
+  "postManifest": "final-825-current-shared-placement-focused-closed-post-source-manifest.json",
+  "cases": 10,
+  "failures": 0,
+  "requiredMarker": "[SharedSceneryClearanceValidation] result=Passed cases=10 failures=0",
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

@@ -7,7 +7,7 @@ using Game.Rendering.Contracts;
 
 namespace Game.Runtime
 {
-    /// <summary>Reserves streamed building geometry even when its visual or combat proxies are not loaded.</summary>
+    /// <summary>Reserves authored buildings, trees, and solid props before their streamed visuals are loaded.</summary>
     internal sealed class BuildingPlacementAuthoredBuildingCache
     {
         private World world;
@@ -21,8 +21,6 @@ namespace Game.Runtime
 
         internal void Ensure(EntityManager em, GridConfig currentGrid)
         {
-            using var skirmish = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
-            if (skirmish.IsEmptyIgnoreFilter) { mask = null; world = null; return; }
             int geometryCount = RenderBoundsGateway.Provider?.CountAuthoredBuildingGeometry(em) ?? 0;
             using var query = em.CreateEntityQuery(ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>());
             var entity = query.CalculateEntityCount() == 1 ? query.GetSingletonEntity() : Entity.Null;
@@ -39,12 +37,16 @@ namespace Game.Runtime
             for (int i = 0; i < data.Placements.Length; i++)
             {
                 ref var placement = ref data.Placements[i];
-                if (placement.SemanticCategory != DenseCityPresentationSemanticCategory.GameplayBuildingIntact) continue;
                 var bounds = data.Prototypes[placement.PrototypeIndex].CombinedLocalBounds;
                 var matrix = placement.WorldMatrix;
                 float3 center = math.transform(matrix, bounds.Center);
                 float3 extents = math.abs(matrix.c0.xyz) * bounds.Extents.x +
                     math.abs(matrix.c1.xyz) * bounds.Extents.y + math.abs(matrix.c2.xyz) * bounds.Extents.z;
+                bool building = placement.SemanticCategory == DenseCityPresentationSemanticCategory.GameplayBuildingIntact;
+                bool solidScenery = placement.SemanticCategory is DenseCityPresentationSemanticCategory.Vegetation or
+                    DenseCityPresentationSemanticCategory.Prop or DenseCityPresentationSemanticCategory.BuildingAttachmentIntact;
+                // Ground cover and flat decals can stay beneath a foundation; standing scenery cannot.
+                if (!building && !(solidScenery && extents.y >= .5f)) continue;
                 Reserve(center, extents);
             }
             }

@@ -1,0 +1,19 @@
+{
+  "result": "FailedRenderRowReconciliation",
+  "wrapperExit": 0,
+  "requiredMarkerFound": false,
+  "sourceUnchanged": true,
+  "materialsUnchanged": true,
+  "oldExpectedRows": 124167,
+  "actualRows": 124168,
+  "independentlyObservedDelta": {
+    "rendererSceneId": 256696288,
+    "path": "AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Runways/SM_Env_Runway_01",
+    "beforeMaterialSlots": 1,
+    "afterMaterialSlots": 2,
+    "otherRendererMaterialSlotDeltas": 0,
+    "sourceCommit": "f1ec95e83",
+    "sourceHash": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698"
+  },
+  "playerReady": false
+}

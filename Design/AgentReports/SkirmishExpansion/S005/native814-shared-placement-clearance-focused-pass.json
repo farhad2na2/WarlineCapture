@@ -1,0 +1,118 @@
+{
+  "result": "PassedFocusedPlacementWithMaterialDrift",
+  "sourceHash": "9cfef79ebbc0d515a140fc880cbb4a9e734a955bb3f18dfa8508a202d94d1cdb",
+  "sourceFilesUnchanged": true,
+  "materialsUnchanged": false,
+  "materialDelta": {
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/TrackSoil.mat": {
+      "pre": "75f1b72c3ab730692d3bc833e1211a1211276d567ea6ab3869dc99feb4a00656",
+      "post": "b23b726ab9eeaeca9dc146f225ce20b350533922045674b17fa7089b8d112c6e"
+    },
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_03_A.mat": {
+      "pre": "d488c8801df72bbf037e6a4bc33d8d4991ca318895dc6617e82d12775d3e9526",
+      "post": "f19ac08b820d3bbc5698121053c02d816ac46ade8e78002530f2881142fc875c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/TrackSoil.mat": {
+      "pre": "e3c4b5d37f3ce1f3a866b5022c51201867550339965b1bf404d54e86356714f8",
+      "post": "0fda0b9dea98fdc0143b87b2e31e385f79e2e86d772f3512ea971d78edc6c3a0"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CityEdgeAirfield/Ground.mat": {
+      "pre": "612bf5a69539305f6d1db21327266f56613d7406b833df224fc58d0119037f58",
+      "post": "b0d9c3499771e315d8edae9d0adfbb3e4ad41be641505e823572b40592fc6109"
+    },
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_04_A.mat": {
+      "pre": "af1b6db2f3e59e27db256d69125e8c934e2fbd4473a13f5a55cf12875e17773e",
+      "post": "d305d4ea967fddc7f94a05a9712113c04c8d1644d6e773e8f2abc9c041cbeb68"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/Ground.mat": {
+      "pre": "2111a32b829e42fc9c2f30956f8771b93d6ef73f610753115486ebe8ff27e4f3",
+      "post": "900430799e9c47c8d949408e7d198ea1ff23c7648912c0ceef623a7c568ad0bf"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Roads/RunwayPaint.mat": {
+      "pre": null,
+      "post": "1db2252a86eb1d55b511f19d14512271b504a9de496328aad88060872cfb7cdc"
+    },
+    "Assets/Game/Art/MapBeautify/DenseCity/OutskirtsSand.mat": {
+      "pre": "e6c67158bbcb529428ef99094ebd8271749174d45874c251ecca9b73f7c8bcfc",
+      "post": "8e40e069fd36228bad94219c130efb7ed3ca3fa7dbff1bd7dea3de88687bf6e2"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/TrackSoil.mat": {
+      "pre": "e1c772609bfaee761cf4b502fa2fb1f08f2f7c2d2243e76a66b80c69e6397ac9",
+      "post": "1242c24842c452afcb54dff7ace3f54bfa8ff92cec45b048f222229aed96c7bf"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/Ground.mat": {
+      "pre": "efa3948cebeca654556529d0e0bdb8f6a7672e429c49553a06bb5770023d5798",
+      "post": "2f2e115b0283309db3a550db5db969d23de64fc9241e826f15e9b75f05b4a4be"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/TrackSoil.mat": {
+      "pre": "3ba5616fc9181a16dd368c10c35ef3c6618a0b54e5a4e36ad22fb37bb59c2d62",
+      "post": "2138c766437af2344a13139ab772557b121dfb0488bf9f7e125dfadad766fd6d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/TrackSoil.mat": {
+      "pre": "3b735930305875c84329e1e3c9d840de40853195cce7179f859e025aca0e7f3e",
+      "post": "9fbecd001cf7fff519c0f87e14e68043f979372e3b2f8b5fcd4aac5965bf7bf8"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/Ground.mat": {
+      "pre": "f498acbc694301addb4f30e2d31720dd71948f21be30ca6b91f253456c1368c1",
+      "post": "bdeb82d9c6ec0fe06b669995e7507cda61c59bc170983eee0de873fecb5fc774"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M04LastCorridor/Ground.mat": {
+      "pre": "0496e5e860b8930419c1bbd83ca37a9fa04cc6322caf9950dc3f45130a28d41e",
+      "post": "c3530f6bf0063164f642943636f636d97cabb74b911eff61669988a46142e4af"
+    },
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_PolygonMilitary_GroundVariation.mat": {
+      "pre": "7ed7f04e648b5d415cb01e37baa0a524364cbc8e34b4a43c84d3b1703109bc8c",
+      "post": "21f57b234d129dcd471d8a8875d3defe20077d480a9e671087a022916c12d4a1"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/Ground.mat": {
+      "pre": "eee5722e802309d181291c12109200688a9982befa88da1be2c011489cb21b40",
+      "post": "6a2467d0736573510a8210797833033f702f51b24a8ad5874f06d872d2d469e9"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/TrackSoil.mat": {
+      "pre": "902be7a704f6fd44fd0873f1df3288f95fd7daa7a6b26b9eef83e1e333186e6e",
+      "post": "6434c9d0a6eba7b6e80c6977cef4092ef328a94c2f9f0ceea73be49ef00a5efc"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/TrackSoil.mat": {
+      "pre": "c603c0d16071c9a680d8e8a7212e982f5db76d484706bf14b586a07c3bbb17fb",
+      "post": "60cb572261438d2290cdfe002785a218d9aebc5207a46e0d9cec50992ab4d677"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/Ground.mat": {
+      "pre": "51d23e60c7dafd9cb8e6ba19ff3da71017f1c6050998bcb6b0075323601d5901",
+      "post": "2683c4cf1ac25de429955784f8142d4e133323715169f4ecabe1e98fafd47c4c"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M05ArmorBreak/TrackSoil.mat": {
+      "pre": "7abec6936d1bb43153828093dfbb61f74c8b3123e4039bf3ec80e5bb112ded83",
+      "post": "64f5938cffeb01b1f72843d2d9bbca157d17ba5468b61979691d4e66c10b613b"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/Ground.mat": {
+      "pre": "731464a05abf04199064791e02ae2390294da646ca9f9523f8a621ba4e8ff101",
+      "post": "f7808c1fe3670884fd9438984c2f54e01e2f756e799eeacb8f4d7c08b96985dc"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/TrackSoil.mat": {
+      "pre": "ff5b7bce0f7270a449ef6fb0d1daacd1cf370e6c67b8352d9145332a88cc3490",
+      "post": "c56f8d06b7084afcb451132b5f6fe3329aebba14345038d07f48868df3685a2d"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/AshLinePort/Ground.mat": {
+      "pre": "302985658b252d252ceacc887c82e0db53b5d7f5ad484134905f666c85909a59",
+      "post": "ca0399eba97f9cf640f00cdfc716a20e95f4546c1d81030cbb9697ea844d6992"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/TrackSoil.mat": {
+      "pre": "3f2b79db28001983d63a58c8748cebb04d764bad752e3b4dea353f85cda34458",
+      "post": "1217acc53abcfaa6de27ee118ea194b51d90880f6a3edce64251fe57485d7de5"
+    },
+    "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M02TrustUnderFire/Ground.mat": {
+      "pre": "1e9a588863cce05a573e5b34ea1e0c28953fb3e4b359a85c7bf80e0515ca77bd",
+      "post": "90d979eac0c614d0cd52ced044b4276c6d543f9e40c9421fdc1166a341e12c45"
+    }
+  },
+  "wrapperExit": 0,
+  "log": "native-814-corrected-native-bounds-clearance-regressions.log",
+  "pre": "final-812-prefab-audit-clinic-failed-closed-post-source-manifest.json",
+  "post": "final-814-corrected-native-bounds-clearance-closed-post-source-manifest.json",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=6 failures=0 nativePlacementAcceptance=Pending",
+  "cases": 6,
+  "compilerErrors": false,
+  "countsForExactFullCandidate": false,
+  "nativePlacementAcceptance": "Pending",
+  "playerReady": false
+}

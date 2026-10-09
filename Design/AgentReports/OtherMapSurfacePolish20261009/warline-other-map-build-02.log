@@ -1,0 +1,111 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CityEdgeAirfield","result":"Passed","beforeSha256":"63e6007ed8e222fe846a1083f4ccf1078c8d8d1cc507bd4f341b3dc8371ce8b4","afterSha256":"d6f03e14e02b53b1047f7449bb083b5b0eb47eafa9529587e23091b0ca4e171f","nonMaterialSha256":"5ab881168c4ce875d6def395ff68a41dd1c9ac8c4a3f1fd6433e5f856f4e3caa","groundRenderers":14,"padRenderers":3,"roadRenderers":4677,"stoneZones":726,"clayZones":243,"concreteZones":4,"maskWidth":1024,"maskHeight":1024}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:69)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"RefineryDistrict","result":"Passed","beforeSha256":"236326c4e9d1ad15966429b070a28d87ab1a82ce89b7793b57ce5390850686b8","afterSha256":"94f263a8d241d1698529372303ac60e224f75ac24e7a6d5a34d0944f3f30a3d1","nonMaterialSha256":"988279218d544503573a5bbc6b0da271edf779b8b8428f774cd9be924ee9c9bf","groundRenderers":21,"padRenderers":21,"roadRenderers":4094,"stoneZones":519,"clayZones":180,"concreteZones":7,"maskWidth":1024,"maskHeight":1024}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"AshLinePort","result":"Passed","beforeSha256":"0f96c4db1233267cb2404d198119327a70d222226b3ebd05241b17f72b1b4a5a","afterSha256":"31ac0295429314db6aff1ebf817c2e78cda221c6919afb87074210bb413d866a","nonMaterialSha256":"baa0d684a7c9f78cce10efa4d2d257e4e20fc3126a0c5a71cf69db0fb1eccb27","groundRenderers":16,"padRenderers":9,"roadRenderers":4239,"stoneZones":470,"clayZones":161,"concreteZones":16,"maskWidth":1024,"maskHeight":1024}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH04M04GroundedSignal","result":"Passed","beforeSha256":"78673aee0bed5e643da72744d34648b26670aaa9a3bf53f0d673babb63464672","afterSha256":"6232766e929131ea11956adf8a91941d69caa73bcf560848d7b79a56a1a4d78a","nonMaterialSha256":"9b823d9e1706a3ae351ededb6cc48ee83024e72d59523716499bdda1d55735c0","groundRenderers":13,"padRenderers":2,"roadRenderers":4677,"stoneZones":297,"clayZones":99,"concreteZones":4,"maskWidth":1024,"maskHeight":512}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH04M05ArmorBreak","result":"Passed","beforeSha256":"acb2c59e55cca78e16007fedb1d373a5e5e47fbd7c09c1b70b4e721b7125c48d","afterSha256":"4d0cd41aaa9de74eba4f6520434aad9296f8c76fa141bf96a9d0960845f5f550","nonMaterialSha256":"3dfbccb47dc66afaab55f93884018708f3b0edd3ce18cd1bfd0100f0d34a841d","groundRenderers":6,"padRenderers":24,"roadRenderers":2687,"stoneZones":295,"clayZones":108,"concreteZones":9,"maskWidth":2048,"maskHeight":1024}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH05M01CitywideAlert","result":"Passed","beforeSha256":"51063c6984b6a5e6aa8df8f16af82032235d2374da4f9fcb609d8d906b2528c6","afterSha256":"054146196732181062047badfdb3ca43d327f8621e64dcb1176e31eef22607c2","nonMaterialSha256":"46f158ece04547ea7239f51d47a2c7ef4c935eae6a08a1519affdaa0c8aed668","groundRenderers":509,"padRenderers":0,"roadRenderers":872,"stoneZones":44,"clayZones":21,"concreteZones":4,"maskWidth":1024,"maskHeight":512}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH05M02TrustUnderFire","result":"Passed","beforeSha256":"b83e61364cc11ef3b041f8ba7fd32be8a9a775462dba7cfcaa7bb15657adcf45","afterSha256":"7d111d9d86678aea758b6f971775b5da7983be617685022f83fc5478049b208f","nonMaterialSha256":"817622cab9904921f14f0ef7ac4b789bb77c769a6e340566e35e788bbcf003a1","groundRenderers":4,"padRenderers":6,"roadRenderers":2642,"stoneZones":104,"clayZones":40,"concreteZones":15,"maskWidth":1024,"maskHeight":1024}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH05M03NetworkCollapse","result":"Passed","beforeSha256":"520136f04026ab2c5780f399c18be1afe0898fb9a2691606a2084ea677478d4b","afterSha256":"4d67b69a5397478b115246d17b9a10ec172731d8b229e4df5a916c2d50f10152","nonMaterialSha256":"09ec9ee3afa3413fc63c2fb88d2cb495b13aa7d7ed17a33b0dc2b79250edfda1","groundRenderers":509,"padRenderers":0,"roadRenderers":872,"stoneZones":36,"clayZones":20,"concreteZones":4,"maskWidth":1024,"maskHeight":512}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH05M04LastCorridor","result":"Passed","beforeSha256":"30a916d9785761a2df4c20311aea7a31b42252de44dacf12b027a95d571577c3","afterSha256":"98fda82b92f39ae2f6ca922841795301b8d76bc5749bc2474dafc74798dbaeb4","nonMaterialSha256":"f9eaff98a85348af14dd3cc4fbf1fb6746d5924adc282f8859982cb3e6c26e6e","groundRenderers":509,"padRenderers":0,"roadRenderers":872,"stoneZones":37,"clayZones":21,"concreteZones":4,"maskWidth":1024,"maskHeight":512}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] {"map":"CH05M05CommandNode","result":"Passed","beforeSha256":"82e3ed777d5df16c2c80850b81368b82576f18fc597dbdaa8cc06650e538ce28","afterSha256":"2ac4a5a2cae0352380283a4fd59d3b269e1f6d2e766776cdda615aaafa10d605","nonMaterialSha256":"3475bc71abb4a9aab415508b56aa80f7cd557d05a041bf9796f05d9001b70a02","groundRenderers":509,"padRenderers":0,"roadRenderers":872,"stoneZones":31,"clayZones":16,"concreteZones":4,"maskWidth":1024,"maskHeight":512}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OtherMapSurfaceBuild] result=Passed maps=10
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildAndCapture () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.Build.cs:101)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildAndCapture
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_7d77e489/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,15 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "beforeSha256": "78673aee0bed5e643da72744d34648b26670aaa9a3bf53f0d673babb63464672",
+    "afterSha256": "6232766e929131ea11956adf8a91941d69caa73bcf560848d7b79a56a1a4d78a",
+    "nonMaterialSha256": "9b823d9e1706a3ae351ededb6cc48ee83024e72d59523716499bdda1d55735c0",
+    "groundRenderers": 13,
+    "padRenderers": 2,
+    "roadRenderers": 4677,
+    "stoneZones": 297,
+    "clayZones": 99,
+    "concreteZones": 4,
+    "maskWidth": 1024,
+    "maskHeight": 512
+}

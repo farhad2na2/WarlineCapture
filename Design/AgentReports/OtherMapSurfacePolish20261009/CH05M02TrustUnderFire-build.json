@@ -1,0 +1,15 @@
+{
+    "map": "CH05M02TrustUnderFire",
+    "result": "Passed",
+    "beforeSha256": "b83e61364cc11ef3b041f8ba7fd32be8a9a775462dba7cfcaa7bb15657adcf45",
+    "afterSha256": "7d111d9d86678aea758b6f971775b5da7983be617685022f83fc5478049b208f",
+    "nonMaterialSha256": "817622cab9904921f14f0ef7ac4b789bb77c769a6e340566e35e788bbcf003a1",
+    "groundRenderers": 4,
+    "padRenderers": 6,
+    "roadRenderers": 2642,
+    "stoneZones": 104,
+    "clayZones": 40,
+    "concreteZones": 15,
+    "maskWidth": 1024,
+    "maskHeight": 1024
+}

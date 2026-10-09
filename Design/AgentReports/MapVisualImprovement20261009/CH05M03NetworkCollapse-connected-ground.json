@@ -1,0 +1,11 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "sourceHashBefore": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+    "sourceHashAfter": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M03NetworkCollapse/DistrictMask.asset",
+    "connectedTexels": 983,
+    "protectedRoadTexels": 61931,
+    "groundMaterials": 2,
+    "squareMetresAdded": 586.4761352539063
+}

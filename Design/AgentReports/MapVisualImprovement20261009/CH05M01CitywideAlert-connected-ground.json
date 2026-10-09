@@ -1,0 +1,11 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "result": "Passed",
+    "sourceHashBefore": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+    "sourceHashAfter": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M01CitywideAlert/DistrictMask.asset",
+    "connectedTexels": 1422,
+    "protectedRoadTexels": 74050,
+    "groundMaterials": 2,
+    "squareMetresAdded": 848.3917236328125
+}

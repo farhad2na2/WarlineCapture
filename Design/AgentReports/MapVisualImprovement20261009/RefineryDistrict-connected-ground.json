@@ -1,0 +1,11 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "sourceHashBefore": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+    "sourceHashAfter": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/RefineryDistrict/DistrictMask.asset",
+    "connectedTexels": 25059,
+    "protectedRoadTexels": 94428,
+    "groundMaterials": 2,
+    "squareMetresAdded": 13419.6572265625
+}

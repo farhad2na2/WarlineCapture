@@ -16,9 +16,9 @@ namespace Game.Editor.MapVariants
         private const string Report="Design/AgentReports/OtherMapSurfacePolish20261009";
         private static readonly string[] Maps={"CityEdgeAirfield","RefineryDistrict","AshLinePort","CH04M04GroundedSignal","CH04M05ArmorBreak","CH05M01CitywideAlert","CH05M02TrustUnderFire","CH05M03NetworkCollapse","CH05M04LastCorridor","CH05M05CommandNode"};
         private static bool Variant(string map)=>!map.StartsWith("CH");
-        private static string Source(string map)=>"Assets/Game/Scenes/OperationMaps/"+(Variant(map)?"Variants/":"")+map+"/PreparedEntities.unity";
-        private static string Binding(string map)=>Path.GetDirectoryName(Source(map))+"/RuntimeBinding.unity";
-        private static string Definition(string map)=>"Assets/Game/GeneratedOperationMaps/"+(Variant(map)?"Variants/":"")+map+(Variant(map)?"/Candidate":"")+"/Definition.asset";
+        private static string Source(string map)=>map=="DenseCity"?"Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity":"Assets/Game/Scenes/OperationMaps/"+(Variant(map)?"Variants/":"")+map+"/PreparedEntities.unity";
+        private static string Binding(string map)=>map=="DenseCity"?"Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity":Path.GetDirectoryName(Source(map))+"/RuntimeBinding.unity";
+        private static string Definition(string map)=>map=="DenseCity"?"Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset":"Assets/Game/GeneratedOperationMaps/"+(Variant(map)?"Variants/":"")+map+(Variant(map)?"/Candidate":"")+"/Definition.asset";
         [Serializable] private sealed class SurfaceRow{public string name,path,mesh,material,shader;public Vector3 center,size;}
         [Serializable] private sealed class MaterialRow{public string path,shader;public int renderers;}
         [Serializable] private sealed class Audit{public string map,source,sha256;public Vector3 min,max;public int rendererCount;public SurfaceRow[] surfaces;public MaterialRow[] materials;}
@@ -52,7 +52,7 @@ namespace Game.Editor.MapVariants
         {
             string n=r.name.ToLowerInvariant();return n.Contains("ground")||n.Contains("paving")||n.Contains("asphalt")||n.Contains("concrete")||n.Contains("road")||n.Contains("sandwear")||n.Contains("sidewalk")||n.Contains("terrain")||n.Contains("surface");
         }
-        private static void Capture(string map,Scene scene,OperationMapDefinition def,MeshRenderer[] rs,string label)
+        private static void Capture(string map,Scene scene,OperationMapDefinition def,MeshRenderer[] rs,string label,string directory=null,Tuple<string,Vector3,float>[] extraViews=null)
         {
             var binding=SceneManager.GetSceneByPath(Binding(map));if(!binding.IsValid()||!binding.isLoaded)binding=EditorSceneManager.OpenScene(Binding(map),OpenSceneMode.Additive);
             SceneManager.SetActiveScene(binding);
@@ -83,7 +83,8 @@ namespace Game.Editor.MapVariants
                 var buildings=rs.Where(r=>r.bounds.size.y>3&&r.bounds.size.x>4&&r.bounds.size.z>4&&r.bounds.size.x<100&&r.bounds.size.z<100&&r.bounds.center.x>min.x&&r.bounds.center.x<max.x&&r.bounds.center.z>min.z&&r.bounds.center.z<max.z)
                     .Where(r=>{string n=(r.GetComponent<MeshFilter>()?.sharedMesh?.name??r.name).ToLowerInvariant();return n.Contains("house")||n.Contains("hangar")||n.Contains("factory")||n.Contains("warehouse")||n.Contains("building");}).ToArray();
                 Vector3 close=buildings.OrderBy(r=>(r.bounds.center-center).sqrMagnitude).Select(r=>r.bounds.center).DefaultIfEmpty(center).First();close.y=0;
-                var views=new[]{("overview",center,Mathf.Max(max.x-min.x,max.z-min.z)*.72f),("detail",close,85f)};
+                var views=new List<(string,Vector3,float)>{("overview",center,Mathf.Max(max.x-min.x,max.z-min.z)*.72f),("detail",close,85f)};
+                if(extraViews!=null)views.AddRange(extraViews.Select(v=>(v.Item1,v.Item2,v.Item3)));
                 foreach(var view in views)
                 {
                     // Wide inspection cameras exceed gameplay camera altitude. Suppress only
@@ -92,7 +93,7 @@ namespace Game.Editor.MapVariants
                     try
                     {
                         if(view.Item1=="overview"){RenderSettings.fog=false;type?.GetProperty("renderPostProcessing")?.SetValue(data,false);}
-                        go.transform.rotation=Quaternion.Euler(58,0,0);go.transform.position=view.Item2-go.transform.forward*view.Item3;camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();File.WriteAllBytes(Report+"/"+map+"-"+label+"-"+view.Item1+".png",image.EncodeToPNG());
+                        go.transform.rotation=Quaternion.Euler(58,0,0);go.transform.position=view.Item2-go.transform.forward*view.Item3;camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();File.WriteAllBytes((directory??Report)+"/"+map+"-"+label+"-"+view.Item1+".png",image.EncodeToPNG());
                     }
                     finally{RenderSettings.fog=fog;type?.GetProperty("renderPostProcessing")?.SetValue(data,true);}
                 }

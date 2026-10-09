@@ -1,0 +1,11 @@
+{
+    "map": "DenseCity",
+    "result": "Passed",
+    "beforeHash": "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40",
+    "afterHash": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+    "protectedSceneHash": "60fe4a336afa7c73256c080643b521fa291b175ff4905e8a89bb77ad1ccd86eb",
+    "roadPieces": 249,
+    "runwayPieces": 1,
+    "originalTriangles": 45894,
+    "newTriangles": 45722
+}

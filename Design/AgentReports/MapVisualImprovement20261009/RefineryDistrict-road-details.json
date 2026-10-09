@@ -1,0 +1,11 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeHash": "94f263a8d241d1698529372303ac60e224f75ac24e7a6d5a34d0944f3f30a3d1",
+    "afterHash": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+    "protectedSceneHash": "a3a715b77f8be628db11974633dc49eb00e97606e4ebb849147418ec718242d9",
+    "roadPieces": 212,
+    "runwayPieces": 0,
+    "originalTriangles": 34522,
+    "newTriangles": 34522
+}

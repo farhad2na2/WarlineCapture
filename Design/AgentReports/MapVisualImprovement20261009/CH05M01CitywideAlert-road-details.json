@@ -1,0 +1,11 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "result": "Passed",
+    "beforeHash": "054146196732181062047badfdb3ca43d327f8621e64dcb1176e31eef22607c2",
+    "afterHash": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+    "protectedSceneHash": "cbe573a94ea2c183969dbdadb388c62fde09f5c5ef9b66dff36fc2c072e04b7a",
+    "roadPieces": 140,
+    "runwayPieces": 1,
+    "originalTriangles": 24541,
+    "newTriangles": 24369
+}

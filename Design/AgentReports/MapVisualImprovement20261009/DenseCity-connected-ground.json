@@ -1,0 +1,11 @@
+{
+    "map": "DenseCity",
+    "result": "Passed",
+    "sourceHashBefore": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+    "sourceHashAfter": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+    "mask": "Assets/Game/Art/MapBeautify/DenseCity/DistrictSurfaceMask.asset",
+    "connectedTexels": 18634,
+    "protectedRoadTexels": 350901,
+    "groundMaterials": 4,
+    "squareMetresAdded": 18634.0
+}

@@ -1,0 +1,11 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "sourceHashBefore": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+    "sourceHashAfter": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH05M05CommandNode/DistrictMask.asset",
+    "connectedTexels": 786,
+    "protectedRoadTexels": 61931,
+    "groundMaterials": 2,
+    "squareMetresAdded": 468.9422607421875
+}

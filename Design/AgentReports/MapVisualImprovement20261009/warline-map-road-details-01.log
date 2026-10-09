@@ -1,0 +1,119 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildRoadDetails
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:65)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CityEdgeAirfield","result":"Passed","beforeHash":"d6f03e14e02b53b1047f7449bb083b5b0eb47eafa9529587e23091b0ca4e171f","afterHash":"ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe","protectedSceneHash":"9d0379bd8900d5088bb18d5efb4624c599cff254774f3b15df2cfc218f5dea81","roadPieces":116,"runwayPieces":2,"originalTriangles":19316,"newTriangles":18972}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"RefineryDistrict","result":"Passed","beforeHash":"94f263a8d241d1698529372303ac60e224f75ac24e7a6d5a34d0944f3f30a3d1","afterHash":"44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108","protectedSceneHash":"a3a715b77f8be628db11974633dc49eb00e97606e4ebb849147418ec718242d9","roadPieces":212,"runwayPieces":0,"originalTriangles":34522,"newTriangles":34522}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"AshLinePort","result":"Passed","beforeHash":"31ac0295429314db6aff1ebf817c2e78cda221c6919afb87074210bb413d866a","afterHash":"8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9","protectedSceneHash":"9ad09fe59030e8db6e0b4780fc49e1ebea83d27f5d0aa23314c87ea6ab490410","roadPieces":216,"runwayPieces":0,"originalTriangles":34904,"newTriangles":34904}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH04M04GroundedSignal","result":"Passed","beforeHash":"6232766e929131ea11956adf8a91941d69caa73bcf560848d7b79a56a1a4d78a","afterHash":"f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e","protectedSceneHash":"c6a7d6f521e7e3cd3d1f1be544b7335eee4f64e994c78625d9068eb4a6b9ecf2","roadPieces":11,"runwayPieces":2,"originalTriangles":2172,"newTriangles":1828}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH04M05ArmorBreak","result":"Passed","beforeHash":"4d0cd41aaa9de74eba4f6520434aad9296f8c76fa141bf96a9d0960845f5f550","afterHash":"0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c","protectedSceneHash":"a780b0435dfc27cf3f737f4af491de4dc6ad4b6bbe0d13b897579036e3fb4f78","roadPieces":413,"runwayPieces":2,"originalTriangles":67438,"newTriangles":67094}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH05M01CitywideAlert","result":"Passed","beforeHash":"054146196732181062047badfdb3ca43d327f8621e64dcb1176e31eef22607c2","afterHash":"ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5","protectedSceneHash":"cbe573a94ea2c183969dbdadb388c62fde09f5c5ef9b66dff36fc2c072e04b7a","roadPieces":140,"runwayPieces":1,"originalTriangles":24541,"newTriangles":24369}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH05M02TrustUnderFire","result":"Passed","beforeHash":"7d111d9d86678aea758b6f971775b5da7983be617685022f83fc5478049b208f","afterHash":"4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253","protectedSceneHash":"df0947b7b6f0c1564a33374a4cff8f90f14fc0b4d3d06806b42c3304eedfbe57","roadPieces":212,"runwayPieces":0,"originalTriangles":34264,"newTriangles":34264}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH05M03NetworkCollapse","result":"Passed","beforeHash":"4d67b69a5397478b115246d17b9a10ec172731d8b229e4df5a916c2d50f10152","afterHash":"478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b","protectedSceneHash":"49d20ec488ad5cd3994a7146c63553806dd46d15423e58a32d1901c096e20b0f","roadPieces":140,"runwayPieces":0,"originalTriangles":24335,"newTriangles":24335}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH05M04LastCorridor","result":"Passed","beforeHash":"98fda82b92f39ae2f6ca922841795301b8d76bc5749bc2474dafc74798dbaeb4","afterHash":"9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85","protectedSceneHash":"3ab0894c9f06c29fe16065f26aac2fb511d61838f5f8724003980dd0bac439d7","roadPieces":140,"runwayPieces":0,"originalTriangles":24335,"newTriangles":24335}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"CH05M05CommandNode","result":"Passed","beforeHash":"2ac4a5a2cae0352380283a4fd59d3b269e1f6d2e766776cdda615aaafa10d605","afterHash":"6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5","protectedSceneHash":"95d8533b1c27c1a6b225629943c1f5813090fcfbc27ce5f454b142b7203f97c0","roadPieces":140,"runwayPieces":0,"originalTriangles":24335,"newTriangles":24335}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] {"map":"DenseCity","result":"Passed","beforeHash":"77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40","afterHash":"40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6","protectedSceneHash":"60fe4a336afa7c73256c080643b521fa291b175ff4905e8a89bb77ad1ccd86eb","roadPieces":249,"runwayPieces":1,"originalTriangles":45894,"newTriangles":45722}
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MapRoadDetails] result=Passed maps=11 transformsCollidersAndGameplay=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildRoadDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildRoadDetails
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_df1a6cb5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,11 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "sourceHashBefore": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+    "sourceHashAfter": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+    "mask": "Assets/Game/Art/MapBeautify/CampaignSurfaces/CH04M04GroundedSignal/DistrictMask.asset",
+    "connectedTexels": 11866,
+    "protectedRoadTexels": 81323,
+    "groundMaterials": 2,
+    "squareMetresAdded": 7441.62109375
+}

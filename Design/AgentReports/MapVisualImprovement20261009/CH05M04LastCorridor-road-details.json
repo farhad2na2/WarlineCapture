@@ -1,0 +1,11 @@
+{
+    "map": "CH05M04LastCorridor",
+    "result": "Passed",
+    "beforeHash": "98fda82b92f39ae2f6ca922841795301b8d76bc5749bc2474dafc74798dbaeb4",
+    "afterHash": "9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85",
+    "protectedSceneHash": "3ab0894c9f06c29fe16065f26aac2fb511d61838f5f8724003980dd0bac439d7",
+    "roadPieces": 140,
+    "runwayPieces": 0,
+    "originalTriangles": 24335,
+    "newTriangles": 24335
+}

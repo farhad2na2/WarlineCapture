@@ -1,0 +1,11 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "beforeHash": "6232766e929131ea11956adf8a91941d69caa73bcf560848d7b79a56a1a4d78a",
+    "afterHash": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+    "protectedSceneHash": "c6a7d6f521e7e3cd3d1f1be544b7335eee4f64e994c78625d9068eb4a6b9ecf2",
+    "roadPieces": 11,
+    "runwayPieces": 2,
+    "originalTriangles": 2172,
+    "newTriangles": 1828
+}

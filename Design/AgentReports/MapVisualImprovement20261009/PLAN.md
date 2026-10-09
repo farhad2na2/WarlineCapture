@@ -54,3 +54,15 @@ Each step gets a scoped commit/PR, push, merge to main and a fast-forward pull i
 - Earlier shared desert/dense-city road and district surface foundation: PR [#58](https://github.com/farhad2na2/WarlineCapture/pull/58), merged as `024768787b6a05e590bd2cffa9ca59c8985fb6bd` and pulled to main.
 - Ten-map surface foundation: native detail review complete; saved scene/material validation passed for 10 scenes and 50 materials. Scene differences are material references only. Full normal-input mission and Android acceptance remain pending. Evidence: `../OtherMapSurfacePolish20261009/validation-summary.json`.
 - New improvement steps: in progress. Record actual results here as work is completed; recommendations above are not claims of implementation.
+
+### Step 1 published
+
+- Commit `4213848753926368a750cce82a59cfd32bb00258`; PR [#59](https://github.com/farhad2na2/WarlineCapture/pull/59); main merge `7bba4c19748f9b52da6712a312511b5c1ffb9855`.
+- Main checkout fast-forwarded to the merge. Both unrelated dirty tracked files were hash-verified unchanged; all 7,112 unrelated untracked paths remained present.
+- A fresh validation dispatch did not run because T7 Pipeline could not bind its configured port 7801, already used by main. Original passing asset validation remains valid and all ten saved scene hashes match it. The owner explicitly approved restarting only T7. T7 was gracefully restarted through the repository wrapper, connected on port 7802, and the fresh foundation revalidation passed (`warline-map-foundation-revalidate-02.log`, exit 0). Main and other Editors were left running.
+
+### Step 2 validated
+
+- Lowered inappropriate dirt-strip relief on 1,989 pieces, rebuilt eight runway sections with continuous straight surfaces and aligned markings. Preserved exact XZ footprints, authored ramps, transforms, collision and mission data. Road triangle count fell from 336,056 to 334,680.
+- Connected small gaps between existing paved frontages while protecting road coverage, reduced yellow-green ground contrast, and added sparse concrete fractures and worn limestone sets. No extra scene objects.
+- Eleven native source/capture checks and the connected-ground checks passed. See `step2-validation.json` and `step2-gallery.html`. Full normal-input missions and Android acceptance remain pending.

@@ -1,0 +1,153 @@
+{
+  "result": "Passed",
+  "scope": "Step 2: existing eleven physical source maps; visual road meshes and ground materials/masks only",
+  "nativeWrapperExitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "logs": [
+    "warline-map-foundation-revalidate-02.log",
+    "warline-map-visual-audit-01.log",
+    "warline-map-road-details-01.log",
+    "warline-map-connected-ground-01.log"
+  ],
+  "maps": [
+    {
+      "map": "AshLinePort",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+      "savedSourceSHA256": "8697d04fa2f32401b9226512d520c3fd95970770105d19caa6453c4f05b1acb9",
+      "roads": 216,
+      "runways": 0,
+      "trianglesBefore": 34904,
+      "trianglesAfter": 34904,
+      "connectedCoverageTexels": 23142,
+      "protectedRoadTexels": 109205
+    },
+    {
+      "map": "CH04M04GroundedSignal",
+      "source": "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
+      "savedSourceSHA256": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+      "roads": 11,
+      "runways": 2,
+      "trianglesBefore": 2172,
+      "trianglesAfter": 1828,
+      "connectedCoverageTexels": 11866,
+      "protectedRoadTexels": 81323
+    },
+    {
+      "map": "CH04M05ArmorBreak",
+      "source": "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity",
+      "savedSourceSHA256": "0c3a1d3c4bc2745990f3e1af48950d42f9a854f1e807c2f523bb00cded126a2c",
+      "roads": 413,
+      "runways": 2,
+      "trianglesBefore": 67438,
+      "trianglesAfter": 67094,
+      "connectedCoverageTexels": 13905,
+      "protectedRoadTexels": 145322
+    },
+    {
+      "map": "CH05M01CitywideAlert",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity",
+      "savedSourceSHA256": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+      "roads": 140,
+      "runways": 1,
+      "trianglesBefore": 24541,
+      "trianglesAfter": 24369,
+      "connectedCoverageTexels": 1422,
+      "protectedRoadTexels": 74050
+    },
+    {
+      "map": "CH05M02TrustUnderFire",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/PreparedEntities.unity",
+      "savedSourceSHA256": "4b90474d0469b304c9c7544750760a1b4346a6bf568589257dfc98aaa7022253",
+      "roads": 212,
+      "runways": 0,
+      "trianglesBefore": 34264,
+      "trianglesAfter": 34264,
+      "connectedCoverageTexels": 5240,
+      "protectedRoadTexels": 99953
+    },
+    {
+      "map": "CH05M03NetworkCollapse",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity",
+      "savedSourceSHA256": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+      "roads": 140,
+      "runways": 0,
+      "trianglesBefore": 24335,
+      "trianglesAfter": 24335,
+      "connectedCoverageTexels": 983,
+      "protectedRoadTexels": 61931
+    },
+    {
+      "map": "CH05M04LastCorridor",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity",
+      "savedSourceSHA256": "9d4f083b755587f9d436940f1cd7a2e3be67df40f998e44c5116edfa80856c85",
+      "roads": 140,
+      "runways": 0,
+      "trianglesBefore": 24335,
+      "trianglesAfter": 24335,
+      "connectedCoverageTexels": 992,
+      "protectedRoadTexels": 61931
+    },
+    {
+      "map": "CH05M05CommandNode",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity",
+      "savedSourceSHA256": "6616fb0d77b4012aaffb87ebbbab590c74e5f92ae121f4a3f25cb23f203ae6a5",
+      "roads": 140,
+      "runways": 0,
+      "trianglesBefore": 24335,
+      "trianglesAfter": 24335,
+      "connectedCoverageTexels": 786,
+      "protectedRoadTexels": 61931
+    },
+    {
+      "map": "CityEdgeAirfield",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+      "savedSourceSHA256": "ac916647e652691465bb6ef5d90f7257d4e902897881ab5f51c44aa81e8ffcfe",
+      "roads": 116,
+      "runways": 2,
+      "trianglesBefore": 19316,
+      "trianglesAfter": 18972,
+      "connectedCoverageTexels": 37270,
+      "protectedRoadTexels": 138160
+    },
+    {
+      "map": "DenseCity",
+      "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+      "savedSourceSHA256": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+      "roads": 249,
+      "runways": 1,
+      "trianglesBefore": 45894,
+      "trianglesAfter": 45722,
+      "connectedCoverageTexels": 18634,
+      "protectedRoadTexels": 350901
+    },
+    {
+      "map": "RefineryDistrict",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity",
+      "savedSourceSHA256": "44b8708b842615b8ba6cec21ee2f80dd196645d9587107b4978406f5d20f5108",
+      "roads": 212,
+      "runways": 0,
+      "trianglesBefore": 34522,
+      "trianglesAfter": 34522,
+      "connectedCoverageTexels": 25059,
+      "protectedRoadTexels": 94428
+    }
+  ],
+  "totals": {
+    "roads": 1989,
+    "runways": 8,
+    "trianglesBefore": 336056,
+    "trianglesAfter": 334680,
+    "connectedCoverageTexels": 139299,
+    "protectedRoadTexels": 1279135
+  },
+  "visualReview": "All eleven native detail captures reviewed. CityEdge/DenseCity runway joins reviewed. Existing repeated cargo, vegetation/runway intrusions and bright water proceed to steps 3/4. Existing CH05 CommandNode sparse compound remains authored.",
+  "invariants": "Native save compares scene text excluding visual mesh/material references. No authored transforms, colliders, buildings, navigation, mission definitions or bindings changed. Connected-ground pass separately asserts source SHA unchanged.",
+  "coverageMetric": "Coverage texels include partial opacity changes; squareMetresAdded in native receipts is not a fully paved area measurement.",
+  "normalInputMissionAcceptance": "Not run; pending",
+  "androidDeviceAcceptance": "Not run; pending",
+  "historicalEvidence": "Step 1 source hashes predate the intentional road mesh reference changes; do not use them as current readiness hashes."
+}

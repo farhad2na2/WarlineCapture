@@ -1,0 +1,1074 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "265bce63b31e5715de7a8d2dfbebf3f39bc24ff244ac447e7e56e048f624c6e3",
+    "afterHash": "5d3241044464c47dd66d82cacbedbf2fa87ac4ea182630b3bc0eb9e562573853",
+    "protectedSceneHash": "fccec9dd752cff63f846bd6f9f52efd45bf497425fb15ba7f836d3edef326cef",
+    "rocks": 90,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 31,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 11580,
+    "renderersAfter": 11580,
+    "trianglesBefore": 9306895,
+    "trianglesAfter": 9306895,
+    "moves": [
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1300.1851806640625,
+                "y": 0.0,
+                "z": 333.9068908691406
+            },
+            "after": {
+                "x": 1301.9647216796875,
+                "y": 0.0,
+                "z": 341.0903015136719
+            },
+            "transformId": 1373498168,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1303.4442138671875,
+                "y": 0.0,
+                "z": 353.912841796875
+            },
+            "after": {
+                "x": 1309.9420166015625,
+                "y": 0.0,
+                "z": 342.74029541015627
+            },
+            "transformId": 690975297,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1311.7987060546875,
+                "y": 0.0,
+                "z": 331.4935607910156
+            },
+            "after": {
+                "x": 1301.3433837890625,
+                "y": 0.0,
+                "z": 344.3902893066406
+            },
+            "transformId": 1304775420,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1308.1805419921875,
+                "y": 1.002890944480896,
+                "z": 307.3245849609375
+            },
+            "after": {
+                "x": 1296.1680908203125,
+                "y": 1.0028910636901856,
+                "z": 314.70074462890627
+            },
+            "transformId": 1414315697,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1296.8721923828125,
+                "y": 0.0,
+                "z": 331.2244567871094
+            },
+            "after": {
+                "x": 1302.6031494140625,
+                "y": 0.0,
+                "z": 316.3507385253906
+            },
+            "transformId": 1031968859,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 798.12353515625,
+                "y": 0.0,
+                "z": 496.5042724609375
+            },
+            "after": {
+                "x": 789.9986572265625,
+                "y": 0.0,
+                "z": 500.6297607421875
+            },
+            "transformId": 1132187317,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 802.3392333984375,
+                "y": 0.0,
+                "z": 514.108154296875
+            },
+            "after": {
+                "x": 798.329833984375,
+                "y": 0.0,
+                "z": 502.27972412109377
+            },
+            "transformId": 1069310677,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 781.0194702148438,
+                "y": 0.0,
+                "z": 494.92633056640627
+            },
+            "after": {
+                "x": 790.4302368164063,
+                "y": 0.0,
+                "z": 503.92974853515627
+            },
+            "transformId": 1508632924,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 869.27880859375,
+                "y": 0.0,
+                "z": 396.50408935546877
+            },
+            "after": {
+                "x": 864.969970703125,
+                "y": 0.0,
+                "z": 391.20794677734377
+            },
+            "transformId": 842678350,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 873.794677734375,
+                "y": 0.0,
+                "z": 392.18719482421877
+            },
+            "after": {
+                "x": 872.474853515625,
+                "y": 0.0,
+                "z": 392.85797119140627
+            },
+            "transformId": 2010651893,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 859.4986572265625,
+                "y": 0.0,
+                "z": 389.37664794921877
+            },
+            "after": {
+                "x": 864.9229736328125,
+                "y": 0.0,
+                "z": 394.5079345703125
+            },
+            "transformId": 2038281845,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1201.001220703125,
+                "y": 0.0,
+                "z": 765.7872314453125
+            },
+            "after": {
+                "x": 1211.558349609375,
+                "y": 0.0,
+                "z": 769.6920166015625
+            },
+            "transformId": 1801532818,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1199.5037841796875,
+                "y": 0.08850771188735962,
+                "z": 769.7876586914063
+            },
+            "after": {
+                "x": 1211.7838134765625,
+                "y": 0.08850768208503723,
+                "z": 771.3421020507813
+            },
+            "transformId": 977937771,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1265.1793212890625,
+                "y": 0.0,
+                "z": 758.722900390625
+            },
+            "after": {
+                "x": 1252.7489013671875,
+                "y": 0.0,
+                "z": 770.641845703125
+            },
+            "transformId": 2049252716,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1341.129638671875,
+                "y": 0.0,
+                "z": 773.7554321289063
+            },
+            "after": {
+                "x": 1325.632568359375,
+                "y": 0.0,
+                "z": 770.1317749023438
+            },
+            "transformId": 1985231198,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1342.939697265625,
+                "y": 0.0,
+                "z": 769.7719116210938
+            },
+            "after": {
+                "x": 1335.18505859375,
+                "y": 0.0,
+                "z": 771.7817993164063
+            },
+            "transformId": 1565339596,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 760.6774291992188,
+                "y": 0.0,
+                "z": 459.3514404296875
+            },
+            "after": {
+                "x": 759.9635620117188,
+                "y": 0.0,
+                "z": 463.54638671875
+            },
+            "transformId": 1885691708,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 758.5538330078125,
+                "y": 0.0,
+                "z": 459.76824951171877
+            },
+            "after": {
+                "x": 768.5166015625,
+                "y": 0.0,
+                "z": 465.19635009765627
+            },
+            "transformId": 1549214035,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 754.4257202148438,
+                "y": 0.0,
+                "z": 455.28802490234377
+            },
+            "after": {
+                "x": 759.4839477539063,
+                "y": 0.0,
+                "z": 466.84637451171877
+            },
+            "transformId": 306949227,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 854.9404296875,
+                "y": 0.0,
+                "z": 503.64801025390627
+            },
+            "after": {
+                "x": 866.342041015625,
+                "y": 0.0,
+                "z": 498.1746826171875
+            },
+            "transformId": 247439231,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1319.876220703125,
+                "y": 0.0,
+                "z": 330.90472412109377
+            },
+            "after": {
+                "x": 1302.298583984375,
+                "y": 0.0,
+                "z": 323.38751220703127
+            },
+            "transformId": 1129835793,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1319.562255859375,
+                "y": 0.0,
+                "z": 336.40167236328127
+            },
+            "after": {
+                "x": 1312.362060546875,
+                "y": 0.0,
+                "z": 325.0374755859375
+            },
+            "transformId": 1389790766,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 771.870361328125,
+                "y": 0.0,
+                "z": 390.237060546875
+            },
+            "after": {
+                "x": 754.719482421875,
+                "y": 0.0,
+                "z": 382.860107421875
+            },
+            "transformId": 2099318014,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 754.62890625,
+                "y": 0.0,
+                "z": 399.85430908203127
+            },
+            "after": {
+                "x": 754.72216796875,
+                "y": 0.0,
+                "z": 384.51007080078127
+            },
+            "transformId": 2059094667,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 907.4781494140625,
+                "y": 0.0,
+                "z": 487.28546142578127
+            },
+            "after": {
+                "x": 888.163818359375,
+                "y": 0.0,
+                "z": 489.041259765625
+            },
+            "transformId": 1062345917,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 842.8727416992188,
+                "y": 0.0,
+                "z": 485.80615234375
+            },
+            "after": {
+                "x": 853.0166625976563,
+                "y": 0.0,
+                "z": 479.255615234375
+            },
+            "transformId": 1690461427,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 843.2222900390625,
+                "y": 0.0,
+                "z": 474.34588623046877
+            },
+            "after": {
+                "x": 864.7447509765625,
+                "y": 0.0,
+                "z": 480.90557861328127
+            },
+            "transformId": 1469923633,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 782.0000610351563,
+                "y": 0.0,
+                "z": 328.6778869628906
+            },
+            "after": {
+                "x": 785.0580444335938,
+                "y": 0.0,
+                "z": 337.6993103027344
+            },
+            "transformId": 2020454498,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1336.845703125,
+                "y": 0.2475920170545578,
+                "z": 318.49725341796877
+            },
+            "after": {
+                "x": 1315.797119140625,
+                "y": 0.247592031955719,
+                "z": 316.62298583984377
+            },
+            "transformId": 430109230,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1351.8035888671875,
+                "y": 0.13523629307746888,
+                "z": 277.1543884277344
+            },
+            "after": {
+                "x": 1351.9991455078125,
+                "y": 0.13523632287979127,
+                "z": 281.0798645019531
+            },
+            "transformId": 178945578,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1358.803955078125,
+                "y": 0.23064136505126954,
+                "z": 272.6793518066406
+            },
+            "after": {
+                "x": 1364.134033203125,
+                "y": 0.23064136505126954,
+                "z": 282.7298889160156
+            },
+            "transformId": 362324339,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1280.8583984375,
+                "y": 0.5188677310943604,
+                "z": 353.29925537109377
+            },
+            "after": {
+                "x": 1263.150634765625,
+                "y": 0.5188677310943604,
+                "z": 348.69610595703127
+            },
+            "transformId": 971343389,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1257.2567138671875,
+                "y": 0.0,
+                "z": 349.03448486328127
+            },
+            "after": {
+                "x": 1276.2188720703125,
+                "y": 0.0,
+                "z": 350.3460693359375
+            },
+            "transformId": 1349439283,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1284.6224365234375,
+                "y": 0.3424070179462433,
+                "z": 349.99713134765627
+            },
+            "after": {
+                "x": 1263.4549560546875,
+                "y": 0.3424069881439209,
+                "z": 351.99603271484377
+            },
+            "transformId": 2088473947,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 838.254150390625,
+                "y": 0.0,
+                "z": 287.0977478027344
+            },
+            "after": {
+                "x": 816.7044677734375,
+                "y": 0.0,
+                "z": 291.8213195800781
+            },
+            "transformId": 866165570,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 770.3143920898438,
+                "y": 0.0,
+                "z": 445.4991455078125
+            },
+            "after": {
+                "x": 755.4771118164063,
+                "y": 0.0,
+                "z": 440.7606201171875
+            },
+            "transformId": 955176011,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1290.7264404296875,
+                "y": 0.0,
+                "z": 364.9400634765625
+            },
+            "after": {
+                "x": 1277.1468505859375,
+                "y": 0.0,
+                "z": 360.2142333984375
+            },
+            "transformId": 1782388709,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1343.6893310546875,
+                "y": 0.0,
+                "z": 628.3836059570313
+            },
+            "after": {
+                "x": 1334.1138916015625,
+                "y": 0.0,
+                "z": 624.9423217773438
+            },
+            "transformId": 1925761409,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1351.673828125,
+                "y": 0.0,
+                "z": 620.6931762695313
+            },
+            "after": {
+                "x": 1344.343017578125,
+                "y": 0.0,
+                "z": 626.5924682617188
+            },
+            "transformId": 127464826,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1339.5283203125,
+                "y": 0.0,
+                "z": 609.8687133789063
+            },
+            "after": {
+                "x": 1333.9189453125,
+                "y": 0.0,
+                "z": 628.2423706054688
+            },
+            "transformId": 1118636833,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 812.350830078125,
+                "y": 0.0,
+                "z": 477.36419677734377
+            },
+            "after": {
+                "x": 808.4384765625,
+                "y": 0.0,
+                "z": 471.57989501953127
+            },
+            "transformId": 1120651517,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 807.2747802734375,
+                "y": 0.0,
+                "z": 484.9466552734375
+            },
+            "after": {
+                "x": 808.219482421875,
+                "y": 0.0,
+                "z": 473.22991943359377
+            },
+            "transformId": 77167798,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 818.8551635742188,
+                "y": 0.0,
+                "z": 461.37139892578127
+            },
+            "after": {
+                "x": 816.2846069335938,
+                "y": 0.0,
+                "z": 474.87994384765627
+            },
+            "transformId": 811272705,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1005.7421875,
+                "y": 0.0,
+                "z": 273.88909912109377
+            },
+            "after": {
+                "x": 989.6201171875,
+                "y": 0.0,
+                "z": 270.9698486328125
+            },
+            "transformId": 2027128546,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1008.252685546875,
+                "y": 0.0,
+                "z": 270.0117492675781
+            },
+            "after": {
+                "x": 997.983642578125,
+                "y": 0.0,
+                "z": 272.6198425292969
+            },
+            "transformId": 842512987,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1741.27294921875,
+                "y": 0.0,
+                "z": 314.0845031738281
+            },
+            "after": {
+                "x": 1734.50146484375,
+                "y": 0.0,
+                "z": 318.8316955566406
+            },
+            "transformId": 420768968,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1731.8504638671875,
+                "y": 0.0,
+                "z": 321.0410461425781
+            },
+            "after": {
+                "x": 1743.7930908203125,
+                "y": 0.0,
+                "z": 320.4816589355469
+            },
+            "transformId": 122900301,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1731.2989501953125,
+                "y": 0.0,
+                "z": 317.16937255859377
+            },
+            "after": {
+                "x": 1734.8236083984375,
+                "y": 0.0,
+                "z": 322.13165283203127
+            },
+            "transformId": 1813413493,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1844.216064453125,
+                "y": 0.0,
+                "z": 322.6766052246094
+            },
+            "after": {
+                "x": 1847.255859375,
+                "y": 0.0,
+                "z": 326.3736877441406
+            },
+            "transformId": 508697179,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1864.8077392578125,
+                "y": 0.0,
+                "z": 327.50177001953127
+            },
+            "after": {
+                "x": 1856.1646728515625,
+                "y": 0.0,
+                "z": 328.023681640625
+            },
+            "transformId": 2028119517,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1840.2958984375,
+                "y": 0.0,
+                "z": 340.445068359375
+            },
+            "after": {
+                "x": 1847.12109375,
+                "y": 0.0,
+                "z": 329.6737060546875
+            },
+            "transformId": 1670502829,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1959.901611328125,
+                "y": 0.0,
+                "z": 685.0403442382813
+            },
+            "after": {
+                "x": 1962.025634765625,
+                "y": 0.0,
+                "z": 682.0313110351563
+            },
+            "transformId": 695138093,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1951.4521484375,
+                "y": 0.0,
+                "z": 687.3930053710938
+            },
+            "after": {
+                "x": 1962.321533203125,
+                "y": 0.0,
+                "z": 683.6813354492188
+            },
+            "transformId": 583201849,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 978.389892578125,
+                "y": 0.0,
+                "z": 292.2976989746094
+            },
+            "after": {
+                "x": 975.100341796875,
+                "y": 0.0,
+                "z": 284.4884948730469
+            },
+            "transformId": 681234713,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 987.87890625,
+                "y": 0.0,
+                "z": 292.2264709472656
+            },
+            "after": {
+                "x": 975.281982421875,
+                "y": 0.0,
+                "z": 286.1385192871094
+            },
+            "transformId": 240506474,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 981.3974609375,
+                "y": 0.0,
+                "z": 275.3587951660156
+            },
+            "after": {
+                "x": 975.1412353515625,
+                "y": 0.0,
+                "z": 287.7884826660156
+            },
+            "transformId": 1566035611,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1354.103515625,
+                "y": 0.0,
+                "z": 354.33184814453127
+            },
+            "after": {
+                "x": 1354.251708984375,
+                "y": 0.0,
+                "z": 339.55511474609377
+            },
+            "transformId": 245011212,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1458.997802734375,
+                "y": 0.0,
+                "z": 438.831298828125
+            },
+            "after": {
+                "x": 1435.543701171875,
+                "y": 0.0,
+                "z": 438.530029296875
+            },
+            "transformId": 2030169078,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 895.8359375,
+                "y": 0.0,
+                "z": 757.720947265625
+            },
+            "after": {
+                "x": 897.920166015625,
+                "y": 0.0,
+                "z": 770.9879150390625
+            },
+            "transformId": 864301346,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1886.90478515625,
+                "y": 0.0,
+                "z": 351.86004638671877
+            },
+            "after": {
+                "x": 1864.750732421875,
+                "y": 0.0,
+                "z": 347.77081298828127
+            },
+            "transformId": 249856730,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1886.28076171875,
+                "y": 0.0,
+                "z": 356.0478515625
+            },
+            "after": {
+                "x": 1880.5966796875,
+                "y": 0.0,
+                "z": 349.4207763671875
+            },
+            "transformId": 980926815,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1880.4951171875,
+                "y": 0.0,
+                "z": 362.752685546875
+            },
+            "after": {
+                "x": 1865.1220703125,
+                "y": 0.0,
+                "z": 351.07080078125
+            },
+            "transformId": 1596223453,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ],
+    "waterSurfaces": []
+}

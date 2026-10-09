@@ -1,0 +1,19 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "beforeHash": "a991eeb91f2852924888f4ebed3de4043d009616df0ae1693bb4dac82fe58d0b",
+    "afterHash": "a991eeb91f2852924888f4ebed3de4043d009616df0ae1693bb4dac82fe58d0b",
+    "protectedSceneHash": "831c7b80eb7360b5005bac1662458392060f7739886371ed61553061b5477146",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 18200,
+    "renderersAfter": 18200,
+    "trianglesBefore": 13711483,
+    "trianglesAfter": 13711483,
+    "moves": [],
+    "waterSurfaces": []
+}

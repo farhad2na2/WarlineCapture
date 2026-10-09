@@ -1,0 +1,19 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "5d3241044464c47dd66d82cacbedbf2fa87ac4ea182630b3bc0eb9e562573853",
+    "afterHash": "5d3241044464c47dd66d82cacbedbf2fa87ac4ea182630b3bc0eb9e562573853",
+    "protectedSceneHash": "54ac08a4ced1557cf832370a1de529a56f42bf4cb809bd521b338fd44a71307e",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 11580,
+    "renderersAfter": 11580,
+    "trianglesBefore": 9306895,
+    "trianglesAfter": 9306895,
+    "moves": [],
+    "waterSurfaces": []
+}

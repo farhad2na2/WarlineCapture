@@ -1,0 +1,19 @@
+{
+    "map": "CH05M04LastCorridor",
+    "result": "Passed",
+    "beforeHash": "a928cc72e5c232bedbd5081ad8b5b24376835cc4d332da2541fc3df6416bdf2b",
+    "afterHash": "a928cc72e5c232bedbd5081ad8b5b24376835cc4d332da2541fc3df6416bdf2b",
+    "protectedSceneHash": "d1e6c648570f57320f25a470e5a9f8c6622296a4024c8afed490f9adb1c25a84",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 4643,
+    "renderersAfter": 4643,
+    "trianglesBefore": 2524135,
+    "trianglesAfter": 2524135,
+    "moves": [],
+    "waterSurfaces": []
+}

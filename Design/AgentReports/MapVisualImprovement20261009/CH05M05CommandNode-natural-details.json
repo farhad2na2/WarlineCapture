@@ -1,0 +1,2338 @@
+{
+    "map": "CH05M05CommandNode",
+    "result": "Passed",
+    "beforeHash": "9277a5d2befecb231d8c95b33d2add3e65a8c115d15bc0c1cae2ae024d433c79",
+    "afterHash": "20a09607bca1be778cf36f2d430aaa5969ee104dafe988e51a175c7d9c354769",
+    "protectedSceneHash": "7f920eb57a4963aaf8c45ea427dae937cd81133556f83e511cd891638d93471b",
+    "rocks": 20,
+    "mountains": 0,
+    "water": 46,
+    "plantGroups": 1,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 4055,
+    "renderersAfter": 4055,
+    "trianglesBefore": 2168333,
+    "trianglesAfter": 2168333,
+    "moves": [
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 1003.3897094726563,
+                "y": 0.14612165093421937,
+                "z": 498.5809020996094
+            },
+            "after": {
+                "x": 1006.7857055664063,
+                "y": 0.14612162113189698,
+                "z": 499.1475524902344
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 1858466730,
+            "prefabTransformId": 4657778999754048
+        }
+    ],
+    "waterSurfaces": [
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1615134898",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 303.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 303.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-117788938",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 313.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 313.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-413434747",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 323.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 323.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1094123443",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 333.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 333.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1938982574",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 343.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 343.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-239218586",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 353.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 353.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1962260433",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 363.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 363.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1713017230",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 373.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 373.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1271324009",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 383.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 383.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1461037838",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 393.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 393.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-243507163",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 403.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 403.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-772832315",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 413.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 413.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-139625398",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 423.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 423.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-970723951",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 433.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 433.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1666743655",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 443.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 443.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-561050269",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 453.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.2899999618530274,
+                "z": 453.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-976318923",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 463.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 463.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-2025086286",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 473.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 473.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-2091370933",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 483.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 483.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1579728478",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 493.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 493.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1151393015",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 503.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 503.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-548701299",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 513.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 513.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-929217007",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_c62164f02b7ce3049893d13d6256f145.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 523.0
+            },
+            "size": {
+                "x": 6.1439995765686039,
+                "y": 0.0,
+                "z": 9.567999839782715
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.03500000387430191,
+                "z": 523.0
+            },
+            "scale": {
+                "x": 0.1228799894452095,
+                "y": 1.0,
+                "z": 0.1913599967956543
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1466512384",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 303.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 303.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-700191817",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 313.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 313.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1981810882",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 323.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 323.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1313267067",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 333.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 333.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-442277600",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 343.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 343.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-38510878",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 353.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 353.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1888033523",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 363.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 363.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-868019790",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 373.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 373.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1154193559",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 383.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 383.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-677072249",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 393.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 393.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1691677774",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 403.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 403.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-2071039550",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 413.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 413.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1071277257",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 423.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 423.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1102167627",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 433.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 433.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-956618689",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 443.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 443.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1006625310",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 453.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": -1.25,
+                "z": 453.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-678092787",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 463.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 463.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1469442825",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 473.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 473.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-912688123",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 483.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 483.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-896851534",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 493.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 493.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1400217254",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 503.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 503.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-1114930386",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 513.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 513.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        },
+        {
+            "id": "GlobalObjectId_V1-2-aec8badb49d19458991cf59c1d0103e1-7529453304070081191-428036673",
+            "name": "SM_Gen_Env_Water_Plane_01",
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Gen_Env_Water_Plane_01",
+            "mesh": "SM_Gen_Env_Water_Plane_01",
+            "meshAsset": "Assets/Synty/PolygonGeneric/Models/SM_Gen_Env_Water_Plane_01.fbx",
+            "material": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials/Synty_Generic_Basic_7ebfd405eb8711d4bb584f620ef5043a.mat",
+            "shader": "Universal Render Pipeline/Lit",
+            "owner": "",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "Game.Authoring.DenseCityPresentationIdentityAuthoring"
+            ],
+            "center": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 523.0
+            },
+            "size": {
+                "x": 6.399999618530273,
+                "y": 0.0,
+                "z": 10.399999618530274
+            },
+            "position": {
+                "x": 1281.0,
+                "y": 0.07500000298023224,
+                "z": 523.0
+            },
+            "scale": {
+                "x": 0.12799999117851258,
+                "y": 1.0,
+                "z": 0.20799998939037324
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localMeshSize": {
+                "x": 50.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "vertices": 1089,
+            "triangles": 2048,
+            "colliders": 0,
+            "active": true
+        }
+    ]
+}

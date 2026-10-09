@@ -1,0 +1,173 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "5d3241044464c47dd66d82cacbedbf2fa87ac4ea182630b3bc0eb9e562573853",
+    "afterHash": "0c1aa504c989561e9f1924bf9dfca60cd6a9284405dca02b8aee4b317fb13f8b",
+    "protectedSceneHash": "550014e019976bfece52331a62138726df6f21b905979fd87b3231e95726d310",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 11580,
+    "renderersAfter": 11580,
+    "trianglesBefore": 9306895,
+    "trianglesAfter": 9306895,
+    "moves": [
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_01",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1593.2105712890625,
+                "y": 0.0,
+                "z": 307.8964538574219
+            },
+            "after": {
+                "x": 1593.21044921875,
+                "y": 0.0,
+                "z": 316.3023376464844
+            },
+            "transformId": 2077379005,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_01",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1670.2572021484375,
+                "y": 0.0,
+                "z": 301.1918029785156
+            },
+            "after": {
+                "x": 1664.257080078125,
+                "y": 0.0,
+                "z": 315.0472106933594
+            },
+            "transformId": 2016334362,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1646.5880126953125,
+                "y": 0.0,
+                "z": 305.88165283203127
+            },
+            "after": {
+                "x": 1640.588134765625,
+                "y": 0.0,
+                "z": 318.73602294921877
+            },
+            "transformId": 650897235,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1663.03076171875,
+                "y": 0.0,
+                "z": 303.28436279296877
+            },
+            "after": {
+                "x": 1663.0306396484375,
+                "y": 0.0,
+                "z": 323.929443359375
+            },
+            "transformId": 428955906,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1765.5205078125,
+                "y": 0.0,
+                "z": 300.2700500488281
+            },
+            "after": {
+                "x": 1765.5205078125,
+                "y": 0.0,
+                "z": 318.1332092285156
+            },
+            "transformId": 1522541884,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_02",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1632.3587646484375,
+                "y": 0.0,
+                "z": 278.1631164550781
+            },
+            "after": {
+                "x": 1632.35888671875,
+                "y": 0.0,
+                "z": 269.2463073730469
+            },
+            "transformId": 1742142431,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_04",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1700.21435546875,
+                "y": 0.0,
+                "z": 290.1221008300781
+            },
+            "after": {
+                "x": 1700.2144775390625,
+                "y": 0.0,
+                "z": 271.3861999511719
+            },
+            "transformId": 980635097,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_05",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1689.5550537109375,
+                "y": 0.0,
+                "z": 286.9393005371094
+            },
+            "after": {
+                "x": 1695.55517578125,
+                "y": 0.0,
+                "z": 320.0790100097656
+            },
+            "transformId": 1761262377,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vegetation/SM_Env_SandEdge_06",
+            "reason": "decorative sand edge moved from runway to clear shoulder",
+            "before": {
+                "x": 1608.776123046875,
+                "y": 0.0,
+                "z": 278.6556091308594
+            },
+            "after": {
+                "x": 1608.776123046875,
+                "y": 0.0,
+                "z": 270.7366027832031
+            },
+            "transformId": 30199009,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ],
+    "waterSurfaces": []
+}

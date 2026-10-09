@@ -1,0 +1,19 @@
+{
+    "map": "DenseCity",
+    "result": "Passed",
+    "beforeHash": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
+    "afterHash": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
+    "protectedSceneHash": "2506098628139c5e4cf0774975add1e325e5f4e2613138fabf66aa57d7cf37e2",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 127899,
+    "renderersAfter": 127899,
+    "trianglesBefore": 51715166,
+    "trianglesAfter": 51715166,
+    "moves": [],
+    "waterSurfaces": []
+}

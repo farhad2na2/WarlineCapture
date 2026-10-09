@@ -1,0 +1,19 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "result": "Passed",
+    "beforeHash": "ef15eb4893c036d016b398cda4240400c772463c084666377d05e94dc2127f9d",
+    "afterHash": "ef15eb4893c036d016b398cda4240400c772463c084666377d05e94dc2127f9d",
+    "protectedSceneHash": "3da35a8978bf4d0e548f7a212b953b8171331e09219a261ee6f33324e7c63635",
+    "rocks": 0,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 0,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 4666,
+    "renderersAfter": 4666,
+    "trianglesBefore": 2518565,
+    "trianglesAfter": 2518565,
+    "moves": [],
+    "waterSurfaces": []
+}

@@ -1,0 +1,615 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "fa2faaf5a3afc9b588efbbd80eadb33c17186f0c07414705b1e1400fc5472000",
+    "afterHash": "2c9f02e955fe0a37fbd119739296992d42c1e6fa5458175eb84c5a0b0392d76c",
+    "protectedSceneHash": "cbfcbf351ab5a0edbbb69105cb8427562c63d69516f8b0cf3df595386e11081a",
+    "rocks": 230,
+    "mountains": 0,
+    "water": 0,
+    "plantGroups": 14,
+    "runwayGroundPieces": 0,
+    "loweredGroundVertices": 0,
+    "renderersBefore": 25127,
+    "renderersAfter": 25127,
+    "trianglesBefore": 16335637,
+    "trianglesAfter": 16335637,
+    "moves": [
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 673.8499755859375,
+                "y": 0.0,
+                "z": 498.1000061035156
+            },
+            "after": {
+                "x": 682.8155517578125,
+                "y": 0.0,
+                "z": 492.2327575683594
+            },
+            "transformId": 746787866,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 673.2000122070313,
+                "y": 0.0,
+                "z": 490.1000061035156
+            },
+            "after": {
+                "x": 682.8317260742188,
+                "y": 0.0,
+                "z": 493.8827819824219
+            },
+            "transformId": 1029198408,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 674.2000122070313,
+                "y": 0.0,
+                "z": 499.1000061035156
+            },
+            "after": {
+                "x": 682.7902221679688,
+                "y": 0.0,
+                "z": 495.5328063964844
+            },
+            "transformId": 2102437787,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 573.0,
+                "y": 0.0,
+                "z": 492.0
+            },
+            "after": {
+                "x": 562.04052734375,
+                "y": 0.0,
+                "z": 492.55889892578127
+            },
+            "transformId": 2101235855,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 574.4821166992188,
+                "y": 0.16867993772029878,
+                "z": 496.79266357421877
+            },
+            "after": {
+                "x": 570.5972290039063,
+                "y": 0.16867995262145997,
+                "z": 494.20892333984377
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 900161313,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 557.6373291015625,
+                "y": 0.0,
+                "z": 502.11224365234377
+            },
+            "after": {
+                "x": 562.3106689453125,
+                "y": 0.0,
+                "z": 495.85888671875
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1395838490,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 754.0,
+                "y": 0.0,
+                "z": 489.0
+            },
+            "after": {
+                "x": 744.400390625,
+                "y": 0.0,
+                "z": 491.507568359375
+            },
+            "transformId": 1820485807,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 749.0,
+                "y": 0.0,
+                "z": 502.0
+            },
+            "after": {
+                "x": 752.3505859375,
+                "y": 0.0,
+                "z": 493.1575927734375
+            },
+            "transformId": 1741680048,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 755.8499755859375,
+                "y": 0.0,
+                "z": 503.1000061035156
+            },
+            "after": {
+                "x": 744.84033203125,
+                "y": 0.0,
+                "z": 494.8075866699219
+            },
+            "transformId": 1292926547,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 713.67822265625,
+                "y": 0.0,
+                "z": 521.6417236328125
+            },
+            "after": {
+                "x": 700.81982421875,
+                "y": 0.0,
+                "z": 511.9981689453125
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 653558389,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 857.4418334960938,
+                "y": 0.0,
+                "z": 486.6977233886719
+            },
+            "after": {
+                "x": 863.8936157226563,
+                "y": 0.0,
+                "z": 482.3536682128906
+            },
+            "transformId": 4657778999754048,
+            "instanceId": 1737738738,
+            "prefabTransformId": 4657778999754048
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 763.0,
+                "y": 0.0,
+                "z": 486.0
+            },
+            "after": {
+                "x": 766.05517578125,
+                "y": 0.0,
+                "z": 484.96661376953127
+            },
+            "transformId": 629054314,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 767.0,
+                "y": 0.0,
+                "z": 496.0
+            },
+            "after": {
+                "x": 773.104248046875,
+                "y": 0.0,
+                "z": 486.6165771484375
+            },
+            "transformId": 1187327879,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 773.938720703125,
+                "y": 0.0,
+                "z": 495.9167785644531
+            },
+            "after": {
+                "x": 766.382568359375,
+                "y": 0.0,
+                "z": 488.2665710449219
+            },
+            "transformId": 4007070079012600,
+            "instanceId": 1498200270,
+            "prefabTransformId": 4007070079012600
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 608.0,
+                "y": 0.0,
+                "z": 503.0
+            },
+            "after": {
+                "x": 597.74609375,
+                "y": 0.0,
+                "z": 509.574462890625
+            },
+            "transformId": 52544562,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 613.6688232421875,
+                "y": 0.0,
+                "z": 505.39404296875
+            },
+            "after": {
+                "x": 612.1876220703125,
+                "y": 0.0,
+                "z": 511.2244873046875
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 2032861236,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 596.8499755859375,
+                "y": 0.0,
+                "z": 519.0999755859375
+            },
+            "after": {
+                "x": 597.8802490234375,
+                "y": 0.0,
+                "z": 512.87451171875
+            },
+            "transformId": 1944072708,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 787.0,
+                "y": 0.0,
+                "z": 484.0
+            },
+            "after": {
+                "x": 781.37939453125,
+                "y": 0.0,
+                "z": 492.74658203125
+            },
+            "transformId": 1878163539,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 782.4771118164063,
+                "y": 0.0,
+                "z": 504.4676208496094
+            },
+            "after": {
+                "x": 793.5228881835938,
+                "y": 0.0,
+                "z": 494.3965759277344
+            },
+            "transformId": 4148633311000140,
+            "instanceId": 1811623392,
+            "prefabTransformId": 4148633311000140
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 795.8499755859375,
+                "y": 0.0,
+                "z": 503.1000061035156
+            },
+            "after": {
+                "x": 781.7366943359375,
+                "y": 0.0,
+                "z": 496.0466003417969
+            },
+            "transformId": 1581533429,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 613.0,
+                "y": 0.0,
+                "z": 490.0
+            },
+            "after": {
+                "x": 597.2379150390625,
+                "y": 0.0,
+                "z": 493.31103515625
+            },
+            "transformId": 842812521,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 600.0,
+                "y": 0.0,
+                "z": 483.0
+            },
+            "after": {
+                "x": 607.9736328125,
+                "y": 0.0,
+                "z": 494.96099853515627
+            },
+            "transformId": 1839154444,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 609.0,
+                "y": 0.0,
+                "z": 480.0
+            },
+            "after": {
+                "x": 597.132568359375,
+                "y": 0.0,
+                "z": 496.6109619140625
+            },
+            "transformId": 1580731270,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 865.0,
+                "y": 0.0,
+                "z": 464.0
+            },
+            "after": {
+                "x": 867.47021484375,
+                "y": 0.0,
+                "z": 469.4603271484375
+            },
+            "transformId": 361413949,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 869.8283081054688,
+                "y": 0.06257471442222595,
+                "z": 461.9806823730469
+            },
+            "after": {
+                "x": 857.6004028320313,
+                "y": 0.06257471442222595,
+                "z": 471.1103210449219
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 92831493,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 850.8499755859375,
+                "y": 0.0,
+                "z": 479.1000061035156
+            },
+            "after": {
+                "x": 857.6688232421875,
+                "y": 0.0,
+                "z": 472.7603454589844
+            },
+            "transformId": 865561436,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 590.0,
+                "y": 0.0,
+                "z": 509.0
+            },
+            "after": {
+                "x": 580.82421875,
+                "y": 0.0,
+                "z": 495.57403564453127
+            },
+            "transformId": 123904789,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 746.0,
+                "y": 0.0,
+                "z": 469.0
+            },
+            "after": {
+                "x": 738.655029296875,
+                "y": 0.0,
+                "z": 476.98681640625
+            },
+            "transformId": 2051750189,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 746.2000122070313,
+                "y": 0.0,
+                "z": 468.1000061035156
+            },
+            "after": {
+                "x": 739.0646362304688,
+                "y": 0.0,
+                "z": 478.6368103027344
+            },
+            "transformId": 1276897508,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 744.7999877929688,
+                "y": 0.0,
+                "z": 468.1000061035156
+            },
+            "after": {
+                "x": 739.2144165039063,
+                "y": 0.0,
+                "z": 480.2868347167969
+            },
+            "transformId": 1454313870,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 515.173583984375,
+                "y": 0.0,
+                "z": 468.88946533203127
+            },
+            "after": {
+                "x": 523.7275390625,
+                "y": 0.0,
+                "z": 466.70220947265627
+            },
+            "transformId": 1867900375,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 519.4749145507813,
+                "y": 0.1257803589105606,
+                "z": 460.98260498046877
+            },
+            "after": {
+                "x": 515.3434448242188,
+                "y": 0.12578034400939942,
+                "z": 468.3521728515625
+            },
+            "transformId": 4917545018120972,
+            "instanceId": 893768487,
+            "prefabTransformId": 4917545018120972
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 528.0,
+                "y": 0.0,
+                "z": 467.0
+            },
+            "after": {
+                "x": 523.812744140625,
+                "y": 0.0,
+                "z": 470.002197265625
+            },
+            "transformId": 166208756,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 498.0162353515625,
+                "y": 0.0,
+                "z": 472.6551208496094
+            },
+            "after": {
+                "x": 499.2816162109375,
+                "y": 0.0,
+                "z": 472.7401428222656
+            },
+            "transformId": 1728879473,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02",
+            "reason": "sheltered planting at existing rock base",
+            "before": {
+                "x": 512.7274169921875,
+                "y": 0.0,
+                "z": 476.8133239746094
+            },
+            "after": {
+                "x": 510.95074462890627,
+                "y": 0.0,
+                "z": 474.3901062011719
+            },
+            "transformId": 2024416487,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ],
+    "waterSurfaces": []
+}

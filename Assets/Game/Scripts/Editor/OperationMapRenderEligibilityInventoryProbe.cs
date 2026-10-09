@@ -56,12 +56,15 @@ namespace Game.Editor
         // delta: generated scenery +48400, building decoration +847, accepted
         // market stock +44. Preserve the earlier removal ledger and geometry.
         internal const int ExpectedExistingBeautifyRenderRowAddition = 48400 + 847 + 44;
+        // PR60 split runway asphalt and markings into two existing-renderer material slots.
+        internal const int ExpectedReviewedRunwayMaterialRowAddition = 1;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
             ExpectedCorrectedLayoutRenderRowRemoval +
             ExpectedRetainedRooftopSupportRenderRowAddition +
-            ExpectedExistingBeautifyRenderRowAddition;
+            ExpectedExistingBeautifyRenderRowAddition +
+            ExpectedReviewedRunwayMaterialRowAddition;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -214,7 +217,7 @@ namespace Game.Editor
         {
             var expected = new Dictionary<string, int>(StringComparer.Ordinal)
             {
-                ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10842,
+                ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10843,
                 ["AuthoredOperationMapEntityPresentation/GameplayBuildings"] = 1584,
                 ["AuthoredOperationMapEntityPresentation/GameplayVehicles"] = 340,
                 ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597,
@@ -236,13 +239,14 @@ namespace Game.Editor
 
         private static InventoryReport Build(Scene scene)
         {
-            // Pin the independently inspected existing source revision. A later
+            // Pin the reviewed visual revision; see MapVisualImprovement20261009/
+            // dense-render-cache-source-reconciliation.json and native phase receipts. A later
             // scene change requires its own reconciliation, even if row totals
             // happen to remain equal.
             using (var stream = File.OpenRead(scene.path))
             using (var hash = System.Security.Cryptography.SHA256.Create())
                 if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
-                    "77899a3986fecbf837ec3e3da7661815604bcd708a5dc938f3fac5891029be40")
+                    "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30")
                     throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
@@ -400,7 +404,8 @@ namespace Game.Editor
                     ExpectedEmbeddedDestroyedDuplicateRowRemoval +
                     ExpectedCorrectedLayoutRenderRowRemoval -
                     ExpectedRetainedRooftopSupportRenderRowAddition -
-                    ExpectedExistingBeautifyRenderRowAddition)
+                    ExpectedExistingBeautifyRenderRowAddition -
+                    ExpectedReviewedRunwayMaterialRowAddition)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +

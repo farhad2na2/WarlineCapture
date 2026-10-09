@@ -1,0 +1,50 @@
+{
+    "map": "CH05M01CitywideAlert",
+    "result": "Passed",
+    "beforeHash": "ce72bc5eb40adf243c6bf7fdf0125041dd3732bf8d55e59743e0231a2c10e9f5",
+    "afterHash": "ed8947714837b099ad296284823357c38060ced5fbac0caff532bafe83d6e37f",
+    "protectedSceneHash": "e370b381b07cce3b45573b755cd247b965a10234eb0b9a1bcb13fe0042d51ad6",
+    "groups": 1,
+    "buildingRenderers": 18,
+    "variedContainers": 0,
+    "renderersBefore": 4666,
+    "renderersAfter": 4666,
+    "trianglesBefore": 2518565,
+    "trianglesAfter": 2518565,
+    "moves": [
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Powerpole_01 (20)",
+            "reason": "street pole clearance",
+            "before": {
+                "x": 1160.990234375,
+                "y": 0.07000003010034561,
+                "z": 511.469970703125
+            },
+            "after": {
+                "x": 1160.990234375,
+                "y": 0.06999993324279785,
+                "z": 503.27728271484377
+            },
+            "transformId": 160931419,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 882.6799926757813,
+                "y": 1.159999966621399,
+                "z": 387.8199462890625
+            },
+            "after": {
+                "x": 907.258056640625,
+                "y": 1.159999966621399,
+                "z": 355.1398620605469
+            },
+            "transformId": 1513157557,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

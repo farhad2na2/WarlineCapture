@@ -1,0 +1,1104 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "beforeHash": "f022505ca8f7918fb46c98a39aabfdb447e11a308ab271fe324d7c6ada53d71e",
+    "afterHash": "cf2c8bd423d15f92ce6ed8ef381c57fd492a477646b05186ee4c9479c7fa4903",
+    "protectedSceneHash": "80fd539444428cd4e57e9baa1cf09c841f5d53e34cf0af19030d8f9f5ab99f1f",
+    "groups": 4,
+    "buildingRenderers": 4,
+    "variedContainers": 0,
+    "renderersBefore": 18200,
+    "renderersAfter": 18200,
+    "trianglesBefore": 13711483,
+    "trianglesAfter": 13711483,
+    "moves": [
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 532.6118774414063,
+                "y": 0.0,
+                "z": 571.4636840820313
+            },
+            "after": {
+                "x": 532.6118774414063,
+                "y": 0.0,
+                "z": 579.2691040039063
+            },
+            "transformId": 1457948299,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 746.60595703125,
+                "y": 0.0,
+                "z": 568.1035766601563
+            },
+            "after": {
+                "x": 746.60595703125,
+                "y": 0.0,
+                "z": 579.3427124023438
+            },
+            "transformId": 1436267791,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 557.675537109375,
+                "y": 0.0,
+                "z": 570.9052734375
+            },
+            "after": {
+                "x": 557.675537109375,
+                "y": 0.0,
+                "z": 578.9825439453125
+            },
+            "transformId": 424806907,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 750.8297729492188,
+                "y": 0.0,
+                "z": 572.435302734375
+            },
+            "after": {
+                "x": 750.8297729492188,
+                "y": 0.0,
+                "z": 579.328125
+            },
+            "transformId": 725500699,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 584.0548095703125,
+                "y": 0.0,
+                "z": 569.6546020507813
+            },
+            "after": {
+                "x": 584.0548095703125,
+                "y": 0.0,
+                "z": 579.1920776367188
+            },
+            "transformId": 1565736995,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 715.0667724609375,
+                "y": 0.0,
+                "z": 570.6290893554688
+            },
+            "after": {
+                "x": 715.0667724609375,
+                "y": 0.0,
+                "z": 579.0386352539063
+            },
+            "transformId": 735599009,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 637.3155517578125,
+                "y": 0.0,
+                "z": 551.6410522460938
+            },
+            "after": {
+                "x": 637.3155517578125,
+                "y": 0.0,
+                "z": 540.7759399414063
+            },
+            "transformId": 694429403,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 509.08038330078127,
+                "y": 0.0,
+                "z": 543.6675415039063
+            },
+            "after": {
+                "x": 509.08038330078127,
+                "y": 0.0,
+                "z": 541.0984497070313
+            },
+            "transformId": 142309321,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 615.8685913085938,
+                "y": 0.0,
+                "z": 575.5817260742188
+            },
+            "after": {
+                "x": 615.8685913085938,
+                "y": 0.0,
+                "z": 578.9219360351563
+            },
+            "transformId": 1705930783,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 583.9739379882813,
+                "y": 0.0,
+                "z": 573.4600219726563
+            },
+            "after": {
+                "x": 583.9739379882813,
+                "y": 0.0,
+                "z": 581.7521362304688
+            },
+            "transformId": 513056861,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 774.6514892578125,
+                "y": 0.0,
+                "z": 546.5423583984375
+            },
+            "after": {
+                "x": 774.6514892578125,
+                "y": 0.0,
+                "z": 541.0257568359375
+            },
+            "transformId": 1243988907,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 548.0036010742188,
+                "y": 0.0,
+                "z": 575.2380981445313
+            },
+            "after": {
+                "x": 548.0036010742188,
+                "y": 0.0,
+                "z": 584.3471069335938
+            },
+            "transformId": 1571856856,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 515.4636840820313,
+                "y": 0.0,
+                "z": 569.336181640625
+            },
+            "after": {
+                "x": 515.4636840820313,
+                "y": 0.0,
+                "z": 579.111572265625
+            },
+            "transformId": 1126688471,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 895.7189331054688,
+                "y": 0.0,
+                "z": 559.7396240234375
+            },
+            "after": {
+                "x": 911.8482055664063,
+                "y": 0.0,
+                "z": 559.7396240234375
+            },
+            "transformId": 832040630,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 794.44482421875,
+                "y": 0.0,
+                "z": 573.9556274414063
+            },
+            "after": {
+                "x": 794.44482421875,
+                "y": 0.0,
+                "z": 579.4923706054688
+            },
+            "transformId": 1877483777,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 634.3318481445313,
+                "y": 0.0,
+                "z": 575.5159301757813
+            },
+            "after": {
+                "x": 634.3318481445313,
+                "y": 0.0,
+                "z": 579.1674194335938
+            },
+            "transformId": 1918777228,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 669.1808471679688,
+                "y": 0.0,
+                "z": 568.6072998046875
+            },
+            "after": {
+                "x": 669.1808471679688,
+                "y": 0.0,
+                "z": 579.3035888671875
+            },
+            "transformId": 1131696857,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 897.02734375,
+                "y": 0.0,
+                "z": 567.4022216796875
+            },
+            "after": {
+                "x": 897.02734375,
+                "y": 0.0,
+                "z": 579.510986328125
+            },
+            "transformId": 673011374,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 610.0408325195313,
+                "y": 0.0,
+                "z": 545.338623046875
+            },
+            "after": {
+                "x": 610.0408325195313,
+                "y": 0.0,
+                "z": 540.7442626953125
+            },
+            "transformId": 388644123,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 822.7451171875,
+                "y": 0.0,
+                "z": 570.6946411132813
+            },
+            "after": {
+                "x": 822.7451171875,
+                "y": 0.0,
+                "z": 579.0430297851563
+            },
+            "transformId": 1795793168,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 493.0562744140625,
+                "y": 0.0,
+                "z": 556.6651000976563
+            },
+            "after": {
+                "x": 488.08203125,
+                "y": 0.0,
+                "z": 556.6651000976563
+            },
+            "transformId": 571213974,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 703.1875610351563,
+                "y": 0.0,
+                "z": 559.941650390625
+            },
+            "after": {
+                "x": 703.1875610351563,
+                "y": 0.0,
+                "z": 540.760498046875
+            },
+            "transformId": 1549921804,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 588.5882568359375,
+                "y": 0.0,
+                "z": 551.7333374023438
+            },
+            "after": {
+                "x": 588.5882568359375,
+                "y": 0.0,
+                "z": 579.5183715820313
+            },
+            "transformId": 310848350,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 678.819091796875,
+                "y": 0.0,
+                "z": 543.83447265625
+            },
+            "after": {
+                "x": 678.819091796875,
+                "y": 0.0,
+                "z": 540.851318359375
+            },
+            "transformId": 248067958,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 630.239501953125,
+                "y": 0.0,
+                "z": 574.0380859375
+            },
+            "after": {
+                "x": 630.239501953125,
+                "y": 0.0,
+                "z": 579.025634765625
+            },
+            "transformId": 326633204,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 674.649658203125,
+                "y": 0.0,
+                "z": 552.3475952148438
+            },
+            "after": {
+                "x": 674.649658203125,
+                "y": 0.0,
+                "z": 540.5669555664063
+            },
+            "transformId": 244696821,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 499.5228576660156,
+                "y": 0.0,
+                "z": 565.1011352539063
+            },
+            "after": {
+                "x": 485.3365783691406,
+                "y": 0.0,
+                "z": 565.1011352539063
+            },
+            "transformId": 1255580195,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 494.8614196777344,
+                "y": 0.0,
+                "z": 566.4415893554688
+            },
+            "after": {
+                "x": 494.8614196777344,
+                "y": 0.0,
+                "z": 579.1441040039063
+            },
+            "transformId": 736121775,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_02",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 805.5013427734375,
+                "y": 0.0,
+                "z": 549.9740600585938
+            },
+            "after": {
+                "x": 805.5013427734375,
+                "y": 0.0,
+                "z": 540.6614379882813
+            },
+            "transformId": 1970277901,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 691.5304565429688,
+                "y": 0.0,
+                "z": 560.0836791992188
+            },
+            "after": {
+                "x": 691.5304565429688,
+                "y": 0.0,
+                "z": 579.4398803710938
+            },
+            "transformId": 1905272775,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 717.1676025390625,
+                "y": 0.0,
+                "z": 557.3565063476563
+            },
+            "after": {
+                "x": 717.1676025390625,
+                "y": 0.0,
+                "z": 540.7394409179688
+            },
+            "transformId": 650675263,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 534.866455078125,
+                "y": 0.0,
+                "z": 563.628662109375
+            },
+            "after": {
+                "x": 534.866455078125,
+                "y": 0.0,
+                "z": 579.02587890625
+            },
+            "transformId": 2119158335,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 742.2703857421875,
+                "y": 0.0,
+                "z": 567.9793701171875
+            },
+            "after": {
+                "x": 742.2703857421875,
+                "y": 0.0,
+                "z": 579.5257568359375
+            },
+            "transformId": 1275939414,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 777.6458740234375,
+                "y": 0.0,
+                "z": 545.9789428710938
+            },
+            "after": {
+                "x": 777.6458740234375,
+                "y": 0.0,
+                "z": 540.7247924804688
+            },
+            "transformId": 656766051,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 676.0221557617188,
+                "y": 0.0,
+                "z": 555.2055053710938
+            },
+            "after": {
+                "x": 676.0221557617188,
+                "y": 0.0,
+                "z": 537.7874145507813
+            },
+            "transformId": 1678280112,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 591.8953247070313,
+                "y": 0.0,
+                "z": 548.8997802734375
+            },
+            "after": {
+                "x": 591.8953247070313,
+                "y": 0.0,
+                "z": 540.5513916015625
+            },
+            "transformId": 1821522735,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 813.2239990234375,
+                "y": 0.0,
+                "z": 548.2140502929688
+            },
+            "after": {
+                "x": 813.2239990234375,
+                "y": 0.0,
+                "z": 540.7866821289063
+            },
+            "transformId": 1800038370,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 889.1676025390625,
+                "y": 0.0,
+                "z": 553.0404663085938
+            },
+            "after": {
+                "x": 889.1676025390625,
+                "y": 0.0,
+                "z": 540.6348266601563
+            },
+            "transformId": 1612751675,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 639.450439453125,
+                "y": 0.0,
+                "z": 558.6851196289063
+            },
+            "after": {
+                "x": 639.450439453125,
+                "y": 0.0,
+                "z": 540.6613159179688
+            },
+            "transformId": 913755910,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 827.1239624023438,
+                "y": 0.0,
+                "z": 562.2920532226563
+            },
+            "after": {
+                "x": 827.1239624023438,
+                "y": 0.0,
+                "z": 540.7157592773438
+            },
+            "transformId": 1000379784,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 574.8408203125,
+                "y": 0.0,
+                "z": 559.1241455078125
+            },
+            "after": {
+                "x": 574.8408203125,
+                "y": 0.0,
+                "z": 540.3809814453125
+            },
+            "transformId": 242939200,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 592.8305053710938,
+                "y": 0.0,
+                "z": 572.1050415039063
+            },
+            "after": {
+                "x": 592.8305053710938,
+                "y": 0.0,
+                "z": 579.4169311523438
+            },
+            "transformId": 1481499100,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 771.05810546875,
+                "y": 0.0,
+                "z": 558.8449096679688
+            },
+            "after": {
+                "x": 771.05810546875,
+                "y": 0.0,
+                "z": 540.4046020507813
+            },
+            "transformId": 1483361169,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 910.6827392578125,
+                "y": 0.0,
+                "z": 570.5294799804688
+            },
+            "after": {
+                "x": 912.8187255859375,
+                "y": 0.0,
+                "z": 570.5294799804688
+            },
+            "transformId": 2091281657,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 889.99609375,
+                "y": 0.0,
+                "z": 567.1856689453125
+            },
+            "after": {
+                "x": 889.99609375,
+                "y": 0.0,
+                "z": 579.5050048828125
+            },
+            "transformId": 514956479,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 819.7059936523438,
+                "y": 0.0,
+                "z": 550.7100219726563
+            },
+            "after": {
+                "x": 819.7059936523438,
+                "y": 0.0,
+                "z": 540.4613647460938
+            },
+            "transformId": 1368403495,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 602.493408203125,
+                "y": 0.0,
+                "z": 548.4768676757813
+            },
+            "after": {
+                "x": 602.493408203125,
+                "y": 0.0,
+                "z": 539.7584838867188
+            },
+            "transformId": 2053716590,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 768.563232421875,
+                "y": 0.0,
+                "z": 550.4752807617188
+            },
+            "after": {
+                "x": 768.563232421875,
+                "y": 0.0,
+                "z": 534.7964477539063
+            },
+            "transformId": 89441617,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 628.2845458984375,
+                "y": 0.0,
+                "z": 570.58984375
+            },
+            "after": {
+                "x": 628.2845458984375,
+                "y": 0.0,
+                "z": 582.302978515625
+            },
+            "transformId": 168538336,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 822.4240112304688,
+                "y": 0.0,
+                "z": 554.3458251953125
+            },
+            "after": {
+                "x": 822.4240112304688,
+                "y": 0.0,
+                "z": 534.776611328125
+            },
+            "transformId": 2051736425,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 511.2914123535156,
+                "y": 0.0,
+                "z": 562.7120361328125
+            },
+            "after": {
+                "x": 511.2914123535156,
+                "y": 0.0,
+                "z": 584.74560546875
+            },
+            "transformId": 1562448743,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04",
+            "reason": "runway scenery clearance",
+            "before": {
+                "x": 489.3256530761719,
+                "y": 0.0,
+                "z": 564.2633056640625
+            },
+            "after": {
+                "x": 479.6304626464844,
+                "y": 0.0,
+                "z": 564.2633056640625
+            },
+            "transformId": 1060952295,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 633.0153198242188,
+                "y": -0.018269209191203119,
+                "z": 673.7864990234375
+            },
+            "after": {
+                "x": 623.7015991210938,
+                "y": -0.01826918125152588,
+                "z": 671.3505859375
+            },
+            "transformId": 722311892,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 633.012939453125,
+                "y": -0.018269209191203119,
+                "z": 678.4682006835938
+            },
+            "after": {
+                "x": 623.70166015625,
+                "y": -0.01826918125152588,
+                "z": 674.9506225585938
+            },
+            "transformId": 389050055,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 637.3561401367188,
+                "y": -0.018269209191203119,
+                "z": 676.6151733398438
+            },
+            "after": {
+                "x": 623.6430053710938,
+                "y": -0.01826918125152588,
+                "z": 678.6210327148438
+            },
+            "transformId": 1317556193,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 551.0162963867188,
+                "y": -0.018269209191203119,
+                "z": 652.0448608398438
+            },
+            "after": {
+                "x": 587.0772094726563,
+                "y": -0.01826918125152588,
+                "z": 671.4494018554688
+            },
+            "transformId": 514025076,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 572.6221923828125,
+                "y": -0.029999999329447748,
+                "z": 639.132080078125
+            },
+            "after": {
+                "x": 586.9791259765625,
+                "y": -0.029999971389770509,
+                "z": 674.9912719726563
+            },
+            "transformId": 465751911,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 580.1464233398438,
+                "y": -0.029999999329447748,
+                "z": 638.96337890625
+            },
+            "after": {
+                "x": 586.9790649414063,
+                "y": -0.029999971389770509,
+                "z": 678.5912475585938
+            },
+            "transformId": 583688378,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 527.603759765625,
+                "y": -0.029999999329447748,
+                "z": 641.765869140625
+            },
+            "after": {
+                "x": 550.3125,
+                "y": -0.029999971389770509,
+                "z": 671.4087524414063
+            },
+            "transformId": 531498941,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 504.989990234375,
+                "y": -0.018269209191203119,
+                "z": 653.0479736328125
+            },
+            "after": {
+                "x": 550.4105224609375,
+                "y": -0.01826918125152588,
+                "z": 675.0494384765625
+            },
+            "transformId": 148327273,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 510.8742370605469,
+                "y": -0.029999999329447748,
+                "z": 644.5397338867188
+            },
+            "after": {
+                "x": 550.3123779296875,
+                "y": -0.029999971389770509,
+                "z": 678.608642578125
+            },
+            "transformId": 1541632305,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 493.5367126464844,
+                "y": -0.029999999329447748,
+                "z": 651.4511108398438
+            },
+            "after": {
+                "x": 513.645751953125,
+                "y": -0.029999971389770509,
+                "z": 671.40869140625
+            },
+            "transformId": 1287353837,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 473.44659423828127,
+                "y": -0.029999999329447748,
+                "z": 655.0548095703125
+            },
+            "after": {
+                "x": 513.645751953125,
+                "y": -0.029999971389770509,
+                "z": 675.0087280273438
+            },
+            "transformId": 1256209961,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 483.9452209472656,
+                "y": -0.018269209191203119,
+                "z": 621.1249389648438
+            },
+            "after": {
+                "x": 513.743896484375,
+                "y": -0.01826918125152588,
+                "z": 678.6493530273438
+            },
+            "transformId": 182811842,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

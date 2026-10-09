@@ -1,0 +1,148 @@
+{
+  "result": "Passed",
+  "step": 3,
+  "title": "City and industrial detail",
+  "successfulNativeLogs": [
+    "warline-map-district-details-02.log"
+  ],
+  "maps": [
+    {
+      "map": "AshLinePort",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+      "savedSourceSHA256": "09785b8074e4f2dcd256b860972b0e3b7252b6e0b319a5004c978d89cd1637d5",
+      "groups": 40,
+      "buildingRenderers": 166,
+      "variedContainers": 5035,
+      "movedProps": 102,
+      "renderers": 31295,
+      "triangles": 20735295
+    },
+    {
+      "map": "CH04M04GroundedSignal",
+      "source": "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
+      "savedSourceSHA256": "cf2c8bd423d15f92ce6ed8ef381c57fd492a477646b05186ee4c9479c7fa4903",
+      "groups": 4,
+      "buildingRenderers": 4,
+      "variedContainers": 0,
+      "movedProps": 64,
+      "renderers": 18200,
+      "triangles": 13711483
+    },
+    {
+      "map": "CH04M05ArmorBreak",
+      "source": "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity",
+      "savedSourceSHA256": "265bce63b31e5715de7a8d2dfbebf3f39bc24ff244ac447e7e56e048f624c6e3",
+      "groups": 22,
+      "buildingRenderers": 403,
+      "variedContainers": 1510,
+      "movedProps": 126,
+      "renderers": 11580,
+      "triangles": 9306895
+    },
+    {
+      "map": "CH05M01CitywideAlert",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity",
+      "savedSourceSHA256": "ed8947714837b099ad296284823357c38060ced5fbac0caff532bafe83d6e37f",
+      "groups": 1,
+      "buildingRenderers": 18,
+      "variedContainers": 0,
+      "movedProps": 2,
+      "renderers": 4666,
+      "triangles": 2518565
+    },
+    {
+      "map": "CH05M02TrustUnderFire",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/PreparedEntities.unity",
+      "savedSourceSHA256": "68577e50cf2a71f5eafa8f9d9bcda43795c47edfef9c30f8db86853430a9d6b7",
+      "groups": 3,
+      "buildingRenderers": 128,
+      "variedContainers": 4715,
+      "movedProps": 6,
+      "renderers": 10373,
+      "triangles": 8017300
+    },
+    {
+      "map": "CH05M03NetworkCollapse",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity",
+      "savedSourceSHA256": "7c588bc6f933337e047ab791c399c62115deb0683c85176c1e68f46647e79b90",
+      "groups": 1,
+      "buildingRenderers": 16,
+      "variedContainers": 0,
+      "movedProps": 2,
+      "renderers": 4644,
+      "triangles": 2499613
+    },
+    {
+      "map": "CH05M04LastCorridor",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity",
+      "savedSourceSHA256": "a1dbe29d983e2ad1b0c9cfda8632b884ba16da9ab92ee92f8060494c0effccdf",
+      "groups": 1,
+      "buildingRenderers": 16,
+      "variedContainers": 0,
+      "movedProps": 2,
+      "renderers": 4643,
+      "triangles": 2524135
+    },
+    {
+      "map": "CH05M05CommandNode",
+      "source": "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity",
+      "savedSourceSHA256": "9277a5d2befecb231d8c95b33d2add3e65a8c115d15bc0c1cae2ae024d433c79",
+      "groups": 1,
+      "buildingRenderers": 10,
+      "variedContainers": 0,
+      "movedProps": 2,
+      "renderers": 4055,
+      "triangles": 2168333
+    },
+    {
+      "map": "CityEdgeAirfield",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+      "savedSourceSHA256": "fa2faaf5a3afc9b588efbbd80eadb33c17186f0c07414705b1e1400fc5472000",
+      "groups": 40,
+      "buildingRenderers": 224,
+      "variedContainers": 0,
+      "movedProps": 149,
+      "renderers": 25127,
+      "triangles": 16335637
+    },
+    {
+      "map": "DenseCity",
+      "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+      "savedSourceSHA256": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
+      "groups": 40,
+      "buildingRenderers": 1577,
+      "variedContainers": 0,
+      "movedProps": 59,
+      "renderers": 127899,
+      "triangles": 51715166
+    },
+    {
+      "map": "RefineryDistrict",
+      "source": "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity",
+      "savedSourceSHA256": "97836ca7f406dfb6ba295cab39cd8698f0649566d53060e83ef05db5af311991",
+      "groups": 40,
+      "buildingRenderers": 139,
+      "variedContainers": 795,
+      "movedProps": 92,
+      "renderers": 24996,
+      "triangles": 14932269
+    }
+  ],
+  "totals": {
+    "groups": 193,
+    "buildingRenderers": 2701,
+    "variedContainers": 12055,
+    "movedProps": 606
+  },
+  "newRenderers": 0,
+  "newTriangles": 0,
+  "invariants": "Native serialized scene comparison excludes only material/visual-mesh references and recorded poses of approved render-only scenery roots. Gameplay, collision, logical ownership, building placements, navigation, mission data and lighting retained.",
+  "visualReview": "Native captures reviewed; see gallery.",
+  "performance": "Renderer and triangle counts unchanged. Shared palette/weathering materials add material variants; no device GPU profiling performed.",
+  "normalInputMissionAcceptance": "Not run; pending",
+  "androidDeviceAcceptance": "Not run; pending",
+  "metricLabels": {
+    "buildingRenderers": "building mesh renderers",
+    "variedContainers": "container mesh renderers, including separate doors"
+  }
+}

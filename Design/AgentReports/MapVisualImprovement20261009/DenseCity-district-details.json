@@ -1,0 +1,1019 @@
+{
+    "map": "DenseCity",
+    "result": "Passed",
+    "beforeHash": "40a3aa25f9779f54116762dafae4adf2012d6c3954fc1e13750dc1a815e7a0a6",
+    "afterHash": "911075aa8b90f0c6b3bba1b039973adbc4726012b66caeec3024ef120b99d698",
+    "protectedSceneHash": "a5021c1db112e0d9f80ae28c33a37a17efc55af07ea34e81f638e516daaff167",
+    "groups": 40,
+    "buildingRenderers": 1577,
+    "variedContainers": 0,
+    "renderersBefore": 127899,
+    "renderersAfter": 127899,
+    "trianglesBefore": 51715166,
+    "trianglesAfter": 51715166,
+    "moves": [
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 968.4796752929688,
+                "y": 0.03500000014901161,
+                "z": 527.6010131835938
+            },
+            "after": {
+                "x": 981.1033325195313,
+                "y": 0.034999996423721316,
+                "z": 503.01959228515627
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1622699377,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 941.3845825195313,
+                "y": 0.03500000014901161,
+                "z": 518.6859130859375
+            },
+            "after": {
+                "x": 981.0243530273438,
+                "y": 0.034999996423721316,
+                "z": 506.6195068359375
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 362518969,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 936.9718627929688,
+                "y": 0.04316667467355728,
+                "z": 478.3338623046875
+            },
+            "after": {
+                "x": 966.4500122070313,
+                "y": 0.0431666374206543,
+                "z": 503.01953125
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 288664762,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1249.3779296875,
+                "y": 0.04338313639163971,
+                "z": 513.7611083984375
+            },
+            "after": {
+                "x": 1250.6796875,
+                "y": 0.043383121490478519,
+                "z": 510.3790283203125
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 864600296,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1239.394775390625,
+                "y": 0.03500000014901161,
+                "z": 568.0421752929688
+            },
+            "after": {
+                "x": 1249.267822265625,
+                "y": 0.034999996423721316,
+                "z": 517.5789184570313
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1664576420,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1087.5545654296875,
+                "y": 0.043294209986925128,
+                "z": 303.72601318359377
+            },
+            "after": {
+                "x": 1084.6148681640625,
+                "y": 0.04329419136047363,
+                "z": 331.73638916015627
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 971935693,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1088.579345703125,
+                "y": 0.03500000014901161,
+                "z": 282.8831787109375
+            },
+            "after": {
+                "x": 1070.217529296875,
+                "y": 0.034999996423721316,
+                "z": 331.7364501953125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1108609551,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1164.460693359375,
+                "y": 0.03500000014901161,
+                "z": 662.46044921875
+            },
+            "after": {
+                "x": 1117.062744140625,
+                "y": 0.034999996423721316,
+                "z": 659.025390625
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 46012828,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1314.157958984375,
+                "y": 0.0421786867082119,
+                "z": 501.57708740234377
+            },
+            "after": {
+                "x": 1259.9873046875,
+                "y": 0.0421786904335022,
+                "z": 489.737060546875
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 675499001,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1135.3126220703125,
+                "y": 0.03500000014901161,
+                "z": 289.20977783203127
+            },
+            "after": {
+                "x": 1087.5599365234375,
+                "y": 0.034999996423721316,
+                "z": 310.5970458984375
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 638419688,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1093.7996826171875,
+                "y": 0.04165569320321083,
+                "z": 730.3187866210938
+            },
+            "after": {
+                "x": 1091.8575439453125,
+                "y": 0.04165571928024292,
+                "z": 705.7804565429688
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 905924759,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1130.40625,
+                "y": 0.03500000014901161,
+                "z": 724.6885986328125
+            },
+            "after": {
+                "x": 1077.62890625,
+                "y": 0.034999996423721316,
+                "z": 705.7803955078125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 499528551,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1094.1298828125,
+                "y": 0.03500000014901161,
+                "z": 760.1070556640625
+            },
+            "after": {
+                "x": 1077.9599609375,
+                "y": 0.034999996423721316,
+                "z": 709.3804931640625
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 354456773,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1178.8916015625,
+                "y": 0.03500000014901161,
+                "z": 337.39691162109377
+            },
+            "after": {
+                "x": 1123.59912109375,
+                "y": 0.034999996423721316,
+                "z": 342.63525390625
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1281725481,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1179.660888671875,
+                "y": 0.03500000014901161,
+                "z": 337.4745788574219
+            },
+            "after": {
+                "x": 1123.76123046875,
+                "y": 0.034999996423721316,
+                "z": 349.8352355957031
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 136342117,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1203.1407470703125,
+                "y": 0.03500000014901161,
+                "z": 668.1146850585938
+            },
+            "after": {
+                "x": 1148.9056396484375,
+                "y": 0.034999996423721316,
+                "z": 663.1892700195313
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1806218717,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1026.5379638671875,
+                "y": 0.043148260563611987,
+                "z": 840.6076049804688
+            },
+            "after": {
+                "x": 1031.8878173828125,
+                "y": 0.04314827919006348,
+                "z": 792.6782836914063
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 2058869618,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1035.4544677734375,
+                "y": 0.03500000014901161,
+                "z": 848.315673828125
+            },
+            "after": {
+                "x": 1029.9395751953125,
+                "y": 0.034999996423721316,
+                "z": 796.2783203125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1695861431,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1120.559326171875,
+                "y": 0.03500000014901161,
+                "z": 750.4259643554688
+            },
+            "after": {
+                "x": 1090.71875,
+                "y": 0.034999996423721316,
+                "z": 749.2817993164063
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1576856306,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1129.5303955078125,
+                "y": 0.03500000014901161,
+                "z": 765.525146484375
+            },
+            "after": {
+                "x": 1129.9969482421875,
+                "y": 0.034999996423721316,
+                "z": 707.75927734375
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1183724984,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1338.492919921875,
+                "y": 0.03500000014901161,
+                "z": 490.6261901855469
+            },
+            "after": {
+                "x": 1311.369384765625,
+                "y": 0.034999996423721316,
+                "z": 513.0711669921875
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1853680571,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1365.12939453125,
+                "y": 0.03500000014901161,
+                "z": 538.3236083984375
+            },
+            "after": {
+                "x": 1311.30126953125,
+                "y": 0.034999996423721316,
+                "z": 516.671142578125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 206719029,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1242.203857421875,
+                "y": 0.03500000014901161,
+                "z": 580.5669555664063
+            },
+            "after": {
+                "x": 1242.24072265625,
+                "y": 0.034999996423721316,
+                "z": 583.3837280273438
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1342626462,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1189.934326171875,
+                "y": 0.04244821146130562,
+                "z": 331.5416564941406
+            },
+            "after": {
+                "x": 1153.713134765625,
+                "y": 0.042448222637176517,
+                "z": 342.1299743652344
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1172698969,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1215.3648681640625,
+                "y": 0.03500000014901161,
+                "z": 315.973388671875
+            },
+            "after": {
+                "x": 1153.8892822265625,
+                "y": 0.034999996423721316,
+                "z": 349.3299560546875
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 187237541,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1363.969482421875,
+                "y": 0.042733874171972278,
+                "z": 486.4373779296875
+            },
+            "after": {
+                "x": 1307.010498046875,
+                "y": 0.042733848094940189,
+                "z": 491.75933837890627
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1175015199,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1080.235107421875,
+                "y": 0.041645824909210208,
+                "z": 812.6337280273438
+            },
+            "after": {
+                "x": 1052.96630859375,
+                "y": 0.041645824909210208,
+                "z": 795.7804565429688
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1374877578,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1047.308837890625,
+                "y": 0.0415436327457428,
+                "z": 843.9942626953125
+            },
+            "after": {
+                "x": 1019.15478515625,
+                "y": 0.04154360294342041,
+                "z": 824.318115234375
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1570678171,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1079.6494140625,
+                "y": 0.03500000014901161,
+                "z": 825.873779296875
+            },
+            "after": {
+                "x": 1019.32470703125,
+                "y": 0.034999996423721316,
+                "z": 817.1181640625
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 395592746,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 965.7929077148438,
+                "y": 0.03500000014901161,
+                "z": 831.2599487304688
+            },
+            "after": {
+                "x": 1002.3169555664063,
+                "y": 0.034999996423721316,
+                "z": 791.7288208007813
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1677893229,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 944.4935302734375,
+                "y": 0.03500000014901161,
+                "z": 828.6066284179688
+            },
+            "after": {
+                "x": 1002.6341552734375,
+                "y": 0.034999996423721316,
+                "z": 795.3289184570313
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1898482884,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1127.7076416015625,
+                "y": 0.04315886273980141,
+                "z": 722.1558837890625
+            },
+            "after": {
+                "x": 1181.2589111328125,
+                "y": 0.043158888816833499,
+                "z": 680.2711181640625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 660071941,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1171.2833251953125,
+                "y": 0.03500000014901161,
+                "z": 743.071533203125
+            },
+            "after": {
+                "x": 1119.5201416015625,
+                "y": 0.034999996423721316,
+                "z": 730.7288818359375
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 2114071320,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1215.2821044921875,
+                "y": 0.03500000014901161,
+                "z": 315.2525634765625
+            },
+            "after": {
+                "x": 1171.2467041015625,
+                "y": 0.034999996423721316,
+                "z": 328.262939453125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 972080499,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1091.3310546875,
+                "y": 0.03500000014901161,
+                "z": 804.7127685546875
+            },
+            "after": {
+                "x": 1088.90380859375,
+                "y": 0.034999996423721316,
+                "z": 772.7633056640625
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1466027096,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1092.646240234375,
+                "y": 0.03500000014901161,
+                "z": 851.606689453125
+            },
+            "after": {
+                "x": 1059.057861328125,
+                "y": 0.034999996423721316,
+                "z": 817.780517578125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 868883373,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1093.207275390625,
+                "y": 0.043215006589889529,
+                "z": 832.310546875
+            },
+            "after": {
+                "x": 1043.600830078125,
+                "y": 0.043215036392211917,
+                "z": 836.54541015625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 493279752,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1249.761962890625,
+                "y": 0.042701561003923419,
+                "z": 700.2197265625
+            },
+            "after": {
+                "x": 1220.8759765625,
+                "y": 0.0427016019821167,
+                "z": 664.15771484375
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 830688855,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1258.885009765625,
+                "y": 0.03500000014901161,
+                "z": 697.2822875976563
+            },
+            "after": {
+                "x": 1204.146240234375,
+                "y": 0.034999996423721316,
+                "z": 660.5578002929688
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 434310399,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 929.5774536132813,
+                "y": 0.03500000014901161,
+                "z": 821.689208984375
+            },
+            "after": {
+                "x": 1000.9774780273438,
+                "y": 0.034999996423721316,
+                "z": 818.17333984375
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1405135712,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 951.5847778320313,
+                "y": 0.04341892898082733,
+                "z": 827.5990600585938
+            },
+            "after": {
+                "x": 1020.4000854492188,
+                "y": 0.04341888427734375,
+                "z": 841.0635375976563
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 238252440,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1402.2750244140625,
+                "y": 0.03500000014901161,
+                "z": 504.91510009765627
+            },
+            "after": {
+                "x": 1369.2464599609375,
+                "y": 0.034999996423721316,
+                "z": 519.6629028320313
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 541963105,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1405.7080078125,
+                "y": 0.03500000014901161,
+                "z": 512.3294067382813
+            },
+            "after": {
+                "x": 1369.6572265625,
+                "y": 0.034999996423721316,
+                "z": 523.2628784179688
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1080373003,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1407.5062255859375,
+                "y": 0.03500000014901161,
+                "z": 521.0059204101563
+            },
+            "after": {
+                "x": 1351.1275634765625,
+                "y": 0.034999996423721316,
+                "z": 516.0629272460938
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1680328552,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1311.19384765625,
+                "y": 0.04222401604056358,
+                "z": 597.0429077148438
+            },
+            "after": {
+                "x": 1264.62841796875,
+                "y": 0.042223989963531497,
+                "z": 621.2188110351563
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1481776559,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1308.7769775390625,
+                "y": 0.03500000014901161,
+                "z": 588.7887573242188
+            },
+            "after": {
+                "x": 1264.1588134765625,
+                "y": 0.034999996423721316,
+                "z": 628.4187622070313
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 879285678,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1124.6666259765625,
+                "y": 0.04302394017577171,
+                "z": 803.4987182617188
+            },
+            "after": {
+                "x": 1094.2591552734375,
+                "y": 0.04302394390106201,
+                "z": 791.7288208007813
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 209495733,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1332.7442626953125,
+                "y": 0.03500000014901161,
+                "z": 585.8971557617188
+            },
+            "after": {
+                "x": 1326.6339111328125,
+                "y": 0.034999996423721316,
+                "z": 562.3898315429688
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 835907883,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1317.656982421875,
+                "y": 0.04344337806105614,
+                "z": 607.5907592773438
+            },
+            "after": {
+                "x": 1310.608642578125,
+                "y": 0.04344332218170166,
+                "z": 562.3898315429688
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 585588608,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1185.4276123046875,
+                "y": 0.043165214359760287,
+                "z": 765.2074584960938
+            },
+            "after": {
+                "x": 1186.7286376953125,
+                "y": 0.04316520690917969,
+                "z": 701.0972290039063
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1998711154,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1194.3031005859375,
+                "y": 0.03500000014901161,
+                "z": 769.56787109375
+            },
+            "after": {
+                "x": 1169.6011962890625,
+                "y": 0.034999996423721316,
+                "z": 728.662841796875
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 201429883,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1171.761962890625,
+                "y": 0.03500000014901161,
+                "z": 797.5792236328125
+            },
+            "after": {
+                "x": 1133.762939453125,
+                "y": 0.034999996423721316,
+                "z": 758.0635986328125
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 718224367,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 916.9583129882813,
+                "y": 0.03500000014901161,
+                "z": 817.8303833007813
+            },
+            "after": {
+                "x": 945.6582641601563,
+                "y": 0.034999996423721316,
+                "z": 800.3898315429688
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 1978867774,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Pallet_02",
+            "reason": "frontage service group",
+            "before": {
+                "x": 909.2495727539063,
+                "y": 0.03500000014901161,
+                "z": 805.5713500976563
+            },
+            "after": {
+                "x": 960.4884643554688,
+                "y": 0.034999996423721316,
+                "z": 803.9898071289063
+            },
+            "transformId": 4642821202595556,
+            "instanceId": 262983549,
+            "prefabTransformId": 4642821202595556
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1098.30810546875,
+                "y": 0.04159046337008476,
+                "z": 897.2326049804688
+            },
+            "after": {
+                "x": 1059.7451171875,
+                "y": 0.04159045219421387,
+                "z": 850.6819458007813
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1840011484,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 969.3451538085938,
+                "y": 0.04324331134557724,
+                "z": 926.1989135742188
+            },
+            "after": {
+                "x": 1015.6559448242188,
+                "y": 0.04324328899383545,
+                "z": 893.0629272460938
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 921452346,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1089.7027587890625,
+                "y": 0.042858850210905078,
+                "z": 909.8740234375
+            },
+            "after": {
+                "x": 1015.9959716796875,
+                "y": 0.04285883903503418,
+                "z": 900.262939453125
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 64077654,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1251.6826171875,
+                "y": 0.04282108321785927,
+                "z": 758.2403564453125
+            },
+            "after": {
+                "x": 1199.259765625,
+                "y": 0.04282110929489136,
+                "z": 727.9803466796875
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 582913939,
+            "prefabTransformId": 4869235317524650
+        },
+        {
+            "path": "Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_BarrelPile_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 1095.9735107421875,
+                "y": 0.041782110929489139,
+                "z": 914.0379638671875
+            },
+            "after": {
+                "x": 1091.8995361328125,
+                "y": 0.04178214073181152,
+                "z": 850.681884765625
+            },
+            "transformId": 4869235317524650,
+            "instanceId": 1949516820,
+            "prefabTransformId": 4869235317524650
+        }
+    ]
+}

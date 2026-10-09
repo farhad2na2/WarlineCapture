@@ -1,0 +1,50 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "beforeHash": "478b405d57a3826756fb216377618e3ffb020a35ed2b6fb61ed0a3640e0e0f4b",
+    "afterHash": "7c588bc6f933337e047ab791c399c62115deb0683c85176c1e68f46647e79b90",
+    "protectedSceneHash": "cd10b8a6c297c7a547cda7d69e3f35a040f97f5228a5ae968e76a8109e33075b",
+    "groups": 1,
+    "buildingRenderers": 16,
+    "variedContainers": 0,
+    "renderersBefore": 4644,
+    "renderersAfter": 4644,
+    "trianglesBefore": 2499613,
+    "trianglesAfter": 2499613,
+    "moves": [
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Powerpole_01 (20)",
+            "reason": "street pole clearance",
+            "before": {
+                "x": 1160.990234375,
+                "y": 0.07000003010034561,
+                "z": 511.469970703125
+            },
+            "after": {
+                "x": 1160.990234375,
+                "y": 0.06999993324279785,
+                "z": 503.27728271484377
+            },
+            "transformId": 160931419,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Crate_Wood_01",
+            "reason": "frontage service group",
+            "before": {
+                "x": 882.6799926757813,
+                "y": 1.159999966621399,
+                "z": 387.8199462890625
+            },
+            "after": {
+                "x": 907.258056640625,
+                "y": 1.159999966621399,
+                "z": 355.1398620605469
+            },
+            "transformId": 1513157557,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+  "before": "7bba4c19748f9b52da6712a312511b5c1ffb9855",
+  "after": "ce537469aeaa6b9d58bc2a07b449d5e341d6980e",
+  "unrelatedDirtyHashesPreserved": {
+    "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs": "b8d2e1545b122038ff3c2ea6fee230aa16133694541ee235925a2f8962c11613",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "f99cf8788446fa46866536925e58dad2199819561849eeb2967184d522894769",
+    "Assets/Game/Scripts/Rendering/RenderBoundsPresentation.cs": "ce5e612991d97f68c65f447d95b65a94ff2ded8dc40897b43bf69ae021350028",
+    "Assets/Game/Scripts/Editor/SkirmishBuildingPlacementProbe.cs": "5210a1a34aad75caa7ab10ce5e4af5ecfa715581bf29f62b4316b1884e16d8ec",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs": "5c38a28bc5b978a8491827512c203b03212b694f6e439a5c9d81ee34f64f144d",
+    "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs": "879e07078701f2ab0c7f0ffd461b59c18c1791957b49672a772c15394f7dc8f9",
+    "Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs": "69b34c6e2332a577b9f22a7044e0be569198ac4a1c151c56f2a2b2b413002cc2",
+    "Design/AgentReports/SkirmishExpansion/S005/CURRENT_ACCEPTANCE.md": "79d3d7989ab2e7c095b1fb84e9bbc2a8b5100f0811490839531920dff20b8cd6",
+    "Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json": "e3c2e44febdd626ce7d1676705de5a1e318c45613dd5aeb86ee98d2aa37fea1d",
+    "Design/AgentReports/SkirmishExpansion/S005/role-lifecycle-current-qualification-plan.json": "e8a1579f8119c8478a24581883cb2d698535a30fcf56f5e10e0283c2e5463419"
+  },
+  "unrelatedUntrackedPathsPreserved": 7170,
+  "incomingPaths": 127,
+  "commit": "f1ec95e833b49fabefc9855ea0cae7fbd6af226e",
+  "pr": "https://github.com/farhad2na2/WarlineCapture/pull/60"
+}

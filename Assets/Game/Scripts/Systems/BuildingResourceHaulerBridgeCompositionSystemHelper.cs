@@ -189,6 +189,8 @@ namespace Game.Runtime
             if (selected.Length == 0)
                 return false;
 
+            LogSelectedHaulInput(clickedBuildingId, selected.Length, "Begin");
+
             bool clickedIsOilSource = context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(clickedBuilding);
             bool clickedIsFuelBuilding = context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(clickedBuilding);
             bool clickedIsFabricationInput =
@@ -263,6 +265,7 @@ namespace Game.Runtime
                 }
                 if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
                 {
+                    LogSelectedHaulInput(clickedBuildingId, selected.Length, "ReservationFailed");
                     SetResourceHaulStatus(
                         em,
                         unit,
@@ -274,6 +277,7 @@ namespace Game.Runtime
 
                 if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
                 {
+                    LogSelectedHaulInput(clickedBuildingId, selected.Length, "RouteUnavailable");
                     ReleaseReservation(context, em, reservation);
                     SetResourceHaulStatus(
                         em,
@@ -301,9 +305,16 @@ namespace Game.Runtime
                     RecordRouteAssignmentTelemetry(em, unit, resourceKind, hadActiveOrder);
 
                 assignedAny = true;
+                LogSelectedHaulInput(clickedBuildingId, selected.Length, "Assigned");
             }
 
             return assignedAny;
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        private static void LogSelectedHaulInput(int buildingId, int selectedCount, string result)
+        {
+            Debug.Log($"[SelectedHaulInput] building={buildingId} selected={selectedCount} result={result}");
         }
 
         private bool TryAssignAutomaticHaulerOrder(Context context, EntityManager em, GridConfig grid, Entity unit)

@@ -1,0 +1,114 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SupplyReadOnly851.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 151,
+      "executeMs": 20,
+      "assemblyName": "PipelineRunScript_S005SupplyReadOnly851_e7cffe448d8b4ca59b6a464cde8003eb",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyBuildingsAndInputState; no actor/order/resource/clock writes",
+        "frame": 12531,
+        "buildings": [
+          {
+            "id": 11,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(925, 623)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_11"
+          },
+          {
+            "id": 15,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(866, 614)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_15"
+          },
+          {
+            "id": 19,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(826, 554)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_19"
+          }
+        ],
+        "input": [
+          {
+            "QueuedMoveOrderToken": 97,
+            "DragStart": {
+              "x": 1200.4339599609375,
+              "y": 559.0765380859375
+            },
+            "DragCurrent": {
+              "x": 1200.4339599609375,
+              "y": 559.0765380859375
+            },
+            "LastPointerPosition": {
+              "x": 1200.4339599609375,
+              "y": 559.0765380859375
+            },
+            "PointerPressedOverUi": 0,
+            "IsDraggingSelection": 0,
+            "IgnoreNextLeftMouseRelease": 0,
+            "SkipNextWorldReleaseAfterSelection": 0,
+            "IgnoreWorldCommandsUntilFrame": 12274,
+            "IgnoreUiClickUntilRelease": 0,
+            "SelectionModeHoldArmed": 0,
+            "SelectionModeHoldStartTime": 392.08074951171875,
+            "HasQueuedMoveOrder": 0,
+            "QueuedMoveOrderScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "QueuedMoveOrderFrame": -1,
+            "LastLiveSelectionRect": {
+              "x": 1200.4339599609375,
+              "y": 559.0765380859375,
+              "z": 1200.4339599609375,
+              "w": 559.0765380859375
+            },
+            "HasLiveSelectionRect": 0,
+            "LastKnownPointerPosition": {
+              "x": -20,
+              "y": -753
+            },
+            "HasLastKnownPointerPosition": 1,
+            "ActiveCommandMode": 0,
+            "ActiveCommandModeFrame": 0,
+            "ActiveCommandModeOneShot": 0,
+            "ActiveCommandModeRequiresWorldTarget": 0,
+            "ActiveBoardCommandDirection": 0,
+            "BoardPassengerDragArmed": 0,
+            "HasLastMoveTargetClick": 0,
+            "LastMoveTargetClickScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "LastMoveTargetClickTime": 0
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

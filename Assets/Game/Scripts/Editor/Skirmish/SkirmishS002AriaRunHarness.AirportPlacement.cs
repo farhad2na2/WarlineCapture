@@ -511,6 +511,14 @@ namespace Game.Editor
                     var clearance = new RectInt(rect.xMin - serviceLaneCells, rect.yMin - serviceLaneCells,
                         rect.width + serviceLaneCells * 2, rect.height + serviceLaneCells * 2);
                     if (AirportOverlapsOccupant(source, clearance)) continue;
+                    // Buying both Factories first must leave the compact paid
+                    // supply sites observed in native851 available. This only
+                    // filters the player's qualification strategy candidates;
+                    // it creates no reservation, actor or physical map asset.
+                    if (fixedWingCycleOnly && kind == "Fabrication" && !paidIndustryOilReady &&
+                        (clearance.Overlaps(new RectInt(906, 562, 15, 4)) ||
+                         clearance.Overlaps(new RectInt(954, 562, 25, 15)) ||
+                         clearance.Overlaps(new RectInt(986, 534, 14, 10)))) continue;
                 }
                 var footprint = source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(active.Definition, rotated);
                 var site = source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint,

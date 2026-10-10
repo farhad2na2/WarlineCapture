@@ -3,7 +3,7 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+  "sourceHash": "44434768a3814ec2928295a4b0e872a88fec6f4e1c43955fc1aadd2fcac33a93",
   "sourceFingerprint": "final-849-unassisted-airport-source-fit-closed-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
@@ -64,7 +64,7 @@
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
   "activeScope": null,
-  "nextWork": "Complete implemented scenery reader parity/current Airport scan; run balanced paid fixed-wing cycle and remaining native readiness gates.",
+  "nextWork": "Run normal paid flight cycle after earlier two-Factory investment, preserving observed compact supply sites. Native851 landed at home but missed refuel/second-sortie deadline.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -140,8 +140,8 @@
   },
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Normal-input paid fixed-wing flight/return/refuel/second-sortie"
+    "status": "Running",
+    "scope": "RunS005EditorStrikeCycleProbe"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -421,8 +421,8 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-839-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native839-normal-paid-strike-cycle-failure.json",
+  "currentSourceFingerprint": "final-852-early-factory-reserved-supply-pre-independent-fingerprint.json",
+  "latestAircraftProgress": "native851-normal-paid-strike-cycle-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
@@ -468,7 +468,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native839-normal-paid-strike-cycle-failure.json",
+  "latestAircraftFailure": "native851-normal-paid-strike-cycle-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,

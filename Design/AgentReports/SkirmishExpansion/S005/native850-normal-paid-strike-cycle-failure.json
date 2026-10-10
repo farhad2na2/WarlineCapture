@@ -1,0 +1,42 @@
+{
+  "result": "Failed",
+  "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-849-unassisted-airport-source-fit-closed-post-source-manifest.json",
+  "postSourceManifest": "final-850-paid-supply-input-failure-closed-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "wrapperExitArtifact": "native-850-current-manual-en-seed155926.log.wrapper-exit",
+  "nativeBridgeExitCode": 1,
+  "log": "native-850-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-e5b290948cf74b6da51221a39a93986f.jsonl",
+  "inputAudit": "native850-touch-contact-audit.json",
+  "recordedContacts": 121,
+  "allRecordedContactsEnded": true,
+  "progress": [],
+  "localFuelRouteEvidence": [
+    "[S005LocalFuelRoute] phase=Begin source=17 destination=18 tanker=production.1004.0 input=TouchPending",
+    "[S005LocalFuelRoute] phase=Assigned source=17 destination=18 input=Touch nativeOrderObserved=1 resourcesOrOrdersInjected=0",
+    "[S005LocalFuelRoute] result=Delivered source=17 destination=18 input=Touch nativeOrderObserved=1 loadedCargoObserved=1 receivedAdded=16 resourcesOrOrdersInjected=0"
+  ],
+  "failureMarkers": [
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Normal-input factory supply order was not acknowledged after three visible attempts."
+  ],
+  "normalInput": true,
+  "noOutcomeInjection": true,
+  "normalBudget": true,
+  "scope": "Normal-input paid industry and logistics setup only; failed Factory15 supply acknowledgment before research, Airport or Strike purchase.",
+  "completeMissionCertified": false,
+  "bilateralCapacityCertified": false,
+  "allRolesCertified": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false,
+  "technicallyReady": false,
+  "attemptedScope": "Paid Strike production/taxi, native fire, return/home touchdown, refuel and second airborne sortie. Second return/full mission/bilateral capacity/all roles are not certified.",
+  "aircraftPurchased": false,
+  "flightObserved": false,
+  "materialsAtLastSnapshot": 120,
+  "fuelAtLastSnapshot": 575.9,
+  "elapsedAtLastSnapshot": 355.664
+}

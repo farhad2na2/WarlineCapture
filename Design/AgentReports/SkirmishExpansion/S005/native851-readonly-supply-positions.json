@@ -1,0 +1,141 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SupplyReadOnly851.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 1210,
+      "executeMs": 76,
+      "assemblyName": "PipelineRunScript_S005SupplyReadOnly851_6a582334ae8f4c4790281e54ee268469",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyBuildingsAndInputState; no actor/order/resource/clock writes",
+        "frame": 35523,
+        "buildings": [
+          {
+            "id": 5,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(907, 596)",
+            "footprint": "(15, 4)",
+            "instance": "Oil Pump_5"
+          },
+          {
+            "id": 7,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(906, 608)",
+            "footprint": "(25, 15)",
+            "instance": "Oil Refinery_7"
+          },
+          {
+            "id": 9,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(931, 599)",
+            "footprint": "(14, 10)",
+            "instance": "Fuel Bladder_9"
+          },
+          {
+            "id": 11,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(925, 623)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_11"
+          },
+          {
+            "id": 15,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(866, 614)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_15"
+          },
+          {
+            "id": 19,
+            "owner": 1,
+            "hasOwner": true,
+            "destroyed": false,
+            "origin": "(826, 554)",
+            "footprint": "(19, 16)",
+            "instance": "Field Fabrication Depot_19"
+          }
+        ],
+        "input": [
+          {
+            "QueuedMoveOrderToken": 236,
+            "DragStart": {
+              "x": 1900.68017578125,
+              "y": 967.52392578125
+            },
+            "DragCurrent": {
+              "x": 1900.68017578125,
+              "y": 967.52392578125
+            },
+            "LastPointerPosition": {
+              "x": 1900.68017578125,
+              "y": 967.52392578125
+            },
+            "PointerPressedOverUi": 0,
+            "IsDraggingSelection": 0,
+            "IgnoreNextLeftMouseRelease": 0,
+            "SkipNextWorldReleaseAfterSelection": 0,
+            "IgnoreWorldCommandsUntilFrame": 35255,
+            "IgnoreUiClickUntilRelease": 0,
+            "SelectionModeHoldArmed": 0,
+            "SelectionModeHoldStartTime": 973.2705688476562,
+            "HasQueuedMoveOrder": 0,
+            "QueuedMoveOrderScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "QueuedMoveOrderFrame": -1,
+            "LastLiveSelectionRect": {
+              "x": 1900.68017578125,
+              "y": 967.52392578125,
+              "z": 1900.68017578125,
+              "w": 967.52392578125
+            },
+            "HasLiveSelectionRect": 0,
+            "LastKnownPointerPosition": {
+              "x": -20,
+              "y": -753
+            },
+            "HasLastKnownPointerPosition": 1,
+            "ActiveCommandMode": 0,
+            "ActiveCommandModeFrame": 0,
+            "ActiveCommandModeOneShot": 0,
+            "ActiveCommandModeRequiresWorldTarget": 0,
+            "ActiveBoardCommandDirection": 0,
+            "BoardPassengerDragArmed": 0,
+            "HasLastMoveTargetClick": 0,
+            "LastMoveTargetClickScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "LastMoveTargetClickTime": 0
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

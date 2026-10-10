@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current full source fingerprint: `61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current full source fingerprint: `44434768a3814ec2928295a4b0e872a88fec6f4e1c43955fc1aadd2fcac33a93`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city physical source. The current work changes shared scenery-bound reading and Editor qualification strategy only; it creates no physical map, changes no geometry, and preserves gameplay costs, rates, capacities and match deadlines. Owner visual review remains deferred; real player/device acceptance is pending.
 
@@ -593,3 +593,17 @@ Actual wrapper2; full PRE/POST source unchanged (`cfe1a6c4bc94af5391d381ba790eb3
 ### Native839 normal paid fixed-wing cycle — failed
 
 Actual wrapper2; full PRE/POST source unchanged (`4553d69bec40ddd9f656d6c86a6926393bb86c2dcc23c063969c15a3f2b5f316`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native839-normal-paid-strike-cycle-failure.json`.
+
+### Native850 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Normal-input factory supply order was not acknowledged after three visible attempts.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native850-normal-paid-strike-cycle-failure.json`.
+
+### Native851 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`38133e50a1f8f5d257a768a1476a80aef1870f1c94f18336c6fdd440f2a3cdd7`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native851-normal-paid-strike-cycle-failure.json`.
+
+## Native851 deadline failure and next strategy
+
+Native851 failed with actual wrapper exit1 and matching full PRE/POST source38133e50. It paid for the Airport and Strike, completed native parking, takeoff/fire, accepted normal Return receipt321 with attack cleared, and landed at home with Fuel15. Refueling and a second sortie missed the normal match deadline. All recorded contacts ended; the Factory supply failure from850 did not reproduce. This is retained progress, not a cycle/full-match/readiness pass. Proof: `native851-normal-paid-strike-cycle-failure.json`.
+
+The next candidate funds both extra Factories before the fleet and filters their strategy candidates to leave native851 compact Oil/Refinery/store sites available. It creates no physical map or gameplay reservation and changes no costs/rates/caps/deadline. Source delta: `source-delta-852-early-factory-strategy-only.json`. Compilation completed without errors; the normal-input cycle remains pending. Native848/849 proofs retain their original full source61e and are separate from current-source acceptance.

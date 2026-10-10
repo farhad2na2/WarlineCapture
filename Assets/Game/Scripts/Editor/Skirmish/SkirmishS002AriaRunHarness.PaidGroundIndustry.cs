@@ -275,9 +275,10 @@ namespace Game.Editor
             paidIndustryFabricationReady = false;
             paidIndustryFuelReady = !fixedWingCycleOnly;
             paidIndustryOilReady = !fixedWingCycleOnly;
-            // Keep native839's compact paid refinery/store sites available:
-            // warm up one extra Factory, finish the supply cluster, then fund
-            // the second extra Factory. All purchases retain normal costs.
+            // Native851 funded the paid Strike too late for a second sortie.
+            // Invest in both extra Factories before the fleet. The placement
+            // strategy reserves the observed compact supply sites; all actual
+            // construction still requires native input and normal clearance.
             paidIndustryAddedTarget = 2;
             paidIndustryBeforeConstruction = paidIndustryOpeningCount;
             paidIndustryStep = paidIndustrySite = 0;
@@ -405,6 +406,17 @@ namespace Game.Editor
                 em.GetComponentData<UnitResourceHaulOrder>(materialsPriorityTruck).DestinationBuildingId != materialsPriorityFactoryId)
             {
                 if (now < materialsPriorityAckAt) return false;
+                var observedCargo = em.GetComponentData<UnitResourceHauler>(materialsPriorityTruck);
+                var observedOrder = em.HasComponent<UnitResourceHaulOrder>(materialsPriorityTruck)
+                    ? em.GetComponentData<UnitResourceHaulOrder>(materialsPriorityTruck) : default;
+                Debug.Log("[S005MaterialsPriority] phase=Unacknowledged factory=" + materialsPriorityFactoryId +
+                    " truckSelected=" + em.HasComponent<SelectedUnitTag>(materialsPriorityTruck) +
+                    " cargoOil=" + observedCargo.CargoOilBarrels + " observedDestination=" + observedOrder.DestinationBuildingId +
+                    " haulPhase=" + observedOrder.Phase + " status=" +
+                    (em.HasComponent<UnitResourceHaulStatus>(materialsPriorityTruck)
+                        ? JsonUtility.ToJson(em.GetComponentData<UnitResourceHaulStatus>(materialsPriorityTruck)) : "none"));
+                ScreenCapture.CaptureScreenshot(LiveTracePath() + ".factory-" + materialsPriorityFactoryId +
+                    "-attempt-" + materialsPriorityAttempts + ".png");
                 // The native command can reject a temporarily unavailable bay.
                 // Retry through the same visible selection and world tap; never
                 // turn a gesture receipt into a fabricated order acknowledgment.
@@ -498,7 +510,7 @@ namespace Game.Editor
                 // Start the normal fabrication investment before buying the
                 // logistics fleet so it can fund the remaining purchases.
                 paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
-                int warmupAdded = fixedWingCycleOnly ? 1 : paidIndustryAddedTarget;
+                int warmupAdded = paidIndustryAddedTarget;
                 if (!TickPaidIndustryBuilding(now, "Building_Ammunition_Depot", CountLivingPlayerFabrication(em),
                     paidIndustryOpeningCount + warmupAdded, "Fabrication", warmupAdded, paidIndustryOpeningCount, 100)) return false;
                 paidIndustryWarmReady = true;

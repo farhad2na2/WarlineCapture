@@ -1,0 +1,14 @@
+{
+  "previousSourceHash": "38133e50a1f8f5d257a768a1476a80aef1870f1c94f18336c6fdd440f2a3cdd7",
+  "currentSourceHash": "44434768a3814ec2928295a4b0e872a88fec6f4e1c43955fc1aadd2fcac33a93",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "physicalMapUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "shippingRuntimeAndConfigurationUnchanged": true,
+  "scope": "Editor normal-input strategy only: both extra Factories early; reserve previously observed compact supply sites in candidate selection. No gameplay reservation or costs/caps/deadline change.",
+  "nativeResult": "Pending",
+  "playerReady": false
+}

@@ -1,0 +1,36 @@
+{
+  "result": "Failed",
+  "sourceHash": "49cd2a7ff8e0315d5171df255742852e080c1f654cdadf1626186dd6621f0214",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-862-safe-compact-paid-cycle-pre-source-manifest.json",
+  "postSourceManifest": "final-862-resumed-paid-cycle-closed-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "wrapperExitArtifact": "native-862-current-manual-en-seed155926.log.wrapper-exit",
+  "nativeBridgeExitCode": 1,
+  "log": "native-862-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-1667065bf71c45258a6e3208541e311b.jsonl",
+  "inputAudit": "native862-touch-contact-audit.json",
+  "recordedContacts": 116,
+  "allRecordedContactsEnded": true,
+  "progress": [],
+  "localFuelRouteEvidence": [
+    "[S005LocalFuelRoute] phase=Begin source=18 destination=19 tanker=role.tanker.1.8.0 input=TouchPending",
+    "[S005LocalFuelRoute] phase=Assigned source=18 destination=19 input=Touch nativeOrderObserved=1 resourcesOrOrdersInjected=0",
+    "[S005LocalFuelRoute] result=Delivered source=18 destination=19 input=Touch nativeOrderObserved=1 loadedCargoObserved=1 receivedAdded=8 resourcesOrOrdersInjected=0"
+  ],
+  "failureMarkers": [
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Normal-input factory supply selection/delivery acknowledgment did not complete."
+  ],
+  "normalInput": true,
+  "noOutcomeInjection": true,
+  "normalBudget": true,
+  "scope": "Failed paid Strike qualification; only phases present in the retained markers were observed. No unobserved production/flight phase or complete mission is certified.",
+  "completeMissionCertified": false,
+  "bilateralCapacityCertified": false,
+  "allRolesCertified": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false,
+  "technicallyReady": false
+}

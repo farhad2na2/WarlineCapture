@@ -1,0 +1,34 @@
+{
+  "result": "Failed",
+  "sourceHash": "98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-863-deferred-camera-pre-source-manifest.json",
+  "postSourceManifest": "final-864-resumed-paid-cycle-closed-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "wrapperExitArtifact": "native-864-current-manual-en-seed155926.log.wrapper-exit",
+  "nativeBridgeExitCode": 1,
+  "log": "native-864-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-b56b5e204df94353a0e5b2d0d36904a4.jsonl",
+  "inputAudit": "native864-touch-contact-audit.json",
+  "recordedContacts": 113,
+  "allRecordedContactsEnded": true,
+  "progress": [],
+  "localFuelRouteEvidence": [
+    "[S005LocalFuelRoute] phase=Begin source=18 destination=19 tanker=production.1003.0 input=TouchPending"
+  ],
+  "failureMarkers": [
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Normal local Fuel store tap was not acknowledged after three attempts."
+  ],
+  "normalInput": true,
+  "noOutcomeInjection": true,
+  "normalBudget": true,
+  "scope": "Failed paid Strike qualification; only phases present in the retained markers were observed. No unobserved production/flight phase or complete mission is certified.",
+  "completeMissionCertified": false,
+  "bilateralCapacityCertified": false,
+  "allRolesCertified": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false,
+  "technicallyReady": false
+}

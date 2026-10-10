@@ -124,6 +124,10 @@ namespace Game.Editor
 
         private static bool SelectFixedWingCard(EntityManager em, Entity session, Entity actor, double now)
         {
+            if (fixedWingSelectionStarted == 0) fixedWingSelectionStarted = now;
+            if (now - fixedWingSelectionStarted > 45)
+                throw new InvalidOperationException("Paid Strike exclusive selection did not complete through normal input.");
+            if (!SelectOnlyPlayerResumeActorThroughInput(em, actor)) return false;
             if (em.HasComponent<SelectedUnitTag>(actor) &&
                 UiShellRuntimeGateway.TryReadMatchHudSelection(out var selected) && selected.Visible && selected.IsAircraft)
             {
@@ -132,7 +136,6 @@ namespace Game.Editor
                 fixedWingSelectionPagingForward = true;
                 return true;
             }
-            if (fixedWingSelectionStarted == 0) fixedWingSelectionStarted = now;
             if (now - fixedWingSelectionStarted > 45 || fixedWingPages > 24)
                 throw new InvalidOperationException("Paid Strike card selection did not complete through normal squad paging.");
             if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return false;
@@ -398,6 +401,7 @@ namespace Game.Editor
             if (fixedWingFleetStep == 1)
             {
                 if (drawer != null && drawer.IsOpen) { PlayerResumeTap(drawer.CloseButton); return false; }
+                if (!SelectOnlyPlayerResumeActorThroughInput(em, fixedWingRetiredOilTruck)) return false;
                 if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) return false;
                 if (command.ActiveCommandMode is not (TacticalCommandMode.None or TacticalCommandMode.Select))
                 { PlayerResumeTap(controls?.SelectButton); return false; }
@@ -422,7 +426,7 @@ namespace Game.Editor
                     if (button.name == "DestroySector" && PlayerResumeTap(button))
                     {
                         fixedWingFleetStep = 2;
-                        Debug.Log("[S005FuelFleet] phase=RetireOilTruck input=Touch cargoEmptyObserved=1 resourcesOrOrdersInjected=0");
+                        Debug.Log("[S005FuelFleet] phase=RetireOilTruck input=Touch cargoEmptyObserved=1 selectedNativeActors=1 resourcesOrOrdersInjected=0");
                         return false;
                     }
                 return false;
@@ -478,6 +482,7 @@ namespace Game.Editor
         private static bool SetFixedWingMaterialProductionThroughInput(EntityManager em, double now,
             MatchOverlayCommandControlsView controls, bool enabled)
         {
+            if (!SelectOnlyPlayerResumeActorThroughInput(em, Entity.Null)) return false;
             if (fixedWingProductionFocusPending)
             {
                 if (AriaCommandEvidence.AcceptedCommands != fixedWingProductionFocusCommands)

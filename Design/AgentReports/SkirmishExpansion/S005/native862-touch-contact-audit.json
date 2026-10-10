@@ -1,0 +1,18 @@
+{
+  "recordedContacts": 116,
+  "completedContacts": 116,
+  "phases": {
+    "Menu": 9,
+    "PlayerResume": 107
+  },
+  "terminalCancellations": [],
+  "errors": [],
+  "strictRecordedContacts": true,
+  "strictAllContactsEnded": true,
+  "nativeMenuContactsRecorded": true,
+  "terminalContactsRecorded": false,
+  "completeMatchCertified": false,
+  "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+  "trace": "s005-aria-live-155926-en-1667065bf71c45258a6e3208541e311b.jsonl.touch.jsonl",
+  "sha256": "79d3e84edf89e8c16fecd591d8d02d5518a9c376418bd2fea16aa1de0dde8d9e"
+}

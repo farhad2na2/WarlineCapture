@@ -45,6 +45,12 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", "1");
             Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", "1");
         }
+        public static void RunS005EditorPaidFuelClickProbe()
+        {
+            RunS005EditorPaidBuildingClearanceProbe();
+            Environment.SetEnvironmentVariable("WARLINE_S005_PAID_FUEL_CLICK_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", "1");
+        }
         private static void RunEditorJourney(string language, bool manual, bool stopProbe=false, string selectedCatalog="S004", int selectedSeed=0)
         {
             if (selectedCatalog == "S005")
@@ -86,6 +92,10 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_PAID_FUEL_CLICK_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_STARTING_FUEL_CLICK_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_SINGLE_ACTOR_RETIREMENT_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_PLAYER_RESUME_PROBE", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_COMBAT_RESUME_PROBE", null);

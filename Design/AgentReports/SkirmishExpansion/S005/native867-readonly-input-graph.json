@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005InputGraphReadOnly867.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 173,
+      "executeMs": 26,
+      "assemblyName": "PipelineRunScript_S005InputGraphReadOnly867_9deef04d2bc74a229e723903d10c6cb7",
+      "success": true,
+      "result": "readOnly=1 actorsResourcesClockWrites=0 visited=1236; activePlacement=False; buildingCamera=Main Camera"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

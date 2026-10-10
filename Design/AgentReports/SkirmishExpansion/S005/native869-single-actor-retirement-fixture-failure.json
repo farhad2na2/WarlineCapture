@@ -1,0 +1,33 @@
+{
+  "result": "FailedFixture",
+  "sourceHash": "4e1fd38c44e6e4c3b7d1daafc50b5d3480f3944880ce7f7d5dd473eeada259fb",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "trace": "s005-aria-live-104734-en-359e08485e234186b2e53fa2e00e189b.jsonl",
+  "inputAudit": "native869-touch-contact-audit.json",
+  "failureReason": "Short fixture queued two paid Oil trucks; only one purchase was intended. Surviving starting Oil truck remained health160/capacityReleased0 and Tanker count1; no cleanup pass certified.",
+  "commands": [
+    {
+      "frame": 1613,
+      "operation": "Production",
+      "receipt": 4,
+      "verified": true
+    },
+    {
+      "frame": 1741,
+      "operation": "Production",
+      "receipt": 8,
+      "verified": true
+    }
+  ],
+  "markers": [
+    "[S005SingleActorRetirement] phase=MixedSelection nativeActors=2 input=Touch",
+    "[S005SingleActorSelection] phase=Clear input=Touch previousNativeActors=2 previousGroups=2 selectionInjected=0",
+    "[S005SingleActorRetirement] phase=Retire selectedNativeActors=1 cargoEmptyObserved=1 input=Touch",
+    "[S005SingleActorRetirement] phase=CleanupObserved oil=2 tankers=1 survivorExists=True survivorHealth=160 survivorReleased=0 receiptViolations=0 unexpected=0 interventions=0 target=Entity(1416:171) survivor=Entity(986:11)",
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Single-actor retirement changed the surviving fleet or failed its input audit."
+  ],
+  "playerReady": false,
+  "completeMissionCertified": false
+}

@@ -26,12 +26,216 @@ namespace Game.Editor
         private static Entity materialsPriorityTruck, materialsPriorityFactory;
         private static int materialsPriorityFactoryId, materialsPriorityStep, materialsPriorityAttempts;
         private static bool materialsPriorityPagingForward;
+        private static bool materialsPriorityCloseMapPending;
         private static double materialsPriorityDue, materialsPriorityStartedAt, materialsPriorityAckAt;
         private static Entity localFuelTanker, localFuelStore;
         private static int localFuelSourceId, localFuelStoreId, localFuelStep, localFuelAttempts;
         private static bool localFuelReady, localFuelLoaded, localFuelPagingForward;
         private static float localFuelReceivedBefore;
         private static double localFuelStartedAt, localFuelAckAt;
+        private static bool singleActorPagingForward = true;
+
+        // Expanded squad cards add to selection. A single-vehicle action must
+        // clear the visible selection first and observe exactly one native tag;
+        // checking only whether the intended actor is included is insufficient.
+        private static bool SelectOnlyPlayerResumeActorThroughInput(EntityManager em, Entity target)
+        {
+            if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return false;
+            var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            if (tray == null) return false;
+            using var query = em.CreateEntityQuery(typeof(SelectedUnitTag));
+            using var selected = query.ToEntityArray(Allocator.Temp);
+            if (target != Entity.Null && selected.Length == 1 && selected[0] == target && page.SelectedGroups == 1)
+                return true;
+            var popup = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            if (popup != null && popup.IsOpen)
+            {
+                if (PlayerResumeTap(popup.CloseAction)) airProbeDefenseMapStep = airProbeDefenseMapAttempts = 0;
+                return false;
+            }
+            if (selected.Length > 0 || page.SelectedGroups > 0)
+            {
+                if (PlayerResumeTap(tray.ClearSelectionButton))
+                    Debug.Log("[S005SingleActorSelection] phase=Clear input=Touch previousNativeActors=" + selected.Length +
+                        " previousGroups=" + page.SelectedGroups + " selectionInjected=0");
+                return false;
+            }
+            if (target == Entity.Null) return true;
+            if (!SkirmishLaunchProjection.TryGet(em, out var session, out _)) return false;
+            for (int slot = 0; slot < 5; slot++)
+                if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == target)
+                { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+            if (singleActorPagingForward && !page.NextPage) singleActorPagingForward = false;
+            if (!singleActorPagingForward && !page.PreviousPage) singleActorPagingForward = true;
+            PlayerResumeTap(singleActorPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+            return false;
+        }
+
+        private static void TickSingleActorRetirementProbe(double now)
+        {
+            var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            if (!SkirmishLaunchProjection.TryGet(em, out var session, out _)) return;
+            var oil = new List<Entity>();
+            int tankers = 0;
+            using (var q = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent),
+                typeof(UnitResourceHauler), typeof(UnitHealth)))
+            using (var units = q.ToEntityArray(Allocator.Temp))
+                foreach (var unit in units)
+                {
+                    var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                    if (owner.FactionId != 1 || owner.CapacityReleased != 0 || owner.SessionId.ToString() != playerResumeSessionId ||
+                        em.GetComponentData<UnitHealth>(unit).Current <= 0) continue;
+                    var role = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role;
+                    if (role == Game.Skirmish.Contracts.SkirmishRoleKind.LogisticsTruck) oil.Add(unit);
+                    if (role == Game.Skirmish.Contracts.SkirmishRoleKind.Tanker) tankers++;
+                }
+            var drawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
+            if (singleActorRetirementStep == 0)
+            {
+                if (oil.Count < 2)
+                {
+                    foreach (var receipt in em.GetBuffer<SkirmishProductionReservation>(session, true))
+                        if (receipt.FactionId == 1 && receipt.Role == Game.Skirmish.Contracts.SkirmishRoleKind.LogisticsTruck &&
+                            receipt.Phase is Game.Skirmish.Contracts.SkirmishReservationPhase.Reserved or Game.Skirmish.Contracts.SkirmishReservationPhase.Producing)
+                            return;
+                    TouchFixedWingCatalog(drawer, BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray"); return;
+                }
+                if (oil.Count != 2 || tankers != 1) throw new InvalidOperationException("Single-actor retirement fixture fleet is unexpected.");
+                foreach (var unit in oil)
+                {
+                    if (em.HasComponent<UnitSpawnTransitTag>(unit)) return;
+                    if (em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).ReservationId > 0) singleActorRetirementTarget = unit;
+                    else singleActorRetirementSurvivor = unit;
+                }
+                if (singleActorRetirementTarget == Entity.Null || singleActorRetirementSurvivor == Entity.Null)
+                    throw new InvalidOperationException("Normal paid/opening Oil trucks are missing.");
+                singleActorRetirementStep = 1;
+            }
+            if (drawer != null && drawer.IsOpen) { PlayerResumeTap(drawer.CloseButton); return; }
+            var controls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if (singleActorRetirementStep == 1)
+            {
+                // Deliberately recreate the additive-card state that native867
+                // carried into retirement, using the same public card controls.
+                foreach (var unit in oil)
+                {
+                    if (em.HasComponent<SelectedUnitTag>(unit)) continue;
+                    if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return;
+                    var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                    for (int slot = 0; slot < 5; slot++)
+                        if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == unit)
+                        { PlayerResumeTap(tray?.VisibleCardButton(slot)); return; }
+                    PlayerResumeTap(page.NextPage ? tray?.NextPageButton : tray?.PreviousPageButton);
+                    return;
+                }
+                using var selected = em.CreateEntityQuery(typeof(SelectedUnitTag));
+                if (selected.CalculateEntityCount() != 2) throw new InvalidOperationException("Mixed native Oil selection was not reproduced.");
+                Debug.Log("[S005SingleActorRetirement] phase=MixedSelection nativeActors=2 input=Touch");
+                singleActorRetirementStep = 2;
+            }
+            if (singleActorRetirementStep == 2)
+            {
+                if (!SelectOnlyPlayerResumeActorThroughInput(em, singleActorRetirementTarget)) return;
+                var cargo = em.GetComponentData<UnitResourceHauler>(singleActorRetirementTarget);
+                if (cargo.CargoOilBarrels > 0 || cargo.CargoFuelBarrels > 0) return;
+                var wheel = controls?.CommandWheelPanel;
+                if (wheel == null) return;
+                if (!wheel.IsOpen) { PlayerResumeTap(wheel.OpenButton); return; }
+                foreach (var button in wheel.GetComponentsInChildren<UnityEngine.UI.Button>())
+                    if (button.name == "DestroySector" && PlayerResumeTap(button))
+                    {
+                        singleActorRetirementStep = 3;
+                        Debug.Log("[S005SingleActorRetirement] phase=Retire selectedNativeActors=1 cargoEmptyObserved=1 input=Touch");
+                        return;
+                    }
+                return;
+            }
+            bool released = !em.Exists(singleActorRetirementTarget) ||
+                em.GetComponentData<SkirmishAttemptOwnedComponent>(singleActorRetirementTarget).CapacityReleased != 0;
+            if (!released) return;
+            Debug.Log("[S005SingleActorRetirement] phase=CleanupObserved oil=" + oil.Count + " tankers=" + tankers +
+                " survivorExists=" + em.Exists(singleActorRetirementSurvivor) + " survivorHealth=" +
+                (em.Exists(singleActorRetirementSurvivor) ? em.GetComponentData<UnitHealth>(singleActorRetirementSurvivor).Current : -1) +
+                " survivorReleased=" + (em.Exists(singleActorRetirementSurvivor) ? em.GetComponentData<SkirmishAttemptOwnedComponent>(singleActorRetirementSurvivor).CapacityReleased : -1) +
+                " receiptViolations=" + AriaCommandEvidence.Violations + " unexpected=" + playerResumeTouch.UnexpectedSamples +
+                " interventions=" + playerResumeTouch.PhysicalInterventions + " target=" + singleActorRetirementTarget +
+                " survivor=" + singleActorRetirementSurvivor);
+            if (oil.Count != 1 || tankers != 1 || !em.Exists(singleActorRetirementSurvivor) ||
+                em.GetComponentData<UnitHealth>(singleActorRetirementSurvivor).Current <= 0 ||
+                AriaCommandEvidence.Violations != 0 || playerResumeTouch.UnexpectedSamples != 0 || playerResumeTouch.PhysicalInterventions != 0)
+                throw new InvalidOperationException("Single-actor retirement changed the surviving fleet or failed its input audit.");
+            Debug.Log("[S005SingleActorRetirement] result=Passed input=Touch additiveSelectionReproduced=1 exclusiveSelectionObserved=1 oilBefore=2 oilAfter=1 tankersAfter=1 nativeCleanupObserved=1 actorResourcesClockInjected=0 completeMatchCertified=0");
+            ScreenCapture.CaptureScreenshot(LiveTracePath() + ".single-actor-retirement.png");
+            playerResumeProbeActive = false;
+            playerResumeTouch.Dispose(); playerResumeTouch = null;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+            Finish(false, "singleActorRetirementOnly");
+        }
+
+        // Short normal-input diagnostic: use the opening industry and native
+        // Tanker rather than buying the full paid qualification setup.
+        private static void TickStartingFuelClickProbe(double now)
+        {
+            var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            if (!SkirmishLaunchProjection.TryGet(em, out var session, out _)) return;
+            if (localFuelStep == 0)
+            {
+                using var q = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(UnitHealth));
+                using var actors = q.ToEntityArray(Allocator.Temp);
+                foreach (var actor in actors)
+                {
+                    var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                    if (owner.FactionId != 1 || owner.CapacityReleased != 0 || owner.SessionId.ToString() != playerResumeSessionId ||
+                        em.GetComponentData<UnitHealth>(actor).Current <= 0) continue;
+                    if (em.HasComponent<BuildingResourceStorageComponent>(actor))
+                    {
+                        var stock = em.GetComponentData<BuildingResourceStorageComponent>(actor);
+                        if (stock.FuelStorageCapacity > 0 && stock.FuelBarrelsPerDay <= 0 && stock.OilBarrelsPerDay <= 0)
+                        { localFuelStore = actor; localFuelStoreId = stock.RuntimeBuildingId; }
+                    }
+                    if (em.HasComponent<SkirmishUnitRoleComponent>(actor) &&
+                        em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role == Game.Skirmish.Contracts.SkirmishRoleKind.Tanker)
+                        localFuelTanker = actor;
+                }
+                if (localFuelStore == Entity.Null || localFuelTanker == Entity.Null)
+                    throw new InvalidOperationException("Starting fuel click diagnostic has no native store/Tanker.");
+                localFuelStep = 1;
+            }
+            if (localFuelStep == 2)
+            {
+                if (now < localFuelAckAt) return;
+                Debug.Log("[S005StartingFuelClick] result=ObservedOnly target=" + localFuelStoreId +
+                    " selected=" + em.HasComponent<SelectedUnitTag>(localFuelTanker) + " order=" +
+                    (em.HasComponent<UnitResourceHaulOrder>(localFuelTanker) ?
+                    em.GetComponentData<UnitResourceHaulOrder>(localFuelTanker).DestinationBuildingId.ToString() : "none") +
+                    " completeMatchCertified=0");
+                Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", null);
+                Environment.SetEnvironmentVariable("WARLINE_S005_PAID_FUEL_CLICK_ONLY", null);
+                Environment.SetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY", null);
+                playerResumeProbeActive = false;
+                playerResumeTouch.Dispose(); playerResumeTouch = null;
+                Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+                Finish(false, "startingFuelClickOnly");
+                return;
+            }
+            var controls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) return;
+            if (command.ActiveCommandMode is not (Game.Tactical.Contracts.TacticalCommandMode.None or Game.Tactical.Contracts.TacticalCommandMode.Select))
+            { PlayerResumeTap(controls?.SelectButton); return; }
+            if (!em.HasComponent<SelectedUnitTag>(localFuelTanker))
+            {
+                var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                if (tray == null || !UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return;
+                for (int slot = 0; slot < 5; slot++)
+                    if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == localFuelTanker)
+                    { PlayerResumeTap(tray.VisibleCardButton(slot)); return; }
+                if (localFuelPagingForward && !page.NextPage) localFuelPagingForward = false;
+                if (!localFuelPagingForward && !page.PreviousPage) localFuelPagingForward = true;
+                PlayerResumeTap(localFuelPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+                return;
+            }
+            if (PlayerResumeWorldTap(em, localFuelStore, now)) { localFuelStep = 2; localFuelAckAt = now + 2; }
+        }
 
         private static void ResetFixedWingLocalFuelSupplyProbe()
         {
@@ -121,6 +325,7 @@ namespace Game.Editor
             { PlayerResumeTap(controls?.SelectButton); return false; }
             if (localFuelStep == 1)
             {
+                if (!SelectOnlyPlayerResumeActorThroughInput(em, localFuelTanker)) return false;
                 if (!em.HasComponent<SelectedUnitTag>(localFuelTanker))
                 {
                     var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
@@ -261,6 +466,7 @@ namespace Game.Editor
             materialsPriorityTruck = materialsPriorityFactory = Entity.Null;
             materialsPriorityFactoryId = materialsPriorityStep = materialsPriorityAttempts = 0;
             materialsPriorityDue = materialsPriorityStartedAt = materialsPriorityAckAt = 0;
+            materialsPriorityCloseMapPending = false;
             paidFuelStorageRecovery = false;
             paidIndustryPlacementFocus = null;
             paidIndustryOpeningFuelStorageCount = CountLivingPlayerFuelStores(em);
@@ -291,6 +497,11 @@ namespace Game.Editor
         private static bool TickFixedWingFactorySupplyThroughInput(EntityManager em, double now)
         {
             if (!fixedWingCycleOnly || !paidIndustryReady || fixedWingStep >= 2) return true;
+            // A deferred redirect can interrupt camera navigation while its map
+            // is open (native862). Finish that owned UI flow before another
+            // squad selection or purchase; use the normal visible close action.
+            if (materialsPriorityCloseMapPending)
+                return CloseDeferredFactoryCameraThroughInput();
             var placement = UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             if (placement != null && placement.HasPendingPlacement) return true;
             if (materialsPriorityTruck == Entity.Null)
@@ -376,6 +587,7 @@ namespace Game.Editor
             { PlayerResumeTap(controls?.SelectButton); return false; }
             if (materialsPriorityStep == 0)
             {
+                if (!SelectOnlyPlayerResumeActorThroughInput(em, materialsPriorityTruck)) return false;
                 if (!em.HasComponent<SelectedUnitTag>(materialsPriorityTruck))
                 {
                     var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
@@ -394,10 +606,11 @@ namespace Game.Editor
             }
             if (materialsPriorityStep == 1)
             {
+                if (!SelectOnlyPlayerResumeActorThroughInput(em, materialsPriorityTruck)) return false;
                 // Selection and camera gestures take real simulation time. An
                 // empty pickup-phase truck can begin filling before the world
                 // tap (native861); do not repeatedly redirect its live cargo.
-                if (DeferUnsafeFactoryRedirect(em, now)) return true;
+                if (DeferUnsafeFactoryRedirect(em, now)) return false;
                 if (PlayerResumeWorldTap(em, materialsPriorityFactory, now))
                 {
                     materialsPriorityAttempts++;
@@ -419,7 +632,7 @@ namespace Game.Editor
                     " haulPhase=" + observedOrder.Phase + " status=" +
                     (em.HasComponent<UnitResourceHaulStatus>(materialsPriorityTruck)
                         ? JsonUtility.ToJson(em.GetComponentData<UnitResourceHaulStatus>(materialsPriorityTruck)) : "none"));
-                if (DeferUnsafeFactoryRedirect(em, now)) return true;
+                if (DeferUnsafeFactoryRedirect(em, now)) return false;
                 ScreenCapture.CaptureScreenshot(LiveTracePath() + ".factory-" + materialsPriorityFactoryId +
                     "-attempt-" + materialsPriorityAttempts + ".png");
                 // The native command can reject a temporarily unavailable bay.
@@ -476,6 +689,18 @@ namespace Game.Editor
             materialsPriorityTruck = materialsPriorityFactory = Entity.Null;
             materialsPriorityStep = materialsPriorityAttempts = 0;
             materialsPriorityDue = now + 2;
+            materialsPriorityCloseMapPending = true;
+            return true;
+        }
+
+        private static bool CloseDeferredFactoryCameraThroughInput()
+        {
+            var map = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            if (map != null && map.IsOpen)
+            { PlayerResumeTap(map.CloseAction); return false; }
+            airProbeDefenseMapStep = airProbeDefenseMapAttempts = 0;
+            materialsPriorityCloseMapPending = false;
+            Debug.Log("[S005MaterialsPriority] phase=DeferredCameraClosed input=Touch popupOpen=0");
             return true;
         }
 

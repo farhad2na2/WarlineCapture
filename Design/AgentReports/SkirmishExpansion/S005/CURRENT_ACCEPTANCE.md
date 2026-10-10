@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current full source fingerprint: `49cd2a7ff8e0315d5171df255742852e080c1f654cdadf1626186dd6621f0214`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current full source fingerprint: `98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city source, including the shared visual refinement merged in PR64. This task now tests compact legal industry placement through normal input and explicitly includes the interface arrow in the existing fallback font. Gameplay costs, rates, capacities and deadlines remain fixed. Owner visual review remains deferred; real player/device acceptance is pending.
 
@@ -637,3 +637,27 @@ Native860: scoped current-source starting/paid military clearance passed. All14 
 Native861 failed before aircraft delivery at497.535s: an empty Oil truck entered phase2 loading during UI selection, then carried8 Oil in phase3 while the test player retried a factory redirect. Native cargo protection preserved destination18. This is a stale test-player precondition, with eight earlier redirects acknowledged. Current source39fe2e88 PRE/POST unchanged; actual wrapper/bridge1. Full failure and read-only route evidence retained. Fix the pre-tap cargo/phase check; no flight or mission acceptance credited.
 
 Safe factory redirect repair: before each world tap and unacknowledged retry, re-read cargo, haul phase and the old/new factory batch funding. Defer busy, already-assigned or no-longer-needed redirects without claiming acknowledgment. A stable empty pickup-phase failure still fails after three attempts. Native cargo/order protection is unchanged. Connected Editor recompile completed with failed=false/errors=[]; the full native aircraft cycle remains pending.
+
+### Native862 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`49cd2a7ff8e0315d5171df255742852e080c1f654cdadf1626186dd6621f0214`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Normal-input factory supply selection/delivery acknowledgment did not complete.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native862-normal-paid-strike-cycle-failure.json`.
+
+Native862: safe cargo deferral was observed, but it interrupted full-map navigation and left the popup blocking the next squad selection. The30-second selection watchdog failed at430.570s. Actual wrapper/bridge1 and full-source PRE/POST unchanged49cd2a7f; native862-normal-paid-strike-cycle-failure.json retains the failed run. Add normal close-action cleanup before another selection/purchase, with a scoped native map/preview/paging regression. No flight acceptance claimed.
+
+Native863 scoped UI regression passed: normal catalog preview, compact-map open, deferred test-player camera intent, shared cleanup via visible close action, preserved preview, normal cancel and observed squad-page transition. No troop commands or actor/resource/clock writes. Actual wrapper/bridge0,16/16 contacts ended and full-source PRE/POST unchanged98c423df. This is an Editor UI-flow regression, not aircraft or complete mission acceptance.
+
+### Native864 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Normal local Fuel store tap was not acknowledged after three attempts.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native864-normal-paid-strike-cycle-failure.json`.
+
+### Native865–866 native building-click diagnosis
+
+Native865 used the opening Tanker/store through normal menu and touch input. The building handler received one selected unit and rejected the unavailable haul reservation. Native866 used normal paid industry purchases and touched the paid receiving store; the native handler assigned destination 19. These are observations, not physical-delivery or complete-mission certification. Both runs have actual wrapper/native bridge exit 0, full unchanged PRE/POST source manifests, and strict contact audits with every contact ended. Exact paid-cycle reproduction native867 remains active with opt-in Editor click-gate logging; S005 remains in progress and not player-ready.
+
+### Native867 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`f069e4e38699479e85774982b6b4da4e52f4f95506c6df8ea4a9739296c37fc8`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Native Oil fleet retirement released an unexpected count.. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native867-normal-paid-strike-cycle-failure.json`.
+
+### Native867–870 fleet selection regression
+
+Native867 failed after paid Strike parking when additive Oil truck selection carried into retirement; all Oil trucks were released. The Editor test player now clears through the visible HUD and observes one native actor/group before single-vehicle haul, retirement and aircraft actions, and clears unit selection before factory controls. Native868/869 failed short fixtures are retained; native869 recorded two paid production receipts, invalidating its intended one-purchase fleet count. Native870 fixed that fixture, reproduced two selected Oil trucks, cleared through normal input, retired exactly one truck, and observed one Oil truck plus one Tanker surviving with input/receipt violations0. Actual wrapper/native bridge0, strict contacts ended, full source PRE/POST unchanged (`4fcf3d4940c07982dfb5964257217f20e312caa75b43b311ae25ab6d0fd64d04`). Full support conversion, aircraft cycle and player readiness remain pending.

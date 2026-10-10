@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "49cd2a7ff8e0315d5171df255742852e080c1f654cdadf1626186dd6621f0214",
-  "sourceFingerprint": "final-862-safe-compact-paid-cycle-pre-independent-fingerprint.json",
+  "sourceHash": "98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2",
+  "sourceFingerprint": "final-863-deferred-camera-pre-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technical readiness",
@@ -64,7 +64,7 @@
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
   "activeScope": null,
-  "nextWork": "Current-source paid Strike complete flight, Return, refuel and second-sortie verification after test-player cargo race repair.",
+  "nextWork": "Resume normal paid Strike cycle with exclusive single-actor selection; all remaining mission readiness gates remain pending.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -140,8 +140,8 @@
   },
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Paid Strike cycle after safe factory redirect strategy"
+    "status": "Running",
+    "scope": "RunS005EditorStrikeCycleProbe"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -411,12 +411,12 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-856-resumed-paid-cycle-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native856-normal-paid-strike-cycle-failure.json",
+  "currentSourceFingerprint": "final-870-single-actor-retirement-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native867-normal-paid-strike-cycle-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
-  "activePreManifest": "final-860-compact-paid-clearance-current-pre-source-manifest.json",
+  "activePreManifest": null,
   "latestSourceFitFailure": "native753-readonly-scan-opening-roster-drift-failure.json",
   "latestSourceFitDiagnostic": "native755-readonly-playable-air-fit-completed.json",
   "sourceFitNecessaryGate": {
@@ -458,7 +458,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native856-normal-paid-strike-cycle-failure.json",
+  "latestAircraftFailure": "native867-normal-paid-strike-cycle-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,
@@ -697,7 +697,9 @@
   "latestRecoverySourceDriftFailure": "native857-boarded-savecontinue-observed-victory-source-drift-failure.json",
   "currentSourceFitProof": "native859-current-map-source-fit-pass.json",
   "priorFocusedClearanceProof": "native848-focused-current-proof.json",
-  "currentCompileProof": "compile-862-safe-factory-redirect-status.json",
+  "currentCompileProof": "compile-863-deferred-camera-probe-status.json",
   "currentSharedBuildingClearanceProof": "native860-compact-paid-building-clearance-pass.json",
-  "latestFailedFactoryRedirectProof": "native861-factory-redirect-cargo-race-failure.json"
+  "latestFailedFactoryRedirectProof": "native861-factory-redirect-cargo-race-failure.json",
+  "currentDeferredCameraProof": "native863-deferred-factory-camera-scoped-pass.json",
+  "latestNativeInputDiagnostic": "native870-single-actor-retirement-scoped-pass.json"
 }

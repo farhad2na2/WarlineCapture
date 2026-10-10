@@ -1,0 +1,18 @@
+{
+  "result": "ObservedOnly",
+  "sourceHash": "f069e4e38699479e85774982b6b4da4e52f4f95506c6df8ea4a9739296c37fc8",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "trace": "s005-aria-live-155926-en-83916a9a58c748d19a81e372cc146d10.jsonl",
+  "normalInput": true,
+  "scope": "Paid store native touch routing; no delivery, full mission or aircraft certification.",
+  "completeMissionCertified": false,
+  "playerReady": false,
+  "markers": [
+    "[SelectedHaulInput] building=19 selected=1 result=Begin",
+    "[SelectedHaulInput] building=19 selected=1 result=Assigned",
+    "[S005StartingFuelClick] result=ObservedOnly target=19 selected=False order=19 completeMatchCertified=0",
+    "[SkirmishS003Startup] result=Passed reason=startingFuelClickOnly"
+  ]
+}

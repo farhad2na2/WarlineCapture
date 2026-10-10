@@ -306,6 +306,8 @@ namespace Game.Editor
                         var clearanceDrawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
                         if (clearanceDrawer != null && clearanceDrawer.IsOpen)
                         { PlayerResumeTap(clearanceDrawer.CloseButton); return; }
+                        if (Environment.GetEnvironmentVariable("WARLINE_S005_PAID_FUEL_CLICK_ONLY") == "1")
+                        { TickStartingFuelClickProbe(now); return; }
                         ScreenCapture.CaptureScreenshot(LiveTracePath() + ".placement-clearance-paid.png");
                         SkirmishBuildingPlacementProbe.InspectSharedSceneryClearance(LiveTracePath() + ".placement-clearance-paid.json");
                         Debug.Log("[S005PaidBuildingClearance] result=Passed input=Touch industryTargets=3Factories,OilPump,Refinery,FuelStore budgetsUnchanged=1 sourceGeometryModified=0 completeMatch=NotClaimed");

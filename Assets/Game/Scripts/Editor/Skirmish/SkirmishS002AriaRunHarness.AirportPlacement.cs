@@ -25,6 +25,14 @@ namespace Game.Editor
         private static bool airportCameraPending;
         private static bool airportCameraNavigationOnly, airportCameraProbeStarted, airportCameraPreviewOnly, airportCameraPreviewOpened;
         private static MatchHudMinimapView observedAirportCameraMap;
+        private static bool deferredFactoryCameraOnly;
+        private static bool startingFuelClickOnly;
+        private static bool singleActorRetirementOnly;
+        private static int singleActorRetirementStep;
+        private static Entity singleActorRetirementTarget, singleActorRetirementSurvivor;
+        private static int deferredFactoryCameraPageBefore;
+        private static bool deferredFactoryCameraPageTapped;
+        private static bool deferredFactoryCameraPreviewPreserved;
 
         private static readonly List<Vector2Int> placementSearchOrigins = new();
         private static BuildingDefinition placementSearchDefinition;
@@ -51,6 +59,17 @@ namespace Game.Editor
             airportCameraPreviewOnly = Environment.GetEnvironmentVariable("WARLINE_S005_CAMERA_PREVIEW_ONLY") == "1";
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_PREVIEW_ONLY", null);
             airportCameraPreviewOpened = false;
+            deferredFactoryCameraOnly = Environment.GetEnvironmentVariable("WARLINE_S005_DEFERRED_FACTORY_CAMERA_ONLY") == "1";
+            startingFuelClickOnly = Environment.GetEnvironmentVariable("WARLINE_S005_STARTING_FUEL_CLICK_ONLY") == "1";
+            Environment.SetEnvironmentVariable("WARLINE_S005_STARTING_FUEL_CLICK_ONLY", null);
+            singleActorRetirementOnly = Environment.GetEnvironmentVariable("WARLINE_S005_SINGLE_ACTOR_RETIREMENT_ONLY") == "1";
+            Environment.SetEnvironmentVariable("WARLINE_S005_SINGLE_ACTOR_RETIREMENT_ONLY", null);
+            singleActorRetirementStep = 0;
+            singleActorRetirementTarget = singleActorRetirementSurvivor = Entity.Null;
+            singleActorPagingForward = true;
+            Environment.SetEnvironmentVariable("WARLINE_S005_DEFERRED_FACTORY_CAMERA_ONLY", null);
+            deferredFactoryCameraPageTapped = false;
+            deferredFactoryCameraPreviewPreserved = false;
             observedAirportCameraMap = null;
             placementSearchDefinition = null;
             placementSearchOrigins.Clear();
@@ -76,8 +95,35 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_CAMERA_PREVIEW_ONLY", "1");
         }
 
+        public static void RunS005EditorDeferredFactoryCameraProbe()
+        {
+            RunS005EditorSouthernPlacementCameraProbe();
+            Environment.SetEnvironmentVariable("WARLINE_S005_DEFERRED_FACTORY_CAMERA_ONLY", "1");
+        }
+
+        public static void RunS005EditorStartingFuelClickProbe()
+        {
+            RunS005EditorSouthernAirportCameraProbe();
+            Environment.SetEnvironmentVariable("WARLINE_S005_STARTING_FUEL_CLICK_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", "1");
+        }
+
+        public static void RunS005EditorSingleActorRetirementProbe()
+        {
+            RunS005EditorSouthernAirportCameraProbe();
+            Environment.SetEnvironmentVariable("WARLINE_S005_SINGLE_ACTOR_RETIREMENT_ONLY", "1");
+        }
+
+        public static void RunS005EditorDiagnosedStrikeCycleProbe()
+        {
+            RunS005EditorStrikeCycleProbe();
+            Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", "1");
+        }
+
         private static void TickAirportCameraNavigationProbe(double now)
         {
+            if (singleActorRetirementOnly) { TickSingleActorRetirementProbe(now); return; }
+            if (startingFuelClickOnly) { TickStartingFuelClickProbe(now); return; }
             if (airportCameraPreviewOnly && !airportCameraPreviewOpened)
             {
                 var preview = UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
@@ -98,6 +144,11 @@ namespace Game.Editor
                 if (!BeginAirportCameraFocus(new Vector3(1399f, 0f, 177.5f), false))
                     throw new InvalidOperationException("Southern Airport camera probe could not start.");
                 airportCameraProbeStarted = true;
+            }
+            if (deferredFactoryCameraOnly)
+            {
+                TickDeferredFactoryCameraProbe(now);
+                return;
             }
             if (airportCameraPending) { FocusAirportSiteThroughMap(now); return; }
             Vector3 point = Camera.main != null ? Camera.main.WorldToScreenPoint(airportCameraSite) : Vector3.zero;
@@ -124,6 +175,48 @@ namespace Game.Editor
             playerResumeTouch.Dispose(); playerResumeTouch = null;
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
             Finish(false, "southernAirportCameraOnly");
+        }
+
+        private static void TickDeferredFactoryCameraProbe(double now)
+        {
+            var popup = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            if (airportCameraPending)
+            {
+                if (popup == null || !popup.IsOpen) { FocusAirportSiteThroughMap(now); return; }
+                // Defer only the test player's navigation intent. Actors, cargo,
+                // resources, orders and simulation time remain native and live.
+                airportCameraPending = false;
+                materialsPriorityCloseMapPending = true;
+                Debug.Log("[S005DeferredFactoryCamera] phase=DeferredWhileMapOpen input=Touch");
+            }
+            if (materialsPriorityCloseMapPending && !CloseDeferredFactoryCameraThroughInput()) return;
+            var preview = UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+            if (!deferredFactoryCameraPreviewPreserved)
+            {
+                if (popup != null && popup.IsOpen || preview == null || !preview.HasPendingPlacement)
+                    throw new InvalidOperationException("Deferred camera cleanup lost its preview or left the map open.");
+                deferredFactoryCameraPreviewPreserved = true;
+            }
+            if (preview != null && preview.HasPendingPlacement)
+            { PlayerResumeTap(preview.CancelButton); return; }
+            if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return;
+            if (!deferredFactoryCameraPageTapped)
+            {
+                deferredFactoryCameraPageBefore = page.PageIndex;
+                var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                if (PlayerResumeTap(tray?.NextPageButton)) deferredFactoryCameraPageTapped = true;
+                return;
+            }
+            if (page.PageIndex == deferredFactoryCameraPageBefore) return;
+            if (AriaCommandEvidence.AcceptedCommands != airportCameraCommandsBefore ||
+                AriaCommandEvidence.Violations != 0 || playerResumeTouch.UnexpectedSamples != 0 || playerResumeTouch.PhysicalInterventions != 0)
+                throw new InvalidOperationException("Deferred camera cleanup changed troop orders or failed its input audit.");
+            Debug.Log("[S005DeferredFactoryCamera] result=Passed input=Touch popupOpen=0 previewPreserved=1 nextPageObserved=1 troopCommandsAdded=0 actorResourceClockWrites=0 completeMatchCertified=0");
+            ScreenCapture.CaptureScreenshot(LiveTracePath() + ".deferred-factory-camera.png");
+            playerResumeProbeActive = false;
+            playerResumeTouch.Dispose(); playerResumeTouch = null;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+            Finish(false, "deferredFactoryCameraOnly");
         }
 
         private static void TickAirportPlacementProbe(EntityManager em, Entity session, double now)

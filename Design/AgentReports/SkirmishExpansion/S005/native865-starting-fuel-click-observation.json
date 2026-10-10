@@ -1,0 +1,21 @@
+{
+  "result": "ObservedOnly",
+  "sourceHash": "58eabbbe0ff0e9e78c70642c4ffce8a59b57a90308bca6151f5800eb6b9788e1",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "trace": "s005-aria-live-104734-en-f1632dfde3d14925b90ba5619816cb7a.jsonl",
+  "normalInput": true,
+  "completeMissionCertified": false,
+  "playerReady": false,
+  "markers": [
+    "[BuildingSelectionGate] phase=Pressed point=(777.00, 291.52) pending=False command=False ignore=False ui=True unitUi=False",
+    "[BuildingSelectionGate] phase=Pressed point=(215.20, 125.67) pending=False command=False ignore=False ui=True unitUi=False",
+    "[BuildingSelectionGate] phase=Pressed point=(1587.90, 259.80) pending=True command=False ignore=False ui=False unitUi=False",
+    "[BuildingSelectionGate] phase=Released point=(1587.90, 259.80) command=False ignore=False ui=False unitUi=False",
+    "[SelectedHaulInput] building=9 selected=1 result=Begin",
+    "[SelectedHaulInput] building=9 selected=1 result=ReservationFailed",
+    "[S005StartingFuelClick] result=ObservedOnly target=9 selected=False order=none completeMatchCertified=0",
+    "[SkirmishS003Startup] result=Passed reason=startingFuelClickOnly"
+  ]
+}

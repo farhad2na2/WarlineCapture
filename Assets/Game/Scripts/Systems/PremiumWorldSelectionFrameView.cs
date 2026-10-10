@@ -302,8 +302,13 @@ namespace Game.Runtime
         private const string AndroidLogTag = "WarlineSelection";
 
         [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public static void Log(string message)
         {
+#if UNITY_EDITOR && !WARLINE_SELECTION_CLICK_DIAGNOSTICS
+            if (System.Environment.GetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS") != "1")
+                return;
+#endif
             Debug.Log(message);
 #if UNITY_ANDROID && !UNITY_EDITOR
             try

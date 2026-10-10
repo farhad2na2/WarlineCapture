@@ -187,7 +187,10 @@ namespace Game.Runtime
             }
 
             if (selected.Length == 0)
+            {
+                BuildingSelectionNativeDiagnostic.Log($"[SelectedHaulInput] building={clickedBuildingId} selected=0 result=NoSelectedUnits");
                 return false;
+            }
 
             LogSelectedHaulInput(clickedBuildingId, selected.Length, "Begin");
 

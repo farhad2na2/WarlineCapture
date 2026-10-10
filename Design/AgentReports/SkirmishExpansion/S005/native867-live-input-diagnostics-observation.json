@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var before=System.Environment.GetEnvironmentVariable(\"WARLINE_SELECTION_CLICK_DIAGNOSTICS\"); System.Environment.SetEnvironmentVariable(\"WARLINE_SELECTION_CLICK_DIAGNOSTICS\", \"1\"); return \"loggingBefore=\"+(before??\"null\")+\"; loggingAfter=\"+System.Environment.GetEnvironmentVariable(\"WARLINE_SELECTION_CLICK_DIAGNOSTICS\");"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "loggingBefore=1; loggingAfter=1"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

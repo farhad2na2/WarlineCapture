@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var t=System.AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType(\"Game.Runtime.GameplayRuntimeUpdateDebugFlags\",false)).First(x=>x!=null); return string.Join(\"; \",t.GetProperties(System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static).Where(p=>p.Name.Contains(\"Building\")).Select(p=>p.Name+\"=\"+p.GetValue(null)));"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "DisableBuildingPlacementRuntime=False; DisableBuildingBoundaryRuntime=False; DisableBuildingProductionRuntime=False; DisableBuildingResourceRuntime=False; DisableBuildingResourceHaulerRuntime=False; DisableBuildingVisualRuntime=False; DisableBuildingInputRuntime=False; DisableBuildingReservationCleanupRuntime=False; DisableBuildingDestroyedRuntime=False; DisableBuildingDoorRuntime=False; DisableBuildingMarkerRuntime=False"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

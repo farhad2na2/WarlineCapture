@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "sourceHash": "1513f61275cc54031c54135fda0f79615b612e89a273d6a1bec46a92ec0f2314",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "trace": "s005-aria-live-104734-en-ca46cee2bef84a7f8d7efa87cec4078a.jsonl",
+  "inputAudit": "native868-touch-contact-audit.json",
+  "markers": [
+    "[S005SingleActorRetirement] phase=MixedSelection nativeActors=2 input=Touch",
+    "[S005SingleActorSelection] phase=Clear input=Touch previousNativeActors=2 previousGroups=2 selectionInjected=0",
+    "[S005SingleActorRetirement] phase=Retire selectedNativeActors=1 cargoEmptyObserved=1 input=Touch",
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Single-actor retirement changed the surviving fleet or failed its input audit."
+  ],
+  "playerReady": false,
+  "completeMissionCertified": false
+}

@@ -163,6 +163,7 @@ namespace Game.Runtime
                                                  !gate.OverUnitCommandUi;
                 if (_pendingBuildingSelectionClick)
                     _buildingSelectionPressPosition = pointerPosition;
+                BuildingSelectionNativeDiagnostic.Log($"[BuildingSelectionGate] phase=Pressed point={pointerPosition} pending={_pendingBuildingSelectionClick} command={gate.BlockedByCommandMode} ignore={gate.IgnoreBecauseCommandUiPressed} ui={gate.OverGameplayUi} unitUi={gate.OverUnitCommandUi}");
             }
 
             if (pointer.WasReleasedThisFrame)
@@ -174,6 +175,7 @@ namespace Game.Runtime
                     IMatchRuntimeUi mainMenu = context.GetMainMenu?.Invoke();
                     BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
                     afterUi = Math.Max(afterUi, gate.MeasuredAt);
+                    BuildingSelectionNativeDiagnostic.Log($"[BuildingSelectionGate] phase=Released point={pointerPosition} command={gate.BlockedByCommandMode} ignore={gate.IgnoreBecauseCommandUiPressed} ui={gate.OverGameplayUi} unitUi={gate.OverUnitCommandUi}");
 
                     if (!gate.BlockedByCommandMode &&
                         !gate.IgnoreBecauseCommandUiPressed &&

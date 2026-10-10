@@ -465,6 +465,7 @@ namespace Game.Runtime
             if (context.IsBoardablePlayerTransportClick != null &&
                 context.IsBoardablePlayerTransportClick(screenPosition))
             {
+                BuildingSelectionNativeDiagnostic.Log($"[BuildingSelectionHitOwnerDiag] stage=transport-intercept tap={screenPosition}");
                 return true;
             }
 

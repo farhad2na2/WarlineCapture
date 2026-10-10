@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "System.Environment.SetEnvironmentVariable(\"WARLINE_SELECTION_CLICK_DIAGNOSTICS\", \"1\"); return \"Editor input diagnostics enabled; actors, resources and clock unchanged\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Editor input diagnostics enabled; actors, resources and clock unchanged"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

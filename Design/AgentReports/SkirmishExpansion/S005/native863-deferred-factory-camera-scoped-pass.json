@@ -1,0 +1,31 @@
+{
+  "run": "native863",
+  "result": "PassedScopedNativeDeferredCameraCleanup",
+  "sourceHash": "98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2",
+  "preManifest": "final-863-deferred-camera-pre-source-manifest.json",
+  "postManifest": "final-863-deferred-camera-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "wrapperExit": 0,
+  "bridgeExit": 0,
+  "log": "native-863-deferred-factory-camera-regression.log",
+  "trace": "s005-aria-live-104734-en-1c799e1ac8c84428a0a13598dcc79cef.jsonl",
+  "actualSeed": 104734,
+  "locale": "en",
+  "recordedAndCompletedContacts": 16,
+  "touchAudit": "native863-touch-contact-audit.json",
+  "normalInput": true,
+  "steps": [
+    "Open building preview through catalog",
+    "Open full map through compact map touch",
+    "Defer only test-player camera intent",
+    "Close map through shared factory cleanup and normal close action",
+    "Observe preserved preview",
+    "Cancel preview through visible button",
+    "Observe next squad page after normal page touch"
+  ],
+  "troopCommandsAdded": 0,
+  "actorResourceClockWrites": false,
+  "scope": "Editor test-player UI regression only; no aircraft/production/mission readiness acceptance",
+  "fullMissionCertified": false,
+  "playerReady": false
+}

@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
+using Game.Composition;
+public class S005InputGraphReadOnly867 {
+ public static object Run() {
+  var root=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+  var queue=new Queue<(object item,int depth)>();queue.Enqueue((root,0));var seen=new HashSet<object>();var rows=new List<string>();int visited=0;
+  while(queue.Count>0 && visited<1500) {
+   var (o,depth)=queue.Dequeue();if(o==null || !seen.Add(o))continue;visited++;var t=o.GetType();
+   if(t.Name=="BuildingPlacementStartupSystemHelper") {
+    var camera=t.GetProperty("WorldCamera").GetValue(o) as Camera;rows.Add("buildingCamera="+(camera!=null?camera.name:"null"));
+   }
+   if(t.Name=="BuildingPlacementLifecycleCompositionSystemHelper")rows.Add("activePlacement="+(t.GetProperty("ActivePlacement").GetValue(o)!=null));
+   if(depth>=10)continue;
+   if(o is Delegate d){if(d.Target!=null)queue.Enqueue((d.Target,depth+1));continue;}
+   if(t.Namespace==null || !(t.Namespace.StartsWith("Game.") || t.Namespace.StartsWith("Game")))continue;
+   foreach(var f in t.GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)) {
+    var v=f.GetValue(o);if(v==null || v is string || v.GetType().IsPrimitive)continue;
+    var ns=v.GetType().Namespace;if(v is Delegate || (ns!=null && ns.StartsWith("Game")))queue.Enqueue((v,depth+1));
+   }
+  }
+  return "readOnly=1 actorsResourcesClockWrites=0 visited="+visited+"; "+string.Join("; ",rows);
+ }
+}

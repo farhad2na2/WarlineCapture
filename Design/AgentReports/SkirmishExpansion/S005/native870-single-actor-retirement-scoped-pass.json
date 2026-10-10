@@ -1,0 +1,33 @@
+{
+  "result": "PassedScopedNativeSelectionAndRetirement",
+  "sourceHash": "4fcf3d4940c07982dfb5964257217f20e312caa75b43b311ae25ab6d0fd64d04",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-870-single-actor-retirement-pre-source-manifest.json",
+  "postSourceManifest": "final-870-single-actor-retirement-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "trace": "s005-aria-live-104734-en-733d32761c524e6b8755e9a22421a208.jsonl",
+  "inputAudit": "native870-touch-contact-audit.json",
+  "recordedContacts": 20,
+  "allRecordedContactsEnded": true,
+  "normalInput": true,
+  "scope": "Normal single paid Oil truck purchase, additive selection reproduced, visible Clear selection, sole actor selected, native retirement and one Oil truck/one Tanker surviving. Full support conversion and aircraft not certified.",
+  "commands": [
+    {
+      "frame": 1621,
+      "operation": "Production",
+      "receipt": 4,
+      "verified": true
+    }
+  ],
+  "markers": [
+    "[S005SingleActorRetirement] phase=MixedSelection nativeActors=2 input=Touch",
+    "[S005SingleActorSelection] phase=Clear input=Touch previousNativeActors=2 previousGroups=2 selectionInjected=0",
+    "[S005SingleActorRetirement] phase=Retire selectedNativeActors=1 cargoEmptyObserved=1 input=Touch",
+    "[S005SingleActorRetirement] phase=CleanupObserved oil=1 tankers=1 survivorExists=True survivorHealth=160 survivorReleased=0 receiptViolations=0 unexpected=0 interventions=0 target=Entity(1416:253) survivor=Entity(986:11)",
+    "[S005SingleActorRetirement] result=Passed input=Touch additiveSelectionReproduced=1 exclusiveSelectionObserved=1 oilBefore=2 oilAfter=1 tankersAfter=1 nativeCleanupObserved=1 actorResourcesClockInjected=0 completeMatchCertified=0",
+    "[SkirmishS003Startup] result=Passed reason=singleActorRetirementOnly"
+  ],
+  "playerReady": false,
+  "completeMissionCertified": false
+}

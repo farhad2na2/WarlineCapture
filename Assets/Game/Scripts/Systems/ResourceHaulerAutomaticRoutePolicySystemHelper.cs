@@ -414,25 +414,20 @@ namespace Game.Runtime
             if (!fabrication && profile.OilPerFuelBatch <= 0) return false;
             requiredOil = math.max(loadAmount, fabrication ? recipe.OilConsumedPerCycle : profile.OilPerFuelBatch);
 
-            // Keep one Materials batch funded, then feed the full refinery batch.
-            // Incoming reservations count so several trucks do not all choose the same unfunded depot.
-            bool materialsFunded = false;
-            using var factories = em.CreateEntityQuery(typeof(MaterialFabricationComponent),
-                typeof(BuildingResourceStorageComponent), typeof(SkirmishAttemptOwnedComponent));
-            using var entities = factories.ToEntityArray(Unity.Collections.Allocator.Temp);
-            foreach (var entity in entities)
+            // Fund one batch for each enabled input. A different funded Factory
+            // must not suppress this Factory's demand. Real inbound reservations
+            // count so spare trucks can serve other inputs before delivery.
+            if (fabrication)
             {
-                var factoryOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
-                var factory = em.GetComponentData<MaterialFabricationComponent>(entity);
-                if (factoryOwner.CapacityReleased != 0 || factoryOwner.FactionId != owner.FactionId ||
-                    !factoryOwner.SessionId.Equals(owner.SessionId) || factory.OwnerFactionId != owner.FactionId ||
-                    factory.ProductionEnabled == 0 || factory.OilConsumedPerCycle <= 0 ||
-                    em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0) continue;
-                var stock = em.GetComponentData<BuildingResourceStorageComponent>(entity);
-                materialsFunded |= math.max(0, stock.StoredOilBarrels - stock.ReservedOilOutboundBarrels) +
-                    math.max(0, stock.ReservedOilInboundBarrels) + 0.0001f >= factory.OilConsumedPerCycle;
+                float committedOil = 0;
+                if (em.HasComponent<BuildingResourceStorageComponent>(candidate.CombatEntity))
+                {
+                    var stock = em.GetComponentData<BuildingResourceStorageComponent>(candidate.CombatEntity);
+                    committedOil = math.max(0, stock.StoredOilBarrels - stock.ReservedOilOutboundBarrels) +
+                        math.max(0, stock.ReservedOilInboundBarrels);
+                }
+                priority = committedOil + 0.0001f < recipe.OilConsumedPerCycle ? 2 : 0;
             }
-            if (fabrication) priority = materialsFunded ? 0 : 2;
             else if (em.HasComponent<BuildingResourceStorageComponent>(candidate.CombatEntity))
             {
                 var stock = em.GetComponentData<BuildingResourceStorageComponent>(candidate.CombatEntity);

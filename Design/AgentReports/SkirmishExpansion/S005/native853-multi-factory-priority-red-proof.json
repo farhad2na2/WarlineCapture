@@ -1,0 +1,13 @@
+{
+  "result": "FailedReproducedMultiFactoryPriorityDefect",
+  "sourceHash": "87dfa36ce913ee7f23149323e6b980d54bb1b6da9f87427051a61ff98100ad1b",
+  "sourceUnchanged": true,
+  "preManifest": "final-853-multi-factory-priority-red-pre-source-manifest.json",
+  "postManifest": "final-853-multi-factory-priority-red-closed-post-source-manifest.json",
+  "log": "native-853-multi-factory-priority-red.log",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "failure": "Empty enabled Factory priority expected2, observed0 when other Factory has funded batch.",
+  "scope": "Focused automated reproduction; not normal mission or readiness evidence.",
+  "playerReady": false
+}

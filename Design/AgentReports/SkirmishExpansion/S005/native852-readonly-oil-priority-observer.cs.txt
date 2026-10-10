@@ -1,0 +1,31 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
+using Unity.Entities;
+using Unity.Collections;
+using Game.Components;
+using Game.Composition;
+using Game.Runtime;
+using Newtonsoft.Json.Linq;
+public class S005OilDemandReadOnly852 {
+ static object Get(object x,string n) { var t=x.GetType();var f=t.GetField(n,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);return f!=null?f.GetValue(x):t.GetProperty(n,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).GetValue(x); }
+ public static object Run() {
+  var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+  var h=typeof(Game.Editor.SkirmishS002AriaRunHarness);
+  var source=h.GetMethod("FindAirportPlacementSource",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{Get(Get(Get(scene,"MatchBootstrap"),"BuildingUiCommandContext"),"CanConfirmBuildingPlacement"),new HashSet<object>(),0});
+  var b=source.GetType().GetField("RuntimeBuildingSystem",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(source);
+  var buildings=(System.Collections.IEnumerable)Get(b,"Buildings");
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;
+  var policy=typeof(ResourceHaulerUtilitySystemHelper).Assembly.GetType("Game.Runtime.ResourceHaulerAutomaticRoutePolicySystemHelper").GetMethod("TryResolveExpandedOilDemand",BindingFlags.Static|BindingFlags.NonPublic);
+  var rows=new JArray();
+  foreach(var p in buildings) {var id=(int)Get(p,"Key");var v=Get(p,"Value");var actor=(Entity)Get(v,"CombatEntity");
+   if(!em.Exists(actor)||!em.HasComponent<MaterialFabricationComponent>(actor)||(byte)Get(v,"OwnerFactionId")!=1)continue;
+   var args=new object[]{em,v,8f,0,0f};var resolved=(bool)policy.Invoke(null,args);
+   rows.Add(new JObject{["id"]=id,["resolved"]=resolved,["priority"]=(int)args[3],["requiredOil"]=(float)args[4],["stock"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<BuildingResourceStorageComponent>(actor))),["recipe"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<MaterialFabricationComponent>(actor)))});
+  }
+  using var q=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent));
+  var inputs=new JArray(); using var es=q.ToEntityArray(Allocator.Temp);foreach(var e in es) inputs.Add(JObject.Parse(JsonUtility.ToJson(em.GetComponentData<RtsSelectionInputStateComponent>(e))));
+  return new JObject{["scope"]="ReadOnlyNativeOilDemandObservation; no actor/order/resource/clock writes",["frame"]=Time.frameCount,["buildings"]=rows,["input"]=inputs};
+ }
+}

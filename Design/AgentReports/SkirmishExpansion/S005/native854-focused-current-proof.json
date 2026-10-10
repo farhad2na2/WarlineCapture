@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "sourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-854-multi-factory-priority-green-pre-source-manifest.json",
+  "postSourceManifest": "final-854-multi-factory-priority-green-closed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "log": "native-854-multi-factory-priority-green.log",
+  "requiredPassMarker": "[SkirmishFacilityEconomyProfileTests] result=Passed tests=8",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "tests": 8,
+  "scope": "Focused automated economy/profile and independent Factory priority regressions; normal-input mission remains pending.",
+  "nativeMatchCount": 0,
+  "playerReady": false
+}

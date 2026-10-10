@@ -320,10 +320,10 @@
         "refuel/rearm where supported"
       ],
       "currentSourceCertified": false,
-      "stage": "Native851 failed; native evidence retained, no cycle pass claim.",
+      "stage": "Native852 failed; native evidence retained, no cycle pass claim.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "scopedNativeProgress": "native780-current-paid-strike-second-sortie-deadline-failure.json",
-      "scopedNativeProof": "native851-normal-paid-strike-cycle-failure.json"
+      "scopedNativeProof": "native852-normal-paid-strike-cycle-failure.json"
     },
     {
       "role": "TransportPlane",
@@ -402,12 +402,12 @@
     }
   ],
   "airportQualification": "Native769 passed joint normal paid construction of two living same-faction Airports at western and southern sites. Bilateral aircraft capacity, parking/taxi and remaining aircraft lifecycles remain pending.",
-  "currentSourceHash": "44434768a3814ec2928295a4b0e872a88fec6f4e1c43955fc1aadd2fcac33a93",
+  "currentSourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
   "currentAutomatedEvidence": "TECHNICAL_READINESS_CURRENT.json",
   "currentRecoveryStagingCertified": false,
-  "latestNativeStatus": "Native790 fleet purchase driver watchdog before flight; native791 repeats after driver drawer lifetime correction.",
+  "latestNativeStatus": "Native852 intentionally ended after live empty enabled Factory priority0 observation; native853 reproduced the defect; native854 passes8 focused cases after shared repair. Full native qualification pending.",
   "latestRetainedFailure": "native790-normal-paid-strike-cycle-failure.json",
-  "currentSourceFingerprint": "final-852-early-factory-reserved-supply-pre-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-854-multi-factory-priority-green-closed-post-independent-fingerprint.json",
   "latestNativeOutcomePass": "native490-aria-menu-result-return-pass.json",
   "historicalStatusAliases": {
     "currentNativeCaptureRun": "native467 paid Strike cycle with full-batch refinery supply and safe reserve",
@@ -435,7 +435,7 @@
   "historicalCurrentSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
   "historicalCurrentSourceFingerprint": "final-505-shared-frontage-and-evidence-pre-independent-fingerprint.json",
   "latestStatus": "Native830 passed current-source starting/paid building clearance with wrapper0, 20 buildings and 107 clean contacts. Complete role, aircraft, recovery, ARIA and cleanup gates remain open.",
-  "currentNativeStatus": "Native851 failed; native evidence retained, no cycle pass claim.",
+  "currentNativeStatus": "Native852 failed; native evidence retained, no cycle pass claim.",
   "proofApplicability": {
     "earlierFullSource": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "delta": "source-delta-796-shared-oil-air-fuel-and-sequential-purchases.json",

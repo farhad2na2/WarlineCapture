@@ -1,0 +1,14 @@
+{
+  "previousSourceHash": "87dfa36ce913ee7f23149323e6b980d54bb1b6da9f87427051a61ff98100ad1b",
+  "currentSourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
+  "changedFiles": [
+    "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs"
+  ],
+  "shippingRuntimeModified": true,
+  "physicalMapUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "costsRatesCapacitiesDeadlineUnchanged": true,
+  "focusedProof": "native854-focused-current-proof.json",
+  "normalInputQualificationPending": true,
+  "playerReady": false
+}

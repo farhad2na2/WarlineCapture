@@ -1,0 +1,9 @@
+{
+  "status": "HypothesisRequiresFocusedReproduction",
+  "activeSourceHash": "44434768a3814ec2928295a4b0e872a88fec6f4e1c43955fc1aadd2fcac33a93",
+  "sourceFile": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+  "finding": "TryResolveExpandedOilDemand computes materialsFunded across all factories with OR. One funded Factory suppresses strategic priority for every unfunded Factory in that attempt. Extra Factories were oil-starved for substantial time in native851 despite repeated manual redirects.",
+  "nextCheck": "Reproduce with two own live enabled Factories: one funded, the other empty. Inspect the empty Factory priority independently, plus reserved inbound oil, disabled/dead/other-faction and legacy behavior. Preserve full batch fuel demand and all costs/rates/caps/deadline.",
+  "runtimeModifiedDuringActive852": false,
+  "readinessClaim": false
+}

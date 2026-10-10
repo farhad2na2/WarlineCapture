@@ -211,6 +211,55 @@ namespace Game.Tests.Editor
             Assert.IsFalse(ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(em, refineryView, 8, out _, out _));
         }
 
+        [Test]
+        public void FundedFactoryDoesNotSuppressAnotherEnabledFactoryOilDemand()
+        {
+            using var world = new World(nameof(FundedFactoryDoesNotSuppressAnotherEnabledFactoryOilDemand));
+            var em = world.EntityManager;
+            var attempt = new FixedString64Bytes("multiple-factories");
+            var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+            em.SetComponentData(session, new SkirmishExpandedSessionComponent { SessionId = attempt });
+            var funded = em.CreateEntity(typeof(MaterialFabricationComponent), typeof(MaterialFabricationInputTag),
+                typeof(BuildingResourceStorageComponent), typeof(SkirmishAttemptOwnedComponent));
+            em.SetComponentData(funded, new MaterialFabricationComponent { OwnerFactionId = 1,
+                ProductionEnabled = 1, OilConsumedPerCycle = 10 });
+            em.SetComponentData(funded, new SkirmishAttemptOwnedComponent { SessionId = attempt, FactionId = 1 });
+            em.SetComponentData(funded, new BuildingResourceStorageComponent { OwnerFactionId = 1,
+                OilStorageCapacity = 24, StoredOilBarrels = 16 });
+            var empty = em.Instantiate(funded);
+            var emptyStock = new BuildingResourceStorageComponent { OwnerFactionId = 1, OilStorageCapacity = 24 };
+            em.SetComponentData(empty, emptyStock);
+            var emptyView = new RuntimeBuildingEntity { CombatEntity = empty, OwnerFactionId = 1 };
+            var fundedView = new RuntimeBuildingEntity { CombatEntity = funded, OwnerFactionId = 1 };
+            Assert.IsTrue(ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(
+                em, emptyView, 8, out int emptyPriority, out float requiredOil));
+            Assert.AreEqual(2, emptyPriority, "A different funded Factory must not starve this empty enabled input.");
+            Assert.AreEqual(10, requiredOil);
+            ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(
+                em, fundedView, 8, out int fundedPriority, out _);
+            Assert.AreEqual(0, fundedPriority, "The funded Factory must not attract every spare truck.");
+
+            emptyStock.ReservedOilInboundBarrels = 10;
+            em.SetComponentData(empty, emptyStock);
+            ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(
+                em, emptyView, 8, out emptyPriority, out _);
+            Assert.AreEqual(0, emptyPriority, "A real inbound batch funds this Factory before physical delivery.");
+
+            emptyStock.ReservedOilInboundBarrels = 0;
+            emptyStock.StoredOilBarrels = 12;
+            emptyStock.ReservedOilOutboundBarrels = 4;
+            em.SetComponentData(empty, emptyStock);
+            ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(
+                em, emptyView, 8, out emptyPriority, out _);
+            Assert.AreEqual(2, emptyPriority, "Oil committed elsewhere cannot fund this Factory's batch.");
+
+            var disabled = em.GetComponentData<MaterialFabricationComponent>(empty);
+            disabled.ProductionEnabled = 0;
+            em.SetComponentData(empty, disabled);
+            Assert.IsFalse(ResourceHaulerAutomaticRoutePolicySystemHelper.TryResolveExpandedOilDemand(
+                em, emptyView, 8, out _, out _), "Paused Factory must not request expanded supply.");
+        }
+
         public static void RunFocusedValidation()
         {
             var tests = new SkirmishFacilityEconomyProfileTests();
@@ -221,7 +270,8 @@ namespace Game.Tests.Editor
             tests.RefineryWaitsForFullBatchInputAndCapacityAndPreservesReservations();
             tests.NativeCheckpointPreservesRefineryBatchProgressAcrossFreshWorld();
             tests.ExpandedOilRoutesFundOneMaterialsBatchThenTheFullRefineryBatch();
-            Debug.Log("[SkirmishFacilityEconomyProfileTests] result=Passed tests=7");
+            tests.FundedFactoryDoesNotSuppressAnotherEnabledFactoryOilDemand();
+            Debug.Log("[SkirmishFacilityEconomyProfileTests] result=Passed tests=8");
         }
     }
 }

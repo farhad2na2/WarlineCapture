@@ -1,0 +1,54 @@
+{
+    "map": "CH04M04GroundedSignal",
+    "result": "Passed",
+    "beforeHash": "6664b24c82651997cfd5ce50a6e50d42b4900a07d060eccf387597053cee0192",
+    "afterHash": "adf48de82e3b74196f07fb8117135b97f4f3237cceee7090835ac6546c423db2",
+    "protectedHash": "384a0930ee81de0e4592ca06b0cc8f5ffb3e1ed5489cb9a3cb88e246229c1c10",
+    "supportedProps": 0,
+    "parkedVehicles": 2,
+    "vehiclePalettes": 16,
+    "roofMaterials": 66,
+    "groundMaterials": 426,
+    "waterEdges": 0,
+    "wearStamps": 515,
+    "renderersBefore": 18200,
+    "renderersAfter": 18200,
+    "trianglesBefore": 13711483,
+    "trianglesAfter": 13711483,
+    "moves": [
+        {
+            "path": "Map_CityEdgeAirfield/Vehicles/SM_Veh_APC_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 517.5820922851563,
+                "y": -0.029999999329447748,
+                "z": 513.7954711914063
+            },
+            "after": {
+                "x": 517.5820922851563,
+                "y": -0.029999999329447748,
+                "z": 513.8701782226563
+            },
+            "transformId": 689278312,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 694.8828735351563,
+                "y": -0.03338709473609924,
+                "z": 682.0934448242188
+            },
+            "after": {
+                "x": 696.2445678710938,
+                "y": -0.03338709473609924,
+                "z": 682.0934448242188
+            },
+            "transformId": 1710291147,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

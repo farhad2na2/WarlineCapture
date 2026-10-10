@@ -1,0 +1,211 @@
+[
+  {
+    "map": "AshLinePort",
+    "source": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+    "sourceHash": "11b1dcb92d3c7ccdee8b94e6a761f4475565d7140e27ab6148e7bbca2932ece2",
+    "min": {
+      "x": 400.0,
+      "y": -20.0,
+      "z": 300.0
+    },
+    "max": {
+      "x": 1000.0,
+      "y": 980.0,
+      "z": 700.0
+    },
+    "waterSections": 2,
+    "vehicleRendererCandidates": 1951,
+    "roofRendererCandidates": 267,
+    "initialSupportCandidates": 0
+  },
+  {
+    "map": "CH04M04GroundedSignal",
+    "source": "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
+    "sourceHash": "6664b24c82651997cfd5ce50a6e50d42b4900a07d060eccf387597053cee0192",
+    "min": {
+      "x": 450.0,
+      "y": -20.0,
+      "z": 525.0
+    },
+    "max": {
+      "x": 975.0,
+      "y": 980.0,
+      "z": 690.0
+    },
+    "waterSections": 0,
+    "vehicleRendererCandidates": 33,
+    "roofRendererCandidates": 35,
+    "initialSupportCandidates": 0
+  },
+  {
+    "map": "CH04M05ArmorBreak",
+    "source": "Assets/Game/Scenes/OperationMaps/CH04M05ArmorBreak/PreparedEntities.unity",
+    "sourceHash": "0c1aa504c989561e9f1924bf9dfca60cd6a9284405dca02b8aee4b317fb13f8b",
+    "min": {
+      "x": 748.0,
+      "y": -20.0,
+      "z": 268.0
+    },
+    "max": {
+      "x": 2012.0,
+      "y": 980.0,
+      "z": 772.0
+    },
+    "waterSections": 0,
+    "vehicleRendererCandidates": 476,
+    "roofRendererCandidates": 412,
+    "initialSupportCandidates": 0
+  },
+  {
+    "map": "CH05M01CitywideAlert",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity",
+    "sourceHash": "ef15eb4893c036d016b398cda4240400c772463c084666377d05e94dc2127f9d",
+    "min": {
+      "x": 868.0,
+      "y": -20.0,
+      "z": 308.0
+    },
+    "max": {
+      "x": 1292.0,
+      "y": 980.0,
+      "z": 512.0
+    },
+    "waterSections": 46,
+    "vehicleRendererCandidates": 20,
+    "roofRendererCandidates": 46,
+    "initialSupportCandidates": 20
+  },
+  {
+    "map": "CH05M02TrustUnderFire",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/PreparedEntities.unity",
+    "sourceHash": "6bddd4830ee4cacbcc883061a277e42f2f2bb8a282fa97b17e72653879f3b897",
+    "min": {
+      "x": 408.0,
+      "y": -20.0,
+      "z": 308.0
+    },
+    "max": {
+      "x": 992.0,
+      "y": 980.0,
+      "z": 692.0
+    },
+    "waterSections": 1,
+    "vehicleRendererCandidates": 985,
+    "roofRendererCandidates": 159,
+    "initialSupportCandidates": 0
+  },
+  {
+    "map": "CH05M03NetworkCollapse",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity",
+    "sourceHash": "8d249965e5448f6476459b85ec6f2a07eb978fcd2e7814dfa075f40f4e41e91c",
+    "min": {
+      "x": 868.0,
+      "y": -20.0,
+      "z": 308.0
+    },
+    "max": {
+      "x": 1292.0,
+      "y": 980.0,
+      "z": 512.0
+    },
+    "waterSections": 46,
+    "vehicleRendererCandidates": 20,
+    "roofRendererCandidates": 41,
+    "initialSupportCandidates": 20
+  },
+  {
+    "map": "CH05M04LastCorridor",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity",
+    "sourceHash": "a928cc72e5c232bedbd5081ad8b5b24376835cc4d332da2541fc3df6416bdf2b",
+    "min": {
+      "x": 868.0,
+      "y": -20.0,
+      "z": 308.0
+    },
+    "max": {
+      "x": 1292.0,
+      "y": 980.0,
+      "z": 512.0
+    },
+    "waterSections": 46,
+    "vehicleRendererCandidates": 20,
+    "roofRendererCandidates": 41,
+    "initialSupportCandidates": 20
+  },
+  {
+    "map": "CH05M05CommandNode",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity",
+    "sourceHash": "20a09607bca1be778cf36f2d430aaa5969ee104dafe988e51a175c7d9c354769",
+    "min": {
+      "x": 868.0,
+      "y": -20.0,
+      "z": 308.0
+    },
+    "max": {
+      "x": 1292.0,
+      "y": 980.0,
+      "z": 512.0
+    },
+    "waterSections": 46,
+    "vehicleRendererCandidates": 16,
+    "roofRendererCandidates": 33,
+    "initialSupportCandidates": 24
+  },
+  {
+    "map": "CityEdgeAirfield",
+    "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+    "sourceHash": "5dc790b721b1925e7b807c8442c2e7b13e3f1f4f6cf9aba6699053649cea2012",
+    "min": {
+      "x": 400.0,
+      "y": -20.0,
+      "z": 300.0
+    },
+    "max": {
+      "x": 1000.0,
+      "y": 980.0,
+      "z": 700.0
+    },
+    "waterSections": 0,
+    "vehicleRendererCandidates": 536,
+    "roofRendererCandidates": 392,
+    "initialSupportCandidates": 4
+  },
+  {
+    "map": "DenseCity",
+    "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+    "sourceHash": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
+    "min": {
+      "x": 0.0,
+      "y": -6.954544544219971,
+      "z": 0.0
+    },
+    "max": {
+      "x": 2048.0,
+      "y": 40.37545394897461,
+      "z": 1024.0
+    },
+    "waterSections": 210,
+    "vehicleRendererCandidates": 276,
+    "roofRendererCandidates": 2021,
+    "initialSupportCandidates": 4
+  },
+  {
+    "map": "RefineryDistrict",
+    "source": "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity",
+    "sourceHash": "c5ea5d879372a390ab3f828b92865ef0cce5d2d46041dcfa5c6c5efd50d78dbc",
+    "min": {
+      "x": 400.0,
+      "y": -20.0,
+      "z": 300.0
+    },
+    "max": {
+      "x": 1000.0,
+      "y": 980.0,
+      "z": 700.0
+    },
+    "waterSections": 0,
+    "vehicleRendererCandidates": 930,
+    "roofRendererCandidates": 261,
+    "initialSupportCandidates": 0
+  }
+]

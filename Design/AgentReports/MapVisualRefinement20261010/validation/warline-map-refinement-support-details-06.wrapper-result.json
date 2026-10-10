@@ -1,0 +1,6 @@
+{
+  "wrapperExitCode": 1,
+  "nativeReceiptExitCode": 1,
+  "requiredPassMarker": "[MapRefinementSupport] result=Passed maps=1",
+  "result": "Failed"
+}

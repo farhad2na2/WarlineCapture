@@ -26,7 +26,7 @@ namespace Game.Editor.MapVariants
         private static bool NaturalWater(MeshRenderer r)
         {
             string n=MeshName(r).ToLowerInvariant();
-            return !n.Contains("tank")&&r.bounds.size.y<1.2f&&(n.Contains("water_plane")||r.sharedMaterials.Any(m=>m!=null&&AssetDatabase.GetAssetPath(m).ToLowerInvariant().Contains("water.mat")));
+            return !n.Contains("tank")&&r.bounds.size.y<1.2f&&(n.Contains("water_plane")||r.sharedMaterials.Any(m=>m!=null&&m.shader!=null&&m.shader.name=="Game/Environment/CampaignWater")||r.sharedMaterials.Any(m=>m!=null&&AssetDatabase.GetAssetPath(m).ToLowerInvariant().Contains("water.mat")));
         }
         private static Material WeatheredRock(Material source,bool mountain)
         {

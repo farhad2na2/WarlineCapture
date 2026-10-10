@@ -1,0 +1,21 @@
+{
+    "map": "DenseCity",
+    "result": "Passed",
+    "beforeHash": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
+    "afterHash": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+    "protectedHash": "ed726a938eafc7b6f3a38029aff15cc755f9d4d2072cf59422ace39b32ee1265",
+    "protectionKind": "native-component-and-transform-invariants-v1",
+    "attachments": [],
+    "supportedProps": 0,
+    "parkedVehicles": 0,
+    "vehiclePalettes": 0,
+    "roofMaterials": 1816,
+    "groundMaterials": 8443,
+    "waterEdges": 210,
+    "wearStamps": 10987,
+    "renderersBefore": 127899,
+    "renderersAfter": 127899,
+    "trianglesBefore": 51715166,
+    "trianglesAfter": 51287202,
+    "moves": []
+}

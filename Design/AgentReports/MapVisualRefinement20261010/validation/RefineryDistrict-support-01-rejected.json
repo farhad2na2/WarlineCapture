@@ -1,0 +1,654 @@
+{
+    "map": "RefineryDistrict",
+    "result": "Passed",
+    "beforeHash": "c5ea5d879372a390ab3f828b92865ef0cce5d2d46041dcfa5c6c5efd50d78dbc",
+    "afterHash": "729584e1e5c32c791357b861f5d771807cad1443ae2033ede0bf78ccde932f3a",
+    "protectedHash": "8f34a4566785e51c337154618d5513ab692e6d66a2f8f027f7ddc02a733141fb",
+    "protectionKind": "",
+    "canonicalOwnershipHash": "",
+    "supportVerificationHash": "8bac8da03a2e2e4ece85d1fa235bfa1e952fc03367f0b36ac06a77bbe217824a",
+    "independentAttachmentIdentitiesRemoved": 0,
+    "attachments": [],
+    "supportedProps": 18,
+    "parkedVehicles": 19,
+    "vehiclePalettes": 256,
+    "roofMaterials": 370,
+    "groundMaterials": 977,
+    "waterEdges": 0,
+    "wearStamps": 2215,
+    "renderersBefore": 24996,
+    "renderersAfter": 24996,
+    "trianglesBefore": 14932269,
+    "trianglesAfter": 14932269,
+    "moves": [
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 479.01593017578127,
+                "y": -0.03338709473609924,
+                "z": 634.1397705078125
+            },
+            "after": {
+                "x": 479.01593017578127,
+                "y": -0.03338709473609924,
+                "z": 635.0697021484375
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 32057271,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 508.5963134765625,
+                "y": -0.03338709473609924,
+                "z": 678.1719970703125
+            },
+            "after": {
+                "x": 508.5963134765625,
+                "y": -0.03338709473609924,
+                "z": 689.1719970703125
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 177927415,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 574.0,
+                "y": -0.03338709473609924,
+                "z": 445.5350646972656
+            },
+            "after": {
+                "x": 574.0,
+                "y": -0.03338709473609924,
+                "z": 446.4649353027344
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1604684796,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 593.111083984375,
+                "y": -0.03338709473609924,
+                "z": 445.5350646972656
+            },
+            "after": {
+                "x": 593.111083984375,
+                "y": -0.03338709473609924,
+                "z": 446.4649353027344
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 779518860,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 597.888916015625,
+                "y": -0.03338709473609924,
+                "z": 445.5350646972656
+            },
+            "after": {
+                "x": 597.888916015625,
+                "y": -0.03338709473609924,
+                "z": 434.5350646972656
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 12443884,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 612.2222290039063,
+                "y": -0.03338709473609924,
+                "z": 445.5350646972656
+            },
+            "after": {
+                "x": 612.2222290039063,
+                "y": -0.03338709473609924,
+                "z": 446.4649353027344
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1199728434,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 650.4444580078125,
+                "y": -0.03338709473609924,
+                "z": 445.5350646972656
+            },
+            "after": {
+                "x": 650.4444580078125,
+                "y": -0.03338709473609924,
+                "z": 446.4649353027344
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 835106950,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 668.0,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 668.0,
+                "y": -0.03338709473609924,
+                "z": 456.3092041015625
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1831494782,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 672.875,
+                "y": -0.03338709473609924,
+                "z": 445.31915283203127
+            },
+            "after": {
+                "x": 672.875,
+                "y": -0.03338709473609924,
+                "z": 446.680908203125
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1342465710,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 692.375,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 692.375,
+                "y": -0.03338709473609924,
+                "z": 446.6907958984375
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1002694322,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 702.125,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 702.125,
+                "y": -0.03338709473609924,
+                "z": 434.3092041015625
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1677047291,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 711.875,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 711.875,
+                "y": -0.03338709473609924,
+                "z": 446.6907958984375
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 2108335772,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 731.375,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 731.375,
+                "y": -0.03338709473609924,
+                "z": 446.6907958984375
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 118431047,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 736.25,
+                "y": -0.03338709473609924,
+                "z": 445.3092041015625
+            },
+            "after": {
+                "x": 736.25,
+                "y": -0.03338709473609924,
+                "z": 456.3092041015625
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 329322686,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 897.0,
+                "y": -0.03338709473609924,
+                "z": 447.3092041015625
+            },
+            "after": {
+                "x": 897.0,
+                "y": -0.03338709473609924,
+                "z": 448.6907958984375
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1367282768,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 906.3333129882813,
+                "y": -0.03338709473609924,
+                "z": 447.3092041015625
+            },
+            "after": {
+                "x": 906.3333129882813,
+                "y": -0.03338709473609924,
+                "z": 429.3092041015625
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 704533859,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 915.6666870117188,
+                "y": -0.03338709473609924,
+                "z": 447.5350646972656
+            },
+            "after": {
+                "x": 915.6666870117188,
+                "y": -0.03338709473609924,
+                "z": 448.4649353027344
+            },
+            "transformId": 4787448854796664,
+            "instanceId": 1067164991,
+            "prefabTransformId": 4787448854796664
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_APC_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 925.0,
+                "y": -0.029999999329447748,
+                "z": 461.962646484375
+            },
+            "after": {
+                "x": 925.0,
+                "y": -0.029999999329447748,
+                "z": 462.037353515625
+            },
+            "transformId": 4167568167384340,
+            "instanceId": 1139792819,
+            "prefabTransformId": 4167568167384340
+        },
+        {
+            "path": "Map_RefineryDistrict/Vehicles/SM_Veh_Rocket_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1017.4840087890625,
+                "y": 8.96634578704834,
+                "z": 692.0
+            },
+            "after": {
+                "x": 1018.5159912109375,
+                "y": 8.96634578704834,
+                "z": 692.0
+            },
+            "transformId": 4791697533351964,
+            "instanceId": 1005385966,
+            "prefabTransformId": 4791697533351964
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 437.81207275390627,
+                "y": 5.197999954223633,
+                "z": 272.3058776855469
+            },
+            "after": {
+                "x": 442.845947265625,
+                "y": 14.196059226989746,
+                "z": 266.4964904785156
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 29924870,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1022.1879272460938,
+                "y": 5.197999954223633,
+                "z": 564.5826416015625
+            },
+            "after": {
+                "x": 1017.154052734375,
+                "y": 14.196061134338379,
+                "z": 570.39208984375
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 424064648,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 858.4707641601563,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 861.0772094726563,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1788302159,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 780.0196533203125,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 782.6260986328125,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 661067269,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 727.880126953125,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 730.486572265625,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 976631709,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1022.1879272460938,
+                "y": 5.197999954223633,
+                "z": 570.609619140625
+            },
+            "after": {
+                "x": 1013.97998046875,
+                "y": 11.382441520690918,
+                "z": 567.1890869140625
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 424064648,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 864.4977416992188,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 861.0772094726563,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1788302159,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 786.046630859375,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 782.6260986328125,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 661067269,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 733.9071044921875,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 730.486572265625,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 976631709,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1022.1279296875,
+                "y": 8.781999588012696,
+                "z": 570.609619140625
+            },
+            "after": {
+                "x": 1028.807373046875,
+                "y": 11.057624816894532,
+                "z": 576.62060546875
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 424064648,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 864.4977416992188,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 864.2819213867188,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1788302159,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 786.046630859375,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 785.830810546875,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 661067269,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 733.9071044921875,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 733.6912841796875,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 976631709,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 437.8721008300781,
+                "y": 8.781999588012696,
+                "z": 272.3058776855469
+            },
+            "after": {
+                "x": 445.88446044921877,
+                "y": 11.384647369384766,
+                "z": 269.69781494140627
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 29924870,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1022.1279296875,
+                "y": 8.781999588012696,
+                "z": 564.5826416015625
+            },
+            "after": {
+                "x": 1017.6788940429688,
+                "y": 6.649848937988281,
+                "z": 556.2427978515625
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 424064648,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 858.4707641601563,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 853.1513061523438,
+                "y": -0.08297348022460938,
+                "z": 721.7711791992188
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1788302159,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 780.0196533203125,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 795.7044677734375,
+                "y": 11.057622909545899,
+                "z": 725.9685668945313
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 661067269,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_RefineryDistrict/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 727.880126953125,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 718.19775390625,
+                "y": 7.33277702331543,
+                "z": 733.0249633789063
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 976631709,
+            "prefabTransformId": 5328843907673651205
+        }
+    ]
+}

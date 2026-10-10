@@ -239,14 +239,14 @@ namespace Game.Editor
 
         private static InventoryReport Build(Scene scene)
         {
-            // Pin the reviewed visual revision; see MapVisualImprovement20261009/
+            // Pin the reviewed visual revision; see MapVisualRefinement20261010/
             // dense-render-cache-source-reconciliation.json and native phase receipts. A later
             // scene change requires its own reconciliation, even if row totals
             // happen to remain equal.
             using (var stream = File.OpenRead(scene.path))
             using (var hash = System.Security.Cryptography.SHA256.Create())
                 if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
-                    "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30")
+                    "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b")
                     throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))

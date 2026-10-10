@@ -1,0 +1,85 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005IndustryLayoutReadOnly857.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition' is inaccessible due to its protection level",
+          "line": 19,
+          "column": 38,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition' is inaccessible due to its protection level",
+          "line": 19,
+          "column": 87,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition' is inaccessible due to its protection level",
+          "line": 60,
+          "column": 39,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition.FootprintCells' is inaccessible due to its protection level",
+          "line": 77,
+          "column": 74,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition.FootprintCells' is inaccessible due to its protection level",
+          "line": 77,
+          "column": 128,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition.FootprintCells' is inaccessible due to its protection level",
+          "line": 81,
+          "column": 82,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition.FootprintCells' is inaccessible due to its protection level",
+          "line": 82,
+          "column": 118,
+          "id": "CS0122"
+        },
+        {
+          "severity": "error",
+          "message": "'BuildingDefinition.FootprintCells' is inaccessible due to its protection level",
+          "line": 82,
+          "column": 184,
+          "id": "CS0122"
+        }
+      ],
+      "compileMs": 483,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005IndustryLayoutReadOnly857_0aee2ba93b13410b9026359c537888d8",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,39 @@
+{
+  "sourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
+  "trace": "s005-aria-live-155926-en-d1db5a12c211480a851c63502cd3374e.jsonl.economy.jsonl",
+  "scope": "Read-only recorded store accounting; difference aggregates native consumption and any actual reservations, not a per-role fuel certificate. No flight occurred; aircraft delivery taxi did occur. Initial350 is native setup.",
+  "observations": [
+    {
+      "elapsed": 7.088247776031494,
+      "fuelDeliveredToStores": 0.0,
+      "storedUsableFuel": 348.3503723144531,
+      "initialFuelPlusPhysicalDeliveriesMinusStored": 1.649627685546875
+    },
+    {
+      "elapsed": 308.68023681640625,
+      "fuelDeliveredToStores": 408.0,
+      "storedUsableFuel": 503.58447265625,
+      "initialFuelPlusPhysicalDeliveriesMinusStored": 254.41552734375
+    },
+    {
+      "elapsed": 608.1188354492188,
+      "fuelDeliveredToStores": 896.0,
+      "storedUsableFuel": 525.3196411132812,
+      "initialFuelPlusPhysicalDeliveriesMinusStored": 720.6803588867188
+    },
+    {
+      "elapsed": 864.075439453125,
+      "fuelDeliveredToStores": 1360.0,
+      "storedUsableFuel": 649.0143737792969,
+      "initialFuelPlusPhysicalDeliveriesMinusStored": 1060.9856262207031
+    },
+    {
+      "elapsed": 1072.9735107421875,
+      "fuelDeliveredToStores": 1792.0,
+      "storedUsableFuel": 795.3571166992188,
+      "initialFuelPlusPhysicalDeliveriesMinusStored": 1346.6428833007812
+    }
+  ],
+  "hypothesis": "Improve industry route proximity and staged fleet throughput; do not change consumption rates/costs/caps/deadline or reduce launch reserve.",
+  "playerReady": false
+}

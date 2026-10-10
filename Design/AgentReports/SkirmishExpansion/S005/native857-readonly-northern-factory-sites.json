@@ -1,0 +1,348 @@
+{
+  "result": "CompletedReadOnlySamples",
+  "scope": "Read-only live native placement samples on unchanged Campaign source; no route, joint compound, capacity or mission certification",
+  "tested": 1155,
+  "counts": {
+    "Fabrication": 24
+  },
+  "sites": [
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 983.5,
+        "y": 0.0,
+        "z": 558.0
+      },
+      "rect": {
+        "m_XMin": 974,
+        "m_YMin": 550,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 987.5,
+        "y": 0.0,
+        "z": 558.0
+      },
+      "rect": {
+        "m_XMin": 978,
+        "m_YMin": 550,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 967.5,
+        "y": 0.0,
+        "z": 562.0
+      },
+      "rect": {
+        "m_XMin": 958,
+        "m_YMin": 554,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 971.5,
+        "y": 0.0,
+        "z": 562.0
+      },
+      "rect": {
+        "m_XMin": 962,
+        "m_YMin": 554,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 963.5,
+        "y": 0.0,
+        "z": 566.0
+      },
+      "rect": {
+        "m_XMin": 954,
+        "m_YMin": 558,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 967.5,
+        "y": 0.0,
+        "z": 566.0
+      },
+      "rect": {
+        "m_XMin": 958,
+        "m_YMin": 558,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 971.5,
+        "y": 0.0,
+        "z": 566.0
+      },
+      "rect": {
+        "m_XMin": 962,
+        "m_YMin": 558,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 963.5,
+        "y": 0.0,
+        "z": 570.0
+      },
+      "rect": {
+        "m_XMin": 954,
+        "m_YMin": 562,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 967.5,
+        "y": 0.0,
+        "z": 570.0
+      },
+      "rect": {
+        "m_XMin": 958,
+        "m_YMin": 562,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 971.5,
+        "y": 0.0,
+        "z": 570.0
+      },
+      "rect": {
+        "m_XMin": 962,
+        "m_YMin": 562,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 963.5,
+        "y": 0.0,
+        "z": 574.0
+      },
+      "rect": {
+        "m_XMin": 954,
+        "m_YMin": 566,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 875.5,
+        "y": 0.0,
+        "z": 622.0
+      },
+      "rect": {
+        "m_XMin": 866,
+        "m_YMin": 614,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 875.5,
+        "y": 0.0,
+        "z": 626.0
+      },
+      "rect": {
+        "m_XMin": 866,
+        "m_YMin": 618,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 999.5,
+        "y": 0.0,
+        "z": 646.0
+      },
+      "rect": {
+        "m_XMin": 990,
+        "m_YMin": 638,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1003.5,
+        "y": 0.0,
+        "z": 646.0
+      },
+      "rect": {
+        "m_XMin": 994,
+        "m_YMin": 638,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 999.5,
+        "y": 0.0,
+        "z": 650.0
+      },
+      "rect": {
+        "m_XMin": 990,
+        "m_YMin": 642,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1003.5,
+        "y": 0.0,
+        "z": 650.0
+      },
+      "rect": {
+        "m_XMin": 994,
+        "m_YMin": 642,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1007.5,
+        "y": 0.0,
+        "z": 650.0
+      },
+      "rect": {
+        "m_XMin": 998,
+        "m_YMin": 642,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 999.5,
+        "y": 0.0,
+        "z": 654.0
+      },
+      "rect": {
+        "m_XMin": 990,
+        "m_YMin": 646,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1003.5,
+        "y": 0.0,
+        "z": 654.0
+      },
+      "rect": {
+        "m_XMin": 994,
+        "m_YMin": 646,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1007.5,
+        "y": 0.0,
+        "z": 654.0
+      },
+      "rect": {
+        "m_XMin": 998,
+        "m_YMin": 646,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 999.5,
+        "y": 0.0,
+        "z": 658.0
+      },
+      "rect": {
+        "m_XMin": 990,
+        "m_YMin": 650,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1003.5,
+        "y": 0.0,
+        "z": 658.0
+      },
+      "rect": {
+        "m_XMin": 994,
+        "m_YMin": 650,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1007.5,
+        "y": 0.0,
+        "z": 658.0
+      },
+      "rect": {
+        "m_XMin": 998,
+        "m_YMin": 650,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    }
+  ],
+  "actorsOrdersResourcesClockPreviewGeometryModified": false,
+  "playerReady": false
+}

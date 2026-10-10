@@ -1,0 +1,30 @@
+using System;
+using Game.Components;
+using Game.Runtime;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEngine;
+using Newtonsoft.Json.Linq;
+public class S005SupplyReadOnly861 {
+ public static object Run() {
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;
+  using var sessions=em.CreateEntityQuery(typeof(SkirmishMatchState));if(sessions.CalculateEntityCount()!=1)throw new InvalidOperationException("No unique native session");var match=sessions.GetSingleton<SkirmishMatchState>();
+  var buildings=new JArray(); using(var q=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent),typeof(SkirmishAttemptOwnedComponent)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es) {
+   var stock=em.GetComponentData<BuildingResourceStorageComponent>(e);if(stock.OwnerFactionId!=1)continue;
+   var row=new JObject{["entity"]=e.ToString(),["stock"]=JObject.Parse(JsonUtility.ToJson(stock))};
+   if(em.HasComponent<LocalTransform>(e))row["pose"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<LocalTransform>(e)));
+   if(em.HasComponent<MaterialFabricationComponent>(e))row["factory"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<MaterialFabricationComponent>(e)));
+   buildings.Add(row);
+  }
+  var trucks=new JArray();using(var q=em.CreateEntityQuery(typeof(UnitResourceHauler),typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es) {
+   var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(owner.FactionId!=1||owner.CapacityReleased!=0)continue;
+   var row=new JObject{["entity"]=e.ToString(),["role"]=em.GetComponentData<SkirmishUnitRoleComponent>(e).Role.ToString(),["hauler"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<UnitResourceHauler>(e)))};
+   if(em.HasComponent<LocalTransform>(e))row["pose"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<LocalTransform>(e)));
+   if(em.HasComponent<UnitMove>(e))row["move"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<UnitMove>(e)));
+   if(em.HasComponent<UnitResourceHaulOrder>(e))row["order"]=JObject.Parse(JsonUtility.ToJson(em.GetComponentData<UnitResourceHaulOrder>(e)));
+   trucks.Add(row);
+  }
+  return new JObject{["scope"]="Read-only native supply observation; no actor, resource, order, clock or geometry writes",["elapsed"]=JObject.Parse(JsonUtility.ToJson(match)),["buildings"]=buildings,["trucks"]=trucks};
+ }
+}

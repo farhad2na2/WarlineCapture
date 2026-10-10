@@ -1,0 +1,10 @@
+{
+  "result": "Passed",
+  "scope": "Connected Editor recompile; no native readiness claim",
+  "errors": [],
+  "sourceEdits": [
+    "SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "strategy": "Normal-input compact western supply sites measured in native859; full validator and eight-cell service lanes retained; no gameplay budget/rate/cap/deadline or physical geometry edits."
+}

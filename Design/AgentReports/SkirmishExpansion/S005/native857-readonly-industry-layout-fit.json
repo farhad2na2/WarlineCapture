@@ -1,0 +1,6511 @@
+{
+  "result": "CompletedReadOnlySamples",
+  "scope": "Read-only live native placement samples on unchanged Campaign source; no route, joint compound, capacity or mission certification",
+  "tested": 1008,
+  "counts": {
+    "OilPump": 143,
+    "Fabrication": 102,
+    "Refinery": 88,
+    "FuelBladder": 131
+  },
+  "sites": [
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 225,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 233,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 233,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 233,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 241,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 241,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 241,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 241,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 249,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 249,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 249,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 249,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 259.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 257,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1210,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1218,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1226,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 147,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1210,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1218,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1226,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1282,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 155,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1210,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1218,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1226,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1282,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 163,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1210,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1218,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1226,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 171,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1210,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1218,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1226,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1258,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 179,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1186,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1194,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1202,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 187,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1170,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1178,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1290,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 195,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 203,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 203,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 203,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 211,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1298,
+        "m_YMin": 211,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1306,
+        "m_YMin": 211,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 219,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1234,
+        "m_YMin": 227,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1242,
+        "m_YMin": 227,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Fabrication",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1250,
+        "m_YMin": 227,
+        "m_Width": 19,
+        "m_Height": 16
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1220.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1228.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1236.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1244.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 155.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 148,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1220.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1228.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1236.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1244.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1260.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1268.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1276.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1284.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1272,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1292.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1300.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 163.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 156,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1220.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1228.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1236.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1244.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1292.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1300.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 171.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 164,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1220.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1228.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1236.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1244.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 179.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 172,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1220.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1228.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1236.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1244.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1260.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 187.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 180,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1188.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1196.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1204.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1212.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 195.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 188,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1180.5,
+        "y": 0.0,
+        "z": 203.5
+      },
+      "rect": {
+        "m_XMin": 1168,
+        "m_YMin": 196,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 203.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 196,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1300.5,
+        "y": 0.0,
+        "z": 203.5
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 196,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 203.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 196,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 203.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 196,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 211.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 204,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 211.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 204,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1308.5,
+        "y": 0.0,
+        "z": 219.5
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 212,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1316.5,
+        "y": 0.0,
+        "z": 219.5
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 212,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 227.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 220,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "Refinery",
+      "centre": {
+        "x": 1252.5,
+        "y": 0.0,
+        "z": 235.5
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 228,
+        "m_Width": 25,
+        "m_Height": 15
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1228.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1221,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1236.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1229,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 150,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1228.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1221,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1236.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1229,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1268.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1261,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1276.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1269,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1284.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1277,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1292.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1285,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 158,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1228.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1221,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1236.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1229,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1284.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1277,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1292.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1285,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 166,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1228.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1221,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1236.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1229,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 174,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1228.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1221,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1236.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1229,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1268.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1261,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 182,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1268.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1261,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 190,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1196.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1189,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1204.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1197,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1212.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1205,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1220.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1213,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1292.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1285,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 198,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1180.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1173,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1188.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1181,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 206,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 214,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 214,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 214,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1308.0,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1301,
+        "m_YMin": 214,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1316.0,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1309,
+        "m_YMin": 214,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 222,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 222,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 222,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 227.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 222,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 230,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 230,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 230,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 235.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 230,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1244.0,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1237,
+        "m_YMin": 238,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1252.0,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1245,
+        "m_YMin": 238,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 238,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1268.0,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1261,
+        "m_YMin": 238,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 243.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 238,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 246,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1300.0,
+        "y": 0.0,
+        "z": 251.0
+      },
+      "rect": {
+        "m_XMin": 1293,
+        "m_YMin": 246,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    },
+    {
+      "kind": "FuelBladder",
+      "centre": {
+        "x": 1260.0,
+        "y": 0.0,
+        "z": 259.0
+      },
+      "rect": {
+        "m_XMin": 1253,
+        "m_YMin": 254,
+        "m_Width": 14,
+        "m_Height": 10
+      }
+    }
+  ],
+  "actorsOrdersResourcesClockPreviewGeometryModified": false,
+  "playerReady": false
+}

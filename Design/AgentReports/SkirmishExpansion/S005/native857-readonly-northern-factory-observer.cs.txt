@@ -1,0 +1,101 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using Game.Components;
+using Game.Runtime;
+using Game.Composition;
+using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+using UnityEngine;
+using Newtonsoft.Json.Linq;
+
+public class S005IndustryLayoutReadOnly857
+{
+    static readonly BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+    static object Get(object value, string name) { var type=value.GetType(); var f=type.GetField(name,Flags); return f!=null?f.GetValue(value):type.GetProperty(name,Flags).GetValue(value); }
+    class Site { public string kind; public RectInt rect; public Vector3 centre; }
+    static readonly Dictionary<string,object> defs = new Dictionary<string,object>();
+    static readonly List<Site> sites = new List<Site>();
+    static readonly RectInt[] regions = { new RectInt(862,530,140,132) };
+    static object source,adapter,cache;
+    static MethodInfo effective,valid,cached;
+    static Delegate rectDelegate,occupantDelegate;
+    static GridConfig grid;
+    static object roads,blockers;
+    static World world;
+    static int regionIndex,kindIndex,x,z,tested;
+    static string[] kinds={"Fabrication"};
+    static UnityEditor.EditorApplication.CallbackFunction callback;
+    const string Output="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native857-readonly-northern-factory-sites.json";
+
+    public static object Run()
+    {
+        if(callback!=null) throw new InvalidOperationException("Observer already running");
+        world=World.DefaultGameObjectInjectionWorld;
+        var em=world.EntityManager;
+        var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+        var harness=typeof(Game.Editor.SkirmishS002AriaRunHarness);
+        source=harness.GetMethod("FindAirportPlacementSource",Flags).Invoke(null,new object[]{Get(Get(Get(scene,"MatchBootstrap"),"BuildingUiCommandContext"),"CanConfirmBuildingPlacement"),new HashSet<object>(),0});
+        var args=new object[]{source,null,null,null,null};
+        if(!(bool)harness.GetMethod("ReadAirportGrid",Flags).Invoke(null,args)) throw new InvalidOperationException("Grid unavailable");
+        grid=(GridConfig)args[2]; roads=args[3]; blockers=args[4];
+        adapter=Get(source,"BuildingPlacementAdapterCompositionSystemHelper");
+        cache=Get(source,"BuildingPlacementInvalidCellCacheCompositionSystemHelper");
+        effective=harness.GetMethod("AirportEffectiveRect",Flags);
+        valid=adapter.GetType().GetMethod("IsPlacementValid",Flags);
+        cached=cache.GetType().GetMethod("HasCachedInvalidCellInFootprint",Flags);
+        var ps=valid.GetParameters();
+        rectDelegate=effective.CreateDelegate(ps[8].ParameterType);
+        occupantDelegate=harness.GetMethod("AirportOverlapsOccupant",Flags).CreateDelegate(ps[9].ParameterType);
+        var runtime=Get(Get(source,"RuntimeBuildingSystem"),"Buildings");
+        foreach(var pair in (IEnumerable)runtime)
+        {
+            var building=Get(pair,"Value"); var actor=(Entity)Get(building,"CombatEntity");
+            if(!em.Exists(actor)||!em.HasComponent<BuildingResourceStorageComponent>(actor)) continue;
+            var stock=em.GetComponentData<BuildingResourceStorageComponent>(actor);
+            if(stock.OwnerFactionId!=1)continue;
+            string kind=em.HasComponent<MaterialFabricationComponent>(actor)?"Fabrication":stock.OilBarrelsPerDay>0?"OilPump":stock.FuelBarrelsPerDay>0?"Refinery":stock.FuelStorageCapacity>0?"FuelBladder":null;
+            if(kind!=null) defs[kind]=Get(building,"Definition");
+        }
+        foreach(string kind in kinds) if(!defs.ContainsKey(kind))throw new InvalidOperationException("Missing live definition: "+kind);
+        regionIndex=kindIndex=tested=0; x=regions[0].xMin; z=regions[0].yMin; sites.Clear();
+        callback=Tick; UnityEditor.EditorApplication.update+=callback;
+        return new { scope="ReadOnlyNativeIndustrySiteFit", started=true, frameBudgetMs=5, writesToActorsOrdersResourcesClockPreviewOrGeometry=false, output=Output };
+    }
+    static void Tick()
+    {
+        try
+        {
+            if(world==null||!world.IsCreated||world!=World.DefaultGameObjectInjectionWorld) { Finish("IncompleteWorldChanged"); return; }
+            var args=new object[]{source,null,null,null,null}; if(!(bool)typeof(Game.Editor.SkirmishS002AriaRunHarness).GetMethod("ReadAirportGrid",Flags).Invoke(null,args))throw new InvalidOperationException("Grid unavailable"); grid=(GridConfig)args[2]; roads=args[3]; blockers=args[4]; var watch=Stopwatch.StartNew();
+            do
+            {
+                var def=defs[kinds[kindIndex]]; var footprint=(Vector2Int)Get(def,"FootprintCells");
+                var relative=((float3)new Vector3(x,0,z)-grid.Origin)/grid.CellSize;
+                var origin=new Vector2Int(Mathf.RoundToInt(relative.x),Mathf.RoundToInt(relative.z));
+                var rect=(RectInt)effective.Invoke(null,new object[]{source,def,origin,grid,false});
+                tested++;
+                if(!(bool)cached.Invoke(cache,new object[]{rect.position,rect.size}) &&
+                    (bool)valid.Invoke(adapter,new object[]{source,def,origin,footprint,false,grid,roads,blockers,rectDelegate,occupantDelegate}))
+                    sites.Add(new Site{kind=kinds[kindIndex],rect=rect,centre=new Vector3(grid.Origin.x+(origin.x+footprint.x*.5f)*grid.CellSize,0,grid.Origin.z+(origin.y+footprint.y*.5f)*grid.CellSize)});
+                x+=4;
+                if(x>=regions[regionIndex].xMax) {x=regions[regionIndex].xMin;z+=4;}
+                if(z>=regions[regionIndex].yMax) {kindIndex++;z=regions[regionIndex].yMin;}
+                if(kindIndex>=kinds.Length) {regionIndex++;kindIndex=0;if(regionIndex>=regions.Length){Finish("CompletedReadOnlySamples");return;}x=regions[regionIndex].xMin;z=regions[regionIndex].yMin;}
+            } while(watch.ElapsedMilliseconds<5);
+        }
+        catch(Exception ex) { Finish("Failed: "+ex); }
+    }
+    static void Finish(string result)
+    {
+        UnityEditor.EditorApplication.update-=callback; callback=null;
+        var rows=new JArray(); var counts=new JObject(); foreach(string kind in kinds)counts[kind]=0;
+        foreach(var s in sites) { counts[s.kind]=(int)counts[s.kind]+1; rows.Add(new JObject{["kind"]=s.kind,["centre"]=JObject.Parse(JsonUtility.ToJson(s.centre)),["rect"]=JObject.Parse(JsonUtility.ToJson(s.rect))}); }
+        var output=new JObject{["result"]=result,["scope"]="Read-only live native placement samples on unchanged Campaign source; no route, joint compound, capacity or mission certification",["tested"]=tested,["counts"]=counts,["sites"]=rows,["actorsOrdersResourcesClockPreviewGeometryModified"]=false,["playerReady"]=false};
+        System.IO.File.WriteAllText(Output,output.ToString());
+        UnityEngine.Debug.Log("[S005ReadOnlyIndustrySites] result="+result+" tested="+tested+" nativeLegal="+sites.Count+" sourceGeometryModified=0");
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "run": "native858",
+  "result": "FailedSourceDrift",
+  "focusedChecks": "Passed",
+  "cases": 11,
+  "failures": 0,
+  "wrapperExit": 0,
+  "bridgeExit": 0,
+  "log": "native-858-merged-shared-clearance-focused.log",
+  "marker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+  "sourceBefore": "65919a142d36156da4ad2386c7d13011de37767b72a0abd62bec8b1681eeb5ec",
+  "sourceAfter": "54ff44fe85057a724b3797dbf10de19224d494aea24720931435dbfaf9090f6b",
+  "delta": "source-delta-858-unexpected-focused-source-drift.json",
+  "qualificationAccepted": false,
+  "reason": "Editor persisted the dynamic fallback glyph U+2192 and its atlas after the preceding native run; full-source freeze failed."
+}

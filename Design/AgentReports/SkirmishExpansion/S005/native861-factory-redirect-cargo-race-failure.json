@@ -1,0 +1,17 @@
+{
+  "run": "native861",
+  "result": "FailedFactoryRedirectCargoRaceBeforeAircraftDelivery",
+  "sourceHash": "39fe2e886a5198768dd439e9443107f8a30911a65f4294fae61b6d33d6270c60",
+  "wrapperExit": 1,
+  "bridgeExit": 1,
+  "sourceUnchanged": true,
+  "preManifest": "final-860-compact-paid-clearance-current-pre-source-manifest.json",
+  "postManifest": "final-861-resumed-paid-cycle-closed-post-source-manifest.json",
+  "log": "native-861-current-manual-en-seed155926.log",
+  "touchAudit": "native861-touch-contact-audit.json",
+  "trace": "s005-aria-live-155926-en-b11c7a4e936241778025a4434e9526b3.jsonl",
+  "observation": "Redirect began with empty pickup-phase truck; first unacknowledged tap found phase2 filling, subsequent retries phase3 loaded with8 Oil and destination18. Test player incorrectly treated normal cargo protection as a mandatory factory-order failure. Eight earlier factory redirects acknowledged; paid compact supply and native local fuel delivery observed. No aircraft launch or complete-match acceptance.",
+  "readOnlySupply": "native861-readonly-supply-routes.json",
+  "elapsedAtFailure": 497.5348,
+  "playerReady": false
+}

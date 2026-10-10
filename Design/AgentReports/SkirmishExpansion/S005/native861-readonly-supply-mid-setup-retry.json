@@ -1,0 +1,682 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SupplyReadOnly861.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 148,
+      "executeMs": 6,
+      "assemblyName": "PipelineRunScript_S005SupplyReadOnly861_700b1b00477a45f3874615330e23a87d",
+      "success": true,
+      "result": {
+        "scope": "Read-only native supply observation; no actor, resource, order, clock or geometry writes",
+        "elapsed": {
+          "SessionId": {
+            "utf8LengthInBytes": 53,
+            "bytes": {
+              "offset0000": {
+                "byte0000": 101,
+                "byte0001": 120,
+                "byte0002": 112,
+                "byte0003": 97,
+                "byte0004": 110,
+                "byte0005": 100,
+                "byte0006": 101,
+                "byte0007": 100,
+                "byte0008": 45,
+                "byte0009": 115,
+                "byte0010": 48,
+                "byte0011": 48,
+                "byte0012": 53,
+                "byte0013": 45,
+                "byte0014": 49,
+                "byte0015": 53
+              },
+              "offset0016": {
+                "byte0000": 53,
+                "byte0001": 57,
+                "byte0002": 50,
+                "byte0003": 54,
+                "byte0004": 45,
+                "byte0005": 99,
+                "byte0006": 97,
+                "byte0007": 101,
+                "byte0008": 102,
+                "byte0009": 55,
+                "byte0010": 57,
+                "byte0011": 102,
+                "byte0012": 50,
+                "byte0013": 57,
+                "byte0014": 51,
+                "byte0015": 55
+              },
+              "offset0032": {
+                "byte0000": 102,
+                "byte0001": 52,
+                "byte0002": 49,
+                "byte0003": 101,
+                "byte0004": 55,
+                "byte0005": 97,
+                "byte0006": 54,
+                "byte0007": 101,
+                "byte0008": 54,
+                "byte0009": 97,
+                "byte0010": 52,
+                "byte0011": 52,
+                "byte0012": 51,
+                "byte0013": 97,
+                "byte0014": 98,
+                "byte0015": 57
+              },
+              "byte0048": 52,
+              "byte0049": 101,
+              "byte0050": 57,
+              "byte0051": 57,
+              "byte0052": 55,
+              "byte0053": 0,
+              "byte0054": 0,
+              "byte0055": 0,
+              "byte0056": 0,
+              "byte0057": 0,
+              "byte0058": 0,
+              "byte0059": 0,
+              "byte0060": 0,
+              "byte0061": 0
+            }
+          },
+          "Seed": 155926,
+          "ScenarioIndex": 7,
+          "Phase": 2,
+          "StartupFailure": 0,
+          "Outcome": 0,
+          "Reason": 0,
+          "ElapsedSeconds": 337.1087646484375,
+          "PlayerUnitsLost": 1,
+          "EnemyUnitsLost": 4,
+          "PlayerBuildingsLost": 0,
+          "EnemyBuildingsLost": 0,
+          "ResultSaved": 0,
+          "SurrenderRequested": 0
+        },
+        "buildings": [
+          {
+            "entity": "Entity(739:5)",
+            "stock": {
+              "RuntimeBuildingId": 5,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 200,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 120,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 194.04234313964844,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 422
+            },
+            "pose": {
+              "Position": {
+                "x": 914.5,
+                "y": 0.009179778397083282,
+                "z": 598
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          },
+          {
+            "entity": "Entity(743:5)",
+            "stock": {
+              "RuntimeBuildingId": 7,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 5000,
+              "FuelStorageCapacity": 5000,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 120,
+              "StoredOilBarrels": 40,
+              "StoredFuelBarrels": 120,
+              "ReservedOilInboundBarrels": 8,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 251
+            },
+            "pose": {
+              "Position": {
+                "x": 918.5,
+                "y": 0.009179778397083282,
+                "z": 615.5
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          },
+          {
+            "entity": "Entity(747:5)",
+            "stock": {
+              "RuntimeBuildingId": 9,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 0,
+              "FuelStorageCapacity": 5000,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 0,
+              "StoredFuelBarrels": 429.8362121582031,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 360,
+              "Version": 4373
+            },
+            "pose": {
+              "Position": {
+                "x": 938,
+                "y": 0.009179778397083282,
+                "z": 604
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          },
+          {
+            "entity": "Entity(751:5)",
+            "stock": {
+              "RuntimeBuildingId": 11,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 2,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 8,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 28
+            },
+            "pose": {
+              "Position": {
+                "x": 934.5,
+                "y": 0.009179778397083282,
+                "z": 631
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            },
+            "factory": {
+              "RuntimeBuildingId": 11,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 0,
+              "Status": 2,
+              "BlockReason": 1,
+              "Version": 212
+            }
+          },
+          {
+            "entity": "Entity(2616:3)",
+            "stock": {
+              "RuntimeBuildingId": 15,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 14,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 30
+            },
+            "pose": {
+              "Position": {
+                "x": 843.5,
+                "y": 0.009179778397083282,
+                "z": 622
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            },
+            "factory": {
+              "RuntimeBuildingId": 15,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 27.2684326171875,
+              "Status": 1,
+              "BlockReason": 0,
+              "Version": 180
+            }
+          },
+          {
+            "entity": "Entity(2615:9)",
+            "stock": {
+              "RuntimeBuildingId": 16,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 4,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 31
+            },
+            "pose": {
+              "Position": {
+                "x": 875.5,
+                "y": 0.009179778397083282,
+                "z": 622
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            },
+            "factory": {
+              "RuntimeBuildingId": 16,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 0,
+              "Status": 2,
+              "BlockReason": 1,
+              "Version": 183
+            }
+          },
+          {
+            "entity": "Entity(869:9)",
+            "stock": {
+              "RuntimeBuildingId": 17,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 200,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 120,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 196.61239624023438,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 231
+            },
+            "pose": {
+              "Position": {
+                "x": 833.5,
+                "y": 0.009179778397083282,
+                "z": 604
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          },
+          {
+            "entity": "Entity(938:17)",
+            "stock": {
+              "RuntimeBuildingId": 18,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 5000,
+              "FuelStorageCapacity": 5000,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 120,
+              "StoredOilBarrels": 44,
+              "StoredFuelBarrels": 24,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 16,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 81
+            },
+            "pose": {
+              "Position": {
+                "x": 834.5,
+                "y": 0.009179778397083282,
+                "z": 585.5
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          },
+          {
+            "entity": "Entity(940:9)",
+            "stock": {
+              "RuntimeBuildingId": 19,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 0,
+              "FuelStorageCapacity": 5000,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 0,
+              "StoredFuelBarrels": 88,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 24,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 88,
+              "Version": 37
+            },
+            "pose": {
+              "Position": {
+                "x": 832,
+                "y": 0.009179778397083282,
+                "z": 562
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0,
+                  "w": 1
+                }
+              }
+            }
+          }
+        ],
+        "trucks": [
+          {
+            "entity": "Entity(983:11)",
+            "role": "LogisticsTruck",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 8,
+              "CargoFuelBarrels": 0
+            },
+            "pose": {
+              "Position": {
+                "x": 899.4192504882812,
+                "y": 0.00917959213256836,
+                "z": 619.611328125
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 4.672136871397119e-26,
+                  "y": 0.39155855774879456,
+                  "z": -9.871923697071525e-26,
+                  "w": 0.9201532006263733
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          },
+          {
+            "entity": "Entity(2621:71)",
+            "role": "Tanker",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 0,
+              "CargoFuelBarrels": 0
+            },
+            "pose": {
+              "Position": {
+                "x": 824.0360717773438,
+                "y": 0.00917959213256836,
+                "z": 559.47412109375
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0.029658518731594086,
+                  "z": 0,
+                  "w": -0.9995601177215576
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          },
+          {
+            "entity": "Entity(872:57)",
+            "role": "Tanker",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 0,
+              "CargoFuelBarrels": 0
+            },
+            "pose": {
+              "Position": {
+                "x": 838.348388671875,
+                "y": 0.00917959213256836,
+                "z": 575.0478515625
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": -0.052027277648448944,
+                  "z": 0,
+                  "w": -0.9986456632614136
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          },
+          {
+            "entity": "Entity(1099:103)",
+            "role": "LogisticsTruck",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 0,
+              "CargoFuelBarrels": 0
+            },
+            "pose": {
+              "Position": {
+                "x": 842.605712890625,
+                "y": 0.00917959213256836,
+                "z": 595.9136352539062
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 1.401298464324817e-45,
+                  "y": -0.9992269277572632,
+                  "z": -1.401298464324817e-45,
+                  "w": 0.03931456059217453
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          },
+          {
+            "entity": "Entity(980:21)",
+            "role": "Tanker",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 0,
+              "CargoFuelBarrels": 8
+            },
+            "pose": {
+              "Position": {
+                "x": 833.7136840820312,
+                "y": 0.00917959213256836,
+                "z": 569.8917846679688
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": 0,
+                  "y": 0.9971001148223877,
+                  "z": 0,
+                  "w": -0.07610108703374863
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          },
+          {
+            "entity": "Entity(2542:43)",
+            "role": "LogisticsTruck",
+            "hauler": {
+              "BarrelCapacity": 8,
+              "FillDurationSeconds": 2,
+              "UnloadDurationSeconds": 1.5,
+              "CargoOilBarrels": 8,
+              "CargoFuelBarrels": 0
+            },
+            "pose": {
+              "Position": {
+                "x": 905.5233154296875,
+                "y": 0.00917959213256836,
+                "z": 602.9909057617188
+              },
+              "Scale": 1,
+              "Rotation": {
+                "value": {
+                  "x": -1.401298464324817e-45,
+                  "y": -0.15111805498600006,
+                  "z": 1.401298464324817e-45,
+                  "w": -0.9885157942771912
+                }
+              }
+            },
+            "move": {
+              "Speed": 8,
+              "WalkSpeed": 8,
+              "RoadSpeedMultiplier": 1.350000023841858,
+              "ArriveDistance": 0.05000000074505806
+            }
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

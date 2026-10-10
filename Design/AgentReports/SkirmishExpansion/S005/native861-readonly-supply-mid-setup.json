@@ -1,0 +1,43 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SupplyReadOnly861.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "The name 'SkirmishLaunchProjection' does not exist in the current context",
+          "line": 11,
+          "column": 6,
+          "id": "CS0103"
+        },
+        {
+          "severity": "error",
+          "message": "The name 'SkirmishLaunchProjection' does not exist in the current context",
+          "line": 26,
+          "column": 134,
+          "id": "CS0103"
+        }
+      ],
+      "compileMs": 228,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005SupplyReadOnly861_b5fa3e27a2034a698fdf1d5a1de985ca",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,21 @@
+{
+  "run": "native859",
+  "result": "PassedScopedSourceFit",
+  "sourceHash": "78c3364c59a0bcc897c8bf7b739c302f38cb021173accc020e6f66f526f3fe14",
+  "wrapperExit": 0,
+  "bridgeExit": 0,
+  "preManifest": "final-859-current-source-fit-pre-source-manifest.json",
+  "postManifest": "final-859-current-source-fit-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "log": "native-859-current-map-source-fit.log",
+  "openingRoster": 32,
+  "airportSamples": 7776,
+  "nativeLegalAirportSamples": 7,
+  "nonOverlappingAirportPairs": 14,
+  "capacityCertified": false,
+  "westSupplyReadOnly": "native859-readonly-western-supply-sites.json",
+  "westSupplySamples": 2523,
+  "physicalGeometryChanged": false,
+  "missionAccepted": false,
+  "limitation": "Read-only native-valid samples do not prove joint access, parking capacity or a full mission."
+}

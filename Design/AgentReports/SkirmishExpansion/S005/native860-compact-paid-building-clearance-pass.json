@@ -1,0 +1,48 @@
+{
+  "run": "native860",
+  "result": "PassedScopedNativeStartingAndPaidClearance",
+  "sourceHash": "39fe2e886a5198768dd439e9443107f8a30911a65f4294fae61b6d33d6270c60",
+  "wrapperExit": 0,
+  "bridgeExit": 0,
+  "log": "native-860-compact-paid-building-clearance.log",
+  "preManifest": "final-860-compact-paid-clearance-current-pre-source-manifest.json",
+  "postManifest": "final-860-compact-paid-clearance-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "startingClearance": "s005-aria-live-155926-en-ae3d987227944b79ba561781a4c17249.jsonl.placement-clearance.json",
+  "paidClearance": "s005-aria-live-155926-en-ae3d987227944b79ba561781a4c17249.jsonl.placement-clearance-paid.json",
+  "startingBuildings": 14,
+  "paidTotalBuildings": 19,
+  "factions": 2,
+  "normalInput": "Touch; full live placement validator, normal costs and eight-cell service lanes",
+  "touchAudit": "native860-touch-contact-audit.json",
+  "recordedAndCompletedContacts": 108,
+  "paidSites": {
+    "OilPump": [
+      833.5,
+      604
+    ],
+    "Refinery": [
+      834.5,
+      585.5
+    ],
+    "FuelBladder": [
+      833,
+      563
+    ],
+    "Factories": [
+      [
+        843.5,
+        626
+      ],
+      [
+        875.5,
+        622
+      ]
+    ]
+  },
+  "physicalMapModified": false,
+  "fullMissionCertified": false,
+  "airCycleCertified": false,
+  "visualOwnerReview": "Deferred",
+  "devicePlayerAcceptance": "Pending"
+}

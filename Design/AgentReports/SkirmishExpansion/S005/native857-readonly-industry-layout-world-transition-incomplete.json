@@ -1,0 +1,6413 @@
+{
+  "result": "Failed: System.InvalidOperationException: Grid unavailable\n  at S005IndustryLayoutReadOnly857.Tick () [0x00077] in /private/tmp/S005IndustryLayoutReadOnly857.cs:73 ",
+  "scope": "Read-only live native placement samples on unchanged Campaign source; no route, joint compound, capacity or mission certification",
+  "tested": 590,
+  "counts": {
+    "OilPump": 457,
+    "Fabrication": 0,
+    "Refinery": 0,
+    "FuelBladder": 0
+  },
+  "sites": [
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 155.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 153,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1271.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1279.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1272,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 159.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 157,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1271.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1279.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1272,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 163.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 161,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1271.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1279.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1272,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 167.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 165,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 171.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 169,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 175.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 173,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1271.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1279.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1272,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1283.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1276,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1287.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1280,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 179.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 177,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1271.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1264,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1275.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1268,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 183.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 181,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 187.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 185,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 191.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 189,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1223.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1216,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1227.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1220,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1235.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1228,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1239.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1232,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 195.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 193,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 199.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 197,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 203.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 201,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1191.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1184,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1195.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1188,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1199.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1192,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1203.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1196,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1207.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1200,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1211.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1204,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1215.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1208,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1219.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1212,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1263.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1256,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1267.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1260,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1291.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1284,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1295.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1288,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 207.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 205,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1243.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1236,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1247.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1240,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1251.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1244,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 211.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 209,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1179.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1172,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1183.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1176,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1187.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1180,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1255.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1248,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1259.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1252,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1299.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1292,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1303.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1296,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1307.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1300,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1311.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1304,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1315.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1308,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1319.5,
+        "y": 0.0,
+        "z": 215.0
+      },
+      "rect": {
+        "m_XMin": 1312,
+        "m_YMin": 213,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    },
+    {
+      "kind": "OilPump",
+      "centre": {
+        "x": 1231.5,
+        "y": 0.0,
+        "z": 219.0
+      },
+      "rect": {
+        "m_XMin": 1224,
+        "m_YMin": 217,
+        "m_Width": 15,
+        "m_Height": 4
+      }
+    }
+  ],
+  "actorsOrdersResourcesClockPreviewGeometryModified": false,
+  "playerReady": false
+}

@@ -394,6 +394,10 @@ namespace Game.Editor
             }
             if (materialsPriorityStep == 1)
             {
+                // Selection and camera gestures take real simulation time. An
+                // empty pickup-phase truck can begin filling before the world
+                // tap (native861); do not repeatedly redirect its live cargo.
+                if (DeferUnsafeFactoryRedirect(em, now)) return true;
                 if (PlayerResumeWorldTap(em, materialsPriorityFactory, now))
                 {
                     materialsPriorityAttempts++;
@@ -415,6 +419,7 @@ namespace Game.Editor
                     " haulPhase=" + observedOrder.Phase + " status=" +
                     (em.HasComponent<UnitResourceHaulStatus>(materialsPriorityTruck)
                         ? JsonUtility.ToJson(em.GetComponentData<UnitResourceHaulStatus>(materialsPriorityTruck)) : "none"));
+                if (DeferUnsafeFactoryRedirect(em, now)) return true;
                 ScreenCapture.CaptureScreenshot(LiveTracePath() + ".factory-" + materialsPriorityFactoryId +
                     "-attempt-" + materialsPriorityAttempts + ".png");
                 // The native command can reject a temporarily unavailable bay.
@@ -431,6 +436,45 @@ namespace Game.Editor
                 " truck=" + em.GetComponentData<SkirmishAttemptOwnedComponent>(materialsPriorityTruck).StableObjectId +
                 " nativeOrderObserved=1 cargoOrOrderInjected=0 defaultPolicyChanged=0");
             materialsPriorityTruck = materialsPriorityFactory = Entity.Null;
+            materialsPriorityDue = now + 2;
+            return true;
+        }
+
+        private static bool DeferUnsafeFactoryRedirect(EntityManager em, double now)
+        {
+            var cargo = em.GetComponentData<UnitResourceHauler>(materialsPriorityTruck);
+            var order = em.HasComponent<UnitResourceHaulOrder>(materialsPriorityTruck)
+                ? em.GetComponentData<UnitResourceHaulOrder>(materialsPriorityTruck) : default;
+            // After a world tap, an observed matching destination remains an
+            // acknowledgment even if loading has progressed. Before the tap,
+            // an automatic assignment makes this optional redirect unnecessary.
+            bool alreadyAssigned = order.DestinationBuildingId == materialsPriorityFactoryId;
+            if (alreadyAssigned && materialsPriorityStep != 1) return false;
+            var stock = em.GetComponentData<BuildingResourceStorageComponent>(materialsPriorityFactory);
+            var recipe = em.GetComponentData<MaterialFabricationComponent>(materialsPriorityFactory);
+            bool funded = stock.StoredOilBarrels - stock.ReservedOilOutboundBarrels +
+                stock.ReservedOilInboundBarrels >= recipe.OilConsumedPerCycle;
+            bool busy = cargo.CargoOilBarrels > 0 || cargo.CargoFuelBarrels > 0 ||
+                em.HasComponent<UnitResourceHaulOrder>(materialsPriorityTruck) && order.Phase != 1;
+            bool oldFactoryNeedsDelivery = false;
+            using (var factories = em.CreateEntityQuery(typeof(MaterialFabricationComponent), typeof(BuildingResourceStorageComponent)))
+            using (var buildings = factories.ToEntityArray(Allocator.Temp))
+                foreach (var building in buildings)
+                {
+                    var previousRecipe = em.GetComponentData<MaterialFabricationComponent>(building);
+                    if (previousRecipe.RuntimeBuildingId != order.DestinationBuildingId || previousRecipe.ProductionEnabled == 0) continue;
+                    var previousStock = em.GetComponentData<BuildingResourceStorageComponent>(building);
+                    oldFactoryNeedsDelivery = previousStock.StoredOilBarrels - previousStock.ReservedOilOutboundBarrels +
+                        previousStock.ReservedOilInboundBarrels - cargo.BarrelCapacity < previousRecipe.OilConsumedPerCycle;
+                }
+            if (!alreadyAssigned && !funded && !busy && !oldFactoryNeedsDelivery) return false;
+            string reason = alreadyAssigned ? "FactoryAlreadyAssigned" : funded ? "FactoryBatchFunded" :
+                busy ? "TruckStartedDelivery" : "PreviousFactoryNeedsDelivery";
+            Debug.Log("[S005MaterialsPriority] phase=Deferred reason=" + reason +
+                " factory=" + materialsPriorityFactoryId + " cargoOil=" + cargo.CargoOilBarrels +
+                " haulPhase=" + order.Phase + " orderAcknowledged=0 cargoOrOrderInjected=0 input=Touch");
+            materialsPriorityTruck = materialsPriorityFactory = Entity.Null;
+            materialsPriorityStep = materialsPriorityAttempts = 0;
             materialsPriorityDue = now + 2;
             return true;
         }
@@ -509,7 +553,8 @@ namespace Game.Editor
             {
                 // Start the normal fabrication investment before buying the
                 // logistics fleet so it can fund the remaining purchases.
-                paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
+                paidIndustryPlacementFocus ??= fixedWingCycleOnly
+                    ? new Vector3(859.5f, 0, 622f) : FindNewestPlayerOilSourcePosition(em);
                 int warmupAdded = paidIndustryAddedTarget;
                 if (!TickPaidIndustryBuilding(now, "Building_Ammunition_Depot", CountLivingPlayerFabrication(em),
                     paidIndustryOpeningCount + warmupAdded, "Fabrication", warmupAdded, paidIndustryOpeningCount, 100)) return false;
@@ -522,7 +567,12 @@ namespace Game.Editor
             if (warmupOnly) return paidIndustryWarmReady;
             if (!paidIndustryOilReady)
             {
-                paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
+                // Native859 sampled these compact western supply pads on the
+                // current Campaign source. They are search preferences only:
+                // every purchase still requires the full live native validator,
+                // eight-cell service spacing and normal touch confirmation.
+                paidIndustryPlacementFocus ??= fixedWingCycleOnly
+                    ? new Vector3(833.5f, 0, 604f) : FindNewestPlayerOilSourcePosition(em);
                 if (!TickPaidIndustryBuilding(now, Game.Skirmish.Contracts.SkirmishStructureIds.VisualKey(Game.Skirmish.Contracts.SkirmishStructureIds.OilPump), CountLivingPlayerOilSources(em),
                     paidIndustryOpeningOilCount + 1, "OilPump", 1, paidIndustryOpeningOilCount, 100)) return false;
                 paidIndustryOilReady = true;
@@ -538,7 +588,8 @@ namespace Game.Editor
                 // Choose the paid refinery near its oil supply, rather than HQ.
                 // HQ proximity previously selected a legal site across a long
                 // haul route and starved materials during aircraft research.
-                paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
+                paidIndustryPlacementFocus ??= fixedWingCycleOnly
+                    ? new Vector3(834.5f, 0, 585.5f) : FindNewestPlayerOilSourcePosition(em);
                 if (!TickPaidIndustryBuilding(now, "Building_Refinery", CountLivingPlayerRefineries(em),
                     paidIndustryOpeningRefineryCount + 1, "Refinery", 1, paidIndustryOpeningRefineryCount, 160)) return false;
                 paidIndustryFuelReady = true;
@@ -552,7 +603,8 @@ namespace Game.Editor
                 // A nearby receiving store keeps eight-barrel tanker loads from
                 // being mostly consumed by the long trip to the original store.
                 // Purchase and placement still use normal player input and rules.
-                paidIndustryPlacementFocus ??= FindNewestPlayerRefineryPosition(em);
+                paidIndustryPlacementFocus ??= fixedWingCycleOnly
+                    ? new Vector3(833f, 0, 563f) : FindNewestPlayerRefineryPosition(em);
                 if (!TickPaidIndustryBuilding(now, "Building_Fuel_Bladder", CountLivingPlayerFuelStores(em),
                     paidIndustryOpeningFuelStorageCount + 1, "FuelBladder", 1, paidIndustryOpeningFuelStorageCount, 40)) return false;
                 paidIndustryLocalFuelStorageReady = true;

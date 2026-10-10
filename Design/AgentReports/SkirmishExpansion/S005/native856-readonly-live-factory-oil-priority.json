@@ -1,0 +1,195 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005OilDemandReadOnly852.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 700,
+      "executeMs": 11,
+      "assemblyName": "PipelineRunScript_S005OilDemandReadOnly852_0649611f62684b189193c02b4eea44f4",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyNativeOilDemandObservation; no actor/order/resource/clock writes",
+        "frame": 12647,
+        "buildings": [
+          {
+            "id": 11,
+            "resolved": true,
+            "priority": 0,
+            "requiredOil": 10,
+            "stock": {
+              "RuntimeBuildingId": 11,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 6,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 8,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 20
+            },
+            "recipe": {
+              "RuntimeBuildingId": 11,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 0,
+              "Status": 2,
+              "BlockReason": 1,
+              "Version": 152
+            }
+          },
+          {
+            "id": 15,
+            "resolved": true,
+            "priority": 0,
+            "requiredOil": 10,
+            "stock": {
+              "RuntimeBuildingId": 15,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 8,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 8,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 24
+            },
+            "recipe": {
+              "RuntimeBuildingId": 15,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 0,
+              "Status": 2,
+              "BlockReason": 1,
+              "Version": 123
+            }
+          },
+          {
+            "id": 16,
+            "resolved": true,
+            "priority": 0,
+            "requiredOil": 10,
+            "stock": {
+              "RuntimeBuildingId": 16,
+              "OwnerFactionId": 1,
+              "OilStorageCapacity": 24,
+              "FuelStorageCapacity": 0,
+              "OilBarrelsPerDay": 0,
+              "FuelBarrelsPerDay": 0,
+              "StoredOilBarrels": 10,
+              "StoredFuelBarrels": 0,
+              "ReservedOilInboundBarrels": 0,
+              "ReservedOilOutboundBarrels": 0,
+              "ReservedFuelInboundBarrels": 0,
+              "ReservedFuelOutboundBarrels": 0,
+              "CivilianFuelReserveBarrels": 0,
+              "ReceivedHaulerFuelBarrels": 0,
+              "Version": 19
+            },
+            "recipe": {
+              "RuntimeBuildingId": 16,
+              "OwnerFactionId": 1,
+              "ProductionEnabled": 1,
+              "OutputCapacityPolicy": 0,
+              "OilConsumedPerCycle": 10,
+              "MaterialsOutputPerCycle": 50,
+              "CycleDurationSeconds": 30,
+              "CycleProgressSeconds": 23.292490005493164,
+              "Status": 1,
+              "BlockReason": 0,
+              "Version": 116
+            }
+          }
+        ],
+        "input": [
+          {
+            "QueuedMoveOrderToken": 98,
+            "DragStart": {
+              "x": 1505.518798828125,
+              "y": 85.13623046875
+            },
+            "DragCurrent": {
+              "x": 1505.518798828125,
+              "y": 85.13623046875
+            },
+            "LastPointerPosition": {
+              "x": 1505.518798828125,
+              "y": 85.13623046875
+            },
+            "PointerPressedOverUi": 1,
+            "IsDraggingSelection": 0,
+            "IgnoreNextLeftMouseRelease": 0,
+            "SkipNextWorldReleaseAfterSelection": 0,
+            "IgnoreWorldCommandsUntilFrame": 11962,
+            "IgnoreUiClickUntilRelease": 0,
+            "SelectionModeHoldArmed": 0,
+            "SelectionModeHoldStartTime": 0,
+            "HasQueuedMoveOrder": 0,
+            "QueuedMoveOrderScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "QueuedMoveOrderFrame": -1,
+            "LastLiveSelectionRect": {
+              "x": 1505.518798828125,
+              "y": 85.13623046875,
+              "z": 1505.518798828125,
+              "w": 85.13623046875
+            },
+            "HasLiveSelectionRect": 0,
+            "LastKnownPointerPosition": {
+              "x": 493,
+              "y": -1894
+            },
+            "HasLastKnownPointerPosition": 1,
+            "ActiveCommandMode": 0,
+            "ActiveCommandModeFrame": 0,
+            "ActiveCommandModeOneShot": 0,
+            "ActiveCommandModeRequiresWorldTarget": 0,
+            "ActiveBoardCommandDirection": 0,
+            "BoardPassengerDragArmed": 0,
+            "HasLastMoveTargetClick": 0,
+            "LastMoveTargetClickScreenPosition": {
+              "x": 0,
+              "y": 0
+            },
+            "LastMoveTargetClickTime": 0
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

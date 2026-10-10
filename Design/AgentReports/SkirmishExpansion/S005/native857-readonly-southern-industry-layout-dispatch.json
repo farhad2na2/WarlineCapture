@@ -1,0 +1,33 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005IndustryLayoutReadOnly857.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 80,
+      "executeMs": 4,
+      "assemblyName": "PipelineRunScript_S005IndustryLayoutReadOnly857_8f22dab433de4f33b53c94dc1e414517",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyNativeIndustrySiteFit",
+        "started": true,
+        "frameBudgetMs": 5,
+        "writesToActorsOrdersResourcesClockPreviewOrGeometry": false,
+        "output": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native857-readonly-industry-layout-fit.json"
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

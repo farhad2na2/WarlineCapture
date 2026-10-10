@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005InputGraphReadOnly871.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 316,
+      "executeMs": 27,
+      "assemblyName": "PipelineRunScript_S005InputGraphReadOnly871_6f2fbd3e68d144be97414df2238e529b",
+      "success": true,
+      "result": "readOnly=1 actorsResourcesClockWrites=0 visited=1232; activePlacement=False; buildingCamera=Main Camera; inputContext.GetWorldCamera=Main Camera (UnityEngine.Camera); inputContext.IsPlayRequested=False; inputContext.GetActivePlacement=null"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

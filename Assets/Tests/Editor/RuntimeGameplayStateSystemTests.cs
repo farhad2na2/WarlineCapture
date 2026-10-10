@@ -23,7 +23,9 @@ public sealed class RuntimeGameplayStateSystemTests
             RunCase(test => test.ReadGameplayState_RebindsAfterWorldReplacement());
             RunCase(test => test.SeparateWorlds_DoNotShareGameplayState());
             RunCase(test => test.DisposedWorld_ReadsDefaultAndIgnoresWrites());
-            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=9");
+            RunCase(test => test.BuildingStartup_BindsInputToCurrentWorldWithoutResettingState());
+            RunCase(test => test.RoadStartup_BindsContextsToCurrentWorldWithoutResettingState());
+            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=11");
             ValidationExit.Passed();
         }
         catch (System.Exception exception)
@@ -218,6 +220,71 @@ public sealed class RuntimeGameplayStateSystemTests
         Assert.DoesNotThrow(() => _ = runtimeState.PlayRequested);
         Assert.IsFalse(runtimeState.PlayRequested);
         Assert.DoesNotThrow(() => runtimeState.PlayRequested = true);
+    }
+
+    [Test]
+    public void BuildingStartup_BindsInputToCurrentWorldWithoutResettingState()
+    {
+        var state = new RuntimeGameplayStateSystem(_world.EntityManager)
+        {
+            PlayRequested = true,
+            SelectionModeActive = true,
+            PlayerAutoModeEnabled = true
+        };
+        RuntimeGameplayStateComponent before = state.ReadGameplayState();
+        var root = new GameObject("BuildingStartupStateTest");
+        try
+        {
+            var source = new BuildingGameplaySourceCompositionSystemHelper();
+            new BuildingGameplayStartupCompositionSystemHelper().Initialize(
+                source, null, null, root.transform, default, null, null);
+            var input = new BuildingPlacementInputTickCompositionSystemHelper().Create(
+                source, default, null, 10f,
+                (_, _, _) => default, (_, _, _) => default, _ => default);
+
+            Assert.IsTrue(input.IsPlayRequested());
+            Assert.IsTrue(input.RuntimeGameplayStateSystem.SelectionModeActive);
+            Assert.AreEqual(before, state.ReadGameplayState());
+
+            state.PlayRequested = false;
+            Assert.IsFalse(input.IsPlayRequested());
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public void RoadStartup_BindsContextsToCurrentWorldWithoutResettingState()
+    {
+        var state = new RuntimeGameplayStateSystem(_world.EntityManager)
+        {
+            PlayRequested = true,
+            SelectionModeActive = true,
+            PlayerAutoModeEnabled = true
+        };
+        RuntimeGameplayStateComponent before = state.ReadGameplayState();
+        var root = new GameObject("RoadStartupStateTest");
+        try
+        {
+            var source = new RoadBuildCompositionSourceCompositionSystemHelper();
+            var contexts = new RoadBuildCompositionContextCompositionSystemHelper();
+            new RoadBuildCompositionLifecycleCompositionSystemHelper().Init(
+                source, contexts, null, null, root.transform, null);
+            var input = contexts.CreateRoadBuildInteractionContext(source);
+
+            Assert.IsTrue(input.RuntimeGameplayStateSystem.PlayRequested);
+            Assert.IsTrue(input.RuntimeGameplayStateSystem.SelectionModeActive);
+            Assert.AreEqual(before, state.ReadGameplayState());
+
+            state.PlayRequested = false;
+            Assert.IsFalse(input.RuntimeGameplayStateSystem.PlayRequested);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

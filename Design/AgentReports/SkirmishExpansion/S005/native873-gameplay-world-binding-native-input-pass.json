@@ -1,0 +1,28 @@
+{
+  "result": "PassedScopedNativeInputGate",
+  "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-872-gameplay-world-binding-pre-source-manifest.json",
+  "postSourceManifest": "final-873-starting-fuel-click-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "log": "native-873-starting-fuel-click.log",
+  "trace": "s005-aria-live-104734-en-fcf63cad555c46838ecbe97e8259051e.jsonl",
+  "inputAudit": "native873-touch-contact-audit.json",
+  "recordedContacts": 12,
+  "allRecordedContactsEnded": true,
+  "normalInput": true,
+  "markers": [
+    "[BuildingSelectionGate] phase=Pressed point=(777.00, 291.52) pending=False command=False ignore=False ui=True unitUi=False",
+    "[BuildingSelectionGate] phase=Pressed point=(215.20, 125.67) pending=False command=False ignore=False ui=True unitUi=False",
+    "[BuildingSelectionGate] phase=Pressed point=(1587.90, 259.80) pending=True command=False ignore=False ui=False unitUi=False",
+    "[BuildingSelectionGate] phase=Released point=(1587.90, 259.80) command=False ignore=False ui=False unitUi=False",
+    "[SelectedHaulInput] building=9 selected=1 result=Begin",
+    "[SelectedHaulInput] building=9 selected=1 result=ReservationFailed",
+    "[S005StartingFuelClick] result=ObservedOnly target=9 selected=False order=none completeMatchCertified=0",
+    "[SkirmishS003Startup] result=Passed reason=startingFuelClickOnly"
+  ],
+  "scope": "Normal native building tap reaches the selected-hauler handler in a fresh Play World. No route, delivery, aircraft cycle or complete mission is certified.",
+  "completeMissionCertified": false,
+  "playerReady": false
+}

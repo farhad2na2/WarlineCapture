@@ -16,6 +16,9 @@ namespace Game.Runtime
             BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext = default)
         {
+            if (source.RoadBuildEcsCompositionSystemHelper.TryGetEntityManager(out EntityManager entityManager))
+                source.RuntimeGameplayStateSystem.Bind(entityManager);
+
             source.RoadBuildStartupState = source.RoadBuildStartupSystem.Initialize(
                 configAsset,
                 sceneWorldCamera,

@@ -1,0 +1,15 @@
+{
+  "result": "PassedFocused",
+  "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-872-gameplay-world-binding-pre-source-manifest.json",
+  "postSourceManifest": "final-872-gameplay-world-binding-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "log": "native-872-gameplay-world-binding.log",
+  "tests": 11,
+  "scope": "Shared building and road startup bind existing gameplay state into their input contexts; values preserved and external PlayRequested changes observed. Isolated ECS tests, not normal-input mission acceptance.",
+  "editorWarnings": "Existing startup visual helpers warn about renderer.material in Edit mode; retained in raw log.",
+  "completeMissionCertified": false,
+  "playerReady": false
+}

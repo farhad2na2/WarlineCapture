@@ -18,6 +18,7 @@ namespace Game.Runtime
                 BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
             if (childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
             {
+                childSystems.RuntimeGameplayStateSystem.Bind(entityManager);
                 childSystems.RuntimeFactionResourceSystemHelper.Configure(entityManager);
                 childSystems.UnitPathfindingPendingStateReader.Bind(entityManager);
             }

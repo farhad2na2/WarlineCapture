@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current full source fingerprint: `98c423df5e83a3a76e510410508f3246bc672f3edb90a749753ba4062ebe84f2`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current full source fingerprint: `443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city source, including the shared visual refinement merged in PR64. This task now tests compact legal industry placement through normal input and explicitly includes the interface arrow in the existing fallback font. Gameplay costs, rates, capacities and deadlines remain fixed. Owner visual review remains deferred; real player/device acceptance is pending.
 
@@ -661,3 +661,15 @@ Actual wrapper1; full PRE/POST source unchanged (`f069e4e38699479e85774982b6b4da
 ### Native867–870 fleet selection regression
 
 Native867 failed after paid Strike parking when additive Oil truck selection carried into retirement; all Oil trucks were released. The Editor test player now clears through the visible HUD and observes one native actor/group before single-vehicle haul, retirement and aircraft actions, and clears unit selection before factory controls. Native868/869 failed short fixtures are retained; native869 recorded two paid production receipts, invalidating its intended one-purchase fleet count. Native870 fixed that fixture, reproduced two selected Oil trucks, cleared through normal input, retired exactly one truck, and observed one Oil truck plus one Tanker surviving with input/receipt violations0. Actual wrapper/native bridge0, strict contacts ended, full source PRE/POST unchanged (`4fcf3d4940c07982dfb5964257217f20e312caa75b43b311ae25ab6d0fd64d04`). Full support conversion, aircraft cycle and player readiness remain pending.
+
+### Native871 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`4fcf3d4940c07982dfb5964257217f20e312caa75b43b311ae25ab6d0fd64d04`). Cycle failed: required pass marker absent. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native871-normal-paid-strike-cycle-failure.json`.
+
+## Current gameplay input World binding
+
+Native871 was stopped after a read-only observation proved building input `IsPlayRequested=false` during the running match. The shared building and road startup facades were unbound. Startup now binds them to the current World before constructing input contexts, without resetting gameplay state. Native872 passed 11 focused cases with actual wrapper/bridge exit0 and identical full PRE/POST manifests; compiler completed with errors[]. Existing Edit-mode visual material warnings are retained. Consecutive native Play-session input probes and complete mission acceptance remain pending.
+
+Native873 reached `[SelectedHaulInput] ... selected=1 result=Begin` after an unblocked normal world tap in a fresh Play session. The empty starting Fuel store correctly failed reservation. Actual wrapper/bridge exit0, 12/12 contacts ended and exact full source443cf PRE/POST matched. This certifies the input gate only, not a delivery or mission. Proof `native873-gameplay-world-binding-native-input-pass.json`.
+
+Native874 repeated the same normal-input probe immediately after native873 without recompilation. Its new Play World also reached the selected-hauler handler, with actual wrapper/bridge exit0, 12/12 contacts ended and identical full source443cf PRE/POST. Proof `native874-gameplay-world-binding-native-input-pass.json`. Both checks are scoped input acceptance; complete paid flight and mission gates remain open.

@@ -1,0 +1,1691 @@
+{
+    "map": "CityEdgeAirfield",
+    "result": "Passed",
+    "beforeHash": "5dc790b721b1925e7b807c8442c2e7b13e3f1f4f6cf9aba6699053649cea2012",
+    "afterHash": "77e2a79f023a5edf386ac2c77be56f0ab9df659d7b62c1bae7520a07e6176a7e",
+    "protectedHash": "88d4c1cce6f4a438ffc3c65eaf0753916e475ba7a988f2b2451f00886352686a",
+    "protectionKind": "",
+    "canonicalOwnershipHash": "",
+    "supportVerificationHash": "a6f209d1eec84b5c0f3afa3bbff96fa76881d26e3ed9d1fd08ed99ea997405fd",
+    "independentAttachmentIdentitiesRemoved": 0,
+    "attachments": [],
+    "supportedProps": 97,
+    "parkedVehicles": 1,
+    "vehiclePalettes": 25,
+    "roofMaterials": 522,
+    "groundMaterials": 1317,
+    "waterEdges": 0,
+    "wearStamps": 2967,
+    "renderersBefore": 25127,
+    "renderersAfter": 25127,
+    "trianglesBefore": 16335637,
+    "trianglesAfter": 16335637,
+    "moves": [
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 406.0625,
+                "y": 6.000572204589844,
+                "z": 453.7048645019531
+            },
+            "after": {
+                "x": 392.21807861328127,
+                "y": 8.032103538513184,
+                "z": 456.3442077636719
+            },
+            "transformId": 560364785,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 449.89923095703127,
+                "y": 12.44636344909668,
+                "z": 432.3428649902344
+            },
+            "after": {
+                "x": 405.327392578125,
+                "y": 7.808250427246094,
+                "z": 434.0570373535156
+            },
+            "transformId": 217123920,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 409.1173095703125,
+                "y": 6.7458977699279789,
+                "z": 407.3878479003906
+            },
+            "after": {
+                "x": 397.53485107421877,
+                "y": 6.204591274261475,
+                "z": 389.5892639160156
+            },
+            "transformId": 1767351240,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 408.0625,
+                "y": 6.000572204589844,
+                "z": 451.9048767089844
+            },
+            "after": {
+                "x": 392.2244873046875,
+                "y": 7.621551513671875,
+                "z": 460.8522644042969
+            },
+            "transformId": 214690937,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 493.5,
+                "y": 4.221394062042236,
+                "z": 492.20001220703127
+            },
+            "after": {
+                "x": 394.635986328125,
+                "y": 3.205803394317627,
+                "z": 472.80767822265627
+            },
+            "transformId": 47949450,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 411.1173095703125,
+                "y": 6.7458977699279789,
+                "z": 405.5878601074219
+            },
+            "after": {
+                "x": 398.8665771484375,
+                "y": 11.34640121459961,
+                "z": 402.5425720214844
+            },
+            "transformId": 803108478,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 451.89923095703127,
+                "y": 12.44636344909668,
+                "z": 430.5428771972656
+            },
+            "after": {
+                "x": 405.32098388671877,
+                "y": 7.416606903076172,
+                "z": 428.7265319824219
+            },
+            "transformId": 5511701,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_CityEdgeAirfield/Vehicles/SM_Veh_APC_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 517.5820922851563,
+                "y": -0.029999999329447748,
+                "z": 513.7954711914063
+            },
+            "after": {
+                "x": 517.5820922851563,
+                "y": -0.029999999329447748,
+                "z": 513.8701782226563
+            },
+            "transformId": 4167568167384340,
+            "instanceId": 1451066629,
+            "prefabTransformId": 4167568167384340
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 605.8540649414063,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 603.2476196289063,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 453397529,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 648.6351928710938,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 651.2416381835938,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 970096932,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 530.0540771484375,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 532.6605224609375,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 55566734,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 786.65869140625,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 784.05224609375,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1383958573,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 843.7274169921875,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 841.1209716796875,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1741376549,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 856.5040893554688,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 853.8976440429688,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1588740859,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 917.0485229492188,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 914.4420776367188,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1448361974,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 956.0711059570313,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 953.4646606445313,
+                "y": 11.382441520690918,
+                "z": 711.97998046875
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1502412625,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 782.1544189453125,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 784.7608642578125,
+                "y": 11.382441520690918,
+                "z": 734.845947265625
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 905636227,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.81207275390627,
+                "y": 5.197999954223633,
+                "z": 486.8429870605469
+            },
+            "after": {
+                "x": 394.845947265625,
+                "y": 14.196059226989746,
+                "z": 481.0335998535156
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 1115480357,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.81207275390627,
+                "y": 5.197999954223633,
+                "z": 614.9701538085938
+            },
+            "after": {
+                "x": 398.02001953125,
+                "y": 11.382441520690918,
+                "z": 612.3637084960938
+            },
+            "transformId": 902678225537898975,
+            "instanceId": 461419981,
+            "prefabTransformId": 902678225537898975
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 599.8270874023438,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 600.0446166992188,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 453397529,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 654.6621704101563,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 651.2416381835938,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 970096932,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 536.0810546875,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 532.6605224609375,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 55566734,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 780.6317138671875,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 780.8492431640625,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1383958573,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 837.700439453125,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 837.91796875,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1741376549,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 850.4771118164063,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 850.6946411132813,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1588740859,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 911.0215454101563,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 911.2390747070313,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1448361974,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 950.0441284179688,
+                "y": 5.197999954223633,
+                "z": 720.1879272460938
+            },
+            "after": {
+                "x": 950.2616577148438,
+                "y": 14.19605541229248,
+                "z": 715.154052734375
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1502412625,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 788.181396484375,
+                "y": 5.197999954223633,
+                "z": 729.8120727539063
+            },
+            "after": {
+                "x": 784.7608642578125,
+                "y": 11.382441520690918,
+                "z": 738.02001953125
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 905636227,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.81207275390627,
+                "y": 5.197999954223633,
+                "z": 480.8160095214844
+            },
+            "after": {
+                "x": 398.02001953125,
+                "y": 11.382441520690918,
+                "z": 484.2366027832031
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 1115480357,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.81207275390627,
+                "y": 5.197999954223633,
+                "z": 608.9431762695313
+            },
+            "after": {
+                "x": 383.44921875,
+                "y": 11.29294490814209,
+                "z": 602.3577270507813
+            },
+            "transformId": 6841950912773333218,
+            "instanceId": 461419981,
+            "prefabTransformId": 6841950912773333218
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 599.8270874023438,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 612.5725708007813,
+                "y": 10.186910629272461,
+                "z": 729.4028930664063
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 453397529,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 654.6621704101563,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 654.4463500976563,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 970096932,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 536.0810546875,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 535.865234375,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 55566734,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 780.6317138671875,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 775.0748291015625,
+                "y": 10.126911163330079,
+                "z": 716.1476440429688
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1383958573,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 837.700439453125,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 828.02001953125,
+                "y": 2.137026786804199,
+                "z": 713.5698852539063
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1741376549,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 850.4771118164063,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 862.8716430664063,
+                "y": 10.126911163330079,
+                "z": 716.1476440429688
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1588740859,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 911.0215454101563,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 910.7096557617188,
+                "y": -0.08297348022460938,
+                "z": 731.9797973632813
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1448361974,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 950.0441284179688,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 940.3906860351563,
+                "y": 5.524169921875,
+                "z": 713.8709106445313
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1502412625,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 788.181396484375,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 787.965576171875,
+                "y": 14.198259353637696,
+                "z": 734.7103881835938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 905636227,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.8721008300781,
+                "y": 8.781999588012696,
+                "z": 480.8160095214844
+            },
+            "after": {
+                "x": 377.72503662109377,
+                "y": 2.9170284271240236,
+                "z": 486.26922607421877
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 1115480357,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.8721008300781,
+                "y": 8.781999588012696,
+                "z": 608.9431762695313
+            },
+            "after": {
+                "x": 381.53887939453127,
+                "y": 11.295148849487305,
+                "z": 601.3607788085938
+            },
+            "transformId": 9099033498540693137,
+            "instanceId": 461419981,
+            "prefabTransformId": 9099033498540693137
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 605.8540649414063,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 612.5725708007813,
+                "y": 10.186910629272461,
+                "z": 727.4857788085938
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 453397529,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 648.6351928710938,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 639.1854858398438,
+                "y": -0.08297348022460938,
+                "z": 733.5807495117188
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 970096932,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 530.0540771484375,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 523.6865234375,
+                "y": 10.126911163330079,
+                "z": 733.8523559570313
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 55566734,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 786.65869140625,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 796.267333984375,
+                "y": 9.364215850830079,
+                "z": 713.0862426757813
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1383958573,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 843.7274169921875,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 826.3216552734375,
+                "y": 16.97835350036621,
+                "z": 716.5717163085938
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1741376549,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 856.5040893554688,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 862.8716430664063,
+                "y": 10.126911163330079,
+                "z": 714.3032836914063
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1588740859,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 917.0485229492188,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 926.7308959960938,
+                "y": 7.33277702331543,
+                "z": 716.9750366210938
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1448361974,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 956.0711059570313,
+                "y": 8.781999588012696,
+                "z": 720.1279296875
+            },
+            "after": {
+                "x": 962.4386596679688,
+                "y": 10.126911163330079,
+                "z": 716.1476440429688
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1502412625,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 782.1544189453125,
+                "y": 8.781999588012696,
+                "z": 729.8720703125
+            },
+            "after": {
+                "x": 772.7047119140625,
+                "y": -0.08297348022460938,
+                "z": 733.5807495117188
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 905636227,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.8721008300781,
+                "y": 8.781999588012696,
+                "z": 486.8429870605469
+            },
+            "after": {
+                "x": 394.32110595703127,
+                "y": 6.649847030639648,
+                "z": 496.2357177734375
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 1115480357,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "Map_CityEdgeAirfield/City/Shop_05/Model/SM_Bld_Village_ClothCover_Small_03 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 389.8721008300781,
+                "y": 8.781999588012696,
+                "z": 614.9701538085938
+            },
+            "after": {
+                "x": 394.42437744140627,
+                "y": 6.020216941833496,
+                "z": 625.6196899414063
+            },
+            "transformId": 5328843907673651205,
+            "instanceId": 461419981,
+            "prefabTransformId": 5328843907673651205
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 375.1011047363281,
+                "y": 6.099999904632568,
+                "z": 499.52801513671877
+            },
+            "after": {
+                "x": 394.5959777832031,
+                "y": 4.809885501861572,
+                "z": 506.63800048828127
+            },
+            "transformId": 1932470278,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 368.6316223144531,
+                "y": 13.471892356872559,
+                "z": 527.1264038085938
+            },
+            "after": {
+                "x": 372.1296691894531,
+                "y": 6.767411231994629,
+                "z": 527.5112915039063
+            },
+            "transformId": 934370391,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 377.7799377441406,
+                "y": 6.099999904632568,
+                "z": 465.7371826171875
+            },
+            "after": {
+                "x": 364.4443664550781,
+                "y": 10.044635772705079,
+                "z": 435.342041015625
+            },
+            "transformId": 490085097,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 377.02679443359377,
+                "y": 6.099999904632568,
+                "z": 582.78759765625
+            },
+            "after": {
+                "x": 395.63604736328127,
+                "y": 2.817448139190674,
+                "z": 585.25
+            },
+            "transformId": 1615090823,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 405.3209533691406,
+                "y": 10.180158615112305,
+                "z": 432.3854064941406
+            },
+            "after": {
+                "x": 398.2740783691406,
+                "y": 8.45196533203125,
+                "z": 430.1593933105469
+            },
+            "transformId": 1179356348,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 491.5,
+                "y": 4.221394062042236,
+                "z": 494.0
+            },
+            "after": {
+                "x": 394.60882568359377,
+                "y": 4.809885501861572,
+                "z": 514.5411376953125
+            },
+            "transformId": 1199654836,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 393.9098205566406,
+                "y": 14.436970710754395,
+                "z": 612.2792358398438
+            },
+            "after": {
+                "x": 394.6087951660156,
+                "y": 4.8098859786987309,
+                "z": 598.9126586914063
+            },
+            "transformId": 780541117,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 372.1886291503906,
+                "y": 13.471892356872559,
+                "z": 626.6920166015625
+            },
+            "after": {
+                "x": 375.6866760253906,
+                "y": 6.767407417297363,
+                "z": 627.0767822265625
+            },
+            "transformId": 464010233,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.91064453125,
+                "y": 13.471892356872559,
+                "z": 625.5369873046875
+            },
+            "after": {
+                "x": 392.37896728515627,
+                "y": 7.808255195617676,
+                "z": 636.9371337890625
+            },
+            "transformId": 844229235,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 461.471923828125,
+                "y": 6.099999904632568,
+                "z": 432.7802429199219
+            },
+            "after": {
+                "x": 398.286865234375,
+                "y": 8.45196533203125,
+                "z": 437.7246398925781
+            },
+            "transformId": 1323310267,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_01",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 473.52978515625,
+                "y": 14.436970710754395,
+                "z": 433.9098205566406
+            },
+            "after": {
+                "x": 385.12677001953127,
+                "y": 8.306879997253418,
+                "z": 430.1593933105469
+            },
+            "transformId": 16831511,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 373.5925598144531,
+                "y": 6.099999904632568,
+                "z": 513.2342529296875
+            },
+            "after": {
+                "x": 390.7137756347656,
+                "y": 7.808254718780518,
+                "z": 528.3429565429688
+            },
+            "transformId": 1846612758,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.6024169921875,
+                "y": 7.181790351867676,
+                "z": 508.3096008300781
+            },
+            "after": {
+                "x": 393.502685546875,
+                "y": 8.451969146728516,
+                "z": 535.37060546875
+            },
+            "transformId": 2110297534,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 393.9098205566406,
+                "y": 14.436970710754395,
+                "z": 484.152099609375
+            },
+            "after": {
+                "x": 383.4615173339844,
+                "y": 8.306879997253418,
+                "z": 436.05938720703127
+            },
+            "transformId": 863712274,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 392.3854064941406,
+                "y": 10.180158615112305,
+                "z": 528.3366088867188
+            },
+            "after": {
+                "x": 390.1593933105469,
+                "y": 8.306882858276368,
+                "z": 548.53076171875
+            },
+            "transformId": 98971224,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 395.65533447265627,
+                "y": 6.099999904632568,
+                "z": 472.8076477050781
+            },
+            "after": {
+                "x": 397.72467041015627,
+                "y": 8.451969146728516,
+                "z": 535.37060546875
+            },
+            "transformId": 2069415322,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 369.3125915527344,
+                "y": 6.099999904632568,
+                "z": 543.8922119140625
+            },
+            "after": {
+                "x": 367.2347717285156,
+                "y": 6.767397403717041,
+                "z": 563.6843872070313
+            },
+            "transformId": 1773578872,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 392.3428649902344,
+                "y": 12.44636344909668,
+                "z": 460.9903869628906
+            },
+            "after": {
+                "x": 397.7246398925781,
+                "y": 8.306882858276368,
+                "z": 548.5179443359375
+            },
+            "transformId": 2124806574,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.12872314453127,
+                "y": 18.246379852294923,
+                "z": 581.880126953125
+            },
+            "after": {
+                "x": 393.9580078125,
+                "y": 2.8174476623535158,
+                "z": 578.4900512695313
+            },
+            "transformId": 1174913443,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.6024169921875,
+                "y": 7.181790351867676,
+                "z": 597.2410278320313
+            },
+            "after": {
+                "x": 396.2740478515625,
+                "y": 4.809885025024414,
+                "z": 601.7945556640625
+            },
+            "transformId": 1574851088,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 425.518310546875,
+                "y": 7.181790351867676,
+                "z": 434.6023864746094
+            },
+            "after": {
+                "x": 396.32684326171877,
+                "y": 11.236517906188965,
+                "z": 333.1927185058594
+            },
+            "transformId": 555859866,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 397.979248046875,
+                "y": 11.478119850158692,
+                "z": 402.5425720214844
+            },
+            "after": {
+                "x": 366.2869873046875,
+                "y": 6.204590797424316,
+                "z": 336.4835510253906
+            },
+            "transformId": 671563803,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 392.3854064941406,
+                "y": 10.180158615112305,
+                "z": 638.6088256835938
+            },
+            "after": {
+                "x": 390.1593933105469,
+                "y": 8.451969146728516,
+                "z": 645.6556396484375
+            },
+            "transformId": 1000546074,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Bld_Village_ClothCover_Small_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 448.4406433105469,
+                "y": 11.478119850158692,
+                "z": 413.6629638671875
+            },
+            "after": {
+                "x": 391.8657531738281,
+                "y": 11.738043785095215,
+                "z": 321.49969482421877
+            },
+            "transformId": 1957954272,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 375.5925598144531,
+                "y": 6.099999904632568,
+                "z": 511.43426513671877
+            },
+            "after": {
+                "x": 371.2488708496094,
+                "y": 5.812946796417236,
+                "z": 513.2341918945313
+            },
+            "transformId": 1950751592,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 396.6024169921875,
+                "y": 7.181790351867676,
+                "z": 506.5096130371094
+            },
+            "after": {
+                "x": 391.84490966796877,
+                "y": 4.418240547180176,
+                "z": 503.7496643066406
+            },
+            "transformId": 1028694701,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 395.9098205566406,
+                "y": 14.436970710754395,
+                "z": 482.35211181640627
+            },
+            "after": {
+                "x": 395.6553649902344,
+                "y": 5.8129472732543949,
+                "z": 470.46392822265627
+            },
+            "transformId": 2137238635,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 370.6316223144531,
+                "y": 13.471892356872559,
+                "z": 525.326416015625
+            },
+            "after": {
+                "x": 368.6316223144531,
+                "y": 6.308991432189941,
+                "z": 525.839599609375
+            },
+            "transformId": 1062101845,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 379.7799377441406,
+                "y": 6.099999904632568,
+                "z": 463.93719482421877
+            },
+            "after": {
+                "x": 377.7799377441406,
+                "y": 5.812946796417236,
+                "z": 463.69854736328127
+            },
+            "transformId": 1930720254,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.3854064941406,
+                "y": 10.180158615112305,
+                "z": 526.53662109375
+            },
+            "after": {
+                "x": 392.3854064941406,
+                "y": 7.4166107177734379,
+                "z": 525.500244140625
+            },
+            "transformId": 2014501837,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.3428649902344,
+                "y": 12.44636344909668,
+                "z": 459.1903991699219
+            },
+            "after": {
+                "x": 392.3428649902344,
+                "y": 4.45030403137207,
+                "z": 460.9903869628906
+            },
+            "transformId": 1091895028,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 369.61956787109377,
+                "y": 13.471892356872559,
+                "z": 558.3862915039063
+            },
+            "after": {
+                "x": 366.332763671875,
+                "y": 6.317044258117676,
+                "z": 560.1862182617188
+            },
+            "transformId": 2047553159,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 379.02679443359377,
+                "y": 6.099999904632568,
+                "z": 580.9876098632813
+            },
+            "after": {
+                "x": 377.02679443359377,
+                "y": 0.20580196380615235,
+                "z": 582.7875366210938
+            },
+            "transformId": 1920805774,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 396.12872314453127,
+                "y": 18.246379852294923,
+                "z": 580.0801391601563
+            },
+            "after": {
+                "x": 392.6278076171875,
+                "y": 17.265338897705079,
+                "z": 580.1818237304688
+            },
+            "transformId": 721351734,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 407.3209533691406,
+                "y": 10.180158615112305,
+                "z": 430.5854187011719
+            },
+            "after": {
+                "x": 405.3209533691406,
+                "y": 10.230222702026368,
+                "z": 436.0442810058594
+            },
+            "transformId": 1477282,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 384.51312255859377,
+                "y": 11.478119850158692,
+                "z": 598.48291015625
+            },
+            "after": {
+                "x": 384.287841796875,
+                "y": 11.583922386169434,
+                "z": 601.278076171875
+            },
+            "transformId": 1399014495,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 396.6024169921875,
+                "y": 7.181790351867676,
+                "z": 595.4410400390625
+            },
+            "after": {
+                "x": 391.84490966796877,
+                "y": 4.418240547180176,
+                "z": 592.6810302734375
+            },
+            "transformId": 962487431,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 427.518310546875,
+                "y": 7.181790351867676,
+                "z": 432.8023986816406
+            },
+            "after": {
+                "x": 402.484619140625,
+                "y": 7.4166059494018559,
+                "z": 432.3854064941406
+            },
+            "transformId": 1347238804,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 395.9098205566406,
+                "y": 14.436970710754395,
+                "z": 610.479248046875
+            },
+            "after": {
+                "x": 393.9098205566406,
+                "y": 14.487038612365723,
+                "z": 609.076171875
+            },
+            "transformId": 1236402127,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 374.1886291503906,
+                "y": 13.471892356872559,
+                "z": 624.8920288085938
+            },
+            "after": {
+                "x": 372.1886291503906,
+                "y": 6.308991432189941,
+                "z": 625.4052124023438
+            },
+            "transformId": 1381182665,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 396.91064453125,
+                "y": 13.471892356872559,
+                "z": 623.7369995117188
+            },
+            "after": {
+                "x": 396.19744873046877,
+                "y": 6.316868782043457,
+                "z": 625.5369262695313
+            },
+            "transformId": 2140016545,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 437.4981994628906,
+                "y": 6.099999904632568,
+                "z": 412.7738037109375
+            },
+            "after": {
+                "x": 402.4845886230469,
+                "y": 7.41660737991333,
+                "z": 430.55596923828127
+            },
+            "transformId": 130987174,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 394.3854064941406,
+                "y": 10.180158615112305,
+                "z": 636.808837890625
+            },
+            "after": {
+                "x": 392.3854064941406,
+                "y": 7.416608810424805,
+                "z": 635.7724609375
+            },
+            "transformId": 280820261,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 463.471923828125,
+                "y": 6.099999904632568,
+                "z": 430.9802551269531
+            },
+            "after": {
+                "x": 402.484619140625,
+                "y": 7.416605472564697,
+                "z": 434.2148132324219
+            },
+            "transformId": 1466932090,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 420.5679626464844,
+                "y": 6.099999904632568,
+                "z": 379.315673828125
+            },
+            "after": {
+                "x": 399.2704162597656,
+                "y": 10.415685653686524,
+                "z": 356.9481201171875
+            },
+            "transformId": 1806461146,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "SharedLandscapeDressing20261004/Landscape_SM_Prop_Pot_Large_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 475.52978515625,
+                "y": 14.436970710754395,
+                "z": 432.1098327636719
+            },
+            "after": {
+                "x": 406.7391357421875,
+                "y": 10.230223655700684,
+                "z": 436.0442810058594
+            },
+            "transformId": 156764572,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

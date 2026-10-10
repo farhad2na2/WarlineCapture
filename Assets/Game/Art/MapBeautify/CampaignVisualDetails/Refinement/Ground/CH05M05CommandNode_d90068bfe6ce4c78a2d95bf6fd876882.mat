@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CH05M05CommandNode_d90068bfe6ce4c78a2d95bf6fd876882
+  m_Shader: {fileID: 4800000, guid: ccc0634edfe14e0c95ffa7446dd9ec82, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ActivityMap:
+        m_Texture: {fileID: 2800000, guid: 6a14db627595e42dabecb76afb3035e2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: a77d1ab09c6f9a040b53b1939745e6c5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DesertDetailMap:
+        m_Texture: {fileID: 2800000, guid: fbdb534127384530b6769cbff3b176bf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DesertDetailNormal:
+        m_Texture: {fileID: 2800000, guid: af0e6581e0b64911b4e7274573bd4667, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistrictSurfaceMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GreenDetailMap:
+        m_Texture: {fileID: 2800000, guid: 69f24f4c3ee64cf79184d114ba68f01a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ActivityStrength: 0.85
+    - _BaseColorInfluence: 1
+    - _DetailAntiRepeat: 1
+    - _DetailFadeEnd: 120
+    - _DetailFadeStart: 40
+    - _DetailScale: 0.48
+    - _DetailStrength: 0.035
+    - _DirtShoulderTintStrength: 0
+    - _DirtShoulderWarmthThreshold: 0.08
+    - _DistrictSurfaceStrength: 0
+    - _EnvironmentReflections: 0
+    - _GreenPatchThreshold: 0.47
+    - _GroundDetailNormalStrength: 0.24
+    - _GroundDetailStrength: 0.3
+    - _GroundDetailTiling: 0.085
+    - _MacroContrastHigh: 0.8
+    - _MacroContrastLow: 0.1
+    - _MacroScale: 0.027
+    - _MacroStrength: 0.4
+    - _SandPaletteStrength: 1
+    - _SandScrubCoverage: 0.19
+    - _Smoothness: 0.08
+    m_Colors:
+    - _ActivityRect: {r: 833, g: 273, b: 494, a: 274}
+    - _BaseColor: {r: 1.12, g: 1.08, b: 0.96, a: 1}
+    - _DirtShoulderColorScale: {r: 1, g: 1, b: 1, a: 1}
+    - _DistrictSurfaceConstant: {r: 0, g: 0, b: 0, a: 0}
+    - _DistrictSurfaceRect: {r: 0, g: 0, b: 2048, a: 1024}
+    - _MacroTintA: {r: 0.96, g: 0.94, b: 0.89, a: 1}
+    - _MacroTintB: {r: 1.07, g: 1.02, b: 0.94, a: 1}
+    - _SandDryColor: {r: 0.82, g: 0.73, b: 0.56, a: 1}
+    - _SandScrubColor: {r: 0.62, g: 0.63, b: 0.48, a: 1}
+    - _SandWornColor: {r: 0.62, g: 0.56, b: 0.45, a: 1}
+    - _SpecColor: {r: 0.08, g: 0.075, b: 0.06, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

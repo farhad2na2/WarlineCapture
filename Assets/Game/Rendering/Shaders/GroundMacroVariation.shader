@@ -48,6 +48,9 @@ Shader "Game/Environment/GroundMacroVariation"
         _GreenPatchThreshold("Green Patch Threshold", Range(0, 1)) = 0.5
 
         [Header(District Surfaces)]
+        _ActivityMap("Authored Activity Wear", 2D) = "black" {}
+        _ActivityRect("Activity World Rect", Vector) = (0,0,1,1)
+        _ActivityStrength("Activity Wear Strength", Range(0,1)) = 0
         _DistrictSurfaceMap("District Surface Mask", 2D) = "black" {}
         _DistrictSurfaceRect("District World Rect", Vector) = (0, 0, 2048, 1024)
         _DistrictSurfaceStrength("District Surface Strength", Range(0, 1)) = 0
@@ -110,6 +113,7 @@ Shader "Game/Environment/GroundMacroVariation"
             TEXTURE2D(_DistrictSurfaceMap);
             SAMPLER(sampler_DistrictSurfaceMap);
 
+            TEXTURE2D(_ActivityMap); SAMPLER(sampler_ActivityMap);
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float4 _DistrictSurfaceRect;
@@ -142,6 +146,8 @@ Shader "Game/Environment/GroundMacroVariation"
                 half4 _DirtShoulderColorScale;
                 half _DirtShoulderTintStrength;
                 half _DirtShoulderWarmthThreshold;
+                float4 _ActivityRect;
+                half _ActivityStrength;
             CBUFFER_END
 
             // Global runtime toggle (0 = enabled, 1 = disabled). Globals default
@@ -316,6 +322,18 @@ Shader "Game/Environment/GroundMacroVariation"
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
                 albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);
                 ApplyDistrictSurface(input.positionWS, albedo, normalWS);
+                if(_ActivityStrength>.001)
+                {
+                    float2 auv=(input.positionWS.xz-_ActivityRect.xy)/_ActivityRect.zw;
+                    half4 activity=SAMPLE_TEXTURE2D(_ActivityMap,sampler_ActivityMap,auv);
+                    float edgeMeters=min(min(auv.x,1-auv.x)*_ActivityRect.z,min(auv.y,1-auv.y)*_ActivityRect.w);
+                    activity*=smoothstep(0,6,edgeMeters)*_ActivityStrength*smoothstep(.75,.95,normalWS.y);
+                    float grain=ValueNoise(input.positionWS.xz*3.1);
+                    float chip=smoothstep(.72,.80,ValueNoise(input.positionWS.xz*5.3));
+                    albedo*=1-activity.r*(.18+grain*.11)-activity.g*(.15+grain*.08);
+                    albedo=lerp(albedo,lerp(half3(.35,.33,.28),half3(.57,.53,.44),grain),activity.b*(.24+chip*.32));
+                    albedo=lerp(albedo,half3(.61,.55,.44),activity.a*(.10+grain*.12));
+                }
 
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;

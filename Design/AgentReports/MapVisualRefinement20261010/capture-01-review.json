@@ -1,0 +1,187 @@
+{
+  "nativeCapture": "Passed",
+  "visualReview": "Failed",
+  "reason": "Remaining detached furnishings used bounding-box support; generated bank names also omitted seven waterfront frames. Mesh-ray support and original audited waterfront cameras are required for final review.",
+  "frames": [
+    {
+      "file": "CH04M04GroundedSignal-after-detail.png",
+      "sha256": "f251ebc5e975d78e6f84c2b970072fb6938800ee9c2dcb2e972d64b9f295c732"
+    },
+    {
+      "file": "RefineryDistrict-after-overview.png",
+      "sha256": "b2da40d1aa65e67c13d6150fbf9c7b3e6f8e7551b3a894a0149c2ca760fdd2a2"
+    },
+    {
+      "file": "CH05M01CitywideAlert-after-detached.png",
+      "sha256": "6210070fa2b9a72fb5acd859b993cdaf853179738db25c6d0a8b3c176d957083"
+    },
+    {
+      "file": "RefineryDistrict-after-landscape.png",
+      "sha256": "c46f9456f6f941f3d3e2f21b5af0337d97f4a69fb2e4f2757c4aca06ffdd3f65"
+    },
+    {
+      "file": "CH05M02TrustUnderFire-after-detail.png",
+      "sha256": "1d8518f8589977e7a489611d7ae8a34340d1b693f0e36207571eed4e4522d2af"
+    },
+    {
+      "file": "CityEdgeAirfield-after-overview.png",
+      "sha256": "8966c308ce2808c0ce6b5a0b667808ba438092b5e36f509250d1d36958d387a8"
+    },
+    {
+      "file": "CH05M01CitywideAlert-after-detail.png",
+      "sha256": "e1ac22565287f8823f1e7751bfa2861764463c19acc4484441bf68e35a0736cc"
+    },
+    {
+      "file": "DenseCity-after-detached.png",
+      "sha256": "15b486613661a9f2bfa8098aa59375fce12a5cb8026be56d974b51dd6cf8e49d"
+    },
+    {
+      "file": "CH05M05CommandNode-after-overview.png",
+      "sha256": "8509d11c92e5da6495b6be2b97a7ca19b7fb05a420671aa90eb4e67149fccaf2"
+    },
+    {
+      "file": "CH05M04LastCorridor-after-detached.png",
+      "sha256": "71bbe78f4f53f361d56ce9e17a49c585a90b18073e38f2c1659fc83cb2232f2d"
+    },
+    {
+      "file": "CH05M03NetworkCollapse-after-detail.png",
+      "sha256": "9c0fdd64848c9822f7dbd5d5425c1d516ea5f7d2c0f4baa8e5c26b1152ec2de7"
+    },
+    {
+      "file": "CityEdgeAirfield-after-landscape.png",
+      "sha256": "8f867cb9ed9d2223f460f3d4ad09434464f5575b61f9cccdade7c543cb29d365"
+    },
+    {
+      "file": "CH05M01CitywideAlert-after-runway.png",
+      "sha256": "4c7734f76475b88904666e21cc799fd6aec6a8cb639d98650d3bcef4f1b1df7a"
+    },
+    {
+      "file": "CH05M01CitywideAlert-after-overview.png",
+      "sha256": "40d5d5ba6a4348d0b85aa321e606211e4b0431b73b921fdd96288dd8946d1212"
+    },
+    {
+      "file": "CH05M02TrustUnderFire-after-overview.png",
+      "sha256": "c66306e07549eb41938abe194c5673e02122079296a29e0d18a5f66a0ad5d970"
+    },
+    {
+      "file": "CH04M04GroundedSignal-after-runway.png",
+      "sha256": "97da680609bfbe08c16dcde4f765e36eefcea294446becd4cdc3c7ece96a89ba"
+    },
+    {
+      "file": "AshLinePort-after-overview.png",
+      "sha256": "1bcad0cba42be83ba3dbd44a623132f004b19bd70e826649f41726c0b3540e41"
+    },
+    {
+      "file": "CityEdgeAirfield-after-detached.png",
+      "sha256": "39b34a037af36f17b6a5cce9e3b2652383c0169f29b2b48b05336c2121096146"
+    },
+    {
+      "file": "CH04M04GroundedSignal-after-overview.png",
+      "sha256": "deb3ee0cb7fc52f0a6b6dc5da5255ca66903d93e57946d15289e212154e7050f"
+    },
+    {
+      "file": "CH05M04LastCorridor-after-detail.png",
+      "sha256": "9c0fdd64848c9822f7dbd5d5425c1d516ea5f7d2c0f4baa8e5c26b1152ec2de7"
+    },
+    {
+      "file": "DenseCity-after-overview.png",
+      "sha256": "d69217bbe9e88541329d33fa988f9a038ec6fd4be9eb04703ee653f8252a382d"
+    },
+    {
+      "file": "CH05M05CommandNode-after-detached.png",
+      "sha256": "2d75a3ad280c2907b2e30fd86c8fcd7868f7674c408a97a969e2041a3968af08"
+    },
+    {
+      "file": "CH05M04LastCorridor-after-overview.png",
+      "sha256": "a8577c2871a33d365b475e57d6c1a133cf3f8e983f474fcbb670762c337a0ea1"
+    },
+    {
+      "file": "CH04M04GroundedSignal-after-landscape.png",
+      "sha256": "de10a1860b1a962a360cf90c642dc7031a78d4d2546b28bee3833564ca2e0ec0"
+    },
+    {
+      "file": "CityEdgeAirfield-after-runway.png",
+      "sha256": "90ffe598974a852d5746dc9c10aa1ca65d32a9df7a85c856038ef2758eee99f9"
+    },
+    {
+      "file": "DenseCity-after-mountain.png",
+      "sha256": "8d5f4ccfdb0047f70bcc7d0553fb3a95a149b293fd6522a6b35ebb7cc2bb81ab"
+    },
+    {
+      "file": "CH05M03NetworkCollapse-after-landscape.png",
+      "sha256": "5d10222cafe8ba428640d090e9b85125b1fbd31e962cbc5bbc34aca8a2eb61c9"
+    },
+    {
+      "file": "CH05M05CommandNode-after-detail.png",
+      "sha256": "7f3aa170d1bbfc40fc1118eb06b573a722704e4af10ac114b1d20f84aae0d0ee"
+    },
+    {
+      "file": "DenseCity-after-landscape.png",
+      "sha256": "a81a5aaab0a347b95f1afdedc50c66ecd1742776782b436e08fa868d2f1d27d5"
+    },
+    {
+      "file": "DenseCity-after-detail.png",
+      "sha256": "8c7904ac7595b46dbd5b9f22c11e1cdabcc0501f2c182ad816fba8407ff5e69c"
+    },
+    {
+      "file": "CH05M02TrustUnderFire-after-landscape.png",
+      "sha256": "6702cc81f3e9617fd2bc6294b587578d8f0d4804df89b2eafd97b483b0bc8445"
+    },
+    {
+      "file": "AshLinePort-after-landscape.png",
+      "sha256": "f08999c24fd8486e077f2ffa5e17050044af9ed76f54a540abd7d8d79932ff1b"
+    },
+    {
+      "file": "CH05M04LastCorridor-after-landscape.png",
+      "sha256": "5d10222cafe8ba428640d090e9b85125b1fbd31e962cbc5bbc34aca8a2eb61c9"
+    },
+    {
+      "file": "CH04M05ArmorBreak-after-detail.png",
+      "sha256": "18696adfd650e1ffdbf3d08164e0924aa0fa829d8fe4f9d9aecc2de33ba638bf"
+    },
+    {
+      "file": "CH05M03NetworkCollapse-after-detached.png",
+      "sha256": "71bbe78f4f53f361d56ce9e17a49c585a90b18073e38f2c1659fc83cb2232f2d"
+    },
+    {
+      "file": "AshLinePort-after-detail.png",
+      "sha256": "52f76827c14dc6b7f7974f7984d3924264fbdfd616516b5e981e2a39a7ddaa4a"
+    },
+    {
+      "file": "CH04M05ArmorBreak-after-runway.png",
+      "sha256": "f975f5824f181f9ef807809e8f7262ea83820a1ed801e5e8359df5f664f63ae6"
+    },
+    {
+      "file": "CH05M05CommandNode-after-landscape.png",
+      "sha256": "34d60e630322810fa7f66b74d25a85f7e88cdd2c2217d6e05e1e9613555b8611"
+    },
+    {
+      "file": "CH05M01CitywideAlert-after-landscape.png",
+      "sha256": "10fb980b4a170d24b85f01f6020f8f6c74a944c88711b6ea8d1b27d784282002"
+    },
+    {
+      "file": "CityEdgeAirfield-after-detail.png",
+      "sha256": "76bd3bd50f48cc4697c5b3a2aa8a32c3d0d4fb3084d8606ae1b152c9d050678e"
+    },
+    {
+      "file": "RefineryDistrict-after-detail.png",
+      "sha256": "777b359ae8883649cc0befee00cc7b07571158f3af020ae62a65a960e919ef26"
+    },
+    {
+      "file": "CH04M05ArmorBreak-after-overview.png",
+      "sha256": "c9fe6bfdf5171dcde8e17f792285e929beb4af68494880261de825f695ec3fe3"
+    },
+    {
+      "file": "DenseCity-after-runway.png",
+      "sha256": "2bf724570c6292c3d541453d77846cc2eadac74843639c187f78b5f7e060ec59"
+    },
+    {
+      "file": "CH04M05ArmorBreak-after-landscape.png",
+      "sha256": "6917a6d35031be1b1e1c1c9bcd3494c005dc0ecc13bf1f36740fceabbfbcd218"
+    },
+    {
+      "file": "CH05M03NetworkCollapse-after-overview.png",
+      "sha256": "52e79ed0c03c1994fcb6ba03850ef9dd3b03a55e59c54149bf65864247b01f63"
+    }
+  ]
+}

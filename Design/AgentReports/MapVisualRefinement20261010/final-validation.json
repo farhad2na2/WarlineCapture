@@ -1,0 +1,103 @@
+{
+  "implementation": "Completed",
+  "visualReview": {
+    "result": "Passed",
+    "maps": 11,
+    "matchedViews": 52,
+    "captureManifest": "after-capture-manifest.json",
+    "finalCommandNodeCapture": "05",
+    "otherMapCapture": "03",
+    "review": "Native views inspected for lighting, ground separation, roofs, water edges, parking and unsupported decoration. Contact sheets plus full-resolution detail reviews; no image repainting."
+  },
+  "automatedChecks": [
+    {
+      "check": "source-build",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-build-details-10.wrapper-result.json",
+      "log": "validation/warline-map-refinement-build-details-10.log.gz",
+      "marker": "[MapRefinement] result=Passed maps=11 protectedSceneData=unchanged"
+    },
+    {
+      "check": "attachment-ownership",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-ownership-details-03.wrapper-result.json",
+      "log": "validation/warline-map-refinement-ownership-details-03.log.gz",
+      "marker": "[MapRefinementOwnership] result=Passed"
+    },
+    {
+      "check": "shared-water",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-water-details-01.wrapper-result.json",
+      "log": "validation/warline-map-refinement-water-details-01.log.gz",
+      "marker": "[MapRefinementWaterReuse] result=Passed"
+    },
+    {
+      "check": "lighting",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-lighting-details-01.wrapper-result.json",
+      "log": "validation/warline-map-refinement-lighting-details-01.log.gz",
+      "marker": "[MapRefinementLighting] result=Passed bindings=11 match=1 runtimeQualityProfiles=2"
+    },
+    {
+      "check": "final-support",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-support-details-08.wrapper-result.json",
+      "log": "validation/warline-map-refinement-support-details-08.log.gz",
+      "marker": "[MapRefinementSupport] result=Passed maps=1"
+    },
+    {
+      "check": "all-map-capture",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-capture-details-03.wrapper-result.json",
+      "log": "validation/warline-map-refinement-capture-details-03.log.gz",
+      "marker": "[MapRefinementCapture] result=Passed maps=11"
+    },
+    {
+      "check": "command-node-final-capture",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-capture-details-05.wrapper-result.json",
+      "log": "validation/warline-map-refinement-capture-details-05.log.gz",
+      "marker": "[MapRefinementCapture] result=Passed maps=1"
+    },
+    {
+      "check": "mobile-quality-defaults",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-mobile-tier-details-02.wrapper-result.json",
+      "log": "validation/warline-map-refinement-mobile-tier-details-02.log.gz",
+      "marker": "[MapRefinementMobileTier] result=Passed"
+    },
+    {
+      "check": "graphics-23-tests",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-quality-details-05.wrapper-result.json",
+      "log": "validation/warline-map-refinement-quality-details-05.log.gz",
+      "marker": "[AndroidVisualQualityValidation] result=Passed tests=23"
+    },
+    {
+      "check": "destruction-4-tests",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-destruction-details-01.wrapper-result.json",
+      "log": "validation/warline-map-refinement-destruction-details-01.log.gz",
+      "marker": "[OperationMapBuildingDestructionValidation] result=Passed tests=4"
+    },
+    {
+      "check": "cache-parity-and-determinism",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-cache-details-02.wrapper-result.json",
+      "log": "validation/warline-map-refinement-cache-details-02.log.gz",
+      "marker": "[OperationMapRenderDatabaseBuilder] determinism=Passed"
+    },
+    {
+      "check": "runtime-visual-integration",
+      "result": "Passed",
+      "receipt": "validation/warline-map-refinement-runtime-details-02.wrapper-result.json",
+      "log": "validation/warline-map-refinement-runtime-details-02.log.gz",
+      "marker": "[MapRefinementRuntime] result=Passed mission=m02 evidence=visual-integration"
+    }
+  ],
+  "runtimeEvidenceScope": "Campaign CH01 M02 uses the refined DenseCity source through its existing ForwardPost runtime binding. Visual integration only.",
+  "fullNormalInputMissionPlaythrough": "Not rerun for this visual pass",
+  "androidGpuFramePacing": "Pending real-device measurement",
+  "realPlayerDeviceAcceptance": "Pending",
+  "whitespaceReview": "Code/shader/document diff check passed; native Unity scene serialization contains empty YAML fields with trailing spaces."
+}

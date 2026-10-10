@@ -1,0 +1,6 @@
+{
+  "wrapperExitCode": 128,
+  "nativeReceiptExitCode": null,
+  "requiredPassMarker": "[OperationMapRenderDatabaseBuilder] determinism=Passed",
+  "result": "Failed"
+}

@@ -1,0 +1,421 @@
+{
+  "format": "Native Unity PNG evidence; WebP review copies use format compression only.",
+  "frames": [
+    {
+      "native": "AshLinePort-after-detail.png",
+      "nativeSha256": "95fb993f46caa8020d50add5143d0f94dd5723af23cc087d16de769c6dd44e7a",
+      "reviewCopy": "AshLinePort-after-detail.webp",
+      "reviewSha256": "4b7af412e9533cb7da4a6537b588f86edcc532e802f17d4bef7361867d1d1f81",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "AshLinePort-after-landscape.png",
+      "nativeSha256": "de1791f2ecf0a6a963105c2d1221e1e3a8e2d567e67ebef3c2596a8586892249",
+      "reviewCopy": "AshLinePort-after-landscape.webp",
+      "reviewSha256": "c9b650d097628fa277584ddb614ec50fd0f37a99b7eff946a860035216442023",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "AshLinePort-after-overview.png",
+      "nativeSha256": "72df5ab5b0dc9fcd9bbdc7ebd82742ffbe07f0b42da4623e2845368a4a86e1c9",
+      "reviewCopy": "AshLinePort-after-overview.webp",
+      "reviewSha256": "9ee1d215a974aa357342eb96e3eb40ecd597ec9c7ffe4b27a89ccdf1f9087497",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "AshLinePort-after-waterfront.png",
+      "nativeSha256": "2cfd02ed06014213c549cfa1a343d9fb2bbc8a50fe625990cf4d527f646610f7",
+      "reviewCopy": "AshLinePort-after-waterfront.webp",
+      "reviewSha256": "8265c47ac26ad9a0b1907bf8e13e3d4cf619e0c460f3c8a01069b852c3d9d86c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M04GroundedSignal-after-detail.png",
+      "nativeSha256": "606370a3fd1d8c36978670344cf3cd8875f9c90d1714bcce10bdd43c532afcd3",
+      "reviewCopy": "CH04M04GroundedSignal-after-detail.webp",
+      "reviewSha256": "863d5c919db748c5eb90348b12d2e5168eaec1e854e44e7ea6f81e269fe69b03",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M04GroundedSignal-after-landscape.png",
+      "nativeSha256": "0d714073dce426f6eac8fe3111d3c635cf7098c83067cd6d9c03c8c60072fe28",
+      "reviewCopy": "CH04M04GroundedSignal-after-landscape.webp",
+      "reviewSha256": "321784552d346c577ea61e26469f6ba34157416e632fbe9a905c21446cae0f97",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M04GroundedSignal-after-overview.png",
+      "nativeSha256": "f7e0fd65a2fa8642db68c1557d093ff712a1a65fceeee1fae725d9c39ccc81f9",
+      "reviewCopy": "CH04M04GroundedSignal-after-overview.webp",
+      "reviewSha256": "8f0f582004721bc79771b842ba59377e57dd98c00473f5780decfa02e3061638",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M04GroundedSignal-after-runway.png",
+      "nativeSha256": "b9525aa5066258841759ae1a699eb81fac0480cd5a1e0db59cb03851bde77aeb",
+      "reviewCopy": "CH04M04GroundedSignal-after-runway.webp",
+      "reviewSha256": "849738735465ba7797826ee229dd4ac9c7a1a1aceead32e66053cebe20b8b85f",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M05ArmorBreak-after-detail.png",
+      "nativeSha256": "1be556e7d60cada181448689b077793baff3ea4b9d3faeca23a6abefc9844434",
+      "reviewCopy": "CH04M05ArmorBreak-after-detail.webp",
+      "reviewSha256": "ee60517361e7de32d82ca5929b59c4e0dc508c3c4eaed1947866874a0b14316a",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M05ArmorBreak-after-landscape.png",
+      "nativeSha256": "bae079c1cb8b27a00b7dde3f8b5a34fc3a83f9e657d409505ddf138660a4e06b",
+      "reviewCopy": "CH04M05ArmorBreak-after-landscape.webp",
+      "reviewSha256": "5585b459c8e359fc782979f897adac90c8adc02d894b4308122170012f39402f",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M05ArmorBreak-after-overview.png",
+      "nativeSha256": "3d02717edba68ad9613de95a473ca48428e41d99d1f487efccaf12ce2ce5f707",
+      "reviewCopy": "CH04M05ArmorBreak-after-overview.webp",
+      "reviewSha256": "13659099cad9aae6bca31cdad4c17431bf77d44165c5411b4c21ae3297b29550",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH04M05ArmorBreak-after-runway.png",
+      "nativeSha256": "77ac6a228179665ddc82f9ecabcf0ca9be2fc492468da9ef049c35fded168768",
+      "reviewCopy": "CH04M05ArmorBreak-after-runway.webp",
+      "reviewSha256": "adcfd24c81d211b4b39a6bf55f9d9e7280b811b7b521813fb8084e78252a3845",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-detached.png",
+      "nativeSha256": "b647442e48efcaab316caf3bd83dd1e5fd1b59c1a579dd00a4761d9c1b3d091c",
+      "reviewCopy": "CH05M01CitywideAlert-after-detached.webp",
+      "reviewSha256": "bd20bf6af202041484ee75a5051454eb8826cd09d00336d0954373094e0e6c56",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-detail.png",
+      "nativeSha256": "1fc8ed2578b21ab23590a70b09531d34ce305bbb2abb3e2cf8c0055deb9f8b5e",
+      "reviewCopy": "CH05M01CitywideAlert-after-detail.webp",
+      "reviewSha256": "f7fa765c125ce2e1542a43d964b805c45fadd3db2a51235f3fdd8803da987f7c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-landscape.png",
+      "nativeSha256": "2d70783909f6f732791eab1793e5605cc76360730cab1a1c13014fe8a2701ca1",
+      "reviewCopy": "CH05M01CitywideAlert-after-landscape.webp",
+      "reviewSha256": "b5300cac9b3515dcb2a76a9e8c9c56db02097b413c6554126352928d67059e86",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-overview.png",
+      "nativeSha256": "60b630914419375ee01ade059e3263c042dc52973a33174346d29a419b55d39c",
+      "reviewCopy": "CH05M01CitywideAlert-after-overview.webp",
+      "reviewSha256": "dff71c7ef9c1def0548370d3080b2cce45eb96532fb02b55955c71682f13da20",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-runway.png",
+      "nativeSha256": "18dde1065e079ec771c9bd4533dbf729914c65b57e4f10be27b8246bb3d1e9d1",
+      "reviewCopy": "CH05M01CitywideAlert-after-runway.webp",
+      "reviewSha256": "dc9b3b1f26b14b7401ee79ae4f5b04311dff1db99ab1650bae1c1239efbbf71a",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M01CitywideAlert-after-waterfront.png",
+      "nativeSha256": "f947de9a5dc95de5fe2815c02b80c26d7f740ce42ef4c4f5c3c85fb9f03aec14",
+      "reviewCopy": "CH05M01CitywideAlert-after-waterfront.webp",
+      "reviewSha256": "f581370a3d00b196fa5bdd82f234a67ab5d555e0437a8b73f8b7815cee60d4e0",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M02TrustUnderFire-after-detail.png",
+      "nativeSha256": "e79b94533576e116a8e5aa1d8b4af9997778dd417f5f9dd29c326f2701d17de0",
+      "reviewCopy": "CH05M02TrustUnderFire-after-detail.webp",
+      "reviewSha256": "40e9579038e96f945a3bbc8fd82edfcd5d1da0240d5b30bf27602f2a347cd147",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M02TrustUnderFire-after-landscape.png",
+      "nativeSha256": "6702cc81f3e9617fd2bc6294b587578d8f0d4804df89b2eafd97b483b0bc8445",
+      "reviewCopy": "CH05M02TrustUnderFire-after-landscape.webp",
+      "reviewSha256": "434c97a0981c1b3f4a2ddce603c3f8c367de49d2ae1ef89fb123330e4feb70f2",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M02TrustUnderFire-after-overview.png",
+      "nativeSha256": "a8736861854803dd07836b9897cf9652ea5cea9c647b42a3d488d8a8aa9bccad",
+      "reviewCopy": "CH05M02TrustUnderFire-after-overview.webp",
+      "reviewSha256": "b24ad15117b49c519e95b8d184908f59d5d37548043dd271e5442fe85694ce1f",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M02TrustUnderFire-after-waterfront.png",
+      "nativeSha256": "ba478477c118ea9ba0df13c2c560e19a8c2a5192b2d276062f5954bdabf01115",
+      "reviewCopy": "CH05M02TrustUnderFire-after-waterfront.webp",
+      "reviewSha256": "e4b39f6a8ef1f211037ba43b9279db40fe3c01a0d4978ab52569abb03ce3c41c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M03NetworkCollapse-after-detached.png",
+      "nativeSha256": "a0e9c6147cad46cd44e579e9ad2b69e7e7abd9ad2e15aa1bc6119ee5c809da17",
+      "reviewCopy": "CH05M03NetworkCollapse-after-detached.webp",
+      "reviewSha256": "3c0dad56ceead6bdd61b5388fb9c9584db125c339253c123c2854a6b2c4d7e38",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M03NetworkCollapse-after-detail.png",
+      "nativeSha256": "9c9ea4d8de3ae611e7ee8cfa08d34ac15ae1f18753b3f1b39aa3166377ec9f6b",
+      "reviewCopy": "CH05M03NetworkCollapse-after-detail.webp",
+      "reviewSha256": "116fcd26c94c86fb64734ff1f82546bd45a012e21e057a2ea0c32f97b8c5f600",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M03NetworkCollapse-after-landscape.png",
+      "nativeSha256": "d5fe3c187e12e889cc22895cc1fbcee35ec55384d085518cd43339ebc75622bc",
+      "reviewCopy": "CH05M03NetworkCollapse-after-landscape.webp",
+      "reviewSha256": "36b83e287d4e12cc36b54030d6995ca177e03839166fafe95d73b55ffc45f485",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M03NetworkCollapse-after-overview.png",
+      "nativeSha256": "87507f841ba2498e91bba0e78c8f2a7d284bc8b2a3faca6f301fa11d1434f4a7",
+      "reviewCopy": "CH05M03NetworkCollapse-after-overview.webp",
+      "reviewSha256": "4e886849f1d536f9aa04a4d0290d7e02a306fb1d6f3007142955425c9a99765c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M03NetworkCollapse-after-waterfront.png",
+      "nativeSha256": "5bbd35be084c38d21bc19e31a3e223f2d923c36b4291f63bb4ca5c0226e8c6ee",
+      "reviewCopy": "CH05M03NetworkCollapse-after-waterfront.webp",
+      "reviewSha256": "09a5a56ed95c3a7db8d0a49449ed178c2604d7c934d587b16efbca4b8f0a19dd",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M04LastCorridor-after-detached.png",
+      "nativeSha256": "a0e9c6147cad46cd44e579e9ad2b69e7e7abd9ad2e15aa1bc6119ee5c809da17",
+      "reviewCopy": "CH05M04LastCorridor-after-detached.webp",
+      "reviewSha256": "3c0dad56ceead6bdd61b5388fb9c9584db125c339253c123c2854a6b2c4d7e38",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M04LastCorridor-after-detail.png",
+      "nativeSha256": "9c9ea4d8de3ae611e7ee8cfa08d34ac15ae1f18753b3f1b39aa3166377ec9f6b",
+      "reviewCopy": "CH05M04LastCorridor-after-detail.webp",
+      "reviewSha256": "116fcd26c94c86fb64734ff1f82546bd45a012e21e057a2ea0c32f97b8c5f600",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M04LastCorridor-after-landscape.png",
+      "nativeSha256": "d5fe3c187e12e889cc22895cc1fbcee35ec55384d085518cd43339ebc75622bc",
+      "reviewCopy": "CH05M04LastCorridor-after-landscape.webp",
+      "reviewSha256": "36b83e287d4e12cc36b54030d6995ca177e03839166fafe95d73b55ffc45f485",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M04LastCorridor-after-overview.png",
+      "nativeSha256": "5daf3bb61358cb5faa77597898c6a06c017dfc2618572f3f0d94534fc03afcac",
+      "reviewCopy": "CH05M04LastCorridor-after-overview.webp",
+      "reviewSha256": "e487b78440f8eeac73ac7f6388767e2dbefd1b85c424dd8b883fe49511f9fdf2",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M04LastCorridor-after-waterfront.png",
+      "nativeSha256": "d4700679e37f59ac230325500ccc4369d8b71ffa420f1289cd5eaa185d0d0528",
+      "reviewCopy": "CH05M04LastCorridor-after-waterfront.webp",
+      "reviewSha256": "70227b875a4a70249514dd00d931aa3df526b244e79946551d79252bc37d4b97",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M05CommandNode-after-detached.png",
+      "nativeSha256": "5f0f4fe2ce068c08fc69eaee04b8f61b96acab85798bb7e193b99047a43f7f96",
+      "reviewCopy": "CH05M05CommandNode-after-detached.webp",
+      "reviewSha256": "a50ad8de945bf422895a59b84b03ca2cf81a7cf6bf2dd2a12487e93593743b51",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M05CommandNode-after-detail.png",
+      "nativeSha256": "dd1a12153a2ae69cf6e124e599603382f4c4b05a06b63067029c25ad95463b48",
+      "reviewCopy": "CH05M05CommandNode-after-detail.webp",
+      "reviewSha256": "05a18a481e7374d79586f6abb0529cf63ef5ba6830b1b3418d079edb36950f22",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M05CommandNode-after-landscape.png",
+      "nativeSha256": "826e7ecf4e0ae017c13f1d5c1c6e6866d6ccf18f889580ac00b5a30a898dede4",
+      "reviewCopy": "CH05M05CommandNode-after-landscape.webp",
+      "reviewSha256": "606c837d93a6ce85474ae6fbb8c4ee832d80fa3e0734dc33e8d5f8c784c2bacd",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M05CommandNode-after-overview.png",
+      "nativeSha256": "e4716007448577eece24562bc77e6f4c6dad1c2418f73f5757c9069969d6b500",
+      "reviewCopy": "CH05M05CommandNode-after-overview.webp",
+      "reviewSha256": "b70e3f349129cedd0333f540a3bf770494e821bb694f9bee0080bf6edfd4ffe3",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CH05M05CommandNode-after-waterfront.png",
+      "nativeSha256": "91c452a0d20581e14c73594c1495604b2c2b92fbb80ef8a45cd32eaf70cb3fc6",
+      "reviewCopy": "CH05M05CommandNode-after-waterfront.webp",
+      "reviewSha256": "d11d1dee2657f69076fbd428f2d709c135578e9bd86bdd5904c7b0c254f96f20",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CityEdgeAirfield-after-detached.png",
+      "nativeSha256": "991f7a5111ddb7f8571a90acde4783aecd41547b23725597b88e8d4a882e6aae",
+      "reviewCopy": "CityEdgeAirfield-after-detached.webp",
+      "reviewSha256": "e077711fd12d7b80a91152ddc474ab804c0c7a54102123ee6d29eac5bc7cccac",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CityEdgeAirfield-after-detail.png",
+      "nativeSha256": "4406615f7219932b29364b83321a2ae0e6422da62a465ea38678d8771fd55b12",
+      "reviewCopy": "CityEdgeAirfield-after-detail.webp",
+      "reviewSha256": "6d666d3e1108e4457db6f5fd9e0f3c7741cceb358b55083a3ac64ce668f5f6c4",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CityEdgeAirfield-after-landscape.png",
+      "nativeSha256": "397016149f3627bbff49e979d7a26faaac8b31ad2c95142566e1fc47c3d715e4",
+      "reviewCopy": "CityEdgeAirfield-after-landscape.webp",
+      "reviewSha256": "d8ee4df7cadeaea6125a8b8ffce3aa1598dcaf52af665460ecc2ab86cf68396b",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CityEdgeAirfield-after-overview.png",
+      "nativeSha256": "f534ed1c0755b287f9b4bb540ff4ecba8067de1be1aa5421f9e28a574f7d9c9d",
+      "reviewCopy": "CityEdgeAirfield-after-overview.webp",
+      "reviewSha256": "b7517f32eb83b0d0bb6078a6a315a5f1f20faca8a6ee3b2589aadb28a927e09a",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "CityEdgeAirfield-after-runway.png",
+      "nativeSha256": "5b423f2922f4119e346f853f0ad8310e8e3c67c3f1014a054c3216be3e914bc9",
+      "reviewCopy": "CityEdgeAirfield-after-runway.webp",
+      "reviewSha256": "73c54daf4becfd61fa8f6577f22cc3ceccf6baee72b0bcdf4619b5d9344d1a02",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-detached.png",
+      "nativeSha256": "9101808713eaaac85e14ca39dfd6bdf6a74cdf4abab0078b26ff650ab771d0cd",
+      "reviewCopy": "DenseCity-after-detached.webp",
+      "reviewSha256": "1865d936a6577e03269859f9f694520075d675c2ee462243dd74686e6bcf3bc3",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-detail.png",
+      "nativeSha256": "5fabb409c7406be9532b24180aa440f1aa75dadb2b108e25f191744d0a941b32",
+      "reviewCopy": "DenseCity-after-detail.webp",
+      "reviewSha256": "47a83742250fdaae1d18f84dc008dc1f211c6c1e387e88972750d5d0fd0ac287",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-landscape.png",
+      "nativeSha256": "54314ef07f8a544cd4295d4441b2a1c1a5212c09f2fd5631c83b52274bdc8859",
+      "reviewCopy": "DenseCity-after-landscape.webp",
+      "reviewSha256": "f602390ebef1ee1ba959caaa0a3fd3fd2b3b6bccc1f6c78085367135d8c16718",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-mountain.png",
+      "nativeSha256": "6b0b22e16ea913562e25f8b3ea3713130fb74058d92b7b02f6749b2764945f86",
+      "reviewCopy": "DenseCity-after-mountain.webp",
+      "reviewSha256": "c96afdeb547acc68e15a7e95714deb196f654ac0dcf29da7857500750fd4cc9c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-overview.png",
+      "nativeSha256": "2acf01b9b7ffffe5f6f14f586c00556d96f8248dd72b98c7d8f144223af356cd",
+      "reviewCopy": "DenseCity-after-overview.webp",
+      "reviewSha256": "9a77c8ab10fb5859e7743b976c725f923c51696309fdeaaedc38473a5822625c",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-runway.png",
+      "nativeSha256": "32b2dabc1221afc2a9ef8e7fd57dee85ef4f73fec54922eb4f4553e73f822362",
+      "reviewCopy": "DenseCity-after-runway.webp",
+      "reviewSha256": "7f027372acd3abb5e9c4a8014d384f48a38bfbf1bb0dbd308d0bd45604277a2a",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "DenseCity-after-waterfront.png",
+      "nativeSha256": "7a7c49a5717aaee902e9c5bb7018e60803b5196ce3435fe3a8449833bbb72953",
+      "reviewCopy": "DenseCity-after-waterfront.webp",
+      "reviewSha256": "8ce76f4a130936ecc080d6f9c641a63eaee488f03294e5b6b1141f4a24529225",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "RefineryDistrict-after-detail.png",
+      "nativeSha256": "516d928c34cb438dd47323182757baae87a2c025c0853b45bb8748853bea2bd6",
+      "reviewCopy": "RefineryDistrict-after-detail.webp",
+      "reviewSha256": "5c197cc6981b0cc77f1afedbb32c0d0d36ee137b49ea74b6e9e19c623f643196",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "RefineryDistrict-after-landscape.png",
+      "nativeSha256": "ea02093111f216e5220625f984738c8248d44966af407886d3697a070cc24980",
+      "reviewCopy": "RefineryDistrict-after-landscape.webp",
+      "reviewSha256": "b8cb22de6cf5be08f55f61ac1f9b9c16b9de62ba1a735e31f0b61ce6acd78979",
+      "width": 1600,
+      "height": 1000
+    },
+    {
+      "native": "RefineryDistrict-after-overview.png",
+      "nativeSha256": "23c41ffa0196d0ba4c20776c4ca9873c26706a0920dfbd47c98c2f9a6c7b868e",
+      "reviewCopy": "RefineryDistrict-after-overview.webp",
+      "reviewSha256": "092c73b83cc960a0cefe2eed1857f946f46c288488750639403bb0275be575db",
+      "width": 1600,
+      "height": 1000
+    }
+  ]
+}

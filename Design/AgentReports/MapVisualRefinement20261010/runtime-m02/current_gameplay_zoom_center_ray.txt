@@ -1,0 +1,13 @@
+mission=saga.ch01.m02.establish_base
+cameraPosition=926.398,44,338.858
+rayOrigin=926.485,43.807,339.076 rayDirection=0.289,-0.635,0.717
+hit=0 distance=39.689 entity=145385:1 mesh=DenseCity_SmallRubble material=SmallRubble part=-1 baseColor=0.119,0.089,0.051,1 boundsCenter=700.998,6.824,746.293 boundsSize=4808.157,23.596,1094.359
+hit=1 distance=39.882 entity=145383:1 mesh=DenseCity_PaperDebris material=PaperDebris part=-1 baseColor=0.38,0.342,0.243,1 boundsCenter=701.033,6.779,746.966 boundsSize=4807.852,23.44,1093.054
+hit=2 distance=68.185 entity=145384:1 mesh=DenseCity_KerbPaving material=DenseCity_d4b09abd885b542e69956a58652cf120 part=-1 baseColor=0.214,0.187,0.133,1 boundsCenter=701,0.513,738.012 boundsSize=4810,0.055,1060.024
+hit=3 distance=68.194 entity=145446:1 mesh=DenseCity_Cracks material=RoadCracks part=-1 baseColor=0.022,0.02,0.015,1 boundsCenter=692.518,0.534,731.3 boundsSize=4760.435,0,1020.07
+hit=4 distance=68.197 entity=145445:1 mesh=DenseCity_Lanes material=FadedLanePaint part=-1 baseColor=0.42,0.38,0.274,1 boundsCenter=701,0.505,746.28 boundsSize=4787,0.055,1073.56
+hit=5 distance=68.202 entity=145395:1 mesh=DenseCity_SandSpill material=RoadSand part=-1 baseColor=0.448,0.342,0.179,1 boundsCenter=1521.35,0.502,738.35 boundsSize=2250.7,0.055,1080.7
+hit=6 distance=68.216 entity=145396:1 mesh=DenseCity_FlatPaving material=DenseCity_801150ec7498041da988e5f906dad051 part=-1 baseColor=0.068,0.081,0.095,1 boundsCenter=701,0.493,743 boundsSize=4810,0.055,1090
+hit=7 distance=68.7 entity=144208:1 mesh=SM_Bld_CamoNet_Tent_01 material=PolygonMilitary_Mat_01_A part=-1 baseColor=1,1,1,1 boundsCenter=948.85,1.426,389.56 boundsSize=5.086,3.011,5.1
+hit=8 distance=68.7 entity=144209:1 mesh=SM_Bld_CamoNet_Tent_01 material=PolygonMilitary_Camo_Netting_Mat part=-1 baseColor=1,1,1,1 boundsCenter=948.85,1.426,389.56 boundsSize=5.086,3.011,5.1
+hit=9 distance=69.027 entity=108926:1 mesh=SM_Env_Ground_Round_02 material=DenseCity_2fb6795cb60ba476fb65648b39aceef7 part=-1 baseColor=1.283,1.184,0.911,1 boundsCenter=55.7,0.003,492.7 boundsSize=5833.655,0.005,6459.297

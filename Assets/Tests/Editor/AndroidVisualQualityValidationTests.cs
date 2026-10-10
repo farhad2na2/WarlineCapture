@@ -48,12 +48,12 @@ public sealed class AndroidVisualQualityValidationTests
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
             RunCase(() => HighMobileRenderPipelineUsesSharperScaleAndExtendedShadows(), ref passed);
-            RunCase(() => HighMobileVolumeProfileMatchesDemoExactly(), ref passed);
+            RunCase(() => HighMobileVolumeProfileKeepsReadableGameplayGrade(), ref passed);
             RunCase(() => HighProfileEnablesDetailedGroundAndDenseAsphalt(), ref passed);
             RunCase(() => MobileRenderPipelineUsesGpuInstancedDrawingDefaults(), ref passed);
             RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
             RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
-            RunCase(() => UniversalRenderPipelineGlobalSettingsRetainRuntimeResources(), ref passed);
+            RunCase(() => UniversalRenderPipelineGlobalSettingsRegisterRuntimeResources(), ref passed);
             RunCase(() => AndroidBuildDisablesStaticBatchingForGpuResidentDrawer(), ref passed);
             RunCase(() => AndroidBuildEnablesOptimizedFramePacing(), ref passed);
             RunCase(() => VisualQualityProfileDefinesDistinctMediumAndHighRendering(), ref passed);
@@ -80,8 +80,24 @@ public sealed class AndroidVisualQualityValidationTests
 
     private static void RunCase(Action test, ref int passed)
     {
-        test();
-        passed++;
+        // Quality application tests mutate the shared editor tier. Keep later tests and
+        // checked-in settings on the same authored configuration after each case.
+        var quality = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset")[0];
+        string previous = EditorJsonUtility.ToJson(quality);
+        try
+        {
+            test();
+            passed++;
+        }
+        finally
+        {
+            if (EditorJsonUtility.ToJson(quality) != previous)
+            {
+                EditorJsonUtility.FromJsonOverwrite(previous, quality);
+                EditorUtility.SetDirty(quality);
+                AssetDatabase.SaveAssets();
+            }
+        }
     }
 
     [Test]
@@ -164,10 +180,13 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void HighMobileVolumeProfileMatchesDemoExactly()
+    public static void HighMobileVolumeProfileKeepsReadableGameplayGrade()
     {
-        UnityEngine.Object profile = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DemoVolumeProfilePath);
-        Assert.NotNull(profile, $"Missing Demo volume profile at {DemoVolumeProfilePath}.");
+        var quality=AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
+        Assert.NotNull(quality);
+        UnityEngine.Object profile=new SerializedObject(quality).FindProperty("highVolumeProfile").objectReferenceValue;
+        Assert.NotNull(profile,"High mobile needs its gameplay grading profile.");
+        Assert.AreNotEqual(DemoVolumeProfilePath,AssetDatabase.GetAssetPath(profile),"Gameplay tuning must preserve the imported Demo profile.");
 
         SerializedProperty components = new SerializedObject(profile).FindProperty("components");
         Assert.NotNull(components, "High mobile volume profile is missing serialized components.");
@@ -182,7 +201,12 @@ public sealed class AndroidVisualQualityValidationTests
             if (string.Equals(component.name, "ColorAdjustments", StringComparison.Ordinal))
                 color = component;
             else if (string.Equals(component.name, "Bloom", StringComparison.Ordinal))
+            {
                 hasBloom = true;
+                var bloom=new SerializedObject(component);
+                Assert.LessOrEqual(bloom.FindProperty("dirtIntensity.m_Value").floatValue,.25f,"Lens dirt must not obscure the tactical view.");
+                Assert.LessOrEqual(bloom.FindProperty("intensity.m_Value").floatValue,.35f,"Daytime bloom must keep concrete and roofs readable.");
+            }
             else if (string.Equals(component.name, "Vignette", StringComparison.Ordinal))
                 hasVignette = true;
             else if (string.Equals(component.name, "ShadowsMidtonesHighlights", StringComparison.Ordinal))
@@ -197,8 +221,8 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedObject serializedColor = new(color);
         float contrast = serializedColor.FindProperty("contrast").FindPropertyRelative("m_Value").floatValue;
         float saturation = serializedColor.FindProperty("saturation").FindPropertyRelative("m_Value").floatValue;
-        Assert.That(contrast, Is.EqualTo(15f).Within(0.001f), "High mobile contrast must match Demo exactly.");
-        Assert.That(saturation, Is.EqualTo(10f).Within(0.001f), "High mobile saturation must match Demo exactly.");
+        Assert.That(contrast, Is.InRange(5f,15f), "Gameplay contrast must retain surface detail.");
+        Assert.That(saturation, Is.InRange(0f,10f), "Gameplay saturation must preserve faction and terrain separation.");
     }
 
     [Test]
@@ -298,17 +322,16 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void UniversalRenderPipelineGlobalSettingsRetainRuntimeResources()
+    public static void UniversalRenderPipelineGlobalSettingsRegisterRuntimeResources()
     {
         string path = Path.GetFullPath(Path.Combine(
             Application.dataPath,
             "../Assets/Settings/UniversalRenderPipelineGlobalSettings.asset"));
         string settings = File.ReadAllText(path);
 
-        StringAssert.DoesNotContain(
-            "m_RuntimeSettings:\n      m_List: []",
-            settings,
-            "URP runtime resources must not be emptied during settings migration.");
+        // Core RP 17 clears m_RuntimeSettings in Editor serialization and fills it only
+        // during player builds (RenderPipelineGraphicsSettingsContainer.OnBeforeSerialize).
+        // Validate the registered source collection and actual loaded GPU resources instead.
         StringAssert.Contains(
             "class: GPUResidentDrawerResources",
             settings,
@@ -316,17 +339,17 @@ public sealed class AndroidVisualQualityValidationTests
 
         Match runtimeBlock = Regex.Match(
             settings,
-            @"m_RuntimeSettings:\s*\r?\n(?<body>[\s\S]*?)\r?\n  m_AssetVersion:",
+            @"m_SettingsList:\s*\r?\n(?<body>[\s\S]*?)\r?\n    m_RuntimeSettings:",
             RegexOptions.CultureInvariant);
         Assert.True(
             runtimeBlock.Success,
-            "URP global settings must retain a readable m_RuntimeSettings block.");
+            "URP global settings must retain a readable registered settings collection.");
 
         HashSet<string> runtimeRids = CollectRids(runtimeBlock.Groups["body"].Value);
         Assert.That(
             runtimeRids.Count,
             Is.GreaterThan(0),
-            "URP runtime settings must contain at least one managed-reference RID.");
+            "URP registered settings must contain at least one managed-reference RID.");
 
         Match referencesBlock = Regex.Match(
             settings,
@@ -340,7 +363,7 @@ public sealed class AndroidVisualQualityValidationTests
         {
             Assert.True(
                 definedRids.Contains(runtimeRid),
-                $"URP runtime settings RID {runtimeRid} has no managed-reference definition.");
+                $"URP registered settings RID {runtimeRid} has no managed-reference definition.");
         }
 
         Match gpuResidentDrawer = Regex.Match(
@@ -352,7 +375,23 @@ public sealed class AndroidVisualQualityValidationTests
             "URP global settings must define GPUResidentDrawerResources.");
         Assert.True(
             runtimeRids.Contains(gpuResidentDrawer.Groups["rid"].Value),
-            "GPUResidentDrawerResources must be included in m_RuntimeSettings, not merely serialized as an unused reference.");
+            "GPUResidentDrawerResources must be registered in the source collection, not merely serialized as an unused reference.");
+        var asset=AssetDatabase.LoadMainAssetAtPath("Assets/Settings/UniversalRenderPipelineGlobalSettings.asset");
+        var registered=new SerializedObject(asset).FindProperty("m_Settings.m_SettingsList.m_List");
+        Assert.NotNull(registered);
+        object gpu=null;
+        for(int i=0;i<registered.arraySize;i++)
+        {
+            var value=registered.GetArrayElementAtIndex(i).managedReferenceValue;
+            if(value?.GetType().Name=="GPUResidentDrawerResources")gpu=value;
+        }
+        Assert.NotNull(gpu,"GPU Resident Drawer resources must load through the active registered collection.");
+        foreach(string name in new[]{"instanceDataBufferCopyKernels","instanceDataBufferUploadKernels","transformUpdaterKernels","windDataUpdaterKernels","occluderDepthPyramidKernels","instanceOcclusionCullingKernels"})
+        {
+            var property=gpu.GetType().GetProperty(name,BindingFlags.Public|BindingFlags.Instance);
+            Assert.NotNull(property,"Missing GPU resource property "+name);
+            Assert.IsInstanceOf<ComputeShader>(property.GetValue(gpu),"Missing GPU compute resource "+name);
+        }
     }
 
     private static HashSet<string> CollectRids(string yamlBlock)
@@ -440,8 +479,8 @@ public sealed class AndroidVisualQualityValidationTests
             "High must not silently reuse Medium's lower-resolution render pipeline.");
         Assert.NotNull(highVolume.objectReferenceValue, "High requires a configured color-grading volume profile.");
         UnityEngine.Object demoVolume = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DemoVolumeProfilePath);
-        Assert.AreSame(demoVolume, highVolume.objectReferenceValue, "High must use the exact Demo volume profile.");
-        Assert.AreSame(demoVolume, ultraVolume.objectReferenceValue, "Ultra must use the exact Demo volume profile.");
+        Assert.AreNotSame(demoVolume, highVolume.objectReferenceValue, "High uses a separate gameplay grade, preserving imported Demo art.");
+        Assert.AreSame(highVolume.objectReferenceValue, ultraVolume.objectReferenceValue, "High and Ultra retain a consistent gameplay color treatment.");
         Assert.True(profile.EnableHighCameraPostProcessing, "High must enable its configured mobile color treatment.");
         Assert.That(
             profile.HighSunShadowStrength,

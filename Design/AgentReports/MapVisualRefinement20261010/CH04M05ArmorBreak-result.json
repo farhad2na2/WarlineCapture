@@ -1,0 +1,377 @@
+{
+    "map": "CH04M05ArmorBreak",
+    "result": "Passed",
+    "beforeHash": "0c1aa504c989561e9f1924bf9dfca60cd6a9284405dca02b8aee4b317fb13f8b",
+    "afterHash": "5c6d4bd79f516f156071a67c5b0ff5007e501b560d8b84b6989f957a291786e9",
+    "protectedHash": "2933a1f1f77e3bf9a2af0ecb8bbe06441bbbb12731956b7d5b9b935dabe938c0",
+    "supportedProps": 0,
+    "parkedVehicles": 21,
+    "vehiclePalettes": 216,
+    "roofMaterials": 412,
+    "groundMaterials": 2545,
+    "waterEdges": 0,
+    "wearStamps": 2769,
+    "renderersBefore": 11580,
+    "renderersAfter": 11580,
+    "trianglesBefore": 9306895,
+    "trianglesAfter": 9306895,
+    "moves": [
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 834.8709716796875,
+                "y": -0.03338709473609924,
+                "z": 314.16204833984377
+            },
+            "after": {
+                "x": 834.8709716796875,
+                "y": -0.03338709473609924,
+                "z": 313.23211669921877
+            },
+            "transformId": 853096897,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 890.30224609375,
+                "y": -0.03338709473609924,
+                "z": 434.68218994140627
+            },
+            "after": {
+                "x": 890.30224609375,
+                "y": -0.03338709473609924,
+                "z": 445.68218994140627
+            },
+            "transformId": 589502215,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 913.841552734375,
+                "y": -0.03338709473609924,
+                "z": 442.98175048828127
+            },
+            "after": {
+                "x": 912.91162109375,
+                "y": -0.03338709473609924,
+                "z": 442.98175048828127
+            },
+            "transformId": 609764576,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1053.823486328125,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1053.823486328125,
+                "y": -0.03338709473609924,
+                "z": 434.4649658203125
+            },
+            "transformId": 1767418766,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1058.6470947265625,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1058.6470947265625,
+                "y": -0.03338709473609924,
+                "z": 444.5350341796875
+            },
+            "transformId": 1789617849,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1073.11767578125,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1073.11767578125,
+                "y": -0.03338709473609924,
+                "z": 434.4649658203125
+            },
+            "transformId": 2055878424,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1092.4117431640625,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1092.4117431640625,
+                "y": -0.03338709473609924,
+                "z": 444.5350341796875
+            },
+            "transformId": 725667724,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1111.7059326171875,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1111.7059326171875,
+                "y": -0.03338709473609924,
+                "z": 434.4649658203125
+            },
+            "transformId": 870595801,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1131.0,
+                "y": -0.03338709473609924,
+                "z": 433.5350341796875
+            },
+            "after": {
+                "x": 1131.0,
+                "y": -0.03338709473609924,
+                "z": 434.4649658203125
+            },
+            "transformId": 1998876853,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1153.0,
+                "y": -0.03338709473609924,
+                "z": 433.3092041015625
+            },
+            "after": {
+                "x": 1153.0,
+                "y": -0.03338709473609924,
+                "z": 434.6907958984375
+            },
+            "transformId": 1299660798,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1162.3333740234375,
+                "y": -0.03338709473609924,
+                "z": 433.31915283203127
+            },
+            "after": {
+                "x": 1162.3333740234375,
+                "y": -0.03338709473609924,
+                "z": 444.31915283203127
+            },
+            "transformId": 1940470383,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1171.6666259765625,
+                "y": -0.03338709473609924,
+                "z": 433.31915283203127
+            },
+            "after": {
+                "x": 1171.6666259765625,
+                "y": -0.03338709473609924,
+                "z": 434.680908203125
+            },
+            "transformId": 850037171,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1190.3333740234375,
+                "y": -0.03338709473609924,
+                "z": 433.31915283203127
+            },
+            "after": {
+                "x": 1190.3333740234375,
+                "y": -0.03338709473609924,
+                "z": 434.680908203125
+            },
+            "transformId": 1377122832,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1195.0,
+                "y": -0.03338709473609924,
+                "z": 433.3092041015625
+            },
+            "after": {
+                "x": 1195.0,
+                "y": -0.03338709473609924,
+                "z": 422.3092041015625
+            },
+            "transformId": 1411589424,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1209.0,
+                "y": -0.03338709473609924,
+                "z": 433.31915283203127
+            },
+            "after": {
+                "x": 1209.0,
+                "y": -0.03338709473609924,
+                "z": 434.680908203125
+            },
+            "transformId": 1196294917,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_APC_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1252.4285888671875,
+                "y": -0.029999999329447748,
+                "z": 473.962646484375
+            },
+            "after": {
+                "x": 1252.4285888671875,
+                "y": -0.029999999329447748,
+                "z": 462.962646484375
+            },
+            "transformId": 1587932501,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_APC_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1263.2857666015625,
+                "y": -0.029999999329447748,
+                "z": 473.962646484375
+            },
+            "after": {
+                "x": 1263.2857666015625,
+                "y": -0.029999999329447748,
+                "z": 474.037353515625
+            },
+            "transformId": 1562472300,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1270.75,
+                "y": -0.03338709473609924,
+                "z": 453.31915283203127
+            },
+            "after": {
+                "x": 1270.75,
+                "y": -0.03338709473609924,
+                "z": 464.31915283203127
+            },
+            "transformId": 1807573313,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Light_Armored_Car_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1274.142822265625,
+                "y": -0.021058229729533197,
+                "z": 473.99310302734377
+            },
+            "after": {
+                "x": 1274.142822265625,
+                "y": -0.021058229729533197,
+                "z": 474.0068359375
+            },
+            "transformId": 1894940033,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "alternating parked vehicle direction inside the existing bay",
+            "before": {
+                "x": 1285.0,
+                "y": -0.03338709473609924,
+                "z": 453.5350341796875
+            },
+            "after": {
+                "x": 1285.0,
+                "y": -0.03338709473609924,
+                "z": 454.4649658203125
+            },
+            "transformId": 1785758971,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "Map_Frontier/Vehicles/SM_Veh_Truck_01",
+            "reason": "parking gap with adjacent clear service bay",
+            "before": {
+                "x": 1649.67822265625,
+                "y": -0.03338709473609924,
+                "z": 449.15106201171877
+            },
+            "after": {
+                "x": 1649.67822265625,
+                "y": -0.03338709473609924,
+                "z": 460.15106201171877
+            },
+            "transformId": 1278622485,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

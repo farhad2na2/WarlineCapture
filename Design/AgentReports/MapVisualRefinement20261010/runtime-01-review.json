@@ -1,0 +1,16 @@
+{
+  "nativeCapture": "Passed",
+  "visualReview": "Passed",
+  "cleanupReview": "NeedsCorrection",
+  "reason": "Editor quality restoration reserialized Mobile MSAA to 4; final capture helper reapplies Mobile default after restoring the editor scene.",
+  "files": [
+    {
+      "file": "runtime-m02/current_max_zoom_out.png",
+      "sha256": "332c7c16015dcb71e6a06782d80fa41a28a11f37156dabf0af95b7980a796fa0"
+    },
+    {
+      "file": "runtime-m02/current_gameplay_zoom.png",
+      "sha256": "7fae72857fc6b28cede8e6bbcd4d8a87b37fb006fc10ccef5b11b99dd894450c"
+    }
+  ]
+}

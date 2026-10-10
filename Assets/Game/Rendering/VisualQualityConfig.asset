@@ -17,8 +17,8 @@ MonoBehaviour:
   mediumRenderPipelineAsset: {fileID: 11400000, guid: 5e6cbd92db86f4b18aec3ed561671858, type: 2}
   highRenderPipelineAsset: {fileID: 11400000, guid: a1de4c1d39ce4b77a734c981f57ef149, type: 2}
   renderPipelineAsset: {fileID: 11400000, guid: 540d0d69be1d47ad8d8aabbaa70ec494, type: 2}
-  highVolumeProfile: {fileID: 11400000, guid: e73f84682cee8f04f8dab8c7d9733ee3, type: 2}
-  globalVolumeProfile: {fileID: 11400000, guid: e73f84682cee8f04f8dab8c7d9733ee3, type: 2}
+  highVolumeProfile: {fileID: 11400000, guid: be247585c309c463fabc798a04703fb0, type: 2}
+  globalVolumeProfile: {fileID: 11400000, guid: be247585c309c463fabc798a04703fb0, type: 2}
   lowRenderScaleOverride: 0.5
   mediumRenderScaleOverride: 0.5
   highRenderScaleOverride: 0.75

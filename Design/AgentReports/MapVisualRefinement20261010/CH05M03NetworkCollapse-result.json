@@ -1,0 +1,1277 @@
+{
+    "map": "CH05M03NetworkCollapse",
+    "result": "Passed",
+    "beforeHash": "8d249965e5448f6476459b85ec6f2a07eb978fcd2e7814dfa075f40f4e41e91c",
+    "afterHash": "5080fb28eb94b6167e1ea8dfdd5fe5f91c3a288d2084aad708954bb0b4584c4a",
+    "protectedHash": "cab9d35aa366e0b19682dcd68eec136d7b1827c7b36ab20aaeb3009a15973ee2",
+    "protectionKind": "native-component-and-transform-invariants-v1",
+    "canonicalOwnershipHash": "6b2a578d6326cfb93ca87a197dd19ed805c9ef4b145ba924578d1f5df8400053",
+    "supportVerificationHash": "e3711d9eaac86b942c7740a8755e8c56bec32b040dd8449703edc719aec6973e",
+    "independentAttachmentIdentitiesRemoved": 37,
+    "attachments": [
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1066909866-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1915701798-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-228398518-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-8759425867530831771",
+            "presentationIdentities": [
+                "densecity.89b6cbccc4281197ca802ce1b2e7dd1e0287130c3623f2064e4e8965bc57585e"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-312785447-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1915701798-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-812664658-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-8561152807302790664",
+            "presentationIdentities": [
+                "densecity.014d0e7f9f018897ac122b0ca60b22784cedcb3990bf3f892905ba963eee1200"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-2001251215-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.c2ff1c9ef8301ec0547e61913cb149eae4c2ed887a01fef95055dab00253046e"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-796837580-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.4689a18e348bda36e29d9202ef0599abdc35f51066c77a3b9eaa236a1fd89d2a"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-379834397-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.3164df44835332865837428860807b4781bc24c439e21f7e003c4f867b277524"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1529435683-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.a31607a2767b557d9d2f7b833c4778f5382b156f9ea80db76c1edca5dff5c730"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1371178436-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1657012452-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-9018588647608282748",
+            "presentationIdentities": [
+                "densecity.8b6b595d7b884fc6af88419e06c229b29c001eb69a0b0b13f8766d078f8d3634"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-2039615435-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-228398518-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-8759425867530831771",
+            "presentationIdentities": [
+                "densecity.0d7027c31c32b8e36f3241a7e29d907b240b68c123678c11f4a3cba43d6d770e"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-87545150-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1048830798-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1656661518892122-48157828863339402",
+            "presentationIdentities": [
+                "densecity.84b27519cb6bc6273a6d311914a87228b1e0dc663a8622b6b3e03b2d0c473630"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-675006242-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.264b0463c900ee979545838f2506a4be21e502b93d53412ad81064772c10d09e"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-393179275-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.d3dbc8d98f8cf2532e17e6750ed7a1fe56b3f4306f2379155f1b755cc248fbbd"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-473190044-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-992201685-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-1256953171829676259",
+            "presentationIdentities": [
+                "densecity.4fe2f20010efa13097de7f83cb7f5c153796fd30093e38cfa7ce832cf47632c0"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1483879621-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1363853678-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-926531582472131775",
+            "presentationIdentities": [
+                "densecity.ba2a505c6bacfedaed29732893be0f849344d8ef528b5cf8e82ce1679cae121d"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1495216408-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.41fec941a7ee229b37bda5c6c2be7c8e7faa1521ef16d516b3cd9fd00e88bec4"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-175895655-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.bf604614f941e2ec05b3b33df3d28ade8a75323b6b58f1938f474463970075cb"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-849753105-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1657012452-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-9018588647608282748",
+            "presentationIdentities": [
+                "densecity.e06c1dba386260aefa31200b771cf90613045eb39341482a00499604b92f8849"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1285149975-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1657012452-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-9018588647608282748",
+            "presentationIdentities": [
+                "densecity.2f77abd9d8ca501904fb884bc8a37fd54efeab3b31aa3dfee2de1683bff8165e"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1260387052-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-992201685-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-1256953171829676259",
+            "presentationIdentities": [
+                "densecity.3733432846466bd4058d904511e26baaed4e9d161bdf8e16854ff53c82bf12f0"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-776415987-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-992201685-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-1256953171829676259",
+            "presentationIdentities": [
+                "densecity.8d0273e94a066fbd56683a110b31231410f38feb4abf13221704fa68cfa8808f"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-2106306198-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.cc81027aae4ec71d38a1c2a4e0cefcc497b0e9e096cbf758bf9283ca288426ce"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-343030139-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.e69fdabdd05a84d1e91d3238025edbad6092799fb5996cf9889f27c8927232b4"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-336618294-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.30ca9fa946333b6cdd629e8ca0c2a9dae294f35b0c36105d5060b24d7fbb5949"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-723274049-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.b20a8a8c9dbb93ec814cb719f9e7b723011b77dbb65bf8c1b7ac9c0bed9170e1"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-2009643695-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.ec038260bad7bc149767605b53bcc2996c1542f3729b6e9bf5786da49b4f2f4c"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1069277368-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1261844998-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1865828407317150-3188419766280469743",
+            "presentationIdentities": [
+                "densecity.bb71dcd7263ff4325d69fa2f71ab9788f67bd8e90bdabe4646d6985a49250ec3"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-770025252-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-992201685-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-1256953171829676259",
+            "presentationIdentities": [
+                "densecity.eedf7735e1dcc5e9c16f4c663cf6bb3cdc1c9049c6b3dbfdef386be5331712dc"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1024246257-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1140997232-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1656661518892122-874648377519992416",
+            "presentationIdentities": [
+                "densecity.3624d48e73a1cad77cca20d124390ce9f5dab4f7580e223ed75f9abeea3e9933"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1308160611-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.2e087f6de71524fe5b821479d318a745ec2ea6ae0060655dc140867d16f14298"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-582960454-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-228398518-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-8759425867530831771",
+            "presentationIdentities": [
+                "densecity.28f8c592e36372640d4dbd51ac1213f5b7ec9d507b7fd5058a15e082eb906b62"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1173705103-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-992201685-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-1256953171829676259",
+            "presentationIdentities": [
+                "densecity.bd09645a84114564ce35b72335f851cebd84811d58cdc2f29418349787a9ed56"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1803841896-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.989dd517d7951a7490863b85595e782f18f2c9029d97a60b25a5aa1e8dad0986"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1442166747-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.3b5a5cea9c1045926361994595f089a157ed76657472b8954e2e9dc410b3f5c7"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1839052657-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.c4303df91cab602c35bc4bec0b74c14099a24f8f7b8fe23713b4722d372fb7a2"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1437228599-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-538766517-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1370266613094688-4860776705371025453",
+            "presentationIdentities": [
+                "densecity.ccbb7f973ac22bb9cc8f74efd8453950e1c8c1576e4aecd186d5394a1fd00e8b"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1079957305-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-640828030-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1532433655345526-5072559749334622092",
+            "presentationIdentities": [
+                "densecity.e7fa6b2f326e44d82ed46d34fed189a7eb11871f9c260cbddd97e7e617aadfe4"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-296164253-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1048830798-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1656661518892122-48157828863339402",
+            "presentationIdentities": [
+                "densecity.a35aa560ce59ec2860207f5ac40b2d7f528d24cf14503f0d051c8458c06c6427"
+            ]
+        },
+        {
+            "prop": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-815842110-0",
+            "beforeParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-862967059-0",
+            "afterParent": "GlobalObjectId_V1-2-6e51ec1d41cd54e2a9d19c8b17193103-1056446086-0",
+            "buildingStableId": "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1307263765291764-2294910226615634054",
+            "presentationIdentities": [
+                "densecity.802c2f9d1f7f24693073443c283e35acb38fb2948c9026b1604c5942abde9e51"
+            ]
+        }
+    ],
+    "supportedProps": 54,
+    "parkedVehicles": 0,
+    "vehiclePalettes": 0,
+    "roofMaterials": 34,
+    "groundMaterials": 1502,
+    "waterEdges": 46,
+    "wearStamps": 437,
+    "renderersBefore": 4644,
+    "renderersAfter": 4644,
+    "trianglesBefore": 2499613,
+    "trianglesAfter": 2405881,
+    "moves": [
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform___UnmappedBuildings/SM_Bld_Roof_Cap_03 (3)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1087.4403076171875,
+                "y": 4.759999752044678,
+                "z": 517.27001953125
+            },
+            "after": {
+                "x": 1108.2401123046875,
+                "y": 7.017821311950684,
+                "z": 512.5507202148438
+            },
+            "transformId": 1066909866,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform___UnmappedBuildings/SM_Bld_Roof_Cap_04 (4)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1078.45703125,
+                "y": 4.252999782562256,
+                "z": 498.36700439453127
+            },
+            "after": {
+                "x": 1065.2578125,
+                "y": 11.197818756103516,
+                "z": 493.940185546875
+            },
+            "transformId": 312785447,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Aerial_01 (4)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1054.4901123046875,
+                "y": 19.76099967956543,
+                "z": 489.94000244140627
+            },
+            "after": {
+                "x": 1058.3399658203125,
+                "y": 12.179986953735352,
+                "z": 495.937744140625
+            },
+            "transformId": 2001251215,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_05 (2)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 15.184000015258789,
+                "z": 500.16998291015627
+            },
+            "after": {
+                "x": 1058.47802734375,
+                "y": 11.967819213867188,
+                "z": 497.4707946777344
+            },
+            "transformId": 796837580,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_05 (3)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 13.829000473022461,
+                "z": 500.16998291015627
+            },
+            "after": {
+                "x": 1057.42529296875,
+                "y": 11.967819213867188,
+                "z": 495.7669372558594
+            },
+            "transformId": 379834397,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_Mount_04 (6)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 15.184000015258789,
+                "z": 500.16998291015627
+            },
+            "after": {
+                "x": 1057.432373046875,
+                "y": 12.434971809387207,
+                "z": 497.4707946777344
+            },
+            "transformId": 1529435683,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Cone_01 (2)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1078.416259765625,
+                "y": 5.9490275382995609,
+                "z": 509.831787109375
+            },
+            "after": {
+                "x": 1067.048583984375,
+                "y": 11.250770568847657,
+                "z": 514.859619140625
+            },
+            "transformId": 1371178436,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Hanging_Shoes_01 (1)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1094.500244140625,
+                "y": 6.065999984741211,
+                "z": 517.1519775390625
+            },
+            "after": {
+                "x": 1108.236328125,
+                "y": 8.396001815795899,
+                "z": 509.32489013671877
+            },
+            "transformId": 2039615435,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_PowerBox_06 (23)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1098.1171875,
+                "y": 6.985000133514404,
+                "z": 486.6649169921875
+            },
+            "after": {
+                "x": 1097.7415771484375,
+                "y": 7.5432209968566898,
+                "z": 477.60943603515627
+            },
+            "transformId": 87545150,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_PowerBox_06 (33)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1056.4481201171875,
+                "y": 15.043000221252442,
+                "z": 508.59295654296877
+            },
+            "after": {
+                "x": 1058.9193115234375,
+                "y": 12.08569622039795,
+                "z": 514.9907836914063
+            },
+            "transformId": 675006242,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_PowerBox_06 (35)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1054.5731201171875,
+                "y": 16.187999725341798,
+                "z": 501.14898681640627
+            },
+            "after": {
+                "x": 1059.5308837890625,
+                "y": 12.245697021484375,
+                "z": 494.1040954589844
+            },
+            "transformId": 393179275,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Satellite_Dish_01 (3)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1053.1800537109375,
+                "y": 19.871000289916993,
+                "z": 499.72998046875
+            },
+            "after": {
+                "x": 1046.37353515625,
+                "y": 13.158864974975586,
+                "z": 493.9619140625
+            },
+            "transformId": 473190044,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Satellite_Dish_02 (4)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1052.02001953125,
+                "y": 15.940000534057618,
+                "z": 519.050048828125
+            },
+            "after": {
+                "x": 1048.13134765625,
+                "y": 12.948541641235352,
+                "z": 511.26348876953127
+            },
+            "transformId": 1483879621,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Satellite_Dish_03 (1)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1054.9691162109375,
+                "y": 16.81999969482422,
+                "z": 491.1300048828125
+            },
+            "after": {
+                "x": 1058.882568359375,
+                "y": 12.072021484375,
+                "z": 497.4265441894531
+            },
+            "transformId": 1495216408,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sign_Safety_02 (5)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1053.633056640625,
+                "y": 7.095999717712402,
+                "z": 510.5820007324219
+            },
+            "after": {
+                "x": 1059.97216796875,
+                "y": 12.274741172790528,
+                "z": 518.3574829101563
+            },
+            "transformId": 175895655,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Statue_01 (1)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1075.176025390625,
+                "y": 7.469000816345215,
+                "z": 512.7149658203125
+            },
+            "after": {
+                "x": 1067.09326171875,
+                "y": 11.198559761047364,
+                "z": 513.566162109375
+            },
+            "transformId": 849753105,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Statue_Base_01",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1075.150146484375,
+                "y": 5.12000036239624,
+                "z": 512.719970703125
+            },
+            "after": {
+                "x": 1065.919189453125,
+                "y": 11.197819709777832,
+                "z": 516.59375
+            },
+            "transformId": 1285149975,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_TV_Antenna_01 (4)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1052.3150634765625,
+                "y": 19.25200080871582,
+                "z": 489.04595947265627
+            },
+            "after": {
+                "x": 1046.6651611328125,
+                "y": 12.965324401855469,
+                "z": 492.39910888671877
+            },
+            "transformId": 1260387052,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_TV_Antenna_02 (6)",
+            "reason": "detached roof decoration placed on a ray-verified static roof",
+            "before": {
+                "x": 1053.2601318359375,
+                "y": 19.652000427246095,
+                "z": 492.3399658203125
+            },
+            "after": {
+                "x": 1046.659423828125,
+                "y": 12.948934555053711,
+                "z": 495.77581787109377
+            },
+            "transformId": 776415987,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_01 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 14.100000381469727,
+                "z": 497.57696533203127
+            },
+            "after": {
+                "x": 1059.513916015625,
+                "y": 11.967819213867188,
+                "z": 495.76690673828127
+            },
+            "transformId": 2106306198,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_Mount_02 (10)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 14.100000381469727,
+                "z": 497.57696533203127
+            },
+            "after": {
+                "x": 1056.40478515625,
+                "y": 12.271605491638184,
+                "z": 495.76690673828127
+            },
+            "transformId": 343030139,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_Mount_02 (9)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 14.100000381469727,
+                "z": 498.89697265625
+            },
+            "after": {
+                "x": 1056.40478515625,
+                "y": 12.271605491638184,
+                "z": 497.47076416015627
+            },
+            "transformId": 336618294,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_Mount_04 (7)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 13.829000473022461,
+                "z": 500.16998291015627
+            },
+            "after": {
+                "x": 1060.5908203125,
+                "y": 12.434971809387207,
+                "z": 494.0632019042969
+            },
+            "transformId": 723274049,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Airconditioner_Optimized_02",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.39501953125,
+                "y": 14.100000381469727,
+                "z": 498.89697265625
+            },
+            "after": {
+                "x": 1058.494873046875,
+                "y": 11.967819213867188,
+                "z": 494.0631103515625
+            },
+            "transformId": 2009643695,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_AmmoBox_02 (4)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 872.4930419921875,
+                "y": 3.545398712158203,
+                "z": 363.8509521484375
+            },
+            "after": {
+                "x": 875.0935668945313,
+                "y": 5.828338146209717,
+                "z": 390.4800109863281
+            },
+            "transformId": 1069277368,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Barrel_Stack_01",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 949.2528076171875,
+                "y": 1.4690017700195313,
+                "z": 394.80780029296877
+            },
+            "after": {
+                "x": 949.2528076171875,
+                "y": 0.020053982734680177,
+                "z": 394.80780029296877
+            },
+            "transformId": 726450364,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Barrel_Stack_01 (1)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 947.68701171875,
+                "y": 1.4690017700195313,
+                "z": 394.7037353515625
+            },
+            "after": {
+                "x": 947.68701171875,
+                "y": 0.020055770874023439,
+                "z": 394.7037353515625
+            },
+            "transformId": 308748744,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Basket_03 (9)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1065.26123046875,
+                "y": 3.0180001258850099,
+                "z": 518.2559814453125
+            },
+            "after": {
+                "x": 1065.26123046875,
+                "y": 0.40174150466918948,
+                "z": 518.2559814453125
+            },
+            "transformId": 1239984115,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_DownPipe_Straight_01 (19)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1051.6480712890625,
+                "y": 5.4579997062683109,
+                "z": 497.04998779296877
+            },
+            "after": {
+                "x": 1045.51123046875,
+                "y": 12.947818756103516,
+                "z": 495.1546630859375
+            },
+            "transformId": 770025252,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Electronics_Shelf_01 (6)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.777099609375,
+                "y": 2.6389999389648439,
+                "z": 516.636962890625
+            },
+            "after": {
+                "x": 1069.777099609375,
+                "y": 0.01999497413635254,
+                "z": 516.636962890625
+            },
+            "transformId": 896127524,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Pot_Hanging_01 (1)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1033.0390625,
+                "y": 9.331000328063965,
+                "z": 507.22296142578127
+            },
+            "after": {
+                "x": 1028.026123046875,
+                "y": 14.525321006774903,
+                "z": 513.3035888671875
+            },
+            "transformId": 1024246257,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Pot_Hanging_01 (2)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.736083984375,
+                "y": 8.372000694274903,
+                "z": 493.7030029296875
+            },
+            "after": {
+                "x": 1060.583740234375,
+                "y": 13.25733470916748,
+                "z": 495.7669982910156
+            },
+            "transformId": 1308160611,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_PowerBox_05 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1113.794189453125,
+                "y": 6.735000133514404,
+                "z": 514.8609619140625
+            },
+            "after": {
+                "x": 1106.4688720703125,
+                "y": 7.577428340911865,
+                "z": 510.44488525390627
+            },
+            "transformId": 582960454,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rubbish_Pile_01 (5)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1077.237060546875,
+                "y": 1.9190000295639039,
+                "z": 496.24298095703127
+            },
+            "after": {
+                "x": 1077.237060546875,
+                "y": 0.16470074653625489,
+                "z": 496.24298095703127
+            },
+            "transformId": 1701946947,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rubbish_Pile_01 (8)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1050.97314453125,
+                "y": 5.559999942779541,
+                "z": 497.5999755859375
+            },
+            "after": {
+                "x": 1048.7462158203125,
+                "y": 13.20232105255127,
+                "z": 494.251220703125
+            },
+            "transformId": 1173705103,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rubbish_Pile_02 (5)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1076.953125,
+                "y": 1.8650000095367432,
+                "z": 494.2239990234375
+            },
+            "after": {
+                "x": 1076.953125,
+                "y": 0.1289222240447998,
+                "z": 494.2239990234375
+            },
+            "transformId": 934804522,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_16 (7)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1067.591064453125,
+                "y": 2.630000114440918,
+                "z": 512.91796875
+            },
+            "after": {
+                "x": 1067.591064453125,
+                "y": 0.01999688148498535,
+                "z": 512.91796875
+            },
+            "transformId": 1078738641,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_23 (7)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1066.920166015625,
+                "y": 2.636000156402588,
+                "z": 517.1656494140625
+            },
+            "after": {
+                "x": 1066.920166015625,
+                "y": 0.020000934600830079,
+                "z": 517.1656494140625
+            },
+            "transformId": 457549176,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_Hanging_04 (1)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1062.609130859375,
+                "y": 7.854000091552734,
+                "z": 508.7340087890625
+            },
+            "after": {
+                "x": 1057.853271484375,
+                "y": 12.90968132019043,
+                "z": 514.1724853515625
+            },
+            "transformId": 1803841896,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_Hanging_04 (2)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1058.904052734375,
+                "y": 7.823999881744385,
+                "z": 508.58599853515627
+            },
+            "after": {
+                "x": 1057.0889892578125,
+                "y": 12.909680366516114,
+                "z": 516.6669311523438
+            },
+            "transformId": 1442166747,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_Hanging_05 (1)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1060.7451171875,
+                "y": 7.858999729156494,
+                "z": 508.9530029296875
+            },
+            "after": {
+                "x": 1061.0015869140625,
+                "y": 12.71314811706543,
+                "z": 514.49365234375
+            },
+            "transformId": 1839052657,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_Hanging_05 (2)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1061.634033203125,
+                "y": 7.797999858856201,
+                "z": 508.56195068359377
+            },
+            "after": {
+                "x": 1057.41015625,
+                "y": 12.713149070739746,
+                "z": 513.2694091796875
+            },
+            "transformId": 1437228599,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_01 (12)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1066.779052734375,
+                "y": 2.691999912261963,
+                "z": 518.5679931640625
+            },
+            "after": {
+                "x": 1066.779052734375,
+                "y": 0.020001649856567384,
+                "z": 518.5679931640625
+            },
+            "transformId": 2075581305,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_01 (13)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.690185546875,
+                "y": 2.629000186920166,
+                "z": 514.02001953125
+            },
+            "after": {
+                "x": 1069.690185546875,
+                "y": 0.01999378204345703,
+                "z": 514.02001953125
+            },
+            "transformId": 510272560,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_02 (4)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.7060546875,
+                "y": 2.6480002403259279,
+                "z": 513.281005859375
+            },
+            "after": {
+                "x": 1069.7060546875,
+                "y": 0.019993305206298829,
+                "z": 513.281005859375
+            },
+            "transformId": 633830916,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_03 (8)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1066.108154296875,
+                "y": 2.6700000762939455,
+                "z": 518.508056640625
+            },
+            "after": {
+                "x": 1066.108154296875,
+                "y": 0.02000284194946289,
+                "z": 518.508056640625
+            },
+            "transformId": 1773867228,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_03 (9)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.80810546875,
+                "y": 2.641000270843506,
+                "z": 512.0260009765625
+            },
+            "after": {
+                "x": 1069.80810546875,
+                "y": 0.019992351531982423,
+                "z": 512.0260009765625
+            },
+            "transformId": 1948360598,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_04 (2)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.713134765625,
+                "y": 2.8440003395080568,
+                "z": 512.635986328125
+            },
+            "after": {
+                "x": 1069.713134765625,
+                "y": 0.23293256759643556,
+                "z": 512.635986328125
+            },
+            "transformId": 999193373,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_06 (2)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.947021484375,
+                "y": 2.6510000228881838,
+                "z": 511.33404541015627
+            },
+            "after": {
+                "x": 1069.947021484375,
+                "y": 0.019991636276245118,
+                "z": 511.33404541015627
+            },
+            "transformId": 179588980,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sack_Large_02 (8)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1069.55224609375,
+                "y": 2.634000301361084,
+                "z": 515.0570068359375
+            },
+            "after": {
+                "x": 1069.55224609375,
+                "y": 0.019994497299194337,
+                "z": 515.0570068359375
+            },
+            "transformId": 387017110,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sign_Poster_02 (6)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1055.070068359375,
+                "y": 10.701000213623047,
+                "z": 500.4110107421875
+            },
+            "after": {
+                "x": 1060.583740234375,
+                "y": 12.761741638183594,
+                "z": 497.4707946777344
+            },
+            "transformId": 1079957305,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sign_Poster_06 (14)",
+            "reason": "orphan low furnishing grounded at its existing footprint",
+            "before": {
+                "x": 1122.59912109375,
+                "y": 2.426999807357788,
+                "z": 494.0489501953125
+            },
+            "after": {
+                "x": 1122.59912109375,
+                "y": 0.42173194885253909,
+                "z": 494.0489501953125
+            },
+            "transformId": 1284993181,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Sign_Shop_07 (3)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1102.18017578125,
+                "y": 6.069999694824219,
+                "z": 473.65997314453127
+            },
+            "after": {
+                "x": 1097.7470703125,
+                "y": 7.557785987854004,
+                "z": 479.40484619140627
+            },
+            "transformId": 296164253,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        },
+        {
+            "path": "AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_TV_Antenna_01 (5)",
+            "reason": "detached roof decoration placed on a ray-verified supported roof",
+            "before": {
+                "x": 1127.670166015625,
+                "y": 8.40000057220459,
+                "z": 515.3499755859375
+            },
+            "after": {
+                "x": 1124.84814453125,
+                "y": 7.781943321228027,
+                "z": 501.40325927734377
+            },
+            "transformId": 815842110,
+            "instanceId": 0,
+            "prefabTransformId": 0
+        }
+    ]
+}

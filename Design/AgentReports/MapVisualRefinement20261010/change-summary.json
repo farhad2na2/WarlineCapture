@@ -1,0 +1,13 @@
+{
+  "supportedProps": 267,
+  "parkedVehicles": 142,
+  "vehiclePalettes": 1578,
+  "roofMaterials": 3768,
+  "groundMaterials": 23097,
+  "waterEdges": 397,
+  "wearStamps": 24934,
+  "renderersBefore": 267478,
+  "renderersAfter": 267478,
+  "trianglesBefore": 144464691,
+  "trianglesAfter": 143661253
+}

@@ -32,7 +32,7 @@ namespace Game.Runtime
 
             Color nightColor = new(0.34f, 0.40f, 0.52f);
             Color dawnColor = new(1f, 0.67f, 0.42f);
-            Color noonColor = new(1f, 0.97f, 0.87f);
+            Color noonColor = new(1f, 0.977f, 0.935f);
             Color blended = Color.Lerp(nightColor, dawnColor, twilight);
             directionalLight.color = Color.Lerp(blended, noonColor, daylight);
             directionalLight.intensity = Mathf.Lerp(0.10f, 1.15f, daylight) + (twilight * 0.08f);
@@ -45,13 +45,13 @@ namespace Game.Runtime
         {
             Color nightSky = new(0.045f, 0.065f, 0.12f);
             Color dawnSky = new(0.55f, 0.34f, 0.28f);
-            Color daySky = new(0.212f, 0.227f, 0.259f);
+            Color daySky = new(0.27f, 0.30f, 0.35f);
             Color nightEquator = new(0.03f, 0.04f, 0.08f);
             Color dawnEquator = new(0.42f, 0.22f, 0.18f);
-            Color dayEquator = new(0.114f, 0.125f, 0.133f);
+            Color dayEquator = new(0.15f, 0.17f, 0.19f);
             Color nightGround = new(0.015f, 0.018f, 0.03f);
             Color dawnGround = new(0.17f, 0.11f, 0.08f);
-            Color dayGround = new(0.047f, 0.043f, 0.035f);
+            Color dayGround = new(0.07f, 0.063f, 0.052f);
 
             RenderSettings.ambientSkyColor = Color.Lerp(Color.Lerp(nightSky, dawnSky, twilight), daySky, daylight);
             RenderSettings.ambientEquatorColor = Color.Lerp(Color.Lerp(nightEquator, dawnEquator, twilight), dayEquator, daylight);
@@ -120,7 +120,7 @@ namespace Game.Runtime
                 Color.white,
                 daylight);
 
-            _whiteBalance.temperature.value = Mathf.Lerp(-18f, 4f, daylight) + (twilight * 14f);
+            _whiteBalance.temperature.value = Mathf.Lerp(-18f, 0f, daylight) + (twilight * 14f);
             _whiteBalance.tint.value = Mathf.Lerp(6f, 0f, daylight);
 
             _bloom.intensity.value = Mathf.Lerp(0.55f, 0.18f, daylight);

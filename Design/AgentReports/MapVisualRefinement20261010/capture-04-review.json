@@ -1,0 +1,27 @@
+{
+  "nativeCapture": "Passed",
+  "visualReview": "Failed",
+  "reason": "Two water tanks remained suspended on overlapping orphan platforms. Native support check required cycle correction.",
+  "files": [
+    {
+      "file": "CH05M05CommandNode-after-waterfront.png",
+      "sha256": "5ffc82a3ddcb17481d8ecbd650131cbe048b7269193b7563e7e1f7c9dfd8ebcd"
+    },
+    {
+      "file": "CH05M05CommandNode-after-overview.png",
+      "sha256": "a9c95389e706d25c5d2bf4b279d3212fcb952777dcda6403f73884184f047cc2"
+    },
+    {
+      "file": "CH05M05CommandNode-after-detached.png",
+      "sha256": "b832353d86ba3c5950a59dacf933cc650c181e62d0f37bbd45ca3013e928a428"
+    },
+    {
+      "file": "CH05M05CommandNode-after-detail.png",
+      "sha256": "17ee031aafcdc4b0537dec59293f16b4dbd18f2585ded819de81771710965b72"
+    },
+    {
+      "file": "CH05M05CommandNode-after-landscape.png",
+      "sha256": "d1f00d801ebf7ddd1c290eea725222bc09575a78362e2ad1dffd2db3498701a4"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "result": "Failed",
+  "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-872-gameplay-world-binding-pre-source-manifest.json",
+  "postSourceManifest": "final-875-resumed-paid-cycle-closed-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-875-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-f7ae76b530874f21b60caaba8c4d7eab.jsonl",
+  "inputAudit": "native875-touch-contact-audit.json",
+  "recordedContacts": 341,
+  "completedContacts": 339,
+  "allRecordedContactsEnded": false,
+  "inputAuditErrors": [
+    {
+      "contact": [
+        40,
+        1,
+        319
+      ],
+      "kinds": [
+        "Dispatched",
+        "Began"
+      ]
+    },
+    {
+      "contact": [
+        41,
+        1,
+        13
+      ],
+      "kinds": [
+        "Dispatched"
+      ]
+    }
+  ],
+  "failureReason": "Test-player empty-selection guard closed its own full map before the multi-frame camera gesture could focus the off-screen added Factory. Starting Factory paused; remaining pause blocked. Owned abort left two unfinished recorded contacts; retained as failed input audit.",
+  "rootCause": "SelectOnlyPlayerResumeActorThroughInput(Entity.Null) must preserve camera input when selected actors and presented selected groups are already zero.",
+  "progress": [
+    "[S005FixedWingCycle] phase=Progress stage=0 materials=0 fuel=746 actor=0 nativeFire=0 elapsed=553.484 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=0 fuel=761 actor=0 nativeFire=0 elapsed=563.603 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=0 fuel=791 actor=0 nativeFire=0 elapsed=573.607 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=100 fuel=817 actor=0 nativeFire=0 elapsed=583.625 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=100 fuel=829 actor=0 nativeFire=0 elapsed=593.628 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=150 fuel=810 actor=0 nativeFire=0 elapsed=603.640 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=150 fuel=800 actor=0 nativeFire=0 elapsed=613.628 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=150 fuel=818 actor=0 nativeFire=0 elapsed=623.662 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=200 fuel=821 actor=0 nativeFire=0 elapsed=633.671 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=300 fuel=841 actor=0 nativeFire=0 elapsed=644.901 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=300 fuel=856 actor=0 nativeFire=0 elapsed=654.931 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=300 fuel=846 actor=0 nativeFire=0 elapsed=664.944 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=300 fuel=849 actor=0 nativeFire=0 elapsed=674.938 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=400 fuel=879 actor=0 nativeFire=0 elapsed=684.964 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=450 fuel=893 actor=0 nativeFire=0 elapsed=694.951 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=450 fuel=917 actor=0 nativeFire=0 elapsed=704.987 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=450 fuel=931 actor=0 nativeFire=0 elapsed=714.997 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=500 fuel=956 actor=0 nativeFire=0 elapsed=724.994 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=600 fuel=964 actor=0 nativeFire=0 elapsed=735.401 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=1 materials=80 fuel=948 actor=1 nativeFire=0 elapsed=746.351 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 parkingTransitComplete=1 atHome=1 receipt=1005",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=80 fuel=961 actor=1 nativeFire=0 elapsed=756.355 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=80 fuel=947 actor=1 nativeFire=0 elapsed=766.387 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=130 fuel=937 actor=1 nativeFire=0 elapsed=776.401 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=230 fuel=959 actor=1 nativeFire=0 elapsed=786.912 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=90 fuel=955 actor=1 nativeFire=0 elapsed=797.570 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=PauseFabrication id=11 input=Touch",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=90 fuel=973 actor=1 nativeFire=0 elapsed=808.039 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=140 fuel=982 actor=1 nativeFire=0 elapsed=818.755 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=190 fuel=979 actor=1 nativeFire=0 elapsed=829.479 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=190 fuel=966 actor=1 nativeFire=0 elapsed=840.178 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=190 fuel=969 actor=1 nativeFire=0 elapsed=850.232 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=190 fuel=971 actor=1 nativeFire=0 elapsed=860.901 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=190 fuel=994 actor=1 nativeFire=0 elapsed=871.586 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=290 fuel=992 actor=1 nativeFire=0 elapsed=882.294 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=290 fuel=985 actor=1 nativeFire=0 elapsed=893.112 selectedRoundTripReserve=0",
+    "[S005FixedWingCycle] phase=Progress stage=2 materials=290 fuel=972 actor=1 nativeFire=0 elapsed=903.924 selectedRoundTripReserve=0"
+  ],
+  "localFuelRouteEvidence": [
+    "[S005LocalFuelRoute] phase=Begin source=18 destination=19 tanker=role.tanker.1.8.0 input=TouchPending",
+    "[S005LocalFuelRoute] phase=Assigned source=18 destination=19 input=Touch nativeOrderObserved=1 resourcesOrOrdersInjected=0",
+    "[S005LocalFuelRoute] result=Delivered source=18 destination=19 input=Touch nativeOrderObserved=1 loadedCargoObserved=1 receivedAdded=32 resourcesOrOrdersInjected=0"
+  ],
+  "fleetMarkers": [
+    "[S005FuelFleet] phase=Plan oil=3 tankers=3 targetOil=2 targetTankers=4 supportCap=6 tankerCost=140 input=TouchPending",
+    "[S005FuelFleet] phase=RetireOilTruck input=Touch cargoEmptyObserved=1 selectedNativeActors=1 resourcesOrOrdersInjected=0",
+    "[S005FuelFleet] phase=CapacityReleased nativeOil=2 nativeTankers=3 input=Touch observedCleanup=1",
+    "[S005FuelFleet] result=Passed nativeOil=2 nativeTankers=4 supportUsed=6 supportCap=6 tankerCost=140 input=Touch normalBudget=1 resourcesOrOrdersInjected=0"
+  ],
+  "normalInput": true,
+  "noOutcomeInjection": true,
+  "normalBudget": true,
+  "scope": "Paid industry/Airport, explicit physical local fuel delivery, paid Strike parked and single Oil retirement/four-Tanker fleet observed. Failed aborted journey, no flight/Return/refuel/second sortie or complete mission certified.",
+  "completeMissionCertified": false,
+  "bilateralCapacityCertified": false,
+  "allRolesCertified": false,
+  "playerReady": false,
+  "technicallyReady": false
+}

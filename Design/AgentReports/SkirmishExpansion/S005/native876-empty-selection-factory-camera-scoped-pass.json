@@ -1,0 +1,24 @@
+{
+  "result": "PassedScopedNativeFactoryCamera",
+  "sourceHash": "b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-876-empty-selection-camera-pre-source-manifest.json",
+  "postSourceManifest": "final-876-empty-selection-camera-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "log": "native-876-empty-selection-camera.log",
+  "trace": "s005-aria-live-104734-en-3824ed3576cc434c96aebd568df1c30d.jsonl",
+  "inputAudit": "native876-touch-contact-audit.json",
+  "recordedContacts": 16,
+  "allRecordedContactsEnded": true,
+  "normalInput": true,
+  "markers": [
+    "[S005AirportPlacement] cameraInput=FullMapTouch site=(1399.00, 0.00, 177.50) from=(1240.38, 201.66) to=(1240.38, 201.66) drag=False acceptedCommandsBefore=0",
+    "[S005AircraftBaseGuard] cameraInput=FullMapTouch world=(934.50, 1.01, 631.00) from=(943.69, 607.60) to=(943.69, 607.60) drag=False",
+    "[S005EmptySelectionCamera] result=Passed input=Touch emptySelectionPopupPreserved=1 nativeFactorySelected=1 troopCommandsAdded=0 actorResourcesClockInjected=0 completeMatchCertified=0",
+    "[SkirmishS003Startup] result=Passed reason=emptySelectionFactoryCameraOnly"
+  ],
+  "scope": "Normal camera excursion to airfield, full-map gesture survives the already-empty selection guard, native Factory selected after camera return, no camera-issued troop commands. No complete paid flight cycle or mission certified.",
+  "completeMissionCertified": false,
+  "playerReady": false
+}

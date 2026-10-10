@@ -3,15 +3,15 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
-  "sourceFingerprint": "final-874-starting-fuel-click-post-independent-fingerprint.json",
+  "sourceHash": "b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb",
+  "sourceFingerprint": "final-876-empty-selection-camera-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technical readiness",
   "deviceAcceptance": "Pending",
-  "focusedCurrentProof": "native872-gameplay-world-binding-focused-pass.json",
-  "activeRun": null,
-  "activeLog": null,
+  "focusedCurrentProof": null,
+  "activeRun": "native877",
+  "activeLog": "native-877-current-manual-en-seed155926.log",
   "nativeCurrentSource": [],
   "priorCandidateRecovery": {
     "sourceHash": "45fec66e1f6c98ae3aae21e18b7923ad31ab2b8bcb8c2db3e7cff07460773420",
@@ -63,8 +63,8 @@
   "priorNativeFactoryControl": [
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
-  "activeScope": null,
-  "nextWork": "Finish consecutive native input World-binding regression, then retry normal paid Strike production/flight/Return/refuel/second sortie. Complete mission and other acceptance gates remain open.",
+  "activeScope": "RunS005EditorDiagnosedStrikeCycleProbe",
+  "nextWork": "Qualify short native empty-selection camera regression, then retry paid Strike flight cycle.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -412,11 +412,11 @@
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
   "currentSourceFingerprint": "final-871-resumed-paid-cycle-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native871-normal-paid-strike-cycle-failure.json",
+  "latestAircraftProgress": "native875-normal-paid-strike-cycle-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
-  "activePreManifest": null,
+  "activePreManifest": "final-876-empty-selection-camera-pre-source-manifest.json",
   "latestSourceFitFailure": "native753-readonly-scan-opening-roster-drift-failure.json",
   "latestSourceFitDiagnostic": "native755-readonly-playable-air-fit-completed.json",
   "sourceFitNecessaryGate": {
@@ -458,7 +458,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native871-normal-paid-strike-cycle-failure.json",
+  "latestAircraftFailure": "native875-normal-paid-strike-cycle-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,
@@ -697,13 +697,19 @@
   "latestRecoverySourceDriftFailure": "native857-boarded-savecontinue-observed-victory-source-drift-failure.json",
   "currentSourceFitProof": "native859-current-map-source-fit-pass.json",
   "priorFocusedClearanceProof": "native848-focused-current-proof.json",
-  "currentCompileProof": "compile-863-deferred-camera-probe-status.json",
+  "currentCompileProof": "compile-876-empty-selection-camera-status-retry.json",
   "currentSharedBuildingClearanceProof": "native860-compact-paid-building-clearance-pass.json",
   "latestFailedFactoryRedirectProof": "native861-factory-redirect-cargo-race-failure.json",
   "currentDeferredCameraProof": "native863-deferred-factory-camera-scoped-pass.json",
   "latestNativeInputDiagnostic": "native870-single-actor-retirement-scoped-pass.json",
-  "currentNativeInputGateProofs": [
-    "native873-gameplay-world-binding-native-input-pass.json",
-    "native874-gameplay-world-binding-native-input-pass.json"
-  ]
+  "priorGameplayWorldBindingProofs": {
+    "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
+    "focused": "native872-gameplay-world-binding-focused-pass.json",
+    "nativeInputProbes": [
+      "native873-gameplay-world-binding-native-input-pass.json",
+      "native874-gameplay-world-binding-native-input-pass.json"
+    ],
+    "countsForCurrentFullSource": false
+  },
+  "currentEmptySelectionCameraProof": "native876-empty-selection-factory-camera-scoped-pass.json"
 }

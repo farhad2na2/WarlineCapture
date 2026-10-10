@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current full source fingerprint: `443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current full source fingerprint: `b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city source, including the shared visual refinement merged in PR64. This task now tests compact legal industry placement through normal input and explicitly includes the interface arrow in the existing fallback font. Gameplay costs, rates, capacities and deadlines remain fixed. Owner visual review remains deferred; real player/device acceptance is pending.
 
@@ -673,3 +673,9 @@ Native871 was stopped after a read-only observation proved building input `IsPla
 Native873 reached `[SelectedHaulInput] ... selected=1 result=Begin` after an unblocked normal world tap in a fresh Play session. The empty starting Fuel store correctly failed reservation. Actual wrapper/bridge exit0, 12/12 contacts ended and exact full source443cf PRE/POST matched. This certifies the input gate only, not a delivery or mission. Proof `native873-gameplay-world-binding-native-input-pass.json`.
 
 Native874 repeated the same normal-input probe immediately after native873 without recompilation. Its new Play World also reached the selected-hauler handler, with actual wrapper/bridge exit0, 12/12 contacts ended and identical full source443cf PRE/POST. Proof `native874-gameplay-world-binding-native-input-pass.json`. Both checks are scoped input acceptance; complete paid flight and mission gates remain open.
+
+Native875 failed at off-screen added-Factory camera navigation: the test-player empty-selection guard closed its own map popup before the camera gesture completed. Actual wrapper/bridge1, full source443cf PRE/POST identical. Paid Strike parking and the exact-one Oil retirement/four-Tanker fleet were observed; flight remained untested. The owned abort left two unfinished touch contacts (339/341 ended); this remains a failed input audit. Proof `native875-normal-paid-strike-cycle-failure.json`.
+
+The test-player guard now returns immediately when the intended selection is empty and both native actor tags and presented groups are already zero, preserving the multi-frame map gesture. A short native regression moves from the airfield view to the starting Factory, requiring the popup to survive the guard, actual Factory selection and no camera-issued troop command. Compilation/native qualification pending.
+
+Native876 passed the isolated empty-selection camera regression: normal airfield excursion, full-map gesture preserved, native starting Factory selected, no added troop command. Actual wrapper/bridge0, 16/16 touch contacts ended, compiler completed with errors[], full b2a541 PRE/POST source identical. Proof `native876-empty-selection-factory-camera-scoped-pass.json`. Native877 retries the full paid Strike cycle; no flight/mission pass is claimed yet.

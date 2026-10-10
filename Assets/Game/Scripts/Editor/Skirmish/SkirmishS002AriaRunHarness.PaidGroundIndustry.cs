@@ -34,6 +34,56 @@ namespace Game.Editor
         private static float localFuelReceivedBefore;
         private static double localFuelStartedAt, localFuelAckAt;
         private static bool singleActorPagingForward = true;
+        private static int emptySelectionCameraStep, emptySelectionCameraCommands;
+        private static double emptySelectionCameraStarted;
+        private static bool emptySelectionCameraPopupPreserved;
+
+        private static void TickEmptySelectionCameraProbe(double now)
+        {
+            if (emptySelectionCameraStep == 0)
+            {
+                emptySelectionCameraStarted = now;
+                emptySelectionCameraCommands = AriaCommandEvidence.AcceptedCommands;
+                if (!BeginAirportCameraFocus(new Vector3(1399f, 0f, 177.5f), false))
+                    throw new InvalidOperationException("Empty-selection camera excursion unavailable.");
+                emptySelectionCameraStep = 1;
+            }
+            if (now - emptySelectionCameraStarted > 120)
+                throw new InvalidOperationException("Empty-selection Factory camera regression timed out.");
+            if (airportCameraPending) { FocusAirportSiteThroughMap(now); return; }
+            var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            if (!SelectOnlyPlayerResumeActorThroughInput(em, Entity.Null)) return;
+            var popup = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            emptySelectionCameraPopupPreserved |= popup != null && popup.IsOpen;
+            Entity target = Entity.Null;
+            int targetId = 0;
+            using (var query = em.CreateEntityQuery(typeof(MaterialFabricationComponent), typeof(LocalTransform)))
+            using (var factories = query.ToEntityArray(Allocator.Temp))
+                foreach (var factory in factories)
+                {
+                    var fabrication = em.GetComponentData<MaterialFabricationComponent>(factory);
+                    if (fabrication.OwnerFactionId != 1) continue;
+                    target = factory;
+                    targetId = fabrication.RuntimeBuildingId;
+                    break;
+                }
+            if (target == Entity.Null) throw new InvalidOperationException("Native starting Factory missing.");
+            var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            var bootstrap = scene?.MatchBootstrap;
+            if (bootstrap == null || !bootstrap.BuildingUiQuery.TryGetSelectedMaterialFabricationReadModel(
+                bootstrap.BuildingUiQueryContext, out var selected) || selected.RuntimeBuildingId != targetId)
+            { PlayerResumeWorldTap(em, target, now); return; }
+            if (!emptySelectionCameraPopupPreserved || AriaCommandEvidence.AcceptedCommands != emptySelectionCameraCommands ||
+                AriaCommandEvidence.Violations != 0 || playerResumeTouch.UnexpectedSamples != 0 || playerResumeTouch.PhysicalInterventions != 0)
+                throw new InvalidOperationException("Empty-selection camera regression input audit failed.");
+            Debug.Log("[S005EmptySelectionCamera] result=Passed input=Touch emptySelectionPopupPreserved=1 nativeFactorySelected=1 troopCommandsAdded=0 actorResourcesClockInjected=0 completeMatchCertified=0");
+            UnityEngine.ScreenCapture.CaptureScreenshot(LiveTracePath() + ".empty-selection-factory-camera.png");
+            Environment.SetEnvironmentVariable("WARLINE_S005_EMPTY_SELECTION_CAMERA_ONLY", null);
+            playerResumeProbeActive = false;
+            playerResumeTouch.Dispose(); playerResumeTouch = null;
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+            Finish(false, "emptySelectionFactoryCameraOnly");
+        }
 
         // Expanded squad cards add to selection. A single-vehicle action must
         // clear the visible selection first and observe exactly one native tag;
@@ -46,6 +96,11 @@ namespace Game.Editor
             using var query = em.CreateEntityQuery(typeof(SelectedUnitTag));
             using var selected = query.ToEntityArray(Allocator.Temp);
             if (target != Entity.Null && selected.Length == 1 && selected[0] == target && page.SelectedGroups == 1)
+                return true;
+            // Building controls can be reached through a map camera gesture.
+            // An already empty unit selection needs no UI change, so preserve
+            // that gesture instead of closing its popup on every tick.
+            if (target == Entity.Null && selected.Length == 0 && page.SelectedGroups == 0)
                 return true;
             var popup = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
             if (popup != null && popup.IsOpen)

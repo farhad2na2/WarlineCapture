@@ -95,6 +95,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_PAID_FUEL_CLICK_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_STARTING_FUEL_CLICK_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_SINGLE_ACTOR_RETIREMENT_ONLY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S005_EMPTY_SELECTION_CAMERA_ONLY", null);
             Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_PLAYER_RESUME_PROBE", null);
             Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY", null);

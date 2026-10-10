@@ -120,8 +120,18 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_SELECTION_CLICK_DIAGNOSTICS", "1");
         }
 
+        public static void RunS005EditorEmptySelectionCameraProbe()
+        {
+            RunS005EditorSouthernAirportCameraProbe();
+            emptySelectionCameraStep = 0;
+            emptySelectionCameraPopupPreserved = false;
+            Environment.SetEnvironmentVariable("WARLINE_S005_EMPTY_SELECTION_CAMERA_ONLY", "1");
+        }
+
         private static void TickAirportCameraNavigationProbe(double now)
         {
+            if (Environment.GetEnvironmentVariable("WARLINE_S005_EMPTY_SELECTION_CAMERA_ONLY") == "1")
+            { TickEmptySelectionCameraProbe(now); return; }
             if (singleActorRetirementOnly) { TickSingleActorRetirementProbe(now); return; }
             if (startingFuelClickOnly) { TickStartingFuelClickProbe(now); return; }
             if (airportCameraPreviewOnly && !airportCameraPreviewOpened)

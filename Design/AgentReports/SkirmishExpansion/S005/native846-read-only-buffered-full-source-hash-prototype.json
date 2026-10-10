@@ -1,0 +1,7 @@
+{
+  "result": "PassedFullSourceHashParity",
+  "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+  "seconds": 19.921218,
+  "scope": "Read-only full original source extension/ordering/BinaryWriter manifest contract with commonCrypto, a shared1MiB input buffer and regular buffered FileStream. No paths or data excluded.",
+  "playerReady": false
+}

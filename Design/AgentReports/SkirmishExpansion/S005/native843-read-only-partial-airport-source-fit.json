@@ -1,0 +1,76 @@
+{
+    "stride": 16,
+    "diagnosticWatchdogSeconds": 600,
+    "samples": 2780,
+    "tested": 2476,
+    "cachedClear": 2476,
+    "frames": 2478,
+    "pairChecks": 0,
+    "previewMutated": false,
+    "physicalSourceModified": false,
+    "capacityCertified": false,
+    "playerReady": false,
+    "logicalPlayableOnly": true,
+    "scope": "ReadOnlyLogicalPlayableCoarseNativeValidator",
+    "limitation": "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.",
+    "sites": [
+        {
+            "origin": {
+                "x": 1294,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1294,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1399.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        },
+        {
+            "origin": {
+                "x": 1310,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1310,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1415.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        },
+        {
+            "origin": {
+                "x": 1582,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1582,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1687.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        }
+    ],
+    "playablePairs": []
+}

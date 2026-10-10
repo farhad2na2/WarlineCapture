@@ -139,6 +139,9 @@ PY
         # Pipeline can time out acknowledging a cold eval after the callback was
         # scheduled. Accept ownership only from this new log's exact bridge header;
         # a missing/mismatched header still fails, without opening another Editor.
+        # A cold Editor can run the already-scheduled callback after Pipeline's
+        # five-second acknowledgement times out. Keep the exact new-log/project/
+        # method ownership check, bounded by both60s and the original run timeout.
         handoff_started_seconds=$SECONDS
         while ! python3 - "$LOG_FILE" "$PROJECT_PATH" "$execute_method" <<'PY'
 import pathlib,sys
@@ -147,7 +150,7 @@ expected='[ExistingEditorValidation] project='+sys.argv[2]+'/Assets executeMetho
 sys.exit(0 if p.exists() and p.open().readline().rstrip('\r\n')==expected else 1)
 PY
         do
-            if [[ "$((SECONDS - handoff_started_seconds))" -ge 15 || "$((SECONDS - live_started_seconds))" -ge "$TIMEOUT_SECONDS" ]]; then
+            if [[ "$((SECONDS - handoff_started_seconds))" -ge 60 || "$((SECONDS - live_started_seconds))" -ge "$TIMEOUT_SECONDS" ]]; then
                 echo "[UnityInvokeMac] ERROR: Pipeline dispatch failed without matching validation ownership; existing Editor preserved." >&2
                 exit "$dispatch_status"
             fi

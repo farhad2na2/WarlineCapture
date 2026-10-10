@@ -1,0 +1,114 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+using Unity.Rendering;
+using Unity.Transforms;
+using UnityEngine;
+using Newtonsoft.Json.Linq;
+using Game.Components;
+
+public static class S005SceneryCensusResolvedMesh843
+{
+    public static string Main()
+    {
+        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var reader = Game.Rendering.RenderBoundsPresentation.Create();
+        var baseline = new List<Bounds>();
+        using var query = em.CreateEntityQuery(new EntityQueryDesc { All=new[]{ComponentType.ReadOnly<LocalToWorld>(),ComponentType.ReadOnly<MaterialMeshInfo>(),ComponentType.ReadOnly<RenderMeshArray>()}, None=new[]{ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>(),ComponentType.ReadOnly<Prefab>()} });
+        var timer = Stopwatch.StartNew();
+        using (var entities=query.ToEntityArray(Allocator.Temp))
+        foreach (var entity in entities)
+        {
+            var info=em.GetComponentData<MaterialMeshInfo>(entity);
+            var array=em.GetSharedComponentManaged<RenderMeshArray>(entity);
+            var matrix=em.GetComponentData<LocalToWorld>(entity).Value;
+            bool found=false; Bounds bounds=default;
+            if(info.HasMaterialMeshIndexRange)
+            {
+                var range=info.MaterialMeshIndexRange;
+                for(int i=range.start;i<range.end;i++) Append(array.MeshReferences[array.MaterialMeshIndices[i].MeshIndex],matrix,ref bounds,ref found);
+            }
+            else Append(array.GetMesh(info),matrix,ref bounds,ref found);
+            if(found)baseline.Add(bounds);
+        }
+        double baselineMs=timer.Elapsed.TotalMilliseconds;
+        var native=new NativeList<Bounds>(Allocator.Temp);
+        try
+        {
+            timer.Restart(); Collect(em,ref native); double collectMs=timer.Elapsed.TotalMilliseconds;
+            var optimized=new List<Bounds>(); foreach(var b in native)optimized.Add(b);
+            var times=new List<double>(); var counts=new List<int>();
+            for(int i=0;i<5;i++){timer.Restart();var check=new NativeList<Bounds>(Allocator.Temp);try{Collect(em,ref check);counts.Add(check.Length);}finally{check.Dispose();};times.Add(timer.Elapsed.TotalMilliseconds);}
+            string oldHash=Hash(baseline),newHash=Hash(optimized);
+            bool equal=baseline.Count>0 && oldHash==newHash && baseline.Count==native.Length && counts.All(x=>x==baseline.Count);
+            var result=new JObject { ["result"]=equal?"PassedExactLiveBoundsParity":"Failed",["sourceHash"]="20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",["readOnly"]=true,["baselineCount"]=baseline.Count,["optimizedCount"]=native.Length,["baselineSortedBoundsHash"]=oldHash,["optimizedSortedBoundsHash"]=newHash,["baselineCollectMilliseconds"]=baselineMs,["optimizedCollectMilliseconds"]=collectMs,["optimizedCountMilliseconds"]=JArray.FromObject(times),["optimizedCounts"]=JArray.FromObject(counts),["playerReady"]=false,["scope"]="Exact read-only live bounds comparison against the previous per-entity algorithm; full native mission and device performance not certified." };
+            File.WriteAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native843-read-only-call-local-resolved-mesh-prototype.json",result.ToString());
+            if(!equal)throw new InvalidOperationException("Scenery census/bounds parity failed.");
+            return result.ToString();
+        }
+        finally{native.Dispose();}
+    }
+    struct Descriptor { public bool eligible; public Bounds local; }
+    static void Collect(EntityManager em,ref NativeList<Bounds> results)
+    {
+        using var query=em.CreateEntityQuery(new EntityQueryDesc { All=new[]{ComponentType.ReadOnly<LocalToWorld>(),ComponentType.ReadOnly<MaterialMeshInfo>(),ComponentType.ReadOnly<RenderMeshArray>()}, None=new[]{ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>(),ComponentType.ReadOnly<Prefab>()} });
+        query.CompleteDependency();
+        using var chunks=query.ToArchetypeChunkArray(Allocator.Temp);
+        var shared=em.GetSharedComponentTypeHandle<RenderMeshArray>(); var infoType=em.GetComponentTypeHandle<MaterialMeshInfo>(true);var transformType=em.GetComponentTypeHandle<LocalToWorld>(true);
+        var metadata=new Dictionary<Mesh,Descriptor>();
+        foreach(var chunk in chunks)
+        {
+            var array=chunk.GetSharedComponentManaged(shared,em);var infos=chunk.GetNativeArray(ref infoType);var matrices=chunk.GetNativeArray(ref transformType);var enabled=chunk.GetEnabledMask(ref infoType);
+            var resolved=new Dictionary<MaterialMeshInfo,Mesh[]>();
+            for(int e=0;e<chunk.Count;e++)
+            {
+                if(!enabled[e])continue;bool found=false;Bounds bounds=default;var info=infos[e];var matrix=matrices[e].Value;
+                if(!resolved.TryGetValue(info,out var meshes))
+                {
+                    if(info.HasMaterialMeshIndexRange){var range=info.MaterialMeshIndexRange;meshes=new Mesh[range.end-range.start];for(int i=range.start;i<range.end;i++)meshes[i-range.start]=array.MeshReferences[array.MaterialMeshIndices[i].MeshIndex];}
+                    else meshes=new[]{array.GetMesh(info)};
+                    resolved.Add(info,meshes);
+                }
+                foreach(var mesh in meshes)AppendCached(mesh,matrix,metadata,ref bounds,ref found);
+                if(found)results.Add(bounds);
+            }
+        }
+    }
+    static void AppendCached(Mesh mesh,float4x4 matrix,Dictionary<Mesh,Descriptor> metadata,ref Bounds bounds,ref bool found)
+    {
+        if(ReferenceEquals(mesh,null))return;
+        if(!metadata.TryGetValue(mesh,out var descriptor))
+        {
+            descriptor=default;
+            if(mesh!=null){string name=mesh.name;descriptor.eligible=!name.Contains("Destroyed")&&(name.StartsWith("SM_Bld_",StringComparison.Ordinal)||name.IndexOf("Tree",StringComparison.OrdinalIgnoreCase)>=0||name.IndexOf("Palm",StringComparison.OrdinalIgnoreCase)>=0||name.StartsWith("SM_Prop_",StringComparison.Ordinal));if(descriptor.eligible)descriptor.local=mesh.bounds;}
+            metadata.Add(mesh,descriptor);
+        }
+        if(!descriptor.eligible)return;
+        var local=descriptor.local;var world=AABB.Transform(matrix,new AABB {Center=local.center,Extents=local.extents});
+        if(world.Extents.y<.5f||!math.all(math.isfinite(world.Center))||!math.all(math.isfinite(world.Extents)))return;
+        var current=new Bounds(world.Center,world.Extents*2);if(found)bounds.Encapsulate(current);else bounds=current;found=true;
+    }
+    static void Append(Mesh mesh,float4x4 matrix,ref Bounds bounds,ref bool found)
+    {
+        if(mesh==null||mesh.name.Contains("Destroyed"))return;
+        string name=mesh.name;
+        if(!(name.StartsWith("SM_Bld_",StringComparison.Ordinal)||name.IndexOf("Tree",StringComparison.OrdinalIgnoreCase)>=0||name.IndexOf("Palm",StringComparison.OrdinalIgnoreCase)>=0||name.StartsWith("SM_Prop_",StringComparison.Ordinal)))return;
+        var local=mesh.bounds;var world=AABB.Transform(matrix,new AABB {Center=local.center,Extents=local.extents});
+        if(world.Extents.y<.5f||!math.all(math.isfinite(world.Center))||!math.all(math.isfinite(world.Extents)))return;
+        var current=new Bounds(world.Center,world.Extents*2);
+        if(found)bounds.Encapsulate(current);else bounds=current;
+        found=true;
+    }
+    static string Hash(List<Bounds> values)
+    {
+        var rows=values.Select(b=>string.Join(",",new[]{b.center.x,b.center.y,b.center.z,b.extents.x,b.extents.y,b.extents.z}.Select(x=>x.ToString("R",System.Globalization.CultureInfo.InvariantCulture)))).OrderBy(x=>x,StringComparer.Ordinal);
+        using var sha=SHA256.Create();return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(string.Join("\n",rows)))).Replace("-","").ToLowerInvariant();
+    }
+}

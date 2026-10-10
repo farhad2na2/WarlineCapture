@@ -25,6 +25,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             ("streamed-sidewalk", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredSidewalkCache_TracksLateSourceOwnersAndBufferPublication()),
             ("sidewalk-edges-and-rotation", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredSidewalk_ReservesOverlappingCellEdgesWithoutRotatedEmptyCorners()),
             ("multi-mesh-scenery", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredScenery_ReservesEveryStandingMeshInRange()),
+            ("chunk-scenery-live-changes", () => new BuildingPlacementValidationUtilitySystemHelperTests().AuthoredScenery_ChunkScanTracksEnablementTransformsAndMeshReplacement()),
             ("cold-player-placement-boundary", () => new BuildingPlacementValidationUtilitySystemHelperTests().OrdinaryPlayerPlacement_RejectsSceneryWithoutStartingGrantCache()),
             ("combined-native-model-bounds", () => new BuildingPlacementValidationUtilitySystemHelperTests().CombinedNativeModelBounds_IncludeDisabledActiveSourcesAndPlacementOffset())
         };
@@ -186,6 +187,71 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             finally {bounds.Dispose();}
         }
         finally {UnityEngine.Object.DestroyImmediate(ground);UnityEngine.Object.DestroyImmediate(tree);UnityEngine.Object.DestroyImmediate(prop);}
+    }
+
+    [Test]
+    public void AuthoredScenery_ChunkScanTracksEnablementTransformsAndMeshReplacement()
+    {
+        using var world = new World("Chunk scenery placement census");
+        var em = world.EntityManager;
+        var tree = new Mesh { name = "SM_Tree_Palm", bounds = new Bounds(new Vector3(0,3,0), new Vector3(2,6,2)) };
+        var ground = new Mesh { name = "SM_Prop_GroundCover", bounds = new Bounds(Vector3.zero, new Vector3(2,.1f,2)) };
+        var prop = new Mesh { name = "SM_Prop_Crate", bounds = new Bounds(Vector3.zero, new Vector3(2,.25f,2)) };
+        try
+        {
+            var archetype = em.CreateArchetype(typeof(Unity.Transforms.LocalToWorld), typeof(Unity.Rendering.MaterialMeshInfo));
+            using var entities = em.CreateEntity(archetype, 300, Allocator.Temp);
+            var array = new Unity.Rendering.RenderMeshArray(Array.Empty<Material>(), new[] { tree, ground, prop });
+            for (int i = 0; i < entities.Length; i++)
+            {
+                em.SetComponentData(entities[i], new Unity.Transforms.LocalToWorld { Value = Unity.Mathematics.float4x4.Translate(new Unity.Mathematics.float3(20+i*4,0,10)) });
+                em.SetComponentData(entities[i], Unity.Rendering.MaterialMeshInfo.FromRenderMeshArrayIndices(0,0));
+                em.AddSharedComponentManaged(entities[i], array);
+            }
+            var reader = Game.Rendering.RenderBoundsPresentation.Create();
+            Assert.That(reader.CountAuthoredBuildingGeometry(em), Is.EqualTo(300));
+            em.SetComponentEnabled<Unity.Rendering.MaterialMeshInfo>(entities[37], false);
+            em.SetComponentData(entities[42], Unity.Rendering.MaterialMeshInfo.FromRenderMeshArrayIndices(0,1));
+            em.SetComponentData(entities[43], Unity.Rendering.MaterialMeshInfo.FromRenderMeshArrayIndices(0,2));
+            em.SetComponentData(entities[43], new Unity.Transforms.LocalToWorld { Value = Unity.Mathematics.float4x4.TRS(
+                new Unity.Mathematics.float3(99,0,77), Unity.Mathematics.quaternion.identity, new Unity.Mathematics.float3(1,12,1)) });
+            em.SetComponentData(entities[45], new Unity.Transforms.LocalToWorld { Value = Unity.Mathematics.float4x4.Translate(new Unity.Mathematics.float3(123,0,98)) });
+            em.AddComponent<OperationMapRenderProxySlotComponent>(entities[19]);
+            em.AddComponent<Prefab>(entities[20]);
+            em.AddComponent<Disabled>(entities[24]);
+            Assert.That(reader.CountAuthoredBuildingGeometry(em), Is.EqualTo(295), "Enabled masks and excluded proxy/prefab/disabled entities must match the former entity query.");
+            var bounds = new NativeList<Bounds>(Allocator.Temp);
+            try
+            {
+                reader.CollectAuthoredBuildingBounds(em, ref bounds);
+                Assert.That(bounds.Length, Is.EqualTo(295));
+                bool scaledProp = false, movedTree = false, disabledTree = false;
+                foreach (var item in bounds)
+                {
+                    scaledProp |= item.center == new Vector3(99,0,77) && item.size == new Vector3(2,3,2);
+                    movedTree |= item.center == new Vector3(123,3,98);
+                    disabledTree |= item.center == new Vector3(168,3,10);
+                }
+                Assert.That(scaledProp, Is.True, "Standing classification must use actual world scale after a same-count mesh replacement.");
+                Assert.That(movedTree, Is.True, "A same-frame transform edit must be reflected without a stale geometry snapshot.");
+                Assert.That(disabledTree, Is.False);
+                em.SetComponentEnabled<Unity.Rendering.MaterialMeshInfo>(entities[37], true);
+                em.SetComponentData(entities[42], Unity.Rendering.MaterialMeshInfo.FromRenderMeshArrayIndices(0,0));
+                Assert.That(reader.CountAuthoredBuildingGeometry(em), Is.EqualTo(297));
+                tree.name = "SM_Decal_Flat";
+                Assert.That(reader.CountAuthoredBuildingGeometry(em), Is.EqualTo(1), "Mesh classification changes between calls must not retain a stale descriptor.");
+                tree.name = "SM_Tree_Palm";
+                tree.bounds = new Bounds(new Vector3(0,5,0), new Vector3(4,10,4));
+                bounds.Clear();
+                reader.CollectAuthoredBuildingBounds(em, ref bounds);
+                bool editedMesh = false;
+                foreach (var item in bounds)
+                    editedMesh |= item.center == new Vector3(123,5,98) && item.size == new Vector3(4,10,4);
+                Assert.That(editedMesh, Is.True, "A mesh's local bounds edited in place must be reread on the next call.");
+            }
+            finally { bounds.Dispose(); }
+        }
+        finally { UnityEngine.Object.DestroyImmediate(tree); UnityEngine.Object.DestroyImmediate(ground); UnityEngine.Object.DestroyImmediate(prop); }
     }
 
     private static void ValidatePackedSceneryClearance(bool skirmish, DenseCityPresentationSemanticCategory category)

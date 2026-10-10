@@ -1,0 +1,74 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+using Unity.Rendering;
+using Unity.Transforms;
+using UnityEngine;
+using Newtonsoft.Json.Linq;
+using Game.Components;
+
+public static class S005SceneryCensusParity846
+{
+    public static string Main()
+    {
+        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var reader = Game.Rendering.RenderBoundsPresentation.Create();
+        var baseline = new List<Bounds>();
+        using var query = em.CreateEntityQuery(new EntityQueryDesc { All=new[]{ComponentType.ReadOnly<LocalToWorld>(),ComponentType.ReadOnly<MaterialMeshInfo>(),ComponentType.ReadOnly<RenderMeshArray>()}, None=new[]{ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>(),ComponentType.ReadOnly<Prefab>()} });
+        var timer = Stopwatch.StartNew();
+        using (var entities=query.ToEntityArray(Allocator.Temp))
+        foreach (var entity in entities)
+        {
+            var info=em.GetComponentData<MaterialMeshInfo>(entity);
+            var array=em.GetSharedComponentManaged<RenderMeshArray>(entity);
+            var matrix=em.GetComponentData<LocalToWorld>(entity).Value;
+            bool found=false; Bounds bounds=default;
+            if(info.HasMaterialMeshIndexRange)
+            {
+                var range=info.MaterialMeshIndexRange;
+                for(int i=range.start;i<range.end;i++) Append(array.MeshReferences[array.MaterialMeshIndices[i].MeshIndex],matrix,ref bounds,ref found);
+            }
+            else Append(array.GetMesh(info),matrix,ref bounds,ref found);
+            if(found)baseline.Add(bounds);
+        }
+        double baselineMs=timer.Elapsed.TotalMilliseconds;
+        var native=new NativeList<Bounds>(Allocator.Temp);
+        try
+        {
+            timer.Restart(); reader.CollectAuthoredBuildingBounds(em,ref native); double collectMs=timer.Elapsed.TotalMilliseconds;
+            var optimized=new List<Bounds>(); foreach(var b in native)optimized.Add(b);
+            var times=new List<double>(); var counts=new List<int>();
+            for(int i=0;i<5;i++){timer.Restart();counts.Add(reader.CountAuthoredBuildingGeometry(em));times.Add(timer.Elapsed.TotalMilliseconds);}
+            string oldHash=Hash(baseline),newHash=Hash(optimized);
+            bool equal=baseline.Count>0 && oldHash==newHash && baseline.Count==native.Length && counts.All(x=>x==baseline.Count);
+            var result=new JObject { ["result"]=equal?"PassedExactLiveBoundsParity":"Failed",["sourceHash"]="1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",["readOnly"]=true,["baselineCount"]=baseline.Count,["optimizedCount"]=native.Length,["baselineSortedBoundsHash"]=oldHash,["optimizedSortedBoundsHash"]=newHash,["baselineCollectMilliseconds"]=baselineMs,["optimizedCollectMilliseconds"]=collectMs,["optimizedCountMilliseconds"]=JArray.FromObject(times),["optimizedCounts"]=JArray.FromObject(counts),["playerReady"]=false,["scope"]="Exact read-only live bounds comparison against the previous per-entity algorithm; full native mission and device performance not certified." };
+            File.WriteAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native846-read-only-live-scenery-census-parity.json",result.ToString());
+            if(!equal)throw new InvalidOperationException("Scenery census/bounds parity failed.");
+            return result.ToString();
+        }
+        finally{native.Dispose();}
+    }
+    static void Append(Mesh mesh,float4x4 matrix,ref Bounds bounds,ref bool found)
+    {
+        if(mesh==null||mesh.name.Contains("Destroyed"))return;
+        string name=mesh.name;
+        if(!(name.StartsWith("SM_Bld_",StringComparison.Ordinal)||name.IndexOf("Tree",StringComparison.OrdinalIgnoreCase)>=0||name.IndexOf("Palm",StringComparison.OrdinalIgnoreCase)>=0||name.StartsWith("SM_Prop_",StringComparison.Ordinal)))return;
+        var local=mesh.bounds;var world=AABB.Transform(matrix,new AABB {Center=local.center,Extents=local.extents});
+        if(world.Extents.y<.5f||!math.all(math.isfinite(world.Center))||!math.all(math.isfinite(world.Extents)))return;
+        var current=new Bounds(world.Center,world.Extents*2);
+        if(found)bounds.Encapsulate(current);else bounds=current;
+        found=true;
+    }
+    static string Hash(List<Bounds> values)
+    {
+        var rows=values.Select(b=>string.Join(",",new[]{b.center.x,b.center.y,b.center.z,b.extents.x,b.extents.y,b.extents.z}.Select(x=>x.ToString("R",System.Globalization.CultureInfo.InvariantCulture)))).OrderBy(x=>x,StringComparer.Ordinal);
+        using var sha=SHA256.Create();return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(string.Join("\n",rows)))).Replace("-","").ToLowerInvariant();
+    }
+}

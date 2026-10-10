@@ -1,0 +1,15 @@
+{
+  "result": "IncompleteSourceFitDiagnosticStopped",
+  "wrapperExit": 1,
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-842-chunk-scenery-reader-closed-post-source-manifest.json",
+  "postSourceManifest": "final-843-partial-source-fit-closed-post-source-manifest.json",
+  "samples": 2780,
+  "nativeValidSites": 3,
+  "scope": "Partial read-only source-fit only; original and corrected readers proved identical bounds, but scan retained a repeated per-renderer mesh metadata cost. Owned diagnostic stopped through evidence-preserving harness abort before applying further measured correction.",
+  "completedSourceFit": false,
+  "playerReady": false,
+  "liveBoundsParity": "native843-read-only-live-scenery-census-parity.json",
+  "log": "native-843-current-playable-airport-source-fit.log"
+}

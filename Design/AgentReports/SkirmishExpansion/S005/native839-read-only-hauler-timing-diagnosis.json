@@ -1,0 +1,3191 @@
+{
+  "result": "ObservedShortRoutesWithLimitedFleetThroughput",
+  "sourceHash": "4553d69bec40ddd9f656d6c86a6926393bb86c2dcc23c063969c15a3f2b5f316",
+  "scope": "Read-only one-second observation after World elapsed716. Source17 to receiving store18. Missed inter-sample turns make travel and fuel lower bounds; sampled unload intervals include loading, both travel legs, unloading and assignment. Not a full mission or fuel viability certificate.",
+  "inputTrace": "native839-read-only-hauler-timing.jsonl",
+  "results": [
+    {
+      "id": "production.1004.0",
+      "samples": 389,
+      "first": 716.3644486067351,
+      "last": 1095.1375742803793,
+      "observedUnloads": 32,
+      "observedLoads": 32,
+      "meanUnloadInterval": 11.856160523219694,
+      "maxRemainingPlannedPath": 27,
+      "sampledManhattanTravelLowerBound": 1367,
+      "groundFuelLowerBound": 68.35000000000001,
+      "transitions": [
+        {
+          "time": 717.5232872830238,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 719.6156334502157,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 723.7291720469948,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            544
+          ]
+        },
+        {
+          "time": 724.7699306716677,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            544
+          ]
+        },
+        {
+          "time": 726.8217414689716,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            544
+          ]
+        },
+        {
+          "time": 729.8818546289112,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 731.8917138816323,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 735.0115758029278,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            544
+          ]
+        },
+        {
+          "time": 737.0511761696544,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            982,
+            544
+          ]
+        },
+        {
+          "time": 738.1036638782825,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            982,
+            544
+          ]
+        },
+        {
+          "time": 740.177438573679,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 743.2793400844093,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 746.3279507958796,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            542
+          ]
+        },
+        {
+          "time": 748.3015686383005,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            541
+          ]
+        },
+        {
+          "time": 750.3329006244894,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            541
+          ]
+        },
+        {
+          "time": 754.1633195260074,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 757.5067476311233,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 761.9921247770544,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 763.026846309891,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 764.0707464774605,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 768.1560122200754,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 770.205477434909,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 773.2329465968069,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 775.2301763964351,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 776.2696872649249,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 780.3598420524504,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            561
+          ]
+        },
+        {
+          "time": 783.3970515818801,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            562
+          ]
+        },
+        {
+          "time": 786.4776407943573,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            545
+          ]
+        },
+        {
+          "time": 788.4714089219924,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            545
+          ]
+        },
+        {
+          "time": 789.5163445060607,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 792.550091923913,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 794.5943921038415,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 798.6670597025659,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 800.7895998673048,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            982,
+            543
+          ]
+        },
+        {
+          "time": 802.8738967382815,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 805.9567156599369,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 808.9152409934904,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            541
+          ]
+        },
+        {
+          "time": 810.9436389503535,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            541
+          ]
+        },
+        {
+          "time": 815.1296331787016,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 817.1740300168749,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 821.2528286313172,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            541
+          ]
+        },
+        {
+          "time": 823.3095993378665,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            541
+          ]
+        },
+        {
+          "time": 824.3387403429952,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 828.4490031634923,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 830.4710198713001,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 833.4930715782102,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 835.5048638747539,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 836.513784626266,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 840.6016443388071,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 843.6497208846267,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 846.6785443143453,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            546
+          ]
+        },
+        {
+          "time": 847.6813468483742,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            546
+          ]
+        },
+        {
+          "time": 849.7050037679728,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            546
+          ]
+        },
+        {
+          "time": 851.7214644474443,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 854.7503397872206,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 856.7478277345654,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            546
+          ]
+        },
+        {
+          "time": 858.8180458580609,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            546
+          ]
+        },
+        {
+          "time": 859.8604297765996,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            546
+          ]
+        },
+        {
+          "time": 862.8992295672651,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 865.5851767824497,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 867.6712055688258,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 869.6788134172093,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 870.689334837487,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 873.7272089698818,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 875.7579033800866,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 877.7703249228653,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            547
+          ]
+        },
+        {
+          "time": 879.804472550517,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 880.8192331304308,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 884.885971883079,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 886.9141613037791,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 889.9596021787729,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 891.9985108093824,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 893.0170825698879,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 898.0335173846688,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 900.0599120443221,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            558
+          ]
+        },
+        {
+          "time": 903.1228052841034,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 905.1421206535306,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 906.1633415238466,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 909.197708014166,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 911.217652805848,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 914.3390742267948,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 916.3566422320437,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 919.3771524883341,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 921.3935619804543,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            558
+          ]
+        },
+        {
+          "time": 924.4536410819273,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 926.4764457892161,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 930.5108317534905,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 933.5579663298558,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 936.6118383470457,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            542
+          ]
+        },
+        {
+          "time": 938.6056405536365,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 939.6483502655756,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 942.6785643890034,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 945.6949411302339,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 949.7508155114483,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 950.8009602248203,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 951.8139876842033,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 954.8977701074909,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            978,
+            558
+          ]
+        },
+        {
+          "time": 957.9308309059124,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            978,
+            559
+          ]
+        },
+        {
+          "time": 960.9967510669958,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 962.9809710856061,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 965.0647278006654,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 968.2230379439425,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 970.2571233517956,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 974.3967054288369,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 975.4280505094212,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 978.5372760023456,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            982,
+            545
+          ]
+        },
+        {
+          "time": 980.562524256995,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 983.5825651267078,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 987.6962635011878,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 989.7765194305684,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 990.8150401746389,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 993.8515200053807,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 995.8901694973465,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 998.9142567028757,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1000.9529063745867,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1003.9947505963501,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            978,
+            559
+          ]
+        },
+        {
+          "time": 1006.0206077608746,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            978,
+            559
+          ]
+        },
+        {
+          "time": 1009.0419257988688,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1011.07068609423,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1014.1132919702213,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 1017.1374817283358,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 1020.1572722380515,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 1022.1902431470808,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 1024.2312554733362,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 1027.2752208632883,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            978,
+            560
+          ]
+        },
+        {
+          "time": 1030.3609527142253,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            979,
+            557
+          ]
+        },
+        {
+          "time": 1033.3761623350438,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            545
+          ]
+        },
+        {
+          "time": 1034.417791966116,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            545
+          ]
+        },
+        {
+          "time": 1036.42468637391,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            545
+          ]
+        },
+        {
+          "time": 1039.4320440737065,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 1041.4610702411737,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 1044.5743524169084,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 1046.6381594126578,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 1049.685540742008,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            978,
+            559
+          ]
+        },
+        {
+          "time": 1052.6142008032184,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            978,
+            559
+          ]
+        },
+        {
+          "time": 1055.7912348581012,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1056.8155749558937,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1057.8351514160167,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1060.9100585409906,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 1062.9275434536394,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            559
+          ]
+        },
+        {
+          "time": 1065.968571174657,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1068.0293484309223,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 1070.0606542152818,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 1074.086897333851,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            560
+          ]
+        },
+        {
+          "time": 1076.1203013805207,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            560
+          ]
+        },
+        {
+          "time": 1079.1967550085392,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            545
+          ]
+        },
+        {
+          "time": 1081.216211428633,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 1083.2382330500986,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            981,
+            546
+          ]
+        },
+        {
+          "time": 1085.2477286604699,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 1088.2779382017907,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 1091.3277688899543,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1092.3109068914782,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 1093.362611978082,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        }
+      ]
+    },
+    {
+      "id": "role.tanker.1.8.0",
+      "samples": 389,
+      "first": 716.3644486067351,
+      "last": 1095.1375742803793,
+      "observedUnloads": 31,
+      "observedLoads": 32,
+      "meanUnloadInterval": 11.879310727305711,
+      "maxRemainingPlannedPath": 27,
+      "sampledManhattanTravelLowerBound": 1429,
+      "groundFuelLowerBound": 71.45,
+      "transitions": [
+        {
+          "time": 718.5524492429104,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 721.6595222519245,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 723.7291720469948,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 727.8647841734346,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 728.8684068412986,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 730.8967448787298,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 735.0115758029278,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 738.1036638782825,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            561
+          ]
+        },
+        {
+          "time": 741.2275599164423,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            986,
+            545
+          ]
+        },
+        {
+          "time": 743.2793400844093,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            986,
+            545
+          ]
+        },
+        {
+          "time": 744.2937769179698,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            545
+          ]
+        },
+        {
+          "time": 746.3279507958796,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 749.308579567587,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            562
+          ]
+        },
+        {
+          "time": 753.0322449782398,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            547
+          ]
+        },
+        {
+          "time": 755.33210626035,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            982,
+            547
+          ]
+        },
+        {
+          "time": 757.5067476311233,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            982,
+            547
+          ]
+        },
+        {
+          "time": 761.9921247770544,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            979,
+            559
+          ]
+        },
+        {
+          "time": 764.0707464774605,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            979,
+            559
+          ]
+        },
+        {
+          "time": 767.1134649699088,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 769.1896231730934,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 770.205477434909,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 773.2329465968069,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 775.2301763964351,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 778.3523154368158,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            982,
+            545
+          ]
+        },
+        {
+          "time": 780.3598420524504,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 781.3902126268949,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 784.3839982093778,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 786.4776407943573,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 790.5116727871355,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 792.550091923913,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 793.5246597246733,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 797.6400728279259,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 800.7895998673048,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 803.9233261698391,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 805.9567156599369,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 807.0259334014263,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 809.9011794549879,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 812.0031499878969,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 815.1296331787016,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            985,
+            547
+          ]
+        },
+        {
+          "time": 817.1740300168749,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            985,
+            545
+          ]
+        },
+        {
+          "time": 819.2241752946284,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 822.2762000856455,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 825.3912397900131,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            558
+          ]
+        },
+        {
+          "time": 827.4087642056402,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 829.4549644978251,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 830.4710198713001,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 833.4930715782102,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 835.5048638747539,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            560
+          ]
+        },
+        {
+          "time": 838.5580048353877,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            547
+          ]
+        },
+        {
+          "time": 840.6016443388071,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 841.6123059724923,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            547
+          ]
+        },
+        {
+          "time": 843.6497208846267,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            977,
+            560
+          ]
+        },
+        {
+          "time": 846.6785443143453,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            977,
+            560
+          ]
+        },
+        {
+          "time": 849.7050037679728,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 851.7214644474443,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 855.7562369944062,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 857.7836886120494,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 861.8662899450865,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 863.2843304814305,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 864.603198239347,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            542
+          ]
+        },
+        {
+          "time": 867.6712055688258,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 870.689334837487,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            558
+          ]
+        },
+        {
+          "time": 873.7272089698818,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 875.7579033800866,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 876.7638464996126,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            542
+          ]
+        },
+        {
+          "time": 880.8192331304308,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            979,
+            560
+          ]
+        },
+        {
+          "time": 882.8513448776212,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            979,
+            560
+          ]
+        },
+        {
+          "time": 885.9016951785889,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 887.9243236330803,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 888.9171662644949,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            545
+          ]
+        },
+        {
+          "time": 891.9985108093824,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 894.0234290247317,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            560
+          ]
+        },
+        {
+          "time": 897.0465713103767,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 899.047417547321,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 900.0599120443221,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 903.1228052841034,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 905.1421206535306,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 908.1841599380132,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 910.2205643493216,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 912.2508457673248,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            543
+          ]
+        },
+        {
+          "time": 915.3544270570856,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            561
+          ]
+        },
+        {
+          "time": 917.3670520323794,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            561
+          ]
+        },
+        {
+          "time": 920.3831086948048,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 922.4217551860493,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 924.4536410819273,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            983,
+            544
+          ]
+        },
+        {
+          "time": 927.4674525770824,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 929.5062113374006,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            559
+          ]
+        },
+        {
+          "time": 932.5531959540676,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            984,
+            546
+          ]
+        },
+        {
+          "time": 934.5388224206399,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            984,
+            546
+          ]
+        },
+        {
+          "time": 935.575407751603,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            984,
+            547
+          ]
+        },
+        {
+          "time": 937.6299214295577,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 940.6513669777196,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 942.6785643890034,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 944.7240172165912,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 945.6949411302339,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            985,
+            546
+          ]
+        },
+        {
+          "time": 948.7188081673812,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            562
+          ]
+        },
+        {
+          "time": 950.8009602248203,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            562
+          ]
+        },
+        {
+          "time": 953.8766639705282,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 955.9091716862749,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 956.7086326058488,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 959.9696100826841,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 961.991692482261,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 965.0647278006654,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 967.0592190704774,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 969.2414639040362,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 973.3155256852042,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 975.4280505094212,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 978.5372760023456,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 980.562524256995,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 982.5655081735458,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            547
+          ]
+        },
+        {
+          "time": 985.6269461323973,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 987.6962635011878,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            976,
+            559
+          ]
+        },
+        {
+          "time": 991.8271545877215,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 992.8327279218938,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 994.8844428302255,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            545
+          ]
+        },
+        {
+          "time": 998.9142567028757,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1000.9529063745867,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1003.9947505963501,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1006.0206077608746,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1007.0326103416737,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1010.0420012555551,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            561
+          ]
+        },
+        {
+          "time": 1012.0922257590573,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            561
+          ]
+        },
+        {
+          "time": 1015.1094487186056,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 1017.1374817283358,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 1020.1572722380515,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 1022.1902431470808,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            559
+          ]
+        },
+        {
+          "time": 1025.2451477551367,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 1027.2752208632883,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 1028.2938689531293,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            546
+          ]
+        },
+        {
+          "time": 1032.3683541619685,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            563
+          ]
+        },
+        {
+          "time": 1034.417791966116,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1037.4364912488963,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            988,
+            546
+          ]
+        },
+        {
+          "time": 1039.4320440737065,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            988,
+            546
+          ]
+        },
+        {
+          "time": 1040.4127818604466,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            988,
+            546
+          ]
+        },
+        {
+          "time": 1044.5743524169084,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1046.6381594126578,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1049.685540742008,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            547
+          ]
+        },
+        {
+          "time": 1051.7209858417045,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1053.7635890606325,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            986,
+            547
+          ]
+        },
+        {
+          "time": 1055.7912348581012,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            982,
+            561
+          ]
+        },
+        {
+          "time": 1058.861943495227,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            982,
+            560
+          ]
+        },
+        {
+          "time": 1060.9100585409906,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1062.9275434536394,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1063.9279583373573,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1066.9772201308515,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            980,
+            562
+          ]
+        },
+        {
+          "time": 1069.047810593387,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            980,
+            562
+          ]
+        },
+        {
+          "time": 1072.0898735530209,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 1074.086897333851,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            988,
+            545
+          ]
+        },
+        {
+          "time": 1077.139096375322,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            560
+          ]
+        },
+        {
+          "time": 1080.201078927843,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1083.2382330500986,
+          "source": 17,
+          "destination": 18,
+          "phase": 4,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1085.2477286604699,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1087.291837995639,
+          "source": 17,
+          "destination": 18,
+          "phase": 1,
+          "cell": [
+            987,
+            546
+          ]
+        },
+        {
+          "time": 1090.3165995625313,
+          "source": 17,
+          "destination": 18,
+          "phase": 2,
+          "cell": [
+            981,
+            563
+          ]
+        },
+        {
+          "time": 1093.362611978082,
+          "source": 17,
+          "destination": 18,
+          "phase": 3,
+          "cell": [
+            982,
+            561
+          ]
+        }
+      ]
+    },
+    {
+      "id": "production.1006.0",
+      "samples": 45,
+      "first": 1066.9772201308515,
+      "last": 1095.1375742803793,
+      "observedUnloads": 1,
+      "observedLoads": 1,
+      "meanUnloadInterval": null,
+      "maxRemainingPlannedPath": 228,
+      "sampledManhattanTravelLowerBound": 208,
+      "groundFuelLowerBound": 10.4,
+      "transitions": [
+        {
+          "time": 1068.0293484309223,
+          "source": 7,
+          "destination": 9,
+          "phase": 1,
+          "cell": [
+            960,
+            687
+          ]
+        },
+        {
+          "time": 1081.216211428633,
+          "source": 7,
+          "destination": 9,
+          "phase": 2,
+          "cell": [
+            907,
+            625
+          ]
+        },
+        {
+          "time": 1084.2478379921522,
+          "source": 7,
+          "destination": 9,
+          "phase": 3,
+          "cell": [
+            904,
+            606
+          ]
+        },
+        {
+          "time": 1088.2779382017907,
+          "source": 7,
+          "destination": 9,
+          "phase": 4,
+          "cell": [
+            929,
+            597
+          ]
+        },
+        {
+          "time": 1090.3165995625313,
+          "source": null,
+          "destination": null,
+          "phase": null,
+          "cell": [
+            943,
+            597
+          ]
+        },
+        {
+          "time": 1091.3277688899543,
+          "source": 7,
+          "destination": 9,
+          "phase": 1,
+          "cell": [
+            946,
+            597
+          ]
+        }
+      ]
+    }
+  ],
+  "playerReady": false
+}

@@ -1,0 +1,15 @@
+{
+  "result": "FailedDiagnosticStopped",
+  "wrapperExit": 1,
+  "log": "native-840-current-playable-airport-source-fit.log",
+  "sourceHash": "4553d69bec40ddd9f656d6c86a6926393bb86c2dcc23c063969c15a3f2b5f316",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-839-normal-paid-fixedwing-closed-post-source-manifest.json",
+  "postSourceManifest": "final-840-partial-airport-source-fit-closed-post-source-manifest.json",
+  "partialSamples": 2320,
+  "partialLegalSites": 3,
+  "sourceFitCompleted": false,
+  "reason": "Read-only census measured136-198ms per call; diagnostic aborted through owned method to repair player build-preview performance. Persistent Editor retained.",
+  "noResourcesOrdersOrOutcomesInjected": true,
+  "playerReady": false
+}

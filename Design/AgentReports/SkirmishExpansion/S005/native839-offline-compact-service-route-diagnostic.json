@@ -1,0 +1,58 @@
+{
+  "scope": "Offline static route diagnostic from current live read-only snapshot. No occupancy, terrain costs or live reservations; not a readiness test or exact live path guarantee.",
+  "sourceHash": "4553d69bec40ddd9f656d6c86a6926393bb86c2dcc23c063969c15a3f2b5f316",
+  "snapshot": "native839-read-only-grid-snapshot-exact-surface.json",
+  "footprint": [
+    3,
+    3
+  ],
+  "groundFuelPerCell": 0.05,
+  "results": [
+    {
+      "label": "Observed paid refinery/store service bays",
+      "start": [
+        977,
+        560
+      ],
+      "goal": [
+        987,
+        545
+      ],
+      "connected": true,
+      "pathSteps": 15,
+      "manhattanTravelCells": 25,
+      "staticOneWayFuelEstimate": 1.25
+    },
+    {
+      "label": "Observed paid pump/refinery service bays",
+      "start": [
+        916,
+        566
+      ],
+      "goal": [
+        952,
+        567
+      ],
+      "connected": true,
+      "pathSteps": 36,
+      "manhattanTravelCells": 37,
+      "staticOneWayFuelEstimate": 1.85
+    },
+    {
+      "label": "Observed opening pump/factory service bays",
+      "start": [
+        905,
+        601
+      ],
+      "goal": [
+        923,
+        624
+      ],
+      "connected": true,
+      "pathSteps": 42,
+      "manhattanTravelCells": 43,
+      "staticOneWayFuelEstimate": 2.15
+    }
+  ],
+  "playerReady": false
+}

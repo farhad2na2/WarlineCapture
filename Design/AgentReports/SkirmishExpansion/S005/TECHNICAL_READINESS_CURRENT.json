@@ -3,13 +3,13 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
-  "sourceFingerprint": "final-838-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
+  "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+  "sourceFingerprint": "final-849-unassisted-airport-source-fit-closed-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "14cb9dbecb2c3792ffe0d5587de0f99f40390296dd42988d7051840f7f446f30",
   "visualReview": "Owner deferred until technical readiness",
   "deviceAcceptance": "Pending",
-  "focusedCurrentProof": "native836-focused-current-proof.json",
+  "focusedCurrentProof": "native848-focused-current-proof.json",
   "activeRun": null,
   "activeLog": null,
   "nativeCurrentSource": [],
@@ -64,7 +64,7 @@
     "native656-native-factory-scroll-pause-resume-pass.json"
   ],
   "activeScope": null,
-  "nextWork": "Measure service-approach detours and net supply delivery, then choose cheaper legal supply placements or a normal construction/fleet sequence on existing Campaign geometry. Preserve all costs, rates, caps, deadline and actual flight acceptance.",
+  "nextWork": "Complete implemented scenery reader parity/current Airport scan; run balanced paid fixed-wing cycle and remaining native readiness gates.",
   "priorFocusedQualificationCompile": {
     "result": "Passed",
     "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
@@ -141,7 +141,7 @@
   "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
   "nextNativeRun": {
     "status": "Pending",
-    "scope": "Supply-route/source-fit and normal paid-air lifecycle"
+    "scope": "Normal-input paid fixed-wing flight/return/refuel/second-sortie"
   },
   "infrastructure": {
     "diskFreeGiBAtAbort": 1.5,
@@ -421,8 +421,8 @@
     "native796-shared-oil-air-fuel-regression-pass.json"
   ],
   "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
-  "currentSourceFingerprint": "final-838-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native838-normal-paid-strike-cycle-failure.json",
+  "currentSourceFingerprint": "final-839-normal-paid-fixedwing-closed-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native839-normal-paid-strike-cycle-failure.json",
   "activeActualSeed": null,
   "activeArtifactSeedLabel": null,
   "activeEvidenceNote": null,
@@ -468,7 +468,7 @@
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
   "currentFreshAriaSeedFailures": [],
-  "latestAircraftFailure": "native838-normal-paid-strike-cycle-failure.json",
+  "latestAircraftFailure": "native839-normal-paid-strike-cycle-failure.json",
   "previousFullSourceBefore781": {
     "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
     "qualificationProofsRetained": true,
@@ -582,10 +582,10 @@
   "latestNativeStartingPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
   "latestNativePaidPlacementFailure": "native817-paid-factory-vegetation-overlap-failure.json",
   "activeSourceRepair": null,
-  "latestCompilationFailure": "native818-nunit-api-compiler-failure-owned-wrapper-timeout.json",
+  "latestCompilationFailure": "native847-source-fit-warmup-compiler-failure.json",
   "latestNativeFailure": "native828-paid-placement-clearance-scoped-completion-failure.json",
   "latestRenderPackagingProof": "native824-current-shared-map-render-packaging-pass.json",
-  "latestCompilationProof": "native831-integrated-pr62-placement-compile-pass.json",
+  "latestCompilationProof": "native848-focused-current-proof.json",
   "latestNativePaidPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
   "latestNativePlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
   "latestConfirmedSharedPlacementDefectsStatus": "Shared placement correction passed integrated native starting14 and paid20 buildings; Campaign normal journeys remain a separate pending gate",
@@ -635,5 +635,55 @@
     "normalInputFollowUp": "native838-current-placement-and-hauler-movement-observations.json",
     "status": "FocusedPassedNativeMovementObservedAircraftStillFailed"
   },
-  "currentPlacementObservation": "native838-current-placement-and-hauler-movement-observations.json"
+  "currentPlacementObservation": "native838-current-placement-and-hauler-movement-observations.json",
+  "latestReadOnlySourceFitFailure": "native843-current-census-and-partial-source-fit.json",
+  "latestValidationDispatchFailure": "native847-late-focused-wrapper-handoff-failure.json",
+  "focusedNative842": {
+    "result": "Passed",
+    "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-841-chunk-scenery-reader-pre-source-manifest.json",
+    "postSourceManifest": "final-842-chunk-scenery-reader-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-842-chunk-scenery-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative845": {
+    "result": "Passed",
+    "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-844-call-local-scenery-and-balanced-supply-pre-source-manifest.json",
+    "postSourceManifest": "final-845-call-local-scenery-clearance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-845-call-local-scenery-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "latestShippingSceneryReaderChange": "Chunk iteration and call-local mesh-array/name/bounds metadata, preserving enabled masks, complete multi-mesh bounds and fresh per-call source edits.",
+  "latestReadOnlyAirportSiteObservations": "native846-current-reader-and-source-fit-observations.json",
+  "focusedNative848": {
+    "result": "Passed",
+    "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-847-late-focused-handoff-closed-post-source-manifest.json",
+    "postSourceManifest": "final-848-current-clearance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-848-current-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "latestReadOnlyAirportSourceFit": "native849-current-unassisted-source-fit-proof.json"
 }

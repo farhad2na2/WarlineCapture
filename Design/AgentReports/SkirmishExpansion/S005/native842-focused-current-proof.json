@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-841-chunk-scenery-reader-pre-source-manifest.json",
+  "postSourceManifest": "final-842-chunk-scenery-reader-closed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-842-chunk-scenery-clearance-focused.log",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

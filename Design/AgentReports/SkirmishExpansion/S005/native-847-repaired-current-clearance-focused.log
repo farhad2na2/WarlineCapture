@@ -1,0 +1,166 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=BuildingPlacementValidationUtilitySystemHelperTests.RunSharedSceneryClearanceValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=ordinary-sidewalk result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishPlacementGeometry] geometry=0 buildingBounds=0 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+BuildingPlacementValidationUtilitySystemHelperTests:ValidatePackedSceneryClearance (bool,Game.Components.DenseCityPresentationSemanticCategory) (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:277)
+BuildingPlacementValidationUtilitySystemHelperTests/<>c:<RunSharedSceneryClearanceValidation>b__1_1 () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:21)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=skirmish-tree result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishPlacementGeometry] geometry=0 buildingBounds=0 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+BuildingPlacementValidationUtilitySystemHelperTests:ValidatePackedSceneryClearance (bool,Game.Components.DenseCityPresentationSemanticCategory) (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:277)
+BuildingPlacementValidationUtilitySystemHelperTests/<>c:<RunSharedSceneryClearanceValidation>b__1_2 () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:22)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=campaign-tree result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishPlacementGeometry] geometry=0 buildingBounds=0 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+BuildingPlacementValidationUtilitySystemHelperTests:ValidatePackedSceneryClearance (bool,Game.Components.DenseCityPresentationSemanticCategory) (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:277)
+BuildingPlacementValidationUtilitySystemHelperTests/<>c:<RunSharedSceneryClearanceValidation>b__1_3 () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:23)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=skirmish-prop result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishPlacementGeometry] geometry=0 buildingBounds=0 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+BuildingPlacementValidationUtilitySystemHelperTests:ValidatePackedSceneryClearance (bool,Game.Components.DenseCityPresentationSemanticCategory) (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:277)
+BuildingPlacementValidationUtilitySystemHelperTests/<>c:<RunSharedSceneryClearanceValidation>b__1_4 () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:24)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=campaign-prop result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=streamed-sidewalk result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=sidewalk-edges-and-rotation result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=multi-mesh-scenery result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=chunk-scenery-live-changes result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishPlacementGeometry] geometry=0 buildingBounds=0 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+Game.Runtime.BuildingPlacementInvalidCellCacheCompositionSystemHelper:EnsureAuthoredGeometry (Unity.Entities.EntityManager,Unity.Entities.EntityQuery,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs:40)
+Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper:IsPlacementValid (Game.Runtime.BuildingGameplaySourceCompositionSystemHelper,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper/GetEffectivePlacementRectDelegate,Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper/OverlapsAnyPlacementOccupantDelegate) (at Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs:129)
+BuildingPlacementValidationUtilitySystemHelperTests:<OrdinaryPlayerPlacement_RejectsSceneryWithoutStartingGrantCache>g__Validate|5_0 (UnityEngine.Vector2Int,BuildingPlacementValidationUtilitySystemHelperTests/<>c__DisplayClass5_0&) (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:120)
+BuildingPlacementValidationUtilitySystemHelperTests:OrdinaryPlayerPlacement_RejectsSceneryWithoutStartingGrantCache () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:124)
+BuildingPlacementValidationUtilitySystemHelperTests/<>c:<RunSharedSceneryClearanceValidation>b__1_9 () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:29)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=cold-player-placement-boundary result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] case=combined-native-model-bounds result=Passed
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0 nativePlacementAcceptance=Pending
+UnityEngine.Debug:Log (object)
+BuildingPlacementValidationUtilitySystemHelperTests:RunSharedSceneryClearanceValidation () (at Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=BuildingPlacementValidationUtilitySystemHelperTests.RunSharedSceneryClearanceValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_36d460c9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

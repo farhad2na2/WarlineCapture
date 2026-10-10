@@ -1,0 +1,21 @@
+{
+  "result": "WrappedStartupFailedWithCompletedReadOnlySiteObservations",
+  "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 1,
+  "preSourceManifest": "final-845-call-local-scenery-clearance-closed-post-source-manifest.json",
+  "postSourceManifest": "final-846-current-census-source-fit-closed-post-source-manifest.json",
+  "log": "native-846-current-playable-airport-source-fit.log",
+  "failure": "[SkirmishS003Startup] result=Failed reason=sharedStartupDiagnostic",
+  "siteEnumeration": {
+    "completed": true,
+    "samples": 7776,
+    "tested": 5779,
+    "legalSites": 22,
+    "nonOverlappingFootprintPairs": 59,
+    "artifact": "s005-aria-live-104734-en-a86568f69c18438788b90e25fc641950.jsonl.airport-source-fit.json",
+    "scope": "Read-only native-validator observations with195 bounded supplemental diagnostic calls. Enumerates only a stride16 sample, not exhaustive impossibility or aircraft capacity. Source-fit frames include diagnostic calls, not real Unity frame counts. Wrapped startup failed after prolonged idle combat; no native startup/full match pass claimed."
+  },
+  "liveBoundsParity": "native846-read-only-live-scenery-census-parity.json",
+  "playerReady": false
+}

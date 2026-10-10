@@ -28,7 +28,10 @@ namespace Game.Editor
             // Reuse one hashing buffer across the entire candidate. Per-file
             // megabyte FileStream buffers caused gigabytes of temporary managed
             // allocations when validating the shared Campaign asset library.
-            var buffer = new byte[64 * 1024];
+            // The buffered1MiB read was verified against the independent full
+            // manifest. Keep normal OS buffering for the repeated Editor census;
+            // no source paths, bytes or hash/ordering rules are skipped.
+            var buffer = new byte[1024 * 1024];
             using var manifest = new MemoryStream();
             using (var writer = new BinaryWriter(manifest, Encoding.UTF8, true))
             using (var sha = new StreamingFileDigest())
@@ -36,7 +39,7 @@ namespace Game.Editor
                 {
                     writer.Write(file.Substring(root.Length + 1).Replace('\\', '/'));
                     using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read,
-                        4096, FileOptions.SequentialScan);
+                        65536, FileOptions.None);
                     byte[] digest = sha.Compute(stream, buffer);
                     writer.Write(digest.Length);
                     writer.Write(digest);

@@ -1,0 +1,28 @@
+{
+  "result": "SourceGeometryNotYetObserved",
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "readOnly": true,
+  "baselineCount": 0,
+  "optimizedCount": 0,
+  "baselineSortedBoundsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "optimizedSortedBoundsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "baselineCollectMilliseconds": 0.083,
+  "optimizedCollectMilliseconds": 0.0274,
+  "optimizedCountMilliseconds": [
+    0.0092,
+    0.007500000000000001,
+    0.0057,
+    0.0097,
+    0.007
+  ],
+  "optimizedCounts": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "playerReady": false,
+  "scope": "Empty-world startup observation; source geometry had not loaded. This does not establish live source parity or performance.",
+  "parityAcceptance": false
+}

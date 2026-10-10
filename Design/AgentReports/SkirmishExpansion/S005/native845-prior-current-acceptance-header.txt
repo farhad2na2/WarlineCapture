@@ -1,0 +1,22 @@
+# S005 current acceptance
+
+**In progress. Not player-ready.** Current source fingerprint is `cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3`. The compact authority is `TECHNICAL_READINESS_CURRENT.json`. Earlier native evidence retains its original fingerprints; it does not establish exact-current-source acceptance.
+
+S005 reuses the existing Campaign dense-city physical source. Both logical deployments now use the southern town frontage (935,650 / 1387.8,650), retaining 452.8m separation, scenario budgets and Standard/Regular defaults. The residential quarter failed legal full-barracks placement. The logical deployment edits preserved the physical scene. Four shared ground materials were subsequently updated for the palette described below.
+
+## Current placement qualification
+
+Native831 compiled the integrated PR62 candidate with no C# compiler errors and passed all10 shared placement regression cases. Native832 passed normal menu launch and construction of six paid industry buildings. Both factions were inspected: all14 starting and20 total military structures clear roads, sidewalks, trees and standing scenery. All114 recorded native contacts ended without errors. Actual wrapper exit0; full source and material PRE/POST are identical. Opening and paid-construction screenshots were inspected. Proof: `native832-integrated-native-starting-paid-clearance-pass.json`.
+
+This correction applies to shared Campaign, Skirmish and Operations placement; no physical map or gameplay budget was altered by it. Full aircraft refuel/second-sortie, recovery, role, ARIA, cleanup/performance, affected Campaign journeys and device/player gates remain open. Owner visual review remains deferred.
+
+## Current hauler-path qualification
+
+Native833 failed the paid Strike cycle before takeoff; supply vehicles remained stationary for minutes. Native834 preserved normal-input reproduction and read-only movement/grid diagnosis: repeated matching requests for the refinery service bay exhausted the 12,000-expansion search. The captured geometry is connected, but forces a substantial industrial detour. The owned failing validation was ended through its authorized abort method; all recorded contacts ended and source/material PRE/POST matched. Both failures are retained.
+
+Focused835 reproduced the missing route before the runtime correction (wrapper exit0, required pass marker absent, explicitly a failed validation). A hauler-only retry now uses a stronger goal heuristic after the normal search exhausts its work allowance. It retains the existing limit per search, geometry/surface/occupancy checks and service destination; it may choose a longer route and adds one bounded attempt. No physical map, gameplay resource/rate/cap or match deadline changed. Focused836 passed all3 captured routes and3 existing detour cases; focused837 passed shared mixed-unit/long-distance/performance checks (16 measured samples, p95/p99 10.27ms,0 managed allocations). Complete source/material PRE/POST matched. Persistent-allocation shutdown warnings remain open and are not called solved.
+
+Native838 closed on this same frozen source with no C# compiler errors. Both factions and all21 actual military buildings, including the paid Airport and six industry buildings, passed the road/sidewalk/tree/standing-scenery geometry inspection. No60-second hauler travel stalls were observed in its periodic actor trace; normal local fuel deliveries and a paid four-Tanker fleet were recorded. All303 contacts ended cleanly and source/material PRE/POST matched. This is scoped placement/movement evidence, not a complete match pass.
+
+The full aircraft cycle failed before first takeoff: last progress at1074.866s had455 stored fuel against the probe's conservative879 reserve. Actual wrapper exit2 and the generic player-probe timeout marker are retained. Fuel components were read without changing gameplay (8-barrel cargo,0.05 fuel/cell); service detours/net supply delivery and the normal construction/fleet sequence need investigation on existing Campaign geometry. No budgets, rates, caps, deadline or acceptance requirements were changed. Current observations: `native838-current-placement-and-hauler-movement-observations.json`.
+

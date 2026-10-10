@@ -1,0 +1,17 @@
+{
+  "result": "Passed",
+  "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-847-late-focused-handoff-closed-post-source-manifest.json",
+  "postSourceManifest": "final-848-current-clearance-closed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-848-current-clearance-focused.log",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "wrapperSha256": "45abf5d7ee2c173cd8cda6d3ec488423efd1ada5127d6d4372e14595084d0ab3",
+  "actualWrapperExitVerified": true
+}

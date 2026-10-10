@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-844-call-local-scenery-and-balanced-supply-pre-source-manifest.json",
+  "postSourceManifest": "final-845-call-local-scenery-clearance-closed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-845-call-local-scenery-clearance-focused.log",
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

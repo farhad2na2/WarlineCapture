@@ -1,0 +1,10 @@
+{
+  "result": "FailedDispatch",
+  "actualWrapperExit": 6,
+  "dispatch": "native-841-chunk-scenery-clearance-focused.log.dispatch.json",
+  "nativeValidationStarted": false,
+  "passMarkerPresent": false,
+  "reason": "Pipeline connection unavailable during compilation/domain reload; wrapper preserved Editor. Retrying after ready status.",
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "playerReady": false
+}

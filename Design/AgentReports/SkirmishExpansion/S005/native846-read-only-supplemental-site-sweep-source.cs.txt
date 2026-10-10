@@ -1,0 +1,11 @@
+using System;using System.IO;using System.Diagnostics;using System.Reflection;using UnityEditor;using UnityEngine;using Newtonsoft.Json.Linq;
+public static class S005ReadOnlySourceFitSweep846 {
+ public static string Main(){
+ var type=typeof(Game.Editor.SkirmishS002AriaRunHarness);var flags=BindingFlags.NonPublic|BindingFlags.Static;var cursor=type.GetField("airportSourceFitCursor",flags);var tick=type.GetMethod("TickReadOnlyS005AirportSourceFit",flags);
+ if(!EditorApplication.isPlaying||Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT")!="1")throw new InvalidOperationException("No owned read-only source-fit diagnostic is active.");
+ int before=(int)cursor.GetValue(null),calls=0;var timer=Stopwatch.StartNew();bool complete=false;
+ while(calls<128&&timer.Elapsed.TotalMilliseconds<400&&Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT")=="1") {complete=(bool)tick.Invoke(null,null);calls++;if(complete)break;}
+ int after=(int)cursor.GetValue(null);var result=new JObject{["before"]=before,["after"]=after,["diagnosticCalls"]=calls,["milliseconds"]=timer.Elapsed.TotalMilliseconds,["complete"]=complete,["unityFrame"]=Time.frameCount,["sourceHash"]="1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",["scope"]="Supplemental read-only native-validator site enumeration in the already-running wrapped source-fit diagnostic. Advances only the diagnostic cursor; no actor, resources, orders, clock, input, geometry or outcomes are injected. Scan frames include diagnostic calls and are not Unity frame counts. Not normal-input gameplay or player readiness.", ["playerReady"]=false};
+ File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native846-read-only-supplemental-site-sweeps.jsonl",result.ToString(Newtonsoft.Json.Formatting.None)+"\n");return result.ToString();
+ }
+}

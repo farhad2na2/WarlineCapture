@@ -1,0 +1,30 @@
+{
+  "result": "PassedExactLiveBoundsParity",
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "readOnly": true,
+  "baselineCount": 4204,
+  "optimizedCount": 4204,
+  "baselineSortedBoundsHash": "1433fb4f4ebd9c27cfd5c3ecded10b82bd3ca1d3ace0984f61b2f8f9f64756db",
+  "optimizedSortedBoundsHash": "1433fb4f4ebd9c27cfd5c3ecded10b82bd3ca1d3ace0984f61b2f8f9f64756db",
+  "baselineCollectMilliseconds": 106.8811,
+  "optimizedCollectMilliseconds": 24.8134,
+  "optimizedCountMilliseconds": [
+    13.7359,
+    14.024700000000001,
+    13.521600000000001,
+    12.9825,
+    13.302200000000001
+  ],
+  "optimizedCounts": [
+    4204,
+    4204,
+    4204,
+    4204,
+    4204
+  ],
+  "playerReady": false,
+  "scope": "Exact read-only live bounds comparison against the previous per-entity algorithm; full native mission and device performance not certified.",
+  "measurementVariant": "Per-call mesh-array metadata prototype",
+  "shippingReaderMeasurement": false,
+  "optimizedCountMillisecondsActuallyMeasured": "Collect (allocating result list), not Count"
+}

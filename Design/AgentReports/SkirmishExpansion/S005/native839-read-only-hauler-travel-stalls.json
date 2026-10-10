@@ -1,0 +1,10 @@
+{
+  "result": "No60SecondTravelStallObserved",
+  "observationOnly": true,
+  "rootCauseConfirmed": false,
+  "noRuntimeMutation": true,
+  "log": "native-839-current-manual-en-seed155926.log",
+  "actorTrace": "s005-aria-live-155926-en-12d1f27929864250944c51d1ce317cc9.jsonl.actors.jsonl",
+  "stalls": [],
+  "playerReady": false
+}

@@ -273,13 +273,12 @@ namespace Game.Editor
             paidIndustryOpeningRefineryCount = CountLivingPlayerRefineries(em);
             paidIndustryWarmReady = !fixedWingCycleOnly;
             paidIndustryFabricationReady = false;
-            // Native791 reached first fire and home landing too late for a
-            // second funded sortie. Invest in four paid/starting factories and
-            // a second normal Oil pump, funded by the same initial resources,
-            // recipes, native purchases and six-vehicle support cap.
             paidIndustryFuelReady = !fixedWingCycleOnly;
             paidIndustryOilReady = !fixedWingCycleOnly;
-            paidIndustryAddedTarget = fixedWingCycleOnly ? 3 : 2;
+            // Keep native839's compact paid refinery/store sites available:
+            // warm up one extra Factory, finish the supply cluster, then fund
+            // the second extra Factory. All purchases retain normal costs.
+            paidIndustryAddedTarget = 2;
             paidIndustryBeforeConstruction = paidIndustryOpeningCount;
             paidIndustryStep = paidIndustrySite = 0;
             paidIndustryTappedSite = paidIndustryReady = false;
@@ -357,7 +356,7 @@ namespace Game.Editor
                 materialsPriorityStartedAt = now;
                 Debug.Log("[S005MaterialsPriority] phase=Begin factory=" + materialsPriorityFactoryId +
                     " truck=" + em.GetComponentData<SkirmishAttemptOwnedComponent>(materialsPriorityTruck).StableObjectId +
-                    " fleetCommitted=4 input=TouchPending");
+                    " qualificationOilTarget=3 qualificationTankerTarget=3 input=TouchPending");
             }
             if (!em.Exists(materialsPriorityTruck) || !em.Exists(materialsPriorityFactory) || now - materialsPriorityStartedAt > 30)
             {
@@ -499,8 +498,9 @@ namespace Game.Editor
                 // Start the normal fabrication investment before buying the
                 // logistics fleet so it can fund the remaining purchases.
                 paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
+                int warmupAdded = fixedWingCycleOnly ? 1 : paidIndustryAddedTarget;
                 if (!TickPaidIndustryBuilding(now, "Building_Ammunition_Depot", CountLivingPlayerFabrication(em),
-                    paidIndustryOpeningCount + paidIndustryAddedTarget, "Fabrication", paidIndustryAddedTarget, paidIndustryOpeningCount, 100)) return false;
+                    paidIndustryOpeningCount + warmupAdded, "Fabrication", warmupAdded, paidIndustryOpeningCount, 100)) return false;
                 paidIndustryWarmReady = true;
                 paidIndustryPlacementFocus = null;
                 paidIndustryStep = paidIndustrySite = 0;
@@ -510,9 +510,11 @@ namespace Game.Editor
             if (warmupOnly) return paidIndustryWarmReady;
             if (!paidIndustryOilReady)
             {
+                paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
                 if (!TickPaidIndustryBuilding(now, Game.Skirmish.Contracts.SkirmishStructureIds.VisualKey(Game.Skirmish.Contracts.SkirmishStructureIds.OilPump), CountLivingPlayerOilSources(em),
                     paidIndustryOpeningOilCount + 1, "OilPump", 1, paidIndustryOpeningOilCount, 100)) return false;
                 paidIndustryOilReady = true;
+                paidIndustryPlacementFocus = null;
                 paidIndustryStep = paidIndustrySite = 0;
                 paidIndustryTappedSite = false;
                 paidIndustryBeforeConstruction = paidIndustryOpeningRefineryCount;
@@ -549,10 +551,12 @@ namespace Game.Editor
             }
             if (!paidIndustryFabricationReady)
             {
+                paidIndustryPlacementFocus ??= FindNewestPlayerOilSourcePosition(em);
                 if (!TickPaidIndustryBuilding(now, "Building_Ammunition_Depot", CountLivingPlayerFabrication(em),
                     paidIndustryOpeningCount + paidIndustryAddedTarget, "Fabrication", paidIndustryAddedTarget,
                     paidIndustryOpeningCount, 100)) return false;
                 paidIndustryFabricationReady = true;
+                paidIndustryPlacementFocus = null;
                 paidIndustryStep = paidIndustrySite = 0;
                 paidIndustryTappedSite = false;
                 paidIndustryBeforeConstruction = paidIndustryOpeningRefineryCount;

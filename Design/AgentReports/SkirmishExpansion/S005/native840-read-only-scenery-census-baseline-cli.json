@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; var reader=Game.Rendering.RenderBoundsPresentation.Create(); var times=new System.Collections.Generic.List<double>(); int count=0; for(int i=0;i<3;i++){var timer=System.Diagnostics.Stopwatch.StartNew(); count=reader.CountAuthoredBuildingGeometry(em);times.Add(timer.Elapsed.TotalMilliseconds);} return new {count,milliseconds=times.ToArray(),readOnly=true};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "count": 4204,
+        "milliseconds": [
+          136.6912,
+          198.0585,
+          135.5721
+        ],
+        "readOnly": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

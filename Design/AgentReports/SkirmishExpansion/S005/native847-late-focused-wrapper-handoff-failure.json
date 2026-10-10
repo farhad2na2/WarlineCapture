@@ -1,0 +1,16 @@
+{
+  "result": "FailedWrapperHandoffWithLateNativeCaseSuccess",
+  "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+  "sourceUnchanged": true,
+  "wrapperExitCode": 6,
+  "nativeBridgeExitCode": 0,
+  "preSourceManifest": "final-847-repaired-census-qualification-pre-source-manifest.json",
+  "postSourceManifest": "final-847-late-focused-handoff-closed-post-source-manifest.json",
+  "log": "native-847-repaired-current-clearance-focused.log",
+  "nativeCasesPassed": 11,
+  "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+  "nativeMarkerPresent": true,
+  "validationPassed": false,
+  "scope": "Pipeline acknowledgement timed out; exact owned new-log marker arrived after wrapper handoff grace. Actual wrapper failure is retained separately from successful native cases.",
+  "playerReady": false
+}

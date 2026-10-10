@@ -18,7 +18,7 @@ namespace Game.Editor
 {
     public static partial class SkirmishS002AriaRunHarness
     {
-        private const int FixedWingQualificationTankers = 2;
+        private const int FixedWingQualificationTankers = 3;
         private static bool fixedWingCycleOnly, fixedWingNativeFire;
         private static bool fixedWingMaterialProductionPaused;
         private static int fixedWingStep, fixedWingPages, fixedWingFirstFuel, fixedWingTouchdownFuel;

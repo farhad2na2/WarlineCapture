@@ -1,0 +1,12 @@
+{
+  "result": "CompilationFailedBeforeValidation",
+  "sourceHash": "2769569a291d2d13dc32d56b1c00572f3f185e7453427024c7676570fdd08a79",
+  "preSourceManifest": "final-847-buffered-census-and-qualification-reset-pre-source-manifest.json",
+  "errors": [
+    "AirportPlacement.cs(336,88): CS1503 Entity cannot convert to EntityManager",
+    "AirportPlacement.cs(338,17): CS1503 Entity cannot convert to EntityManager"
+  ],
+  "cause": "ReadAirportGrid first out parameter is the grid Entity; obtain EntityManager through the actual native source access helper instead.",
+  "nativeTestStarted": false,
+  "playerReady": false
+}

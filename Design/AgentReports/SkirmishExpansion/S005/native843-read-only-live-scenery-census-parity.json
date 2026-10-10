@@ -1,0 +1,27 @@
+{
+  "result": "PassedExactLiveBoundsParity",
+  "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+  "readOnly": true,
+  "baselineCount": 4204,
+  "optimizedCount": 4204,
+  "baselineSortedBoundsHash": "1433fb4f4ebd9c27cfd5c3ecded10b82bd3ca1d3ace0984f61b2f8f9f64756db",
+  "optimizedSortedBoundsHash": "1433fb4f4ebd9c27cfd5c3ecded10b82bd3ca1d3ace0984f61b2f8f9f64756db",
+  "baselineCollectMilliseconds": 92.800000000000011,
+  "optimizedCollectMilliseconds": 45.6424,
+  "optimizedCountMilliseconds": [
+    48.1939,
+    47.681200000000004,
+    48.3417,
+    51.170500000000004,
+    52.000800000000005
+  ],
+  "optimizedCounts": [
+    4204,
+    4204,
+    4204,
+    4204,
+    4204
+  ],
+  "playerReady": false,
+  "scope": "Exact read-only live bounds comparison against the previous per-entity algorithm; full native mission and device performance not certified."
+}

@@ -250,9 +250,9 @@ namespace Game.Editor
                         // Count authored starting Oil trucks as well as paid
                         // replacements. Native709 left 1,316 produced fuel in
                         // its two refineries at the deadline. Fund materials with
-                        // four Oil trucks / two Tankers, then switch to two/four
+                        // three Oil trucks / three Tankers, then switch to two/four
                         // after paid aircraft delivery, within support cap6.
-                        int requiredTrucks = fixedWingCycleOnly ? 4 : 1;
+                        int requiredTrucks = fixedWingCycleOnly ? 3 : 1;
                         if (fixedWingCycleOnly)
                         {
                             using var oilActors = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),

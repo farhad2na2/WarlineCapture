@@ -1,0 +1,674 @@
+{
+    "stride": 16,
+    "diagnosticWatchdogSeconds": 600,
+    "samples": 7776,
+    "tested": 5779,
+    "cachedClear": 5779,
+    "frames": 1736,
+    "pairChecks": 231,
+    "previewMutated": false,
+    "physicalSourceModified": false,
+    "capacityCertified": false,
+    "playerReady": false,
+    "logicalPlayableOnly": true,
+    "scope": "ReadOnlyLogicalPlayableCoarseNativeValidator",
+    "limitation": "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.",
+    "sites": [
+        {
+            "origin": {
+                "x": 1294,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1294,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1399.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        },
+        {
+            "origin": {
+                "x": 1310,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1310,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1415.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        },
+        {
+            "origin": {
+                "x": 1582,
+                "y": 150
+            },
+            "rotated": false,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 1582,
+                "y": 150,
+                "width": 210,
+                "height": 55
+            },
+            "centre": {
+                "x": 1687.0,
+                "y": 0.0,
+                "z": 177.5
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 470
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 470,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 575.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 486
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 486,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 591.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 486
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 486,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 591.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 486
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 486,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 591.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 502
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 502,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 607.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 502
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 502,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 607.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 502
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 502,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 607.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 518
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 518,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 623.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 518
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 518,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 623.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 518
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 518,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 623.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 534
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 534,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 639.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 534
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 534,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 639.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 534
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 534,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 639.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 550
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 550,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 655.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 550
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 550,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 655.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 550
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 550,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 655.0
+            }
+        },
+        {
+            "origin": {
+                "x": 750,
+                "y": 566
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 750,
+                "y": 566,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 777.5,
+                "y": 0.0,
+                "z": 671.0
+            }
+        },
+        {
+            "origin": {
+                "x": 766,
+                "y": 566
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 766,
+                "y": 566,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 793.5,
+                "y": 0.0,
+                "z": 671.0
+            }
+        },
+        {
+            "origin": {
+                "x": 782,
+                "y": 566
+            },
+            "rotated": true,
+            "insideLogicalPlayable": true,
+            "effectiveRect": {
+                "x": 782,
+                "y": 566,
+                "width": 55,
+                "height": 210
+            },
+            "centre": {
+                "x": 809.5,
+                "y": 0.0,
+                "z": 671.0
+            }
+        }
+    ],
+    "playablePairs": [
+        {
+            "x": 0,
+            "y": 2
+        },
+        {
+            "x": 0,
+            "y": 3
+        },
+        {
+            "x": 0,
+            "y": 4
+        },
+        {
+            "x": 0,
+            "y": 5
+        },
+        {
+            "x": 0,
+            "y": 6
+        },
+        {
+            "x": 0,
+            "y": 7
+        },
+        {
+            "x": 0,
+            "y": 8
+        },
+        {
+            "x": 0,
+            "y": 9
+        },
+        {
+            "x": 0,
+            "y": 10
+        },
+        {
+            "x": 0,
+            "y": 11
+        },
+        {
+            "x": 0,
+            "y": 12
+        },
+        {
+            "x": 0,
+            "y": 13
+        },
+        {
+            "x": 0,
+            "y": 14
+        },
+        {
+            "x": 0,
+            "y": 15
+        },
+        {
+            "x": 0,
+            "y": 16
+        },
+        {
+            "x": 0,
+            "y": 17
+        },
+        {
+            "x": 0,
+            "y": 18
+        },
+        {
+            "x": 0,
+            "y": 19
+        },
+        {
+            "x": 0,
+            "y": 20
+        },
+        {
+            "x": 0,
+            "y": 21
+        },
+        {
+            "x": 1,
+            "y": 2
+        },
+        {
+            "x": 1,
+            "y": 3
+        },
+        {
+            "x": 1,
+            "y": 4
+        },
+        {
+            "x": 1,
+            "y": 5
+        },
+        {
+            "x": 1,
+            "y": 6
+        },
+        {
+            "x": 1,
+            "y": 7
+        },
+        {
+            "x": 1,
+            "y": 8
+        },
+        {
+            "x": 1,
+            "y": 9
+        },
+        {
+            "x": 1,
+            "y": 10
+        },
+        {
+            "x": 1,
+            "y": 11
+        },
+        {
+            "x": 1,
+            "y": 12
+        },
+        {
+            "x": 1,
+            "y": 13
+        },
+        {
+            "x": 1,
+            "y": 14
+        },
+        {
+            "x": 1,
+            "y": 15
+        },
+        {
+            "x": 1,
+            "y": 16
+        },
+        {
+            "x": 1,
+            "y": 17
+        },
+        {
+            "x": 1,
+            "y": 18
+        },
+        {
+            "x": 1,
+            "y": 19
+        },
+        {
+            "x": 1,
+            "y": 20
+        },
+        {
+            "x": 1,
+            "y": 21
+        },
+        {
+            "x": 2,
+            "y": 3
+        },
+        {
+            "x": 2,
+            "y": 4
+        },
+        {
+            "x": 2,
+            "y": 5
+        },
+        {
+            "x": 2,
+            "y": 6
+        },
+        {
+            "x": 2,
+            "y": 7
+        },
+        {
+            "x": 2,
+            "y": 8
+        },
+        {
+            "x": 2,
+            "y": 9
+        },
+        {
+            "x": 2,
+            "y": 10
+        },
+        {
+            "x": 2,
+            "y": 11
+        },
+        {
+            "x": 2,
+            "y": 12
+        },
+        {
+            "x": 2,
+            "y": 13
+        },
+        {
+            "x": 2,
+            "y": 14
+        },
+        {
+            "x": 2,
+            "y": 15
+        },
+        {
+            "x": 2,
+            "y": 16
+        },
+        {
+            "x": 2,
+            "y": 17
+        },
+        {
+            "x": 2,
+            "y": 18
+        },
+        {
+            "x": 2,
+            "y": 19
+        },
+        {
+            "x": 2,
+            "y": 20
+        },
+        {
+            "x": 2,
+            "y": 21
+        }
+    ]
+}

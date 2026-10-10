@@ -1,0 +1,25 @@
+{
+  "result": "ObservedDeliveryCannotOutpaceConsumption",
+  "diagnosticOnly": true,
+  "normalInput": true,
+  "noRuntimeMutation": true,
+  "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+  "first": {
+    "elapsed": 819.5851440429688,
+    "usableFuel": 555.0302734375,
+    "receivedFuel": 1248.0,
+    "unhauledFuel": 64.0
+  },
+  "last": {
+    "elapsed": 1075.5369873046875,
+    "usableFuel": 455.4735107421875,
+    "receivedFuel": 1568.0,
+    "unhauledFuel": 140.0
+  },
+  "seconds": 255.95184326171875,
+  "receivedFuelDelta": 320.0,
+  "usableFuelDelta": -99.5567626953125,
+  "inferredFuelDrain": 419.5567626953125,
+  "inferenceLimit": "Storage conservation during sampled parked-aircraft interval; not a per-truck fuel attribution or full route-cost measurement.",
+  "playerReady": false
+}

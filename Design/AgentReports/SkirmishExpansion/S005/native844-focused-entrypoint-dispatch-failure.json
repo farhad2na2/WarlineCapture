@@ -1,0 +1,9 @@
+{
+  "result": "FailedBeforeTestExecution",
+  "wrapperExitCode": 1,
+  "reason": "Incorrect namespace in requested focused test entry point; MissingMemberException. Correct global class entry point verified in source and prior successful dispatch.",
+  "testCasesExecuted": 0,
+  "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+  "log": "native-844-call-local-scenery-clearance-focused.log",
+  "playerReady": false
+}

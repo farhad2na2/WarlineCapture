@@ -315,7 +315,9 @@ namespace Game.Editor
                 new HashSet<object>(), 0);
             // Read the native resolved definition; the prefab configuration is a different asset type.
             var definition = source?.BuildingDefinitionPrefabSystemHelper.FindConfiguredDefinition("Airport");
-            if (source == null || definition == null || !ReadAirportGrid(source, out _, out var grid, out var roads, out var blockers))
+            if (source == null || definition == null ||
+                !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out var em) ||
+                !ReadAirportGrid(source, out _, out var grid, out var roads, out var blockers))
                 throw new InvalidOperationException("Read-only Airport source-fit has no native definition/grid.");
             var map = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.OperationMapDefinition>(
                 "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset");
@@ -330,6 +332,12 @@ namespace Game.Editor
             int columns = (endX - startX + scan.stride - 1) / scan.stride;
             int rows = (endZ - startZ + scan.stride - 1) / scan.stride;
             int total = columns * rows * 2;
+            // Count/refresh the unchanged native geometry before budgeting the
+            // candidate enumeration itself. Otherwise its first census alone
+            // exceeds8ms and leaves this read-only diagnostic at one site/tick.
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
+            source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.EnsureAuthoredGeometry(
+                em, source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery, grid);
             var budget = System.Diagnostics.Stopwatch.StartNew();
             int frameSamples = 0;
             // This observational fixture needs longer than the opening screenshot
@@ -445,7 +453,7 @@ namespace Game.Editor
                     for (int x = min.x; x < max.x; x += stride)
                         placementSearchOrigins.Add(new Vector2Int(x, z));
                 var hud = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
-                var focus = (kind is "Fabrication" or "Refinery" or "FuelBladder") && paidIndustryPlacementFocus.HasValue
+                var focus = (kind is "Fabrication" or "OilPump" or "Refinery" or "FuelBladder") && paidIndustryPlacementFocus.HasValue
                     ? paidIndustryPlacementFocus.Value : hud != null ? hud.PlayerBaseObjectivePosition : Vector3.zero;
                 if (kind == "Airport" && fixedWingCycleOnly && hud != null)
                 {

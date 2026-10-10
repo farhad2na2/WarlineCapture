@@ -1,0 +1,15 @@
+{
+  "result": "FailedFixtureSetup",
+  "sourceHash": "2dba2a2d0d2a88b79fad0d48aa192193a0aba9f44886e398bce468454993b9f3",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-880-oil-supply-cycle-pre-source-manifest.json",
+  "postSourceManifest": "final-880-oil-supply-cycle-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-880-oil-supply-cycle-regressions.log",
+  "completedNewCases": 3,
+  "failure": "Existing incoming-Oil fixture selected the waiting factory but never reserved its delivery before expecting the next truck to prefer the refinery. Waiting factory still has8 Oil and0 inbound against a10 Oil recipe, so its unfunded priority remains higher.",
+  "existingSharedRegressionSuiteCompleted": false,
+  "nativeMissionAcceptance": false,
+  "playerReady": false
+}

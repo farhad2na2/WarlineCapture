@@ -1,0 +1,685 @@
+{
+  "result": "ObservedOnly",
+  "sourceHash": "b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb",
+  "source": "s005-aria-live-155926-en-2543c4d2ed424730abbbbf5237379ada.jsonl.actors.jsonl",
+  "readOnly": true,
+  "latestElapsed": 1074.8568115234375,
+  "oilAtDeadline": [
+    {
+      "elapsed": 1074.8568115234375,
+      "id": "role.logistics_truck.1.9.0",
+      "role": "LogisticsTruck",
+      "faction": 1,
+      "position": {
+        "x": 901.2666625976562,
+        "y": 0.00917959213256836,
+        "z": 606.4525146484375
+      },
+      "health": 160.0,
+      "speed": 8.0,
+      "pathIndex": 5,
+      "pathLength": 6,
+      "frame": 48102,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": true,
+      "hasPathRequest": false,
+      "hasPathFollow": true,
+      "hasPathRange": true,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 901,
+        "y": 606
+      },
+      "targetCell": {
+        "x": 904,
+        "y": 606
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 904,
+        "y": 606
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": false,
+      "hauling": true,
+      "haulSource": 17,
+      "haulDestination": 7,
+      "haulPhase": 3,
+      "haulStatus": 2,
+      "haulReason": 0,
+      "cargoOil": 8.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1074.8568115234375,
+      "id": "production.1002.0",
+      "role": "LogisticsTruck",
+      "faction": 1,
+      "position": {
+        "x": 839.515380859375,
+        "y": 0.00917959213256836,
+        "z": 599.0626831054688
+      },
+      "health": 160.0,
+      "speed": 8.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 48102,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 839,
+        "y": 599
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 839,
+        "y": 600
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 1089.7823486328125,
+      "engaged": false,
+      "stationary": false,
+      "air": false,
+      "hauling": true,
+      "haulSource": 17,
+      "haulDestination": 7,
+      "haulPhase": 2,
+      "haulStatus": 2,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    }
+  ],
+  "strikeTrajectoryLast10": [
+    {
+      "elapsed": 939.7664794921875,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1374.5,
+        "y": 0.8241641521453857,
+        "z": 189.5
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 42580,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": true,
+      "gridCell": {
+        "x": 1374,
+        "y": 189
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 1374,
+        "y": 189
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 954.7925415039062,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1374.5,
+        "y": 0.8241641521453857,
+        "z": 189.5
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 43193,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": true,
+      "gridCell": {
+        "x": 1374,
+        "y": 189
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 1374,
+        "y": 189
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 969.8101806640625,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1374.5,
+        "y": 0.8241641521453857,
+        "z": 189.5
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 43828,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": true,
+      "gridCell": {
+        "x": 1374,
+        "y": 189
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 1374,
+        "y": 189
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 984.8234252929688,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1374.5,
+        "y": 0.8241641521453857,
+        "z": 189.5
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 44464,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": true,
+      "gridCell": {
+        "x": 1374,
+        "y": 189
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 1374,
+        "y": 189
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 999.8375244140625,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1366.0794677734375,
+        "y": 0.7941641807556152,
+        "z": 184.1517333984375
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 45101,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": true,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 1366,
+        "y": 184
+      },
+      "targetCell": {
+        "x": 1362,
+        "y": 687
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1014.8892822265625,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1386.16357421875,
+        "y": 29.682584762573242,
+        "z": 605.0646362304688
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 45726,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": true,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 1386,
+        "y": 605
+      },
+      "targetCell": {
+        "x": 1362,
+        "y": 687
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1029.8895263671875,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1702.3409423828125,
+        "y": 29.682584762573242,
+        "z": 614.44970703125
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 46348,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 1702,
+        "y": 614
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1044.9019775390625,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1413.650390625,
+        "y": 29.682584762573242,
+        "z": 201.52188110351562
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 46972,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 1413,
+        "y": 201
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1059.912353515625,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 891.7523193359375,
+        "y": 33.69784164428711,
+        "z": 147.8062744140625
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 47591,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 891,
+        "y": 147
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    },
+    {
+      "elapsed": 1074.8568115234375,
+      "id": "production.1005.0",
+      "role": "Strike",
+      "faction": 1,
+      "position": {
+        "x": 1373.8160400390625,
+        "y": 0.7941641807556152,
+        "z": 183.86582946777344
+      },
+      "health": 300.0,
+      "speed": 36.0,
+      "pathIndex": -1,
+      "pathLength": 0,
+      "frame": 48102,
+      "retryResumeFrame": 0,
+      "hasGrid": true,
+      "hasTarget": false,
+      "hasPathRequest": false,
+      "hasPathFollow": false,
+      "hasPathRange": false,
+      "hasRetryCooldown": false,
+      "hasLongDistanceMove": false,
+      "gridCell": {
+        "x": 1373,
+        "y": 183
+      },
+      "targetCell": {
+        "x": 0,
+        "y": 0
+      },
+      "requestedGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "longDistanceGoal": {
+        "x": 0,
+        "y": 0
+      },
+      "haulActionEndsAt": 0.0,
+      "engaged": false,
+      "stationary": false,
+      "air": true,
+      "hauling": false,
+      "haulSource": 0,
+      "haulDestination": 0,
+      "haulPhase": 0,
+      "haulStatus": 0,
+      "haulReason": 0,
+      "cargoOil": 0.0,
+      "cargoFuel": 0.0
+    }
+  ],
+  "observation": "Both remaining Oil trucks were using new Pump17 to original Refinery7, while the compact local Refinery18 served the manually assigned local Tankers. Test a normal-input Oil route to local Refinery18 before changing source geography or gameplay rates.",
+  "completeMissionCertified": false
+}

@@ -1,0 +1,35 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_fd7e5768/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Use the shorter complete supply cycle when its Oil is available; never consume another truck's reservation.
+  Expected: same as <Game.Runtime.RuntimeBuildingEntity>
+  But was:  <Game.Runtime.RuntimeBuildingEntity>
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreSame (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+BuildingResourceProductionEcsSystemTests.AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination (System.Byte faction, System.Boolean nearbyPumpReserved) (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:62)
+BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:19)
+UnityEngine.Debug:LogException(Exception)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:28)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OilDeliveryCycleValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:29)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fd7e5768/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_fd7e5768/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

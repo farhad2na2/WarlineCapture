@@ -1,0 +1,22 @@
+{
+  "before": "b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb",
+  "after": "8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29",
+  "changes": [
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+      "before": "c550d1ca7fd7f378c2ec334b0bfa7afc56a497171651509ebccaceb4d617b82d",
+      "after": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be"
+    },
+    {
+      "path": "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
+      "before": "270552d718970aad0a6ebaf6608f31555f0e22b8c66b7c296d6310162af74725",
+      "after": "4cb6393df30c97891d402e5fa3ad74a12f8b876e061fba563184a03afbc154b0"
+    }
+  ],
+  "allOtherSourceFilesUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "materials": 966,
+  "physicalMapAndMissionConfigurationUnchanged": true,
+  "budgetsRatesCapacitiesDeadlinesUnchanged": true,
+  "oldNativeWinsRecertified": false
+}

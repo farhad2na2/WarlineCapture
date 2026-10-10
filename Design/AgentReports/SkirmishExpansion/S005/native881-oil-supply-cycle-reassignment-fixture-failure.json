@@ -1,0 +1,19 @@
+{
+  "result": "FailedChangedRouteFixture",
+  "sourceHash": "52e1d94e72bd024d868a40acc585b16e7a3e64db10a8997af10232f9b1e22cfe",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-881-oil-supply-cycle-pre-source-manifest.json",
+  "postSourceManifest": "final-881-oil-supply-cycle-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-881-oil-supply-cycle-regressions.log",
+  "newSupplyCycleCasesPassed": 3,
+  "committedOilPriorityFactionsPassed": [
+    1,
+    2
+  ],
+  "failure": "Manual reassignment fixture clicked pump62 which the new shorter-cycle automatic policy had already selected. It expected one changed route but this was a same-route click. Fixture must choose the other actual source before retaining its changed-route and duplicate-count assertions.",
+  "existingSharedRegressionSuiteCompleted": false,
+  "nativeMissionAcceptance": false,
+  "playerReady": false
+}

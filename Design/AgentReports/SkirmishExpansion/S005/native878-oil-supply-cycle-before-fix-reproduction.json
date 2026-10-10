@@ -1,0 +1,13 @@
+{
+  "result": "FailedReproduction",
+  "sourceHash": "d1e7fe553901625876ecc5cc72d0ae135b6e8fd4aab7cd0012155b35a95f540e",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-878-oil-cycle-regression-pre-source-manifest.json",
+  "postSourceManifest": "final-878-oil-cycle-regression-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-878-oil-cycle-regression-before-fix.log",
+  "scope": "First isolated Oil supply cycle case failed: destination priority preserved but near-truck source selected instead of available shorter-cycle source. Remaining new cases and existing shared regressions not run after this assertion.",
+  "nativeMissionAcceptance": false,
+  "playerReady": false
+}

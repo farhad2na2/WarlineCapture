@@ -38,7 +38,7 @@ namespace Game.Runtime
                 return false;
             }
 
-            return TryFindNearestAutomaticDestination(
+            if (!TryFindNearestAutomaticDestination(
                 context,
                 em,
                 source,
@@ -47,7 +47,52 @@ namespace Game.Runtime
                 loadAmount,
                 hasAIInput,
                 aiInput,
-                out destination);
+                out destination))
+                return false;
+
+            // Preserve the consumer's strategic and starvation priorities, then
+            // source Oil for its supply cycle. Picking only the nearest pump to
+            // the truck repeatedly crosses otherwise local supply districts.
+            if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
+                TryFindOilSupplyCycleSource(context, em, grid, factionId, unitCell,
+                    loadAmount, destination, out RuntimeBuildingEntity cycleSource))
+                source = cycleSource;
+            return true;
+        }
+
+        private static bool TryFindOilSupplyCycleSource(
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context,
+            EntityManager em,
+            GridConfig grid,
+            byte factionId,
+            int2 unitCell,
+            float loadAmount,
+            RuntimeBuildingEntity destination,
+            out RuntimeBuildingEntity result)
+        {
+            result = null;
+            Vector3 truckPosition = grid.Origin + new float3(
+                (unitCell.x + 0.5f) * grid.CellSize, 0f, (unitCell.y + 0.5f) * grid.CellSize);
+            Vector3 destinationPosition = context.ResolveBuildingFocusWorldPosition(destination);
+            float bestTravel = float.MaxValue;
+            foreach (var pair in context.RuntimeBuildings)
+            {
+                RuntimeBuildingEntity candidate = pair.Value;
+                if (candidate == null || candidate.IsDestroyed ||
+                    !IsAutomaticSource(context, em, candidate, factionId,
+                        ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, loadAmount))
+                    continue;
+                Vector3 sourcePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+                // Include the initial pickup and the delivery/return legs of
+                // continued supply. The existing reservation checks still
+                // govern assignment, including future Oil production.
+                float travel = Vector3.Distance(truckPosition, sourcePosition) +
+                    2f * Vector3.Distance(sourcePosition, destinationPosition);
+                if (!IsBetterDistanceCandidate(candidate, result, travel, bestTravel)) continue;
+                bestTravel = travel;
+                result = candidate;
+            }
+            return result != null;
         }
 
         internal static FuelLogisticsBlockReasonCode ResolveAutomaticAssignmentBlockReason(

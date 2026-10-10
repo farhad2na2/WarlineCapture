@@ -1,0 +1,15 @@
+{
+  "result": "FailedFixtureExpectation",
+  "sourceHash": "a7f4377c54fc78cc686b0cfd0f53caa2c1ab7949dd68144b91e30463ba6fa0fc",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-879-oil-supply-cycle-pre-source-manifest.json",
+  "postSourceManifest": "final-879-oil-supply-cycle-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-879-oil-supply-cycle-regressions.log",
+  "completedNewCases": 2,
+  "failure": "Third new fixture expected a currently reserved producing pump to be ineligible. Existing source contract permits future Oil production reservations. Preserve that contract and assert unchanged stock/reservations instead.",
+  "existingSharedRegressionSuiteRun": false,
+  "nativeMissionAcceptance": false,
+  "playerReady": false
+}

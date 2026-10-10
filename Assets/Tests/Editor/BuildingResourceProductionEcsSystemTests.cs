@@ -9,6 +9,64 @@ using UnityEngine;
 
 public sealed class BuildingResourceProductionEcsSystemTests
 {
+    public static void RunOilDeliveryCycleValidation()
+    {
+        try
+        {
+            var tests = new BuildingResourceProductionEcsSystemTests();
+            tests.AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination(1, false);
+            tests.AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination(2, false);
+            tests.AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination(1, true);
+            ValidationExit.ClearLastExitCode();
+            RunSharedOilAndAirFuelValidation();
+            Assert.AreEqual(0, ValidationExit.LastExitCode, "Existing Oil priority, logistics, economy and aircraft fuel regressions must pass.");
+            Debug.Log("[OilDeliveryCycleValidation] result=Passed cases=3 existingSharedRegressions=Passed budgetsRatesCapacityUnchanged=1");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[OilDeliveryCycleValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [TestCase(1, false)]
+    [TestCase(2, false)]
+    [TestCase(1, true)]
+    public void AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination(byte faction, bool nearbyPumpReserved)
+    {
+        // Native877 crossed the two supply districts: the truck picked a
+        // nearby pump before choosing a distant, higher-demand refinery.
+        using var world = new World(nameof(AutomaticOilRoutes_ChooseShorterSupplyCycleForPriorityDestination));
+        var em = world.EntityManager;
+        var nearbyTruckPump = CreateResourceBuilding(em, 1, faction, new Vector2Int(1, 8), 100, 0, 120, 0, 40, 0);
+        var nearbyRefineryPump = CreateResourceBuilding(em, 2, faction, new Vector2Int(24, 8), 100, 0, 120, 0, 40, 0);
+        var refinery = CreateResourceBuilding(em, 3, faction, new Vector2Int(28, 8), 100, 100, 0, 120, 0, 0);
+        if (nearbyPumpReserved)
+        {
+            var stock = em.GetComponentData<BuildingResourceStorageComponent>(nearbyRefineryPump.CombatEntity);
+            stock.ReservedOilOutboundBarrels = stock.StoredOilBarrels;
+            em.SetComponentData(nearbyRefineryPump.CombatEntity, stock);
+        }
+        var buildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { nearbyTruckPump.Id, nearbyTruckPump },
+            { nearbyRefineryPump.Id, nearbyRefineryPump },
+            { refinery.Id, refinery }
+        };
+        Assert.IsTrue(BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+            CreateAutomaticRouteContext(buildings), em, CreateTestGrid(), faction, new int2(1, 8),
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, 8, out var source, out var destination));
+        Assert.AreSame(refinery, destination, "Supply distance must preserve the selected delivery priority.");
+        Assert.AreSame(nearbyRefineryPump, source,
+            "Use the shorter supply cycle; producing pumps retain their existing future-Oil eligibility.");
+        var afterSelection = em.GetComponentData<BuildingResourceStorageComponent>(nearbyRefineryPump.CombatEntity);
+        Assert.AreEqual(40, afterSelection.StoredOilBarrels, "Choosing a route must not transfer stock.");
+        Assert.AreEqual(nearbyPumpReserved ? 40 : 0, afterSelection.ReservedOilOutboundBarrels,
+            "Choosing a route must not consume or release another truck's reservation.");
+    }
+
     public static void RunSharedOilAndAirFuelValidation()
     {
         try
@@ -94,6 +152,12 @@ public sealed class BuildingResourceProductionEcsSystemTests
         Assert.AreSame(pump, source);
         Assert.AreSame(waiting, destination,
             "A refinery with a committed full batch must let the next truck finish an unfunded factory batch. selectedId=" + destination?.Id);
+        // Route discovery is read-only. Record the first truck's accepted
+        // delivery before evaluating demand for the next truck.
+        var waitingStock = em.GetComponentData<BuildingResourceStorageComponent>(waiting.CombatEntity);
+        Assert.IsTrue(BuildingResourceStorageReservationSystemHelper.TryReserveDestination(
+            ref waitingStock, (byte)ResourceKind.Oil, 8));
+        em.SetComponentData(waiting.CombatEntity, waitingStock);
         // Canceling the refinery's real inbound commitment must restore its
         // priority after the already-funded Materials batch, without a cheat.
         refineryStock.ReservedOilInboundBarrels = 0;
@@ -3464,16 +3528,22 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
 
             bridge.UpdateResourceHaulers(context, false, 0f);
-            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, secondOilPump.Id));
+            UnitResourceHaulOrder initialOrder = em.GetComponentData<UnitResourceHaulOrder>(tray);
+            RuntimeBuildingEntity otherPump = initialOrder.SourceBuildingId == firstOilPump.Id
+                ? secondOilPump
+                : firstOilPump;
+            Assert.AreNotEqual(initialOrder.SourceBuildingId, otherPump.Id,
+                "This fixture must change the actual automatic route before testing reassignment telemetry.");
+            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, otherPump.Id));
             UnitResourceHaulOrder reassignedOrder = em.GetComponentData<UnitResourceHaulOrder>(tray);
-            Assert.AreEqual(secondOilPump.Id, reassignedOrder.SourceBuildingId);
+            Assert.AreEqual(otherPump.Id, reassignedOrder.SourceBuildingId);
 
             FactionFuelLogisticsTelemetryComponent telemetry =
                 em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
             Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
             Assert.AreEqual(1, telemetry.TrayRouteReassignmentCount);
 
-            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, secondOilPump.Id));
+            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, otherPump.Id));
             telemetry = em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
             Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
             Assert.AreEqual(1, telemetry.TrayRouteReassignmentCount);

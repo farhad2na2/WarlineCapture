@@ -1,0 +1,162 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[IncomingOilReservationDemandCase] result=Passed faction=1 preservesMaterialsThenRefineryBatch=1
+UnityEngine.Debug:Log (object)
+BuildingResourceProductionEcsSystemTests:AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory (byte) (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:169)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:96)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[IncomingOilReservationDemandCase] result=Passed faction=2 preservesMaterialsThenRefineryBatch=1
+UnityEngine.Debug:Log (object)
+BuildingResourceProductionEcsSystemTests:AutomaticOilRoutes_CommittedRefineryBatchDoesNotStarveWaitingFactory (byte) (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:169)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:97)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SelectedHaulInput] building=62 selected=1 result=Begin
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper:LogSelectedHaulInput (int,int,string) (at Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs:320)
+Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper:TryAssignSelectedHaulerOrders (Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper/Context,int) (at Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs:195)
+BuildingResourceProductionEcsSystemTests:ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:3531)
+BuildingResourceProductionEcsSystemTests:RunFocusedValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:290)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:99)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SelectedHaulInput] building=62 selected=1 result=Assigned
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper:LogSelectedHaulInput (int,int,string) (at Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs:320)
+Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper:TryAssignSelectedHaulerOrders (Game.Runtime.BuildingResourceHaulerBridgeCompositionSystemHelper/Context,int) (at Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs:311)
+BuildingResourceProductionEcsSystemTests:ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:3531)
+BuildingResourceProductionEcsSystemTests:RunFocusedValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:290)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:99)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Expected: 1
+  But was:  0
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+BuildingResourceProductionEcsSystemTests.ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:3538)
+BuildingResourceProductionEcsSystemTests.RunFocusedValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:290)
+UnityEngine.Debug:LogException(Exception)
+BuildingResourceProductionEcsSystemTests:RunFocusedValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:304)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:99)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[BuildingResourceProductionEcsFocusedValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+BuildingResourceProductionEcsSystemTests:RunFocusedValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:305)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:99)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Existing55 logistics/production regressions must pass.
+  Expected: 0
+  But was:  1
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+BuildingResourceProductionEcsSystemTests.RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:100)
+UnityEngine.Debug:LogException(Exception)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:107)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[IncomingOilReservationDemandValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+BuildingResourceProductionEcsSystemTests:RunIncomingOilReservationDemandValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:108)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:75)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Oil route and production regressions must pass.
+  Expected: 0
+  But was:  1
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+BuildingResourceProductionEcsSystemTests.RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:76)
+UnityEngine.Debug:LogException(Exception)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:85)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SharedOilAndAirFuelValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+BuildingResourceProductionEcsSystemTests:RunSharedOilAndAirFuelValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:86)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Existing Oil priority, logistics, economy and aircraft fuel regressions must pass.
+  Expected: 0
+  But was:  1
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:22)
+UnityEngine.Debug:LogException(Exception)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation() (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:28)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OilDeliveryCycleValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+BuildingResourceProductionEcsSystemTests:RunOilDeliveryCycleValidation () (at Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs:29)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=BuildingResourceProductionEcsSystemTests.RunOilDeliveryCycleValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_17d37acb/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

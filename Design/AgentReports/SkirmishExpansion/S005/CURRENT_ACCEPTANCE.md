@@ -1,6 +1,6 @@
 # S005 current acceptance
 
-**In progress. Not player-ready.** Current full source fingerprint: `b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
+**In progress. Not player-ready.** Current full source fingerprint: `8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29`. `TECHNICAL_READINESS_CURRENT.json` records active work. Earlier native evidence retains its original source fingerprint and does not establish exact-current-source acceptance.
 
 S005 reuses the existing Campaign dense-city source, including the shared visual refinement merged in PR64. This task now tests compact legal industry placement through normal input and explicitly includes the interface arrow in the existing fallback font. Gameplay costs, rates, capacities and deadlines remain fixed. Owner visual review remains deferred; real player/device acceptance is pending.
 
@@ -679,3 +679,12 @@ Native875 failed at off-screen added-Factory camera navigation: the test-player 
 The test-player guard now returns immediately when the intended selection is empty and both native actor tags and presented groups are already zero, preserving the multi-frame map gesture. A short native regression moves from the airfield view to the starting Factory, requiring the popup to survive the guard, actual Factory selection and no camera-issued troop command. Compilation/native qualification pending.
 
 Native876 passed the isolated empty-selection camera regression: normal airfield excursion, full-map gesture preserved, native starting Factory selected, no added troop command. Actual wrapper/bridge0, 16/16 touch contacts ended, compiler completed with errors[], full b2a541 PRE/POST source identical. Proof `native876-empty-selection-factory-camera-scoped-pass.json`. Native877 retries the full paid Strike cycle; no flight/mission pass is claimed yet.
+
+### Native877 normal paid fixed-wing cycle — failed
+
+Actual wrapper1; full PRE/POST source unchanged (`b2a54155ccd05883b3465d1a40c4a69add0f5e83f6c1f6a08be8326ba1ff34cb`). Cycle failed: [S005PlayerSaveResume] result=Failed step=0 reason=Mission ended during qualification setup: Draw. Input audit errors0. Full mission/result-return, second home landing, bilateral capacity and all roles remain separate open gates. Proof `native877-normal-paid-strike-cycle-failure.json`.
+
+Native877 reached native takeoff/fire and accepted Return (receipt234, attack cleared and auto-engage disabled), then reached Draw at the fixed deadline before home touchdown. Both remaining Oil trucks were observed on cross-district supply routes; automatic selection chooses the nearest pump before selecting a destination. The next regression checks shorter complete supply-cycle sourcing for the same priority destination, including both factions and unavailable reserved stock. Fixed costs, rates, capacities, deadlines and physical source remain unchanged.
+
+
+Native882 focused shared Oil-cycle validation passed3 new route cases, both faction demand cases,55 logistics/production,8 economy,3 Fuel-grid,2 runway-approach and8 existing Fuel regressions. Actual wrapper/bridge0; compiler errors empty; complete PRE/POST source manifests equal. Consumer priorities and future-production reservation eligibility preserved. Native878–881 failures retain before-fix reproduction and fixture errors. This is automated evidence only; paid native air cycle and full mission acceptance remain pending.

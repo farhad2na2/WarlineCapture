@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using Game.Components;
 using Unity.Mathematics;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
+using Game.Skirmish.Contracts;
 
 namespace Game.Runtime
 {
@@ -107,6 +110,34 @@ namespace Game.Runtime
                     value.NextRevealTimeSeconds = Shift(value.NextRevealTimeSeconds, worldOffset);
                     value.NextPatrolMoveTimeSeconds = Shift(value.NextPatrolMoveTimeSeconds, worldOffset);
                     part.Data = Convert.ToBase64String(Pack(value));
+                }
+                else if (part.Type == typeof(SkirmishContactKnowledgeElement).FullName)
+                {
+                    using var data = new NativeArray<byte>(bytes, Allocator.Temp);
+                    var values = data.Reinterpret<SkirmishContactKnowledgeElement>(1);
+                    for (int k = 0; k < values.Length; k++)
+                    {
+                        var value = values[k];
+                        if (value.Sight != SkirmishContactSight.Unknown)
+                            value.LastObservedTimeSeconds = Shift(value.LastObservedTimeSeconds, worldOffset);
+                        if (value.ObservationKind == 2)
+                            value.ObservationFrame = unchecked(value.ObservationFrame + frameOffset);
+                        values[k] = value;
+                    }
+                    part.Data = Convert.ToBase64String(data.ToArray());
+                }
+                else if (part.Type == typeof(SkirmishContactLedgerElement).FullName)
+                {
+                    using var data = new NativeArray<byte>(bytes, Allocator.Temp);
+                    var values = data.Reinterpret<SkirmishContactLedgerElement>(1);
+                    for (int k = 0; k < values.Length; k++)
+                    {
+                        var value = values[k];
+                        value.LastObservedTimeSeconds = Shift(value.LastObservedTimeSeconds, worldOffset);
+                        if (value.ObservationKind == 2) value.ObservationFrame = unchecked(value.ObservationFrame + frameOffset);
+                        values[k] = value;
+                    }
+                    part.Data = Convert.ToBase64String(data.ToArray());
                 }
                 else if (part.Type == typeof(ScanIntelLastSeen).FullName)
                 {

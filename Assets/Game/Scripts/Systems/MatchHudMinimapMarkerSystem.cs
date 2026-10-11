@@ -1,10 +1,12 @@
 using Unity.Burst;
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
+using Game.Skirmish.Contracts;
 
 namespace Game.Runtime
 {
@@ -30,6 +32,10 @@ namespace Game.Runtime
                 state.Dependency = new PruneDeadMarkersJob
                 {
                     Health = SystemAPI.GetComponentLookup<UnitHealth>(true),
+                    FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                    FogSight = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                    FogKnowledge = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
+                    Now = (float)now,
                     Markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerBoundaryEntity)
                 }.Schedule(state.Dependency);
                 return;
@@ -37,6 +43,7 @@ namespace Game.Runtime
 
             _nextMarkerRefreshTime = now + MarkerRefreshIntervalSeconds;
             var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
+            var represented = new NativeParallelHashSet<ContactKey>(MaxMarkers, Allocator.TempJob);
             ComponentLookup<CampaignMissionCombatSuppressedTag> combatSuppressionLookup =
                 SystemAPI.GetComponentLookup<CampaignMissionCombatSuppressedTag>(true);
             bool defenseIntel = SystemAPI.TryGetSingleton(out ThreatWarningLedgerState ledger) &&
@@ -54,12 +61,20 @@ namespace Game.Runtime
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectPlayerMarkers,
                 DefenseRoster = missionRoster,
+                Represented = represented,
                 ProducedUnits = produced,
                 RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),
                 MissionRoleLookup = SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true),
                 LastSeenLookup = SystemAPI.GetComponentLookup<ScanIntelLastSeen>(true),
                 CombatSuppressionLookup = combatSuppressionLookup,
+                FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                FogDisabled = SystemAPI.GetComponentLookup<Disabled>(true),
+                FogPassenger = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true),
+                FogPassengerOwner = SystemAPI.GetComponentLookup<SupportPassengerOwnerComponent>(true),
+                FogSight = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                FogKnowledge = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
+                Now = (float)now,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
             state.Dependency = new CollectMarkersJob
@@ -67,6 +82,7 @@ namespace Game.Runtime
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectEnemyMarkers,
                 DefenseRoster = missionRoster,
+                Represented = represented,
                 ProducedUnits = produced,
                 RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),
@@ -74,12 +90,25 @@ namespace Game.Runtime
                 RequireObservedIntel = defenseIntel,
                 LastSeenLookup = SystemAPI.GetComponentLookup<ScanIntelLastSeen>(true),
                 CombatSuppressionLookup = combatSuppressionLookup,
+                FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                FogDisabled = SystemAPI.GetComponentLookup<Disabled>(true),
+                FogPassenger = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true),
+                FogPassengerOwner = SystemAPI.GetComponentLookup<SupportPassengerOwnerComponent>(true),
+                FogSight = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                FogKnowledge = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
+                Now = (float)now,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
             state.Dependency = new CollectScanIntelMarkersJob
             {
                 MaxMarkers = MaxMarkers,
+                FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
                 Markers = markerScratch
+            }.Schedule(state.Dependency);
+            state.Dependency = new CollectFrozenLedgerMarkersJob
+            {
+                MaxMarkers = MaxMarkers, Now = (float)now,
+                Represented = represented, Markers = markerScratch
             }.Schedule(state.Dependency);
             DynamicBuffer<MatchHudMinimapMarkerElement> markers =
                 em.GetBuffer<MatchHudMinimapMarkerElement>(markerBoundaryEntity);
@@ -93,18 +122,37 @@ namespace Game.Runtime
             }.Schedule(state.Dependency);
             state.Dependency = markerScratch.Dispose(state.Dependency);
             state.Dependency = produced.Dispose(state.Dependency);
+            state.Dependency = represented.Dispose(state.Dependency);
         }
 
         [BurstCompile]
         private struct PruneDeadMarkersJob : IJob
         {
             [ReadOnly] public ComponentLookup<UnitHealth> Health;
+            [ReadOnly] public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwned;
+            [ReadOnly] public ComponentLookup<SkirmishContactSightComponent> FogSight;
+            [ReadOnly] public BufferLookup<SkirmishContactKnowledgeElement> FogKnowledge;
+            public float Now;
             public DynamicBuffer<MatchHudMinimapMarkerElement> Markers;
             public void Execute()
             {
                 for (int i = Markers.Length - 1; i >= 0; i--)
                 {
                     Entity source = Markers[i].SourceEntity;
+                    if (source != Entity.Null && FogOwned.HasComponent(source) &&
+                        !SkirmishFogConsumerUtility.IsVisible(FogOwned, FogSight, FogKnowledge, source, 1))
+                    {
+                        if (SkirmishFogConsumerUtility.TryKnowledge(FogKnowledge, source, 1, out var record) &&
+                            record.Sight == SkirmishContactSight.LastSeen && record.LastSeenHealth > 0)
+                        {
+                            var marker = Markers[i]; marker.SourceEntity = Entity.Null;
+                            marker.Position = record.LastSeenPosition; marker.IsLastSeen = 1;
+                            marker.AgeSeconds = math.max(0, Now - record.LastObservedTimeSeconds);
+                            Markers[i] = marker;
+                        }
+                        else Markers.RemoveAt(i);
+                        continue;
+                    }
                     if (source != Entity.Null && (!Health.HasComponent(source) || Health[source].Current <= 0))
                         Markers.RemoveAt(i);
                 }
@@ -144,18 +192,27 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
+        [WithOptions(EntityQueryOptions.IncludeDisabledEntities)]
         private partial struct CollectMarkersJob : IJobEntity
         {
             public int MaxMarkers;
             public byte CollectMode;
             public bool RequireObservedIntel;
             public bool DefenseRoster;
+            public NativeParallelHashSet<ContactKey> Represented;
             [ReadOnly] public NativeParallelHashSet<Entity> ProducedUnits;
             [ReadOnly] public ComponentLookup<RuntimeBuildingCombatInfo> RuntimeBuildingLookup;
             [ReadOnly] public ComponentLookup<OperationMapBuildingComponent> MapBuildingLookup;
             [ReadOnly] public ComponentLookup<CampaignMissionUnitRoleComponent> MissionRoleLookup;
             [ReadOnly] public ComponentLookup<ScanIntelLastSeen> LastSeenLookup;
             [ReadOnly] public ComponentLookup<CampaignMissionCombatSuppressedTag> CombatSuppressionLookup;
+            [ReadOnly] public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwned;
+            [ReadOnly] public ComponentLookup<Disabled> FogDisabled;
+            [ReadOnly] public ComponentLookup<UnitTransportPassenger> FogPassenger;
+            [ReadOnly] public ComponentLookup<SupportPassengerOwnerComponent> FogPassengerOwner;
+            [ReadOnly] public ComponentLookup<SkirmishContactSightComponent> FogSight;
+            [ReadOnly] public BufferLookup<SkirmishContactKnowledgeElement> FogKnowledge;
+            public float Now;
             public NativeList<MatchHudMinimapMarkerElement> Markers;
 
             private void Execute(
@@ -165,16 +222,40 @@ namespace Game.Runtime
                 in Faction faction)
             {
                 if (Markers.Length >= MaxMarkers ||
-                    health.Current <= 0 ||
                     (CollectMode == CollectEnemyMarkers && CombatSuppressionLookup.HasComponent(entity)) ||
                     !ShouldCollectFaction(faction.Id))
                     return;
+                if (!FogOwned.HasComponent(entity) && FogDisabled.HasComponent(entity)) return;
+                if (FogOwned.HasComponent(entity) && faction.Id == FactionIdentity.PlayerFactionId &&
+                    (FogPassenger.HasComponent(entity) || FogPassengerOwner.HasComponent(entity) &&
+                     FogPassengerOwner[entity].Landed == 0)) return;
+                if (FogOwned.HasComponent(entity) && faction.Id != FactionIdentity.PlayerFactionId &&
+                    !SkirmishFogConsumerUtility.IsVisible(FogOwned, FogSight, FogKnowledge, entity, 1))
+                {
+                    if (SkirmishFogConsumerUtility.TryKnowledge(FogKnowledge, entity, 1, out var record) &&
+                        record.Sight == SkirmishContactSight.LastSeen && record.LastSeenHealth > 0)
+                    {
+                        Represented.Add(new ContactKey { Session = FogOwned[entity].SessionId,
+                            Contact = FogOwned[entity].StableObjectId });
+                        Markers.Add(new MatchHudMinimapMarkerElement
+                        {
+                            SourceEntity = Entity.Null, Position = record.LastSeenPosition,
+                            FactionId = faction.Id, IsLastSeen = 1,
+                            AgeSeconds = math.max(0, Now - record.LastObservedTimeSeconds)
+                        });
+                    }
+                    return;
+                }
+                if (health.Current <= 0 || FogDisabled.HasComponent(entity)) return;
                 if (RequireObservedIntel && !LastSeenLookup.HasComponent(entity)) return;
                 if (faction.Id==FactionIdentity.NeutralFactionId && !MissionRoleLookup.HasComponent(entity)) return;
                 if (DefenseRoster && MapBuildingLookup.HasComponent(entity) && !MissionRoleLookup.HasComponent(entity)) return;
                 if (DefenseRoster && CollectMode==CollectPlayerMarkers && !MissionRoleLookup.HasComponent(entity) &&
                     !RuntimeBuildingLookup.HasComponent(entity) && !ProducedUnits.Contains(entity)) return;
 
+                if (FogOwned.HasComponent(entity))
+                    Represented.Add(new ContactKey { Session = FogOwned[entity].SessionId,
+                        Contact = FogOwned[entity].StableObjectId });
                 Markers.Add(new MatchHudMinimapMarkerElement
                 {
                     SourceEntity = entity,
@@ -195,6 +276,40 @@ namespace Game.Runtime
             }
         }
 
+        private struct ContactKey : IEquatable<ContactKey>
+        {
+            public FixedString64Bytes Session;
+            public FixedString64Bytes Contact;
+            public bool Equals(ContactKey other) => Session.Equals(other.Session) && Contact.Equals(other.Contact);
+            public override int GetHashCode() => (Session.GetHashCode() * 397) ^ Contact.GetHashCode();
+        }
+
+        [BurstCompile]
+        private partial struct CollectFrozenLedgerMarkersJob : IJobEntity
+        {
+            public int MaxMarkers;
+            public float Now;
+            public NativeParallelHashSet<ContactKey> Represented;
+            public NativeList<MatchHudMinimapMarkerElement> Markers;
+            private void Execute(in SkirmishExpandedSessionComponent session, in SkirmishFogStateComponent fog,
+                in DynamicBuffer<SkirmishContactLedgerElement> ledger, in SkirmishContactLedgerStateComponent ledgerState)
+            {
+                if (session.IsLegacy != 0 || !session.SessionId.Equals(ledgerState.SessionId)) return;
+                for (int i = 0; i < ledger.Length && Markers.Length < MaxMarkers; i++)
+                {
+                    var contact = ledger[i];
+                    if (contact.ObserverFactionId != 1 || contact.ContactFactionId == 1 ||
+                        contact.Sight != SkirmishContactSight.LastSeen || contact.LastSeenHealth <= 0) continue;
+                    float age = math.max(0, Now - contact.LastObservedTimeSeconds);
+                    if (age >= fog.LastSeenExpireSeconds || !Represented.Add(new ContactKey {
+                        Session = session.SessionId, Contact = contact.ContactStableObjectId })) continue;
+                    Markers.Add(new MatchHudMinimapMarkerElement {
+                        SourceEntity = Entity.Null, Position = contact.LastSeenPosition,
+                        FactionId = contact.ContactFactionId, IsLastSeen = 1, AgeSeconds = age });
+                }
+            }
+        }
+
         [BurstCompile]
         [WithAll(typeof(ScanIntelRevealedTag))]
         [WithNone(typeof(UnitHealth))]
@@ -203,9 +318,10 @@ namespace Game.Runtime
             public int MaxMarkers;
             public NativeList<MatchHudMinimapMarkerElement> Markers;
 
-            private void Execute(in ScanIntelLastSeen lastSeen)
+            [ReadOnly] public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwned;
+            private void Execute(Entity entity, in ScanIntelLastSeen lastSeen)
             {
-                if (Markers.Length >= MaxMarkers ||
+                if (FogOwned.HasComponent(entity) || Markers.Length >= MaxMarkers ||
                     !FactionIdentity.IsHostileToPlayer(lastSeen.FactionId))
                     return;
 

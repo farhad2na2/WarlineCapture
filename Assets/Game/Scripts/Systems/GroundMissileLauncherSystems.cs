@@ -48,7 +48,10 @@ namespace Game.Runtime
                     if (stateRw.Timer > 0f)
                         continue;
 
-                    if (!CampaignSplitFrontLauncherSafety.MayFire(em,entity,stateRw.TargetEntity))
+                    if ((em.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
+                         stateRw.TargetEntity != Entity.Null &&
+                         !CombatTargetPolicyUtility.Allows(em, entity, stateRw.TargetEntity)) ||
+                        !CampaignSplitFrontLauncherSafety.MayFire(em,entity,stateRw.TargetEntity))
                     {
                         CampaignSplitFrontLauncherSafety.Stop(em,entity);
                         if(em.HasComponent<EngageTarget>(entity))ecb.RemoveComponent<EngageTarget>(entity);
@@ -129,7 +132,9 @@ namespace Game.Runtime
             float3 launchDirection = ResolveLaunchDirection(sourcePosition, targetPosition, launcher.BatteryElevatedAngleDegrees);
             quaternion launchRotation = quaternion.LookRotationSafe(launchDirection, math.up());
 
-            if (em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(launcherEntity))
+            if ((!em.HasComponent<SkirmishAttemptOwnedComponent>(launcherEntity) ||
+                 SkirmishFogConsumerUtility.PlayerVisible(em, launcherEntity)) &&
+                em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(launcherEntity))
             {
                 GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<GroundMissileLauncherVfxReferenceComponent>(launcherEntity);
                 float3 smokePosition = sourcePosition + math.up() * LaunchSmokeVerticalOffset;
@@ -841,7 +846,8 @@ namespace Game.Runtime
             EntityCommandBuffer ecb,
             GroundMissileImpactRequestComponent request)
         {
-            if (!em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(request.Source))
+            if (!SkirmishFogConsumerUtility.PlayerImpactVisible(em, request.Source, request.TargetEntity, request.Position, 1) ||
+                !em.Exists(request.Source) || !em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(request.Source))
                 return;
 
             GroundMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<GroundMissileLauncherVfxReferenceComponent>(request.Source);

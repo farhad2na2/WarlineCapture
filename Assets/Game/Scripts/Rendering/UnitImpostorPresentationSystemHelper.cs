@@ -330,6 +330,7 @@ namespace Game.Rendering
             {
                 for (int i = 0; i < transforms.Length; i++)
                 {
+                    if (!SkirmishFogRenderVisibility.PlayerVisible(em, entities[i])) continue;
                     if (skipRenderableUnits && IsRenderableUnit(em, entities[i]))
                         continue;
                     if (requireFarVisualState && visualStates[i].Current != (byte)UnitRenderVisualKind.Far)

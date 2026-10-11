@@ -568,6 +568,10 @@ namespace Game.Runtime
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
             }
 
+            if (hasSourceEntity && em.HasComponent<SkirmishAttemptOwnedComponent>(sourceEntity) &&
+                !SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out _))
+                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable);
+
             if (hasSourceEntity && request.DeferRevealUntilSourceArrives != 0)
             {
                 IssueSelectedUnitScanOrder(em, sourceEntity, request.RequestId, request.Frame, centerCell, centerWorld, radiusCells);
@@ -582,6 +586,8 @@ namespace Game.Runtime
                 (unitScanTargetQuery.IsEmptyIgnoreFilter ? 0 : unitScanTargetQuery.CalculateEntityCount()) +
                 (buildingScanTargetQuery.IsEmptyIgnoreFilter ? 0 : buildingScanTargetQuery.CalculateEntityCount()));
             using NativeList<ScanRevealCandidate> candidates = new(expectedCandidates, Allocator.Temp);
+            byte expandedObserverFaction = 0;
+            if (hasSourceEntity) SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out expandedObserverFaction);
             CollectRevealUnits(
                 unitScanTargetQuery,
                 entityType,
@@ -593,6 +599,7 @@ namespace Game.Runtime
                 grid,
                 centerCell,
                 radiusCells,
+                expandedObserverFaction,
                 candidates);
             CollectRevealBuildings(
                 buildingScanTargetQuery,
@@ -604,14 +611,22 @@ namespace Game.Runtime
                 grid,
                 centerCell,
                 radiusCells,
+                expandedObserverFaction,
                 candidates);
             for (int i = 0; i < candidates.Length; i++)
             {
                 ScanRevealCandidate candidate = candidates[i];
+                // A native expanded Scan only observes its own current attempt.
+                // Preserve the original Campaign/nonowned reveal path unchanged.
+                if (expandedObserverFaction != 0 &&
+                    (!em.HasComponent<SkirmishAttemptOwnedComponent>(candidate.Entity) ||
+                     !em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate.Entity).SessionId.Equals(
+                         em.GetComponentData<SkirmishAttemptOwnedComponent>(sourceEntity).SessionId))) continue;
                 RevealEntity(em, candidate.Entity, candidate.Cell, candidate.Position, request.Frame);
+                if (hasSourceEntity) SkirmishFogService.ObserveFromScan(em, candidate.Entity, sourceEntity, request.RequestId, request.Frame);
+                revealedCount++;
             }
 
-            revealedCount = candidates.Length;
             SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"scanApply revealed request={request.RequestId} count={revealedCount} cell={centerCell} radius={radiusCells} frame={request.Frame}");
             AppendFeedEntry(
@@ -749,6 +764,7 @@ namespace Game.Runtime
             in GridConfig grid,
             int2 centerCell,
             int radiusCells,
+            byte expandedObserverFaction,
             NativeList<ScanRevealCandidate> candidates)
         {
             if (unitScanTargetQuery.IsEmptyIgnoreFilter)
@@ -774,7 +790,7 @@ namespace Game.Runtime
                     : default;
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
+                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default, expandedObserverFaction))
                         continue;
 
                     int2 cell = unitGrids[i].Cell;
@@ -799,6 +815,7 @@ namespace Game.Runtime
             in GridConfig grid,
             int2 centerCell,
             int radiusCells,
+            byte expandedObserverFaction,
             NativeList<ScanRevealCandidate> candidates)
         {
             if (buildingScanTargetQuery.IsEmptyIgnoreFilter)
@@ -821,7 +838,7 @@ namespace Game.Runtime
                     : default;
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default))
+                    if (!IsRevealableScanTarget(factions[i], hasHealth, hasHealth ? healths[i] : default, expandedObserverFaction))
                         continue;
 
                     RuntimeBuildingCombatInfo building = buildings[i];
@@ -837,12 +854,14 @@ namespace Game.Runtime
             }
         }
 
-        private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health)
+        private static bool IsRevealableScanTarget(Faction faction, bool hasHealth, UnitHealth health, byte expandedObserverFaction)
         {
             if (hasHealth && health.Current <= 0)
                 return false;
 
-            return FactionIdentity.IsHostileToPlayer(faction.Id);
+            return expandedObserverFaction != 0
+                ? faction.Id != 0 && faction.Id != expandedObserverFaction
+                : FactionIdentity.IsHostileToPlayer(faction.Id);
         }
 
         private static bool TryResolveSelectedScanSource(EntityManager em, out Entity sourceEntity)
@@ -865,7 +884,11 @@ namespace Game.Runtime
                 for (int i = 0; i < selectedEntities.Length; i++, candidateIndex++)
                 {
                     Entity candidate = selectedEntities[i];
-                    if (!IsValidScanSource(em, candidate))
+                    // UI selection remains player-owned; opposing expanded API
+                    // scans do not authorize player control of enemy actors.
+                    if (!em.HasComponent<Faction>(candidate) ||
+                        !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(candidate).Id) ||
+                        !IsValidScanSource(em, candidate))
                     {
                         SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                             $"scanSourceResolve candidateRejected index={candidateIndex} entity={candidate}");
@@ -889,7 +912,8 @@ namespace Game.Runtime
             if (sourceEntity == Entity.Null ||
                 !em.Exists(sourceEntity) ||
                 !em.HasComponent<Faction>(sourceEntity) ||
-                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(sourceEntity).Id) ||
+                (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(sourceEntity).Id) &&
+                 !SkirmishFogService.TryGetActiveScanObserverFaction(em, sourceEntity, out _)) ||
                 !em.HasComponent<UnitGrid>(sourceEntity) ||
                 !em.HasComponent<UnitMove>(sourceEntity) ||
                 em.HasComponent<Disabled>(sourceEntity) ||

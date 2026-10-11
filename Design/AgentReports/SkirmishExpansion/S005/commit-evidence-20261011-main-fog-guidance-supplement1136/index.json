@@ -1,0 +1,637 @@
+{
+  "format": "S005SelectedEvidenceLosslessGzipSupplement.v1",
+  "date": "2026-10-11",
+  "requiresBaseDirectory": "commit-evidence-20261011-main-fog-guidance-selected",
+  "baseIndexSha256": "8f741d6a3001216da95cbfc824af075997d0c48abe6a67b1f7f0a055430a8443",
+  "scope": "Closed1136 scoped technical14suite pass, closed1134 nativeSaveExit/Continue shipping Planned gate failure, corrected S002 native import/compile, actual live Mobile MSAA0 restoration, archived actual native checkpoint and readonly cleanup/UI evidence. Prior base index remains unchanged.",
+  "runs": [
+    {
+      "run": "1134",
+      "result": "Failed",
+      "sourceHash": "15717d5d6e8de85c81f7b9e442c3d9833187bdbe0732b9d728f91616b9e22519",
+      "preSourceManifest": "final-1132-integrated-post-source-manifest.json",
+      "postSourceManifest": "final-1134-boarded-recovery-post-source-manifest.json",
+      "exactPrePostSourceBytesEqual": true,
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-isolated-paid-boarded-recovery-failure.json",
+      "wrapperExit": 1,
+      "nativeExit": 1,
+      "actualPassedMarkers": [
+        "[SkirmishAcceptanceCensus] result=Passed catalog=S005 definition=skirmish.s005 version=2 code=15717d5d6e8de85c81f7b9e442c3d9833187bdbe0732b9d728f91616b9e22519 config=128f61e981d234a4fe000ef66bced489b14c8875bd07f3ed1224baddd2747b48 setup=AB417F8E seed=104734 playable=0",
+        "[SkirmishNativeShaderGate] result=Passed compiling=0 settledSeconds=2",
+        "[S005TransportNativeSelection] result=Passed role=Rifle members=4 input=Touch selectionInjected=0",
+        "[S005TransportNativeMovement] result=Passed role=Rifle members=4 minimumDisplacement=5.824512 input=Touch actorPositionsSelectionOrdersInjected=0",
+        "[S005TransportNativeSelection] result=Passed role=ApcFast members=1 input=Touch selectionInjected=0",
+        "[S005TransportNativeMovement] result=Passed role=ApcFast members=1 minimumDisplacement=9.358892 input=Touch actorPositionsSelectionOrdersInjected=0",
+        "[S005TransportNativeBoard] result=Passed role=ApcFast passengers=4 links=1 hidden=1 input=Touch passengerLinksInjected=0",
+        "[SkirmishPlayerSave] result=Passed session=expanded-s005-104734-07ee93f7ce944e7a9756684d3a27ad5b schema=7",
+        "[S005TransportSupportCleanup] result=Passed attemptsRemoved=1"
+      ],
+      "actualFailureMarkers": [
+        "[S005TransportSupport] result=Failed cases=0 normalInput=0 fullLifecycle=Pending nativeTouchBoardMoveUnload=Measured checkpoint=NativeSaveContinueMeasured reason=System.TimeoutException: Native boarded Pause/Save/Continue exceeded180seconds.",
+        "[SkirmishS003Startup] result=Failed reason=isolatedPaidTransport:System.TimeoutException: Native boarded Pause/Save/Continue exceeded180seconds.",
+        "[ExistingEditorValidation] result=Failed executeMethod=S005BoardedRecovery1134.RunFastApcValidation"
+      ],
+      "touchRows": 60,
+      "allTouchRowsZeroViolations": true,
+      "technicalSuiteOnly": false,
+      "nativePlayerJourneys": 0,
+      "normalMissionCertified": false,
+      "playerReady": false
+    },
+    {
+      "run": "1136",
+      "result": "Passed",
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+      "preSourceManifest": "final-1136-integrated-pre-source-manifest.json",
+      "postSourceManifest": "final-1136-integrated-post-source-manifest.json",
+      "exactPrePostSourceBytesEqual": true,
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-focused-current-proof.json",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "actualPassedMarkers": [
+        "[SkirmishExpandedDefinitionTests] result=Passed",
+        "[SkirmishExpandedDefinitionTests] result=Passed",
+        "[SkirmishCombinedArmsTests] result=Passed matrixConfigurations=12 existingMissionRegressions=Passed publication=InProgress",
+        "[SkirmishExpandedAcceptanceTests] result=Passed",
+        "[SkirmishExpandedCatalogTests] result=Passed",
+        "[SkirmishExpandedEconomyTests] result=Passed",
+        "[SkirmishFacilityEconomyProfileTests] result=Passed tests=8",
+        "[SkirmishExpandedObjectiveTests] result=Passed",
+        "[SkirmishExpandedArmyTests] result=Passed",
+        "[SkirmishS002AriaHarnessTests] result=Passed",
+        "[SkirmishExpandedAriaTests] result=Passed",
+        "[SkirmishSharedFogTests] result=Passed cases=19 scope=IsolatedActualSystemNotNormalMission",
+        "[SkirmishFogLedgerTests] result=Passed cases=9 scope=IsolatedActualSystemNotNormalMission",
+        "[SkirmishFogConsumerTests] result=Passed cases=13 scope=IsolatedActualSystemsNotNormalMission",
+        "[SkirmishFogVfxTests] result=Passed cases=8 scope=IsolatedActualRequestPlaybackNotNormalMission",
+        "[AssistantGuidanceLifecycleTests] result=Passed cases=2 scope=ActualHelperEditModePlayTeardownPending",
+        "[S005IntegratedTechnical1136] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+        "[ExistingEditorValidation] result=Passed executeMethod=S005IntegratedTechnical1136.RunValidation"
+      ],
+      "actualFailureMarkers": [],
+      "touchRows": 0,
+      "allTouchRowsZeroViolations": null,
+      "technicalSuiteOnly": true,
+      "nativePlayerJourneys": 0,
+      "normalMissionCertified": false,
+      "playerReady": false
+    }
+  ],
+  "files": [
+    {
+      "originalPath": "/private/tmp/S005BoardedRecovery1134.cs",
+      "sha256": "e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122",
+      "bytes": 52692,
+      "object": "objects/e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122.gz",
+      "provenanceKind": "external-current-snapshot-not-executed-byte-certification"
+    },
+    {
+      "originalPath": "/private/tmp/s005-run-boarded-recovery-1134.py",
+      "sha256": "f89908500080fef6b961e15d5874974e65dd849a500749a0ea4ab9ccd136abae",
+      "bytes": 17497,
+      "object": "objects/f89908500080fef6b961e15d5874974e65dd849a500749a0ea4ab9ccd136abae.gz",
+      "provenanceKind": "external-current-snapshot-not-executed-byte-certification"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1134-reviewed-dry-run.json",
+      "sha256": "f561771fb9d05aa94b8a19957b32e79b6c040ad6faffaf3c6f025d8aca41c566",
+      "bytes": 3124,
+      "object": "objects/f561771fb9d05aa94b8a19957b32e79b6c040ad6faffaf3c6f025d8aca41c566.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1136-reviewed-dry-run.json",
+      "sha256": "87e0bc6ad8e7af316dd96e147b485b3119a01d6fbfd146f1f3b1f2068250bc9d",
+      "bytes": 701,
+      "object": "objects/87e0bc6ad8e7af316dd96e147b485b3119a01d6fbfd146f1f3b1f2068250bc9d.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-review-boarded-recovery1134-20261011.json",
+      "sha256": "6f2bdf0d5784d5cffba72711903fbb02dbe8549d17e18b3c99b00fafdd3465cb",
+      "bytes": 3282,
+      "object": "objects/6f2bdf0d5784d5cffba72711903fbb02dbe8549d17e18b3c99b00fafdd3465cb.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-post-independent-fingerprint.json",
+      "sha256": "5952b6721128c49997937e01d3d186e88e5670dc30a1f164db3784be12c4e73d",
+      "bytes": 370,
+      "object": "objects/5952b6721128c49997937e01d3d186e88e5670dc30a1f164db3784be12c4e73d.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-post-source-manifest.json",
+      "sha256": "2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-pre-dispatch-independent-fingerprint.json",
+      "sha256": "83e122f1700cf7d2cf86b5239c86447d849370c3b21ce08fac537772f4e1f0e0",
+      "bytes": 369,
+      "object": "objects/83e122f1700cf7d2cf86b5239c86447d849370c3b21ce08fac537772f4e1f0e0.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-pre-dispatch-source-manifest.json",
+      "sha256": "2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-preflight-independent-fingerprint.json",
+      "sha256": "a858533c92445d3b53dfac41b98c5e644a84ff36970f718d9be5cc09f48d8519",
+      "bytes": 375,
+      "object": "objects/a858533c92445d3b53dfac41b98c5e644a84ff36970f718d9be5cc09f48d8519.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1134-boarded-recovery-preflight-source-manifest.json",
+      "sha256": "2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1136-integrated-post-independent-fingerprint.json",
+      "sha256": "41586a0b7b0bdcdc7352636042e639b7b2ce314ffcccc41ac7fa5d0c1a83e6b3",
+      "bytes": 369,
+      "object": "objects/41586a0b7b0bdcdc7352636042e639b7b2ce314ffcccc41ac7fa5d0c1a83e6b3.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1136-integrated-post-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1136-integrated-pre-independent-fingerprint.json",
+      "sha256": "00eb2b5266f1f5a90f03d3604531c577506bafcb338f8a1ea08971a0877eba8f",
+      "bytes": 369,
+      "object": "objects/00eb2b5266f1f5a90f03d3604531c577506bafcb338f8a1ea08971a0877eba8f.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1136-integrated-pre-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1134-boarded-recovery-fixture.json",
+      "sha256": "bad8183d292a50141759086af5b5b1dee310c8dcf7cb16579b9f6ca3c1547051",
+      "bytes": 3187,
+      "object": "objects/bad8183d292a50141759086af5b5b1dee310c8dcf7cb16579b9f6ca3c1547051.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1136-integrated-technical-fixture.json",
+      "sha256": "c299e79bf89f162ad49a396d97e1fb87b77061921e02dc66ac5dca5884aa1db7",
+      "bytes": 722,
+      "object": "objects/c299e79bf89f162ad49a396d97e1fb87b77061921e02dc66ac5dca5884aa1db7.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1134-isolated-paid-boarded-recovery.log",
+      "sha256": "93c52a70d1c7d30aa32059275919b2dfccb6230d27a330926b6418c2df7cbb80",
+      "bytes": 135060,
+      "object": "objects/93c52a70d1c7d30aa32059275919b2dfccb6230d27a330926b6418c2df7cbb80.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1134-isolated-paid-boarded-recovery.log.dispatch.json",
+      "sha256": "d37f0a689fc151c76acaa02793f9daf9966f7ad23e4fabf8540c60ded90947f9",
+      "bytes": 1002,
+      "object": "objects/d37f0a689fc151c76acaa02793f9daf9966f7ad23e4fabf8540c60ded90947f9.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1134-isolated-paid-boarded-recovery.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1134-isolated-paid-boarded-recovery.log.wrapper-exit",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1136-integrated-technical.log",
+      "sha256": "7bee3c4fcdac81a2794432faa44002920eac1e0ba6d649436fdbe8136dc9c7fd",
+      "bytes": 39124,
+      "object": "objects/7bee3c4fcdac81a2794432faa44002920eac1e0ba6d649436fdbe8136dc9c7fd.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1136-integrated-technical.log.dispatch.json",
+      "sha256": "09ee7611b361c06ffd06a331725fb1d65fc102a6f8a7bc9efae04d1c465b0224",
+      "bytes": 989,
+      "object": "objects/09ee7611b361c06ffd06a331725fb1d65fc102a6f8a7bc9efae04d1c465b0224.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1136-integrated-technical.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1136-integrated-technical.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-apcfast-native-checkpoint.json",
+      "sha256": "6335252d8cf70473442deb41193dd7f207289543ca92b9b99aa24a71651db2fd",
+      "bytes": 10212979,
+      "object": "objects/6335252d8cf70473442deb41193dd7f207289543ca92b9b99aa24a71651db2fd.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-recovery-fixture.cs.txt",
+      "sha256": "e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122",
+      "bytes": 52692,
+      "object": "objects/e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-recovery-prepared.json",
+      "sha256": "a8ec0127a653c8e135fb9087e1c1bb76cabd2508f955c629663402eeace35537",
+      "bytes": 793,
+      "object": "objects/a8ec0127a653c8e135fb9087e1c1bb76cabd2508f955c629663402eeace35537.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-recovery-runner-start.json",
+      "sha256": "e36019fd8745d67af43ad4fc7f25d376a6eb02da14ddb0bb590807c3cb0ebc90",
+      "bytes": 470,
+      "object": "objects/e36019fd8745d67af43ad4fc7f25d376a6eb02da14ddb0bb590807c3cb0ebc90.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-boarded-recovery.touch.jsonl",
+      "sha256": "787e74f06825cfa4e41b79b6767a1635ffb884cf75aee16d7cc1fda64e0547e6",
+      "bytes": 19518,
+      "object": "objects/787e74f06825cfa4e41b79b6767a1635ffb884cf75aee16d7cc1fda64e0547e6.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-isolated-paid-boarded-recovery-failure.json",
+      "sha256": "baeb2807c817724525b6d28a2e36006a6ef7115f7d82d60e8f470df88464fb0e",
+      "bytes": 36306,
+      "object": "objects/baeb2807c817724525b6d28a2e36006a6ef7115f7d82d60e8f470df88464fb0e.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1134-readonly-post-save-ui-state.json",
+      "sha256": "e0be93bc064c106c1feb106e19ebe5f600218217d30a8d0e18d574ba93549aba",
+      "bytes": 1106877,
+      "object": "objects/e0be93bc064c106c1feb106e19ebe5f600218217d30a8d0e18d574ba93549aba.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-focused-current-proof.json",
+      "sha256": "c71d5f253125821037f662a9f0214fbaa509af751ff0bc952f078ae42e8a40d4",
+      "bytes": 661,
+      "object": "objects/c71d5f253125821037f662a9f0214fbaa509af751ff0bc952f078ae42e8a40d4.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-integrated-technical-fixture.cs.txt",
+      "sha256": "7ddcdf7ee11bc05e8c1af4899e2679eaaa6670565ed22cff52c2fccb13b0ed0f",
+      "bytes": 3314,
+      "object": "objects/7ddcdf7ee11bc05e8c1af4899e2679eaaa6670565ed22cff52c2fccb13b0ed0f.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-live-mobile-quality-restored.json",
+      "sha256": "3d996dff67b6f24e95b6166e13e7e02534f47e9485eeb9afda10f6403005fa43",
+      "bytes": 1135,
+      "object": "objects/3d996dff67b6f24e95b6166e13e7e02534f47e9485eeb9afda10f6403005fa43.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-s002-fixture-import.json",
+      "sha256": "1f8306737ef3b8f9f7efe980c22b1ea855e56c488519b3c2b7c9ef5e5439d387",
+      "bytes": 731,
+      "object": "objects/1f8306737ef3b8f9f7efe980c22b1ea855e56c488519b3c2b7c9ef5e5439d387.gz",
+      "provenanceKind": "closed-run-original"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1136-s002-native-compile.json",
+      "sha256": "76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f",
+      "bytes": 397,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f.gz",
+      "provenanceKind": "closed-run-original"
+    }
+  ],
+  "objects": [
+    {
+      "sha256": "e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122",
+      "bytes": 52692,
+      "object": "objects/e89cc9dc0a50150ba247a527c19ae235fcc897124247a0ffe27e617ce8f48122.gz",
+      "gzipSha256": "feb09335f112b4266adf3d60e92f1c3e7684a14aa41604e4c61a88a47a7efe35",
+      "gzipBytes": 12806,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "f89908500080fef6b961e15d5874974e65dd849a500749a0ea4ab9ccd136abae",
+      "bytes": 17497,
+      "object": "objects/f89908500080fef6b961e15d5874974e65dd849a500749a0ea4ab9ccd136abae.gz",
+      "gzipSha256": "3d998aceac7944305baa29d1b7385db89561c87904ae315a6975902d53227d35",
+      "gzipBytes": 5658,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "f561771fb9d05aa94b8a19957b32e79b6c040ad6faffaf3c6f025d8aca41c566",
+      "bytes": 3124,
+      "object": "objects/f561771fb9d05aa94b8a19957b32e79b6c040ad6faffaf3c6f025d8aca41c566.gz",
+      "gzipSha256": "760becc1a210b1ea5bf6c048670f1e19f2cde8476e5b28c7783301f64249863a",
+      "gzipBytes": 666,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "87e0bc6ad8e7af316dd96e147b485b3119a01d6fbfd146f1f3b1f2068250bc9d",
+      "bytes": 701,
+      "object": "objects/87e0bc6ad8e7af316dd96e147b485b3119a01d6fbfd146f1f3b1f2068250bc9d.gz",
+      "gzipSha256": "6a576f1c3409263043240fcc4486e9e51a106cb5344881103953c2e19f0db958",
+      "gzipBytes": 358,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "6f2bdf0d5784d5cffba72711903fbb02dbe8549d17e18b3c99b00fafdd3465cb",
+      "bytes": 3282,
+      "object": "objects/6f2bdf0d5784d5cffba72711903fbb02dbe8549d17e18b3c99b00fafdd3465cb.gz",
+      "gzipSha256": "4d045171948ed9168093fc6922321171a958d8544793a44e5378ddbab806b6ca",
+      "gzipBytes": 1730,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "5952b6721128c49997937e01d3d186e88e5670dc30a1f164db3784be12c4e73d",
+      "bytes": 370,
+      "object": "objects/5952b6721128c49997937e01d3d186e88e5670dc30a1f164db3784be12c4e73d.gz",
+      "gzipSha256": "39057d88c9daa9f2c01d62635d24839f7b83e734062cb5c7c25a09641b12c6e3",
+      "gzipBytes": 283,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4.gz",
+      "sha256": "2433c85920bb05063a1ebc1cd23ed003b041d9ae9c37dfba096e278fb2000cf4",
+      "bytes": 6926382,
+      "gzipSha256": "e8d75ee2ab16a72e697628d02d6aaae7dd3bdf7e3ace024e866b7bc981815671",
+      "gzipBytes": 1842669,
+      "storage": "SharedOriginalIndexObject"
+    },
+    {
+      "sha256": "83e122f1700cf7d2cf86b5239c86447d849370c3b21ce08fac537772f4e1f0e0",
+      "bytes": 369,
+      "object": "objects/83e122f1700cf7d2cf86b5239c86447d849370c3b21ce08fac537772f4e1f0e0.gz",
+      "gzipSha256": "6f8d73fa58d2a83db6b4aa9ee15aad4b7671399b19b72ac7773a74a28d5d8806",
+      "gzipBytes": 281,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "a858533c92445d3b53dfac41b98c5e644a84ff36970f718d9be5cc09f48d8519",
+      "bytes": 375,
+      "object": "objects/a858533c92445d3b53dfac41b98c5e644a84ff36970f718d9be5cc09f48d8519.gz",
+      "gzipSha256": "0bc9897af07cb732390011d4de404b57504e6b0c19c1ebe4ce9b5203a83aa5e2",
+      "gzipBytes": 285,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "41586a0b7b0bdcdc7352636042e639b7b2ce314ffcccc41ac7fa5d0c1a83e6b3",
+      "bytes": 369,
+      "object": "objects/41586a0b7b0bdcdc7352636042e639b7b2ce314ffcccc41ac7fa5d0c1a83e6b3.gz",
+      "gzipSha256": "b40741817217ec898c37e3265d3b7347ae10d88cb3c4831bfa63fd98b2270b91",
+      "gzipBytes": 284,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz",
+      "gzipSha256": "1af0dfaa6600d6dca0771bb49d52f4eb79d234d181cefba57b3421893941f8a4",
+      "gzipBytes": 1842672,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "00eb2b5266f1f5a90f03d3604531c577506bafcb338f8a1ea08971a0877eba8f",
+      "bytes": 369,
+      "object": "objects/00eb2b5266f1f5a90f03d3604531c577506bafcb338f8a1ea08971a0877eba8f.gz",
+      "gzipSha256": "366e07c7dc3ebae7e83b552ba79f93a96d2129841a43ec232689e16e371a423c",
+      "gzipBytes": 284,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "bad8183d292a50141759086af5b5b1dee310c8dcf7cb16579b9f6ca3c1547051",
+      "bytes": 3187,
+      "object": "objects/bad8183d292a50141759086af5b5b1dee310c8dcf7cb16579b9f6ca3c1547051.gz",
+      "gzipSha256": "86b0de5374cc6da174ba9698bbd53e78e0d43cd30b6fb2488d17f0167e750b4b",
+      "gzipBytes": 716,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "c299e79bf89f162ad49a396d97e1fb87b77061921e02dc66ac5dca5884aa1db7",
+      "bytes": 722,
+      "object": "objects/c299e79bf89f162ad49a396d97e1fb87b77061921e02dc66ac5dca5884aa1db7.gz",
+      "gzipSha256": "bd5dba55612642ee3b515fc268b3db2044fb9421c059160ea7e5302b87ed2f26",
+      "gzipBytes": 386,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "93c52a70d1c7d30aa32059275919b2dfccb6230d27a330926b6418c2df7cbb80",
+      "bytes": 135060,
+      "object": "objects/93c52a70d1c7d30aa32059275919b2dfccb6230d27a330926b6418c2df7cbb80.gz",
+      "gzipSha256": "396f6cff4a3bba7d9d2d9a787b3798b2b93f6e4a696dc738f453be5b4a73e005",
+      "gzipBytes": 12949,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "d37f0a689fc151c76acaa02793f9daf9966f7ad23e4fabf8540c60ded90947f9",
+      "bytes": 1002,
+      "object": "objects/d37f0a689fc151c76acaa02793f9daf9966f7ad23e4fabf8540c60ded90947f9.gz",
+      "gzipSha256": "1b56adb03fe58004ece9c10b3449268bfccda770d42716459cc63b52cc2d1a72",
+      "gzipBytes": 478,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b.gz",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1,
+      "gzipSha256": "efbe30fab335f4aef6f7e9665fbba9424fac8e4cf0f9201ba5a530520031c3c8",
+      "gzipBytes": 21,
+      "storage": "SharedOriginalIndexObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865.gz",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "gzipSha256": "c28cc69d141393e44a931229323624ef7b8c5bde3ee047ca9b87332daef23c82",
+      "gzipBytes": 22,
+      "storage": "SharedOriginalIndexObject"
+    },
+    {
+      "sha256": "7bee3c4fcdac81a2794432faa44002920eac1e0ba6d649436fdbe8136dc9c7fd",
+      "bytes": 39124,
+      "object": "objects/7bee3c4fcdac81a2794432faa44002920eac1e0ba6d649436fdbe8136dc9c7fd.gz",
+      "gzipSha256": "08db51c5ed18641c1d2728a7f4e63ee59b2e98884c76b9060b435d97ecd6e3e6",
+      "gzipBytes": 2519,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "09ee7611b361c06ffd06a331725fb1d65fc102a6f8a7bc9efae04d1c465b0224",
+      "bytes": 989,
+      "object": "objects/09ee7611b361c06ffd06a331725fb1d65fc102a6f8a7bc9efae04d1c465b0224.gz",
+      "gzipSha256": "1b023730ce0ff6845dcd5180a3ed251a0272b9714cd8c7edbc6ae9d09a1dfb36",
+      "gzipBytes": 466,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "gzipSha256": "afcc354d84b1c14e57b84114b9e424be57992d03d9db6c8e9c25deb4fa66ff7f",
+      "gzipBytes": 21,
+      "storage": "SharedOriginalIndexObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzipSha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae",
+      "gzipBytes": 22,
+      "storage": "SharedOriginalIndexObject"
+    },
+    {
+      "sha256": "6335252d8cf70473442deb41193dd7f207289543ca92b9b99aa24a71651db2fd",
+      "bytes": 10212979,
+      "object": "objects/6335252d8cf70473442deb41193dd7f207289543ca92b9b99aa24a71651db2fd.gz",
+      "gzipSha256": "c45611daa265d6d1bec71a139032db856f76306f16e68f96ce8d48cd236be010",
+      "gzipBytes": 849269,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "a8ec0127a653c8e135fb9087e1c1bb76cabd2508f955c629663402eeace35537",
+      "bytes": 793,
+      "object": "objects/a8ec0127a653c8e135fb9087e1c1bb76cabd2508f955c629663402eeace35537.gz",
+      "gzipSha256": "d34c920b8f8f607cdf02166df2287adc734bdb007c334001e15691cdf6178674",
+      "gzipBytes": 507,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "e36019fd8745d67af43ad4fc7f25d376a6eb02da14ddb0bb590807c3cb0ebc90",
+      "bytes": 470,
+      "object": "objects/e36019fd8745d67af43ad4fc7f25d376a6eb02da14ddb0bb590807c3cb0ebc90.gz",
+      "gzipSha256": "f6a6a4d20d5486c67b08bf3344a8aeaf5668458b83f9ffba2cef442374924689",
+      "gzipBytes": 315,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "787e74f06825cfa4e41b79b6767a1635ffb884cf75aee16d7cc1fda64e0547e6",
+      "bytes": 19518,
+      "object": "objects/787e74f06825cfa4e41b79b6767a1635ffb884cf75aee16d7cc1fda64e0547e6.gz",
+      "gzipSha256": "74a0f6fd53555fb53cad3bd3c63eb7b83ab5a84a0e0be9393cf1f78525367e14",
+      "gzipBytes": 1743,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "baeb2807c817724525b6d28a2e36006a6ef7115f7d82d60e8f470df88464fb0e",
+      "bytes": 36306,
+      "object": "objects/baeb2807c817724525b6d28a2e36006a6ef7115f7d82d60e8f470df88464fb0e.gz",
+      "gzipSha256": "37dffe959b20e1aee1b367055bb44b944055a6944fe53ea60afee13907cb457d",
+      "gzipBytes": 4286,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "e0be93bc064c106c1feb106e19ebe5f600218217d30a8d0e18d574ba93549aba",
+      "bytes": 1106877,
+      "object": "objects/e0be93bc064c106c1feb106e19ebe5f600218217d30a8d0e18d574ba93549aba.gz",
+      "gzipSha256": "ba238df21b213fc93bc31799706f5ec91882e7a50f0bcdc31a47d0399fc1ba35",
+      "gzipBytes": 16231,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "c71d5f253125821037f662a9f0214fbaa509af751ff0bc952f078ae42e8a40d4",
+      "bytes": 661,
+      "object": "objects/c71d5f253125821037f662a9f0214fbaa509af751ff0bc952f078ae42e8a40d4.gz",
+      "gzipSha256": "5cd0b94dfacdda1954b18f1296a3749adb7dc0406d6242afd2bc519e0eb03d80",
+      "gzipBytes": 390,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "7ddcdf7ee11bc05e8c1af4899e2679eaaa6670565ed22cff52c2fccb13b0ed0f",
+      "bytes": 3314,
+      "object": "objects/7ddcdf7ee11bc05e8c1af4899e2679eaaa6670565ed22cff52c2fccb13b0ed0f.gz",
+      "gzipSha256": "ea15703a0abf72e5619530d21ff82cccfd26f7a2424081641bb5402fba6ca632",
+      "gzipBytes": 1188,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "3d996dff67b6f24e95b6166e13e7e02534f47e9485eeb9afda10f6403005fa43",
+      "bytes": 1135,
+      "object": "objects/3d996dff67b6f24e95b6166e13e7e02534f47e9485eeb9afda10f6403005fa43.gz",
+      "gzipSha256": "c2cdfbecda67236772f6b4fc6c6c61d669152c8ad839f1050b8e024ab88d7cd8",
+      "gzipBytes": 519,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "sha256": "1f8306737ef3b8f9f7efe980c22b1ea855e56c488519b3c2b7c9ef5e5439d387",
+      "bytes": 731,
+      "object": "objects/1f8306737ef3b8f9f7efe980c22b1ea855e56c488519b3c2b7c9ef5e5439d387.gz",
+      "gzipSha256": "29175cce5537341a962d54f9ba219396c36b394dfac4a2969e409be27c03da67",
+      "gzipBytes": 405,
+      "storage": "NewSupplementObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f.gz",
+      "sha256": "76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f",
+      "bytes": 397,
+      "gzipSha256": "f122297c422b62ff56520b7bcae62c4e677dfb116848d00917db9b12839f5f63",
+      "gzipBytes": 241,
+      "storage": "SharedOriginalIndexObject"
+    }
+  ],
+  "statistics": {
+    "selectedOriginalFiles": 37,
+    "uniqueReferencedObjects": 33,
+    "sharedBaseObjects": 6,
+    "newObjects": 27,
+    "selectedOriginalBytes": 46327021,
+    "newGzipBytes": 2757674
+  },
+  "readiness": {
+    "technicalSuite14Passed": true,
+    "fogCasesPassed": 49,
+    "guidanceCasesPassed": 2,
+    "normalMissionCertified": false,
+    "savedPassengerRecoveryCertified": false,
+    "deviceCertified": false,
+    "playerReady": false
+  },
+  "provenanceLimits": [
+    "1134 native save succeeded but Continue did not resume shipping Planned state; actual checkpoint archived, recovery not certified.",
+    "1134 prepared report status remains its historical PreparedNeverLoaded value; actual closed failure proof supersedes that status.",
+    "Current external runner snapshots are not asserted exact executed bytes absent executed-byte evidence.",
+    "Credential marker scan is bounded to selected dedicated logs, not an exhaustive security audit."
+  ],
+  "credentialScan": "credential-marker-scan.json",
+  "selectedCommitDirectories": [
+    "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-main-fog-guidance-selected",
+    "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-main-fog-guidance-supplement1136"
+  ],
+  "productionSourcePathList": "source-selection.json",
+  "sourceStageActionPerformed": false
+}

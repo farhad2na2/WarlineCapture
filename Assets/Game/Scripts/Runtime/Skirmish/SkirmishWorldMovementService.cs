@@ -181,6 +181,22 @@ namespace Game.Runtime
             if (intent.Order != SkirmishGroupOrderKind.Attack)
                 return;
             Entity target = intent.AttackTarget;
+            if (target != Entity.Null && em.Exists(target) &&
+                em.HasComponent<SkirmishAttemptOwnedComponent>(unit) &&
+                em.HasComponent<SkirmishAttemptOwnedComponent>(target))
+            {
+                var observer = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (!observer.SessionId.Equals(em.GetComponentData<SkirmishAttemptOwnedComponent>(target).SessionId) ||
+                    !SkirmishFogService.IsVisibleToFaction(em, target, observer.FactionId))
+                {
+                    // Retain the last accepted public destination, without homing
+                    // to an unseen actor's live pose or retaining precision pursuit.
+                    intent.AttackTarget = Entity.Null;
+                    intent.Engaged = 0;
+                    em.SetComponentData(unit, intent);
+                    return;
+                }
+            }
             if (target == Entity.Null || !em.Exists(target) || !em.HasComponent<LocalTransform>(target))
                 return;
 

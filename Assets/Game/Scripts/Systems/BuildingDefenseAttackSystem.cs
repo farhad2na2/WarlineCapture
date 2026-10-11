@@ -40,6 +40,9 @@ namespace Game.Runtime
             public ComponentLookup<LocalTransform> Transforms;
             public ComponentLookup<UnitAirMovement> AirMovement;
             public ComponentLookup<CombatTargetPolicy> TargetPolicies;
+            public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwned;
+            public ComponentLookup<SkirmishContactSightComponent> FogSight;
+            public BufferLookup<SkirmishContactKnowledgeElement> FogKnowledge;
             public ComponentLookup<RuntimeBuildingCombatInfo> Buildings;
             public ComponentLookup<StaticGridBlocker> StaticBlockers;
             public ComponentLookup<UnitMovementBehavior> MovementBehaviors;
@@ -80,6 +83,9 @@ namespace Game.Runtime
                 Transforms = SystemAPI.GetComponentLookup<LocalTransform>(true),
                 AirMovement = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
                 TargetPolicies = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
+                FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                FogSight = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                FogKnowledge = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
                 Buildings = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 StaticBlockers = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
                 MovementBehaviors = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
@@ -467,6 +473,14 @@ namespace Game.Runtime
                     access.AirMovement.HasComponent(target),
                     access.MovementBehaviors.HasComponent(target) && access.MovementBehaviors[target].UsesVehicleMotion != 0)
             };
+            if (access.FogOwned.HasComponent(source) && access.FogOwned.HasComponent(target))
+            {
+                var observer = access.FogOwned[source];
+                if (!observer.SessionId.Equals(access.FogOwned[target].SessionId) ||
+                    !SkirmishFogConsumerUtility.IsVisible(access.FogOwned, access.FogSight,
+                        access.FogKnowledge, target, observer.FactionId)) return false;
+                targetPolicy.Visible = 1;
+            }
             return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
         }
 

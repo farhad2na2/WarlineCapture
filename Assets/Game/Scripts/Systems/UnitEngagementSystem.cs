@@ -153,6 +153,9 @@ namespace Game.Runtime
                 HoldPositionLookup = holdPositionLookup,
                 ScanOrderLookup = scanOrderLookup,
                 TargetPolicyLookup = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
+                FogOwnedLookup = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                FogSightLookup = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                FogKnowledgeLookup = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
                 TargetBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 ProtectedRecordsLookup = SystemAPI.GetComponentLookup<CampaignMissionProtectedRecordsTag>(true),
                 TargetBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
@@ -206,6 +209,9 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
             [ReadOnly] public ComponentLookup<UnitScanOrder> ScanOrderLookup;
             [ReadOnly] public ComponentLookup<CombatTargetPolicy> TargetPolicyLookup;
+            [ReadOnly] public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwnedLookup;
+            [ReadOnly] public ComponentLookup<SkirmishContactSightComponent> FogSightLookup;
+            [ReadOnly] public BufferLookup<SkirmishContactKnowledgeElement> FogKnowledgeLookup;
             [ReadOnly] public ComponentLookup<RuntimeBuildingCombatInfo> TargetBuildingLookup;
             [ReadOnly] public ComponentLookup<CampaignMissionProtectedRecordsTag> ProtectedRecordsLookup;
             [ReadOnly] public ComponentLookup<StaticGridBlocker> TargetBlockerLookup;
@@ -446,6 +452,14 @@ namespace Game.Runtime
                     Domain = CombatTargetPolicyUtility.InferDomain(TargetBuildingLookup.HasComponent(target) || TargetBlockerLookup.HasComponent(target),
                         TargetAirLookup.HasComponent(target), TargetMovementLookup.HasComponent(target) && TargetMovementLookup[target].UsesVehicleMotion != 0)
                 };
+                if (FogOwnedLookup.HasComponent(source) && FogOwnedLookup.HasComponent(target))
+                {
+                    var observer = FogOwnedLookup[source];
+                    if (!observer.SessionId.Equals(FogOwnedLookup[target].SessionId) ||
+                        !SkirmishFogConsumerUtility.IsVisible(FogOwnedLookup, FogSightLookup,
+                            FogKnowledgeLookup, target, observer.FactionId)) return false;
+                    targetPolicy.Visible = 1;
+                }
                 return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
             }
 

@@ -11,10 +11,11 @@ namespace Game.UI.Runtime
         public Vector3 EnemyBaseObjectivePosition { get; private set; }
         public Vector3 PlayerBaseObjectivePosition { get; private set; }
         public bool EnemyBaseMarkerVisible { get; private set; }
+        public bool EnemyBaseTargetVisible { get; private set; }
         public bool EnemyBaseObjectiveAlive { get; private set; }
         private RectTransform baseMarker;
         private string baseMarkerLocale;
-        public void PresentEnemyBaseMarker(Vector3 screen, bool alive, Vector3 worldPosition, Vector3 playerPosition)
+        public void PresentEnemyBaseMarker(Vector3 screen, bool alive, Vector3 worldPosition, Vector3 playerPosition, bool targetVisible = true)
         {
             if (baseMarker == null)
             {
@@ -28,6 +29,7 @@ namespace Game.UI.Runtime
                 screen.x > 0 && screen.y > 0 && screen.x < Screen.width && screen.y < Screen.height;
             baseMarker.gameObject.SetActive(shown);
             EnemyBaseMarkerVisible = shown;
+            EnemyBaseTargetVisible = shown && targetVisible;
             EnemyBaseObjectiveAlive = alive;
             EnemyBaseObjectivePosition = worldPosition;
             PlayerBaseObjectivePosition = playerPosition;

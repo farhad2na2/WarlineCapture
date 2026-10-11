@@ -131,7 +131,7 @@ namespace Game.Runtime
                 var ownedUnit = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
                 if (!ownedUnit.SessionId.Equals(sessionId) || ownedUnit.FactionId != 1 || ownedUnit.IsStructure != 0)
                     continue;
-                if (!SkirmishFogService.IsVisible(em, unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
+                if (!SkirmishFogService.IsVisibleToFaction(em, unit, 2) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
                     continue;
                 if (!em.HasComponent<SkirmishUnitRoleComponent>(unit))
                     continue;
@@ -210,6 +210,9 @@ namespace Game.Runtime
                         SkirmishArmyCommandService.TryIssueGroupOrder(
                             em, session, groupId, 2, SkirmishGroupOrderKind.Attack, target, out _);
                 }
+                if (!issued && groupId != 0 && TryKnownPlayerBaseApproach(em, session, out var approach))
+                    issued = SkirmishArmyCommandService.TryIssueGroupOrder(
+                        em, session, groupId, 2, SkirmishGroupOrderKind.Move, Entity.Null, approach, out _);
                 if (!issued)
                     state.FailedAttempts++;
                 else
@@ -242,6 +245,18 @@ namespace Game.Runtime
             return setup == null ? null : SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
         }
 
+        internal static bool TryKnownPlayerBaseApproach(EntityManager em, Entity session, out float3 destination)
+        {
+            destination = default;
+            if (!em.HasComponent<SkirmishResolvedSetupRecord>(session)) return false;
+            var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            if (setup == null || !setup.MeasuredLayoutBound) return false;
+            // Both fixed objective locations are authored public map information.
+            // No hidden target entity, mobile position, health or order is consulted.
+            destination = new float3(setup.PlayerBaseWorldX, 0, setup.PlayerBaseWorldZ);
+            return math.all(math.isfinite(destination));
+        }
+
         private static Entity FindVisiblePlayerBase(EntityManager em, Entity session)
         {
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
@@ -258,7 +273,7 @@ namespace Game.Runtime
                 if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role !=
                     SkirmishObjectiveRoleKind.PlayerBase)
                     continue;
-                if (SkirmishFogService.IsVisible(em, entity))
+                if (SkirmishFogService.IsVisibleToFaction(em, entity, 2))
                     return entity;
             }
 
@@ -293,7 +308,7 @@ namespace Game.Runtime
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate);
                 if (!owned.SessionId.Equals(sessionId) || owned.FactionId != 1 || owned.IsStructure == 0 ||
                     !em.HasComponent<UnitHealth>(candidate) ||
-                    !SkirmishArmyGroupSystem.IsAlive(em, candidate) || !SkirmishFogService.IsVisible(em, candidate))
+                    !SkirmishArmyGroupSystem.IsAlive(em, candidate) || !SkirmishFogService.IsVisibleToFaction(em, candidate, 2))
                     continue;
                 float2 position = em.GetComponentData<LocalTransform>(candidate).Position.xz;
                 float distance = math.distancesq(position, basePosition);

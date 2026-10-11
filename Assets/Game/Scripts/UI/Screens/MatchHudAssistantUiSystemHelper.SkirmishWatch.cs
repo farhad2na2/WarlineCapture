@@ -205,7 +205,7 @@ namespace Game.UI.Runtime
                 view.PadSite0 = ObserveHomePadSite(0); view.PadSite1 = ObserveHomePadSite(1);
                 view.PadSite2 = ObserveHomePadSite(2); view.PadSite3 = ObserveHomePadSite(3);
             }
-            if (watchSkirmish != null && watchSkirmish.EnemyBaseMarkerVisible)
+            if (watchSkirmish != null && watchSkirmish.EnemyBaseMarkerVisible && watchSkirmish.EnemyBaseTargetVisible)
             {
                 var point = watchSkirmish.VisibleEnemyBasePoint;
                 view.EnemyBase = new AriaTouchTarget { Id = -20001, Position = point, Available = WatchTargetIsReachable(point, -20001, true) };
@@ -477,7 +477,7 @@ namespace Game.UI.Runtime
             float trackedDistance = 12 * 12;
             foreach (var enemy in watchMap.PresentedContacts)
             {
-                if (enemy.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Enemy || !enemy.Marker.gameObject.activeInHierarchy) continue;
+                if (enemy.Model.LastSeen || enemy.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Enemy || !enemy.Marker.gameObject.activeInHierarchy) continue;
                 // The labelled base is an objective, not an intervening defender.
                 // Fight the contacts in front of the army before ordering it past them.
                 var groundPoint = Camera.main.WorldToScreenPoint(enemy.Model.Position);

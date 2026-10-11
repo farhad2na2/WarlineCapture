@@ -880,6 +880,9 @@ namespace Game.Runtime
                 TargetPosition = targetPosition
             };
 
+            Entity endpoint = kind == UnitAttackVfxRequestKind.MuzzleFlash ? source : target;
+            if (em.Exists(endpoint) && em.HasComponent<SkirmishAttemptOwnedComponent>(endpoint) &&
+                !SkirmishFogConsumerUtility.PlayerVisible(em, endpoint)) return false;
             return kind switch
             {
                 UnitAttackVfxRequestKind.MuzzleFlash => TryBuildMuzzleFlashVfxRequest(em, source, target, sourcePosition, targetPosition, ref request),

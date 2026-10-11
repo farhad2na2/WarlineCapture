@@ -11,6 +11,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -402,6 +403,15 @@ namespace Game.Tests.Editor
             Place(em, car, new float3(-168f, 0f, -4f));
             Place(em, enemyTank, new float3(168f, 0f, 0f));
             RevealAll(em);
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, playerBase, 2),
+                "Player-only Reveal must not grant enemy precision targeting.");
+            Assert.IsFalse(SkirmishArmyCommandService.TryIssueGroupOrder(
+                em, session, GroupOf(em, enemyTank), 2,
+                SkirmishGroupOrderKind.Attack, playerBase, out var unknownAttack));
+            Assert.AreEqual(SkirmishReasonCode.HiddenContact, unknownAttack.Reason);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
+            ObserveEnemyFixtureThreats(world, session);
+            RevealAll(em);
 
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, tank), false, out _));
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, apc), true, out _));
@@ -721,6 +731,7 @@ namespace Game.Tests.Editor
                 em.GetComponentData<LocalTransform>(enemyBase).Position.x -
                 em.GetComponentData<LocalTransform>(tank).Position.x,
                 100f);
+            ObserveEnemyFixtureThreats(world, session);
             RevealAll(em);
 
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, tank), false, out _));
@@ -873,6 +884,7 @@ namespace Game.Tests.Editor
             BootPlayingSession(world, out Entity session, seed);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
+            ObserveEnemyFixtureThreats(world, session);
             RevealAll(em);
             int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity playerBase = DesignatedBase(em, 1);
@@ -1162,6 +1174,7 @@ namespace Game.Tests.Editor
             BootPlayingSession(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
+            ObserveEnemyFixtureThreats(world, session);
             RevealAll(em);
             int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity playerBase = DesignatedBase(em, 1);
@@ -1256,6 +1269,17 @@ namespace Game.Tests.Editor
                 Assert.Greater(math.distance(em.GetComponentData<LocalTransform>(tank).Position, float3.zero), 50f);
 
                 int materials = SkirmishMaterialsService.Read(em, session, 1);
+                Assert.IsFalse(SkirmishFogService.IsVisible(em, enemyBase));
+                Assert.IsFalse(SkirmishArmyCommandService.TryIssueGroupOrder(
+                    em, session, GroupOf(em, tank), 1,
+                    SkirmishGroupOrderKind.Attack, enemyBase, out var unknownAttack));
+                Assert.AreEqual(SkirmishReasonCode.HiddenContact, unknownAttack.Reason);
+                ObserveMeasuredBaseForPlayerFixture(world, session, enemyBase);
+                Assert.IsFalse(VisuallySpawned(em, enemyBase),
+                    "Observation must not supply the missing Barracks prefab.");
+                Assert.AreEqual(enemyPos, em.GetComponentData<LocalTransform>(enemyBase).Position,
+                    "Observation must retain the native measured base anchor.");
+                Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
                 Entity shell = em.CreateEntity();
                 em.AddComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Manual });
                 Assert.IsFalse(FixtureAttackEnemyBase(em, session));
@@ -1724,6 +1748,141 @@ namespace Game.Tests.Editor
         {
             return em.HasComponent<SkirmishVisualSpawnedComponent>(entity) &&
                    em.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned != 0;
+        }
+
+        // Sparse ledger fixtures have no baked enemy acquisition components. Supply
+        // two fixture-owned native observers at the positioned player base/Tank and
+        // run the real positive-time fog system. No sight/knowledge/debug override is
+        // written. Observers have no roster role, group, attack or capacity identity.
+        private static void ObserveEnemyFixtureThreats(World world, Entity session)
+        {
+            EntityManager em = world.EntityManager;
+            Entity playerBase = DesignatedBase(em, 1);
+            Entity playerTank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Entity baseObserver = CreateFixtureFogObserver(em, session, playerBase, 2);
+            Entity tankObserver = CreateFixtureFogObserver(em, session, playerTank, 2);
+            var expanded = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            var originalPhase = expanded.Phase;
+            var fog = em.GetComponentData<SkirmishFogStateComponent>(session);
+            Assert.AreEqual(1, fog.SharedFog);
+            Assert.AreEqual(0, fog.DevelopmentFullVision);
+            Entity temporaryGrid = Entity.Null;
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.IsEmptyIgnoreFilter)
+            {
+                temporaryGrid = em.CreateEntity(typeof(GridConfig));
+                em.SetComponentData(temporaryGrid,
+                    new GridConfig { Width = 4096, Height = 4096, CellSize = 1 });
+            }
+            try
+            {
+                Assert.AreEqual(1, grids.CalculateEntityCount());
+                expanded.Phase = SkirmishSessionPhase.Playing;
+                em.SetComponentData(session, expanded);
+                world.SetTime(new TimeData(world.Unmanaged.Time.ElapsedTime + 1, .1f));
+                world.GetOrCreateSystem<SkirmishSharedFogUpdateSystem>().Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                AssertFixtureDirectObservation(em, session, playerBase, baseObserver, tankObserver, 2);
+                AssertFixtureDirectObservation(em, session, playerTank, baseObserver, tankObserver, 2);
+            }
+            finally
+            {
+                expanded.Phase = originalPhase;
+                em.SetComponentData(session, expanded);
+                // Preserve the pre-existing gridless local movement test contract.
+                if (temporaryGrid != Entity.Null && em.Exists(temporaryGrid))
+                    em.DestroyEntity(temporaryGrid);
+            }
+        }
+
+        // This missing-prefab test measures the native base anchor and presented
+        // order destination, not exploration. Establish its required known enemy base
+        // through a real player acquisition observer without moving the measured base.
+        private static void ObserveMeasuredBaseForPlayerFixture(World world, Entity session, Entity enemyBase)
+        {
+            EntityManager em = world.EntityManager;
+            Assert.AreEqual(SkirmishSessionPhase.Playing,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            var fog = em.GetComponentData<SkirmishFogStateComponent>(session);
+            Assert.AreEqual(1, fog.SharedFog);
+            Assert.AreEqual(0, fog.DevelopmentFullVision);
+            Entity observer = CreateFixtureFogObserver(em, session, enemyBase, 1);
+            Entity temporaryGrid = Entity.Null;
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.IsEmptyIgnoreFilter)
+            {
+                temporaryGrid = em.CreateEntity(typeof(GridConfig));
+                em.SetComponentData(temporaryGrid,
+                    new GridConfig { Width = 4096, Height = 4096, CellSize = 1 });
+            }
+            try
+            {
+                Assert.AreEqual(1, grids.CalculateEntityCount());
+                world.SetTime(new TimeData(world.Unmanaged.Time.ElapsedTime + 1, .1f));
+                world.GetOrCreateSystem<SkirmishSharedFogUpdateSystem>().Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                AssertFixtureDirectObservation(em, session, enemyBase, observer, observer, 1);
+            }
+            finally
+            {
+                if (temporaryGrid != Entity.Null && em.Exists(temporaryGrid))
+                    em.DestroyEntity(temporaryGrid);
+            }
+        }
+
+        private static Entity CreateFixtureFogObserver(EntityManager em, Entity session, Entity target, byte faction)
+        {
+            Assert.IsTrue(em.HasComponent<LocalTransform>(target));
+            Entity observer = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent),
+                typeof(Faction), typeof(UnitHealth), typeof(UnitCombat), typeof(LocalTransform));
+            em.SetComponentData(observer, new SkirmishAttemptOwnedComponent
+            {
+                SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                StableObjectId = new FixedString64Bytes("s002.fixture.observer." + observer.Index),
+                FactionId = faction
+            });
+            em.SetComponentData(observer, new Faction { Id = faction });
+            em.SetComponentData(observer, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(observer, new UnitCombat { AggroRangeCells = 20 });
+            em.SetComponentData(observer,
+                LocalTransform.FromPosition(em.GetComponentData<LocalTransform>(target).Position));
+            return observer;
+        }
+
+        private static void AssertFixtureDirectObservation(EntityManager em, Entity session,
+            Entity target, Entity baseObserver, Entity tankObserver, byte faction)
+        {
+            Assert.IsTrue(SkirmishFogService.IsVisibleToFaction(em, target, faction));
+            Assert.IsTrue(SkirmishFogService.TryGetKnowledge(em, target, faction, out var knowledge));
+            Assert.AreEqual(SkirmishContactSight.Visible, knowledge.Sight);
+            Assert.AreEqual(1, knowledge.ObservationKind);
+            // Overlapping acquisition circles can legitimately select either source.
+            // Require the exact native recorded source to be one of these real fixtures,
+            // then independently verify its current native observation eligibility.
+            Entity source = knowledge.ObservationSource;
+            Assert.IsTrue(source == baseObserver || source == tankObserver);
+            Assert.IsTrue(em.Exists(source));
+            Assert.Greater(em.GetComponentData<UnitHealth>(source).Current, 0);
+            Assert.IsFalse(em.HasComponent<Disabled>(source));
+            Assert.AreEqual(faction, em.GetComponentData<Faction>(source).Id);
+            var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
+            Assert.AreEqual(faction, owned.FactionId);
+            Assert.AreEqual(0, owned.CapacityReleased);
+            Assert.AreEqual(em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                owned.SessionId);
+            Assert.AreEqual(owned.SessionId,
+                em.GetComponentData<SkirmishAttemptOwnedComponent>(target).SessionId);
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            Assert.AreEqual(1, grids.CalculateEntityCount());
+            float cellSize = grids.GetSingleton<GridConfig>().CellSize;
+            float radius = math.max(0, em.GetComponentData<UnitCombat>(source).AggroRangeCells) * cellSize;
+            if (cellSize > 0 && em.HasComponent<UnitAttack>(source))
+                radius = math.max(radius,
+                    math.ceil(math.max(0, em.GetComponentData<UnitAttack>(source).Range) / cellSize) * cellSize);
+            Assert.Greater(radius, 0);
+            float3 sourcePosition = em.GetComponentData<LocalTransform>(source).Position;
+            float3 targetPosition = em.GetComponentData<LocalTransform>(target).Position;
+            Assert.LessOrEqual(math.distancesq(sourcePosition.xz, targetPosition.xz), radius * radius);
         }
 
         private static void RevealAll(EntityManager em)

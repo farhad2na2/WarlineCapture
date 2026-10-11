@@ -380,6 +380,8 @@ namespace Game.Runtime
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             }
 
+            if (!SkirmishFogConsumerUtility.PlayerVisible(em, targetEntity))
+                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             if (!FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             if (em.HasComponent<UnitHealth>(targetEntity) &&

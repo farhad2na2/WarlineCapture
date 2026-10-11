@@ -67,6 +67,7 @@ namespace Game.Runtime
         {
             if (targetEntity == Entity.Null ||
                 !entityManager.Exists(targetEntity) ||
+                !SkirmishFogConsumerUtility.PlayerVisible(entityManager, targetEntity) ||
                 entityManager.HasComponent<StaticGridBlocker>(targetEntity) ||
                 !entityManager.HasComponent<Faction>(targetEntity) ||
                 !entityManager.HasComponent<LocalTransform>(targetEntity))

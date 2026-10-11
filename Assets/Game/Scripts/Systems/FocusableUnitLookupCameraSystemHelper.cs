@@ -168,6 +168,9 @@ namespace Game.Runtime
                 Allocator.TempJob);
             CollectFocusableScreenDistanceCandidatesJob collectJob = new()
             {
+                FogOwnedType = em.GetComponentTypeHandle<SkirmishAttemptOwnedComponent>(true),
+                FogSightType = em.GetComponentTypeHandle<SkirmishContactSightComponent>(true),
+                FogKnowledgeType = em.GetBufferTypeHandle<SkirmishContactKnowledgeElement>(true),
                 EntityType = em.GetEntityTypeHandle(),
                 LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
                 TransitTagType = em.GetComponentTypeHandle<UnitSpawnTransitTag>(true),
@@ -358,6 +361,7 @@ namespace Game.Runtime
 
         private static bool IsFocusableUnitCandidate(EntityManager em, Entity entity)
         {
+            if (!SkirmishFogConsumerUtility.PlayerVisible(em, entity)) return false;
             if(em.HasComponent<SupportPassengerOwnerComponent>(entity)&&em.GetComponentData<SupportPassengerOwnerComponent>(entity).Landed==0)return false;
             bool isOperationMapBuilding =
                 em.Exists(entity) &&
@@ -557,6 +561,9 @@ namespace Game.Runtime
         [BurstCompile]
         private struct CollectFocusableScreenDistanceCandidatesJob : IJobChunk
         {
+            [ReadOnly] public ComponentTypeHandle<SkirmishAttemptOwnedComponent> FogOwnedType;
+            [ReadOnly] public ComponentTypeHandle<SkirmishContactSightComponent> FogSightType;
+            [ReadOnly] public BufferTypeHandle<SkirmishContactKnowledgeElement> FogKnowledgeType;
             [ReadOnly] public EntityTypeHandle EntityType;
             [ReadOnly] public ComponentTypeHandle<LocalToWorld> LocalToWorldType;
             [ReadOnly] public ComponentTypeHandle<UnitSpawnTransitTag> TransitTagType;
@@ -577,6 +584,12 @@ namespace Game.Runtime
                 bool hasUnitTarget = chunk.Has(ref UnitTargetType);
                 bool hasEngageTarget = chunk.Has(ref EngageTargetType);
                 bool hasSelectionHitbox = chunk.Has(ref UnitSelectionHitboxType);
+                bool hasOwned = chunk.Has(ref FogOwnedType);
+                bool hasSight = chunk.Has(ref FogSightType);
+                bool hasKnowledge = chunk.Has(ref FogKnowledgeType);
+                var fogOwners = hasOwned ? chunk.GetNativeArray(ref FogOwnedType) : default;
+                var fogSights = hasSight ? chunk.GetNativeArray(ref FogSightType) : default;
+                var fogKnowledge = hasKnowledge ? chunk.GetBufferAccessor(ref FogKnowledgeType) : default;
                 NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
                 NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref LocalToWorldType);
                 NativeArray<UnitAirComponent> airStates = hasAir
@@ -588,7 +601,22 @@ namespace Game.Runtime
 
                 for (int i = 0; i < entities.Length; i++)
                 {
-                    if (!IsFocusableTransitState(i, hasTransitTag, hasAir, hasUnitTarget, hasEngageTarget, airStates))
+                    bool visible = !hasOwned || fogOwners[i].FactionId == 1;
+                    if (!visible)
+                    {
+                        visible = hasSight && fogSights[i].Sight == Game.Skirmish.Contracts.SkirmishContactSight.Visible;
+                        if (hasKnowledge)
+                        {
+                            var records = fogKnowledge[i];
+                            for (int recordIndex = 0; recordIndex < records.Length; recordIndex++)
+                                if (records[recordIndex].ObserverFactionId == 1)
+                                {
+                                    visible = records[recordIndex].Sight == Game.Skirmish.Contracts.SkirmishContactSight.Visible;
+                                    break;
+                                }
+                        }
+                    }
+                    if (!visible || !IsFocusableTransitState(i, hasTransitTag, hasAir, hasUnitTarget, hasEngageTarget, airStates))
                         continue;
 
                     Candidates.Add(new FocusableScreenDistanceCandidate

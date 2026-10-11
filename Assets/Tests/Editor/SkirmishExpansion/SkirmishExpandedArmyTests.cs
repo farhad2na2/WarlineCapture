@@ -24,7 +24,7 @@ namespace Game.Tests.Editor
             EntityManager em = world.EntityManager;
             CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
             Assert.IsTrue(setup.SharedFog);
-            Assert.IsTrue(setup.DevelopmentFullVision);
+            Assert.IsFalse(setup.DevelopmentFullVision);
             Assert.AreEqual(11, SkirmishArmyGroupSystem.CountFactionGroups(em, session, 1));
             Assert.AreEqual(1, CountPlayerGroups(em, session, SkirmishRoleKind.Tanker));
             Assert.AreEqual(2, CountPlayerGroups(em, session, SkirmishRoleKind.LogisticsTruck));
@@ -127,6 +127,8 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session,
                 FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId, false, out _));
             Entity target = FirstFactionUnit(em, 2, SkirmishRoleKind.Tank);
+            // Isolated command receipt test uses an explicitly observed contact.
+            SkirmishFogService.Reveal(em, target);
             try
             {
                 AriaCommandEvidence.Begin();
@@ -153,16 +155,7 @@ namespace Game.Tests.Editor
                 em, session, FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId, false, out _));
             Entity enemyTank = FirstFactionUnit(em, 2, SkirmishRoleKind.Tank);
             Assert.AreNotEqual(Entity.Null, enemyTank);
-            Assert.AreEqual(SkirmishContactSight.Visible, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
-            Assert.IsTrue(SkirmishArmyCommandService.TryAttack(
-                em, session, enemyTank, out SkirmishCommandDecision seen));
-            Assert.AreEqual(SkirmishGroupOrderKind.Attack, seen.Order);
-
-            var fog = em.GetComponentData<SkirmishFogStateComponent>(session);
-            fog.DevelopmentFullVision = 0;
-            em.SetComponentData(session, fog);
-            SkirmishFogService.Project(em, session);
-            Assert.AreEqual(SkirmishContactSight.LastSeen, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
+            Assert.AreEqual(SkirmishContactSight.Unknown, em.GetComponentData<SkirmishContactSightComponent>(enemyTank).Sight);
             Assert.IsFalse(SkirmishArmyCommandService.TryAttack(
                 em, session, enemyTank, out SkirmishCommandDecision hidden));
             Assert.AreEqual(SkirmishReasonCode.HiddenContact, hidden.Reason);

@@ -1,0 +1,463 @@
+{
+  "scope": "Read-only source/test/config path list for reviewed commit; no edits or staging. Exact changed bytes compared to closed1136. Prior base source-selection reflects historical1132 comparison.",
+  "closedSourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+  "allObservedChangedPathsMatch1136ClosedManifest": true,
+  "paths": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "02dab0b3bd6e0f4974c347d6701b1e1bd6e3bc251bacfea36bc45dca86ea4d4f",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "82c5a3e509116bfec21f0405788bf0b7d808889e3ad852dd96b39ea36f753c45",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "d7e496aac47e910810c3f83993ef000abfac5b30062a3746332e5d295e5b3e36",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "3236f9d56f5299177da32bed9ad33a835d19703f4938f195fbe8e310cac2f86e",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "7273bf05f4bd98b96059dd311ba06e6ca7bde5025a8bf1de3e4097cfce58d4f8",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "3e13a9992243f417bf0e2e433b24cd4972e8590fbe1f1fd8e60cdfc3fafa62df",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishFogObservedPointUtility.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "0512023d98bedc60d56b7ebe5806bd846d29b6ab03131d4620a29054b6561906",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "e6a2d87d119a4cb03bac58f302a431f186f4db3213db61b67a9fc5ae81438f1e",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "10152a2a44568b5a131ae4f9f25b3e474094f1e5270ea2965ed5a2caad2450a0",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "762c6cf2d7b1a035b337045af3c12e6b16b25b43d20e3d8071b1ed23c3ba3535",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "77cebbe9efd1954859e1d6f3c8fd5cccb3d302da0597b5b9374eb00f6f959c41",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/SkirmishFogRenderVisibility.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "6cc6685310b005d38d780ebef64ceb997709e6a7fc44c7c1436887fcb6e36fd0",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "06641f69743933f4afa7e564f498dbeb50cdbd5ad5f84cef5260d5c2dc19a852",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/SkirmishFogRenderMaskSystem.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "03d486b918a16d5f4fee88c9aaa50120631159335f81fb9cb5e22fc2a3eaec2a",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "5cd4d8ae303cc64983b6f654a3bb85de55b74e1cc658da2059a95fd1dd5e88c8",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "0d0b0f7e940677ce7e3360a302bba2e6ff36be43ff93302424c38798454ae759",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "68554955326328f72cb05d5324aafb8fcfe79ec36e68934932be76753bef7554",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "b9829bc5aeaef8daee8c98d1fce4d5ebd3b85c704d40843281bce6a5bc9217ab",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultHudProjection.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "7d090957cf853326797b783ce275c187d9fe60958306cdde48e13edab07b3b21",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "12a9992dbb0d4287d017dae304e4a549228f94f25bdcc17cbb85cffb4ed36b45",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "960eaaff64eff932bd2f05e7dea97bce69b750819e6f862f4380a8dda25a6fa4",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "d369aa58ea48058357bab8f49a5cf6f0e85afaba2b15231423e87c7540d596bb",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "7a4644205ad344a5e00af75c3dea75aa8f7121e609caead83593f9f643b570d2",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedPresentationSystem.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "bd468e27f8681a17a410379cbaa72e030fd6cc9052b30b0f6bca8797bdeb8347",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "33f20a20b3206a580492ec2431608d889147086ad8b5deb994bcdcb07023c535",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogManagedVisualMask.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "85dca3f0102d042af5a4a8c1a13759bdcb0d2d10b21f500c3be2eeecf9c6f8b1",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "11c3dc98702dc56b6b17bc19d2f0544abd6e8e4ab620162f8e5b543df2e3cf2a",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "f43c767909f8d120aa49e9963faad78a5f159892ad8b2fd7c4fa832b8701cb9a",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "d40c735192b172233eb7915b24c4bdfd702f9de496f18b52f40ae9c4f8bf038e",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "4d7f9de3587b49a67b29aa85846e57afd3ddfc5c6e71aec0c7da0dc6cb1f07e3",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "fd1e39966c3af35812c85eae224a37ddddd47e4ec4b28dcae242a85fdbfc1a1b",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "8b8d90a54131b6b9fdecc518b5f9414b3db0859375465f09fad14410fc985691",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "07df1fc650e93f1bea4d364327b33af9337fe205daaebbed1ed8d138a24dc637",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "63f5fd9da93ff67b5aa7cdb78a7f1ec67d86e2043012a451da6154ae9fdbde68",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "21acb659bcce78acaaf406320e88f818bbad7135fd4ca48c3ec3f705a1636f20",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "2ecc2c1e5d2df95bb706aa80a0524d7bbb06bb2e7f8d8bed16ec1c6367e501c2",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "aa7312147affe4557bf2c4e37160cb343c108bf6c214e9654f2a0f4e8617107f",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "c1342d9e355c4d8e903a4d9381425b2b34b73e363bfc36289a5e9e6ff3e081d9",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "bfd1f1eb8a9d03ebf1d63539b258be028fd73cff53f8293484d149e1384985c6",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "6ea5676b0d7fcec34483209a21d36336c147dbfd3a4681c65b45618dbc06314b",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "b96b9e385d8b385f20cc32efff9c9be593dd8e69d1833709a7fb2df3c5026135",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "d07e6b34ae800d2da9d321a4fe6233c176ccfe6c6814497d56611c7d783c267d",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "51d5ecc7d686da660b00e2d6b156f2c733548a939f10edd315d048754bbcf354",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "662ad652fbd101344afb5104f4fcf16c043eb3b99231a85d7903c844980d3d82",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "ec7a4a91d37934cefcc145bd30b6c3e60b2bb12fa7957c15323089bcfeb0fabc",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "e5563345167ff8bc8e352cd4437b0b1a7ff1e8c3c00a7a735b760c4830a5e4ce",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "bf6a1fe3b3b54d69f326e2d77d5052b08fb9555a58d276ca0ce2b791aedbd4f7",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "265d75666daf50a05863f418f703105c736e70b28a811c1615ec02d3092785e7",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "fcc7bd38f484dacb0c9e2d922479a19521a1bc4503cd3be2fc186361ebec3294",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/SkirmishMatchView.Observation.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "bdfb1bab0e8ec6e8ae536e4162c513e59f3f9b83711dfbfe5b32daa470ccf8b8",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "837e0be08841b0ce19bfddaaaee54adc808306b6d0c668d7244a52505d151bd2",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "c58710c100bab6217ce3302caf260c473da964d67f8533158c885374df02ca77",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "11c8d92321a1a73045afa445edd92778b4d7fbfb1b43af47e8abe1a8f616927f",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "db1904cfead6c525299b2e1b735203c12557a2b51636b2459c91f46815a7472c",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "edb70fc99627391fb311712a07d3e25206e062c517611698224410be7ec9dcc3",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "1b01e1c64e4413b5e4a557dc0ec899089c73c0ed08a837f63fb35e9c0f5330e7",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "3a7961d067cda199b68c6653a749408d8f64fc1761d4721ba5980c8a490bff68",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "b0b6fb9a8b19e3d5136412d39e4f407b168e5b9a0de645963b7c178ddcf1e942",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "3d1938ef7cdef4e4140661e98420714c97fb06a06943dc9f3dfb17c9d94db2ba",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "549052f42d35bae067cd17c87ef0e6c7fab93d53d8ed2cfd7a01792ad09010b4",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogConsumerTests.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "7eebd1785716f2c8dc12962233ba3aaf4cd4df882afcc6ef9f03a73ac5144662",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "1dae7cb165bff0dd6af5bb30b12b8d7beb9b943ff28ac91a85f1d13f82154587",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "c34f71f9d3409424b423ba8e4f9b401945258fb15dc315b80c12641615351a31",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "6ade646843c4963de04712d8d5abcc6fee4351ad675a50a38382bb45b85df3de",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs",
+      "gitCategory": "TrackedModified",
+      "sha256AtRead": "e3ef584d262ee76324562be1a60f4f0c592fe92469e83430e99915dbdf12af6a",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "37447dbbafa7a2865876e6d980f599680bc02a8e738a37e572fea9d51dae6561",
+      "matches1136ClosedManifest": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs.meta",
+      "gitCategory": "Untracked",
+      "sha256AtRead": "9f8e9e3ba08242c37585fec40235fe1dc8a7f454f151f23da1ee72c00596b20f",
+      "matches1136ClosedManifest": true
+    }
+  ]
+}

@@ -66,7 +66,7 @@ namespace Game.Composition
 
                 markers.Add(new MatchHudMinimapMarkerModel(
                     position,
-                    ResolveMarkerAllegiance(marker.FactionId)));
+                    ResolveMarkerAllegiance(marker.FactionId), marker.IsLastSeen != 0, marker.AgeSeconds));
             }
         }
 

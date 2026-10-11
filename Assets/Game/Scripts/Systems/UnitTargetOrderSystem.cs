@@ -101,6 +101,8 @@ namespace Game.Runtime
                 for (int i = 0; i < targetEntities.Length; i++)
                 {
                     Entity target = targetEntities[i];
+                    if (entityManager.HasComponent<SkirmishAttemptOwnedComponent>(launcher) &&
+                        !CombatTargetPolicyUtility.Allows(entityManager, launcher, target)) continue;
                     if (target == launcher)
                         continue;
                     if (entityManager.HasComponent<RuntimeBuildingCombatTag>(target))
@@ -300,6 +302,8 @@ namespace Game.Runtime
             int2 targetCell,
             float3 targetPosition)
         {
+            if (entityManager.HasComponent<SkirmishAttemptOwnedComponent>(sourceEntity) &&
+                !CombatTargetPolicyUtility.Allows(entityManager, sourceEntity, targetEntity)) return;
             if (!CampaignSplitFrontLauncherSafety.TryIssueAttack(entityManager, sourceEntity, targetEntity)) return;
             EntityCommandBuffer ecb = new(Allocator.Temp);
             try

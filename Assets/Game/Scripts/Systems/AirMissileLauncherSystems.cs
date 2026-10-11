@@ -476,7 +476,9 @@ namespace Game.Runtime
                 TrackingQuality = state.EffectiveTrackingQuality > 0f ? state.EffectiveTrackingQuality : launcher.TrackingQuality
             });
 
-            if (em.HasComponent<AirMissileLauncherVfxReferenceComponent>(launcherEntity))
+            if ((!em.HasComponent<SkirmishAttemptOwnedComponent>(launcherEntity) ||
+                 SkirmishFogConsumerUtility.PlayerVisible(em, launcherEntity)) &&
+                em.HasComponent<AirMissileLauncherVfxReferenceComponent>(launcherEntity))
             {
                 AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<AirMissileLauncherVfxReferenceComponent>(launcherEntity);
                 CombatGameObjectVfxRequests.Enqueue(
@@ -1094,7 +1096,9 @@ namespace Game.Runtime
             EntityCommandBuffer ecb,
             AirMissileImpactRequestComponent request)
         {
-            if (!em.Exists(request.Source) || !em.HasComponent<AirMissileLauncherVfxReferenceComponent>(request.Source))
+            if (!SkirmishFogConsumerUtility.PlayerImpactVisible(em, request.Source, request.Target,
+                    request.Position, request.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile ? (byte)1 : (byte)2) ||
+                !em.Exists(request.Source) || !em.HasComponent<AirMissileLauncherVfxReferenceComponent>(request.Source))
                 return;
 
             AirMissileLauncherVfxReferenceComponent vfx = em.GetComponentData<AirMissileLauncherVfxReferenceComponent>(request.Source);

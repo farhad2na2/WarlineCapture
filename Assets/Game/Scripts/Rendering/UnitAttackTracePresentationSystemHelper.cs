@@ -102,6 +102,7 @@ namespace Game.Rendering
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
+                if (!SkirmishFogRenderVisibility.PlayerVisible(em, entity)) continue;
                 UnitAttackTraceComponent trace = em.GetComponentData<UnitAttackTraceComponent>(entity);
                 if (trace.TimeRemaining <= 0f)
                     continue;
@@ -110,6 +111,7 @@ namespace Game.Rendering
                 if (engage.Target == Entity.Null || !em.Exists(engage.Target) || !em.HasComponent<LocalTransform>(engage.Target))
                     continue;
 
+                if (!SkirmishFogRenderVisibility.PlayerVisible(em, engage.Target)) continue;
                 LocalTransform sourceTransform = em.GetComponentData<LocalTransform>(entity);
                 LocalTransform targetTransform = em.GetComponentData<LocalTransform>(engage.Target);
                 UnitAttack attack = em.GetComponentData<UnitAttack>(entity);

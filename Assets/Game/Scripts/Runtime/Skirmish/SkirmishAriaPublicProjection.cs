@@ -248,7 +248,7 @@ namespace Game.Runtime
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
                 if (!owned.SessionId.Equals(sessionId) || owned.FactionId != 2 || owned.IsStructure != 0)
                     continue;
-                if (!SkirmishFogService.IsVisible(em, unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
+                if (!SkirmishFogService.IsVisibleToFaction(em, unit, 1) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
                     continue;
                 if (!em.HasComponent<SkirmishUnitRoleComponent>(unit))
                     continue;
@@ -280,7 +280,7 @@ namespace Game.Runtime
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
                 if (!owned.SessionId.Equals(sessionId) || owned.FactionId != 2 || owned.IsStructure != 0)
                     continue;
-                if (!SkirmishFogService.IsVisible(em, unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
+                if (!SkirmishFogService.IsVisibleToFaction(em, unit, 1) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
                     continue;
                 if (!em.HasComponent<SkirmishUnitRoleComponent>(unit))
                     continue;

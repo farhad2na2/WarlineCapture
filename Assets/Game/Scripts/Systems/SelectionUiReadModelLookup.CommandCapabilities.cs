@@ -7,6 +7,7 @@ using UnityEngine;
 using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
+using Game.Skirmish.Contracts;
 
 namespace Game.Runtime
 {
@@ -96,9 +97,15 @@ namespace Game.Runtime
 
         public static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)
         {
-            return entityManager.Exists(entity) &&
-                   entityManager.HasComponent<UnitCombat>(entity) &&
-                   entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
+            if (!entityManager.Exists(entity) || !entityManager.HasComponent<UnitCombat>(entity)) return false;
+            if (entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0) return true;
+            // Expanded reconnaissance Drone is deliberately unarmed. Scan capability
+            // must not grant attack permission or change legacy unarmed-unit policy.
+            return entityManager.HasComponent<SkirmishSharedActorTag>(entity) &&
+                   entityManager.HasComponent<SkirmishUnitRoleComponent>(entity) &&
+                   entityManager.GetComponentData<SkirmishUnitRoleComponent>(entity).Role == SkirmishRoleKind.Drone &&
+                   entityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
+                   entityManager.GetComponentData<SkirmishAttemptOwnedComponent>(entity).CapacityReleased == 0;
         }
 
         public static bool IsSelectedUnitScanSpecialist(EntityManager entityManager, Entity entity)

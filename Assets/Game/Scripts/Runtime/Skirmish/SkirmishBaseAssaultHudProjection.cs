@@ -121,17 +121,29 @@ namespace Game.Runtime
                 var observed = em.HasComponent<SkirmishObservedHealthComponent>(entity)
                     ? em.GetComponentData<SkirmishObservedHealthComponent>(entity)
                     : new SkirmishObservedHealthComponent();
-                readout.Max = health.Max > 0 ? health.Max : observed.LastSeenMax;
                 if (sight == SkirmishContactSight.Visible)
                 {
+                    readout.Max = health.Max;
                     readout.Knowledge = SkirmishHealthReadout.Visible;
                     readout.DisplayedCurrent = health.Current;
                     readout.AgeSeconds = 0f;
                     return readout;
                 }
 
-                if (observed.Known != 0)
+                if (SkirmishFogService.TryGetKnowledge(em, entity, 1, out var knowledge) &&
+                    knowledge.Sight == SkirmishContactSight.LastSeen)
                 {
+                    readout.Max = knowledge.LastSeenMax;
+                    readout.Knowledge = SkirmishHealthReadout.LastSeen;
+                    readout.DisplayedCurrent = knowledge.LastSeenHealth;
+                    readout.AgeSeconds = Unity.Mathematics.math.max(0,
+                        (float)em.WorldUnmanaged.Time.ElapsedTime - knowledge.LastObservedTimeSeconds);
+                    return readout;
+                }
+                if (!em.HasBuffer<SkirmishContactKnowledgeElement>(entity) &&
+                    sight == SkirmishContactSight.LastSeen && observed.Known != 0)
+                {
+                    readout.Max = observed.LastSeenMax;
                     readout.Knowledge = SkirmishHealthReadout.LastSeen;
                     readout.DisplayedCurrent = observed.LastSeenHealth;
                     readout.AgeSeconds = observed.AgeSeconds;

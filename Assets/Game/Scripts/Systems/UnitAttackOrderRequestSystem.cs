@@ -388,7 +388,9 @@ namespace Game.Runtime
             if (request.SourceEntity == Entity.Null ||
                 request.TargetEntity == Entity.Null ||
                 !em.Exists(request.SourceEntity) ||
-                !em.Exists(request.TargetEntity))
+                !em.Exists(request.TargetEntity) ||
+                (em.HasComponent<SkirmishAttemptOwnedComponent>(request.SourceEntity) &&
+                 !CombatTargetPolicyUtility.Allows(em, request.SourceEntity, request.TargetEntity)))
             {
                 return new UnitTargetOrderSystem.AttackOrderIssueResult(
                     TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable),

@@ -457,6 +457,7 @@ namespace Game.Runtime
             if (!em.Exists(entity))
                 return;
 
+            SkirmishFogService.NotifyObservedDeath(em, entity);
             var destroySet = new HashSet<Entity> { entity };
             CollectDescendants(em, entity, destroySet);
             CollectLinkedEntities(em, entity, destroySet);

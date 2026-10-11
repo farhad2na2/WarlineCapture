@@ -27,6 +27,15 @@ namespace Game.Runtime
                     em.HasComponent<UnitAirMovement>(target), em.HasComponent<UnitMovementBehavior>(target) &&
                     em.GetComponentData<UnitMovementBehavior>(target).UsesVehicleMotion != 0)
             };
+            if (em.HasComponent<SkirmishAttemptOwnedComponent>(source) &&
+                em.HasComponent<SkirmishAttemptOwnedComponent>(target))
+            {
+                var observer = em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
+                var contact = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+                if (!observer.SessionId.Equals(contact.SessionId) ||
+                    !SkirmishFogService.IsVisibleToFaction(em, target, observer.FactionId)) return false;
+                targetPolicy.Visible = 1; // Never share player knowledge with the other observer.
+            }
             return Allows(hasSource, sourcePolicy, true, targetPolicy);
         }
 

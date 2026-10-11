@@ -219,11 +219,15 @@ namespace Game.UI.Contracts
     {
         public readonly Vector3 Position;
         public readonly MatchHudMinimapMarkerAllegiance Allegiance;
+        public readonly bool LastSeen;
+        public readonly float AgeSeconds;
 
-        public MatchHudMinimapMarkerModel(Vector3 position, MatchHudMinimapMarkerAllegiance allegiance)
+        public MatchHudMinimapMarkerModel(Vector3 position, MatchHudMinimapMarkerAllegiance allegiance, bool lastSeen = false, float ageSeconds = 0)
         {
             Position = position;
             Allegiance = allegiance;
+            LastSeen = lastSeen;
+            AgeSeconds = ageSeconds;
         }
     }
 

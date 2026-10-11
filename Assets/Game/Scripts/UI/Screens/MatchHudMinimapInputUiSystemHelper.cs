@@ -536,7 +536,9 @@ namespace Game.UI.Runtime
                 if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
                     continue;
 
-                SetMarker(markerIndex, normalized, marker.Allegiance, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
+                Color markerColor = ResolveMarkerColor(marker.Allegiance);
+                if (marker.LastSeen) markerColor.a *= 0.45f;
+                SetMarker(markerIndex, normalized, marker.Allegiance, markerColor, mapRect, parentTopLeft);
                 _view.RecordPresentedContact(marker, _markerImagePool[markerIndex].rectTransform);
                 markerIndex++;
             }

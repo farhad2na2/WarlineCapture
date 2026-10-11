@@ -22,9 +22,10 @@ namespace Game.Runtime
             if (!em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
                 !em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit) ||
                 !em.HasComponent<SkirmishAttemptOwnedComponent>(target) ||
-                !SkirmishArmyGroupSystem.IsAlive(em, target) || !SkirmishFogService.IsVisible(em, target)) return false;
+                !SkirmishArmyGroupSystem.IsAlive(em, target)) return false;
             var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
             var targetOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+            if (!SkirmishFogService.IsVisibleToFaction(em, target, owner.FactionId)) return false;
             if (!owner.SessionId.Equals(targetOwner.SessionId) || owner.FactionId == targetOwner.FactionId) return false;
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishArmyGroupRecord));
             using var entities = sessions.ToEntityArray(Allocator.Temp);
@@ -101,7 +102,7 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (!SkirmishFogService.IsVisible(em, target))
+            if (!SkirmishFogService.IsVisibleToFaction(em, target, 1))
             {
                 decision.Reason = SkirmishReasonCode.HiddenContact;
                 return false;
@@ -120,6 +121,13 @@ namespace Game.Runtime
             byte actingFaction,
             SkirmishGroupOrderKind order,
             Entity target,
+            out SkirmishCommandDecision decision)
+            => TryIssueGroupOrder(em, session, groupId, actingFaction, order, target,
+                SkirmishWorldMovementService.DefaultAdvance(em, session), out decision);
+
+        public static bool TryIssueGroupOrder(
+            EntityManager em, Entity session, uint groupId, byte actingFaction,
+            SkirmishGroupOrderKind order, Entity target, float3 destination,
             out SkirmishCommandDecision decision)
         {
             decision = default;
@@ -150,7 +158,7 @@ namespace Game.Runtime
                     return false;
                 }
 
-                if (!SkirmishFogService.IsVisible(em, target))
+                if (!SkirmishFogService.IsVisibleToFaction(em, target, actingFaction))
                 {
                     decision.Reason = SkirmishReasonCode.HiddenContact;
                     return false;
@@ -180,12 +188,12 @@ namespace Game.Runtime
                     continue;
                 }
 
-                float3 destination = order == SkirmishGroupOrderKind.Attack &&
-                                     target != Entity.Null &&
-                                     em.HasComponent<LocalTransform>(target)
+                float3 unitDestination = order == SkirmishGroupOrderKind.Attack &&
+                                         target != Entity.Null &&
+                                         em.HasComponent<LocalTransform>(target)
                     ? em.GetComponentData<LocalTransform>(target).Position
-                    : SkirmishWorldMovementService.DefaultAdvance(em, session);
-                if (ApplyOrder(em, unit, order, destination, target)) issued++;
+                    : destination;
+                if (ApplyOrder(em, unit, order, unitDestination, target)) issued++;
                 else excluded++;
             }
 

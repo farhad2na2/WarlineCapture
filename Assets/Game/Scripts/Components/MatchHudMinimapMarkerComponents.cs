@@ -12,5 +12,7 @@ namespace Game.Components
         public Entity SourceEntity;
         public float3 Position;
         public byte FactionId;
+        public byte IsLastSeen;
+        public float AgeSeconds;
     }
 }

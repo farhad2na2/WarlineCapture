@@ -84,6 +84,32 @@ namespace Game.Runtime
                                 {receipt.Effect=Entity.Null;receipts[i]=receipt;}
                             }
                         }
+                        if(typeof(T)==typeof(SkirmishContactKnowledgeElement))
+                        {
+                            var knowledge=values.Reinterpret<SkirmishContactKnowledgeElement>();
+                            for(int i=0;i<knowledge.Length;i++)
+                            {
+                                var value=knowledge[i];
+                                if(value.ObservationSource!=Entity.Null)
+                                {
+                                    Entity source=value.ObservationSource;
+                                    bool valid=em.Exists(source) && !em.HasComponent<Disabled>(source) &&
+                                        !em.HasComponent<UnitTransportPassenger>(source) && !em.HasComponent<UnitDeathAnimationComponent>(source) &&
+                                        em.HasComponent<SkirmishAttemptOwnedComponent>(source) &&
+                                        em.HasComponent<SkirmishAttemptOwnedComponent>(e);
+                                    if(valid)
+                                    {
+                                        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(source);
+                                        var contact=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);
+                                        valid=owner.CapacityReleased==0 && owner.SessionId.Equals(contact.SessionId) &&
+                                            owner.StableObjectId.Equals(value.ObservationSourceStableObjectId) &&
+                                            (!em.HasComponent<UnitHealth>(source) || em.GetComponentData<UnitHealth>(source).Current>0);
+                                    }
+                                    if(!valid || string.IsNullOrEmpty(id(source)))
+                                    { value.ObservationSource=Entity.Null; knowledge[i]=value; }
+                                }
+                            }
+                        }
                         var part = Build<T>(values.Reinterpret<byte>(UnsafeUtility.SizeOf<T>()).ToArray(),values.Length,index,id);
                         part.Enabled = !index.IsEnableable || em.IsComponentEnabled(e, ComponentType.ReadWrite<T>());
                         return part;
@@ -203,6 +229,9 @@ namespace Game.Runtime
             Register<SkirmishMoveIntentComponent>(NormalizeExpiredMoveTarget);
             Register<SkirmishArmyGroupMembershipComponent>();
             Register<SkirmishContactSightComponent>();
+            RegisterBuffer<SkirmishContactKnowledgeElement>();
+            RegisterBuffer<SkirmishContactLedgerElement>();
+            Register<SkirmishContactLedgerStateComponent>();
             Register<SkirmishUpgradeStampComponent>();
             Register<SkirmishExpandedSessionComponent>();
             Register<SkirmishObjectiveClockComponent>();

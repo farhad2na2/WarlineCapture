@@ -968,7 +968,8 @@ namespace Game.Runtime
             using var entities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
             foreach (Entity entity in entities)
             {
-                if (!em.HasComponent<UnitSelectionHitbox>(entity) ||
+                if (!SkirmishFogConsumerUtility.PlayerVisible(em, entity) ||
+                    !em.HasComponent<UnitSelectionHitbox>(entity) ||
                     !FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(entity).Id) ||
                     em.GetComponentData<UnitHealth>(entity).Current <= 0) continue;
                 LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
@@ -1017,7 +1018,8 @@ namespace Game.Runtime
                 NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref transformType);
                 for (int i = 0; i < entities.Length; i++)
                 {
-                    if (!IsAttackableRuntimeBuildingCandidate(factions[i], healths[i], combatInfos[i], clickedCell))
+                    if (!SkirmishFogConsumerUtility.PlayerVisible(em, entities[i]) ||
+                        !IsAttackableRuntimeBuildingCandidate(factions[i], healths[i], combatInfos[i], clickedCell))
                         continue;
 
                     Vector3 screen = worldCamera.WorldToScreenPoint(transforms[i].Position);

@@ -1,0 +1,9 @@
+# Selected S005 fog and guidance commit evidence
+
+All six selected closed main runs (1118,1128,1132,1102,1126,1130) failed. Their original logs, exit receipts, failure reports, archived fixtures, raw Touch and exact full source manifests are retained losslessly here. The1132 run passed49 isolated fog cases and2 guidance cases while the overall ARIA suite failed; these do not certify a normal mission or device. Supporting T7 passes retain their own source and scope. Reviewed external fixtures are preparations, not native pass evidence.
+
+Active1134 and mutable readiness pointers are excluded. The separate `source-selection.json` is a read-only commit review aid, with each observed changed path compared against the closed1132 manifest. No source was edited and no files were staged by this indexing work. Originals remain intact.
+
+`index.json` maps each original path to one content-addressed gzip object. Distinct original paths with identical bytes share an object. Object hashing uses original bytes, including whitespace and empty files; JSON was not reserialized. Existing gzip inputs preserve their exact original compressed bytes as an outer gzip object. Restore an individual file by decompressing its mapped object to a new output path and checking its SHA256; never overwrite the original evidence. External `/private/tmp` artifacts have durable objects here and no longer require those temporary paths to recover their indexed bytes. Current temporary runner snapshots are not automatically claimed to be the exact executed runner bytes.
+
+Run `python3 verify_index.py` inside this directory to verify every compressed checksum, decompressed checksum, byte length, alias and exact pre/post source manifest equality. This performs offline evidence verification only. Stage the whole index directory if using it in the reviewed source/evidence commit. Retain failed status and outstanding normal input, visual and player/device gates.

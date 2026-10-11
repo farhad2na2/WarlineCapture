@@ -9,6 +9,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -227,6 +228,29 @@ namespace Game.Tests.Editor
             int playerMaterials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
             int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            Entity tank = FirstRole(em, 1, SkirmishRoleKind.Tank);
+            Entity playerBase = FirstPlayerBase(em);
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, tank, 2));
+            Assert.AreEqual(0, SkirmishEnemyStrategySystem.Perceive(em, session, owned).VisibleHostileTanks);
+            SkirmishStrategyScore unknown = SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
+            Assert.AreEqual(SkirmishStrategyPriority.AttackBase, unknown.Priority);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials,
+                "An unknown tank cannot cause a counter purchase.");
+            uint approachId = em.GetComponentData<SkirmishEnemyStrategyComponent>(session).LastGroupId;
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, approachId, out var approach));
+            Assert.AreEqual(SkirmishGroupOrderKind.Move, approach.LastOrder,
+                "An unknown fixed base permits only its authored public objective approach.");
+            Assert.IsFalse(SkirmishArmyCommandService.TryIssueGroupOrder(em, session, approachId, 2,
+                SkirmishGroupOrderKind.Attack, playerBase, out var unknownAttack));
+            Assert.AreEqual(SkirmishReasonCode.HiddenContact, unknownAttack.Reason);
+            Entity observer = CreateNativeFogObserver(world, session, 2, new float3(100, 0, 100));
+            PlaceFixtureContact(em, tank, new float3(105, 0, 100));
+            PlaceFixtureContact(em, playerBase, new float3(108, 0, 100));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, tank, 2, observer);
+            AssertDirectObservation(em, playerBase, 2, observer);
+            Assert.AreEqual(1, SkirmishEnemyStrategySystem.Perceive(em, session, owned).VisibleHostileTanks);
             SkirmishStrategyScore score = SkirmishEnemyStrategySystem.Evaluate(
                 em, session, owned, authored.ArmyGround);
             Assert.AreEqual(SkirmishStrategyPriority.RecruitCounter, score.Priority);
@@ -259,6 +283,11 @@ namespace Game.Tests.Editor
             var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
             stock.Materials = 0;
             em.SetComponentData(session, stock);
+            Entity playerBase = FirstPlayerBase(em);
+            Entity observer = CreateNativeFogObserver(world, session, 2, new float3(100, 0, 100));
+            PlaceFixtureContact(em, playerBase, new float3(105, 0, 100));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, playerBase, 2, observer);
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishStrategyScore score = SkirmishEnemyStrategySystem.Evaluate(
                 em, session, owned, authored.ArmyGround);
@@ -269,8 +298,20 @@ namespace Game.Tests.Editor
             Assert.AreEqual(2, group.FactionId);
             Assert.AreEqual(SkirmishGroupOrderKind.Attack, group.LastOrder);
 
-            Entity playerBase = FirstPlayerBase(em);
-            SkirmishFogService.Hide(em, playerBase);
+            Assert.IsTrue(SkirmishFogService.TryGetKnowledge(em, playerBase, 2, out var observed));
+            PlaceFixtureContact(em, observer, new float3(500, 0, 500));
+            AdvanceNativeFog(world);
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, playerBase, 2));
+            Assert.IsTrue(SkirmishFogService.TryGetKnowledge(em, playerBase, 2, out var lost));
+            Assert.AreEqual(SkirmishContactSight.LastSeen, lost.Sight);
+            Assert.AreEqual(observed.LastSeenPosition, lost.LastSeenPosition);
+            Assert.AreEqual(observed.LastObservedTimeSeconds, lost.LastObservedTimeSeconds);
+            PlaceFixtureContact(em, playerBase, new float3(800, 0, 800));
+            AdvanceNativeFog(world);
+            Assert.IsTrue(SkirmishFogService.TryGetKnowledge(em, playerBase, 2, out var hiddenMove));
+            Assert.AreEqual(lost.LastSeenPosition, hiddenMove.LastSeenPosition,
+                "A hidden actor's live motion cannot refresh enemy LastSeen.");
+            Assert.AreEqual(lost.LastObservedTimeSeconds, hiddenMove.LastObservedTimeSeconds);
             Assert.IsFalse(SkirmishArmyCommandService.TryIssueGroupOrder(
                 em, session, groupId, 2, SkirmishGroupOrderKind.Attack, playerBase,
                 out SkirmishCommandDecision hidden));
@@ -311,7 +352,11 @@ namespace Game.Tests.Editor
                 { SessionId = sessionId, FactionId = 1, IsStructure = 1 });
             em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
             em.SetComponentData(pad, new UnitHealth { Current = 100, Max = 100 });
-            SkirmishFogService.Reveal(em, pad);
+            EnsureNativeFogFixture(world, session);
+            FixtureSet(em, defender, new Faction { Id = 2 });
+            FixtureSet(em, defender, new UnitCombat { AggroRangeCells = 35 });
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, pad, 2, defender);
             Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
                 { Damage = 10, TargetDomains = SkirmishTargetDomain.Infantry, RangeWorld = 35 });
@@ -319,11 +364,15 @@ namespace Game.Tests.Editor
             em.SetComponentData(defender, new SkirmishRoleOverlayComponent
                 { Damage = 10, TargetDomains = SkirmishTargetDomain.Structure, RangeWorld = 35 });
             em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(150, 0, 0)));
+            AdvanceNativeFog(world);
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
             em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
-            SkirmishFogService.Hide(em, pad);
+            PlaceFixtureContact(em, defender, basePosition + new float3(300, 0, 0));
+            AdvanceNativeFog(world);
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
-            SkirmishFogService.Reveal(em, pad);
+            PlaceFixtureContact(em, defender, basePosition + new float3(20, 0, 0));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, pad, 2, defender);
             em.SetComponentData(pad, new UnitHealth { Current = 0, Max = 100 });
             Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
         }
@@ -472,6 +521,11 @@ namespace Game.Tests.Editor
             var enemy = em.GetComponentData<SkirmishEnemyStockComponent>(session);
             enemy.Materials = 77;
             em.SetComponentData(session, enemy);
+            Entity contact = FirstRole(em, 2, SkirmishRoleKind.Tank);
+            Entity observer = CreateNativeFogObserver(world, session, 1, new float3(100, 0, 100));
+            PlaceFixtureContact(em, contact, new float3(105, 0, 100));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, contact, 1, observer);
             SkirmishAriaPublicView view = SkirmishAriaPublicProjection.FromSession(
                 em, session, authored.ArmyGround);
             Assert.AreEqual(900, view.OwnMaterials);
@@ -543,7 +597,7 @@ namespace Game.Tests.Editor
             int playerMaterials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
             int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            SkirmishScenarioSpawnSystem.CreateForceMember(
+            Entity playerAir = SkirmishScenarioSpawnSystem.CreateForceMember(
                 em,
                 sessionId,
                 new SkirmishResolvedForceEntry
@@ -564,7 +618,11 @@ namespace Game.Tests.Editor
                 SkirmishRosterProjectionSystem.Apply(em, spawned, sessionId, setup);
             }
 
-            SkirmishFogService.Project(em, session);
+            Entity observer = CreateNativeFogObserver(world, session, 2, new float3(100, 0, 100));
+            PlaceFixtureContact(em, playerAir, new float3(105, 0, 100));
+            Assert.IsFalse(SkirmishFogService.IsVisibleToFaction(em, playerAir, 2));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, playerAir, 2, observer);
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishStrategyScore executed = SkirmishEnemyStrategySystem.Evaluate(
                 em, session, owned, authored.ArmyAir);
@@ -645,6 +703,15 @@ namespace Game.Tests.Editor
             int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
             Assert.AreEqual(900, playerMaterials);
             Assert.AreEqual(900, enemyMaterials);
+            Entity playerAir = FirstRole(em, 1, SkirmishRoleKind.TransportHeli);
+            Entity enemyAir = FirstRole(em, 2, SkirmishRoleKind.TransportHeli);
+            Entity enemyObserver = CreateNativeFogObserver(world, session, 2, new float3(100, 0, 100));
+            Entity playerObserver = CreateNativeFogObserver(world, session, 1, new float3(200, 0, 200));
+            PlaceFixtureContact(em, playerAir, new float3(105, 0, 100));
+            PlaceFixtureContact(em, enemyAir, new float3(205, 0, 200));
+            AdvanceNativeFog(world);
+            AssertDirectObservation(em, playerAir, 2, enemyObserver);
+            AssertDirectObservation(em, enemyAir, 1, playerObserver);
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
             SkirmishStrategyScore executed = SkirmishEnemyStrategySystem.Evaluate(
@@ -1274,6 +1341,76 @@ namespace Game.Tests.Editor
                 Debug.LogError("[SkirmishExpandedAriaTests] result=Failed\n" + exception);
                 throw;
             }
+        }
+
+        // These isolated tests spawn ledgers without baked acquisition/pose components.
+        // Supply fixture observer geometry and drive the actual positive-time fog system;
+        // never write sight/knowledge, borrow the player's view, or enable debug full vision.
+        private static void EnsureNativeFogFixture(World world, Entity session)
+        {
+            var em = world.EntityManager;
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.IsEmptyIgnoreFilter)
+                em.AddComponentData(em.CreateEntity(), new GridConfig { Width = 4096, Height = 4096, CellSize = 1 });
+            Assert.AreEqual(1, grids.CalculateEntityCount());
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            state.Phase = SkirmishSessionPhase.Playing;
+            em.SetComponentData(session, state);
+            var fog = em.GetComponentData<SkirmishFogStateComponent>(session);
+            Assert.AreEqual(1, fog.SharedFog);
+            Assert.AreEqual(0, fog.DevelopmentFullVision);
+        }
+
+        private static Entity CreateNativeFogObserver(World world, Entity session, byte faction, float3 position)
+        {
+            EnsureNativeFogFixture(world, session);
+            var em = world.EntityManager;
+            Entity observer = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(Faction), typeof(UnitHealth), typeof(UnitCombat));
+            em.SetComponentData(observer, new SkirmishAttemptOwnedComponent
+            { SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                StableObjectId = new FixedString64Bytes("aria.fixture.observer." + faction + "." + observer.Index), FactionId = faction });
+            em.SetComponentData(observer, new Faction { Id = faction });
+            em.SetComponentData(observer, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(observer, new UnitCombat { AggroRangeCells = 20 });
+            PlaceFixtureContact(em, observer, position);
+            return observer;
+        }
+
+        private static void PlaceFixtureContact(EntityManager em, Entity actor, float3 position)
+        {
+            Assert.AreNotEqual(Entity.Null, actor);
+            FixtureSet(em, actor, LocalTransform.FromPosition(position));
+            FixtureSet(em, actor, new UnitGrid { Cell = new int2((int)position.x, (int)position.z) });
+        }
+
+        private static void FixtureSet<T>(EntityManager em, Entity actor, T component) where T : unmanaged, IComponentData
+        { if (em.HasComponent<T>(actor)) em.SetComponentData(actor, component); else em.AddComponentData(actor, component); }
+
+        private static void AdvanceNativeFog(World world)
+        {
+            world.SetTime(new TimeData(world.Unmanaged.Time.ElapsedTime + 1, .1f));
+            world.GetOrCreateSystem<SkirmishSharedFogUpdateSystem>().Update(world.Unmanaged);
+            world.EntityManager.CompleteAllTrackedJobs();
+        }
+
+        private static void AssertDirectObservation(EntityManager em, Entity contact, byte faction, Entity observer)
+        {
+            Assert.IsTrue(SkirmishFogService.IsVisibleToFaction(em, contact, faction));
+            Assert.IsTrue(SkirmishFogService.TryGetKnowledge(em, contact, faction, out var knowledge));
+            Assert.AreEqual(SkirmishContactSight.Visible, knowledge.Sight);
+            Assert.AreEqual(1, knowledge.ObservationKind);
+            Assert.AreEqual(observer, knowledge.ObservationSource);
+        }
+
+        private static Entity FirstRole(EntityManager em, byte faction, SkirmishRoleKind role)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            using var actors = query.ToEntityArray(Allocator.Temp);
+            foreach (var actor in actors)
+                if (em.GetComponentData<SkirmishAttemptOwnedComponent>(actor).FactionId == faction &&
+                    em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role == role) return actor;
+            Assert.Fail("Compiled fixture has no " + faction + "/" + role);
+            return Entity.Null;
         }
 
         private static void CompileAndSpawn(EntityManager em, out Entity session, out SkirmishResolvedSetup setup)

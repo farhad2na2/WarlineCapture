@@ -94,10 +94,12 @@ namespace Game.UI.Runtime
 
         public void Dispose()
         {
+            // Resource-strip detachment reapplies guidance. Revoke its bound HUD
+            // before cleanup so Play teardown cannot recreate an overlay root.
+            _matchHudAssistantUiSystem.Unbind();
             DisposeGuidedHudRuntime();
             _matchHudMinimapInputSystem.Dispose();
             _matchHudFullMapInputSystem.Dispose();
-            _matchHudAssistantUiSystem.Unbind();
             if (_matchHudMinimapView != null)
                 _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
             if (_matchHudFullMapPopupView != null)

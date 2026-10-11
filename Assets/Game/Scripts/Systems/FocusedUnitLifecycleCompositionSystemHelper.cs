@@ -28,7 +28,7 @@ namespace Game.Runtime
         {
             entity = Entity.Null;
             Entity focusedUnit = selectionStateSystem.FocusedUnit;
-            if (focusedUnit == Entity.Null || !em.Exists(focusedUnit))
+            if (focusedUnit == Entity.Null || !SkirmishFogConsumerUtility.PlayerVisible(em, focusedUnit))
                 return false;
 
             entity = focusedUnit;
@@ -90,7 +90,7 @@ namespace Game.Runtime
             Entity focusedUnit = selectionStateSystem.FocusedUnit;
             if (focusedUnit != Entity.Null)
             {
-                if (!em.Exists(focusedUnit))
+                if (!SkirmishFogConsumerUtility.PlayerVisible(em, focusedUnit))
                 {
                     SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={UnityEngine.Time.frameCount} focused={focusedUnit}");
                     selectionStateSystem.ClearFocusedUnit();

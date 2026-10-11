@@ -35,6 +35,9 @@ namespace Game.Runtime
 
             state.Dependency = new ValidateEngageTargetJob
             {
+                FogOwned = SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true),
+                FogSight = SystemAPI.GetComponentLookup<SkirmishContactSightComponent>(true),
+                FogKnowledge = SystemAPI.GetBufferLookup<SkirmishContactKnowledgeElement>(true),
                 TargetTransformLookup = targetTransformLookup,
                 TargetHealthLookup = targetHealthLookup,
                 PathRequestLookup = pathRequestLookup,
@@ -51,6 +54,9 @@ namespace Game.Runtime
         [BurstCompile]
         private partial struct ValidateEngageTargetJob : IJobEntity
         {
+            [ReadOnly] public ComponentLookup<SkirmishAttemptOwnedComponent> FogOwned;
+            [ReadOnly] public ComponentLookup<SkirmishContactSightComponent> FogSight;
+            [ReadOnly] public BufferLookup<SkirmishContactKnowledgeElement> FogKnowledge;
             [ReadOnly] public ComponentLookup<LocalTransform> TargetTransformLookup;
             [ReadOnly] public ComponentLookup<UnitHealth> TargetHealthLookup;
             [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
@@ -69,6 +75,13 @@ namespace Game.Runtime
                 else if (TargetHealthLookup.HasComponent(target) && TargetHealthLookup[target].Current <= 0)
                     invalid = true;
 
+                if (!invalid && FogOwned.HasComponent(entity) && FogOwned.HasComponent(target))
+                {
+                    var observer = FogOwned[entity];
+                    invalid = !observer.SessionId.Equals(FogOwned[target].SessionId) ||
+                        !SkirmishFogConsumerUtility.IsVisible(FogOwned, FogSight, FogKnowledge,
+                            target, observer.FactionId);
+                }
                 if (!invalid)
                     return;
 

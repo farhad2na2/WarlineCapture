@@ -17,7 +17,7 @@ namespace Game.Runtime
                 Domain = structure ? CombatTargetDomain.Structure : category == SkirmishPopulationCategory.Air
                     ? CombatTargetDomain.Air : category == SkirmishPopulationCategory.Infantry
                         ? CombatTargetDomain.Infantry : CombatTargetDomain.Ground,
-                Visible = (byte)(SkirmishFogService.IsVisible(em, entity) ? 1 : 0)
+                Visible = 1 // Sight is evaluated for the actual attacker at acquisition/attack.
             };
             if (em.HasComponent<CombatTargetPolicy>(entity)) em.SetComponentData(entity, policy);
             else em.AddComponentData(entity, policy);

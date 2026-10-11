@@ -48,7 +48,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual("obj.s002.base.player", setup.PlayerBaseObjectId);
         Assert.AreEqual("obj.s002.base.enemy", setup.EnemyBaseObjectId);
         Assert.IsTrue(setup.SharedFog);
-        Assert.IsTrue(setup.DevelopmentFullVision);
+        Assert.IsFalse(setup.DevelopmentFullVision);
     }
 
     [Test]

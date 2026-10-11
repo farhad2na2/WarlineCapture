@@ -37,3 +37,35 @@ native1074: isolated paid Fighter/Plane Standard Air2 smoke Failed. Funding/read
 Native1070 actual runtime passed all five paid four-member infantry cohorts, legal target domains, native Touch selection/public API Attack, real damage40/56/64/72/88, death and cleanup. Original closure parser failed because Unity omitted nested cohort fields. The separate same-run offline evaluator passed strict primitive raw events, actual runtime cohort assertions, logs, Touch and complete source checks. Missing member IDs/individual-shot counters remain unavailable; no individual-shooter certificate. Original failure is retained. Proof `native1070-offline-cohort-schema-evaluation-v2-20261011.json`.
 
 Native1076: isolated two paid attack helicopter DirectFire effects PassedScopedIsolatedAttackHeliDirectFire; funding/readiness/death disclosed, no whole mission or full lifecycle certificate. Proof `native1076-attack-heli-combat-helipad-direct-fire-pass.json`.
+
+Native1081: isolated paid vehicle native damage effects PassedScopedIsolatedPaidVehicleCombatEffects; funding/readiness/hostile target setup/death disclosed; no infantry/AntiAir/transport/domain matrix or normal whole-mission certificate. Proof `native1081-isolated-paid-vehicle-combat-pass.json`.
+
+Native1092: isolated paid fixed-wing capacity Failed; funding/readiness/death disclosed, actual capacity rejection/death replacement scoped; normal whole mission pending. Proof `native1092-fixedwing-capacity-failure.json`.
+
+Native1072: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, checkpoint not performed; no normal whole-mission certificate. Proof `native1072-isolated-paid-paid-transport-failure.json`.
+
+Native1092 completed the actual paid Fighter/Plane pair, funded Standard Air2 refusal, Fighter death release and paid replacement with 27 paired Touch contacts. The original closure parser incorrectly counted repeated identical per-frame delivery observations as new lifecycles. The preserved same-run offline lifecycle correction passed; original failure remains retained. This does not certify air combat, Plane cargo, bilateral airports or a complete mission.
+
+Native1096 retained the strict unload failure and recorded every visual identity before cleanup. All four passenger roots restored scale 1 and lost their boarded/hidden links; exactly four mismatched descendants are selection-marker children hidden after deselection, while the other 108 snapshots match. A typed marker-state-aware successor is being prepared; no production body restoration defect is established by these rows.
+
+Native1097: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, checkpoint not performed; no normal whole-mission certificate. Proof `native1097-isolated-paid-paid-transport-failure.json`.
+
+Native1078: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, native boarded checkpoint recovery scoped; no normal whole-mission certificate. Proof `native1078-isolated-paid-boarded-recovery-failure.json`.
+
+Native1101: isolated paid transport Board/Move/Unload PassedScopedIsolatedPaidTransportEffects; funding/readiness/death disclosed, checkpoint not performed; no normal whole-mission certificate. Proof `native1101-isolated-paid-paid-transport-pass.json`.
+
+Native T7 1110 passed nine actual ledger/checkpoint cases with unchanged source; its import preflight Mobile MSAA4 issue is preserved and is not a quality pass. Native actual and serialized Mobile MSAA0 were restored before 1111, which passed nineteen core regression cases with unchanged source and idle closure. These isolated checks do not establish main mission readiness; consumer integration and normal-input mission validation remain pending. Exact evidence: delegation-fog-ledger-t7-artifacts/evidence-index.json.
+
+Native1104: independently paid bilateral Airport prerequisite PassedScopedIsolatedIndependentlyPaidBilateralAirportPrerequisite; technical planner/control/funds/readiness disclosed. Four paid tactical aircraft/launch/return/combat and normal mission remain pending. Proof `native1104-isolated-paid-bilateral-airport-pass.json`.
+
+T7 1112 consumer13 passed with unchanged source; native PC pipeline fallback MSAA4 was identified separately and is not a quality pass. T7 Mobile was assigned its existing accepted Mobile pipeline with MSAA disabled, preserving other tiers. Failed1113 fixture expected one Ground impact request although the native producer emits explosion+smoke. Test-only correction preserves zero hidden effects and exact visible positions;1117 passed8 actual producer/playback cases with unchanged source, actual/savedMobileAA0 and clean idle Menu closure. All49 core/ledger/consumer/VFX focused cases are qualified on T7; main integration and normal mission remain pending. Exact94 artifacts: delegation-fog-consumer-t7-artifacts/evidence-index.json.
+
+Native1102: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, native boarded checkpoint recovery scoped; no normal whole-mission certificate. Proof `native1102-isolated-paid-boarded-recovery-failure.json`.
+
+Native1126: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, native boarded checkpoint recovery scoped; no normal whole-mission certificate. Proof `native1126-isolated-paid-boarded-recovery-failure.json`.
+
+Native1130: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, native boarded checkpoint recovery scoped; no normal whole-mission certificate. Proof `native1130-isolated-paid-boarded-recovery-failure.json`.
+
+Native1134: isolated paid transport Board/Move/Unload Failed; funding/readiness/death disclosed, native boarded checkpoint recovery scoped; no normal whole-mission certificate. Proof `native1134-isolated-paid-boarded-recovery-failure.json`.
+
+Native1136: all14 technical suites PASS on full source8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a, unchanged pre/post; fog19+ledger9+consumer13+VFX8=49, guidance2, Mobile MSAA0 with accepted Mobile_RPAsset samples1. Native compiler0errors; wrapper/native0. This is focused-system qualification only; normal-input full missions, populated checkpoint/cargo/aircraft lifecycle and device/owner visual acceptance remain pending. Native1134 real paid APC/Rifle4 Board/Pause/SaveExit PASS but Continue blocked by unpublished S005 catalog; run FAILED, shipping catalog remains Planned. Successor uses existing Editor-only candidate catalog scope; no readiness publication.

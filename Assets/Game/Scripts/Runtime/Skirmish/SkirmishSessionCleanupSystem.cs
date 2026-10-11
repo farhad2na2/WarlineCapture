@@ -41,6 +41,8 @@ namespace Game.Runtime
                 SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, sessionId);
                 if (!em.Exists(entity))
                     continue;
+                if (em.HasBuffer<SkirmishContactLedgerElement>(entity)) em.RemoveComponent<SkirmishContactLedgerElement>(entity);
+                if (em.HasComponent<SkirmishContactLedgerStateComponent>(entity)) em.RemoveComponent<SkirmishContactLedgerStateComponent>(entity);
                 if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(entity))
                 {
                     em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(entity).Catalog?.Dispose();

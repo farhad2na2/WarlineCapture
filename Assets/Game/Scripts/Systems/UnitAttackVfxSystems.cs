@@ -24,6 +24,18 @@ namespace Game.Runtime
             foreach (RefRO<UnitAttackVfxRequest> request in SystemAPI.Query<RefRO<UnitAttackVfxRequest>>())
             {
                 UnitAttackVfxRequest value = request.ValueRO;
+                if ((UnitAttackVfxRequestKind)value.Kind == UnitAttackVfxRequestKind.MuzzleFlash)
+                {
+                    if (em.Exists(value.Source))
+                    {
+                        if (em.HasComponent<SkirmishAttemptOwnedComponent>(value.Source) &&
+                            !SkirmishFogConsumerUtility.PlayerVisible(em, value.Source)) continue;
+                    }
+                    else if (!SkirmishFogConsumerUtility.PlayerImpactVisible(em, value.Source, Entity.Null,
+                        value.PlaybackPosition, 1)) continue;
+                }
+                else if (!SkirmishFogConsumerUtility.PlayerImpactVisible(em, value.Source, value.Target,
+                    value.PlaybackPosition, 1)) continue;
                 switch ((UnitAttackVfxRequestKind)value.Kind)
                 {
                     case UnitAttackVfxRequestKind.MuzzleFlash:

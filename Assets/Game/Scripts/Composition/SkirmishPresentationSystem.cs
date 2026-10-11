@@ -61,7 +61,7 @@ namespace Game.Composition
             bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
                 EntityManager.GetComponentData<UnitHealth>(match.EnemyMainBase).Current > 0 && EntityManager.HasComponent<LocalTransform>(match.EnemyMainBase);
             view.PresentEnemyBaseMarker(baseAlive && worldCamera != null
-                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive, baseAlive ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position : default, EntityManager.Exists(match.PlayerMainBase) && EntityManager.HasComponent<LocalTransform>(match.PlayerMainBase) ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.PlayerMainBase).Position : default);
+                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive, baseAlive ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position : default, EntityManager.Exists(match.PlayerMainBase) && EntityManager.HasComponent<LocalTransform>(match.PlayerMainBase) ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.PlayerMainBase).Position : default, SkirmishFogConsumerUtility.PlayerVisible(EntityManager, match.EnemyMainBase));
 #endif
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)

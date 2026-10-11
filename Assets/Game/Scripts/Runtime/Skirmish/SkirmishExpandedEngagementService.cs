@@ -120,7 +120,7 @@ namespace Game.Runtime
                 target == Entity.Null || !em.Exists(target) ||
                 !em.HasComponent<SkirmishAttemptOwnedComponent>(target) ||
                 !em.HasComponent<LocalTransform>(target) ||
-                !SkirmishArmyGroupSystem.IsAlive(em, target) || !SkirmishFogService.IsVisible(em, target))
+                !SkirmishArmyGroupSystem.IsAlive(em, target) || !SkirmishFogService.IsVisibleToFaction(em, target, factionId))
                 return;
             var targetOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
             if (!targetOwner.SessionId.Equals(sessionId) || targetOwner.FactionId == 0 ||
@@ -190,7 +190,7 @@ namespace Game.Runtime
                     owned.FactionId == factionId ||
                     owned.IsStructure != 0)
                     continue;
-                if (!SkirmishFogService.IsVisible(em, candidate) || !SkirmishArmyGroupSystem.IsAlive(em, candidate))
+                if (!SkirmishFogService.IsVisibleToFaction(em, candidate, factionId) || !SkirmishArmyGroupSystem.IsAlive(em, candidate))
                     continue;
                 if (!em.HasComponent<SkirmishUnitRoleComponent>(candidate))
                     continue;
@@ -221,7 +221,7 @@ namespace Game.Runtime
             var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
             if (owned.FactionId == factionId || owned.IsStructure == 0)
                 return Entity.Null;
-            if (!SkirmishFogService.IsVisible(em, target) || !SkirmishArmyGroupSystem.IsAlive(em, target))
+            if (!SkirmishFogService.IsVisibleToFaction(em, target, factionId) || !SkirmishArmyGroupSystem.IsAlive(em, target))
                 return Entity.Null;
             if (!DomainAllows(overlay.TargetDomains, true, SkirmishPopulationCategory.None))
                 return Entity.Null;

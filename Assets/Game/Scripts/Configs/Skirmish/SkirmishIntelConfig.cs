@@ -21,7 +21,7 @@ namespace Game.Configs
         {
             intelId = "skirmish.intel.shared_fog.v1";
             sharedFog = true;
-            developmentFullVision = true;
+            developmentFullVision = false;
             lastSeenExpireSeconds = 20;
             contentVersion = 1;
         }

@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using Game.Composition;
+using System.Linq;
+using Unity.Transforms;
+
+// Isolated native pipeline fixture. Never counted as normal-input mission acceptance.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005BoardApi924
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session, boundary;
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, index, requestId;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure; static Entity carrier; static object closure; static BindingFlags fields=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;
+        deadline=EditorApplication.timeSinceStartup+300;next=0;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick;
+        Debug.Log("[S005BoardApiFixture] scope=IsolatedNativeBoardApiFixture normalMission=0 fundingInjected=1 readinessGranted=FullArsenal openingDeathStimulus=HealthZero selectionInjected=1 nativeBoardApiOrderInjected=1 pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005BoardApiCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick;
+                completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Ground paid queue fixture exceeded 300 seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId) && (r.RoleKind==SkirmishRoleKind.Rifle || r.RoleKind==SkirmishRoleKind.ApcHeavy))selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=2)throw new InvalidOperationException("Expected Rifle and Heavy APC, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))foreach(var actor in actors)Kill(em,actor);
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                if(index==roles.Length){Finish(false,"twoRoleNativeBoardingDiagnostic");return;}
+                var role=roles[index];
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))throw new InvalidOperationException("Functional producer missing: "+role.RoleKind);
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005BoardApiQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                results.Add(roles[index].RoleKind.ToString());if(roles[index].RoleKind==SkirmishRoleKind.Rifle){index++;phase=2;return;} carrier=members[0];phase=6;caseDeadline=now+45;return;
+            }
+            if(phase==6){ProbeBoard(em);phase=7;return;}
+            if(phase==7){if(em.HasBuffer<UnitTransportPassengerElement>(carrier) && em.GetBuffer<UnitTransportPassengerElement>(carrier).Length>0){Debug.Log("[S005BoardApi] result=Passed nativePassengers="+em.GetBuffer<UnitTransportPassengerElement>(carrier).Length+" normalInput=0 fullRecovery=Pending");Finish(false,"nativeApiBoarded");}return;}
+            if(phase==5)
+            {
+                foreach(var member in members)if(em.Exists(member) && em.HasComponent<SkirmishAttemptOwnedComponent>(member) && em.GetComponentData<SkirmishAttemptOwnedComponent>(member).CapacityReleased==0)return;
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)throw new InvalidOperationException("Capacity not fully released after delivered role death.");
+                foreach(var member in members)if(em.Exists(member) && SkirmishProductionService.TryReleaseDeath(em,session,member))throw new InvalidOperationException("Death released capacity twice.");
+                Debug.Log("[S005GroundPaidQueueDeath] result=Passed role="+roles[index].RoleKind+" capacityReleased=1 idempotent=1 stimulus=HealthZero");results.Add(roles[index].RoleKind.ToString());index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static void ProbeBoard(EntityManager em) {
+        var view=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+        var boot=view.GetType().GetField("matchBootstrapSystem",fields).GetValue(view);
+        closure=((Delegate)boot.GetType().GetField("_selectionRuntimeUpdate",fields).GetValue(boot)).Target;
+        var getContext=closure.GetType().GetMethods(fields).Single(x=>x.Name.Contains("g__GetPointerTargetCommandContext|") && x.GetParameters().Length==0);
+        var context=getContext.Invoke(closure,null);
+        var pointer=closure.GetType().GetField("rtsSelectionPointerTargetCommandSystem",fields).GetValue(closure);
+        var point=(Vector2)Camera.main.WorldToScreenPoint((Vector3)em.GetComponentData<LocalTransform>(carrier).Position+Vector3.up);
+        object[] pick={context,point,em,Entity.Null};
+        bool found=(bool)pointer.GetType().GetMethod("TryGetClickedUnitEntity",fields).Invoke(pointer,pick);
+        Debug.Log("[S005BoardApiPointer] actualCarrier="+carrier+" point="+point+" found="+found+" picked="+pick[3]+" scope=IsolatedProjection normalInput=0");
+        using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+        using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(o.FactionId==1 && o.ReservationId>0 && em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.Rifle && em.GetComponentData<UnitHealth>(actor).Current>0){if(!em.HasComponent<SelectedUnitTag>(actor))em.AddComponent<SelectedUnitTag>(actor);Debug.Log("[S005BoardApiPassenger] id="+o.StableObjectId+" grid="+JsonUtility.ToJson(em.GetComponentData<UnitGrid>(actor)));}}
+        object helper=closure.GetType().GetField("transportBoardingCommandSystem",fields).GetValue(closure);
+        object air=closure.GetType().GetField("unitTransportAirPickupSystem",fields).GetValue(closure);
+        object move=closure.GetType().GetField("unitMoveOrderSystem",fields).GetValue(closure);
+        object selection=closure.GetType().GetField("selectionStateSystem",fields).GetValue(closure);
+        object result=helper.GetType().GetMethod("TryIssueBoardTransportOrderToTransport",fields).Invoke(helper,new object[]{em,carrier,air,move,selection});
+        bool accepted=(bool)result.GetType().GetField("Accepted",fields).GetValue(result);
+        string reason=result.GetType().GetField("ReasonCode",fields).GetValue(result).ToString();
+        Debug.Log("[S005BoardApiReceipt] accepted="+accepted+" reason="+reason+" normalInput=0");
+        if(!accepted)throw new InvalidOperationException("Native direct boarding rejected: "+reason);
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005BoardApiFixture] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending movementAttackService=Pending reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedGroundPaidQueues:"+reason});
+    }
+}

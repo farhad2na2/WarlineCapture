@@ -53,6 +53,9 @@ namespace Game.Editor
         }
         private static void RunEditorJourney(string language, bool manual, bool stopProbe=false, string selectedCatalog="S004", int selectedSeed=0)
         {
+            // Pre-save failures in a reused Editor must not report the preceding
+            // manual journey's counters before StartManualProbe runs.
+            manualActions = manualAttackReceipts = 0;
             if (selectedCatalog == "S005")
             {
                 var source = SkirmishBattleCatalogConfig.Load();

@@ -16,10 +16,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Gunner",
@@ -34,10 +34,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Marksman",
@@ -52,10 +52,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Breacher",
@@ -70,10 +70,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Rocketeer",
@@ -88,10 +88,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Car",
@@ -106,10 +106,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "ApcFast",
@@ -127,10 +127,10 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "ApcArmored",
@@ -148,10 +148,10 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Radar",
@@ -166,10 +166,10 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "LogisticsTruck",
@@ -184,10 +184,10 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Tanker",
@@ -202,10 +202,10 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "AntiAir",
@@ -220,10 +220,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "TransportHeli",
@@ -389,10 +389,10 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "ApcHeavy",
@@ -410,11 +410,11 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "historicalScopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     },
     {
       "role": "Siege",
@@ -429,15 +429,15 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "PaidNativeQueueAndDeathReleasePassed_FullLifecyclePending",
+      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "partialCurrentProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
     }
   ],
-  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
-  "currentSourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
-  "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "currentSourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "currentSourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
@@ -458,6 +458,6 @@
   "currentAriaBaselineMatrix": null,
   "recorded711AriaMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
   "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-  "currentGroundPaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
-  "currentGroundPaidQueueCases": 15
+  "currentGroundPaidQueueCases": 15,
+  "recorded0488NativePaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json"
 }

@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Tests/Editor/RtsSelectionInputSystemTests.cs(3156,62): error CS1503: Argument 2: cannot convert from 'Game.Runtime.RuntimeGameplayStateSystem' to 'Game.UI.Contracts.IMatchRuntimeState'\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

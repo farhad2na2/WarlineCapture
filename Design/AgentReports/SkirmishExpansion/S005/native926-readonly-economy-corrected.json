@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyEconomy926.cs",
+      "entry": "S005ReadOnlyEconomy926.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 61,
+      "executeMs": 4,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyEconomy926_0eb975ba7fda4d22ab949f10d47c9961",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyEconomy",
+        "materials": 30,
+        "capacity": "{\"FactionId\":1,\"InfantryCap\":48,\"GroundCap\":8,\"AirCap\":2,\"SupplyCap\":128,\"InfantryLive\":12,\"GroundLive\":2,\"AirLive\":0,\"SupplyLive\":22,\"InfantryReserved\":0,\"GroundReserved\":0,\"AirReserved\":0,\"SupplyReserved\":0,\"NextReservationId\":1002}",
+        "readiness": "{\"FactionId\":1,\"Readiness\":2,\"InfantryWeapons\":0,\"VehicleProtection\":0,\"AircraftEfficiency\":0,\"NextResearchId\":1}",
+        "reservations": [
+          "{\"ReservationId\":1001,\"Role\":21,\"Category\":4,\"MemberCount\":1,\"RemainingMembers\":1,\"DeliveredMembers\":1,\"ProductionGroupId\":15,\"ProducerRuntimeId\":3,\"MaterialsPaid\":100,\"SupplyCost\":0,\"Phase\":3,\"FactionId\":1,\"Producer\":2}",
+          "{\"ReservationId\":1002,\"Role\":9,\"Category\":2,\"MemberCount\":1,\"RemainingMembers\":1,\"DeliveredMembers\":1,\"ProductionGroupId\":16,\"ProducerRuntimeId\":3,\"MaterialsPaid\":280,\"SupplyCost\":6,\"Phase\":3,\"FactionId\":1,\"Producer\":2}"
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

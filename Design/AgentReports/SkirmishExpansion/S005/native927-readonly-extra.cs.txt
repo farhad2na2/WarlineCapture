@@ -1,0 +1,13 @@
+using System;
+using System.Reflection;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using Game.Components;
+using Game.Composition;
+public static class S005BoardExtra927 {
+ static double next;static readonly BindingFlags f=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;static Type h=>typeof(Game.Editor.SkirmishS002AriaRunHarness);
+ public static object Run(){EditorApplication.update+=Tick;return "Read-only runtime/input-context observer attached to existing owned diagnostic.";}
+ static void Tick(){if(!EditorApplication.isPlaying){EditorApplication.update-=Tick;return;}if(EditorApplication.timeSinceStartup<next)return;next=EditorApplication.timeSinceStartup+.25;if((int)h.GetField("playerResumeStep",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null)!=-2)return;try{var em=World.DefaultGameObjectInjectionWorld.EntityManager;using(var q=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es)Debug.Log("[S005BoardExtraRuntime] frame="+Time.frameCount+" "+JsonUtility.ToJson(em.GetComponentData<RuntimeGameplayStateComponent>(e)));var v=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();var b=v.GetType().GetField("matchBootstrapSystem",f).GetValue(v);var c=((Delegate)b.GetType().GetField("_selectionRuntimeUpdate",f).GetValue(b)).Target;var flush=c.GetType().GetField("rtsSelectionCommandResultFlushSystem",f).GetValue(c);var results=flush.GetType().GetField("_transportCommandResultScratch",f).GetValue(flush) as System.Collections.IEnumerable;foreach(var r in results)Debug.Log("[S005BoardExtraFlushedResult] "+JsonUtility.ToJson(r));}catch(Exception e){Debug.Log("[S005BoardExtraError] "+e.Message);}}
+}

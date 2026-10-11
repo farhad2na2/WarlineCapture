@@ -1,0 +1,45 @@
+{
+  "result": "Failed",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": "1",
+  "locale": "en",
+  "seed": 155926,
+  "normalMissionVictoryClaimed": false,
+  "log": "native-925-normal-touch-board-observation.log",
+  "logSha256": "0e980b6c30a113d50aa896aa550194cc7b0a0768e2ce4dd4b862f45dcaf48822",
+  "preManifest": "final-924-isolated-board-api-post-source-manifest.json",
+  "postManifest": "final-925-failed-manual-en-seed155926-post-source-manifest.json",
+  "sourceManifestUnchanged": true,
+  "trace": "s005-aria-live-155926-en-02309411d27840cab83d0fd1fde80141.jsonl",
+  "lastTrace": null,
+  "inputAudit": {
+    "recordedContacts": 9,
+    "completedContacts": 9,
+    "phases": {
+      "Menu": 9
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-02309411d27840cab83d0fd1fde80141.jsonl.touch.jsonl",
+    "sha256": "4034368d77b958275eaae05677676ba300a3179e874a25eaa5b631183f4e715f"
+  },
+  "nativeFailureMarkers": [
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Player Save/Resume timed out at step=0",
+    "[S004ManualNative] result=Failed outcome=None seconds=16.00954 reason=playerSaveResume=Player Save/Resume timed out at step=0 input=Touch ariaStarted=0 actions=91 attackReceipts=13",
+    "[ExistingEditorValidation] result=Failed executeMethod=S005BoardObserve925.RunValidation"
+  ],
+  "playerReady": false,
+  "scope": "External observer fixture failure; not mission acceptance",
+  "diagnosticFixtureError": "Observer used stale playerResumeBoardStep before playerResumeProbeActive/current stage -2, then shortened probe deadline at stage0. No native boarding was attempted. Corrected external observer926 requires active boarding stage.",
+  "normalBoardingAttempted": false,
+  "normalMissionCompleted": false,
+  "fixtureWatchdogModified": true,
+  "missionClockUnchanged": true
+}

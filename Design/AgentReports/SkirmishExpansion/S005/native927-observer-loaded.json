@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005BoardObserve927.cs",
+      "entry": "S005BoardObserve927.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 69,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005BoardObserve927_1000c1b963f146fa93f649cd0df5115e",
+      "success": true,
+      "result": "Loaded only"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

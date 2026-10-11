@@ -1,0 +1,71 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Composition;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+// Normal touch boarding with read-only observations. No actors, selection,
+// orders, funds or outcomes are injected. Only the Editor watchdog is bounded.
+public static class S005BoardObserve925
+{
+    static TaskCompletionSource<int> done;
+    static readonly BindingFlags stat=BindingFlags.Static|BindingFlags.NonPublic;
+    static readonly BindingFlags inst=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static double stop, boardAt, next;
+    static int lastStep=-99, observations;
+    static bool sawPlay;
+    public static object Run() => "Loaded only";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Existing Play session");
+        done=new TaskCompletionSource<int>();stop=EditorApplication.timeSinceStartup+250;boardAt=next=0;lastStep=-99;observations=0;sawPlay=false;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorBoardedApcSaveResumeEn();
+        harness.GetField("deadline",stat).SetValue(null,stop);
+        EditorApplication.update+=Tick;
+        Debug.Log("[S005BoardObserve] scope=NormalTouchReadOnlyDiagnostic watchdogSeconds=250 actorsResourcesOrdersSelectionInjected=0 missionClockUnchanged=1 normalWin=0");
+        return done.Task;
+    }
+    static void Tick()
+    {
+        if(!EditorApplication.isPlayingOrWillChangePlaymode){if(sawPlay){EditorApplication.update-=Tick;Debug.Log("[S005BoardObserve] diagnosticComplete=1 observations="+observations+" normalWin=0");done.TrySetResult(1);}return;}
+        if(!EditorApplication.isPlaying)return;sawPlay=true;
+        try {
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated)return;
+            var em=world.EntityManager;int step=(int)harness.GetField("playerResumeBoardStep",stat).GetValue(null);
+            double now=EditorApplication.timeSinceStartup;
+            if(step==2 && boardAt==0)boardAt=now;
+            // Let the normal validation end through its own failed watchdog,
+            // without aborting or closing an Editor.
+            if(boardAt>0 && now>boardAt+12)harness.GetField("playerResumeDeadline",stat).SetValue(null,now-.01);
+            if(step<1 || now<next && step==lastStep)return;
+            lastStep=step;next=now+.5;observations++;
+            Debug.Log("[S005BoardObserveState] step="+step+" frame="+Time.frameCount);
+            using(var q=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es)Debug.Log("[S005BoardObserveInput] "+JsonUtility.ToJson(em.GetComponentData<RtsSelectionInputStateComponent>(e)));
+            using(var q=em.CreateEntityQuery(typeof(RtsSelectionCommandResultElement)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es)foreach(var r in em.GetBuffer<RtsSelectionCommandResultElement>(e))Debug.Log("[S005BoardObserveResult] "+JsonUtility.ToJson(r));
+            using(var q=em.CreateEntityQuery(typeof(RtsSelectionCommandIntentRequestElement)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es)foreach(var r in em.GetBuffer<RtsSelectionCommandIntentRequestElement>(e))Debug.Log("[S005BoardObserveRequest] "+JsonUtility.ToJson(r));
+            using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var a in es){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(a);var r=em.GetComponentData<SkirmishUnitRoleComponent>(a).Role;if(o.FactionId!=1 || !em.HasComponent<SelectedUnitTag>(a) && r!=SkirmishRoleKind.ApcHeavy)continue;
+                Debug.Log("[S005BoardObserveActor] id="+o.StableObjectId+" role="+r+" selected="+em.HasComponent<SelectedUnitTag>(a)+" grid="+JsonUtility.ToJson(em.GetComponentData<UnitGrid>(a))+" intent="+(em.HasComponent<SkirmishMoveIntentComponent>(a)?JsonUtility.ToJson(em.GetComponentData<SkirmishMoveIntentComponent>(a)):"none")+" target="+(em.HasComponent<UnitTarget>(a)?JsonUtility.ToJson(em.GetComponentData<UnitTarget>(a)):"none")+" board="+em.HasComponent<UnitTransportBoardingTarget>(a)+" passenger="+em.HasComponent<UnitTransportPassenger>(a));
+                if(r==SkirmishRoleKind.ApcHeavy)ProbePointer(em,a);
+            }
+        }catch(Exception e){Debug.LogError("[S005BoardObserveError] "+e);}
+    }
+    static void ProbePointer(EntityManager em,Entity carrier)
+    {
+        var view=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();var boot=view.GetType().GetField("matchBootstrapSystem",inst).GetValue(view);
+        var closure=((Delegate)boot.GetType().GetField("_selectionRuntimeUpdate",inst).GetValue(boot)).Target;
+        var context=closure.GetType().GetMethods(inst).Single(x=>x.Name.Contains("g__GetPointerTargetCommandContext|") && x.GetParameters().Length==0).Invoke(closure,null);
+        var pointer=closure.GetType().GetField("rtsSelectionPointerTargetCommandSystem",inst).GetValue(closure);
+        var point=(Vector2)Camera.main.WorldToScreenPoint((Vector3)em.GetComponentData<LocalTransform>(carrier).Position+Vector3.up);
+        object[] pick={context,point,em,Entity.Null};bool found=(bool)pointer.GetType().GetMethod("TryGetClickedUnitEntity",inst).Invoke(pointer,pick);
+        bool boardable=(bool)pointer.GetType().GetMethod("IsBoardablePlayerTransportClick",inst).Invoke(pointer,new object[]{context,point});
+        Debug.Log("[S005BoardObservePointer] point="+point+" carrier="+carrier+" found="+found+" picked="+pick[3]+" boardable="+boardable);
+    }
+}

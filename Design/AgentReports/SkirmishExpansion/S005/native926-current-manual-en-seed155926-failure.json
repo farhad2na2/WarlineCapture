@@ -1,0 +1,60 @@
+{
+  "result": "Failed",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": "1",
+  "locale": "en",
+  "seed": 155926,
+  "normalMissionVictoryClaimed": false,
+  "log": "native-926-normal-touch-board-observation.log",
+  "logSha256": "d8f0a96d5c628e1a7039dfe5006bc3be053abc1490a5f0825ed1169aa2aba445",
+  "preManifest": "final-925-failed-manual-en-seed155926-post-source-manifest.json",
+  "postManifest": "final-926-failed-manual-en-seed155926-post-source-manifest.json",
+  "sourceManifestUnchanged": true,
+  "trace": "s005-aria-live-155926-en-2745528d4272488c9595daaae9463183.jsonl",
+  "lastTrace": null,
+  "inputAudit": {
+    "recordedContacts": 50,
+    "completedContacts": 50,
+    "phases": {
+      "Menu": 9,
+      "PlayerResume": 41
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-2745528d4272488c9595daaae9463183.jsonl.touch.jsonl",
+    "sha256": "dae3b4668dc0de54c0132edd7c57072f834d8fc2659a3c3df60ae0d164228d1d"
+  },
+  "nativeFailureMarkers": [
+    "Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)",
+    "Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)",
+    "Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)",
+    "Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)",
+    "Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)",
+    "Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)",
+    "Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)",
+    "Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)",
+    "[S005PlayerSaveResume] result=Failed step=-2 reason=Player Save/Resume timed out at step=-2",
+    "[S004ManualNative] result=Failed outcome=None seconds=187.0086 reason=playerSaveResume=Player Save/Resume timed out at step=-2 input=Touch ariaStarted=0 actions=91 attackReceipts=13",
+    "[ExistingEditorValidation] result=Failed executeMethod=S005BoardObserve926.RunValidation"
+  ],
+  "playerReady": false,
+  "scope": "Normal touch boarding diagnostic; bounded Editor watchdog, not full mission acceptance",
+  "boardedSaveReached": false,
+  "nativeTargetPicking": {
+    "carrierCorrect": true,
+    "boardableClick": true
+  },
+  "previousSkirmishMoveIntentsObserved": false,
+  "probeEnd": "Normal harness failed pre-save watchdog after 12 seconds of boarding observation; no process terminated",
+  "staleManualSummaryCounters": "Raw S004ManualNative actions91/attackReceipts13 belong to earlier native921; use strict touch audit for this run",
+  "normalMissionWin": false,
+  "loggingEnvironmentEnabled": "WARLINE_SELECTION_CLICK_DIAGNOSTICS=1",
+  "actorsResourcesOrdersSelectionInjected": false
+}

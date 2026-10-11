@@ -97,6 +97,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(false));
             RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(true));
             RunCase(test => test.RuntimeInput_CapturedUiReleaseDoesNotSuppressNextWorldSelection());
+            RunCase(test => test.RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(false));
+            RunCase(test => test.RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(true));
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
@@ -2808,7 +2810,7 @@ public sealed class RtsSelectionInputSystemTests
             3,
             true,
             TacticalCommandReasonCode.None,
-            "Stopped selected units.");
+            Game.Configs.GameText.Get("tactical.feedback.stopped_selected_units", "Stopped selected units."));
         AssertImmediateCommandResult(
             RtsSelectionCommandIntentKind.ReturnToBase,
             true,
@@ -3143,6 +3145,50 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(1, focusCalls, "A completed gameplay-UI release must not consume the next world-unit selection.");
     }
 
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RuntimeInput_FullMapUiReleasePreservesNextBoardTarget(bool closing)
+    {
+        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        var runtime = new RuntimeGameplayStateSystem(em) { PlayRequested = true };
+        var ui = new MainMenuPlayUI();
+        Type adapterType = typeof(Game.Composition.MatchSceneView).Assembly
+            .GetType("Game.Composition.MatchRuntimeStateAdapter", throwOnError: true);
+        var runtimeUi = (Game.UI.Contracts.IMatchRuntimeState)Activator.CreateInstance(adapterType, runtime);
+        ui.Init(new SelectionUiCommandUiSystemHelper(input), runtimeUi, resetRuntimeState: false);
+        input.ArmBoardCommandMode(BoardCommandModeDirection.PassengerToTransport,
+            Entity.Null, Time.frameCount, oneShot: true);
+        int boardTargets = 0;
+        int focusCalls = 0;
+        var context = CreateRuntimeInputContext(runtime, input,
+            tryFocusUnit: _ => { focusCalls++; return true; },
+            tryIssueBoardTransportOrder: _ => { boardTargets++; return true; });
+        try
+        {
+            typeof(MainMenuPlayUI).GetMethod(closing ? "RequestFullMapClose" : "RequestFullMapPopup",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(ui, null);
+            Assert.IsTrue(input.IgnoreUiClickUntilRelease,
+                "A map UI release needs a captured sequence so suppression cannot leak into the next world tap.");
+            Assert.IsTrue(runtime.SuppressNextWorldClick);
+            Assert.AreEqual(0, boardTargets, "Map camera controls must issue no troop order.");
+
+            // The normal pointer loop consumes the captured release (or idle
+            // state after full-map camera mode skipped that release).
+            InvokeCompleteCapturedUiClickSequence(input, runtime);
+            Assert.IsFalse(runtime.SuppressNextWorldClick);
+            Assert.IsTrue(input.TryGetActiveBoardCommandMode(out var direction, out _));
+            Assert.AreEqual(BoardCommandModeDirection.PassengerToTransport, direction);
+            Vector2 carrierPoint = new(640, 360);
+            input.BeginPointerPress(carrierPoint, pointerPressedOverUi: false);
+            InvokeRuntimePointerRelease(context, carrierPoint);
+            Assert.AreEqual(1, boardTargets, "The first deliberate transport tap after the map must reach Board.");
+            Assert.AreEqual(0, focusCalls, "Board target selection must not fall through to unit focus.");
+        }
+        finally { ui.Dispose(); }
+    }
+
     [Test]
     public void RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting()
     {
@@ -3467,7 +3513,9 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void MatchOverlayCommandInputUiSystemHelper_LeavesCommandTabPresentationToHudFeedback()
     {
-        string commandInput = File.ReadAllText("Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs");
+        string commandInput = string.Join("\n", Array.ConvertAll(
+            Directory.GetFiles("Assets/Game/Scripts/UI/Screens", "MatchOverlayCommandInputUiSystemHelper*.cs"),
+            File.ReadAllText));
 
         Assert.IsFalse(commandInput.Contains("MatchOverlayCommandTabVisualUiSystemHelper", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains("ApplyDefaultSelection", StringComparison.Ordinal));
@@ -3875,7 +3923,8 @@ public sealed class RtsSelectionInputSystemTests
         Action<Vector2> panCamera = null,
         Func<Entity, Vector2, bool> isBoardSelectedTransportPassengerTarget = null,
         Func<Vector2, bool> tryIssueScanOrder = null,
-        Func<Vector2, bool> tryFocusUnit = null)
+        Func<Vector2, bool> tryFocusUnit = null,
+        Func<Vector2, bool> tryIssueBoardTransportOrder = null)
     {
         return new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
             runtimeGameplayStateSystem: runtimeState,
@@ -3895,7 +3944,7 @@ public sealed class RtsSelectionInputSystemTests
             tryGetDefaultEntityManager: null,
             tryGetScanClickedCell: null,
             setHudWorldMarkersVisible: null,
-            tryIssueBoardTransportOrderToClickedUnit: null,
+            tryIssueBoardTransportOrderToClickedUnit: tryIssueBoardTransportOrder,
             tryIssueBoardSelectedTransportOrderToClickedUnit: null,
             tryIssueBoardSelectedTransportOrderToPassengerRect: null,
             isBoardSelectedTransportPassengerTarget: isBoardSelectedTransportPassengerTarget,

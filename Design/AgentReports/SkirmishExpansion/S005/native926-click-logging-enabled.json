@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "System.Environment.SetEnvironmentVariable(\"WARLINE_SELECTION_CLICK_DIAGNOSTICS\",\"1\"); return \"Selection click logging enabled; no actors, orders, resources or input changed.\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Selection click logging enabled; no actors, orders, resources or input changed."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

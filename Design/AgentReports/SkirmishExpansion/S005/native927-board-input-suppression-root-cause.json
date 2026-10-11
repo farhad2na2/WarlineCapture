@@ -1,0 +1,20 @@
+{
+  "result": "Reproduced",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "log": "native-927-normal-board-native-diagnostics.log",
+  "nativePointerFoundActualCarrier": true,
+  "boardableClick": true,
+  "selectedValidRifles": 4,
+  "worldTouchPaired": true,
+  "actorBoardTargetsCreated": false,
+  "actualNativeReleaseFrame": 7688,
+  "nativeLog": "[SelectionClick] clickSuppressed reason=SuppressNextWorldClick action=ConsumeRelease pos=(1201.78, 541.87)",
+  "runtimeSuppressBefore": 1,
+  "runtimeSuppressAfter": 0,
+  "normalInput": true,
+  "actorsResourcesOrdersSelectionInjected": false,
+  "diagnosticFlagsChangedOnly": true,
+  "fullMissionWin": false,
+  "boardedRecoveryPassed": false,
+  "playerReady": false
+}

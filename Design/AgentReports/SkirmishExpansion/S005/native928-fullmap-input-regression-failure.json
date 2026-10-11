@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "log": "native-928-fullmap-input-regressions.log",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "sourceHash": "378d8835704767e5cee8b0733a356448d36de644d128c80eb384fd06ce711a31",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-928-fullmap-input-final-pre-source-manifest.json",
+  "postSourceManifest": "final-928-failed-input-regression-post-source-manifest.json",
+  "reason": "Existing immediate Stop feedback test expected obsolete Stopped selected units string, but current shipped localized feedback explains cancelled orders and disabled automatic fire.",
+  "newFullMapTestsReached": false,
+  "playerReady": false
+}

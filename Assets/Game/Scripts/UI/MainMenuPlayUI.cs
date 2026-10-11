@@ -678,17 +678,16 @@ namespace Game.UI.Runtime
 
         private void RequestFullMapPopup()
         {
-            if (_runtimeGameplayStateSystem != null)
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-
+            CaptureGameplayUiClickSequence();
             FullMapPopupRequested?.Invoke();
         }
 
         private void RequestFullMapClose()
         {
-            if (_runtimeGameplayStateSystem != null)
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-
+            // The map owns this UI release, not the next deliberate world tap.
+            // Full-map camera input skips the normal pointer loop while open;
+            // capture lets that loop clear suppression after the popup closes.
+            CaptureGameplayUiClickSequence();
             FullMapPopupCloseRequested?.Invoke();
         }
 

@@ -1,0 +1,36 @@
+{
+  "result": "Passed",
+  "scope": "IsolatedNativeBoardApiFixture",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "preSourceManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
+  "postSourceManifest": "final-924-isolated-board-api-post-source-manifest.json",
+  "fixture": "native924-isolated-board-api-fixture.cs.txt",
+  "fixtureSha256": "3e1d9a07fbb8057135d69ae2604d1cc2904074df4683f651c8ca07df4e4a4f2a",
+  "log": "native-924-isolated-board-api.log",
+  "actualWrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "roles": [
+    "Rifle",
+    "ApcHeavy"
+  ],
+  "nativeQueues": true,
+  "paidCosts": [
+    80,
+    280
+  ],
+  "pointerPickedActualCarrier": true,
+  "nativeBoardOrderAccepted": true,
+  "nativePassengersObserved": 1,
+  "ownedWorldCleanupPassed": true,
+  "normalInput": false,
+  "normalMissionWin": false,
+  "fullRecoveryPassed": false,
+  "selectionInjected": true,
+  "nativeBoardApiOrderInjected": true,
+  "readinessGranted": "FullArsenal",
+  "fundingInjected": true,
+  "openingHealthZeroStimuli": true,
+  "enemyStrategyDisabled": true,
+  "pricesCapsRatesMapsUnchanged": true,
+  "playerReady": false
+}

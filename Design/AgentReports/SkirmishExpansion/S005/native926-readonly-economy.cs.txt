@@ -1,0 +1,12 @@
+using System;
+using System.Reflection;
+using Unity.Entities;
+using UnityEngine;
+using Game.Components;
+using Game.Runtime;
+using Game.UI.Runtime;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+public static class S005ReadOnlyEconomy926 {
+ public static object Run(){var em=World.DefaultGameObjectInjectionWorld.EntityManager;using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));var s=q.GetSingletonEntity();var rows=new System.Collections.Generic.List<string>();foreach(var r in em.GetBuffer<SkirmishProductionReservation>(s))rows.Add(JsonUtility.ToJson(r));return new{scope="ReadOnlyEconomy",materials=SkirmishMaterialsService.Read(em,s,1),capacity=JsonUtility.ToJson(em.GetComponentData<SkirmishCapacityComponent>(s)),readiness=JsonUtility.ToJson(em.GetComponentData<SkirmishResearchStateComponent>(s)),reservations=rows};}
+}

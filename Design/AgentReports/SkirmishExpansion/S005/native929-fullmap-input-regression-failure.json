@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "log": "native-929-fullmap-input-regressions.log",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "sourceHash": "34a08d63b58e68c9263a2a5df5cd7956f69b66438a69661e77f3af819f975ecc",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-929-fullmap-input-pre-source-manifest.json",
+  "postSourceManifest": "final-929-failed-input-regression-post-source-manifest.json",
+  "newMapCasesPassedBeforeFailure": true,
+  "reason": "Existing architecture assertion read only the main partial command-input source and missed selection methods moved to GuidedCommands partial source.",
+  "playerReady": false
+}

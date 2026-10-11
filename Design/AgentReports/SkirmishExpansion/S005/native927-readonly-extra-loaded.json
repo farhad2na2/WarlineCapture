@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005BoardExtra927.cs",
+      "entry": "S005BoardExtra927.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 61,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005BoardExtra927_25c01bf2733048f3bda21a1aa0a5fd96",
+      "success": true,
+      "result": "Read-only runtime/input-context observer attached to existing owned diagnostic."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

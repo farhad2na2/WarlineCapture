@@ -3,21 +3,21 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
-  "sourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "sourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native924",
-  "activeLog": "native-924-isolated-board-api.log",
-  "activeScope": "S005BoardApi924.RunValidation",
-  "activePreManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
-  "currentCompilationProof": "compile-919-spawn-surface-status.json",
+  "activeRun": "native931",
+  "activeLog": "native-931-boarded-apc-save-continue.log",
+  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorBoardedRecoveryProbeEn",
+  "activePreManifest": "final-930-fullmap-input-post-source-manifest.json",
+  "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
-  "currentManualLocalePair": "native920-921-current-manual-en-fa-locale-pair.json",
+  "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
@@ -36,6 +36,7 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
+    "Current-source normal EN/FA manual and ARIA journeys after shared map-input fix",
     "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
@@ -43,15 +44,14 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Diagnose native boarding rejection; retain current manual EN/FA wins, qualify aircraft/roles and refresh ARIA matrix on frozen source.",
+  "nextWork": "Validate shared map-input fix and normal boarding Save/Continue/unload, then refresh current normal manual/ARIA journeys and remaining technical gates.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "ActiveIsolatedDiagnostic",
-    "run": 924,
-    "scope": "Rifle plus Heavy APC native target resolver and direct boarding API. Funds/readiness/selection/native API order injected only into disposable fixture; no normal mission acceptance."
+    "status": "Pending",
+    "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
@@ -114,7 +114,7 @@
   },
   "sharedAriaDefenseCommit": "5b98cb427",
   "currentBakedRoleInventory": null,
-  "latestCurrentManualFailure": "native922-current-manual-en-seed155926-failure.json",
+  "latestCurrentManualFailure": "native927-current-manual-en-seed155926-failure.json",
   "recorded711Qualification": {
     "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
     "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
@@ -154,13 +154,10 @@
     "cleanupWarnings": []
   },
   "shippingNativeSurfaceSpawnCommit": "629318bbf",
-  "currentManualControlsProofs": [
-    "native920-current-manual-en-seed130368-victory.json",
-    "native921-current-manual-fa-IR-seed104734-victory.json"
-  ],
-  "currentManualControlsProof": "native921-current-manual-fa-IR-seed104734-victory.json",
-  "currentCombatSaveContinueProof": "native920-current-manual-en-seed130368-victory.json",
-  "manualLocaleStatus": "Passed native920 combat Save/Continue EN and native921 fresh manual FA; frozen result/Main Menu return, complete input/receipt audits, wrapper/bridge0 and matching full source.",
+  "currentManualControlsProofs": [],
+  "currentManualControlsProof": null,
+  "currentCombatSaveContinueProof": null,
+  "manualLocaleStatus": "Recorded0488 normal EN/FA victories retained; refresh pending after shared map-input fix.",
   "focusedNative923": {
     "result": "Passed",
     "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
@@ -176,6 +173,54 @@
     "nativeMatchCount": 0,
     "cleanupWarnings": []
   },
-  "currentGroundPaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
-  "boardedRecoveryStatus": "Native922 Failed before save: no boarding targets after a complete transport-target gesture. Ten seats available, four valid selected Rifle soldiers; retained diagnostics. No recovery/mission acceptance claimed."
+  "currentGroundPaidQueueProof": null,
+  "boardedRecoveryStatus": "Shared map-input fix compiled and complete focused input suite passed (native930); normal native931 boarded Save/Continue/unload active.",
+  "focusedNative924": {
+    "result": "Passed",
+    "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
+    "postSourceManifest": "final-924-isolated-board-api-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-924-isolated-board-api.log",
+    "requiredPassMarker": "[S005BoardApi] result=Passed nativePassengers=",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentIsolatedBoardApiProof": null,
+  "latestDiagnosticFixtureFailure": "native925-current-manual-en-seed155926-failure.json",
+  "latestInputRegressionFailure": "native929-fullmap-input-regression-failure.json",
+  "recorded0488Qualification": {
+    "currentCompilationProof": "compile-919-spawn-surface-status.json",
+    "currentManualLocalePair": "native920-921-current-manual-en-fa-locale-pair.json",
+    "currentManualControlsProofs": [
+      "native920-current-manual-en-seed130368-victory.json",
+      "native921-current-manual-fa-IR-seed104734-victory.json"
+    ],
+    "currentManualControlsProof": "native921-current-manual-fa-IR-seed104734-victory.json",
+    "currentCombatSaveContinueProof": "native920-current-manual-en-seed130368-victory.json",
+    "currentGroundPaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
+    "currentIsolatedBoardApiProof": "native924-scoped-native-board-api-pass.json",
+    "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+    "rootCause": "native927-board-input-suppression-root-cause.json"
+  },
+  "focusedNative930": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-930-fullmap-input-pre-source-manifest.json",
+    "postSourceManifest": "final-930-fullmap-input-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-930-fullmap-input-regressions.log",
+    "requiredPassMarker": "[RtsSelectionInputSystemValidation] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentFullMapInputRegressionProof": "native930-focused-current-proof.json"
 }

@@ -213,8 +213,11 @@ namespace Game.UI.Runtime
                         mapNameText.overflowMode = TextOverflowModes.Overflow;
                     }
                     else if (selected.ScenarioId == "S005")
+                    {
                         UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
                             ? "S005 · حمله با نیروهای ترکیبی" : "S005 · Combined-arms base assault");
+                        mapNameText.overflowMode = TextOverflowModes.Overflow;
+                    }
                     else if (!string.IsNullOrEmpty(titleKey))
                     {
                         binding.Configure(titleKey, titleEnglish, false);

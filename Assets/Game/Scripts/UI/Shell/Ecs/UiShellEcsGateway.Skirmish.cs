@@ -239,6 +239,8 @@ namespace Game.UI.Shell.Ecs
         }
         private static string HiddenAwareBaseLabel(SkirmishHealthReadout readout,string key,string fallback)
         {
+            if (readout.Knowledge == SkirmishHealthReadout.Hidden)
+                return GameText.Get("ui.skirmish."+key,fallback)+"\n—";
             return GameText.Get("ui.skirmish."+key,fallback)+"\n"+
                    Mathf.Max(0,readout.DisplayedCurrent)+" / "+Mathf.Max(0,readout.Max);
         }

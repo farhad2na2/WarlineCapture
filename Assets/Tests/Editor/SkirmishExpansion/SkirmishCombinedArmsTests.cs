@@ -298,14 +298,23 @@ namespace Game.Tests.Editor
             }
         }
 
-        private static Unity.Mathematics.int2 PlaceInitialVehicle(int seed, int noise)
+        [Test]
+        public void InitialPlacementRejectsCoarseGridCellsWithoutTraversableSurface()
+        {
+            foreach (bool vehicle in new[] { false, true })
+                PlaceInitialVehicle(130368, 0, true, false, vehicle);
+            PlaceInitialVehicle(130368, 0, true, true);
+        }
+
+        private static Unity.Mathematics.int2 PlaceInitialVehicle(int seed, int noise,
+            bool validateSurface = false, bool allSurfaceBlocked = false, bool vehicle = true)
         {
             using var world = new World("initial-placement-allocation-" + noise);
             var em = world.EntityManager;
             const int width = 64;
             using var blocked = new Unity.Collections.NativeBitArray(width * width, Unity.Collections.Allocator.Temp);
             using var occupied = new Unity.Collections.NativeBitArray(width * width, Unity.Collections.Allocator.Temp);
-            blocked.Set(32 * width + 32, true); // Force the real fallback search.
+            if (!validateSurface) blocked.Set(32 * width + 32, true); // Force the real fallback search.
             var grid = em.CreateEntity(typeof(GridConfig));
             em.SetComponentData(grid, new GridConfig { Width = width, Height = width, CellSize = 1 });
             em.AddComponentData(grid, new DynamicBlockerComponent { Blocked = blocked });
@@ -313,9 +322,21 @@ namespace Game.Tests.Editor
             var walkable = em.AddBuffer<GridWalkable>(grid);
             walkable.ResizeUninitialized(width * width);
             for (int i = 0; i < walkable.Length; i++) walkable[i] = new GridWalkable { Value = 1 };
+            using var surfaceBlob = CreatePlacementSurface(width, allSurfaceBlocked);
+            if (validateSurface)
+            {
+                em.CreateEntity(typeof(SkirmishMatchState));
+                var surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+                em.SetComponentData(surfaceEntity, new MapSurfaceComponent
+                {
+                    SurfaceBlob = surfaceBlob, Dimensions = new Unity.Mathematics.int2(width),
+                    CellSize = 1, HasSurfaceData = 1
+                });
+            }
             for (int i = 0; i < noise; i++) em.CreateEntity();
             var actor = em.CreateEntity(typeof(UnitFootprint), typeof(SkirmishAttemptOwnedComponent));
-            em.SetComponentData(actor, new UnitFootprint { Size = new Unity.Mathematics.int2(3, 3) });
+            em.SetComponentData(actor, new UnitFootprint { Size = new Unity.Mathematics.int2(vehicle ? 3 : 1) });
+            em.AddComponentData(actor, new UnitMovementBehavior { UsesVehicleMotion = (byte)(vehicle ? 1 : 0) });
             em.SetComponentData(actor, new SkirmishAttemptOwnedComponent
             {
                 FactionId = 1, SessionId = new Unity.Collections.FixedString64Bytes("placement-fixture"),
@@ -329,18 +350,59 @@ namespace Game.Tests.Editor
             object[] args = method.GetParameters().Length == 3
                 ? new object[] { em, actor, new Vector3(32.5f, 0, 32.5f) }
                 : new object[] { em, actor, new Vector3(32.5f, 0, 32.5f), seed };
-            Assert.IsTrue((bool)method.Invoke(null, args));
+            bool placed = (bool)method.Invoke(null, args);
+            if (allSurfaceBlocked)
+            {
+                Assert.IsFalse(placed, "A clear compatibility grid cannot authorize an impassable native surface.");
+                Assert.IsFalse(em.HasComponent<UnitGrid>(actor));
+                return default;
+            }
+            Assert.IsTrue(placed);
             var cell = em.GetComponentData<UnitGrid>(actor).Cell;
             Assert.AreNotEqual(new Unity.Mathematics.int2(32, 32), cell);
+            if (validateSurface)
+            {
+                using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                Assert.IsTrue(new Game.Runtime.Pathfinding.MapSurfaceTraversalValidation().CanTraverseFootprint(
+                    surfaces.GetSingleton<MapSurfaceComponent>(),
+                    1, em.GetComponentData<GridConfig>(grid), cell, em.GetComponentData<UnitFootprint>(actor).Size, vehicle));
+            }
             return cell;
+        }
+
+        private static BlobAssetReference<MapSurfaceBlob> CreatePlacementSurface(int width, bool allBlocked)
+        {
+            using var builder = new BlobBuilder(Unity.Collections.Allocator.Temp);
+            ref var root = ref builder.ConstructRoot<MapSurfaceBlob>();
+            root.CellSize = 1;
+            root.Dimensions = new Unity.Mathematics.int2(width);
+            root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
+            var cells = builder.Allocate(ref root.Cells, width * width);
+            var samples = builder.Allocate(ref root.Samples, width * width);
+            builder.Allocate(ref root.Connections, 0);
+            builder.Allocate(ref root.CompactSamples, 0);
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i] = new MapSurfaceCell { FirstSurfaceIndex = i, SurfaceCount = 1 };
+                bool blocked = allBlocked || i == 32 * width + 32;
+                samples[i] = new MapSurfaceSample
+                {
+                    Cell = new Unity.Mathematics.int2(i % width, i / width),
+                    SurfaceId = i + 1, SurfaceType = blocked ? MapSurfaceType.Blocked : MapSurfaceType.Terrain,
+                    MovementMask = blocked ? MapSurfaceMovementMask.None : MapSurfaceMovementMask.AllGroundUnits,
+                    Normal = Unity.Mathematics.math.up()
+                };
+            }
+            return builder.CreateBlobAssetReference<MapSurfaceBlob>(Unity.Collections.Allocator.Persistent);
         }
 
         public static void RunInitialPlacementValidation()
         {
             var suite = new SkirmishCombinedArmsTests();
             suite.InitialPlacementIgnoresUnrelatedEntityAllocationOrder();
+            suite.InitialPlacementRejectsCoarseGridCellsWithoutTraversableSurface();
             SkirmishNativeCheckpointActorSpawnTests.RunFocusedValidation();
-            Debug.Log("[SkirmishInitialPlacementTests] result=Passed seeds=3 allocationLayouts=3 checkpointSpawnTests=2 nativeMissionAcceptance=Pending");
+            Debug.Log("[SkirmishInitialPlacementTests] result=Passed seeds=3 allocationLayouts=3 nativeSurfaceCases=3 checkpointSpawnTests=2 nativeMissionAcceptance=Pending");
         }
 
         public static void RebuildAndRunFocusedValidation()

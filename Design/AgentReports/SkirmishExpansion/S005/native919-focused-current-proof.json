@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-919-spawn-surface-final-pre-source-manifest.json",
+  "postSourceManifest": "final-919-initial-spawn-surface-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-919-initial-spawn-surface.log",
+  "requiredPassMarker": "[SkirmishInitialPlacementTests] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

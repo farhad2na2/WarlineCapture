@@ -501,6 +501,9 @@ namespace Game.Runtime
                         if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
                             blocked, occupied, ref reserved, cell, 12, footprint,
                             em.HasComponent<UnitAirMovement>(entity), out cell)) return false;
+                        if (!em.HasComponent<UnitAirMovement>(entity) &&
+                            !SkirmishSpawnPlacement.EnsureTraversable(em, grid, walkable,
+                                blocked, occupied, ref reserved, entity, footprint, ref cell)) return false;
                         pos = GridUtils.CellToWorldCenter(grid, cell);
                     }
                     finally { reserved.Dispose(); }

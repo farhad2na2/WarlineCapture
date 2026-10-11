@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyFrames915.cs",
+      "entry": "S005ReadOnlyFrames915.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 111,
+      "executeMs": 15,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyFrames915_7e6d5bccdbb945b9a02b8ab83cad7a03",
+      "success": true,
+      "result": "{ scope = ReadOnlyMovementObservation, actorsResourcesOrdersInjected = False, rows = System.Collections.Generic.List`1[System.Object] }"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -420,9 +420,9 @@
       "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     }
   ],
-  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
-  "currentSourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
-  "currentSourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "currentSourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
@@ -432,13 +432,15 @@
   "historicalReport": "role-lifecycle-history-before-native890.json",
   "currentAutomatedEvidence": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentAircraftCycleProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentCandidateNormalJourneysPending": false,
+  "currentCandidateNormalJourneysPending": true,
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
   "nextWork": "Manual EN/FA controls and native combat/boarding Save/Continue, followed by remaining role/capacity certification.",
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
   "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
-  "currentBakedInventory": "readonly911-current-role-inventory-proof.json",
-  "currentAriaBaselineMatrix": "native909-914-current-fresh-aria-seed-matrix.json"
+  "currentBakedInventory": null,
+  "currentAriaBaselineMatrix": null,
+  "recorded711AriaMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
+  "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
 }

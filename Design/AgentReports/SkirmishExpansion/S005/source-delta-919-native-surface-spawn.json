@@ -1,0 +1,14 @@
+{
+  "before": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "after": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "changedFiles": [
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishCombinedArmsTests.cs"
+  ],
+  "change": "Expanded scenario initial units reuse native surface-footprint placement validation; regression cases cover infantry, vehicle and no legal surface.",
+  "physicalCampaignGeometryChanged": false,
+  "gameplayBudgetsChanged": false,
+  "recordedAriaMatrixRequiresRefresh": true,
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -3,27 +3,20 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
-  "sourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "sourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native915",
-  "activeLog": "native-915-current-manual-en-seed130368.log",
+  "activeRun": "native920",
+  "activeLog": "native-920-current-manual-en-seed130368.log",
   "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
-  "activePreManifest": "final-914-aria-fa-IR-seed155926-post-source-manifest.json",
-  "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
+  "activePreManifest": "final-919-initial-spawn-surface-post-source-manifest.json",
+  "currentCompilationProof": "compile-919-spawn-surface-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
-  "currentNativeVictories": [
-    "native909-current-fresh-aria-en-seed104734-victory.json",
-    "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
-    "native911-current-fresh-aria-en-seed130368-victory.json",
-    "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
-    "native913-current-fresh-aria-en-seed155926-victory.json",
-    "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
-  ],
-  "currentAriaBaselineMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
+  "currentNativeVictories": [],
+  "currentAriaBaselineMatrix": null,
   "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
@@ -51,28 +44,16 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Complete current manual/recovery runs, then ground-role native queues and remaining lifecycle/capacity gates.",
+  "nextWork": "Validate native surface spawn repair, rerun combat Save/Continue/manual, then refresh normal ARIA and remaining role/recovery/capacity gates.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "scope": "Manual normal-input EN/FA and native combat/boarding Save/Continue; excluded from fresh ARIA baseline",
-    "runs": [
-      915,
-      916,
-      917
-    ],
-    "runner": "/private/tmp/s005-run-manual-915.py"
+    "status": "Pending",
+    "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-914-aria-fa-IR-seed155926-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentFreshAriaSeedProofs": [
-    "native909-current-fresh-aria-en-seed104734-victory.json",
-    "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
-    "native911-current-fresh-aria-en-seed130368-victory.json",
-    "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
-    "native913-current-fresh-aria-en-seed155926-victory.json",
-    "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
-  ],
+  "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
   "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
   "latestPreviousCandidateAriaProofs": [
@@ -132,5 +113,44 @@
     "cleanupWarnings": []
   },
   "sharedAriaDefenseCommit": "5b98cb427",
-  "currentBakedRoleInventory": "readonly911-current-role-inventory-proof.json"
+  "currentBakedRoleInventory": null,
+  "latestCurrentManualFailure": null,
+  "recorded711Qualification": {
+    "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+    "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
+    "currentNativeVictories": [
+      "native909-current-fresh-aria-en-seed104734-victory.json",
+      "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
+      "native911-current-fresh-aria-en-seed130368-victory.json",
+      "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
+      "native913-current-fresh-aria-en-seed155926-victory.json",
+      "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
+    ],
+    "currentFreshAriaSeedProofs": [
+      "native909-current-fresh-aria-en-seed104734-victory.json",
+      "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
+      "native911-current-fresh-aria-en-seed130368-victory.json",
+      "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
+      "native913-current-fresh-aria-en-seed155926-victory.json",
+      "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
+    ],
+    "currentAriaBaselineMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
+    "currentBakedRoleInventory": "readonly911-current-role-inventory-proof.json",
+    "latestCurrentManualFailure": "native915-current-manual-en-seed130368-failure.json"
+  },
+  "focusedNative919": {
+    "result": "Passed",
+    "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-919-spawn-surface-final-pre-source-manifest.json",
+    "postSourceManifest": "final-919-initial-spawn-surface-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-919-initial-spawn-surface.log",
+    "requiredPassMarker": "[SkirmishInitialPlacementTests] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  }
 }

@@ -1,0 +1,40 @@
+{
+  "status": "PreparedNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005DroneRunwayHomeRegression20261011.cs",
+  "fixtureSha256": "97f386378df2e89a3b9b589fcc18971de8843b0bb00042a07cc1d4c39a68cd38",
+  "entryPoint": "S005DroneRunwayHomeRegression20261011.RunValidation",
+  "passMarker": "[S005DroneRunwayHomeRegression] result=Passed cases=5 updates=3 actualSystem=1 realExistingRunway=1 normalMission=0 sourceMutation=0",
+  "scope": "Disposable ECS World; actual existing Campaign metadata runway projection and actual FixedWingRunwayHomeInitializationSystem; isolated aircraft inputs, no native mission manipulation.",
+  "cases": [
+    "Expanded shared Drone preserves entire IntelStation pad AirComponent with UsesRunway0",
+    "Legacy Drone binds existing same-faction runway and preserves initialized home",
+    "Shared Fighter binds runway, initializes home, reverses thresholds near landing",
+    "Drone role without shared tag retains legacy binding",
+    "Shared tag without role retains legacy binding"
+  ],
+  "updates": 3,
+  "homeProvenance": "Explicit test input at declared typed pad site (935,0.01,678.8) used by actual native1065; not an actual paid Drone AirComponent capture.",
+  "sourceHashes": {
+    "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs": "b07bdf4f2e9ef9790ce6c2a959d37806000c118eb3368eb99724b6ba74c734f8",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset": "96d33151129ce63b1d88be27b603bab64b03afab173eaa2d6f630e147525fb6e"
+  },
+  "requiredParentExecution": [
+    "Wait until root owns idle Editor lane; do not run alongside root1052 Play",
+    "Load unique external fixture through CLI and assert nested compile result success",
+    "Run through repository wrapper with explicit timeout/log and required full marker",
+    "Capture complete source pre/post manifests; preserve failure evidence"
+  ],
+  "qualificationsNotClaimed": [
+    "normal-input mission acceptance",
+    "paid construction/production (already scoped native1065)",
+    "flight movement/combat",
+    "bilateral airport capacity"
+  ],
+  "runtimePrefabKeys": {
+    "Drone": "Unit_Veh_Drone",
+    "Fighter": "Unit_Veh_Jet_02"
+  },
+  "equality": "Full UnitAirComponent ValueType.Equals, not JsonUtility field serialization; transform/grid/faction/tag/role independently asserted."
+}

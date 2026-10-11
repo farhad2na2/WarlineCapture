@@ -1,0 +1,16 @@
+{
+  "scope": "External unexecuted1052 QA watchdog only",
+  "previousEditorWatchdogSeconds": 600,
+  "currentEditorWatchdogSeconds": 900,
+  "wrapperTimeoutSeconds": 1020,
+  "placementTimeoutSeconds": 360,
+  "roles": 3,
+  "perRoleQueueSeconds": 75,
+  "perRoleMoveSeconds": 65,
+  "missionSimulationBudgetChanged": false,
+  "sourceFilesChanged": false,
+  "fixtureSha256": "f29c58d4061eac0787ccc5328cdf6cd1ee30e76a0700304d6d5aa0bd2fbcb6bb",
+  "compiled": false,
+  "loaded": false,
+  "executed": false
+}

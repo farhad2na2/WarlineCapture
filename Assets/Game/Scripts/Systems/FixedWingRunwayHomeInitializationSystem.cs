@@ -32,11 +32,20 @@ namespace Game.Runtime
             if (runways.Length == 0)
                 return;
 
-            foreach (var (airState, transform, grid, faction, sourceKey) in SystemAPI
+            foreach (var (airState, transform, grid, faction, sourceKey, entity) in SystemAPI
                          .Query<RefRW<UnitAirComponent>, RefRO<LocalTransform>, RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitSourcePrefabKey>>()
                          .WithAll<UnitAirMovement, UnitMove>()
-                         .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>())
+                         .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>()
+                         .WithEntityAccess())
             {
+                // Only expanded recon uses an IntelStation pad. Legacy/Campaign
+                // Drone and every other fixed-wing home retain the shared rule.
+                if (state.EntityManager.HasComponent<SkirmishSharedActorTag>(entity) &&
+                    state.EntityManager.HasComponent<SkirmishUnitRoleComponent>(entity) &&
+                    state.EntityManager.GetComponentData<SkirmishUnitRoleComponent>(entity).Role ==
+                        Game.Skirmish.Contracts.SkirmishRoleKind.Drone)
+                    continue;
+
                 if (!ShouldInitializeRunwayHome(airState.ValueRO, sourceKey.ValueRO.Value))
                     continue;
 

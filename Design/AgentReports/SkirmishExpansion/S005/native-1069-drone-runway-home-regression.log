@@ -1,0 +1,65 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=S005DroneRunwayHomeRegression20261011.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] case=ExpandedDronePreservesIntelStationHome result=Passed usesRunway=0 homePreserved=1
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:112)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] case=LegacyDroneRetainsRunwayBinding result=Passed usesRunway=1 homePreserved=1
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:112)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] case=FighterStillBindsAndReversesNearLanding result=Passed usesRunway=1 homePreserved=0
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:112)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] case=DroneRoleWithoutSharedTagRetainsLegacyBinding result=Passed usesRunway=1 homePreserved=1
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:112)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] case=SharedTagWithoutRoleRetainsLegacyBinding result=Passed usesRunway=1 homePreserved=1
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:112)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005DroneRunwayHomeRegression] result=Passed cases=5 updates=3 actualSystem=1 realExistingRunway=1 normalMission=0 sourceMutation=0
+UnityEngine.Debug:Log (object)
+S005DroneRunwayHomeRegression20261011:RunFocusedValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:118)
+S005DroneRunwayHomeRegression20261011:RunValidation () (at /private/tmp/S005DroneRunwayHomeRegression20261011.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_2c84ba63/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=S005DroneRunwayHomeRegression20261011.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

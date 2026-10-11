@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+// Isolated actual-system regression, never normal-input mission acceptance.
+// Uses the existing Campaign compatibility definition's real runway geometry.
+// Home state represents the authored IntelStation service pad from native1065;
+// it is an explicit fixture input, not a captured native paid actor/checkpoint.
+public static class S005DroneRunwayHomeRegression20261011
+{
+    const string DefinitionPath = "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
+    const string Marker = "[S005DroneRunwayHomeRegression]";
+    public static object Run() => "Loaded only; run RunValidation through the checked repository wrapper.";
+
+    public static Task<int> RunValidation()
+    {
+        RunFocusedValidation();
+        return Task.FromResult(0);
+    }
+
+    public static void RunFocusedValidation()
+    {
+        Require(!EditorApplication.isPlayingOrWillChangePlaymode, "Requires an idle Editor; existing Play is preserved.");
+        string reportPath = Path.Combine(Application.dataPath, "../Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-runway-home-regression-actual.json");
+        Require(!File.Exists(reportPath), "Preserve existing regression evidence; use a unique report path before rerunning.");
+        var report = new Report { result = "Failed", scope = "IsolatedActualSystemExistingCampaignRunway", definitionPath = DefinitionPath };
+        try
+        {
+            OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
+            Require(definition != null, "Missing existing Campaign compatibility definition.");
+            Require(definition.TryCreatePersistentMetadataBlob(out BlobAssetReference<OperationMapBlob> blob, out string error), error);
+            try
+            {
+                using World world = new("S005DroneRunwayHomeRegression20261011.Disposable");
+                EntityManager em = world.EntityManager;
+                OperationMapGridMetadataConfig metadata = definition.GridMetadata;
+                GridConfig grid = new() { Width = metadata.Dimensions.x, Height = metadata.Dimensions.y, CellSize = metadata.CellSize, Origin = metadata.Origin };
+                Entity root = em.CreateEntity(typeof(OperationMapRootComponent), typeof(ActiveOperationMapComponent), typeof(OperationMapMetadataComponent));
+                em.SetComponentData(root, new ActiveOperationMapComponent { OperationMapId = new FixedString64Bytes(definition.OperationMapId), Generation = 1 });
+                em.SetComponentData(root, new OperationMapMetadataComponent { Blob = blob, Generation = 1 });
+                Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+                DynamicBuffer<BuildingFactionRunwayReadModel> runways = em.AddBuffer<BuildingFactionRunwayReadModel>(boundary);
+                Require(OperationMapRunwayReadModelUtility.TryAppendRunways(em, runways, in grid, out FixedList512Bytes<byte> factions, out bool active, out error), error);
+                Require(active && runways.Length == 1 && factions.Length == 1, "Expected one real Campaign runway and owner faction.");
+                BuildingFactionRunwayReadModel runway = runways[0];
+                Require(runway.FactionId == 1 && runway.BuildingId.Length > 0 && math.distancesq(runway.TakeoffPosition, runway.LandingPosition) > 1f, "Actual runway projection missing or degenerate.");
+                report.runwayId = runway.BuildingId.ToString();
+                report.definitionGuid = AssetDatabase.AssetPathToGUID(DefinitionPath);
+
+                // Declared typed pad used in native1065: pad.skirmish.db.service_player.
+                // No runtime facility or checkpoint is modified by this fixture.
+                float3 padHome = new(935f, 0.01f, 678.8f);
+                UnitAirComponent padAir = new()
+                {
+                    HomeInitialized = 1, HomePosition = padHome, HomeCell = GridUtils.WorldToCell(in grid, padHome), UsesRunway = 0,
+                    FixedWingCruiseY = 20f, FixedWingCruiseYInitialized = 1,
+                    AttackManeuverTurnSign = -1, AttackPassGoalCell = new int2(21, 23), AttackRunExitPosition = new float3(11f, 2f, 13f)
+                };
+                var cases = new List<Case>
+                {
+                    CreateCase(em, "ExpandedDronePreservesIntelStationHome", "Unit_Veh_Drone", true, SkirmishRoleKind.Drone, padAir, padHome, padAir.HomeCell, true),
+                    CreateCase(em, "LegacyDroneRetainsRunwayBinding", "Unit_Veh_Drone", false, null, padAir, padHome, padAir.HomeCell, false),
+                    CreateCase(em, "FighterStillBindsAndReversesNearLanding", "Unit_Veh_Jet_02", true, SkirmishRoleKind.Fighter, default, runway.LandingPosition, runway.LandingCell, false),
+                    CreateCase(em, "DroneRoleWithoutSharedTagRetainsLegacyBinding", "Unit_Veh_Drone", false, SkirmishRoleKind.Drone, padAir, padHome, padAir.HomeCell, false),
+                    CreateCase(em, "SharedTagWithoutRoleRetainsLegacyBinding", "Unit_Veh_Drone", true, null, padAir, padHome, padAir.HomeCell, false)
+                };
+                SystemHandle system = world.CreateSystem<FixedWingRunwayHomeInitializationSystem>();
+                for (int update = 0; update < 3; update++)
+                {
+                    system.Update(world.Unmanaged);
+                    em.CompleteAllTrackedJobs();
+                    foreach (Case item in cases)
+                    {
+                        UnitAirComponent actual = em.GetComponentData<UnitAirComponent>(item.entity);
+                        UnitAirComponent expected = item.before;
+                        if (!item.padException)
+                        {
+                            bool reverse = HorizontalDistanceSquared(item.position, runway.LandingPosition) < HorizontalDistanceSquared(item.position, runway.TakeoffPosition);
+                            expected.HomeInitialized = 1;
+                            if (item.before.HomeInitialized == 0) { expected.HomePosition = item.position; expected.HomeCell = item.cell; }
+                            expected.UsesRunway = 1;
+                            expected.RunwayTakeoffPosition = reverse ? runway.LandingPosition : runway.TakeoffPosition;
+                            expected.RunwayTakeoffCell = reverse ? runway.LandingCell : runway.TakeoffCell;
+                            expected.RunwayLandingPosition = reverse ? runway.TakeoffPosition : runway.LandingPosition;
+                            expected.RunwayLandingCell = reverse ? runway.TakeoffCell : runway.LandingCell;
+                            expected.AttackRunExitPosition = default;
+                        }
+                        Require(actual.Equals(expected), item.name + ": full UnitAirComponent mismatch on update " + update);
+                        Require(em.GetComponentData<LocalTransform>(item.entity).Equals(item.transform), item.name + ": transform mutated.");
+                        Require(em.GetComponentData<UnitGrid>(item.entity).Cell.Equals(item.cell), item.name + ": grid mutated.");
+                        Require(em.GetComponentData<Faction>(item.entity).Id == runway.FactionId, item.name + ": faction mutated.");
+                        Require(em.HasComponent<SkirmishSharedActorTag>(item.entity) == item.shared, item.name + ": shared tag mutated.");
+                        Require(em.HasComponent<SkirmishUnitRoleComponent>(item.entity) == item.role.HasValue, item.name + ": role ownership mutated.");
+                        if (item.role.HasValue) Require(em.GetComponentData<SkirmishUnitRoleComponent>(item.entity).Role == item.role.Value, item.name + ": role mutated.");
+                    }
+                }
+                foreach (Case item in cases)
+                {
+                    UnitAirComponent after = em.GetComponentData<UnitAirComponent>(item.entity);
+                    report.cases.Add(new CaseReport { name = item.name, passed = true, airBefore = JsonUtility.ToJson(item.before), airAfter = JsonUtility.ToJson(after), updates = 3 });
+                    Debug.Log(Marker + " case=" + item.name + " result=Passed usesRunway=" + after.UsesRunway + " homePreserved=" + (item.before.HomeInitialized != 0 ? 1 : 0));
+                }
+            }
+            finally { blob.Dispose(); }
+            report.result = "PassedScopedActualSystemRegression";
+            File.WriteAllText(reportPath, JsonUtility.ToJson(report, true));
+            Debug.Log(Marker + " result=Passed cases=5 updates=3 actualSystem=1 realExistingRunway=1 normalMission=0 sourceMutation=0");
+        }
+        catch (Exception exception)
+        {
+            report.error = exception.ToString();
+            File.WriteAllText(reportPath, JsonUtility.ToJson(report, true));
+            Debug.LogError(Marker + " result=Failed " + exception.Message);
+            throw;
+        }
+    }
+
+    static Case CreateCase(EntityManager em, string name, string key, bool shared, SkirmishRoleKind? role, UnitAirComponent air, float3 position, int2 cell, bool padException)
+    {
+        Entity entity = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitAirComponent), typeof(UnitMove), typeof(UnitGrid), typeof(Faction), typeof(UnitSourcePrefabKey), typeof(LocalTransform));
+        var transform = LocalTransform.FromPosition(position);
+        em.SetComponentData(entity, new UnitAirMovement { CruiseHeight = 20f, RunwayTaxiSpeed = 5f });
+        em.SetComponentData(entity, new UnitMove { Speed = 18f, WalkSpeed = 18f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(entity, air);
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new Faction { Id = 1 });
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(key) });
+        em.SetComponentData(entity, transform);
+        if (shared) em.AddComponent<SkirmishSharedActorTag>(entity);
+        if (role.HasValue) em.AddComponentData(entity, new SkirmishUnitRoleComponent { Role = role.Value });
+        return new Case { entity = entity, name = name, shared = shared, role = role, before = air, position = position, cell = cell, transform = transform, padException = padException };
+    }
+
+    static float HorizontalDistanceSquared(float3 a, float3 b) { float3 delta = a - b; delta.y = 0f; return math.lengthsq(delta); }
+    static void Require(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
+    sealed class Case { public Entity entity; public string name; public bool shared, padException; public SkirmishRoleKind? role; public UnitAirComponent before; public float3 position; public int2 cell; public LocalTransform transform; }
+    [Serializable] sealed class CaseReport { public string name, airBefore, airAfter; public bool passed; public int updates; }
+    [Serializable] sealed class Report { public string result, scope, definitionPath, definitionGuid, runwayId, error; public bool normalMission = false, sourceMutation = false; public string homeInputProvenance = "Explicit isolated fixture state representing typed IntelStation pad used in native1065; not captured paid actor state."; public List<CaseReport> cases = new(); }
+}

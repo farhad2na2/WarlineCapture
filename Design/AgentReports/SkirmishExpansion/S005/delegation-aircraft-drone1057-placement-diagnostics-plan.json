@@ -1,0 +1,50 @@
+{
+  "result": "PreparedNotCompiledOrRun",
+  "fixture": "/private/tmp/S005DroneProducerSmoke1057.cs",
+  "runner": "/private/tmp/s005-run-drone-1057.py",
+  "runOwnership": "Runner as prepared targets main /Users/farhad/Projects/WarlineCapture. Root/T7 owner must adapt explicit wrapper --project and manifests to actual verified T7 source if choosing T7; never dispatch this runner against main while T7 owns the heavy test slot. Agent did not control either Editor.",
+  "previous1051": "Native Satellite selection reached,23 completed gestures,3 actual world taps among16 consumed points. Others initiated navigation or were offscreen, therefore no map-fit impossibility or Drone production defect proven.",
+  "confirmationDiagnosis": {
+    "source": "BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement line160 = ActivePlacement!=null && ActivePlacement.IsValid; BuildingPlacementVisualUpdate...line152 determines IsValid via native surface/roads/blocker validator.",
+    "resource": "Materials/credits reservation occurs after Confirm, BuildingPlacementConstructionTransaction lines63\u201371. Disabled preview Confirm itself is not directly cost/cap/readiness. Native selected building eligibility gate is prior to the preview.1057 still records active actual credits/materials costs and displayed own materials/readiness to preserve evidence.",
+    "uiCopy": "Native generic status includes actual origin/footprint and valid versus Blocked by road or blocker. This generic copy does not identify individual road/scenery/water/slope cause, so no specific cause is invented."
+  },
+  "nativePlacementDiagnostics": [
+    "Record UI status and raw IBuildingUiCommand status, actual origin/footprint text, Confirm activity/interactability/native CanConfirm, materials/credits actual cost/current funds, visible readiness and validity-panel copy after each completed actual ground Touch",
+    "Immutable raw JSONL and first6/anylegal screenshots",
+    "Offscreen candidate retained through existing real FullMap camera Touch helper; FullMap popup canvas owns live input while it hides placement controls",
+    "Advance only after actual completed ground Touch and blocked status observation; never consume an offscreen/navigation candidate",
+    "20sec unexposed navigation timeout fails as unobserved input/fixture gate, not invalid geometry; bounded whole search remains nonexhaustive"
+  ],
+  "candidateProvenance": {
+    "logicalTypedPads": "Current SkirmishLayout_S005.asset faction1 Service/AirReturn/Supply, projected through public TryProjectLocalToMap into loaded Campaign frame. Declared typed pad coordinates are navigation candidates, not independent IntelStation legality proof.",
+    "broaderGrid": "24 metre square rings1\u20134 (80 points) around cached visible public base axis; candidate only, native Touch/Confirm decides current legality.",
+    "recordedCampaignLots": [
+      [
+        825.5,
+        671
+      ],
+      [
+        1399,
+        177.5
+      ],
+      [
+        1415,
+        177.5
+      ]
+    ],
+    "recordedLotSource": "Existing checked AirportPlacement.FindPlacementSourceCandidates recorded paid Airport plots (including seed155926). IntelStation must independently pass its own current rules; no prior native Airport pass is relabeled Satellite pass."
+  },
+  "physicalMapChanges": false,
+  "forcedPreviewValid": false,
+  "cameraTransformInjected": false,
+  "actorPositionsOrdersSelectionInjected": false,
+  "checkpointPayloadEdited": false,
+  "fundingReadinessDeathStimuli": "Unchanged isolated disclosed fixture: funded1800, readinessEstablished, opening actor HealthZero, enemy strategy off. Not normal whole mission.",
+  "nextProof": "After actual current native IntelStation Confirm and functional producer observed, then native paid Drone queue request/acceptance/receipt/delivery without Airport may identify or disprove previously suspected arrival mode mismatch.Conditional runtime patch stays unapplied.",
+  "fixtureSha256": "b16b83186196df7c8a791b8c9d7e2dae9adc91a554342a0f32b05bd8bf445bf9",
+  "runnerSha256": "08b8b305a233e77279404c6e01d5bfbf46c6373ba943eb36ee8a5e0ba527d612",
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

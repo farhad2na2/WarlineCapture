@@ -1,0 +1,26 @@
+{
+  "result": "PreparedRunnerNotLaunched",
+  "runner": "/private/tmp/s005-run-radar-1055.py",
+  "runnerSha256": "ea0ce8f4a737368ecec58edb06483fa220d819401e9545ab4f19c470b6ab2aa6",
+  "fixture": "/private/tmp/S005RadarSupport1055.cs",
+  "fixtureSha256": "e204893e0a8147e06c9d962f226f49681ed03335f11793f17007fdb765c9cddb",
+  "requiredHeavyLaneOwnerArgument": "--heavy-lane-owner main1055",
+  "coordination": "Root must supply acknowledgement only after T7 releases heavy lane. This is explicit coordination, not an automatic inference from idle main Editor. Runner was not launched by reviewer.",
+  "guards": [
+    "Main TECHNICAL_READINESS_CURRENT.activeRun must beNone before preparation and dispatch",
+    "Exact reviewed fixture SHA256 required",
+    "Existing1055 log/receipt/dispatch/Touch/fixture/proof/runner-start artifacts refuse overwrite",
+    "Fresh preflight fingerprint must exactly match supplied pre-manifest before Unity call",
+    "Fresh pre-dispatch fingerprint must match after load-only",
+    "Only checked GUI-reuse wrapper dispatch; timeout600s; no alternate route or process termination",
+    "Missing/malformed native completion preserves active ownership",
+    "Wrapper0+native0+full pre/post source equality+all exact Radar markers+paired Touch summary required for scoped pass",
+    "Per-case AriaCommandEvidence.Begin resets accepted count, so final summary requires>=1 while separate verified Move markers required for both roles",
+    "State owner native1055/method must still match before clearing only its own ownership"
+  ],
+  "syntaxCheck": "ast.parse passed; no fixture compile or runtime run by reviewer",
+  "sourceEdits": false,
+  "editorControl": false,
+  "normalMissionCertified": false,
+  "playerReady": false
+}

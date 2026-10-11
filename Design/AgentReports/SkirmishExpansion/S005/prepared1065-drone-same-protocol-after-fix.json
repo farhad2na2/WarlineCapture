@@ -1,0 +1,10 @@
+{
+  "originalFailedFixture": "native1057-drone-producer-fixture.cs.txt",
+  "nextFixture": "S005DroneProducerSmoke1065.cs",
+  "changes": "Unique1065 class and artifact names only; same native setup/placement/paid queue/movement/death protocol",
+  "fixtureSha256": "10e59dcfff1017adb0a220a6956dc8e0139a3a8c7326831006360fdf3a3aea61",
+  "producerFixReview": "delegation-drone-native-pad-production-review-20261011.json",
+  "originalFailure": "native1057-drone-intelstation-no-airport-failure.json",
+  "compiled": false,
+  "executed": false
+}

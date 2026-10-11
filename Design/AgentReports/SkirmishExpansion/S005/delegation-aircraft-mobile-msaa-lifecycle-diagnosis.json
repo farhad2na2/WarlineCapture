@@ -1,0 +1,55 @@
+{
+  "result": "StaticDiagnosisNativeReproductionPending",
+  "parentAuthorization": "Read-only MSAA audit; specific AndroidVisualQualityValidationTests.cs test extension allowed after1057 closes; parent retains Editor/config ownership",
+  "head": "818054c154cf2dd1e1af246c6491812b708b8f8d",
+  "before": {
+    "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs": "ad8284aa03b5e1d522ffb74a1b96960d1b2b1c7e90bcd8923d8d409d24564e1e",
+    "ProjectSettings/QualitySettings.asset": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e",
+    "Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62/Runtime/UniversalRenderPipeline.cs": "a8fba27596291c7f26044c681fd643b698c6963ab5f638133061e88b9b2d108d"
+  },
+  "sourceSnapshot": {
+    "MobileCurrentTier": 1,
+    "MobileAntiAliasing": 4,
+    "MobileCustomPipeline": null,
+    "graphicsDefault": "Assets/Settings/PC_RPAsset.asset",
+    "desktopDefaultMsaa": 4,
+    "acceptedMobile": "Assets/Settings/Mobile_RPAsset.asset",
+    "acceptedMobileGuid": "5e6cbd92db86f4b18aec3ed561671858",
+    "acceptedMobileMsaa": 1,
+    "acceptedHighMobileMsaa": 1,
+    "originalOverrideRemovalCommit": "81569142d",
+    "MobileAAOnlyRepairCommit": "5d48ecd66"
+  },
+  "nativeWriter": "Installed URP UniversalRenderPipeline ctor366\u2013375 treats0as1, then assignsQualitySettings.antiAliasing=asset.msaaSampleCount wheneverdifferent. Mobile null\u2192desktop4 deterministicwritecondition. VQ Dispose restores null; constructor mayrun later, so immediateAA restoration insufficient. Actual native frame/serialization reproduction remains pending.",
+  "beforeTestArchive": "delegation-aircraft-mobile-msaa-test-before.cs.txt",
+  "runtimeAssetsEdited": false,
+  "editorCalled": false,
+  "ownedTestChange": {
+    "file": "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs",
+    "afterSha256": "5620615534b23fa6d412fa06197614aeb2189e4d1bf47e5fb51b83131860214c",
+    "method": "MobileQualityTierUsesBalancedMsaaAndShadows",
+    "change": "Requires unique native Mobile tier binding to accepted Mobile_RPAsset and m_MSAA1, in addition to existing diskAA0/shadow/streaming checks",
+    "compiled": false,
+    "executed": false
+  },
+  "preparedNativeRepair": {
+    "path": "/private/tmp/S005MobileQualityRepair20261011.cs",
+    "sha256": "138bdc931d6925c4f43473dae09d80813bdf7ccc995a4f3583e424fe1cf9fc73",
+    "runOnlyAfterParentOwnsIdleEditor": true,
+    "expectedMutations": "Mobile antiAliasing4\u21920, customRenderPipeline null\u2192acceptedMobile GUID5e6...; no others",
+    "usesNativeSerializedObject": true,
+    "preservesUnexpectedExistingOverride": true,
+    "executed": false
+  },
+  "focusedRegression": {
+    "before": "CurrentMobile AA4+null should fail existing+added assertions; optionally native pre-fix constructor/Play lifecycle observation establishesactualreproduction",
+    "after": [
+      "Native serialized repair expected two fields only, full PRE/POST source diff fail closed",
+      "AndroidVisualQualityValidationTests.MobileQualityTierUsesBalancedMsaaAndShadows selects actualMobile asset, msaa1, diskAA0",
+      "Normal EditorPlay High orBalanced match\u2192Return\u2192Stop withoutquality overrides; afterpipeline recreation+idlecheck Mobile stillAA0+explicitMobile1 and sourceunchanged",
+      "Check runtimeHigh selectedMobileCandidate msaa1; desktopGlobalPC default4 unchanged and notMobilefallback",
+      "If Ultra mode is supported, test Ultra\u2192High andstop as separatequalityswitch technicalcase; preserve anynewtierdelta for review, nothiddenrepair"
+    ],
+    "notClaimed": "Phone60fps/fullperformance contract or all visualquality acceptance"
+  }
+}

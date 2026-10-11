@@ -45,5 +45,27 @@
   "boundedLogObservation": "Persistent Editor log around refresh showed Asset Pipeline Refresh initiated by StopAssetImportingV2(ForceSynchronousImport | ForceDomainReload); no line attributing these three writes to a named source tool in bounded inspected window.",
   "runtimeSearch": "No direct QualitySettings.antiAliasing setter found in Assets/Game/Scripts. SettingsService calls SetQualityLevel. RenderTexture antiAliasing assignments do not explain a persisted quality-tier setting.",
   "recommendation": "Keep pause-fix commit scoped to UnitAirMovementSystem plus its new tests/meta. Preserve unrelated changes for owner investigation. Mobile MSAA delta needs intentional resolution and AndroidVisualQualityValidation validation before whole-source technical acceptance. Existing gameplay proofs remain historical/scoped, not fresh whole8417 acceptance.",
-  "wholeMissionCertified": false
+  "wholeMissionCertified": false,
+  "urpQualityWriteProvenanceClue": {
+    "classification": "Plausible engine/package write path, not confirmed initiating writer",
+    "packageSource": "Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62/Runtime/UniversalRenderPipeline.cs",
+    "packageSha256": "a8fba27596291c7f26044c681fd643b698c6963ab5f638133061e88b9b2d108d",
+    "lines": [
+      366,
+      375
+    ],
+    "mechanism": "URP constructor normalizes QualitySettings.antiAliasing=0 as 1 sample, compares active asset.msaaSampleCount and assigns QualitySettings.antiAliasing=asset.msaaSampleCount when different. An active 4-sample URP asset can therefore set Mobile tier 0 to4 without a direct Game setter.",
+    "exactSetter": "QualitySettings.antiAliasing = asset.msaaSampleCount;",
+    "runtimePipelineSwitches": {
+      "path": "Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs",
+      "assignmentLines": [
+        195,
+        215,
+        235,
+        255
+      ],
+      "restoreLine": 277
+    },
+    "scope": "Parent reported current serialized tier Mobile and Play pipeline switching. This evidence explains a possible in-memory write; persisted write caller still not proven. Mobile Android contract conflict remains; preserve files until intentionally resolved."
+  }
 }

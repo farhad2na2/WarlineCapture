@@ -63,7 +63,11 @@ namespace Game.Runtime
                     recipes.Add(new BuildingProductionRecipe {
                         ProducerPrefab = producer, UnitPrefab = unit, Quantity = Math.Max(1, overlay.SquadMembers),
                         MaterialsCost = overlay.MaterialsCost, CreditsCost = 0,
-                        UseProducerGroundExit = overlay.Producer == SkirmishProducerKind.GroundStaging
+                        // Expanded recon belongs to its IntelStation launch pad.
+                        // Keep the shared Campaign Drone arrival recipe unchanged.
+                        UseProducerGroundExit = overlay.Producer == SkirmishProducerKind.GroundStaging ||
+                            (overlay.Producer == SkirmishProducerKind.IntelStation &&
+                             overlay.RoleKind == SkirmishRoleKind.Drone)
                     });
                 }
                 result.Config = BuildingPlacementSystemConfig.CreateRuntimeCatalogOverlay(

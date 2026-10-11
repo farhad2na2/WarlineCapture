@@ -1,0 +1,31 @@
+{
+  "result": "PreparedNotCompiledOrRun",
+  "sourceUnchangedByAgent": true,
+  "native1050FindingFromRoot": "Build popup really opened after2 completed native contacts; current route hides visible MatchHudSquadTrayView and SkirmishMatchView. Old InputFrame returned before canvas/control diagnostics and catalog selection. Failed earlier Drone fixtures therefore establish driver/UI ownership failure, not producer/queue/runtime defect.",
+  "fixScope": "External disposable QA fixtures only; no runtime source patch or game state change beyond previously disclosed isolated funded/readiness/death stimuli.",
+  "fixtures": [
+    "/private/tmp/S005DroneProducerSmoke1051.cs",
+    "/private/tmp/s005-run-drone-1051.py",
+    "/private/tmp/S005HelipadRolesSmoke1052.cs",
+    "/private/tmp/s005-run-helipad-roles-1052.py"
+  ],
+  "presentedCanvasPriority": [
+    "Active pending placement ConfirmButton rootCanvas",
+    "Native assigned open drawer DrawerRoot or CloseButton rootCanvas",
+    "Visible squad tray or visible HUD rootCanvas"
+  ],
+  "touchGuard": "Canvas.willRenderCanvases callback, once per real frame, exact current presented rootCanvas pixel width versus render-context Screen.width must agree within1px. No editor-update Screen dimensions substituted.",
+  "legitimatePlacementAnchors": "Cache only visible public HUD PlayerBaseObjectivePosition and EnemyBaseObjectivePosition in phase20 before real Focus/Build contact. Later popup/placement phases do not require visible HUD and do not read hidden actors or inject placement positions.",
+  "viewRecovery": "Only when presented input canvas missing/mismatched: bounded diagnostics, max2 queued calls to existing MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080) through reflection, same harness strategy. Do not alter simulation, camera, actors or input guard. Pending busy gesture with unmatched canvas fails after6secs; persistent mismatch after two correction attempts fails after3secs.",
+  "heli1052": "Same route-aware canvas/public anchor fix, assigned-view catalog diagnostics, rolesTransportHeli/AttackHeliLight/AttackHeli, actualAirborne required after accepted Touch Move; everyrole queue/selection/movement/death marker and cases3 required by runner.",
+  "remainingRuntimeQuestion": "Drone accepted queue/delivery without Airport remains unproved until actual native IntelStation build and request are reached. Conditional Drone runway patch stays unapplied.",
+  "sha256": {
+    "/private/tmp/S005DroneProducerSmoke1051.cs": "96f51d5fd234d1791f740a1e8c89da3bbbaca393550335cfe56a9c56d77f4997",
+    "/private/tmp/s005-run-drone-1051.py": "e3260250ca2eff18b581582d17fb30e68e01be7696d898f8e5341fece1b73d81",
+    "/private/tmp/S005HelipadRolesSmoke1052.cs": "7bad881cf5847a98827833ad1f7355d171694ff083c675e1877459967fb5035b",
+    "/private/tmp/s005-run-helipad-roles-1052.py": "365825d1f6309b824581973417075d862a7eda6f16fb37e05593df8c330a41ee"
+  },
+  "normalMissionCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

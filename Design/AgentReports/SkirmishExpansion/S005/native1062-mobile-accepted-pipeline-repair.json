@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005MobileQualityRepair20261011.cs",
+      "entry": "S005MobileQualityRepair20261011.Run"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 2268,
+      "executeMs": 1148,
+      "assemblyName": "PipelineRunScript_S005MobileQualityRepair20261011_80517d59916847748c284db7bbcb0440",
+      "success": true,
+      "result": "Repaired native Mobile AA0 and accepted explicit pipeline; lifecycle validation remains pending."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,67 @@
+using System;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+
+public static class S005MobileQualityRepair20261011
+{
+    public static object Run()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            throw new InvalidOperationException("Mobile quality repair requires an idle Editor.");
+        const string mobilePath = "Assets/Settings/Mobile_RPAsset.asset";
+        const string mobileGuid = "5e6cbd92db86f4b18aec3ed561671858";
+        if (AssetDatabase.AssetPathToGUID(mobilePath) != mobileGuid)
+            throw new InvalidOperationException("Accepted Mobile pipeline GUID changed.");
+        var pipeline = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(mobilePath);
+        if (pipeline == null || new SerializedObject(pipeline).FindProperty("m_MSAA").intValue != 1)
+            throw new InvalidOperationException("Accepted Mobile pipeline must have MSAA disabled (one sample).");
+        var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset");
+        if (assets.Length != 1) throw new InvalidOperationException("Expected one native QualitySettings asset.");
+        var so = new SerializedObject(assets[0]);
+        var tiers = so.FindProperty("m_QualitySettings");
+        SerializedProperty mobile = null;
+        for (int i = 0; i < tiers.arraySize; i++)
+        {
+            var tier = tiers.GetArrayElementAtIndex(i);
+            if (tier.FindPropertyRelative("name").stringValue != "Mobile") continue;
+            if (mobile != null) throw new InvalidOperationException("Duplicate Mobile tier.");
+            mobile = tier.Copy();
+        }
+        if (mobile == null) throw new InvalidOperationException("Missing Mobile tier.");
+        var rp = mobile.FindPropertyRelative("customRenderPipeline");
+        var aa = mobile.FindPropertyRelative("antiAliasing");
+        if (rp.objectReferenceValue != null && rp.objectReferenceValue != pipeline)
+            throw new InvalidOperationException("Unexpected Mobile override; preserve it for review.");
+        if (aa.intValue != 0 && aa.intValue != 4)
+            throw new InvalidOperationException("Unexpected Mobile MSAA; preserve it for review.");
+        int beforeAa = aa.intValue;
+        string beforePipeline = rp.objectReferenceValue != null ? AssetDatabase.GetAssetPath(rp.objectReferenceValue) : "null";
+        rp.objectReferenceValue = pipeline;
+        aa.intValue = 0;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(assets[0]);
+        // Parent must capture full PRE/POST source manifests. This is the same native
+        // project-settings persistence boundary as the existing refinement repair.
+        AssetDatabase.SaveAssets();
+        var verify = new SerializedObject(assets[0]);
+        var after = verify.FindProperty("m_QualitySettings");
+        for (int i = 0; i < after.arraySize; i++)
+        {
+            var tier = after.GetArrayElementAtIndex(i);
+            if (tier.FindPropertyRelative("name").stringValue != "Mobile") continue;
+            if (tier.FindPropertyRelative("antiAliasing").intValue != 0 ||
+                tier.FindPropertyRelative("customRenderPipeline").objectReferenceValue != pipeline)
+                throw new InvalidOperationException("Native Mobile settings did not persist in memory.");
+        }
+        string raw = File.ReadAllText(Path.Combine(Application.dataPath, "../ProjectSettings/QualitySettings.asset"));
+        int start = raw.IndexOf("name: Mobile", StringComparison.Ordinal);
+        int end = raw.IndexOf("\n  - serializedVersion:", start + 1, StringComparison.Ordinal);
+        string block = end >= 0 ? raw.Substring(start, end - start) : raw.Substring(start);
+        if (!block.Contains("antiAliasing: 0") || !block.Contains("guid: " + mobileGuid))
+            throw new InvalidOperationException("Native Mobile settings did not persist to disk.");
+        Debug.Log("[S005MobileQualityRepair] result=Passed beforeAA=" + beforeAa + " beforePipeline=" + beforePipeline +
+            " mobileAA=0 mobilePipeline=" + mobilePath + " urpMsaa=1 pcFallbackNotSelected=1 otherSourceMutationRequiresPostManifestCheck=1");
+        return "Repaired native Mobile AA0 and accepted explicit pipeline; lifecycle validation remains pending.";
+    }
+}

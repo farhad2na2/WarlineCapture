@@ -1,0 +1,19 @@
+{
+  "result": "Passed",
+  "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1052-helipad-roles-producer-post-source-manifest.json",
+  "postSourceManifest": "final-1069-drone-runway-home-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-1069-drone-runway-home-regression.log",
+  "requiredPassMarker": "[S005DroneRunwayHomeRegression] result=Passed cases=5 updates=3 actualSystem=1 realExistingRunway=1 normalMission=0 sourceMutation=0",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "actualWrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "fixtureSha256": "97f386378df2e89a3b9b589fcc18971de8843b0bb00042a07cc1d4c39a68cd38",
+  "scope": "Five isolated actual-system existing-runway cases; not a normal-input mission or captured paid checkpoint."
+}

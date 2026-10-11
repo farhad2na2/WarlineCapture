@@ -1,0 +1,27 @@
+{
+  "result": "ScopedReadOnlyReviewNoActionableDefectFound",
+  "patch": "/private/tmp/s005-drone-native-pad-conditional.patch",
+  "patchSha256": "4ff80fd7e050bb01d667c587e649225fdd001d20d29cbbea0ba4382ec785c3a5",
+  "sourceEditsByReviewer": false,
+  "editorControlOrValidationByReviewer": false,
+  "reproducedPrerequisiteReportedByOwner": "Native1057 source2de5: legal native IntelStation, paid Drone140 receipt1001 producer15, no Airport; Producing delivered0 for75seconds; failure and cleanup preserved.",
+  "scope": [
+    "Expanded runtime catalog only IntelStation+Drone UseProducerGroundExit recipe",
+    "Runway initialization exclusion only shared expanded actor plus Drone role; Campaign/legacy Drone and other fixed wing retain existing rules"
+  ],
+  "mechanismReview": [
+    "BuildingProductionQueueCompositionSystemHelper.cs:384 producer-exit prefab returns null transport with no Airport requirement. This skips delivery transport, not UnitAirMovement or air capacity classification.",
+    "BuildingProductionUpdateCompositionSystemHelper.cs:207 ready null-transport production uses existing TrySpawnPlayerUnitNearBuilding.",
+    "BuildingSpawnCompositionSystemHelper.cs:441 actual prefab UnitAirMovement controls isAirUnit; native output remains an aircraft.",
+    "BuildingSpawnCompositionSystemHelper.cs:971 initializes native aircraft HomePosition/HomeCell and HomeInitialized=1, with UsesRunway default0.",
+    "BuildingSpawnCompositionSystemHelper.cs:375 synchronously calls AdoptNativeMember; SkirmishProductionService.Native.cs:66 adds SkirmishSharedActorTag and the role component before next ECS system iteration.",
+    "New FixedWingRunwayHomeInitializationSystem exclusion cannot recast this paid Drone to unrelated Airport home; existing bootstrap remains for unmarked Campaign/legacy Drone.",
+    "All native producer/price/readiness/domain/category/capacity/member adoption remain existing code. No map/prefab/budget edits."
+  ],
+  "limitations": [
+    "Static source review only; patch not applied or compiled by reviewer.",
+    "Existing generic air spawn placement may use authored production slot or front cell without ground occupancy checks. Actual IntelStation pad clearance/height remains native1065 observation, not a static pass claim.",
+    "Air movement/vision/return/service/save/recovery/death proofs remain separate actual lifecycle work."
+  ],
+  "actionableDefects": []
+}

@@ -1,0 +1,494 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// PREPARED, NOT COMPILED/RUN: isolated Drone R2 native producer/request smoke.
+// Native Touch legal IntelStation placement; no Airport is created or injected.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005DroneProducerSmoke1057
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session, boundary;
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next, queueStatusAt;
+    static int phase, index, requestId, buildSite; static bool siteTapped; static double catalogSeenAt; static bool catalogLogged; static bool buildDispatched; static double buildDispatchedAt; static UnityEngine.UI.Button clickedBuild;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone1057.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, commandBaseline;static bool nativeMoveAcknowledged;
+    static Vector3 destination; [Serializable] sealed class PlacementCandidate { public Vector3 world; public string source; } static readonly List<PlacementCandidate> placementCandidates=new(); static int actualPlacementTouches,actualBlockedPlacements; static double candidateSince; static bool candidatesPrepared; static bool anchorsCached; static Vector3 playerBaseAnchor,enemyBaseAnchor; static double surfaceBlockedSince; static int viewRepairs; static bool viewRepairQueued;
+    static readonly Dictionary<Entity,float3> origins=new();
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static BuildDrawerCatalogRuntimeView ResolveLiveCatalog(out BuildDrawerView drawer)
+    {
+        BuildDrawerCatalogRuntimeView found=null;drawer=null;
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            var ownView=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            if(ownView==null || !ownView.IsOpen)continue; // Match native ResolveCatalogTarget assigned-view gate exactly.
+            if(found!=null){DumpNativeBuildInventory("MultipleAssignedOpenCatalogs",clickedBuild);throw new InvalidOperationException("Multiple catalogs assigned to open native drawer views; ambiguous fixture ownership.");}
+            found=candidate;drawer=ownView;
+        }
+        return found;
+    }
+    static string Hierarchy(Transform transform)
+    {
+        if(transform==null)return "none";var names=new List<string>();
+        for(int depth=0;transform!=null&&depth<10;depth++,transform=transform.parent)names.Add(transform.name);
+        names.Reverse();return string.Join("/",names);
+    }
+    static string ButtonState(UnityEngine.UI.Button button)
+    {
+        if(button==null)return "button=none";
+        return "button="+button.name+" id="+button.GetEntityId()+" active="+button.IsActive()+" interactable="+button.IsInteractable()+" hierarchy="+Hierarchy(button.transform);
+    }
+    static void DumpNativeBuildInventory(string reason,UnityEngine.UI.Button buildButton)
+    {
+        int catalogs=0,drawers=0;
+        Debug.Log("[S005DroneNativeBuildInventory] reason="+reason+" "+ButtonState(buildButton)+" touchBusy="+(touch!=null&&touch.IsBusy));
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            if(catalogs++>=12)break;
+            var assigned=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            Debug.Log("[S005DroneNativeCatalogOwner] reason="+reason+" catalog="+candidate.GetEntityId()+" active="+candidate.isActiveAndEnabled+" hierarchy="+Hierarchy(candidate.transform)+" assignedView="+(assigned!=null?assigned.GetEntityId().ToString():"none")+" assignedActive="+(assigned!=null&&assigned.isActiveAndEnabled)+" assignedOpen="+(assigned!=null&&assigned.IsOpen)+" assignedHierarchy="+Hierarchy(assigned!=null?assigned.transform:null));
+        }
+        foreach(var drawer in UnityEngine.Object.FindObjectsByType<BuildDrawerView>(FindObjectsInactive.Include))
+        {
+            if(drawers++>=12)break;
+            Debug.Log("[S005DroneNativeDrawerOwner] reason="+reason+" drawer="+drawer.GetEntityId()+" active="+drawer.isActiveAndEnabled+" open="+drawer.IsOpen+" hierarchy="+Hierarchy(drawer.transform));
+        }
+        foreach(var controls in UnityEngine.Object.FindObjectsByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Include))
+            Debug.Log("[S005DroneNativeBuildControls] reason="+reason+" controls="+controls.GetEntityId()+" active="+controls.isActiveAndEnabled+" "+ButtonState(controls.BuildButton));
+    }
+
+    static bool LogLiveCatalog(BuildDrawerCatalogRuntimeView catalog, BuildDrawerView drawer)
+    {
+        var keys=new List<string>();
+        var field=typeof(BuildDrawerCatalogRuntimeView).GetField("_items",BindingFlags.Instance|BindingFlags.NonPublic);
+        foreach(var item in (IEnumerable<BuildDrawerCatalogItem>)field.GetValue(catalog))
+            if(item.Prefab!=null && keys.Count<64)keys.Add(item.Prefab.name);
+        var source=typeof(BuildDrawerCatalogRuntimeView).GetField("buildingPlacementConfig",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog) as ScriptableObject;
+        var category=typeof(BuildDrawerCatalogRuntimeView).GetField("_activeCategory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        var restriction=typeof(BuildDrawerCatalogRuntimeView).GetField("_cat",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        bool missionRestricted=(bool)restriction.GetType().GetField("_restricted",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        var missionAllowed=(List<string>)restriction.GetType().GetField("_allowedBuildingConfigIds",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        Debug.Log("[S005DroneLiveCatalogRestriction] missionRestricted="+missionRestricted+" allowed="+string.Join(",",missionAllowed));
+        Debug.Log("[S005DroneLiveCatalog] catalog="+catalog.GetEntityId()+" drawer="+drawer.GetEntityId()+" assignedViewOpen="+drawer.IsOpen+" active="+catalog.isActiveAndEnabled+" category="+category+" source="+(source!=null?source.name:"none")+" keys="+string.Join(",",keys));
+        return keys.Contains("Building_Satelite_Dish");
+    }
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath)||File.Exists("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone1057.placement.jsonl"))throw new InvalidOperationException("Preserve existing unique native1057 Touch/placement evidence");File.WriteAllText(touchPath,"");
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;
+        deadline=EditorApplication.timeSinceStartup+600;next=0;buildSite=0;siteTapped=false;catalogSeenAt=0;catalogLogged=false;buildDispatched=false;buildDispatchedAt=0;clickedBuild=null;anchorsCached=false;playerBaseAnchor=enemyBaseAnchor=Vector3.zero;surfaceBlockedSince=0;viewRepairs=0;viewRepairQueued=false;placementCandidates.Clear();actualPlacementTouches=actualBlockedPlacements=0;candidateSince=0;candidatesPrepared=false;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch;AriaCommandEvidence.Recorded+=ObserveMoveReceipt; touch=null; inputFrame=-1;
+        Debug.Log("[S005DroneMovement] scope=IsolatedNativeDroneR2ProducerAndTouchMovement normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005DroneMovementCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=InputFrame;
+                completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Ground paid queue fixture exceeded 360 seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId) && r.RoleKind==SkirmishRoleKind.Drone)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=1)throw new InvalidOperationException("Expected enabled Drone role, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))foreach(var actor in actors)Kill(em,actor);
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.Established;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"droneNativeQueueMoveDeathWithoutAirport");return;}
+                var role=roles[index];
+                if(SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1))throw new InvalidOperationException("Unexpected Airport invalidates R2 Drone producer case.");
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))
+                {
+                    SkirmishMaterialsService.Write(em,session,1,1800);
+                    if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                    phase=20;caseDeadline=now+360;Debug.Log("[S005DroneProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1");return;
+                }
+                Debug.Log("[S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0 readiness=Established nativeLegalPlacement=1");
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(phase==23){if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.IntelStation,1)){if(now>caseDeadline)throw new TimeoutException("Native IntelStation construction did not become functional.");return;}phase=2;return;}
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                Debug.Log("[S005DroneNativeQueueRequest] result=Accepted role="+roles[index].RoleKind+" requestId="+(9000+requestId)+" nativeApi=1");
+                queueStatusAt=0;receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(now>=queueStatusAt){queueStatusAt=now+5;Debug.Log("[S005DroneNativeQueueProgress] role="+roles[index].RoleKind+" receipt="+receipt.ReservationId+" phase="+receipt.Phase+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+receipt.DeliveredMembers+" required="+receipt.MemberCount+" airportPresent="+SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1));}
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005DronePaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                origins.Clear(); float3 center=float3.zero;nativeMoveAcknowledged=false;
+                foreach(var member in members){var pos=em.GetComponentData<LocalTransform>(member).Position;origins.Add(member,pos);center+=pos;}
+                center/=members.Count; destination=(Vector3)(center+new float3(16,0,0));
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin(); commandBaseline=AriaCommandEvidence.AcceptedCommands;phase=10;caseDeadline=now+65;return;
+            }
+            if(phase==12)
+            {
+                if(touch.IsBusy||!nativeMoveAcknowledged)return;
+                bool moved=true;float minimum=float.MaxValue;
+                foreach(var member in members){if(!em.Exists(member)||em.GetComponentData<UnitHealth>(member).Current<=0)throw new InvalidOperationException("Role died before movement observation");float distance=math.distance(origins[member],em.GetComponentData<LocalTransform>(member).Position);minimum=math.min(minimum,distance);moved &= distance>=5;}
+                if(!moved)return;
+                if(AriaCommandEvidence.AcceptedCommands<=commandBaseline||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("Native Move receipt missing or input violation");
+                Debug.Log("[S005DroneNativeMovement] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" minimumDisplacement="+minimum+" input=Touch actorPositionsSelectionOrdersInjected=0");
+                foreach(var member in members)Kill(em,member);phase=5;caseDeadline=now+10;return;
+            }
+            if(phase==5)
+            {
+                foreach(var member in members)if(em.Exists(member) && em.HasComponent<SkirmishAttemptOwnedComponent>(member) && em.GetComponentData<SkirmishAttemptOwnedComponent>(member).CapacityReleased==0)return;
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)throw new InvalidOperationException("Capacity not fully released after delivered role death.");
+                foreach(var member in members)if(em.Exists(member) && SkirmishProductionService.TryReleaseDeath(em,session,member))throw new InvalidOperationException("Death released capacity twice.");
+                Debug.Log("[S005DronePaidQueueDeath] result=Passed role="+roles[index].RoleKind+" capacityReleased=1 idempotent=1 stimulus=HealthZero");results.Add(roles[index].RoleKind.ToString());index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static void ObserveMoveReceipt(string operation,uint receipt,bool verified)
+    {
+        if(phase!=12||nativeMoveAcknowledged||operation!="Move"||!verified||receipt==0||world==null||!world.IsCreated)return;
+        var em=world.EntityManager;origins.Clear();
+        foreach(var member in members){if(!em.Exists(member)||!em.HasComponent<SelectedUnitTag>(member))return;origins.Add(member,em.GetComponentData<LocalTransform>(member).Position);}
+        nativeMoveAcknowledged=true;
+        Debug.Log("[S005DroneNativeMoveReceipt] role="+roles[index].RoleKind+" receipt="+receipt+" verified=1 displacementOrigin=AfterAcceptedMove");
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static void AddPlacementCandidate(Vector3 world,string source)
+    {
+        if(world.x<750||world.x>1900||world.z<150||world.z>1000)return;
+        world.y=playerBaseAnchor.y;
+        foreach(var old in placementCandidates)if((old.world-world).sqrMagnitude<4)return;
+        placementCandidates.Add(new PlacementCandidate{world=world,source=source});
+    }
+    static void PreparePlacementCandidates()
+    {
+        if(candidatesPrepared)return;candidatesPrepared=true;
+        var layout=AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset");
+        if(layout==null)throw new InvalidOperationException("Existing S005 logical layout missing.");
+        foreach(var pad in layout.Pads)
+        {
+            if(pad.FactionId!=1||pad.Kind is not (SkirmishLegalPadKind.Service or SkirmishLegalPadKind.AirReturn or SkirmishLegalPadKind.Supply))continue;
+            if(!layout.TryProjectLocalToMap(pad.CenterX,pad.CenterZ,out float x,out float z))throw new InvalidOperationException("Typed pad map binding unavailable.");
+            AddPlacementCandidate(new Vector3(x,0,z),"DeclaredTypedPad:"+pad.PadId+";currentNativeLegalityUnproved");
+        }
+        // Prioritize the nearby recorded paid Campaign lot; this facility still needs native validity.
+        AddPlacementCandidate(new Vector3(825.5f,0,671f),"RecordedPaidCampaignAirportLot:rotatedAirport;notIntelStationQualification");
+        Vector3 forward=enemyBaseAnchor-playerBaseAnchor;forward.y=0;forward.Normalize();var side=Vector3.Cross(Vector3.up,forward);
+        // Every point is only a prospective lot on unchanged existing geometry.
+        // Search rings around the legitimate visible objective, not an injected pose.
+        for(int ring=1;ring<=4;ring++)
+            for(int along=-ring;along<=ring;along++)
+                for(int across=-ring;across<=ring;across++)
+                    if(Mathf.Max(Mathf.Abs(along),Mathf.Abs(across))==ring)
+                        AddPlacementCandidate(playerBaseAnchor+forward*(along*24)+side*(across*24),"PublicBaseCandidateGrid24m:ring"+ring+";currentNativeLegalityUnproved");
+        // Native paid Airport plots recorded by the existing Campaign-source
+        // fixture; candidate provenance only. IntelStation must pass its own rules.
+        AddPlacementCandidate(new Vector3(1399f,0,177.5f),"RecordedPaidCampaignAirportLot:seed155926;notIntelStationQualification");
+        AddPlacementCandidate(new Vector3(1415f,0,177.5f),"RecordedPaidCampaignAirportLot:seed155926;notIntelStationQualification");
+        Debug.Log("[S005DronePlacementSearch] candidates="+placementCandidates.Count+" source=ExistingTypedPadsPublicBaseGridRecordedCampaignLots currentLegalityUnproved=1 sourceFitExhaustive=0 forceValid=0 physicalGeometryChanged=0 offscreenCandidatesNotConsumed=1");
+    }
+    [Serializable] sealed class PlacementObservation
+    {
+        public string phase,source,rawNativeStatus,shownStatus,title,footprint,materialsCost,oilCost,fuelCost,readiness,validityPanelStatus;
+        public int candidate,actualTouches,actualBlocked,ownMaterials,currentDollars,activeMaterialsCost,activeCreditsCost;
+        public Vector3 world,camera;
+        public bool hasPending,canConfirmNative,confirmActive,confirmInteractable,fullMapOpen;
+    }
+    static void ObservePlacement(BuildPlacementConfirmationBarView placement,string phaseName)
+    {
+        var command=(IBuildingUiCommand)typeof(BuildPlacementConfirmationBarView).GetField("_commandSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(placement);
+        UiShellRuntimeGateway.TryReadSkirmish(out var model);UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness);
+        var candidate=placementCandidates[buildSite];var map=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        var row=new PlacementObservation {phase=phaseName,candidate=buildSite,actualTouches=actualPlacementTouches,actualBlocked=actualBlockedPlacements,world=candidate.world,source=candidate.source,rawNativeStatus=command?.PlacementStatusText,shownStatus=placement.StatusText?.text,title=placement.TitleText?.text,footprint=placement.FootprintText?.text,materialsCost=placement.MaterialsCostText?.text,oilCost=placement.OilCostText?.text,fuelCost=placement.FuelCostText?.text,ownMaterials=model.OwnMaterials,currentDollars=command?.CurrentDollars??-1,activeMaterialsCost=command?.ActivePlacementCost??-1,activeCreditsCost=command?.ActivePlacementCreditsCost??-1,readiness="stage="+readiness.Stage+" visible="+readiness.Visible+" upgradeEligible="+readiness.CanUpgrade+" pending="+readiness.InProgress+" reason="+readiness.Reason,validityPanelStatus=placement.ValidityPanel!=null?placement.ValidityPanel.StatusText?.text:null,hasPending=placement.HasPendingPlacement,canConfirmNative=command!=null&&command.CanConfirmBuildingPlacement,confirmActive=placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive(),confirmInteractable=placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable(),fullMapOpen=map!=null&&map.IsOpen,camera=Camera.main!=null?Camera.main.transform.position:Vector3.zero};
+        string json=JsonUtility.ToJson(row);Debug.Log("[S005DroneNativePlacementObservation] "+json);
+        File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone1057.placement.jsonl",json+"\n");
+        if(actualPlacementTouches<=6||row.canConfirmNative)ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1057-placement-"+buildSite+"-"+phaseName+".png");
+    }
+
+    static Canvas RootCanvas(Component component)
+    {
+        var canvas=component!=null?component.GetComponentInParent<Canvas>()?.rootCanvas:null;
+        return canvas!=null&&canvas.isActiveAndEnabled&&canvas.gameObject.activeInHierarchy?canvas:null;
+    }
+    static Canvas ResolvePresentedInputCanvas()
+    {
+        var fullMap=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        if(fullMap!=null&&fullMap.IsOpen)
+        {var fullCanvas=RootCanvas(fullMap.CloseAction)??RootCanvas(fullMap.Minimap);if(fullCanvas!=null)return fullCanvas;}
+        var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+        if(placement!=null&&placement.HasPendingPlacement&&placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive())
+        {var canvas=RootCanvas(placement.ConfirmButton);if(canvas!=null)return canvas;}
+        var catalog=ResolveLiveCatalog(out var drawer);
+        if(drawer!=null&&drawer.IsOpen)
+        {
+            var canvas=RootCanvas(drawer.DrawerRoot!=null?drawer.DrawerRoot.transform:drawer.transform);
+            if(canvas==null)canvas=RootCanvas(drawer.CloseButton);
+            if(canvas!=null)return canvas;
+        }
+        var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+        return RootCanvas(tray)??RootCanvas(hud);
+    }
+    static void SurfaceBlocked(Canvas canvas,double now)
+    {
+        if(surfaceBlockedSince==0)
+        {
+            surfaceBlockedSince=now;
+            Debug.Log("[S005DroneNativeInputSurface] phase="+phase+" presentedCanvas="+(canvas!=null?Hierarchy(canvas.transform):"none")+" canvasPixels="+(canvas!=null?canvas.pixelRect.ToString():"none")+" renderScreen="+Screen.width+"x"+Screen.height+" guard=ExactPresentedCanvasWidth");
+            if(phase>=20)DumpNativeBuildInventory("InputSurfaceBlocked",clickedBuild);
+        }
+        if(now-surfaceBlockedSince>=1&&!viewRepairQueued&&viewRepairs<2&&!touch.IsBusy)
+        {
+            viewRepairQueued=true;
+            EditorApplication.delayCall+=()=>
+            {
+                viewRepairQueued=false;if(!EditorApplication.isPlaying||phase==9)return;
+                // Existing harness fixed Game View strategy. Only Editor presentation changes.
+                try
+                {
+                    typeof(Game.Editor.MainMenuV3PrefabBuilder).GetMethod("SetGameViewResolution",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{1920,1080});
+                    viewRepairs++;surfaceBlockedSince=EditorApplication.timeSinceStartup;
+                    Debug.Log("[S005DroneNativeInputSurface] action=ExistingFixedGameViewStrategy width=1920 height=1080 retry="+viewRepairs+" simulationUntouched=1");
+                }
+                catch(Exception error){Finish(true,"Existing native Game View correction failed: "+error);}
+
+            };
+        }
+        if(now-surfaceBlockedSince>6&&touch.IsBusy)
+            throw new InvalidOperationException("Native gesture pending while no matching presented Canvas exists; bounded fixture/input-surface failure, no Drone queue attempted.");
+        if(now-surfaceBlockedSince>3&&viewRepairs>=2)
+            throw new InvalidOperationException("Native input surface did not match presented Canvas after bounded existing Game View correction; fixture/presentation failure, no producer or queue defect proven.");
+    }
+
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        try
+        {
+            double surfaceNow=EditorApplication.timeSinceStartup;
+            var canvas=ResolvePresentedInputCanvas();
+            if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1){SurfaceBlocked(canvas,surfaceNow);return;}
+            surfaceBlockedSince=0;inputFrame=Time.frameCount;
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11 or 20 or 21 or 22 or 23))return;
+            var em=world.EntityManager;
+            if(phase>=20)
+            {
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                var catalog=ResolveLiveCatalog(out var drawer);
+                var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+                var buildControls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                if(phase==20)
+                {
+                    if(hud==null)return;
+                    playerBaseAnchor=hud.PlayerBaseObjectivePosition;enemyBaseAnchor=hud.EnemyBaseObjectivePosition;
+                    if((enemyBaseAnchor-playerBaseAnchor).sqrMagnitude<1)throw new InvalidOperationException("Public HUD base anchors not ready before Build.");
+                    anchorsCached=true;
+                    if(Tap(hud.PlayerFocusButton))
+                    {phase=21;Debug.Log("[S005DronePublicAnchorCache] source=VisibleHUD beforeBuild=1 player="+playerBaseAnchor+" enemy="+enemyBaseAnchor+" actorStateReadForPlacement=0");}
+                    return;
+                }
+                if(!anchorsCached)throw new InvalidOperationException("No legitimate public HUD base anchor cache for placement.");
+                if(phase==21)
+                {
+                    if(placement!=null&&placement.HasPendingPlacement){phase=22;return;}
+                    if(catalog!=null && !catalogLogged){catalogLogged=true;catalogSeenAt=now;LogLiveCatalog(catalog,drawer);}
+                    if(catalog==null)
+                    {
+                        if(!buildDispatched)
+                        {
+                            DumpNativeBuildInventory("BeforeBuildContact",buildControls?.BuildButton);
+                            if(Tap(buildControls?.BuildButton))
+                            {
+                                clickedBuild=buildControls.BuildButton;buildDispatched=true;buildDispatchedAt=now;
+                                Debug.Log("[S005DroneNativeBuildContact] dispatched=1 "+ButtonState(clickedBuild));
+                            }
+                            return;
+                        }
+                        if(now-buildDispatchedAt>=3)
+                        {
+                            DumpNativeBuildInventory("NoAssignedOpenCatalogAfterBuild",clickedBuild);
+                            throw new InvalidOperationException("No native catalog with assigned open view appeared within 3 seconds after actual Build Touch. Fixture/UI ownership unresolved; no Drone producer or queue defect proven.");
+                        }
+                        return;
+                    }
+                    var build=catalog.ResolveCatalogTarget(BuildDrawerCategory.Buildings,"Building_Satelite_Dish");
+                    if(build==null && now-catalogSeenAt>3)
+                    {
+                        bool included=LogLiveCatalog(catalog,drawer);
+                        DumpNativeBuildInventory("AssignedOpenCatalogMissingSatelliteControl",clickedBuild);
+                        throw new InvalidOperationException("Actual native catalog assigned to open view has no Satellite control; keyIncluded="+included+". Producer UI prerequisite unresolved; no Drone queue attempted.");
+                    }
+                    if(!Tap(build)&&build!=null)harness.GetMethod("PlayerResumeScrollTo",privateStatic).Invoke(null,new object[]{build});return;
+                }
+                if(phase==23)return;
+                if(placement==null||!placement.HasPendingPlacement)throw new InvalidOperationException("Native placement closed before IntelStation commit.");
+                PreparePlacementCandidates();
+                if(siteTapped)
+                {
+                    ObservePlacement(placement,"AfterCompletedGroundTouch");
+                    if(placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable())
+                    {if(Tap(placement.ConfirmButton)){phase=23;Debug.Log("[S005DroneProducer] phase=NativeIntelStationConfirmed forceValid=0 relocationInjected=0 actualPlacementTouches="+actualPlacementTouches+" candidate="+buildSite);}return;}
+                    actualBlockedPlacements++;siteTapped=false;buildSite++;candidateSince=0;
+                }
+                if(buildSite>=placementCandidates.Count)throw new InvalidOperationException("Bounded current native IntelStation candidates exhausted after actual Touch observations="+actualPlacementTouches+" blocked="+actualBlockedPlacements+". This sample is not exhaustive source-fit/impossibility proof.");
+                var candidate=placementCandidates[buildSite];
+                if(candidateSince==0){candidateSince=now;ObservePlacement(placement,"BeforeCandidateTouchOrNativeNavigation");}
+                if(now-candidateSince>20)
+                {
+                    ObservePlacement(placement,"UnobservedCandidateNavigationTimeout");
+                    throw new InvalidOperationException("Candidate could not be exposed/touched through normal full-map input within20secs; not counted invalid; source-fit remains unqualified. candidate="+buildSite);
+                }
+                // False means navigation/input not yet complete, never 'bad lot'.
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{candidate.world,now}))
+                {siteTapped=true;actualPlacementTouches++;Debug.Log("[S005DroneProducer] phase=NativePlacementTouch candidate="+candidate.world+" candidateIndex="+buildSite+" actualTouches="+actualPlacementTouches+" source="+candidate.source+" input=Touch offscreenCandidateConsumed=0");}
+                return;
+            }
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10)
+            {
+                using var query=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=query.ToEntityArray(Allocator.Temp);
+                bool exact=selected.Length==members.Count;foreach(var actor in selected)exact &= members.Contains(actor);
+                if(!exact)
+                {
+                    if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return;}
+                    if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                    for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&members.Contains(member)){Tap(tray.VisibleCardButton(slot));return;}
+                    if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);
+                    return;
+                }
+                Debug.Log("[S005DroneNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" input=Touch selectionInjected=0");phase=11;
+            }
+            if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}
+            bool started=(bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{destination,now});
+            if(started){phase=12;Debug.Log("[S005DroneNativeMovement] phase=Order role="+roles[index].RoleKind+" destination="+destination+" input=Touch");}
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;AriaCommandEvidence.Recorded-=ObserveMoveReceipt;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005DroneMovementInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005DroneMovement] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending nativeTouchSelectionMovement=Measured nativeAirLifecycle=Pending scanReturnCapacity=Pending reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedDroneR2Producer:"+reason});
+    }
+}

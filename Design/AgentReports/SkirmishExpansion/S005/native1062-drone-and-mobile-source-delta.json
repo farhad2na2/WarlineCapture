@@ -1,0 +1,35 @@
+{
+  "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+  "priorSourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
+  "modified": [
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+    "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
+    "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs",
+    "ProjectSettings/QualitySettings.asset"
+  ],
+  "added": [],
+  "removed": [],
+  "physicalMapsUnchanged": true,
+  "gameplayBudgetsUnchanged": true,
+  "droneBeforeFix": "native1057-drone-intelstation-no-airport-failure.json",
+  "droneReproduction": {
+    "legalNativeIntelStation": true,
+    "paidMaterials": 140,
+    "producerRuntimeId": 15,
+    "receiptId": 1001,
+    "airportPresent": false,
+    "deliveredMembers": 0,
+    "timeoutSeconds": 75,
+    "nativeQueueAccepted": true,
+    "touchDispatched": 12,
+    "touchCompleted": 12,
+    "receiptViolations": 0
+  },
+  "droneRootCause": "Static resolver name fallback chooses Plane self-arrival; metadata clears requires-runway but leaves Plane mode, whose delivery path still requires a runtime Airport. Expanded Drone IntelStation recipe now uses its own producer exit and preserves producer home.",
+  "mobileNativeRepair": "native1062-mobile-accepted-pipeline-repair.json",
+  "mobilePersistenceDelta": "Only QualitySettings.asset changed across native repair; MobileAA4->0 and explicit accepted MobileRP assigned. No dirty unrelated source saved.",
+  "mobileContract": "native1064-focused-current-proof.json",
+  "compiler": "compile1062-drone-and-mobile-fixed-status.json",
+  "playerReady": false,
+  "technicallyReady": false
+}

@@ -1,0 +1,64 @@
+{
+  "result": "PreparedOnlyNotCompiledOrExecuted",
+  "fixture": "/private/tmp/S005RadarSupport1055.cs",
+  "sha256": "e204893e0a8147e06c9d962f226f49681ed03335f11793f17007fdb765c9cddb",
+  "class": "S005RadarSupport1055",
+  "loadOnlyMethod": "Run",
+  "validationMethod": "RunValidation",
+  "requiredMarkers": [
+    "[S005RadarNativeEffect] result=Passed",
+    "[S005RadarNativeProviderDeath] result=Passed",
+    "[S005RadarSupport] result=Passed cases=2",
+    "[S005RadarSupportCleanup] result=Passed attemptsRemoved=1"
+  ],
+  "ownerExecutionRequired": "Run in a new root-owned isolated validation session via checked macOS wrapper after active1053/T7 ownership permits; this subagent did not load or execute it.",
+  "scope": "Two actual native paid queue deliveries, authored overlays/producer/cost/native ownership, Touch squad selection and verified Move for AntiAir companion and Radar. Observe exact native RadarProvider paid entity, increased range/lock benefit in actual runtime; Radar HealthZero death must remove support and restore baseline. Does not certify AntiAir air hit, visibility intel, normal whole mission, EN/FA/device, air lifecycle.",
+  "disclosedStimuli": [
+    "Materials1800 per native API queue",
+    "FullArsenal readiness",
+    "Own producer oil/fuel storage refill",
+    "Starting unit HealthZero retirement to remove collateral actors",
+    "Enemy strategy temporarily disabled and restored",
+    "Radar/AntiAir HealthZero death stimulus only after observed native effect"
+  ],
+  "forbiddenTestInjectionAvoided": [
+    "No actor positions written",
+    "No selection tags written",
+    "No Move intents/path orders written",
+    "No support provider/link/state/range/lock writes",
+    "No shots/projectiles/damage/health outcome writes to pretend runtime effect",
+    "No physical map/terrain/roads/scenery source edits"
+  ],
+  "realReuse": [
+    "native1024 paid request, receipt, real actor membership/overlay, Touch observation and cleanup framework",
+    "AirMissileLauncherRuntimeTests.SupportLink_AppliesRadarAndSatelliteBonuses identifies actual runtime support semantics",
+    "readonly936 actual Radar/AntiAir prefab baked component census"
+  ],
+  "knownBoundedFailureModes": [
+    "Fails if an existing Radar provider prevents a clean baseline",
+    "Fails/timeouts if existing facility exits/delivery or actual Move fail",
+    "Times out if paid Radar is outside paid AntiAir radius after Move; no teleport or fabricated link fallback",
+    "Fails if link has no measured benefit or provider death does not restore baseline",
+    "First helper AntiAir movement is setup support, not attack certification"
+  ],
+  "groundCombatMinimalNextDriver": {
+    "existingReusableTests": [
+      "UnitCombatFocusedEditModeTests.StandardAttack_RespectsAuthoredDomainAndVisibilityPolicy (actual shared damage but synthetic actors)",
+      "CombatDamageObservationTelemetryTests.DirectFire_RecordsClampedMixedSourceDamageWithoutLastSourceAttribution (native damage hook semantics)",
+      "SkirmishSharedCombatTests.CommandedSiegeUsesNativeOrdersAndRejectsIllegalTargets (command bridge only; explicitly no bridge damage)",
+      "AirMissileLauncherRuntimeTests.TargetAcquisition_TracksHostileAirAndIgnoresGroundUnit plus FireControl_LockedLauncherCreatesHomingProjectile/HomingImpact_DamagesAirTargetAndRemovesProjectile (synthetic isolated weapon tests)"
+    ],
+    "smallestMeaningful1024Extension": [
+      "Retain actual enemy Rifle plus Armored APC as legal target pool instead of retiring every opposing opening unit. Suppress target retaliation only as disclosed target setup; retain faction/domain/native prefab/health rules.",
+      "Process only11 ground armed roles excludingAntiAir; each current paid role uses existing actual delivered receipt/overlay/membership and Touch group selection.",
+      "Use selected-group public SkirmishArmyCommandService.TryAttack(em,session,target,out decision) after target visibility/position setup is explicitly disclosed. Do not label API Attack as native Touch. Its actual runtime bridge owns movement/engagement/weapons.",
+      "Read singleton CombatDamageObservationQueueComponent/Element without calling Record: baselineLastEventId before order; require fresh SourceEntity in paid members, TargetEntity exact retained legal target, DamageApplied>0 and TargetHealthAfter actual current or tracked event HP. This avoids ShotCounter-only false passes and aggregate damage attribution.",
+      "Retained target pool needs safe pre-command re-position/visibility and reset of still-living targets between cases. Restore/read setup before baseline; never inject post-command damage or outcomes. Fail if target was destroyed and native lifecycle disposed it rather than reviving a destroyed actor.",
+      "Siege additionally must respect actual GroundMissileLauncher.MinRange and wait actual projectile/event; Breacher/Marksman cannot all share a Structure target. AntiAir requires an actual legal air target and remains a separate case.",
+      "This is a substantive target-case extension, not a safe parameter-only substitution. No speculative broad ground fixture authored in this preparation."
+    ]
+  },
+  "sourceOrEditorMutationsBySubagent": false,
+  "normalMissionCertified": false,
+  "playerReady": false
+}

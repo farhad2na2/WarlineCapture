@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
-  "sourceFingerprint": "final-1053-current-manual-fa-IR-seed104734-post-independent-fingerprint.json",
+  "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+  "sourceFingerprint": "final-1069-drone-runway-home-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,8 +13,8 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "compile-1046-air-pause-fixed-status.json",
-  "shippingRuntimeCommit": "241b417868a327e436805db82ed842898fc9bacc",
+  "currentCompilationProof": "compile1062-drone-and-mobile-fixed-status.json",
+  "shippingRuntimeCommit": "818054c154cf2dd1e1af246c6491812b708b8f8d",
   "currentNativeVictories": [
     "native1053-current-manual-fa-IR-seed104734-victory.json"
   ],
@@ -38,21 +38,21 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Fresh normal paid Strike flight Save/Continue; native taxi recovery has a scoped pass",
-    "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
-    "Every enabled role X37 lifecycle",
-    "Remaining checkpoint/result/replay and exposed-preset evidence",
-    "Remaining affected Campaign M1/M3/M4 regressions, family stress, cleanup and performance gates",
+    "Bilateral aircraft parking/taxi/launch/return and capacity for actually exposed Standard profile (Air2)",
+    "Remaining enabled-role X37 combat/transport/recon and checkpoint evidence",
+    "Current English/ARIA journeys; remaining checkpoint/result/replay and exposed-preset evidence",
+    "Affected Campaign M3/M4 regressions and required family/stress/cleanup/performance checks",
+    "Real device/performance acceptance; Mobile pipeline configuration contract and Editor lifecycle conservation passed",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Native recorded flight Continue/Pause/Save after pause fix; T7 independent Campaign M1/M4 real visible input; diagnose Drone fixture actual serialized drawer view before production; grouped remaining role effects and acceptance gates.",
+  "nextWork": "T7 native1060 M3FA/M4 regressions; main correctedRadar1068, paidVehicle1061 and remaining air/infantry role effects after heavy lane handoff.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "PreparedAwaitingHeavyLane",
-    "scope": "NativeDrone1057 legal placement diagnostics; groupedHelipad1052 andRadar1055 compile-checked; T7M1/M4 owns heavy Play lane"
+    "status": "Pending",
+    "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-1058-m1-guidance-integrated-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1069-drone-runway-home-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": null,
@@ -63,9 +63,12 @@
   ],
   "currentFixedWingCycleApplicability": {
     "exactWholeSourceEquivalent": false,
-    "nativeAircraftSubsystemEquivalent": true,
+    "nativeAircraftSubsystemEquivalent": false,
     "delta": "source-delta-908-legacy-defense-compatibility.json",
-    "note": "Scoped recorded source proof retained; native flight/return/fuel/Oil/production/map code unchanged by shared ARIA UI/contract/planner changes. Full mission refresh required."
+    "note": "Historical890 real paid cycle retains original hash. UnitAirMovementSystem now has dt<=0 early return; positive-time body is byte-equivalent after normalized guard removal. This is scoped applicability, not whole subsystem/full-source equivalence. Current native pause recovery1049 and isolated pause cases1046 cover the altered zero-delta path.",
+    "positiveTimeAircraftBodyEquivalent": true,
+    "pauseRecoveryCurrentProof": "native1049-retained-flight-pause-save-continue-pass.json",
+    "zeroDeltaIsolatedProof": "native1046-focused-current-proof.json"
   },
   "focusedNative894": {
     "result": "Passed",
@@ -347,7 +350,8 @@
     "native945-normal-paid-strike-returntaxi-save-continue-failure.json",
     "native945-980-normal-paid-strike-taxi-save-continue-pass.json",
     "native978-normal-paid-strike-flight-save-continue-failure.json",
-    "native1018-normal-paid-strike-flight-save-continue-failure.json"
+    "native1018-normal-paid-strike-flight-save-continue-failure.json",
+    "native1049-retained-flight-pause-save-continue-pass.json"
   ],
   "focusedNative976": {
     "result": "Failed",
@@ -420,7 +424,7 @@
     "nativeCurrentWholeSourceAcceptanceClaimed": false
   },
   "currentM02ContentPackRepairProof": "native990-m02-content-pack-binding-repair-pass.json",
-  "latestPushedCommit": "84d2a54eb72cc7aed9e8f5957ca66ecda709f61e",
+  "latestPushedCommit": "818054c154cf2dd1e1af246c6491812b708b8f8d",
   "currentValidationDriverIssue": {
     "scope": "Campaign selection test actuator timing",
     "failedProofs": [
@@ -550,7 +554,7 @@
   "currentNativeGroundBasicMovementStatus": "PassedScopedNativeGroundMovement",
   "currentNativeGroundBasicMovementRoleCount": 15,
   "currentNativeGroundBasicMovementReceiptAudit": "native1024-ground-move-receipt-audit.json",
-  "currentDroneProducerSmoke": "native1051-drone-intelstation-no-airport-failure.json",
+  "currentDroneProducerSmoke": "native1065-drone-intelstation-no-airport-pass.json",
   "focusedNative1043": {
     "result": "Failed",
     "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
@@ -628,8 +632,43 @@
     "native933-current-manual-fa-IR-seed104734-victory.json"
   ],
   "currentFlightRecoveryStatus": "Native1049 scoped normal-input recovery of original paid flight passed actual Continue/Pause/Save/Continue with exact new paused flight state and positive-time motion; not a fresh uninterrupted complete match.",
-  "currentMobileQualitySourceReview": "delegation-unexpected-source-delta-review-20261011.json; independent Mobile MSAA4 edit conflicts with existing0 contract, owner provenance pending; no device pass claimed.",
-  "currentCompilation": "compile1058-integrated-M1-guidance-status.json",
+  "currentMobileQualitySourceReview": "Native explicit accepted Mobile pipeline and AA0; 23 focused checks1064 passed. Actual paid Drone1065 and three-Heli1052 Play/cleanup preserved the complete07d source. Real device performance remains pending.",
+  "currentCompilation": "compile1062-drone-and-mobile-fixed-status.json",
   "currentM1GuidanceIntegration": "native1058-M1-guidance-integration-source-delta.json",
-  "sourceQualificationNote": "Current main source includes exact M1 guidance patch natively proven EN/FA in T7. Prior main proofs retain their recorded8417 source hash and scoped dependency applicability; no full2de5 main-source pass claimed."
+  "sourceQualificationNote": "Current main source includes exact M1 guidance patch natively proven EN/FA in T7. Prior main proofs retain their recorded8417 source hash and scoped dependency applicability; no full2de5 main-source pass claimed.",
+  "mobileQualityRepair": "native1062-mobile-accepted-pipeline-repair.json",
+  "focusedNative1064": {
+    "result": "Passed",
+    "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1062-drone-and-mobile-fixed-source-manifest.json",
+    "postSourceManifest": "final-1064-mobile-quality-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1064-mobile-quality-contract.log",
+    "requiredPassMarker": "[AndroidVisualQualityValidation] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentMobileQualityContractProof": "native1064-focused-current-proof.json",
+  "currentRadarSupportEffect": "native1055-isolated-paid-radar-support-failure.json",
+  "currentHelipadRolesProducerSmoke": "native1052-helipad-roles-helipad-no-airport-pass.json",
+  "focusedNative1069": {
+    "result": "Passed",
+    "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1052-helipad-roles-producer-post-source-manifest.json",
+    "postSourceManifest": "final-1069-drone-runway-home-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1069-drone-runway-home-regression.log",
+    "requiredPassMarker": "[S005DroneRunwayHomeRegression] result=Passed cases=5 updates=3 actualSystem=1 realExistingRunway=1 normalMission=0 sourceMutation=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentDroneRunwayHomeRegressionProof": "native1069-focused-current-proof.json"
 }

@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1062-drone-and-mobile-fixed-source-manifest.json",
+  "postSourceManifest": "final-1064-mobile-quality-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-1064-mobile-quality-contract.log",
+  "requiredPassMarker": "[AndroidVisualQualityValidation] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "actualWrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "scope": "23 focused native Mobile visual-quality contract cases, including explicit accepted Mobile pipeline/MSAA binding; no real device/performance certificate"
+}

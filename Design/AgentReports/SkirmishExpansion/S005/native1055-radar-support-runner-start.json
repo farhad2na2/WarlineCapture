@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1055",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1065-drone-producer-post-source-manifest.json",
+  "preflightManifest": "final-1055-radar-support-preflight-source-manifest.json",
+  "fixtureSha256": "e204893e0a8147e06c9d962f226f49681ed03335f11793f17007fdb765c9cddb",
+  "validationMethod": "S005RadarSupport1055.RunValidation"
+}

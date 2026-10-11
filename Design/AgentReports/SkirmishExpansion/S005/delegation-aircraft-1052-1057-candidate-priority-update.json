@@ -1,0 +1,26 @@
+{
+  "result": "PreparedCandidateOrderOnly",
+  "rows": [
+    {
+      "fixture": "/private/tmp/S005DroneProducerSmoke1057.cs",
+      "oldSha256": "b16b83186196df7c8a791b8c9d7e2dae9adc91a554342a0f32b05bd8bf445bf9",
+      "newSha256": "ca856a5b7ea5fc6078264e22891c56317a3557ea11412baadab9e1788755459a",
+      "archive": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone1057-prepared.cs.txt",
+      "mutation": "Only nearby825.5/671 candidate priority before public grid, after typed pads",
+      "loaded": false,
+      "executed": false,
+      "dryRunCompileRefresh": "Pending root; previous dry-run compiled preceding ordering"
+    },
+    {
+      "fixture": "/private/tmp/S005HelipadRolesSmoke1052.cs",
+      "oldSha256": "1885951449b893a9c6173092a6706f886a14300d961a6bc554cb68491874eb77",
+      "newSha256": "43386a84f0c9e73fdb1c55cfebe6c3766f5b2665a6c05809831f9d7cbf2a44cb",
+      "archive": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-helipad1052-prepared.cs.txt",
+      "mutation": "Only nearby825.5/671 candidate priority before public grid, after typed pads",
+      "loaded": false,
+      "executed": false,
+      "dryRunCompileRefresh": "Pending root; previous dry-run compiled preceding ordering"
+    }
+  ],
+  "sourceAssetsChanged": false
+}

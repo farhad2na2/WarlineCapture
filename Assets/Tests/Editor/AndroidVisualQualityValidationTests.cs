@@ -568,6 +568,33 @@ public sealed class AndroidVisualQualityValidationTests
         StringAssert.Contains("streamingMipmapsMemoryBudget: 256", mobileBlock, "Android Mobile texture streaming must stay inside its bounded memory budget.");
         StringAssert.Contains("asyncUploadTimeSlice: 4", mobileBlock, "Android Mobile loading should provide enough upload time to avoid multi-minute scene stalls.");
         StringAssert.Contains("asyncUploadBufferSize: 32", mobileBlock, "Android Mobile must fit the largest accepted packed texture in the persistent upload buffer.");
+
+        UnityEngine.Object[] qualityAssets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset");
+        Assert.AreEqual(1, qualityAssets.Length, "Expected one native QualitySettings asset.");
+        SerializedObject quality = new(qualityAssets[0]);
+        SerializedProperty tiers = quality.FindProperty("m_QualitySettings");
+        Assert.NotNull(tiers, "QualitySettings must expose its quality tiers.");
+        SerializedProperty mobileTier = null;
+        for (int i = 0; i < tiers.arraySize; i++)
+        {
+            SerializedProperty tier = tiers.GetArrayElementAtIndex(i);
+            if (tier.FindPropertyRelative("name").stringValue == "Mobile")
+            {
+                Assert.IsNull(mobileTier, "Mobile quality tier must be unique.");
+                mobileTier = tier.Copy();
+            }
+        }
+
+        Assert.NotNull(mobileTier, "Native QualitySettings must contain the Mobile tier.");
+        UnityEngine.Object mobilePipeline = mobileTier.FindPropertyRelative("customRenderPipeline").objectReferenceValue;
+        UnityEngine.Object acceptedMobilePipeline = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRenderPipelinePath);
+        Assert.NotNull(acceptedMobilePipeline, "Accepted Mobile render pipeline is missing.");
+        Assert.AreSame(acceptedMobilePipeline, mobilePipeline,
+            "Mobile must explicitly select its accepted pipeline. An empty override falls back to the desktop pipeline and can restore desktop MSAA when Editor Play ends.");
+        SerializedProperty mobileMsaa = new SerializedObject(mobilePipeline).FindProperty("m_MSAA");
+        Assert.NotNull(mobileMsaa, "Selected Mobile pipeline must expose its MSAA setting.");
+        Assert.AreEqual(BalancedMobileMsaa, mobileMsaa.intValue,
+            "Mobile pipeline must use one sample (MSAA disabled), matching QualitySettings antiAliasing zero.");
     }
 
     [Test]

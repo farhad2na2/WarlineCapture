@@ -1,0 +1,41 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded Established-readiness Drone production from legal native IntelStation without Airport; actual paid queue API and native Touch selection/movement; no normal whole mission or full air lifecycle certificate",
+  "sourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1058-m1-guidance-integrated-source-manifest.json",
+  "postManifest": "final-1057-drone-producer-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1057-drone-intelstation-no-airport-smoke.log",
+  "logSha256": "821e386253817464d6de0e957ca0758497ebc88102cd6ef01fa6a543239a0819",
+  "fixture": "native1057-drone-producer-fixture.cs.txt",
+  "fixtureSha256": "ca856a5b7ea5fc6078264e22891c56317a3557ea11412baadab9e1788755459a",
+  "touchEvidence": "delegation-aircraft-drone1057.touch.jsonl",
+  "placementEvidence": "delegation-aircraft-drone1057.placement.jsonl",
+  "placementSampleExhaustive": false,
+  "fundingInjected": true,
+  "readinessGranted": "Established",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing [S005DroneNativeSelection] result=Passed",
+    "Missing [S005DroneNativeMovement] result=Passed",
+    "Missing [S005DronePaidQueueDeath] result=Passed"
+  ],
+  "nativeMarkers": [
+    "[S005DroneMovement] scope=IsolatedNativeDroneR2ProducerAndTouchMovement normalMission=0 fundingInjected=1 readinessGranted=Established deathStimulus=HealthZero pricesCapsRatesMapsUnchanged=1",
+    "[S005DroneProducer] phase=NativeLegalIntelStationBuild airportPresent=0 readiness=Established fundingInjected=1",
+    "[S005DroneProducer] phase=NativePlacementTouch candidate=(935.00, 0.01, 678.80) candidateIndex=0 actualTouches=1 source=DeclaredTypedPad:pad.skirmish.db.service_player;currentNativeLegalityUnproved input=Touch offscreenCandidateConsumed=0",
+    "[S005DroneProducer] phase=NativeIntelStationConfirmed forceValid=0 relocationInjected=0 actualPlacementTouches=1 candidate=0",
+    "[S005DroneProducer] phase=NativeQueuePrerequisites intelStationPresent=1 airportPresent=0 readiness=Established nativeLegalPlacement=1",
+    "[S005DroneMovement] result=Failed cases=0 normalInput=0 fullLifecycle=Pending nativeTouchSelectionMovement=Measured nativeAirLifecycle=Pending scanReturnCapacity=Pending reason=System.TimeoutException: Role Drone phase 4 exceeded native queue/death timeout.",
+    "[S005DroneMovementCleanup] result=Passed attemptsRemoved=1"
+  ]
+}

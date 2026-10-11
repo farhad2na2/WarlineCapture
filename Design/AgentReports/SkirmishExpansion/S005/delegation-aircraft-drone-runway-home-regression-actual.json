@@ -1,0 +1,11 @@
+{
+    "result": "PassedScopedActualSystemRegression",
+    "scope": "IsolatedActualSystemExistingCampaignRunway",
+    "definitionPath": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+    "definitionGuid": "55e36a8d7e7a84e2b9893cee052b0e61",
+    "runwayId": "anchor.skirmish.desert_base_01.runway.faction_1.lane_0",
+    "error": "",
+    "normalMission": false,
+    "sourceMutation": false,
+    "homeInputProvenance": "Explicit isolated fixture state representing typed IntelStation pad used in native1065; not captured paid actor state."
+}

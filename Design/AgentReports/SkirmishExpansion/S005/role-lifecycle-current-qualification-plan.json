@@ -19,7 +19,8 @@
       "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json"
     },
     {
       "role": "Gunner",
@@ -414,7 +415,8 @@
       "historicalInventory": "native359-current-baked-role-census.json",
       "historicalScopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json"
     },
     {
       "role": "Siege",

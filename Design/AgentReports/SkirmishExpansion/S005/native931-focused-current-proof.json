@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-930-fullmap-input-post-source-manifest.json",
+  "postSourceManifest": "final-931-boarded-recovery-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-931-boarded-apc-save-continue.log",
+  "requiredPassMarker": "[S005PassengerSave] result=Passed restoredAndUnloaded=4",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

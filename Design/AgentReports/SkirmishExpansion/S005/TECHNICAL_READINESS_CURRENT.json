@@ -9,10 +9,10 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native931",
-  "activeLog": "native-931-boarded-apc-save-continue.log",
-  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorBoardedRecoveryProbeEn",
-  "activePreManifest": "final-930-fullmap-input-post-source-manifest.json",
+  "activeRun": "native932",
+  "activeLog": "native-932-current-manual-en-seed130368.log",
+  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
+  "activePreManifest": "final-931-boarded-recovery-post-source-manifest.json",
   "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
@@ -174,7 +174,7 @@
     "cleanupWarnings": []
   },
   "currentGroundPaidQueueProof": null,
-  "boardedRecoveryStatus": "Shared map-input fix compiled and complete focused input suite passed (native930); normal native931 boarded Save/Continue/unload active.",
+  "boardedRecoveryStatus": "Passed native931 normal paid Heavy APC boarding4, schema7 Save/Continue, links/hidden visuals restored, physical old world gone and native unloading4. Scoped recovery, no mission win claimed.",
   "focusedNative924": {
     "result": "Passed",
     "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
@@ -222,5 +222,24 @@
     "nativeMatchCount": 0,
     "cleanupWarnings": []
   },
-  "currentFullMapInputRegressionProof": "native930-focused-current-proof.json"
+  "currentFullMapInputRegressionProof": "native930-focused-current-proof.json",
+  "focusedNative931": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-930-fullmap-input-post-source-manifest.json",
+    "postSourceManifest": "final-931-boarded-recovery-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-931-boarded-apc-save-continue.log",
+    "requiredPassMarker": "[S005PassengerSave] result=Passed restoredAndUnloaded=4",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentBoardedRecoveryProofs": [
+    "native931-normal-boarded-save-continue-unload-pass.json"
+  ],
+  "shippingFullMapInputCommit": "8c688734c"
 }

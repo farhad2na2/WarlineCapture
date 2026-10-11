@@ -9,14 +9,21 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": null,
-  "activeLog": null,
-  "activeScope": null,
-  "activePreManifest": null,
+  "activeRun": "native915",
+  "activeLog": "native-915-current-manual-en-seed130368.log",
+  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
+  "activePreManifest": "final-914-aria-fa-IR-seed155926-post-source-manifest.json",
   "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
-  "currentNativeVictories": [],
-  "currentAriaBaselineMatrix": null,
+  "currentNativeVictories": [
+    "native909-current-fresh-aria-en-seed104734-victory.json",
+    "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
+    "native911-current-fresh-aria-en-seed130368-victory.json",
+    "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
+    "native913-current-fresh-aria-en-seed155926-victory.json",
+    "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
+  ],
+  "currentAriaBaselineMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
   "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
@@ -27,7 +34,7 @@
     "note": "Scoped recorded source proof retained; native flight/return/fuel/Oil/production/map code unchanged by shared ARIA UI/contract/planner changes. Full mission refresh required."
   },
   "currentFixedWingCycleProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "aircraftCycleStatus": "Native890 passed paid Strike production, native fire, accepted Return, home touchdown, physical Fuel delivery, refuel and second airborne sortie before fixed1080-second deadline. Second return, bilateral capacity and full mission remain pending.",
+  "aircraftCycleStatus": "Native890 passed normal paid Strike production/taxi, native fire, accepted Return, home touchdown, physical Fuel delivery, refuel and second airborne sortie before the fixed1080-second deadline. This is scoped evidence; bilateral capacity and remaining aircraft lifecycles/recovery remain pending.",
   "existingCampaignAirfieldInventory": "readonly884-existing-campaign-airfield-source-assessment.json",
   "existingCampaignAirfieldObservation": "native889-existing-campaign-airfield-native-source-observation.json",
   "latestSourceAssessmentFailures": [
@@ -39,21 +46,33 @@
     "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
-    "Fresh normal-input EN/FA manual and ARIA journeys; result and return",
+    "Fresh normal-input EN/FA manual journeys; result and return",
     "Fresh current-candidate checkpoint/recovery and exposed-preset evidence",
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Focused legacy/expanded ARIA tests, then complete current-source three-seed EN/FA matrix.",
+  "nextWork": "Complete current manual/recovery runs, then ground-role native queues and remaining lifecycle/capacity gates.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Normal input qualification on current frozen source"
+    "scope": "Manual normal-input EN/FA and native combat/boarding Save/Continue; excluded from fresh ARIA baseline",
+    "runs": [
+      915,
+      916,
+      917
+    ],
+    "runner": "/private/tmp/s005-run-manual-915.py"
   },
-  "currentSourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-914-aria-fa-IR-seed155926-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentFreshAriaSeedProofs": [],
+  "currentFreshAriaSeedProofs": [
+    "native909-current-fresh-aria-en-seed104734-victory.json",
+    "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
+    "native911-current-fresh-aria-en-seed130368-victory.json",
+    "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
+    "native913-current-fresh-aria-en-seed155926-victory.json",
+    "native914-current-fresh-aria-fa-IR-seed155926-victory.json"
+  ],
   "latestFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
   "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
   "latestPreviousCandidateAriaProofs": [
@@ -111,5 +130,7 @@
     "playerReady": false,
     "nativeMatchCount": 0,
     "cleanupWarnings": []
-  }
+  },
+  "sharedAriaDefenseCommit": "5b98cb427",
+  "currentBakedRoleInventory": "readonly911-current-role-inventory-proof.json"
 }

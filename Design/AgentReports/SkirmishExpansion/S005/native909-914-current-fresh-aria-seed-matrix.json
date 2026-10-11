@@ -1,0 +1,88 @@
+{
+  "result": "PassedMinimumTwoWinsPerLocale",
+  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "FreshAria",
+  "seeds": [
+    104734,
+    130368,
+    155926
+  ],
+  "locales": {
+    "en": {
+      "runs": 3,
+      "wins": 3,
+      "defeats": 0
+    },
+    "fa-IR": {
+      "runs": 3,
+      "wins": 3,
+      "defeats": 0
+    }
+  },
+  "runs": [
+    {
+      "proof": "native909-current-fresh-aria-en-seed104734-victory.json",
+      "locale": "en",
+      "seed": 104734,
+      "outcome": "Victory",
+      "elapsed": 228.519,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    },
+    {
+      "proof": "native910-current-fresh-aria-fa-IR-seed104734-victory.json",
+      "locale": "fa-IR",
+      "seed": 104734,
+      "outcome": "Victory",
+      "elapsed": 232.861,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    },
+    {
+      "proof": "native911-current-fresh-aria-en-seed130368-victory.json",
+      "locale": "en",
+      "seed": 130368,
+      "outcome": "Victory",
+      "elapsed": 241.991,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    },
+    {
+      "proof": "native912-current-fresh-aria-fa-IR-seed130368-victory.json",
+      "locale": "fa-IR",
+      "seed": 130368,
+      "outcome": "Victory",
+      "elapsed": 241.719,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    },
+    {
+      "proof": "native913-current-fresh-aria-en-seed155926-victory.json",
+      "locale": "en",
+      "seed": 155926,
+      "outcome": "Victory",
+      "elapsed": 240.772,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    },
+    {
+      "proof": "native914-current-fresh-aria-fa-IR-seed155926-victory.json",
+      "locale": "fa-IR",
+      "seed": 155926,
+      "outcome": "Victory",
+      "elapsed": 241.911,
+      "actualWrapperExit": 0,
+      "normalJourneyAuditsPassed": true
+    }
+  ],
+  "allNormalJourneysAudited": true,
+  "minimumTwoWinsPerLocaleMet": true,
+  "failedSeedsRetained": true,
+  "recoveryAndManualRunsExcluded": true,
+  "countsForTwentySeedFamilyStress": false,
+  "realHumanDeviceAcceptance": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

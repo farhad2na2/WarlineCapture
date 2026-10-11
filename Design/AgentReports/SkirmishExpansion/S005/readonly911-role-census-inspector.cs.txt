@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Unity.Entities;
+public class S005ReadOnlyRoleCensus911 {
+ public static object Run(){
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;
+  using var q=em.CreateEntityQuery(typeof(SkirmishResolvedSetupRecord),typeof(SkirmishProductionCatalogRecord));
+  var session=q.GetSingletonEntity();var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+  var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+  var lookup=(Dictionary<string,Entity>)typeof(SkirmishScenarioSpawnSystem).GetMethod("BuildPrefabEntityLookup",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{em});
+  var rows=new List<object>();
+  foreach(var role in setup.RoleOverlays){
+   if(!army.Allows(role.RoleId))continue;
+   var key=SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind);var exists=lookup.TryGetValue(key,out var prefab)&&em.Exists(prefab);
+   var names=new List<string>();
+   if(exists){using var types=em.GetComponentTypes(prefab);foreach(var t in types)names.Add(t.GetManagedType().Name);}
+   var decision=SkirmishProductionService.EvaluateQueue(em,session,role.RoleId,1,army,1);
+   rows.Add(new {role=role.RoleKind.ToString(),prefabKey=key,baked=exists,producer=role.Producer.ToString(),targetDomains=role.TargetDomains.ToString(),components=names,ownProducer=SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1),enemyProducer=SkirmishProductionService.HasLivingProducer(em,session,role.Producer,2),currentOwnEligibility=decision.Reason.ToString(),decision.Accepted});
+  }
+  return new {scope="ReadOnlyCurrentBakedPrefabAndProducerCensus",roles=rows,count=rows.Count,actorsResourcesOrdersInjected=false,fullLifecycleCertified=false,aircraftCapacityCertified=false};
+ }
+}

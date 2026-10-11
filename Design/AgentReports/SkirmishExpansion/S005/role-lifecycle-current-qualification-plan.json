@@ -17,7 +17,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Gunner",
@@ -33,7 +34,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Marksman",
@@ -49,7 +51,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Breacher",
@@ -65,7 +68,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Rocketeer",
@@ -81,7 +85,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Car",
@@ -97,7 +102,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "ApcFast",
@@ -116,7 +122,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "ApcArmored",
@@ -135,7 +142,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Radar",
@@ -151,7 +159,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "LogisticsTruck",
@@ -167,7 +176,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Tanker",
@@ -183,7 +193,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "AntiAir",
@@ -199,7 +210,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "TransportHeli",
@@ -222,7 +234,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "AttackHeliLight",
@@ -242,7 +255,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "AttackHeli",
@@ -262,7 +276,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Drone",
@@ -278,7 +293,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Fighter",
@@ -298,7 +314,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "native functional Airport placement qualification active",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Strike",
@@ -320,7 +337,8 @@
       "stage": "Scoped paid cycle passed at recorded source; native flight/return/refuel/production subsystem unchanged. Death/capacity release, bilateral capacity and cleanup pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "scopedNativeProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-      "scopedNativeProof": "native890-normal-paid-strike-cycle-scoped-pass.json"
+      "scopedNativeProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "TransportPlane",
@@ -343,7 +361,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "native functional Airport placement qualification active",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Tank",
@@ -359,7 +378,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "current-source native recertification pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "ApcHeavy",
@@ -379,7 +399,8 @@
       "currentSourceCertified": false,
       "stage": "Historical native779 paid280 APC/four passengers Save/Continue, unload and full manual win passed. Current runtime refresh and full combat/death/capacity lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "historicalScopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+      "historicalScopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     },
     {
       "role": "Siege",
@@ -395,7 +416,8 @@
       ],
       "currentSourceCertified": false,
       "stage": "historical native firing and recovery passed; remaining lifecycle gates pending",
-      "historicalInventory": "native359-current-baked-role-census.json"
+      "historicalInventory": "native359-current-baked-role-census.json",
+      "currentBakedInventory": "readonly911-current-role-inventory-proof.json"
     }
   ],
   "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
@@ -410,11 +432,13 @@
   "historicalReport": "role-lifecycle-history-before-native890.json",
   "currentAutomatedEvidence": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentAircraftCycleProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentCandidateNormalJourneysPending": true,
+  "currentCandidateNormalJourneysPending": false,
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
-  "nextWork": "Close native home-defense mission, then EN/FA matrix/manual/recovery and required roster/capacity gates.",
+  "nextWork": "Manual EN/FA controls and native combat/boarding Save/Continue, followed by remaining role/capacity certification.",
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
-  "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability"
+  "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
+  "currentBakedInventory": "readonly911-current-role-inventory-proof.json",
+  "currentAriaBaselineMatrix": "native909-914-current-fresh-aria-seed-matrix.json"
 }

@@ -6,7 +6,7 @@ Shared expanded ARIA now resolves GuardTower through the normal catalog, tries v
 
 Native902 English and native903 Persian seed104734 won through normal input in227.562/233.034 seconds with home HP800. Each completed native menu/Play, frozen result/return,73/73 ended contacts, no interventions or receipt violations and wrapper/bridge0. They remain pinned to recorded source51d7, before the legacy compatibility guard; they are not counted as current-source wins. Pair: `native902-903-first-repaired-home-defense-locale-pair.json`.
 
-Current-source ARIA victories: 0. Required three-seed EN/FA matrix: Pending. Active validation: None. Individual outcomes and active log: `TECHNICAL_READINESS_CURRENT.json`.
+Current-source ARIA victories: 6. Required three-seed EN/FA matrix: native909-914-current-fresh-aria-seed-matrix.json. Active validation: native915. Individual outcomes and active log: `TECHNICAL_READINESS_CURRENT.json`.
 
 Native891–893 and895–897 failed complete missions around134–140 seconds. Both candidate matrices were stopped before remaining runs once two English losses made the threshold unreachable. Failures and full source/input/result evidence are retained. The native895 tower census was initially misattributed to construction; its full input/Materials trace showed canceled placement without a purchase. Native902 supplies the actual verified Placement receipt and tower-count increase. Read-only legal-site observation: `readonly897-native-defense-screen-placement-observation.json`.
 

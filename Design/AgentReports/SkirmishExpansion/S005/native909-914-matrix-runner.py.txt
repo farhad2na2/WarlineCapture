@@ -1,0 +1,16 @@
+import pathlib,json,subprocess,sys
+p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+pre='final-908-legacy-defense-compatibility-focused-post-source-manifest.json'
+runs=[(909,'en',104734,'RunS005EditorAriaEn'),(910,'fa-IR',104734,'RunS005EditorAriaFa'),(911,'en',130368,'RunS005EditorAriaEnSeed2'),(912,'fa-IR',130368,'RunS005EditorAriaFaSeed2'),(913,'en',155926,'RunS005EditorAriaEnSeed3'),(914,'fa-IR',155926,'RunS005EditorAriaFaSeed3')]
+proofs=[]
+for n,locale,seed,method in runs:
+ log=f'native-{n}-current-aria-{locale}-seed{seed}.log'
+ subprocess.run(['rtk','proxy','python3','/private/tmp/s005-start-reused-bounded.py',str(n),log,'Game.Editor.SkirmishS002AriaRunHarness.'+method,pre])
+ r=subprocess.run(['rtk','proxy','python3','/private/tmp/s005-close-journey-891.py',str(n),locale,str(seed),log,pre])
+ if r.returncode:sys.exit(r.returncode)
+ fs=list(p.glob(f'native{n}-current-fresh-aria-{locale}-seed{seed}-*.json'));assert len(fs)==1
+ proof=json.loads(fs[0].read_text());proofs.append(dict(proof=fs[0].name,locale=locale,seed=seed,outcome=proof['outcome']['outcome'],elapsed=proof['outcome']['elapsed'],actualWrapperExit=proof['actualWrapperExit'],normalJourneyAuditsPassed=proof['normalJourneyAuditsPassed']))
+ pre=proof['postManifest'];print(json.dumps(dict(completed=n,outcome=proof['outcome']['outcome'])),flush=True)
+locales={locale:dict(runs=3,wins=sum(x['outcome']=='Victory' for x in proofs if x['locale']==locale),defeats=sum(x['outcome']=='Defeat' for x in proofs if x['locale']==locale)) for locale in ['en','fa-IR']};passed=all(x['wins']>=2 for x in locales.values())
+name='native909-914-current-fresh-aria-seed-matrix.json';d=dict(result='PassedMinimumTwoWinsPerLocale' if passed else 'FailedMinimumTwoWinsPerLocale',sourceHash=proof['sourceHash'],size='Standard',difficulty='Regular',mode='FreshAria',seeds=[104734,130368,155926],locales=locales,runs=proofs,allNormalJourneysAudited=True,minimumTwoWinsPerLocaleMet=passed,failedSeedsRetained=True,recoveryAndManualRunsExcluded=True,countsForTwentySeedFamilyStress=False,realHumanDeviceAcceptance=False,technicallyReady=False,playerReady=False)
+(p/name).write_text(json.dumps(d,indent=2)+'\n');q=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(q.read_text());s['currentAriaBaselineMatrix']=name;s['currentSourceFingerprint']=pre.replace('-source-manifest.json','-independent-fingerprint.json');q.write_text(json.dumps(s,indent=2)+'\n');print(json.dumps(d),flush=True)

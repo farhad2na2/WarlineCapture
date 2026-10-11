@@ -1,0 +1,17 @@
+{
+  "mission": "S005",
+  "result": "PassedInventoryOnly",
+  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "nativeRun": "native911",
+  "fullJourneyProof": "native911-current-fresh-aria-en-seed130368-victory.json",
+  "observation": "Read-only actual loaded baked prefab and functional producer inventory during the normal-input mission; no actor/resource/order mutation",
+  "roles": 22,
+  "allBaked": true,
+  "rawCliEvidence": "readonly911-current-baked-role-producer-census.json",
+  "inspector": "readonly911-role-census-inspector.cs.txt",
+  "inspectorSha256": "c909598590edb1aecf57a64a7c4491b163eeb63285330897b9aeb929b7ea7f2c",
+  "fullLifecycleCertified": false,
+  "aircraftCapacityCertified": false,
+  "normalProductionAvailabilityCertified": false,
+  "playerReady": false
+}

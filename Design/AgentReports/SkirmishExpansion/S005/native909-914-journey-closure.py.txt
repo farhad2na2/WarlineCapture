@@ -1,0 +1,46 @@
+import sys,json,pathlib,subprocess,re,hashlib
+n,locale,seed,log,pre=sys.argv[1:];p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+wrapper=int((p/(log+'.wrapper-exit')).read_text()); bridge=int((p/(log+'.exit')).read_text())
+t=(p/log).read_text(errors='replace'); post=f'final-{n}-aria-{locale}-seed{seed}-post'
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],check=True)
+post+='-source-manifest.json';same=json.loads((p/pre).read_text())==json.loads((p/post).read_text());sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+tag='fa' if locale=='fa-IR' else 'en';traces=[f for f in p.glob(f's005-aria-live-{seed}-{tag}-*.jsonl') if re.fullmatch(f's005-aria-live-{seed}-{tag}-[0-9a-f]{{32}}\.jsonl',f.name) and f.stat().st_mtime>=(p/log).stat().st_birthtime-1]
+assert len(traces)==1,traces
+trace=traces[0];out=json.loads(trace.read_text().splitlines()[-1]);r=subprocess.run(['rtk','proxy','python3','Tools/CI/audit_skirmish_native_contacts.py',str(trace)+'.touch.jsonl'],capture_output=True,text=True)
+audit=json.loads(r.stdout); selected=re.search(r'\[SkirmishS002AriaRun\] selected .*?size=(\w+) difficulty=(\w+) seed=(\d+) locale=([^\s]+)',t)
+errors=[]
+if not same:errors.append('Full source changed')
+if 'code='+sha not in t:errors.append('Native census fingerprint mismatch')
+if not selected or selected.groups()!=('Standard','Regular',seed,locale):errors.append('Native selected configuration mismatch')
+for marker in ['[S004MenuJourney] result=Passed','[S004AriaConsent] result=Passed','[SkirmishTerminalProbe] result=Passed','[SkirmishNormalSpeed] latch=True','[SkirmishS002AriaRun] appended=1']:
+ if marker not in t:errors.append('Missing '+marker)
+if not re.search(r'\[SkirmishNormalSpeed\].*?counted=True',t):errors.append('Normal speed not counted')
+if out.get('phase')!='Finished' or out.get('clockPaused')!=1 or out.get('simulationActive')!=0:errors.append('Missing native frozen terminal state')
+if not audit.get('strictRecordedContacts') or not audit.get('strictAllContactsEnded') or not audit.get('nativeMenuContactsRecorded') or not audit.get('terminalContactsRecorded') or audit['errors']:errors.append('Strict touch audit failed')
+inputs=re.search(r'\[SkirmishInputEvidence\].*?unexpected=(\d+) interventions=(-?\d+).*?receiptViolations=(\d+)',t)
+if not inputs or inputs.groups()!=('0','0','0'):errors.append('Input intervention/receipt audit failed or unknown')
+if '[S004ManualNative] started=1' in t or '[S005PlayerSaveResume] result=Passed' in t:errors.append('Not fresh ARIA')
+victory=out.get('outcome')=='Victory'; expected=0 if victory else 1
+if wrapper!=expected or bridge!=expected:errors.append('Wrapper/bridge outcome mismatch')
+if victory and '[SkirmishS002AriaRun] appended=1 countedWin=1 error=' not in t:errors.append('Victory not counted')
+name=f'native{n}-current-fresh-aria-{locale}-seed{seed}-'+('victory' if victory and not errors else 'failure')+'.json'
+d=dict(result='Passed' if victory and not errors else 'Failed',scope='Complete normal-input ARIA mission/result/return; separate from all-role/capacity/device certification',sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),trace=trace.name,inputAudit=audit,locale=locale,seed=int(seed),size='Standard',difficulty='Regular',mode='FreshAria',normalInput=not errors,normalSpeed=not errors,outcome=out,frozenResult=not errors,returnTarget=(re.search(r'frozenResultAnd:([^\n]+?) completed=',t)[1] if re.search(r'frozenResultAnd:([^\n]+?) completed=',t) else None),countsForFreshAriaSeedBaseline=not errors,normalJourneyAuditsPassed=not errors,errors=errors,realHumanDeviceAcceptance=False,technicallyReady=False,playerReady=False)
+(p/name).write_text(json.dumps(d,indent=2)+'\n');s=json.loads((p/'TECHNICAL_READINESS_CURRENT.json').read_text());s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None)
+if name not in s.setdefault('currentFreshAriaSeedProofs',[]):s['currentFreshAriaSeedProofs'].append(name)
+if victory and not errors:s['currentNativeVictories'].append(name)
+else:s['latestFreshAriaFailure']=name
+(p/'TECHNICAL_READINESS_CURRENT.json').write_text(json.dumps(s,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as f:f.write(f'\nNative{n}: ARIA {locale} seed{seed}, {out.get("outcome")} at{out.get("elapsed")}s. Normal journey audits {"passed" if not errors else "FAILED"}; actual wrapper{wrapper}/bridge{bridge}; full source unchanged={same}. Proof `{name}`.\n')
+print(json.dumps(dict(proof=name,outcome=out,errors=errors)),flush=True)
+if not errors:
+ records=[json.loads((p/f).read_text()) for f in s['currentFreshAriaSeedProofs']]
+ current=[r for r in records if r['sourceHash']==sha and r['locale']==locale]
+ if sum(r['outcome']['outcome']=='Victory' for r in current)+3-len(current)<2:
+  first=min(int(re.search(r'^native(\d+)-',f)[1]) for f in s['currentFreshAriaSeedProofs'])
+  failure=f'native{first}-{n}-aria-baseline-aborted-threshold-failure.json'
+  (p/failure).write_text(json.dumps(dict(result='FailedMinimumTwoWinsPerLocale',scope='Early termination of failed baseline; remaining seeds not exercised on this candidate',sourceHash=sha,locale=locale,runsCompleted=len(current),wins=sum(r['outcome']['outcome']=='Victory' for r in current),maximumPossibleWinsWithRemainingSeeds=sum(r['outcome']['outcome']=='Victory' for r in current)+3-len(current),requiredWins=2,completedProofs=s['currentFreshAriaSeedProofs'],remainingSeedsRequiredAfterRepair=True,fullMatrixCompleted=False,technicallyReady=False,playerReady=False),indent=2)+'\n')
+  s['currentFailedAriaBaseline']=failure;s['nextWork']='Repair shared ARIA defense/visible threat handling; fresh three-seed EN/FA matrix required after runtime changes.'
+  (p/'TECHNICAL_READINESS_CURRENT.json').write_text(json.dumps(s,indent=2)+'\n')
+  print('ARIA_BASELINE_THRESHOLD_UNREACHABLE stopBeforeRemainingRuns=1',flush=True)
+  sys.exit(4)
+sys.exit(0 if not errors else 3)

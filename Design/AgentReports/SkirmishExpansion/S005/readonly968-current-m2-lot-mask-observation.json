@@ -1,0 +1,78 @@
+{
+  "scope": "Read-only current reused Campaign geometry observation; placement/height/resources/native-M2 confirmation still required",
+  "actorsOrInputsModified": false,
+  "grid": {
+    "width": 2048,
+    "height": 1024,
+    "cellSize": 1,
+    "originX": 0,
+    "originZ": 0
+  },
+  "maskBitCounts": [
+    21277,
+    4682,
+    12045,
+    8892,
+    0,
+    0,
+    0
+  ],
+  "clear40x20Lots": 1221,
+  "nearestLots": [
+    {
+      "x": 1000,
+      "z": 315,
+      "distanceSquared": 261
+    },
+    {
+      "x": 1000,
+      "z": 314,
+      "distanceSquared": 292
+    },
+    {
+      "x": 999,
+      "z": 314,
+      "distanceSquared": 305
+    },
+    {
+      "x": 1000,
+      "z": 313,
+      "distanceSquared": 325
+    },
+    {
+      "x": 999,
+      "z": 313,
+      "distanceSquared": 338
+    },
+    {
+      "x": 998,
+      "z": 313,
+      "distanceSquared": 353
+    },
+    {
+      "x": 997,
+      "z": 313,
+      "distanceSquared": 370
+    },
+    {
+      "x": 996,
+      "z": 313,
+      "distanceSquared": 389
+    },
+    {
+      "x": 997,
+      "z": 312,
+      "distanceSquared": 405
+    },
+    {
+      "x": 996,
+      "z": 312,
+      "distanceSquared": 424
+    }
+  ],
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "observedDuring": "native945",
+  "inspector": "readonly968-construction-mask-inspector.cs.txt",
+  "inspectorSha256": "4d696b5646bcffee8acb9189cd6f29a55f32e48045de29d68ecbd08d2a9085cc",
+  "notNativeM2PlacementCertification": true
+}

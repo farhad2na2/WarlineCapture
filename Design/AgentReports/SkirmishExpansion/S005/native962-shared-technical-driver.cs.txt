@@ -1,0 +1,28 @@
+using System;
+using System.Reflection;
+using Game.Tests.Editor;
+using UnityEngine;
+public static class S005SharedTechnical962
+{
+    public static object Run()=>"Loaded only; wrapper execution required";
+    public static void RunValidation()
+    {
+        Check(SkirmishCombinedArmsTests.RunFocusedValidation);
+        Check(SkirmishExpandedAcceptanceTests.RunFocusedValidation);
+        Check(SkirmishExpandedCatalogTests.RunFocusedValidation);
+        Check(SkirmishExpandedEconomyTests.RunFocusedValidation);
+        Check(SkirmishFacilityEconomyProfileTests.RunFocusedValidation);
+        Check(SkirmishExpandedObjectiveTests.RunFocusedValidation);
+        Check(SkirmishExpandedArmyTests.RunFocusedValidation);
+        Check(SkirmishExpandedAriaTests.RunFocusedValidation);
+        Debug.Log("[S005SharedTechnical] result=Passed suites=8 nativePlayerJourneys=0 roleLifecycleAndDeviceGates=Pending");
+    }
+    static void Check(Action run)
+    {
+        var type=Array.Find(AppDomain.CurrentDomain.GetAssemblies(),a=>a.GetType("ValidationExit")!=null).GetType("ValidationExit");
+        type.GetMethod("ClearLastExitCode").Invoke(null,null);
+        run();
+        object status=type.GetProperty("LastExitCode").GetValue(null);
+        if(status is int code&&code!=0)throw new InvalidOperationException("Failed technical suite: "+run.Method.DeclaringType.FullName);
+    }
+}

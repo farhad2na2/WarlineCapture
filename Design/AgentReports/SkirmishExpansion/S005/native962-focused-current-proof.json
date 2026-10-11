@@ -1,0 +1,31 @@
+{
+  "result": "Passed",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-958-shared-campaign-m02-post-source-manifest.json",
+  "postSourceManifest": "final-962-shared-skirmish-technical-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-962-shared-skirmish-technical.log",
+  "requiredPassMarker": "[S005SharedTechnical] result=Passed suites=8",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "scope": "Current-source isolated shared setup/catalog/economy/objective/army/ARIA technical fixtures; not a normal mission lifecycle or device acceptance",
+  "requiredSuiteMarkers": [
+    "[SkirmishCombinedArmsTests] result=Passed",
+    "[SkirmishExpandedAcceptanceTests] result=Passed",
+    "[SkirmishExpandedCatalogTests] result=Passed",
+    "[SkirmishExpandedEconomyTests] result=Passed",
+    "[SkirmishFacilityEconomyProfileTests] result=Passed",
+    "[SkirmishExpandedObjectiveTests] result=Passed",
+    "[SkirmishExpandedArmyTests] result=Passed",
+    "[SkirmishExpandedAriaTests] result=Passed"
+  ],
+  "requiredSuiteMarkersPresent": true,
+  "logSha256": "92d6287bfe035173c78436733ef4577d1e150926333be4b63a9dd1922d8396d4",
+  "normalPlayerJourneyCertified": false
+}

@@ -9,10 +9,10 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native953",
-  "activeLog": "native-953-shared-campaign-m01-en-fa-journey.log",
-  "activeScope": "CampaignSelectionJourney953.RunM01",
-  "activePreManifest": "final-947-checkpoint-conservation-technical-post-source-manifest.json",
+  "activeRun": "native945",
+  "activeLog": "native-945-normal-strike-returntaxi-save-continue.log",
+  "activeScope": "S005AircraftRecovery945.RunTaxiValidation",
+  "activePreManifest": "final-963-shared-campaign-m02-post-source-manifest.json",
   "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [
@@ -267,7 +267,11 @@
   "ariaLocaleStatus": "Current-source fresh ARIA three-seed EN/FA Standard Regular baseline passed with native menu/Play/Confirm, frozen result/return, strict contact/receipt and full source audits; separate from family20 and supplemental presets.",
   "currentCampaignRegressionProofs": [
     "native940-shared-campaign-m01-en-fa-journey-failure.json",
-    "native948-shared-campaign-m01-en-fa-journey-failure.json"
+    "native948-shared-campaign-m01-en-fa-journey-failure.json",
+    "native953-shared-campaign-m01-en-fa-journey-pass.json",
+    "native954-shared-campaign-m02-en-fa-journey-failure.json",
+    "native958-shared-campaign-m02-en-fa-journey-failure.json",
+    "native963-shared-campaign-m02-en-fa-journey-failure.json"
   ],
   "focusedNative947": {
     "result": "Passed",
@@ -301,5 +305,37 @@
     ],
     "normalPlayerRecoveryCertified": false
   },
-  "currentCheckpointTechnicalProof": "native947-focused-current-proof.json"
+  "currentCheckpointTechnicalProof": "native947-focused-current-proof.json",
+  "focusedNative962": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-958-shared-campaign-m02-post-source-manifest.json",
+    "postSourceManifest": "final-962-shared-skirmish-technical-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-962-shared-skirmish-technical.log",
+    "requiredPassMarker": "[S005SharedTechnical] result=Passed suites=8",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [],
+    "actualWrapperExit": 0,
+    "nativeBridgeExit": 0,
+    "scope": "Current-source isolated shared setup/catalog/economy/objective/army/ARIA technical fixtures; not a normal mission lifecycle or device acceptance",
+    "requiredSuiteMarkers": [
+      "[SkirmishCombinedArmsTests] result=Passed",
+      "[SkirmishExpandedAcceptanceTests] result=Passed",
+      "[SkirmishExpandedCatalogTests] result=Passed",
+      "[SkirmishExpandedEconomyTests] result=Passed",
+      "[SkirmishFacilityEconomyProfileTests] result=Passed",
+      "[SkirmishExpandedObjectiveTests] result=Passed",
+      "[SkirmishExpandedArmyTests] result=Passed",
+      "[SkirmishExpandedAriaTests] result=Passed"
+    ],
+    "requiredSuiteMarkersPresent": true,
+    "logSha256": "92d6287bfe035173c78436733ef4577d1e150926333be4b63a9dd1922d8396d4",
+    "normalPlayerJourneyCertified": false
+  },
+  "currentSharedTechnicalProof": "native962-focused-current-proof.json"
 }

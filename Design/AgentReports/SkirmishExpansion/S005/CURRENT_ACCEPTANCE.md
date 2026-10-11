@@ -39,3 +39,13 @@ Native940: Campaign M1 bilingual player-action regression Failed; wrapper1/bridg
 Native948: Campaign M1 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native948-shared-campaign-m01-en-fa-journey-failure.json`.
 
 Native947: current-source checkpoint staging/conservation, transient, support and Strike recovery technical suites passed; actual wrapper0/bridge0, all suite markers present and complete source unchanged. Negative missing-footprint and incomplete-map cases are intentional fixtures. No normal aircraft journey or full X36 closure is claimed. Proof `native947-focused-current-proof.json`.
+
+Native953: Campaign M1 bilingual player-action regression Passed; wrapper0/bridge0; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native953-shared-campaign-m01-en-fa-journey-pass.json`.
+
+Native954: Campaign M2 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native954-shared-campaign-m02-en-fa-journey-failure.json`.
+
+Native958: Campaign M2 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native958-shared-campaign-m02-en-fa-journey-failure.json`.
+
+Native962: all eight current shared Skirmish technical suites passed (combined setup, acceptance, catalog, economy, facility economy, objective, army and ARIA); actual wrapper0/bridge0, all exact suite markers, complete source unchanged. This is fixture evidence, separate from remaining role lifecycles, Campaign journeys, family stress and device gates. Proof `native962-focused-current-proof.json`.
+
+Native963: Campaign M2 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native963-shared-campaign-m02-en-fa-journey-failure.json`.

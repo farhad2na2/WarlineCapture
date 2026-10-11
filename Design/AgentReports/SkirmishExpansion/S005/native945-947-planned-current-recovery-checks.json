@@ -8,7 +8,7 @@
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunTaxiValidation",
       "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
-      "status": "PreparedNotExecuted"
+      "status": "RunningNormalInput"
     },
     {
       "run": "native946",
@@ -16,7 +16,7 @@
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunFlightValidation",
       "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
-      "status": "PreparedNotExecuted"
+      "status": "QueuedAfterNative945"
     },
     {
       "run": "native947",
@@ -29,7 +29,7 @@
     }
   ],
   "readinessEstablished": false,
-  "executionOrder": "Checkpoint technical947 completed after the ARIA baseline; normal aircraft945/946 await affected Campaign closure. No concurrent stateful validation on the same Editor.",
+  "executionOrder": "947 checkpoint technical and 962 shared technical checks completed. Campaign M1 passed bilingual regression; M2 actual blocked construction lot retained as an open defect. Normal aircraft945/946 run sequentially while a source-only M2 logical repair is prepared; no concurrent stateful validation.",
   "preparedDriverCopies": [
     {
       "file": "prepared-S005AircraftRecovery945.cs.txt",
@@ -38,10 +38,6 @@
     {
       "file": "prepared-S005CheckpointTechnical947.cs.txt",
       "sha256": "04d265129c676dc4b3d45bc7761b110ded6c8be65ffe7e2f06c63097c44fca7a"
-    },
-    {
-      "file": "prepared-s005-run-aircraft-recovery-945.py.txt",
-      "sha256": "44cbe8cf6700b257d37a15b04a1d51c70fbd7c2d64be9f603ecd5ec9144697c7"
     },
     {
       "file": "prepared-s005-close-aircraft-recovery-current.py.txt",
@@ -66,6 +62,26 @@
     {
       "file": "prepared-s005-run-campaign-953.py.txt",
       "sha256": "e40ec2632d372f648ea92ee45f92948a472b463ed94ad6863e7b2b5adf37a183"
+    },
+    {
+      "file": "prepared-s005-run-aircraft-recovery-945.py.txt",
+      "sha256": "8e0cd26c4c9e2c750444992d32f249b136863b96fd6d169d27ebbac1ae26e07e"
+    },
+    {
+      "file": "prepared-s005-run-campaign-958.py.txt",
+      "sha256": "ececd956098e93ca36cd5a0698cf7333586698d64cff7a16656b1df17a682d3d"
+    },
+    {
+      "file": "prepared-s005-run-campaign-963.py.txt",
+      "sha256": "133ad8773c1489dc5271e79afc0365d3446614188beb5739db4c7c8eaf729e5a"
+    },
+    {
+      "file": "prepared-CampaignInputJourney958.cs.txt",
+      "sha256": "118cc812f8afb27808cd5d8304f744782e3f38794885d994c5f3e06b26218ce0"
+    },
+    {
+      "file": "prepared-CampaignInputJourney963.cs.txt",
+      "sha256": "ebbedbb6b84225cc24a32bc3cc4efd6aa056a04a536f4b360e19505dcde5f5b6"
     }
   ]
 }

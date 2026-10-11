@@ -1,0 +1,34 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-953-shared-campaign-m01-post-source-manifest.json",
+  "postManifest": "final-954-shared-campaign-m02-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-954-shared-campaign-m02-en-fa-journey.log",
+  "logSha256": "407ae194a2d616df3146d36da089627bd0f0bb57914fafa48725be1c991de21a",
+  "mission": "saga.ch01.m02.establish_base",
+  "victories": [],
+  "screenshots": [
+    "native954-campaign-m02-screens/2-journey-lesson-2-BuildCommand.png",
+    "native954-campaign-m02-screens/2-journey-lesson-2.png",
+    "native954-campaign-m02-screens/2-journey-lesson-3-ItemView.png",
+    "native954-campaign-m02-screens/2-journey-lesson-3.png",
+    "native954-campaign-m02-screens/2-journey-lesson-4-BuildButton.png",
+    "native954-campaign-m02-screens/2-journey-lesson-4-settled.png",
+    "native954-campaign-m02-screens/2-journey-lesson-4.png",
+    "native954-campaign-m02-screens/2-opening.png"
+  ],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "Missing audited native selection companion pass marker"
+  ]
+}

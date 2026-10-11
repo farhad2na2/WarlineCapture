@@ -1,0 +1,26 @@
+{
+  "status": "PreparedNotApplied",
+  "scope": "Logical Campaign M2 construction-anchor repair on the existing physical map",
+  "reason": "Native963 normal placement at all five nearby points was blocked by road or blocker",
+  "oldBuildLot": [
+    1006,
+    330,
+    40,
+    20
+  ],
+  "proposedBuildLot": [
+    1000,
+    314,
+    40,
+    20
+  ],
+  "basis": [
+    "readonly968-current-m2-lot-mask-observation.json",
+    "readonly969-current-m2-lot-mask-observation.json"
+  ],
+  "physicalGeometryChanges": false,
+  "budgetChanges": false,
+  "guardRelaxations": false,
+  "nativeBilingualJourneyRequired": true,
+  "blockedUntil": "Active aircraft945/946 source-frozen validation closes"
+}

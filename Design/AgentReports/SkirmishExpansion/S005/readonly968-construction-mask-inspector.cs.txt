@@ -1,0 +1,49 @@
+using System;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using System.Linq;
+using Unity.Entities;
+using UnityEngine;
+using Game.Components;
+public static class S005ReadOnlyBuildLot968
+{
+    const BindingFlags B=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    public static string Run()
+    {
+        var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return "No current World";
+        var em=world.EntityManager;
+        using var grids=em.CreateEntityQuery(typeof(GridConfig),typeof(GridRoad),typeof(DynamicBlockerComponent));
+        using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+        if(grids.CalculateEntityCount()!=1||surfaces.CalculateEntityCount()!=1)return "Waiting for authoritative grid and source surface";
+        var ge=grids.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(ge);
+        var roads=em.GetBuffer<GridRoad>(ge,true);var blockers=em.GetComponentData<DynamicBlockerComponent>(ge);
+        var assemblies=AppDomain.CurrentDomain.GetAssemblies();
+        Type Type(string n)=>assemblies.Select(a=>a.GetType(n)).First(t=>t!=null);
+        var rt=Type("Game.Runtime.BuildingPlacementAuthoredRoadCache");var road=Activator.CreateInstance(rt,true);rt.GetMethod("Ensure",B).Invoke(road,new object[]{em,surfaces,grid});
+        var rm=(bool[])rt.GetField("mask",B).GetValue(road);var sm=(bool[])rt.GetField("sidewalkMask",B).GetValue(road);var wm=(bool[])rt.GetField("waterMask",B).GetValue(road);
+        var bt=Type("Game.Runtime.BuildingPlacementAuthoredBuildingCache");var buildings=Activator.CreateInstance(bt,true);bt.GetMethod("Ensure",B).Invoke(buildings,new object[]{em,grid});var bm=(bool[])bt.GetField("mask",B).GetValue(buildings);
+        if(rm==null||bm==null)return "Waiting for complete geometry masks";
+        const int x0=780,z0=270,width=320,height=200;var codes=new int[width*height];var counts=new int[7];var prefix=new int[(width+1)*(height+1)];var csv=new StringBuilder();csv.AppendLine("worldX,worldZ,blockedBits");
+        for(int z=0;z<height;z++)for(int x=0;x<width;x++)
+        {
+            int gx=Mathf.FloorToInt((x0+x+.5f-grid.Origin.x)/grid.CellSize),gz=Mathf.FloorToInt((z0+z+.5f-grid.Origin.z)/grid.CellSize);
+            int bits=128;
+            if(gx>=0&&gz>=0&&gx<grid.Width&&gz<grid.Height)
+            {
+                int i=gz*grid.Width+gx;bits=(rm[i]?1:0)|(sm!=null&&sm[i]?2:0)|(bm[i]?4:0)|(blockers.Blocked.IsCreated&&blockers.Blocked.IsSet(i)?8:0)|(roads[i].Value!=0?16:0)|(wm!=null&&wm[i]?32:0);
+                if(em.HasBuffer<GridWalkable>(ge)&&em.GetBuffer<GridWalkable>(ge,true)[i].Value==0)bits|=64;
+            }
+            codes[z*width+x]=bits;for(int b=0;b<7;b++)if((bits&(1<<b))!=0)counts[b]++;
+            int k=(z+1)*(width+1)+x+1;prefix[k]=(bits!=0?1:0)+prefix[k-1]+prefix[k-(width+1)]-prefix[k-(width+2)];
+            if(bits!=0)csv.Append(x0+x).Append(',').Append(z0+z).Append(',').Append(bits).AppendLine();
+        }
+        int Sum(int x,int z,int w,int h)=>prefix[(z+h)*(width+1)+x+w]-prefix[z*(width+1)+x+w]-prefix[(z+h)*(width+1)+x]+prefix[z*(width+1)+x];
+        var candidates=new List<(float distance,int x,int z)>();for(int z=0;z<=height-20;z++)for(int x=0;x<=width-40;x++)if(Sum(x,z,40,20)==0)candidates.Add((Mathf.Pow(x0+x+20-1026,2)+Mathf.Pow(z0+z+10-340,2),x0+x,z0+z));
+        var output=new StringBuilder();output.Append("{\"scope\":\"Read-only current reused Campaign geometry observation; placement/height/resources/native-M2 confirmation still required\",\"actorsOrInputsModified\":false,\"grid\":{\"width\":").Append(grid.Width).Append(",\"height\":").Append(grid.Height).Append(",\"cellSize\":").Append(grid.CellSize).Append(",\"originX\":").Append(grid.Origin.x).Append(",\"originZ\":").Append(grid.Origin.z).Append("},\"maskBitCounts\":[").Append(string.Join(",",counts)).Append("],\"clear40x20Lots\":").Append(candidates.Count).Append(",\"nearestLots\":[");
+        bool first=true;foreach(var c in candidates.OrderBy(c=>c.distance).Take(10)){if(!first)output.Append(',');first=false;output.Append("{\"x\":").Append(c.x).Append(",\"z\":").Append(c.z).Append(",\"distanceSquared\":").Append(c.distance).Append('}');}
+        output.Append("]}");string p="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/";File.WriteAllText(p+"readonly968-current-m2-lot-masks.csv",csv.ToString());File.WriteAllText(p+"readonly968-current-m2-lot-mask-observation.json",output.ToString());
+        return output.ToString();
+    }
+}

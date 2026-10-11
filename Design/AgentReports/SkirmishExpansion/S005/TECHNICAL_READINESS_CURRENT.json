@@ -9,15 +9,15 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native932",
-  "activeLog": "native-932-current-manual-en-seed130368.log",
-  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
-  "activePreManifest": "final-931-boarded-recovery-post-source-manifest.json",
+  "activeRun": null,
+  "activeLog": null,
+  "activeScope": null,
+  "activePreManifest": null,
   "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
-  "currentManualLocalePair": null,
+  "currentManualLocalePair": "native932-933-current-manual-en-fa-locale-pair.json",
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
@@ -154,10 +154,13 @@
     "cleanupWarnings": []
   },
   "shippingNativeSurfaceSpawnCommit": "629318bbf",
-  "currentManualControlsProofs": [],
-  "currentManualControlsProof": null,
-  "currentCombatSaveContinueProof": null,
-  "manualLocaleStatus": "Recorded0488 normal EN/FA victories retained; refresh pending after shared map-input fix.",
+  "currentManualControlsProofs": [
+    "native932-current-manual-en-seed130368-victory.json",
+    "native933-current-manual-fa-IR-seed104734-victory.json"
+  ],
+  "currentManualControlsProof": "native933-current-manual-fa-IR-seed104734-victory.json",
+  "currentCombatSaveContinueProof": "native932-current-manual-en-seed130368-victory.json",
+  "manualLocaleStatus": "Current-source normal manual EN combat Save/Continue and FA fresh journeys passed with native frozen result/return and full input/source audits.",
   "focusedNative923": {
     "result": "Passed",
     "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
@@ -241,5 +244,6 @@
   "currentBoardedRecoveryProofs": [
     "native931-normal-boarded-save-continue-unload-pass.json"
   ],
-  "shippingFullMapInputCommit": "8c688734c"
+  "shippingFullMapInputCommit": "8c688734c",
+  "combatSaveContinueStatus": "Passed current-source native932 complete English normal-input combat Save/Continue, victory and frozen result/return."
 }

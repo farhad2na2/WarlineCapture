@@ -29,3 +29,7 @@ Native927 reproduced the actual first transport-target release consumed by Suppr
 Native930 passed the complete shared selection/input suite, including both new full-map open/close cases, with compiler errors[], wrapper/bridge0 and matching full PRE/POST source. The legacy marker reports65 tests; the executed source contains69 RunCase calls. Native931 normal touch boarded-APC Save/Continue/unload is active; no recovery pass is claimed before its result.
 
 Native931 normal touch paid Heavy APC recovery passed:4 soldiers boarded, schema7 Save/Continue preserved the paid280 receipt and attempt,4978 old physical entities were gone,4 restored passenger links/hidden visuals verified, and all4 unloaded through native player controls. Strict contacts paired, no actor/resource/order/selection injection, wrapper/bridge0 and full PRE/POST source matched. This closes boarded recovery; complete mission, remaining recovery and role/capacity gates remain separate.
+
+Native932 PASS current-source en manual-controls driver: Victory 306.749s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.
+
+Native933 PASS current-source fa-IR manual-controls driver: Victory 131.645s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.

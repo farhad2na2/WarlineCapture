@@ -1106,8 +1106,12 @@ namespace Game.UI.Shell.Ecs
 
             bool assaultOrdered = view.ExpandedAssaultMask == 0 ||
                 (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
-            bool assaultSelected = view.ExpandedAssaultMask != 0 &&
-                (view.ExpandedAssaultMask & ~view.ExpandedSelectedMask) == 0;
+            // Already accepted groups keep fighting while the remaining cohort is selected.
+            // Selection above deliberately excludes their AttackOrder bits, so requiring them
+            // selected here would prevent the next explicit Attack command from ever arming.
+            int remainingAssault = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask;
+            bool assaultSelected = remainingAssault != 0 &&
+                (remainingAssault & ~view.ExpandedSelectedMask) == 0;
             if (!assaultOrdered && assaultSelected)
             {
                 // Keep pressing Attack until the drawer shows the order.

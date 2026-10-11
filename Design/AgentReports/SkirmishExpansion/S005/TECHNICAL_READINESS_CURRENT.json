@@ -3,20 +3,41 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
-  "sourceFingerprint": "final-1160-integrated-post-independent-fingerprint.json",
+  "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+  "sourceFingerprint": "final-1163-integrated-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": null,
-  "activeLog": null,
-  "activeScope": null,
-  "activePreManifest": null,
-  "currentCompilationProof": "native1160-current-compilation.json",
+  "activeRun": "native1157",
+  "activeLog": "native-1157-normal-aria-en-seed130368.log",
+  "activeScope": "S005NormalAria1157Observer.RunValidation",
+  "activePreManifest": "final-1156-normal-aria-post-source-manifest.json",
+  "currentCompilationProof": "native1163-current-compilation.json",
   "shippingRuntimeCommit": "82006da1af6263df643e00663c94c15da71fbc31",
-  "currentNativeVictories": [],
-  "currentAriaBaselineMatrix": null,
+  "currentNativeVictories": [
+    "native1162-normal-aria-pass.json"
+  ],
+  "currentAriaBaselineMatrix": {
+    "status": "InProgress",
+    "currentPassedCases": 1,
+    "remainingCases": 5,
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "qualifiedCases": [
+      {
+        "proof": "native1162-normal-aria-pass.json",
+        "seed": 104734,
+        "locale": "en",
+        "difficulty": "Regular",
+        "size": "Standard",
+        "input": "aria",
+        "result": "Victory",
+        "matchSeconds": 233.56,
+        "nativeResultAndAdjustSetupReturn": true
+      }
+    ],
+    "fullMatrixCertified": false
+  },
   "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
@@ -38,22 +59,24 @@
   "pending": [
     "Bilateral aircraft parking/taxi/launch/return and capacity for actually exposed Standard profile (Air2)",
     "Remaining enabled-role X37 combat/transport/recon and checkpoint evidence",
-    "Current English/ARIA journeys; remaining checkpoint/result/replay and exposed-preset evidence",
+    "Five remaining current shared-fog ARIA seed/locale baseline cases; manual/takeover/R2 and remaining checkpoint/result/return/replay and exposed-preset evidence",
     "Affected Campaign M3/M4 regressions and required family/stress/cleanup/performance checks",
     "Real device/performance acceptance; Mobile pipeline configuration contract and Editor lifecycle conservation passed",
     "Owner native visual review and real player/device acceptance",
     "Authored shared-fog/intel readiness: development full vision cannot certify reconnaissance or full catalog; real visibility and hidden-target qualification remains pending"
   ],
-  "nextWork": "Current shared-fog native Drone/recovery/aircraft checks, then fresh normal ARIA/manual/result/return journeys and scoped shared Campaign regressions.",
+  "nextWork": "Complete five remaining current-source shared-fog normal ARIA seed/locale cases and manual/takeover/R2/result/return/replay gates; complete remaining bilateral aircraft/full-role and scoped Campaign/family/stress/cleanup/performance evidence.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "PendingReviewedRemainingAssaultSelectionRepair",
-    "scope": "Native compile/core1163 then normal1162 with strict frozen/rendered result/return; no fog/watchdog relaxation"
+    "status": "Pending",
+    "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-1160-integrated-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1163-integrated-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentFreshAriaSeedProofs": [],
+  "currentFreshAriaSeedProofs": [
+    "native1162-normal-aria-pass.json"
+  ],
   "latestFreshAriaFailure": null,
   "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
   "latestPreviousCandidateAriaProofs": [
@@ -253,7 +276,7 @@
   "recordedPreviousSourceFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
   "currentStandardRegularJourneysPassed": false,
-  "ariaLocaleStatus": "Fresh baseline pending after aircraft pause fix; six previous-source complete journeys retained historically.",
+  "ariaLocaleStatus": "One current-source normal English ARIA seed104734 Victory qualified by native1162; five remaining baseline seed/locale cases pending. Previous-source locale pair is historical only.",
   "currentCampaignRegressionProofs": [
     "native940-shared-campaign-m01-en-fa-journey-failure.json",
     "native948-shared-campaign-m01-en-fa-journey-failure.json",
@@ -881,10 +904,10 @@
     "suites": 16,
     "fogCases": 49,
     "guidanceCases": 2,
-    "plannerCases": 107,
+    "plannerCases": 111,
     "moveCommandTests": 26,
-    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
-    "proof": "native1160-focused-current-proof.json",
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "proof": "native1163-focused-current-proof.json",
     "compilerErrors": 0,
     "wrapperExit": 0,
     "nativeExit": 0,
@@ -960,35 +983,15 @@
     "successor": "1151 pending external runner correction"
   },
   "latestNormalAria1151": "native1151-normal-aria-failure.json",
-  "currentNormalAriaBlocker": {
-    "proof": "native1158-normal-aria-failure.json",
-    "actualResult": "Abort",
-    "reason": "ariaStopped:Blocked",
-    "matchSeconds": 404.205,
-    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
-    "fullSourceUnchanged": true,
-    "dispatched": 201,
-    "completed": 201,
-    "receiptViolations": 0,
-    "unexpected": 0,
-    "physicalInterventions": 0,
-    "nativeGroupOrderObservations": [
-      "native1158-approach-readonly-snapshot1.json",
-      "native1158-approach-readonly-snapshot2.json"
-    ],
-    "acceptedRifleGroupOrderMask": 3,
-    "pageZeroAssaultMask": 31,
-    "selectionSweepCompletes": false,
-    "terminalJourneyCertified": false,
-    "actualResultInjection": false,
-    "pendingRepair": "TryStructureColumn remaining unordered assault selection predicate",
-    "unprovedCarRejection": true
-  },
+  "currentNormalAriaBlocker": null,
   "lastPushedEvidenceMilestone": {
-    "commit": "ce66ec121",
+    "commit": "70df3b88468a0043debd311a536f28897d0001f5",
     "destination": "origin/main",
-    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
-    "technicalReady": false,
+    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "files": 162,
+    "bytes": 46786043,
+    "nativeCoreSuites": 16,
+    "normalWins": 0,
     "playerReady": false
   },
   "focusedNative1155": {
@@ -1033,10 +1036,25 @@
       "nativeExit": 0,
       "normalMissionCertified": false,
       "deviceCertified": false
+    },
+    {
+      "result": "Passed",
+      "suites": 16,
+      "fogCases": 49,
+      "guidanceCases": 2,
+      "plannerCases": 107,
+      "moveCommandTests": 26,
+      "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+      "proof": "native1160-focused-current-proof.json",
+      "compilerErrors": 0,
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "normalMissionCertified": false,
+      "deviceCertified": false
     }
   ],
   "currentAriaApproachRepair": {
-    "status": "AppliedCompiledFocusedPassed_NormalReplayFailedGroupOrderBookkeeping",
+    "status": "AppliedCompiledFocusedPassed_CurrentNormalReplayVictoryQualified",
     "files": [
       "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
       "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs"
@@ -1044,7 +1062,11 @@
     "precisionVisibilityGatePreserved": true,
     "cameraGuidanceIssuesOrders": false,
     "normalReplay": "native1153",
-    "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33"
+    "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33",
+    "historicalNormalReplay": "native1153",
+    "currentNormalReplay": "native1162",
+    "currentNormalReplayProof": "native1162-normal-aria-pass.json",
+    "currentNormalReplaySourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7"
   },
   "latestNormalAria1153": "native1153-normal-aria-failure.json",
   "focusedNative1160": {
@@ -1063,14 +1085,18 @@
     "cleanupWarnings": []
   },
   "currentSharedAttackMoveRepair": {
-    "status": "AppliedCompiledFocusedPassed_ActualRifleGroupsCorrect_NormalReplayBlockedSelectionPredicate",
+    "status": "AppliedCompiledFocusedPassed_CurrentNormalReplayVictoryQualified",
     "productionFile": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
     "nativeAcceptedMembersOnly": true,
     "rejectedMembersUnchanged": true,
     "normalReplay": "native1158",
     "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
     "failedTestOnlyCompile": "native1159-r1-failed-compilation.json",
-    "failedCompileCandidateSource": "dd52b2c2b274a08e36e6b345ed81bb978a51b1c3e491ad00851ab2201a30c6d3"
+    "failedCompileCandidateSource": "dd52b2c2b274a08e36e6b345ed81bb978a51b1c3e491ad00851ab2201a30c6d3",
+    "historicalNormalReplay": "native1158",
+    "currentNormalReplay": "native1162",
+    "currentNormalReplayProof": "native1162-normal-aria-pass.json",
+    "currentNormalReplaySourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7"
   },
   "latestNormalAria1158": "native1158-normal-aria-failure.json",
   "historicalNormalAriaBlockers": [
@@ -1093,6 +1119,103 @@
       "terminalJourneyCertified": false,
       "actualResultInjection": false,
       "screenObserverQualification": "Actual rendered setup/purpose/objectives/active Stop pass; no native result or return reached. Initial binding/setup overlap attribution limitation remains documented."
+    },
+    {
+      "proof": "native1158-normal-aria-failure.json",
+      "actualResult": "Abort",
+      "reason": "ariaStopped:Blocked",
+      "matchSeconds": 404.205,
+      "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+      "fullSourceUnchanged": true,
+      "dispatched": 201,
+      "completed": 201,
+      "receiptViolations": 0,
+      "unexpected": 0,
+      "physicalInterventions": 0,
+      "nativeGroupOrderObservations": [
+        "native1158-approach-readonly-snapshot1.json",
+        "native1158-approach-readonly-snapshot2.json"
+      ],
+      "acceptedRifleGroupOrderMask": 3,
+      "pageZeroAssaultMask": 31,
+      "selectionSweepCompletes": false,
+      "terminalJourneyCertified": false,
+      "actualResultInjection": false,
+      "pendingRepair": "TryStructureColumn remaining unordered assault selection predicate",
+      "unprovedCarRejection": true,
+      "supersededBy": "native1162-normal-aria-pass.json",
+      "repairQualifiedOnSource": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7"
     }
-  ]
+  ],
+  "focusedNative1163": {
+    "result": "Passed",
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1163-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1163-integrated-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1163-focused-current-integrated.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1163] result=Passed suites=16 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentRemainingAssaultSelectionRepair": {
+    "status": "AppliedCompiledFocusedPassed_NormalReplayVictoryQualified",
+    "planner": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+    "newChecks": 4,
+    "nativePlannerCases": 111,
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "normalReplay": "native1162",
+    "orderedGroupsRemainExcludedFromPendingSelection": true,
+    "nativeFullOrderAndPageGatesPreserved": true,
+    "normalReplayProof": "native1162-normal-aria-pass.json"
+  },
+  "latestNormalAria1162": "native1162-normal-aria-pass.json",
+  "currentNormalAriaQualification": {
+    "result": "PassedOneScopedNormalInputJourney",
+    "proof": "native1162-normal-aria-pass.json",
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "sourceUnchanged": true,
+    "seed": 104734,
+    "locale": "en",
+    "matchSeconds": 233.56,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "wrapperExit": 0,
+    "nativeExit": 0,
+    "nativeTouchDispatched": 62,
+    "nativeTouchCompleted": 62,
+    "receiptErrors": 0,
+    "normalSpeedCertified": true,
+    "countedWinCertified": true,
+    "actualRenderedFrozenVictoryBeforeReturn": true,
+    "actualAdjustSetupReturn": true,
+    "injectedGameplayState": false,
+    "shippingCatalogReady": false,
+    "fullBaselineMatrixCertified": false,
+    "manualJourneyCertified": false,
+    "deviceCertified": false,
+    "playerReady": false
+  },
+  "latestNormalAria1156": "native1156-normal-aria-failure.json",
+  "currentPersianNormalScreenQualification": {
+    "status": "FailedObserverScreens_NativeVictoryGameplayOnly",
+    "proof": "native1156-normal-aria-failure.json",
+    "sourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+    "nativeMatchSeconds": 232.584,
+    "nativeOutcome": "Victory",
+    "countsForAriaSeedBaseline": false,
+    "errors": [
+      "Strict actual native bound rendered text evidence missing: SetupTitle",
+      "Strict actual native bound rendered text evidence missing: AdjustSetupTitle",
+      "Actual setup objective/failure-rule copy missing",
+      "Actual rendered objectives/clock during ARIA missing",
+      "Actual rendered S005 AdjustSetup must follow exact native frozen/rendered Victory of same attempt",
+      "Read-only observer closure incomplete"
+    ],
+    "productionRenderingDefectProven": false
+  }
 }

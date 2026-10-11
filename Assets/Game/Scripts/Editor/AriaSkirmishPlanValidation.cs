@@ -438,6 +438,41 @@ namespace Game.Editor
             Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
                 output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
                 "expanded selected force must arm explicit Attack before any presented terrain world touch");
+            // Native1158 page0 had Assault31/Attack3: the already ordered rifles must
+            // remain excluded while the pending rocketeer/car/APC cohort receives its own order.
+            view = new AriaSkirmishObservation { Active = true, ExpandedSession = true, Time = 100,
+                Infantry = 16, PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                CombinedArmsField = true, OwnStructureAttackUnits = 8, SelectionVisible = true,
+                ExpandedPageCount = 1, ExpandedTotalGroups = 5, ExpandedAssaultMask = 31,
+                ExpandedStructureMask = 4, ExpandedAttackOrderMask = 3, ExpandedSelectedMask = 28,
+                ExpandedSelectedGroups = 3, Attack = new AriaTouchTarget { Available = true, Id = 14 },
+                ClearSquadSelection = new AriaTouchTarget { Available = true, Id = 99 },
+                Squad0 = new AriaTouchTarget { Available = true, Id = 40 },
+                Squad1 = new AriaTouchTarget { Available = true, Id = 41 },
+                Squad2 = new AriaTouchTarget { Available = true, Id = 42 },
+                Squad3 = new AriaTouchTarget { Available = true, Id = 43 },
+                Squad4 = new AriaTouchTarget { Available = true, Id = 44 } };
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultSelecting = 1, PagedToAssault = 1 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
+                output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
+                "native partial-order page arms explicit Attack when every remaining assault group is selected");
+            view.ExpandedSelectedMask = 4; view.ExpandedSelectedGroups = 1;
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultSelecting = 1, PagedToAssault = 1 };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.SelectSquad && output.TargetId == 43 && plan.AssaultIssued == 0,
+                "partial pending cohort selects the next unordered card without reselecting accepted rifles");
+            view.ExpandedAttackOrderMask = 31; view.ExpandedSelectedMask = 0; view.ExpandedSelectedGroups = 0;
+            view.SelectionVisible = false;
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultSelecting = 1, PagedToAssault = 1 };
+            Step(); Check(plan.AssaultIssued == 1 && plan.StructureOrdered == 1 && plan.PagesOrdered == 1 &&
+                plan.AssaultPageSeen == 1 && output.Kind == AriaPlayObservationKind.Waiting,
+                "fully accepted one-page assault completes inspection even when no group remains selected");
+            view.ExpandedAttackOrderMask = 0; view.ExpandedSelectedMask = 31; view.ExpandedSelectedGroups = 5;
+            view.SelectionVisible = true;
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultSelecting = 1, PagedToAssault = 1 };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
+                output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
+                "no accepted orders still require the complete assault selection before explicit Attack");
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

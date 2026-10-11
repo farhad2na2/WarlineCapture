@@ -519,8 +519,8 @@
     }
   ],
   "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
-  "currentSourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
-  "currentSourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
+  "currentSourceHash": "ca84597a2ac1992ba7c5aaa60653155aaa31ed1e6c0fda7bc28591f83910fda7",
+  "currentSourceFingerprint": "final-1163-integrated-post-independent-fingerprint.json",
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
@@ -538,7 +538,7 @@
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
   "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
-  "currentAriaBaselineMatrix": "native934-939-current-fresh-aria-seed-matrix.json",
+  "currentAriaBaselineMatrix": "TECHNICAL_READINESS_CURRENT.json:currentAriaBaselineMatrix",
   "recorded711AriaMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
   "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
   "currentGroundPaidQueueCases": 15,
@@ -553,5 +553,8 @@
   "currentAttackHeliCombatProof": "native1076-attack-heli-combat-helipad-direct-fire-pass.json",
   "currentFixedWingCapacityProof": "native1092-offline-lifecycle-evaluation-v2-20261011.json",
   "currentApcTransportProof": "native1097-offline-two-apc-scoped-evaluation-20261011.json",
-  "currentHelicopterTransportProof": "native1101-isolated-paid-paid-transport-pass.json"
+  "currentHelicopterTransportProof": "native1101-isolated-paid-paid-transport-pass.json",
+  "currentNormalAriaProofs": [
+    "native1162-normal-aria-pass.json"
+  ]
 }

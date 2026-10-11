@@ -1,0 +1,565 @@
+{
+  "format": "S005Core1160LosslessGzipSupplement.v1",
+  "status": "ReviewedSelectedLosslessArchive",
+  "proposedArchiveDirectory": "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-core1160-supplement",
+  "dependencies": [
+    {
+      "index": "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-main-fog-guidance-selected/index.json",
+      "indexSha256": "8f741d6a3001216da95cbfc824af075997d0c48abe6a67b1f7f0a055430a8443"
+    },
+    {
+      "index": "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-main-fog-guidance-supplement1136/index.json",
+      "indexSha256": "5d1cf4e3972338dd590bcf7f7d784e3bbe101c0152006ff1298745b45b89b76c"
+    },
+    {
+      "index": "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-recovery-recon1144/index.json",
+      "indexSha256": "4935ed972b115c31a792b9bb6812fd17db62ccdb1bbab9b7f2c944ebbf205b48"
+    },
+    {
+      "index": "Design/AgentReports/SkirmishExpansion/S005/commit-evidence-20261011-aria-recovery1155/index.json",
+      "indexSha256": "df62e30670d012d24134b54bccb2b8e69a14bd7e211101d730b49fcf1e196475"
+    }
+  ],
+  "files": [
+    {
+      "originalPath": "/private/tmp/S005IntegratedTechnical1159.cs",
+      "sha256": "c5eb90ebe3ca639d44c8751814ef965704a643c89605d4100f37829baa516fe0",
+      "bytes": 3452,
+      "run": "1159",
+      "provenanceKind": "NeverLoadedOrExecutedExternalFixture",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/S005IntegratedTechnical1160.cs",
+      "sha256": "ecb1ccf9ef81fde4558aa4a245f36a1784d22d457fa3e270f88cd9dc5bf41896",
+      "bytes": 3452,
+      "run": "1160",
+      "provenanceKind": "RetainedNativeLoadFile_CurrentBytes_NoSeparateExecutedHashRecord",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/aria1153-accepted-attackmove-groups/Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+      "sha256": "50fea5f262a0314dd0b487364afc56538d757d82878c8ea8bfdbaa633469bc01",
+      "bytes": 75672,
+      "run": "1159",
+      "provenanceKind": "ExactFailedCS1612TestSnapshot_MatchesDD52Manifest_NoExecutedTest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/aria1153-accepted-attackmove-groups/candidate-r1.patch",
+      "sha256": "ceba139bce132f5bb46640d0db022dc14805a83167a570fdb7b90f1d02541692",
+      "bytes": 15776,
+      "run": "AttackMove_r1",
+      "provenanceKind": "ReviewedHistoricalExternalCandidate_PriorToRootCS1612Correction",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/aria1153-accepted-attackmove-groups/manifest-r1.json",
+      "sha256": "c1dd9319af90a19f03a135b98f3a55a15c34335c9ebb919a960b2484199134d8",
+      "bytes": 3034,
+      "run": "AttackMove_r1",
+      "provenanceKind": "ReviewedHistoricalExternalCandidate_PriorToRootCS1612Correction",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-root-cs1612-correction-metadata.json",
+      "sha256": "0bc9e682c0637bb4212e1bc140f781c3ab18930ce0cfd4bdf2e4422429ff8be7",
+      "bytes": 1376,
+      "run": "1160",
+      "provenanceKind": "ActualCompilerFailureVsCorrectedPassingCandidateMetadata",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-root-cs1612-test-correction.patch",
+      "sha256": "34325cc9bd3a82dbd33e76ce11aeab078467e6b6d3c94e180e521fcc99fabcad",
+      "bytes": 899,
+      "run": "1160",
+      "provenanceKind": "RootTinyCS1612TestOnlyCorrection_DiffActualFailedToPassingBytes",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+      "sha256": "10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b",
+      "bytes": 37687,
+      "run": "1160",
+      "provenanceKind": "ExactCurrentCandidateSourceSnapshot_HashMatchesActualFullManifest",
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "sha256": "6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c",
+      "bytes": 7946,
+      "run": "1160",
+      "provenanceKind": "ExactCurrentCandidateSourceSnapshot_HashMatchesActualFullManifest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "sha256": "6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a",
+      "bytes": 64977,
+      "run": "1160",
+      "provenanceKind": "ExactCurrentCandidateSourceSnapshot_HashMatchesActualFullManifest",
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "originalPath": "/private/tmp/supplement1160-source-snapshots/Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+      "sha256": "a8e40c6e7c458e7fa96d8dc0082d4eedda75242f1069e6bcb29826b79ed092f2",
+      "bytes": 75676,
+      "run": "1160",
+      "provenanceKind": "ExactCurrentCandidateSourceSnapshot_HashMatchesActualFullManifest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "/private/tmp/warline-s005-source-manifest.py",
+      "sha256": "bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144",
+      "bytes": 2108,
+      "run": "1160",
+      "provenanceKind": "ExactUsedSourceManifestHelper_CurrentRetainedBytes",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1160-reviewed-dry-run.json",
+      "sha256": "01447d43dbde15111be3d4d393a1f851bf89053876db3310118711452156aa3c",
+      "bytes": 730,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1159-integrated-pre-independent-fingerprint.json",
+      "sha256": "d519d3b5c292072197b86e9195b4555d6df83bae32143ec1d4295ca89f5a89e9",
+      "bytes": 369,
+      "run": "1159",
+      "provenanceKind": "ClosedBeforeValidationCompilerFailure_NoExecutedTest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1159-integrated-pre-source-manifest.json",
+      "sha256": "961f7bc70d76145c016f3ffe213aa27e28e1a503251a839e74bebb7e79a28875",
+      "bytes": 6926382,
+      "run": "1159",
+      "provenanceKind": "ClosedBeforeValidationCompilerFailure_NoExecutedTest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1160-integrated-post-independent-fingerprint.json",
+      "sha256": "2091c5d28d716aa28ae4f4edab9327791c5a8755ccf6750f35f55d95fb2684a7",
+      "bytes": 376,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1160-integrated-post-source-manifest.json",
+      "sha256": "93be662ada6dd5d4136ad8b95f1c037e38348dd2b23e749ed2326729c8f17ad5",
+      "bytes": 6926382,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1160-integrated-pre-independent-fingerprint.json",
+      "sha256": "2a6ba01b23616e4cca6a4a7aa143732c7177007e9b35287f5756a44e472ba11b",
+      "bytes": 369,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1160-integrated-pre-source-manifest.json",
+      "sha256": "93be662ada6dd5d4136ad8b95f1c037e38348dd2b23e749ed2326729c8f17ad5",
+      "bytes": 6926382,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1160-reviewed-integrated.json",
+      "sha256": "cf91f2c9f9ac6faf5405a3ed8756b21b505fee64c4c5c26b0c1396837404cb44",
+      "bytes": 776,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1160-focused-current-integrated.log",
+      "sha256": "bf4d27addd2ce40e215d71e1deecfffb55c655acb4213052b100fa22f68c4da4",
+      "bytes": 40720,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1160-focused-current-integrated.log.dispatch.json",
+      "sha256": "87ef67f1e86d6f795067f2c8a29f0e530a3dc060f57131a903e870d2cdbc82e0",
+      "bytes": 995,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1160-focused-current-integrated.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1160-focused-current-integrated.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1159-r1-failed-compilation.json",
+      "sha256": "258899705127b1778939763db4396f9a1f072a7d27480d86363f0c91e6a701d6",
+      "bytes": 597,
+      "run": "1159",
+      "provenanceKind": "ClosedBeforeValidationCompilerFailure_NoExecutedTest",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1160-current-compilation.json",
+      "sha256": "76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f",
+      "bytes": 397,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1160-focused-current-proof.json",
+      "sha256": "12732257f4121ba0cb7f9a9045cd89fed0bc976479f44f16c63b41b14830bc06",
+      "bytes": 783,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1160-live-mobile-quality.json",
+      "sha256": "88f160949eb0e1ddafd812eeb3127479229f37f7096cc850e6d6b65f21c3d592",
+      "bytes": 1073,
+      "run": "1160",
+      "provenanceKind": "ClosedActualCore16RawEvidence",
+      "storageAction": "ReusePriorCommittedObject"
+    }
+  ],
+  "objects": [
+    {
+      "sha256": "258899705127b1778939763db4396f9a1f072a7d27480d86363f0c91e6a701d6",
+      "bytes": 597,
+      "object": "objects/258899705127b1778939763db4396f9a1f072a7d27480d86363f0c91e6a701d6.gz",
+      "gzipSha256": "a6b2b3376f26614d33bea8d019900b70015e41e096ac1de40d5a2da24b00dee6",
+      "gzipBytes": 388,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "961f7bc70d76145c016f3ffe213aa27e28e1a503251a839e74bebb7e79a28875",
+      "bytes": 6926382,
+      "object": "objects/961f7bc70d76145c016f3ffe213aa27e28e1a503251a839e74bebb7e79a28875.gz",
+      "gzipSha256": "3e8e0e3be6e0526b70cd55bcf07ff6feaa09942141ed0feabf519c6c7847c867",
+      "gzipBytes": 1842684,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "d519d3b5c292072197b86e9195b4555d6df83bae32143ec1d4295ca89f5a89e9",
+      "bytes": 369,
+      "object": "objects/d519d3b5c292072197b86e9195b4555d6df83bae32143ec1d4295ca89f5a89e9.gz",
+      "gzipSha256": "86f27c97dad3471134e9794e38a2107ca15525a39219a198dbcc6c3f6a4575b8",
+      "gzipBytes": 283,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "12732257f4121ba0cb7f9a9045cd89fed0bc976479f44f16c63b41b14830bc06",
+      "bytes": 783,
+      "object": "objects/12732257f4121ba0cb7f9a9045cd89fed0bc976479f44f16c63b41b14830bc06.gz",
+      "gzipSha256": "2d4cde2923176fe8e235575f63bea19b42d9d331745e724032dcdedaa556b510",
+      "gzipBytes": 442,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f",
+      "bytes": 397,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/76374d160fe07fa6294d1aa935c504952cc4bacead61817ce18dc018d8f3d95f.gz",
+      "gzipSha256": "f122297c422b62ff56520b7bcae62c4e677dfb116848d00917db9b12839f5f63",
+      "gzipBytes": 241,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "88f160949eb0e1ddafd812eeb3127479229f37f7096cc850e6d6b65f21c3d592",
+      "bytes": 1073,
+      "object": "../commit-evidence-20261011-aria-recovery1155/objects/88f160949eb0e1ddafd812eeb3127479229f37f7096cc850e6d6b65f21c3d592.gz",
+      "gzipSha256": "3f5ed9882afb49d2603c01d82bfbd4f50b6416d4a336f1a05eb05d3c8034e7a8",
+      "gzipBytes": 497,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "01447d43dbde15111be3d4d393a1f851bf89053876db3310118711452156aa3c",
+      "bytes": 730,
+      "object": "objects/01447d43dbde15111be3d4d393a1f851bf89053876db3310118711452156aa3c.gz",
+      "gzipSha256": "4876aec630e857b4e17c23694c5113894e690b4d275ae1816d63a4b3e04a4d05",
+      "gzipBytes": 371,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "cf91f2c9f9ac6faf5405a3ed8756b21b505fee64c4c5c26b0c1396837404cb44",
+      "bytes": 776,
+      "object": "objects/cf91f2c9f9ac6faf5405a3ed8756b21b505fee64c4c5c26b0c1396837404cb44.gz",
+      "gzipSha256": "633ba5ce31d345eef16aa0d148ecf4a05d723fa1088c842c054ff2f59db7987b",
+      "gzipBytes": 408,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "bf4d27addd2ce40e215d71e1deecfffb55c655acb4213052b100fa22f68c4da4",
+      "bytes": 40720,
+      "object": "objects/bf4d27addd2ce40e215d71e1deecfffb55c655acb4213052b100fa22f68c4da4.gz",
+      "gzipSha256": "5b5c9d71d704285144c2483542cb781cf9aee610d9c8755597086ff6c40b1038",
+      "gzipBytes": 2601,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz",
+      "gzipSha256": "afcc354d84b1c14e57b84114b9e424be57992d03d9db6c8e9c25deb4fa66ff7f",
+      "gzipBytes": 21,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz",
+      "gzipSha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae",
+      "gzipBytes": 22,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "87ef67f1e86d6f795067f2c8a29f0e530a3dc060f57131a903e870d2cdbc82e0",
+      "bytes": 995,
+      "object": "objects/87ef67f1e86d6f795067f2c8a29f0e530a3dc060f57131a903e870d2cdbc82e0.gz",
+      "gzipSha256": "ca1c6de563d23b20126665b62379f096e66a56f0e9be2f4d77fbb58586282272",
+      "gzipBytes": 473,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "93be662ada6dd5d4136ad8b95f1c037e38348dd2b23e749ed2326729c8f17ad5",
+      "bytes": 6926382,
+      "object": "objects/93be662ada6dd5d4136ad8b95f1c037e38348dd2b23e749ed2326729c8f17ad5.gz",
+      "gzipSha256": "dab6523ff889b77ac35bc292c748463b4f7815a78cdac734d32b0c8f8b989e72",
+      "gzipBytes": 1842684,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "2a6ba01b23616e4cca6a4a7aa143732c7177007e9b35287f5756a44e472ba11b",
+      "bytes": 369,
+      "object": "objects/2a6ba01b23616e4cca6a4a7aa143732c7177007e9b35287f5756a44e472ba11b.gz",
+      "gzipSha256": "111d48c7bed9938e424b148961672b3d6c9e305049e71e523748b1693164d59a",
+      "gzipBytes": 285,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "2091c5d28d716aa28ae4f4edab9327791c5a8755ccf6750f35f55d95fb2684a7",
+      "bytes": 376,
+      "object": "objects/2091c5d28d716aa28ae4f4edab9327791c5a8755ccf6750f35f55d95fb2684a7.gz",
+      "gzipSha256": "d932fbb3c728ea6bc96974dcc29a06bd57a75969b8a11f45ac413cded415e7d8",
+      "gzipBytes": 287,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "c5eb90ebe3ca639d44c8751814ef965704a643c89605d4100f37829baa516fe0",
+      "bytes": 3452,
+      "object": "objects/c5eb90ebe3ca639d44c8751814ef965704a643c89605d4100f37829baa516fe0.gz",
+      "gzipSha256": "38abbf26d52e424b0299fb319b733e23c14a4f90db66e533c641079bbc248ebc",
+      "gzipBytes": 1217,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "ecb1ccf9ef81fde4558aa4a245f36a1784d22d457fa3e270f88cd9dc5bf41896",
+      "bytes": 3452,
+      "object": "objects/ecb1ccf9ef81fde4558aa4a245f36a1784d22d457fa3e270f88cd9dc5bf41896.gz",
+      "gzipSha256": "5e593a7c71cd0c95fb4a9f81c99beff389169c656c1d50ea927a3a40426f559a",
+      "gzipBytes": 1217,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144",
+      "bytes": 2108,
+      "object": "objects/bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144.gz",
+      "gzipSha256": "3435c1321f4fa68395784329080736b61e736c817afb0d7932345f2bfae498f7",
+      "gzipBytes": 973,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c",
+      "bytes": 7946,
+      "object": "objects/6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c.gz",
+      "gzipSha256": "6ce4b3db3b5c9a258d42e0a7fc4f8edfc7c2bca6b7f9c53c64f2d4c8dbe02209",
+      "gzipBytes": 2138,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "a8e40c6e7c458e7fa96d8dc0082d4eedda75242f1069e6bcb29826b79ed092f2",
+      "bytes": 75676,
+      "object": "objects/a8e40c6e7c458e7fa96d8dc0082d4eedda75242f1069e6bcb29826b79ed092f2.gz",
+      "gzipSha256": "19347524451d4bde241cef926ba7ae5db68318ab4cc5728acd15a6e1ef254a66",
+      "gzipBytes": 8987,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a",
+      "bytes": 64977,
+      "object": "../commit-evidence-20261011-aria-recovery1155/objects/6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a.gz",
+      "gzipSha256": "41d036e87341ff4c4e0802b97bd9f8f099ba7a3baa35b205b581c994f8c78cd6",
+      "gzipBytes": 11051,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b",
+      "bytes": 37687,
+      "object": "../commit-evidence-20261011-aria-recovery1155/objects/10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b.gz",
+      "gzipSha256": "ce239d978b060023245b7709210af2dfb61b486bc1260a3e455ea4f3329eaa46",
+      "gzipBytes": 6335,
+      "storageAction": "ReusePriorCommittedObject"
+    },
+    {
+      "sha256": "c1dd9319af90a19f03a135b98f3a55a15c34335c9ebb919a960b2484199134d8",
+      "bytes": 3034,
+      "object": "objects/c1dd9319af90a19f03a135b98f3a55a15c34335c9ebb919a960b2484199134d8.gz",
+      "gzipSha256": "9b7878ddddae666535d032a8109d48bee87b8a8d45b69650217d814d61acabd3",
+      "gzipBytes": 1494,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "ceba139bce132f5bb46640d0db022dc14805a83167a570fdb7b90f1d02541692",
+      "bytes": 15776,
+      "object": "objects/ceba139bce132f5bb46640d0db022dc14805a83167a570fdb7b90f1d02541692.gz",
+      "gzipSha256": "6d6d4fc6c3b34985812d8df6e8134cc07621aad2da8eccb2403d96ffec098c0a",
+      "gzipBytes": 3561,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "50fea5f262a0314dd0b487364afc56538d757d82878c8ea8bfdbaa633469bc01",
+      "bytes": 75672,
+      "object": "objects/50fea5f262a0314dd0b487364afc56538d757d82878c8ea8bfdbaa633469bc01.gz",
+      "gzipSha256": "7632fe6b72036c13da783cade7898a0e510db9d64fd073ac201944adeeecaf2a",
+      "gzipBytes": 8979,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "34325cc9bd3a82dbd33e76ce11aeab078467e6b6d3c94e180e521fcc99fabcad",
+      "bytes": 899,
+      "object": "objects/34325cc9bd3a82dbd33e76ce11aeab078467e6b6d3c94e180e521fcc99fabcad.gz",
+      "gzipSha256": "73b5e29c65f6c3a4c82a5d3d937d302f5f955b7373fbed077c14916fe617a66f",
+      "gzipBytes": 377,
+      "storageAction": "ArchiveNewExactObject"
+    },
+    {
+      "sha256": "0bc9e682c0637bb4212e1bc140f781c3ab18930ce0cfd4bdf2e4422429ff8be7",
+      "bytes": 1376,
+      "object": "objects/0bc9e682c0637bb4212e1bc140f781c3ab18930ce0cfd4bdf2e4422429ff8be7.gz",
+      "gzipSha256": "84e990d06927921194d58b352ef49d0a06d719173bc56a2e127b4b856516322f",
+      "gzipBytes": 842,
+      "storageAction": "ArchiveNewExactObject"
+    }
+  ],
+  "statistics": {
+    "selectedExactAliases": 28,
+    "uniqueObjects": 27,
+    "reusedPriorCommittedObjects": 6,
+    "newExactObjects": 21,
+    "selectedBytes": 21118389,
+    "newProposedGzipBytes": 3720691
+  },
+  "runs": [
+    {
+      "run": "1159",
+      "result": "FailedBeforeValidationCompilation",
+      "sourceHash": "dd52b2c2b274a08e36e6b345ed81bb978a51b1c3e491ad00851ab2201a30c6d3",
+      "preSourceManifest": "final-1159-integrated-pre-source-manifest.json",
+      "fingerprint": "final-1159-integrated-pre-independent-fingerprint.json",
+      "failure": "native1159-r1-failed-compilation.json",
+      "nativeFixtureNeverLoaded": true,
+      "nativeFixtureNeverExecuted": true,
+      "noReceiptFabricated": true
+    },
+    {
+      "run": "1160",
+      "result": "PassedScopedCore16",
+      "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+      "preSourceManifest": "final-1160-integrated-pre-source-manifest.json",
+      "postSourceManifest": "final-1160-integrated-post-source-manifest.json",
+      "proof": "native1160-focused-current-proof.json",
+      "log": "native-1160-focused-current-integrated.log",
+      "logSha256": "bf4d27addd2ce40e215d71e1deecfffb55c655acb4213052b100fa22f68c4da4",
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "suites": 16,
+      "moveCommandTests": 26,
+      "plannerCases": 107,
+      "nativeMatchCount": 0,
+      "normalMissionCertified": false
+    }
+  ],
+  "sourceSnapshots": [
+    {
+      "productionPath": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "snapshot": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+      "sha256": "6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c"
+    },
+    {
+      "productionPath": "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+      "snapshot": "/private/tmp/supplement1160-source-snapshots/Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+      "sha256": "a8e40c6e7c458e7fa96d8dc0082d4eedda75242f1069e6bcb29826b79ed092f2"
+    },
+    {
+      "productionPath": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "snapshot": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "sha256": "6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a"
+    },
+    {
+      "productionPath": "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+      "snapshot": "/private/tmp/supplement1160-source-snapshots/Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+      "sha256": "10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b"
+    }
+  ],
+  "cs1612CorrectionMetadata": "/private/tmp/supplement1160-root-cs1612-correction-metadata.json",
+  "reviewedR1Manifest": "/private/tmp/aria1153-accepted-attackmove-groups/manifest-r1.json",
+  "reviewedR1Patch": "/private/tmp/aria1153-accepted-attackmove-groups/candidate-r1.patch",
+  "failedR1TestSnapshot": "/private/tmp/aria1153-accepted-attackmove-groups/Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+  "sourceBoundaries": {
+    "old8cAndF65": "Four prior indexes retained as dependencies; their failures/scoped passes are historical source qualifications. No normal wins.",
+    "failedDD52": "dd52b2c2b274a08e36e6b345ed81bb978a51b1c3e491ad00851ab2201a30c6d3",
+    "passedE17": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "actualDD52ToE17Diff": [
+      "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs"
+    ]
+  },
+  "excluded": [
+    "Active1158 and all its evidence",
+    "Further production candidates/new successor runs",
+    "Ambient Editor.log",
+    "Mutable readiness/CURRENT_ACCEPTANCE/CSV summaries",
+    "Broad directories",
+    "Original1159 native load/log/receipt which never existed"
+  ],
+  "readinessClaim": false,
+  "gitStagePerformed": false,
+  "unityCalls": 0,
+  "credentialScan": {
+    "scope": "One exact dedicated native1160 log only; no ambient Editor.log or secret values emitted",
+    "path": "Design/AgentReports/SkirmishExpansion/S005/native-1160-focused-current-integrated.log",
+    "sha256": "bf4d27addd2ce40e215d71e1deecfffb55c655acb4213052b100fa22f68c4da4",
+    "boundedMarkerCounts": {
+      "privateKey": 0,
+      "githubToken": 0,
+      "apiKey": 0,
+      "awsAccessId": 0,
+      "googleApiKey": 0,
+      "bearer": 0
+    }
+  },
+  "dependencyProvenance": "Reuse exact verified existing indexed objects from four sibling indexes; fourth archive was just created/reviewed and its committed status is not asserted. Legacy storageAction ReusePriorCommittedObject identifies existing index bytes, not a claim of Git commit.",
+  "proposalSha256": "61b13a085aa8cdb014fda77db494595fa299f84b9ed469b69b881ba183a016b7"
+}

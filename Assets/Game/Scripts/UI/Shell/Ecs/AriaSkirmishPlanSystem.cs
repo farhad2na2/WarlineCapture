@@ -665,8 +665,24 @@ namespace Game.UI.Shell.Ecs
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
             {
-                plan.Intent = view.EnemyBase.Available ? AriaSkirmishIntent.TargetBase : AriaSkirmishIntent.FindBase;
-                Target(view.EnemyBase.Available ? view.EnemyBase : view.FocusEnemy, view.EnemyBase.Available, ref output);
+                if (view.EnemyBase.Available)
+                {
+                    plan.Intent = AriaSkirmishIntent.TargetBase;
+                    Target(view.EnemyBase, true, ref output);
+                }
+                else if (view.AdvanceGround.Available)
+                {
+                    // The labelled objective is public; a hidden base is not a precision target.
+                    // Offer the already presented terrain approach for a separate normal Attack Move touch.
+                    // Camera focus alone cannot reveal a contact and must never issue this order.
+                    plan.Intent = AriaSkirmishIntent.Advance;
+                    Target(view.AdvanceGround, true, ref output);
+                }
+                else
+                {
+                    plan.Intent = AriaSkirmishIntent.FindBase;
+                    Target(view.FocusEnemy, false, ref output);
+                }
                 return;
             }
             if (view.ExpandedRetries >= 3)

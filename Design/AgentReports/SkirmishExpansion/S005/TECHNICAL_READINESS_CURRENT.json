@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
-  "sourceFingerprint": "final-1136-integrated-post-independent-fingerprint.json",
+  "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+  "sourceFingerprint": "final-1160-integrated-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,7 +13,7 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "native1136-s002-native-compile.json",
+  "currentCompilationProof": "native1160-current-compilation.json",
   "shippingRuntimeCommit": "82006da1af6263df643e00663c94c15da71fbc31",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
@@ -48,10 +48,10 @@
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "PendingPreparedNativeReplay",
-    "scope": "Corrected normal-input ARIA1151 EN104734; populated recon recovery1150, bilateral aircraft1106, air effects1148 and Plane cargo1122."
+    "status": "PendingReviewedRemainingAssaultSelectionRepair",
+    "scope": "Native compile/core1163 then normal1162 with strict frozen/rendered result/return; no fog/watchdog relaxation"
   },
-  "currentSourceFingerprint": "final-1136-integrated-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1160-integrated-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": null,
@@ -878,11 +878,13 @@
   },
   "currentIntegratedTechnicalQualification": {
     "result": "Passed",
-    "suites": 14,
+    "suites": 16,
     "fogCases": 49,
     "guidanceCases": 2,
-    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
-    "proof": "native1136-focused-current-proof.json",
+    "plannerCases": 107,
+    "moveCommandTests": 26,
+    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "proof": "native1160-focused-current-proof.json",
     "compilerErrors": 0,
     "wrapperExit": 0,
     "nativeExit": 0,
@@ -926,18 +928,29 @@
     "normalMissionCertified": false,
     "deviceCertified": false
   },
-  "currentPopulatedFogNativeRecovery": "native1146-populated-fog-public-save-continue-failure.json",
+  "currentPopulatedFogNativeRecovery": "native1150-populated-fog-public-save-continue-pass.json",
   "historicalNativeVictoriesBeforeSharedFogIntegration": [
     "native1053-current-manual-fa-IR-seed104734-victory.json"
   ],
   "currentPopulatedFogNativeRecoveryNotes": {
-    "result": "Failed",
-    "proof": "native1146-populated-fog-public-save-continue-failure.json",
+    "result": "PassedScopedIsolatedPaidDronePopulatedFogPublicNativeSaveContinue",
+    "proof": "native1150-populated-fog-public-save-continue-pass.json",
     "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
-    "failure": "External fixture required nearest HUD canvas pixel width equal to Screen width at startup ownership handoff, before actual Pause/Save. Native Scan Visible/frozen LastSeen passed; no saved checkpoint or Continue occurred.",
-    "nativeSaveContinueCertified": false,
-    "productionDefectEstablished": false,
-    "successor": "External1150 under preparation; loaded1146 immutable."
+    "actualPaidSourceDrone": true,
+    "sharedFog": 1,
+    "developmentFullVision": 0,
+    "pauseSaveContinue": "Actual presented native Touch controls",
+    "nativeCheckpointFieldsEdited": false,
+    "knowledgeInjected": false,
+    "savedAgeSeconds": 4.210075,
+    "restoredAgeSeconds": 4.210075,
+    "sourceStableReferenceRemapped": true,
+    "expiredAtNaturalAgeSeconds": 20.33606,
+    "nativeTouchDispatched": 22,
+    "nativeTouchCompleted": 22,
+    "receiptViolations": 0,
+    "normalMissionCertified": false,
+    "deviceCertified": false
   },
   "lastNormalAriaPreflightAttempt": {
     "run": "1142",
@@ -945,5 +958,141 @@
     "evidence": "native1142-before-load-native-idle.json",
     "reason": "eval command rejected unsupported timeout_ms flag; no fixture loaded, ownership claimed, Play entered or match run.",
     "successor": "1151 pending external runner correction"
-  }
+  },
+  "latestNormalAria1151": "native1151-normal-aria-failure.json",
+  "currentNormalAriaBlocker": {
+    "proof": "native1158-normal-aria-failure.json",
+    "actualResult": "Abort",
+    "reason": "ariaStopped:Blocked",
+    "matchSeconds": 404.205,
+    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "fullSourceUnchanged": true,
+    "dispatched": 201,
+    "completed": 201,
+    "receiptViolations": 0,
+    "unexpected": 0,
+    "physicalInterventions": 0,
+    "nativeGroupOrderObservations": [
+      "native1158-approach-readonly-snapshot1.json",
+      "native1158-approach-readonly-snapshot2.json"
+    ],
+    "acceptedRifleGroupOrderMask": 3,
+    "pageZeroAssaultMask": 31,
+    "selectionSweepCompletes": false,
+    "terminalJourneyCertified": false,
+    "actualResultInjection": false,
+    "pendingRepair": "TryStructureColumn remaining unordered assault selection predicate",
+    "unprovedCarRejection": true
+  },
+  "lastPushedEvidenceMilestone": {
+    "commit": "ce66ec121",
+    "destination": "origin/main",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "technicalReady": false,
+    "playerReady": false
+  },
+  "focusedNative1155": {
+    "result": "Passed",
+    "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1155-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1155-integrated-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1155-focused-current-integrated.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1155] result=Passed suites=15 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "historicalIntegratedTechnicalQualifications": [
+    {
+      "result": "Passed",
+      "suites": 14,
+      "fogCases": 49,
+      "guidanceCases": 2,
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+      "proof": "native1136-focused-current-proof.json",
+      "compilerErrors": 0,
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "normalMissionCertified": false,
+      "deviceCertified": false
+    },
+    {
+      "result": "Passed",
+      "suites": 15,
+      "fogCases": 49,
+      "guidanceCases": 2,
+      "plannerCases": 107,
+      "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33",
+      "proof": "native1155-focused-current-proof.json",
+      "compilerErrors": 0,
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "normalMissionCertified": false,
+      "deviceCertified": false
+    }
+  ],
+  "currentAriaApproachRepair": {
+    "status": "AppliedCompiledFocusedPassed_NormalReplayFailedGroupOrderBookkeeping",
+    "files": [
+      "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs"
+    ],
+    "precisionVisibilityGatePreserved": true,
+    "cameraGuidanceIssuesOrders": false,
+    "normalReplay": "native1153",
+    "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33"
+  },
+  "latestNormalAria1153": "native1153-normal-aria-failure.json",
+  "focusedNative1160": {
+    "result": "Passed",
+    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1160-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1160-integrated-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1160-focused-current-integrated.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1160] result=Passed suites=16 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentSharedAttackMoveRepair": {
+    "status": "AppliedCompiledFocusedPassed_ActualRifleGroupsCorrect_NormalReplayBlockedSelectionPredicate",
+    "productionFile": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+    "nativeAcceptedMembersOnly": true,
+    "rejectedMembersUnchanged": true,
+    "normalReplay": "native1158",
+    "sourceHash": "e17a324ececad00596682b1b9820ec7bf549d489537de3417f304f20077df098",
+    "failedTestOnlyCompile": "native1159-r1-failed-compilation.json",
+    "failedCompileCandidateSource": "dd52b2c2b274a08e36e6b345ed81bb978a51b1c3e491ad00851ab2201a30c6d3"
+  },
+  "latestNormalAria1158": "native1158-normal-aria-failure.json",
+  "historicalNormalAriaBlockers": [
+    {
+      "proof": "native1153-normal-aria-failure.json",
+      "actualResult": "Abort",
+      "reason": "ariaStopped:Blocked",
+      "matchSeconds": 186.147,
+      "sourceHash": "f65d132501e1661d90fe4829a50fa911ef822a4d395a22e063f9adaa0299fc33",
+      "fullSourceUnchanged": true,
+      "dispatched": 79,
+      "completed": 79,
+      "receiptViolations": 0,
+      "unexpected": 0,
+      "physicalInterventions": 0,
+      "acceptedAttackMoveReceipts": 14,
+      "nativeGroupOrderObservation": "native1153-approach-readonly-snapshot1.json",
+      "selectedFriendlyGroupsLastOrder": "None",
+      "nativeAttackMoveOrdersOnCombatMembers": true,
+      "terminalJourneyCertified": false,
+      "actualResultInjection": false,
+      "screenObserverQualification": "Actual rendered setup/purpose/objectives/active Stop pass; no native result or return reached. Initial binding/setup overlap attribution limitation remains documented."
+    }
+  ]
 }

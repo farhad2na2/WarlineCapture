@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Tactical.Contracts;
+using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -54,7 +55,41 @@ namespace Game.Runtime
                 // Keep player-order pathfinding priority; combat checks AttackMoveOrder
                 // to distinguish this interruptible advance from a plain Move.
             }
+            StampAcceptedExpandedGroups(em, accepted.AsArray(), actingFaction);
             return TacticalCommandResult.Success();
+        }
+
+        private static void StampAcceptedExpandedGroups(EntityManager em, NativeArray<Entity> accepted, byte faction)
+        {
+            // LastOrder is the last accepted group intent, including interruptible Attack Move.
+            // Reuse the same meaning as precision TryAttackMember; never stamp the selected set
+            // because unarmed transports and fuel-rejected members can share that selection.
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishArmyGroupRecord));
+            using var sessionEntities = sessions.ToEntityArray(Allocator.Temp);
+            foreach (var unit in accepted)
+            {
+                if (!em.Exists(unit) || !em.HasComponent<AttackMoveOrder>(unit) ||
+                    !em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
+                    !em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit)) continue;
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId != faction || owned.CapacityReleased != 0) continue;
+                uint groupId = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId;
+                foreach (var session in sessionEntities)
+                {
+                    var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    if (state.IsLegacy != 0 || state.Phase != SkirmishSessionPhase.Playing ||
+                        !state.SessionId.Equals(owned.SessionId)) continue;
+                    var groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+                    for (int i = 0; i < groups.Length; i++)
+                    {
+                        var group = groups[i];
+                        if (group.GroupId != groupId || group.FactionId != faction || group.AliveCount <= 0) continue;
+                        group.LastOrder = SkirmishGroupOrderKind.Attack;
+                        groups[i] = group;
+                        break;
+                    }
+                }
+            }
         }
 
         internal static void ResumeTravel(EntityManager em, double time)

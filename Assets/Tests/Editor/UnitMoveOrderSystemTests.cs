@@ -1,6 +1,7 @@
 using Game.Tactical.Contracts;
 using Game.Components;
 using Game.Runtime;
+using Game.Skirmish.Contracts;
 
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
@@ -26,6 +27,10 @@ public sealed class UnitMoveOrderSystemTests
         try
         {
             RunCase(test => test.AttackMove_ResumesAfterCombatAndExplicitMoveCancelsDestination());
+            RunCase(test => test.AttackMove_AcceptedTerrainCommandProjectsOnlyActuallyOrderedGroups());
+            RunCase(test => test.AttackMove_RejectedFuelCommandPreservesGroupAndUnitHold());
+            RunCase(test => test.AttackMove_PartialAcceptanceKeepsRejectedMemberAndGroupHonest());
+            RunCase(test => test.AttackMove_GroupBookkeepingRespectsFactionAttemptAndLegacyScope());
             RunCase(test => test.RegistryAttackIntentLeavesTravelAndCombatToSharedOwners());
             RunCase(test => test.NativeAirAttackPreservesFuelRejectionAndExistingHold());
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
@@ -47,7 +52,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=22");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=26");
         }
         catch (System.Exception ex)
         {
@@ -575,6 +580,156 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(em.HasComponent<HoldPositionOrderTag>(unit));
         Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
         Assert.IsTrue(em.HasComponent<UnitTarget>(unit));
+    }
+
+    [Test]
+    public void AttackMove_AcceptedTerrainCommandProjectsOnlyActuallyOrderedGroups()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("terrain-groups");
+        var fighter = AttackMoveActor("terrain-groups", 1, 1, SkirmishRoleKind.Rocketeer);
+        var transport = AttackMoveActor("terrain-groups", 2, 1, SkirmishRoleKind.TransportPlane);
+        em.SetComponentData(transport, new UnitCombat { CanAttack = 0 });
+        em.SetComponentData(transport, new UnitAttack { Damage = 0 });
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Rocketeer);
+        AddAttackMoveGroup(session, 2, 1, SkirmishRoleKind.TransportPlane);
+        var unselected = AttackMoveActor("terrain-groups", 3, 1, SkirmishRoleKind.Tank);
+        em.RemoveComponent<SelectedUnitTag>(unselected);
+        AddAttackMoveGroup(session, 3, 1, SkirmishRoleKind.Tank);
+        var groupBuffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+        var thirdGroup = groupBuffer[2]; thirdGroup.Selected = 0;
+        groupBuffer[2] = thirdGroup;
+        var otherAttempt = AttackMoveSession("other-attempt");
+        AddAttackMoveGroup(otherAttempt, 1, 1, SkirmishRoleKind.Rocketeer);
+        var result = ProcessTerrainAttackCommand();
+        Assert.AreEqual(1, result.Accepted); Assert.AreEqual(0, result.HasTargetEntity);
+        Assert.AreEqual(1, result.HasWorldPosition); Assert.AreEqual(71, result.RequestId);
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(fighter));
+        Assert.AreEqual(em.GetComponentData<UnitTarget>(fighter).Cell, em.GetComponentData<AttackMoveOrder>(fighter).Destination);
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(fighter));
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(transport));
+        Assert.IsFalse(em.HasComponent<UnitTarget>(transport));
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unselected)); Assert.IsFalse(em.HasComponent<UnitTarget>(unselected));
+        Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(session)[1].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(session)[2].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(otherAttempt)[0].LastOrder);
+        SkirmishArmyDrawerProjection.Project(em, session);
+        Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyDrawerSlot>(session)[0].LastOrder);
+        Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
+            out _, out _, out _, out _, out _, out _, out _, out _, out var first, out var second, out var third, out _, out _));
+        Assert.IsTrue(first.AttackOrdered); Assert.IsFalse(second.AttackOrdered); Assert.IsFalse(third.AttackOrdered);
+    }
+
+    [Test]
+    public void AttackMove_RejectedFuelCommandPreservesGroupAndUnitHold()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("fuel-groups");
+        var fighter = AttackMoveActor("fuel-groups", 1, 1, SkirmishRoleKind.Tank);
+        em.AddComponentData(fighter, new UnitFuelConsumption { Enabled = 1, GroundFuelPerCell = 1 });
+        em.AddComponent<HoldPositionOrderTag>(fighter);
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Tank, SkirmishGroupOrderKind.Hold);
+        var result = ProcessTerrainAttackCommand();
+        Assert.AreEqual(0, result.Accepted);
+        Assert.AreEqual((int)TacticalCommandReasonCode.InsufficientFuel, result.ReasonCode);
+        Assert.AreEqual(SkirmishGroupOrderKind.Hold, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+        Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(fighter));
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(fighter)); Assert.IsFalse(em.HasComponent<UnitTarget>(fighter));
+    }
+
+    [Test]
+    public void AttackMove_PartialAcceptanceKeepsRejectedMemberAndGroupHonest()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var session = AttackMoveSession("partial-groups");
+        var accepted = AttackMoveActor("partial-groups", 1, 1, SkirmishRoleKind.Rocketeer);
+        var excludedSameGroup = AttackMoveActor("partial-groups", 1, 1, SkirmishRoleKind.Rocketeer);
+        var excludedWholeGroup = AttackMoveActor("partial-groups", 2, 1, SkirmishRoleKind.Tank);
+        foreach (var unit in new[] { excludedSameGroup, excludedWholeGroup })
+        { em.AddComponentData(unit, new UnitFuelConsumption { Enabled = 1, GroundFuelPerCell = 1 }); em.AddComponent<HoldPositionOrderTag>(unit); }
+        AddAttackMoveGroup(session, 1, 1, SkirmishRoleKind.Rocketeer, SkirmishGroupOrderKind.Hold, 2);
+        AddAttackMoveGroup(session, 2, 1, SkirmishRoleKind.Tank, SkirmishGroupOrderKind.Hold);
+        Assert.AreEqual(1, ProcessTerrainAttackCommand().Accepted);
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(accepted));
+        // Group LastOrder means last genuinely accepted group intent, not every member succeeded.
+        Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(session)[0].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.Hold, em.GetBuffer<SkirmishArmyGroupRecord>(session)[1].LastOrder);
+        foreach (var unit in new[] { excludedSameGroup, excludedWholeGroup })
+        { Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(unit)); Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit)); Assert.IsFalse(em.HasComponent<UnitTarget>(unit)); }
+    }
+
+    [Test]
+    public void AttackMove_GroupBookkeepingRespectsFactionAttemptAndLegacyScope()
+    {
+        CreateGrid(32, 32); var em = _entityManager;
+        var active = AttackMoveSession("enemy-groups");
+        var legacy = AttackMoveSession("legacy-groups", 1);
+        AddAttackMoveGroup(active, 7, 2, SkirmishRoleKind.Tank);
+        AddAttackMoveGroup(active, 7, 1, SkirmishRoleKind.Tank);
+        AddAttackMoveGroup(legacy, 7, 2, SkirmishRoleKind.Tank);
+        var enemy = AttackMoveActor("enemy-groups", 7, 2, SkirmishRoleKind.Tank);
+        var campaign = AttackMoveActor("legacy-groups", 7, 2, SkirmishRoleKind.Tank);
+        using var units = new NativeArray<Entity>(new[] { enemy, campaign }, Allocator.Temp);
+        Assert.IsTrue(AttackMoveSystem.IssueUnits(em, units, 2, new int2(20, 20), new float3(20.5f, 0, 20.5f), 2).Accepted);
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(enemy)); Assert.IsTrue(em.HasComponent<AttackMoveOrder>(campaign));
+        Assert.AreEqual(SkirmishGroupOrderKind.Attack, em.GetBuffer<SkirmishArmyGroupRecord>(active)[0].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(active)[1].LastOrder);
+        Assert.AreEqual(SkirmishGroupOrderKind.None, em.GetBuffer<SkirmishArmyGroupRecord>(legacy)[0].LastOrder);
+    }
+
+    private Entity AttackMoveSession(string id, byte legacy = 0)
+    {
+        var session = _entityManager.CreateEntity(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishArmySelectionComponent));
+        _entityManager.SetComponentData(session, new SkirmishExpandedSessionComponent
+        { SessionId = new FixedString64Bytes(id), IsLegacy = legacy, Phase = SkirmishSessionPhase.Playing });
+        _entityManager.SetComponentData(session, new SkirmishArmySelectionComponent { PageSize = 5 });
+        _entityManager.AddBuffer<SkirmishArmyGroupRecord>(session);
+        return session;
+    }
+    private void AddAttackMoveGroup(Entity session, uint id, byte faction, SkirmishRoleKind role,
+        SkirmishGroupOrderKind last = SkirmishGroupOrderKind.None, int members = 1)
+    {
+        _entityManager.GetBuffer<SkirmishArmyGroupRecord>(session).Add(new SkirmishArmyGroupRecord
+        { GroupId = id, FactionId = faction, Role = role, Domain = AttackMoveDomain(role),
+          MemberCount = members, AliveCount = members, Selected = 1, LastOrder = last });
+    }
+    private Entity AttackMoveActor(string attempt, uint group, byte faction, SkirmishRoleKind role)
+    {
+        var em = _entityManager;
+        var unit = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitMove), typeof(UnitGrid),
+            typeof(UnitFootprint), typeof(UnitAttack), typeof(UnitCombat), typeof(UnitHealth), typeof(LocalTransform),
+            typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishArmyGroupMembershipComponent), typeof(SkirmishUnitRoleComponent));
+        em.SetComponentData(unit, new Faction { Id = faction });
+        em.SetComponentData(unit, new UnitMove { Speed = 5, WalkSpeed = 5, RoadSpeedMultiplier = 1 });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        em.SetComponentData(unit, new UnitFootprint { Size = new int2(1) });
+        em.SetComponentData(unit, new UnitAttack { Damage = 10, Range = 3 });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(2.5f, 0, 2.5f)));
+        em.SetComponentData(unit, new SkirmishAttemptOwnedComponent { SessionId = new FixedString64Bytes(attempt), FactionId = faction });
+        em.SetComponentData(unit, new SkirmishArmyGroupMembershipComponent { GroupId = group, Domain = AttackMoveDomain(role) });
+        em.SetComponentData(unit, new SkirmishUnitRoleComponent { Role = role, Category = AttackMoveDomain(role) });
+        if (role == SkirmishRoleKind.TransportPlane) em.AddComponent<UnitAirMovement>(unit);
+        return unit;
+    }
+    private static SkirmishPopulationCategory AttackMoveDomain(SkirmishRoleKind role)
+        => role == SkirmishRoleKind.TransportPlane ? SkirmishPopulationCategory.Air
+            : role == SkirmishRoleKind.Tank ? SkirmishPopulationCategory.Ground : SkirmishPopulationCategory.Infantry;
+    private RtsSelectionCommandResultElement ProcessTerrainAttackCommand()
+    {
+        var em = _entityManager;
+        var queue = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue).Add(new RtsSelectionCommandIntentRequestElement
+        { RequestId = 71, Kind = RtsSelectionCommandIntentKind.Attack, HasTargetCell = 1, TargetCell = new int2(20, 20),
+          WorldPosition = new float3(20.5f, 0, 20.5f), Frame = 2 });
+        em.AddBuffer<RtsSelectionCommandResultElement>(queue);
+        _world.GetOrCreateSystem<AttackOrderCommandSystem>().Update(_world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        var results = em.GetBuffer<RtsSelectionCommandResultElement>(queue);
+        Assert.AreEqual(1, results.Length, "Native Attack command owner must supply the single actual result.");
+        return results[0];
     }
 
     [Test]

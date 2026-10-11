@@ -401,6 +401,43 @@ namespace Game.Editor
             view.Time += 10; view.FocusAdvance.Id = 63;
             Step(); Check(output.TargetId == 63 && plan.MapNavigationStage == 0,
                 "final approach can use the labelled base camera button without entering a map loop");
+            view = new AriaSkirmishObservation { Active = true, ExpandedSession = true, Time = 100,
+                Infantry = 20, PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                CombinedArmsField = true, OwnStructureAttackUnits = 8, SelectionVisible = true,
+                SelectedCount = 20, AttackMode = true, ExpandedPageCount = 1, ExpandedTotalGroups = 2,
+                ExpandedAssaultMask = 3, ExpandedStructureMask = 2, ExpandedSelectedMask = 3,
+                ExpandedSelectedGroups = 2, FocusEnemy = new AriaTouchTarget { Available = true, Id = 13 },
+                AdvanceGround = new AriaTouchTarget { Available = true, Id = -20006 } };
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Advance && output.TargetId == -20006 &&
+                output.Kind == AriaPlayObservationKind.WorldTarget && plan.AssaultIssued == 0,
+                "expanded hidden base offers presented terrain Attack Move without pretending an order was issued");
+            view.EnemyBase = new AriaTouchTarget { Available = true, Id = -20001 };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.TargetBase && output.TargetId == -20001 &&
+                output.Kind == AriaPlayObservationKind.WorldTarget,
+                "native visible base retains precision-target priority over the approach");
+            view.EnemyBase = default; view.AdvanceGround = default;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.FindBase && output.TargetId == 13 &&
+                output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
+                "unpresented terrain retains camera-only guidance without inventing a hidden contact");
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Verifying, Attempts = 3,
+                TargetId = 13, GoalId = output.GoalId, LastProgressAt = view.Time,
+                LastObjectiveProgressAt = view.Time, ObjectiveWatchdogInitialized = 1,
+                VisitedGoalMask = 1UL << (output.GoalId & 63) };
+            Step(); AriaPlayDecisionSystem.Step(output, ref touch);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0,
+                "unavailable approach cannot bypass the existing three-attempt camera bound");
+            view.AdvanceGround = new AriaTouchTarget { Available = true, Id = -20006 };
+            Step(); Check(output.Kind == AriaPlayObservationKind.Waiting && touch.Phase == AriaPlayPhase.Blocked,
+                "new approach availability cannot silently restart blocked ARIA");
+            view.AttackMode = false;
+            view.Attack = new AriaTouchTarget { Available = true, Id = 14 };
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
+                output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
+                "expanded selected force must arm explicit Attack before any presented terrain world touch");
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

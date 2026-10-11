@@ -1,0 +1,79 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=AirPauseConservationTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseCase] result=Passed case=BankedFixedWingMove zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 ownedDisposableWorld=1
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:Case (AirPauseConservationTests/Sample,int) (at Assets/Tests/Editor/AirPauseConservationTests.cs:97)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:42)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseCase] result=Passed case=BankedFixedWingReturn zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 ownedDisposableWorld=1
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:Case (AirPauseConservationTests/Sample,int) (at Assets/Tests/Editor/AirPauseConservationTests.cs:97)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:42)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseCase] result=Passed case=VtolMove zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 ownedDisposableWorld=1
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:Case (AirPauseConservationTests/Sample,int) (at Assets/Tests/Editor/AirPauseConservationTests.cs:97)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:42)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseCase] result=Passed case=DeliveryTransitAtHome zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 ownedDisposableWorld=1
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:Case (AirPauseConservationTests/Sample,int) (at Assets/Tests/Editor/AirPauseConservationTests.cs:97)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:42)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseCase] result=Passed case=QueuedNewTargetWhilePaused zeroDeltaFrames=120 exactTransformFlightGridOrderTransitStable=1 positiveDeltaResumed=1 ownedDisposableWorld=1
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:Case (AirPauseConservationTests/Sample,int) (at Assets/Tests/Editor/AirPauseConservationTests.cs:97)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:42)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005AirPauseRegression] result=Passed zeroDeltaCases=5 pausedFramesEach=120 positiveDeltaControls=5 realPausedQuaternion=1 scope=IsolatedNativeSystem wholeMissionCertified=0
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:RunValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:43)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:34)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AirPauseConservationTests] result=Passed
+UnityEngine.Debug:Log (object)
+AirPauseConservationTests:RunFocusedValidation () (at Assets/Tests/Editor/AirPauseConservationTests.cs:35)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=AirPauseConservationTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_a46d8d1d/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

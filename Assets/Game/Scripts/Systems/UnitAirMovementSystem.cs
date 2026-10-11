@@ -61,6 +61,11 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            // Rebuilding bank and pitch at zero delta changes rotation while paused.
+            float dt = SystemAPI.Time.DeltaTime;
+            if (dt <= 0f)
+                return;
+
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
             MapSurfaceComponent surface = default;
@@ -71,7 +76,6 @@ namespace Game.Runtime
                 hasSurface = surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
             }
 
-            float dt = SystemAPI.Time.DeltaTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
             var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
             var engageLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);

@@ -1,0 +1,94 @@
+{
+  "monitorSha256": "381d633d8adc7cd9f4008ffd655b43a2b3e3cf6a4c3a28376146fc96c3251663",
+  "results": [
+    {
+      "case": "ownership_header_first_observed_after60seconds",
+      "actualExit": 0,
+      "expectedExit": 8,
+      "passesExpectedGuard": false
+    },
+    {
+      "case": "receipt_read_finishes_after_total_deadline",
+      "actualExit": 0,
+      "expectedExit": 124,
+      "passesExpectedGuard": false
+    },
+    {
+      "case": "valid_absolute_project_with_trailing_separator",
+      "actualExit": 1,
+      "expectedExit": 0,
+      "passesExpectedGuard": false
+    }
+  ],
+  "result": "ReviewFoundBoundaryIssues",
+  "reviewedFiles": [
+    {
+      "path": "Tools/CI/invoke_unity_macos.sh",
+      "sha256": "962deaefce86aba9d04e688cf7fc9ca8c8626ce8fad8271fb3587e869b4fab92"
+    },
+    {
+      "path": "Tools/CI/wait_existing_unity_validation.py",
+      "sha256": "381d633d8adc7cd9f4008ffd655b43a2b3e3cf6a4c3a28376146fc96c3251663"
+    },
+    {
+      "path": "Tools/CI/test_wait_existing_unity_validation.py",
+      "sha256": "fa8a8bc1c1bcda3b1bdbe219863db70774ec1583e837509a56869a45a26df5cc"
+    }
+  ],
+  "noEditorsControlled": true,
+  "noRuntimeSourceModified": true,
+  "preparedRegressionTests": "/private/tmp/test_delegated_unity_monitor_boundaries.py",
+  "recommendations": [
+    "Check the ownership deadline before accepting first ownership after a wakeup/scheduler delay.",
+    "Check the total deadline after evidence reads and before returning success.",
+    "Normalize supported --project inputs before comparing with Application.dataPath; retain exact method ownership."
+  ],
+  "positiveFindings": [
+    "One Python process eliminates repeated sleep and ownership-check forks during polling.",
+    "Fresh log/receipt/dispatch-path guard is preserved before dispatch.",
+    "The new monitor requires exact project/method ownership even when CLI dispatch reports success.",
+    "Zero completion requires owned evidence; malformed/nonzero receipt fails.",
+    "Timeout and ownership errors preserve existing Editors.",
+    "Current updated code retries an empty receipt until deadline; initial timeout<=0 and beginning-of-loop total-deadline checks landed."
+  ],
+  "additionalTestGaps": [
+    "Empty receipt that becomes0 during the bounded wait, including creation/truncation race.",
+    "Relative or symlink project paths supported by wrapper arguments.",
+    "Mismatched project (in addition to existing mismatched method test).",
+    "Unreadable log/receipt OSError handling.",
+    "Dispatch acknowledgement time must consume original wrapper budget; shell-level integration test with a stub CLI."
+  ],
+  "limitations": "Deterministic local filesystem and mocked-clock review only. No actual Unity dispatch, licensing recovery, GUI input, process termination or runtime mission acceptance.",
+  "followupReview": {
+    "latestMonitorSha256": "bfc90dd1976e3c212b0701d05cc792a77e492ba956e354ce07fa1309d8c2f3f7",
+    "threeReportedBoundaryIssuesFixed": true,
+    "rootFocusedTests": {
+      "count": 12,
+      "exit": 0
+    },
+    "independentBoundaryTests": {
+      "count": 3,
+      "exit": 0,
+      "note": "Late ownership returns124 after the fix; original expectation8 was updated to match the valid timeout classification."
+    },
+    "bashSyntaxExit": 0,
+    "remainingNonBlockingPathCompatibilityGap": {
+      "case": "relative_project_path",
+      "relativeProject": "../../../../var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/tmpar098dn0/project",
+      "actualExit": 1,
+      "expectedForSupportedRelativeProject": 0,
+      "scope": "False rejection, not false success; default pwd absolute project is unaffected."
+    },
+    "defaultAbsoluteProjectLaneFailClosedReview": "No remaining false-success issue found in reviewed paths."
+  },
+  "finalReview": {
+    "monitorSha256": "50a3d3c8ca8254d0b8db9320d8f7e186c0be3ed751ef18ca27a8a76ebcbbe16d",
+    "shellWrapperSha256": "962deaefce86aba9d04e688cf7fc9ca8c8626ce8fad8271fb3587e869b4fab92",
+    "testSha256": "37333a40f85aeabe02a1c21bedb1f45f295e8917b457ca06b3510ced1adf62df",
+    "focusedTests": 13,
+    "focusedTestsExit": 0,
+    "relativeProjectCompatibilityGapResolved": true,
+    "remainingConcreteFalseSuccessDefects": [],
+    "reviewScope": "Local mocked-clock/filesystem monitoring tests and static code only; no Unity process control; active native runs preserve their exact executed earlier monitor hashes."
+  }
+}

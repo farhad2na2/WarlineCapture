@@ -1,0 +1,32 @@
+{
+  "result": "RecordedSourceDelta",
+  "previousSourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "currentWorkingTreeSourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "changed": [
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+    "ProjectSettings/QualitySettings.asset"
+  ],
+  "added": [
+    "Assets/Tests/Editor/AirPauseConservationTests.cs",
+    "Assets/Tests/Editor/AirPauseConservationTests.cs.meta"
+  ],
+  "removed": [],
+  "unchangedCommonFileCount": 38592,
+  "rootAuthoredRuntimeChange": "UnitAirMovementSystem stops state writes for nonpositive simulation delta; positive-delta body otherwise unchanged",
+  "otherWorkingTreeChangesPreserved": [
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+    "ProjectSettings/QualitySettings.asset"
+  ],
+  "oldProofsRetainTheirOriginalSourceHash": true,
+  "normalNativeSaveContinueAfterFix": "Pending",
+  "technicallyReady": false,
+  "playerReady": false,
+  "ciChangesOutsideSourceManifest": [
+    "Tools/CI/invoke_unity_macos.sh",
+    "Tools/CI/wait_existing_unity_validation.py",
+    "Tools/CI/test_wait_existing_unity_validation.py"
+  ]
+}

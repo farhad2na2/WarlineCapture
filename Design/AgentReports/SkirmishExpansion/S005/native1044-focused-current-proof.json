@@ -1,0 +1,22 @@
+{
+  "result": "Failed",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1043-air-pause-reproduction-post-source-manifest.json",
+  "postSourceManifest": "final-1044-air-pause-reproduction-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "log": "native-1044-air-pause-zero-delta-reproduction.log",
+  "requiredPassMarker": "[S005AirPauseRegression] result=Passed",
+  "requiredPassMarkerPresent": false,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "scope": "Isolated native system reproduction of real1018 paused aircraft state",
+  "defectReproduced": true,
+  "zeroDeltaFrame": 0,
+  "rotationDelta": 0.003006684,
+  "positionDelta": 0,
+  "actualWrapperExitCode": 1,
+  "fixture": "native1044-air-pause-fixture.cs.txt"
+}

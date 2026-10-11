@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "sourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-1046-air-pause-fixed-pre-source-manifest.json",
+  "postSourceManifest": "final-1046-air-pause-fixed-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-1046-air-pause-conservation-fixed.log",
+  "requiredPassMarker": "[AirPauseConservationTests] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": [],
+  "actualWrapperExitCode": 0,
+  "scope": "Five isolated native UnitAirMovementSystem cases;120 paused frames per case and five positive-delta controls",
+  "nativeWholeMissionCertified": false
+}

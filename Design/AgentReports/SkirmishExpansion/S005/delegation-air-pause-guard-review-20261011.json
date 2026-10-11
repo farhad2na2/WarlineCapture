@@ -1,0 +1,66 @@
+{
+  "result": "CompletedStaticPauseGuardReviewNoConcreteDefectFound",
+  "reviewedRuntimeFile": {
+    "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+    "sha256": "60a5095e7ce3cdcdca268e72789b60a2d1d6c761de154365b5dd60b662346d8c"
+  },
+  "reviewedTestFile": {
+    "path": "Assets/Tests/Editor/AirPauseConservationTests.cs",
+    "sha256": "3a4cdadadd817f233bc6b8933d187f022996e5e305bd724120acf8f108919f65"
+  },
+  "oldRuntimeSourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "newWholeSourceHash": "Main agent records after import/compilation; not computed or claimed by this static review.",
+  "reproduction": {
+    "proof": "native1044-focused-current-proof.json",
+    "zeroDeltaFrame": 0,
+    "rotationDelta": 0.003006684,
+    "positionDelta": 0,
+    "oldSourceDefectReproduced": true
+  },
+  "concreteActionableDefects": [],
+  "sourceDiff": {
+    "runtimeFiles": 1,
+    "runtimeInsertions": 5,
+    "runtimeDeletions": 1,
+    "change": "Return from UnitAirMovementSystem.OnUpdate when DeltaTime<=0, before grid reads, component lookup/query mutations and ECB creation/playback.",
+    "positiveDeltaBodyRestoresExactHeadTextWhenRemovingGuardAndReturningDtReadToOldLocation": true,
+    "mapsPlacementsBudgetsChanged": false
+  },
+  "isolatedTestScope": {
+    "cases": [
+      "BankedFixedWingMove",
+      "BankedFixedWingReturn",
+      "VtolMove",
+      "DeliveryTransitAtHome",
+      "QueuedNewTargetWhilePaused"
+    ],
+    "pausedFramesPerCase": 120,
+    "positiveDeltaControls": 5,
+    "checks": [
+      "Exact position/quaternion/scale",
+      "Entire serialized UnitAirComponent",
+      "UnitGrid cell",
+      "UnitTarget presence and goal",
+      "UnitSpawnTransitTag presence",
+      "Positive-delta motion or delivery completion",
+      "New goal replaces old fixed-wing pass intent on positive delta"
+    ],
+    "sample": "Literal native1018 paid Strike banked snapshot; same state reproduced native1044 old runtime defect.",
+    "testsCompiledOrExecutedByThisReviewer": false
+  },
+  "limitsAndRequiredNextEvidence": [
+    "These tests call only UnitAirMovementSystem in a disposable isolated World; they do not certify pause conservation across engagement, fuel, combat, camera, orders or production systems.",
+    "Normal native Continue\u2192Pause\u2192Save must verify the restored aircraft quaternion/state stays stable through paused frames and is actually saved/restored; main has scheduled this work.",
+    "The paused fixture does not certify complete aircraft launch/fire/return/refuel lifecycle or both-faction runway/parking capacity.",
+    "All current whole-source declarations must receive a new source hash. Old native air/recovery proofs retain their original hashes and historical scope."
+  ],
+  "scopedApplicabilityConsequences": [
+    "Shared runtime air movement changed for every Campaign/Skirmish mission whose actors carry UnitAirMovement; new zero-delta behavior needs shared pause/native recovery validation.",
+    "Positive-delta algorithm text is unchanged after normalizing dt-read relocation, which supports narrow code reasoning but does not convert old executions into fresh whole-source runs.",
+    "Road/sidewalk/tree clearance algorithms, building definitions, physical Campaign geometry and S005 placement assets were untouched by this patch; native1018 placement observation remains applicable to those unchanged dependencies.",
+    "Ground-only proofs can retain scoped applicability when their participating actors and unchanged systems are established; full mission/air/current-whole-source acceptance cannot be inferred from that."
+  ],
+  "noSourceEditsByReviewer": true,
+  "noEditorsControlled": true,
+  "playerReady": false
+}

@@ -1,0 +1,13 @@
+import pathlib,json,subprocess,sys
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture');p=root/'Design/AgentReports/SkirmishExpansion/S005'
+# Change only this initial manifest if the ordering of independent checks changes.
+pre='final-944-shared-campaign-m05-post-source-manifest.json'
+load=p/'load945-aircraft-recovery-fixture.json';assert not load.exists()
+r=subprocess.run(['rtk','proxy','unity','command','run_script','--file','/private/tmp/S005AircraftRecovery945.cs','--entry','S005AircraftRecovery945.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True);load.write_text(r.stdout);d=json.loads(r.stdout);assert r.returncode==0 and d['success'] and d['data']['result']['success'];print('External normal-input recovery driver loaded only',flush=True)
+for n,mode,entry in [(945,'ReturnTaxi','RunTaxiValidation'),(946,'Flight','RunFlightValidation')]:
+    log=f'native-{n}-normal-strike-{mode.lower()}-save-continue.log'
+    r=subprocess.run(['rtk','proxy','python3','/private/tmp/s005-start-reused-bounded.py',str(n),log,'S005AircraftRecovery945.'+entry,pre],cwd=root)
+    close=subprocess.run(['rtk','proxy','python3','/private/tmp/s005-close-aircraft-recovery-current.py',str(n),mode,log,pre],cwd=root)
+    if close.returncode:sys.exit(close.returncode)
+    pre=f'final-{n}-aircraft-{mode.lower()}-recovery-post-source-manifest.json'
+    print(json.dumps(dict(completed=n,mode=mode)),flush=True)

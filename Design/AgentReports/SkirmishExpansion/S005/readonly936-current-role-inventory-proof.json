@@ -1,0 +1,27 @@
+{
+  "mission": "S005",
+  "result": "PassedInventoryOnly",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "nativeRun": "native936",
+  "observation": "Read-only actual loaded baked prefab and functional producer inventory during normal-input mission; no actor/resource/order/selection mutation and no planner feedback",
+  "roles": 22,
+  "allBaked": true,
+  "rawCliEvidence": "readonly936-current-baked-role-producer-census.json",
+  "inspector": "readonly936-role-census-inspector.cs.txt",
+  "inspectorSha256": "c909598590edb1aecf57a64a7c4491b163eeb63285330897b9aeb929b7ea7f2c",
+  "missingStartingProducerRoles": [
+    "TransportHeli",
+    "AttackHeliLight",
+    "AttackHeli",
+    "Drone",
+    "Fighter",
+    "Strike",
+    "TransportPlane"
+  ],
+  "fullLifecycleCertified": false,
+  "aircraftCapacityCertified": false,
+  "normalProductionAvailabilityCertified": false,
+  "playerReady": false,
+  "fullJourneyProof": "native936-current-fresh-aria-en-seed130368-victory.json",
+  "containingJourneySourcePostAuditPassed": true
+}

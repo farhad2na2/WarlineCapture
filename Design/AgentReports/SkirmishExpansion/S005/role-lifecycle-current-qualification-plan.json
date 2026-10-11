@@ -16,11 +16,13 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
       "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
-      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json"
+      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Gunner",
@@ -35,10 +37,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Marksman",
@@ -53,10 +57,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Breacher",
@@ -71,10 +77,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Rocketeer",
@@ -89,10 +97,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Car",
@@ -107,10 +117,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "ApcFast",
@@ -128,10 +140,12 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "ApcArmored",
@@ -149,10 +163,12 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Radar",
@@ -167,10 +183,12 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "LogisticsTruck",
@@ -185,10 +203,12 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Tanker",
@@ -203,10 +223,12 @@
         "native service or intelligence behavior"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "AntiAir",
@@ -221,10 +243,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "TransportHeli",
@@ -248,7 +272,8 @@
       "currentSourceCertified": false,
       "stage": "pending",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "AttackHeliLight",
@@ -269,7 +294,8 @@
       "currentSourceCertified": false,
       "stage": "pending",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "AttackHeli",
@@ -290,7 +316,8 @@
       "currentSourceCertified": false,
       "stage": "pending",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Drone",
@@ -307,7 +334,8 @@
       "currentSourceCertified": false,
       "stage": "pending",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Fighter",
@@ -328,7 +356,8 @@
       "currentSourceCertified": false,
       "stage": "native functional Airport placement qualification active",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Strike",
@@ -351,7 +380,8 @@
       "historicalInventory": "native359-current-baked-role-census.json",
       "scopedNativeProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
       "scopedNativeProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "TransportPlane",
@@ -375,7 +405,8 @@
       "currentSourceCertified": false,
       "stage": "native functional Airport placement qualification active",
       "historicalInventory": "native359-current-baked-role-census.json",
-      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json"
+      "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Tank",
@@ -390,10 +421,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "ApcHeavy",
@@ -411,12 +444,14 @@
         "disembark and cleanup"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "historicalScopedNativeProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
       "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
-      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json"
+      "partialCurrentRecoveryEvidence": "native931-normal-boarded-save-continue-unload-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     },
     {
       "role": "Siege",
@@ -431,10 +466,12 @@
         "native attack and visible effect against legal target"
       ],
       "currentSourceCertified": false,
-      "stage": "Recorded native paid queue/death passed; current full lifecycle pending.",
+      "stage": "Native queue/death scope applicable by byte-identical production dependencies; native UI movement/attack/service lifecycle pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
-      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json"
+      "recorded0488ProductionEvidence": "native923-scoped-native-ground-paid-queues-pass.json",
+      "currentNativeQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+      "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
     }
   ],
   "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
@@ -453,10 +490,10 @@
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
-  "nextWork": "Resolve native boarding acceptance, then enabled-role movement/combat/service and aircraft capacity/recovery; refresh ARIA baseline on frozen source.",
+  "nextWork": "Current manual/boarding recovery passed. Finish current ARIA baseline, then aircraft lifecycles/capacity/recovery and remaining role movement/attack/service.",
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
   "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
-  "currentBakedInventory": null,
+  "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
   "currentAriaBaselineMatrix": null,
   "recorded711AriaMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
   "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",

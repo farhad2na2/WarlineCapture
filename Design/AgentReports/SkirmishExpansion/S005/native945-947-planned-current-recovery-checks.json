@@ -1,0 +1,51 @@
+{
+  "status": "PreparedNotExecuted",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "checks": [
+    {
+      "run": "native945",
+      "scope": "Normal paid Strike return taxi Save/Continue",
+      "driver": "/private/tmp/S005AircraftRecovery945.cs",
+      "entry": "S005AircraftRecovery945.RunTaxiValidation",
+      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json"
+    },
+    {
+      "run": "native946",
+      "scope": "Normal paid Strike flight Save/Continue",
+      "driver": "/private/tmp/S005AircraftRecovery945.cs",
+      "entry": "S005AircraftRecovery945.RunFlightValidation",
+      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json"
+    },
+    {
+      "run": "native947",
+      "scope": "Automated checkpoint staging, transients, support and strike codec/conservation fixtures; no native player journey",
+      "driver": "/private/tmp/S005CheckpointTechnical947.cs",
+      "entry": "S005CheckpointTechnical947.RunValidation",
+      "dryCompileProof": "compile947-checkpoint-technical-fixture-dry-run.json"
+    }
+  ],
+  "readinessEstablished": false,
+  "executionOrder": "After fresh ARIA baseline and affected Campaign regression closure; no concurrent stateful validation on the same Editor",
+  "preparedDriverCopies": [
+    {
+      "file": "prepared-S005AircraftRecovery945.cs.txt",
+      "sha256": "39597111e2b79d92e5b65a50030ced89940a9559c147d30f257043e20df5e1db"
+    },
+    {
+      "file": "prepared-S005CheckpointTechnical947.cs.txt",
+      "sha256": "04d265129c676dc4b3d45bc7761b110ded6c8be65ffe7e2f06c63097c44fca7a"
+    },
+    {
+      "file": "prepared-s005-run-aircraft-recovery-945.py.txt",
+      "sha256": "9c122acee7dde2201797069fb91f12e5f7f82de7c337dacf78e0efae9c82deef"
+    },
+    {
+      "file": "prepared-s005-close-aircraft-recovery-current.py.txt",
+      "sha256": "5e7adf653fcbdba93ced12e1c5efcbe2dc3259d763a2a240601ad5a897cd7a57"
+    },
+    {
+      "file": "prepared-s005-run-campaign-940.py.txt",
+      "sha256": "dcdbd225ac3d083aa71ae2e28cd7c1f58313277082140aa60eb3c77e1c3ef885"
+    }
+  ]
+}

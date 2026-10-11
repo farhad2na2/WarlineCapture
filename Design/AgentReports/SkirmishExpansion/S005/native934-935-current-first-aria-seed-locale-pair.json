@@ -1,0 +1,14 @@
+{
+  "result": "PassedFirstSeedLocalePair",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "seed": 104734,
+  "proofs": [
+    "native934-current-fresh-aria-en-seed104734-victory.json",
+    "native935-current-fresh-aria-fa-IR-seed104734-victory.json"
+  ],
+  "completeThreeSeedBaseline": false,
+  "countsForTwentySeedFamilyStress": false,
+  "realHumanDeviceAcceptance": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -1,0 +1,14 @@
+using UnityEngine;
+using Game.Tests.Editor;
+public static class S005CheckpointTechnical947
+{
+    public static object Run()=>"Loaded only; execute through repository wrapper.";
+    public static void RunValidation()
+    {
+        SkirmishNativeRecoveryStagingValidation.RunFocusedValidation();
+        SkirmishNativeCheckpointTransientTests.RunFocusedValidation();
+        SkirmishNativeSupportRecoveryTests.RunFocusedValidation();
+        SkirmishNativeStrikeRecoveryTests.RunFocusedValidation();
+        Debug.Log("[S005CheckpointTechnical] result=Passed staging=1 transient=1 support=1 strike=1 nativePlayerJourneys=0 fullRecoveryGate=Pending");
+    }
+}

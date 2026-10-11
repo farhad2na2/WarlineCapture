@@ -15,8 +15,15 @@
   "activePreManifest": null,
   "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
-  "currentNativeVictories": [],
-  "currentAriaBaselineMatrix": null,
+  "currentNativeVictories": [
+    "native934-current-fresh-aria-en-seed104734-victory.json",
+    "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
+    "native936-current-fresh-aria-en-seed130368-victory.json",
+    "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
+    "native938-current-fresh-aria-en-seed155926-victory.json",
+    "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
+  ],
+  "currentAriaBaselineMatrix": "native934-939-current-fresh-aria-seed-matrix.json",
   "currentManualLocalePair": "native932-933-current-manual-en-fa-locale-pair.json",
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
@@ -36,7 +43,7 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Current-source normal EN/FA manual and ARIA journeys after shared map-input fix",
+    "Finish current-source fresh ARIA three-seed EN/FA baseline; current manual locale pair and boarded recovery passed",
     "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
@@ -44,17 +51,24 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Validate shared map-input fix and normal boarding Save/Continue/unload, then refresh current normal manual/ARIA journeys and remaining technical gates.",
+  "nextWork": "Finish frozen-source ARIA baseline, then aircraft taxi/flight recovery, remaining enabled-role lifecycles/capacity and Campaign regressions.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
     "status": "Pending",
     "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-939-aria-fa-IR-seed155926-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentFreshAriaSeedProofs": [],
-  "latestFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
+  "currentFreshAriaSeedProofs": [
+    "native934-current-fresh-aria-en-seed104734-victory.json",
+    "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
+    "native936-current-fresh-aria-en-seed130368-victory.json",
+    "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
+    "native938-current-fresh-aria-en-seed155926-victory.json",
+    "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
+  ],
+  "latestFreshAriaFailure": null,
   "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
   "latestPreviousCandidateAriaProofs": [
     "native902-current-fresh-aria-en-seed104734-victory.json",
@@ -245,5 +259,9 @@
     "native931-normal-boarded-save-continue-unload-pass.json"
   ],
   "shippingFullMapInputCommit": "8c688734c",
-  "combatSaveContinueStatus": "Passed current-source native932 complete English normal-input combat Save/Continue, victory and frozen result/return."
+  "combatSaveContinueStatus": "Passed current-source native932 complete English normal-input combat Save/Continue, victory and frozen result/return.",
+  "currentNativeGroundQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
+  "currentFirstAriaSeedLocalePair": "native934-935-current-first-aria-seed-locale-pair.json",
+  "recordedPreviousSourceFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
+  "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
 }

@@ -1,0 +1,20 @@
+{
+  "mission": "saga.ch01.m04.airlift",
+  "scope": "T7 English entry only; Farsi not reached",
+  "driver": "CampaignSelectionJourney1060.RunM04",
+  "nativeOutcome": "Defeat",
+  "wrapperExit": 1,
+  "lastLesson": 2,
+  "gestureDispatched": 47,
+  "gestureCompleted": 47,
+  "unexpectedSamples": 0,
+  "physicalInterventions": 0,
+  "fullJourneyStrictTouchAudit": false,
+  "groupDragFixValidated": false,
+  "failure": "Initial APC native contact completed but selection remained0; later mission Defeat. Touchscreen.current None observed, actual routing cause unproven. Fixture did not explicitly set AllDeviceInputAlwaysGoesToGameView/IgnoreFocus.",
+  "beforeSource": "bd07c31512a9243f6b1bbda10b2d32fc90308d2090dab68ad8f46861b83f46fc",
+  "afterSource": "bd07c31512a9243f6b1bbda10b2d32fc90308d2090dab68ad8f46861b83f46fc",
+  "sourceStable": true,
+  "playClosed": true,
+  "heavyLaneReleased": true
+}

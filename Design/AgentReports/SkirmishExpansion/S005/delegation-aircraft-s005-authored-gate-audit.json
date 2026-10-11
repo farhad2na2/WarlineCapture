@@ -1,0 +1,502 @@
+{
+  "scope": "Read-only exact authored acceptance versus current pending checklist; no gate removed, no readiness certified, no Unity/source modification",
+  "mission": "S005",
+  "observedCurrentSourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "exposed": {
+    "size": "Standard",
+    "difficulty": "Regular",
+    "army": "CombinedArms",
+    "start": "FieldR1",
+    "deadlineSeconds": 1080,
+    "airCapPerFaction": 2,
+    "recommendedWar": "Gated, not exposed",
+    "proof": "delegation-aircraft-fixedwing-current-exposure-note.json",
+    "refs": [
+      {
+        "path": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+        "lines": [
+          66,
+          117,
+          120,
+          121
+        ],
+        "sha256": "7ea6bd2dd2451cc2c04e290b51d010bcf21bcd9d77baae62388d489cf21a7501"
+      },
+      {
+        "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+        "lines": [
+          146,
+          158,
+          166
+        ],
+        "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+      }
+    ]
+  },
+  "mustPassRemainingOrConfirmCurrentEvidence": [
+    {
+      "gate": "Entry native baseline and public controls",
+      "requirement": "Six complete normal-speed Regular runs:104734/130368/155926 in EN and FA, at least two actual wins in each locale, all failures retained, native Touch/observations only. Fresh manual full mission and ARIA Play/Stop/takeover, legitimate paid R2 transition, result/freeze/return and exact identity; do not count isolated role fixtures as wins.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            164,
+            166,
+            168
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            89,
+            100,
+            101
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+          "lines": [
+            63,
+            66
+          ],
+          "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874"
+        }
+      ],
+      "current": "Historical six runs and manual FA1053 retain original hashes. Root currently records current matrix/locale pair pending."
+    },
+    {
+      "gate": "Every actually enabled Combined Arms role",
+      "requirement": "All22 currently enabled canonical roles need functional paid producer/cost/quantity, native selection/order, relevant actual combat/service/recon/cargo result, death/reservation cleanup, role/state recovery and EN/FA identity. All-role requirement is explicit and cannot be removed. Technical fixture input/API/funding may be disclosed; no source requires22 separate complete full matches or all75 inventory assets.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            20,
+            79,
+            99
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            154
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            13,
+            36,
+            39,
+            41,
+            83,
+            85
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        }
+      ],
+      "current": "1024 paid ground basics,1052 three Helipad roles,1065 Drone producer and1068 Radar support are scoped proof; per-role effects/recovery remain distinct. Group1070/1076/1077/paired fixed-wing to fill only missing effects."
+    },
+    {
+      "gate": "Standard bilateral air/capacity and failure recovery",
+      "requirement": "Existing legal physical producers/exits; per-faction Air2 queued/in-transit/live reservations, launch/parking/return behavior, native rejection/replacement without overbooking/double release; relevant cancel/producer loss/blocked delivery/no landing-space visible recovery. Preserve known role sizes/fuel and actual runway source.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            21,
+            22,
+            32
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            85
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            150,
+            164
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        }
+      ],
+      "current": "890 scoped normal Strike flight/fire/Return/Fuel/second sortie;1049 actual flight Pause/Save/Continue;1069 shared Drone/runway controls. Paired Fighter/Plane smoke does not alone prove hostile-faction capacity/cargo/combat/full return."
+    },
+    {
+      "gate": "Shared fog/intel source contract",
+      "requirement": "Hidden/live/last-seen contacts and scan obey shared player/enemy observation, rendering/picking/targeting/minimap/ARIA. Existing MATCH_SETUP21 prohibits claiming recon acceptance with development full vision.1077 remains scoped Scan/feed/LastSeen/return if fullVision1; actual hidden/live/expiry binding remains open.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            31
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/MATCH_SETUP.md",
+          "lines": [
+            21
+          ],
+          "sha256": "4ab56169ce64c4e6abb49af7a3f470dabcd467afac1ba48eef25c55a32c2991a"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            87
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+          "lines": [
+            17,
+            33
+          ],
+          "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874"
+        }
+      ],
+      "current": "AuthoredSharedFog developmentFullVision1. Static missing observation/Scan\u2192Sight, expiry, minimap and renderer bindings identified; root reviewing repair."
+    },
+    {
+      "gate": "BA objectives/two viable approaches",
+      "requirement": "Designated original base ownership, native damage win, loss/surrender, same-tick both-base draw/event ordering, deadline draw/death-at-deadline, paused deadline, surviving producer after army wipe, replacement base, result callback replay and hidden-health age; direct and flank assault with real movement/exit clearance. Supply raid alone never wins.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            19,
+            25,
+            150,
+            152,
+            164
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/OBJECTIVE_IMPLEMENTATION.md",
+          "lines": [
+            23,
+            27,
+            31,
+            33,
+            37
+          ],
+          "sha256": "d2a2d80a6e179b53a2cf72db46b1643daab3c7e6c4334096c07d05b846158fdb"
+        }
+      ],
+      "current": "Native962 shared8suite/objective proof historical source; confirm unchanged applicable dependencies or refresh relevant focused suites once on final candidate rather than rerun every edge as full match."
+    },
+    {
+      "gate": "Checkpoint/result/replay/cleanup",
+      "requirement": "Actual public Pause/Save/Exit/Continue into fresh physical session conserves live actors/receipts/queues/fuel/cargo/visibility/groups/research/objective/RNG. Atomic interruption/incompatible version/repeated result callbacks, replay resets exact FieldR1 package/level0 and avoids duplicate grants.10 restart/replay/setup cycles no leakage. Relevant repair/research/cargo/air states can be combined in one disclosed grouped technical snapshot; normal menu recovery remains separate.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            35,
+            41,
+            98
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/AGENT_WORK_PACKAGES.md",
+          "lines": [
+            104,
+            105,
+            106,
+            107
+          ],
+          "sha256": "d62706654dd8450c7b44465160da54f58d60a0d736cca52c45d22e59cbde7f0e"
+        }
+      ],
+      "current": "931 normal HeavyAPC passengers;945\u2013980 taxi;1049 actual paid flight;947 grouped technical checkpoint;1046 zero-delta conservation. No need another16-minute funding run merely to prove identical retained native flight if dependency scope is documented."
+    },
+    {
+      "gate": "Affected Campaign/shared regressions and family stress",
+      "requirement": "AffectedM1\u2013M5 behavior must remain, not every unaffected Campaign chapter.20-seed DB\u00d7BA\u00d7C Regular family sample alternating starts is explicitly required, can shared-cover Field/Established within the family and preserve losses; not20 per role/size or60families per S005. Current accepted dependencies/hashes explicit.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            36,
+            43,
+            89
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+          "lines": [
+            64,
+            65
+          ],
+          "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874"
+        }
+      ],
+      "current": "Root CampaignM3/M4 currentcandidate repair/qualification active; M1/M2/M5 proof applicability must be recorded. Family20sample status not evidenced by six baseline wins."
+    },
+    {
+      "gate": "Separate native visual/human/device/product acceptance",
+      "requirement": "Native visual review remains deferred by owner until technical ready. Real unfamiliar phone players and actual supportedStandard device performance/thermal/readability are separate release gates; EditorMSAA23tests/mobileconfig are not phone acceptance. MP01\u2013MP08 entitlement/resume/account-independence needs own actual checks.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            11,
+            37,
+            38,
+            45,
+            59,
+            61,
+            77,
+            101
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            148,
+            168
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        },
+        {
+          "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+          "lines": [
+            73
+          ],
+          "sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797"
+        }
+      ],
+      "current": "No native visual or human/device PASS inferred. Technical readiness can be reported separately; do not label final player-ready before required acceptance."
+    }
+  ],
+  "overExpandedOrStaleChecklist": [
+    {
+      "item": "WarAir4/LargeWarAir6 and extra difficulties native wins",
+      "correction": "Conditional on actual player exposure; keep unsupported/unaccepted and catalog-final requirements recorded. Do not block current StandardRegular with hidden native profile matrix.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            146,
+            166
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            7,
+            19,
+            37,
+            100,
+            101
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        }
+      ]
+    },
+    {
+      "item": "All360 global compiler vectors",
+      "correction": "Shared compiler/planning integrity remains required once and can use shared applicable proof. S005 needs own3 authored static rows/actual exposedStandard census; no360 native S005 matches.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            96,
+            102
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+          "lines": [
+            162
+          ],
+          "sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf"
+        }
+      ]
+    },
+    {
+      "item": "Every75 source inventory asset /2mapcontexts per role for S005",
+      "correction": "75 inventory and two-context roster ledger are catalog coverage; enabled canonical22role lifecycle remainsS005 requirement. Do not add civilian/pilot/leader fakeabilities or alternate aliases as newroles.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            86,
+            99,
+            102
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            39
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        }
+      ]
+    },
+    {
+      "item": "Every role requires a new full normal18minute match, every counter \u00d7 target \u00d7 route \u00d7 seed \u00d7 checkpoint matrix",
+      "correction": "No such crossproduct specified. Reuse completed basic production/order/death with hash/dependency scope; group actual effect/domain/cargo states and technical recovery in native disclosed fixtures; full mission sample remains its own gate.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            79,
+            99
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            83
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        }
+      ]
+    },
+    {
+      "item": "Bilateral full capacity repeated for every individual aircraft model",
+      "correction": "Certify actual allowed Standard parking/queue mixed composition for bothfactions and model-specific runway/pad/behavior. Full lifecycle permodel stays required, but no explicit allmodel\u00d7bilateralprofile permutation matrix.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            21,
+            32
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            85
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        }
+      ]
+    },
+    {
+      "item": "Everyrole checkpoint in22 fresh normal funded journeys",
+      "correction": "X36/roster83 requires conserved state and role checkpoint coverage; a grouped actual paid-actor technical snapshot can cover common parts and representative specialstate combinations. Normal public Continue scope remains separately required; do not fabricatecheckpoint fields.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            79,
+            98
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        },
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ROSTER_AND_ECONOMY_IMPLEMENTATION.md",
+          "lines": [
+            83
+          ],
+          "sha256": "59e8edaf560bc4d757c65e3a661a15bc60fd86e9ff235527d41adaa5116f5c1b"
+        }
+      ]
+    },
+    {
+      "item": "24 infantry squads or350/500 Standard mission stress armies",
+      "correction": "24squad case belongs broader scale; currentStandard48soldiers=12squads. Verifyactual cap+paging and fullStandard worst-case per exposedtier. P3/P4 engineering/globalWarLarge cases do not authorize unsupported size or injectlarge armies as missionproof. Performance proposal approvals stay explicit.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md",
+          "lines": [
+            23,
+            37,
+            51,
+            55,
+            63,
+            65,
+            73
+          ],
+          "sha256": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14"
+        }
+      ]
+    },
+    {
+      "item": "Support is a prerequisite for current noSupport baseline",
+      "correction": "Explicitly false: baseline can ship withoutSupport; planned enabledSupport policy requires its own recertification when exposed.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/IMPLEMENTATION_HANDOFF.md",
+          "lines": [
+            13
+          ],
+          "sha256": "3e64ad8d3d46ced8a3fcca231b2729c8dbdd923b70ca804f53d930cbba28707c"
+        },
+        {
+          "path": "Design/Roadmap/Support/PLAN.md",
+          "lines": [
+            78,
+            82
+          ],
+          "sha256": "6647bdbba856bfdee571061cb9a6a0a9b03a1e5ad4937dded5b992952c5e66ff"
+        }
+      ]
+    },
+    {
+      "item": "Roleplan says1052Helis/1065Drone/1068Radar pending, currentwholeSourceChanged implies all proofgone",
+      "correction": "Updategranular scope and dependency applicability; preserveoriginalhash and do not assert exactwhole-source equivalence. Avoidrepeating15groundbasics ornormalStrike funding whenpositive-timebody/no dependentcomponent changed. Current roleplan source/fingerprint references930/07d whilecurrentreadiness17beb andstage stringsstale.",
+      "refs": [
+        {
+          "path": "Design/AgentReports/SkirmishExpansion/S005/role-lifecycle-current-qualification-plan.json",
+          "lines": [
+            269,
+            307,
+            347,
+            485,
+            488,
+            490
+          ],
+          "sha256": "2a46073119a0754025ccca2c10a061a3f766da5b38c61785c5d2dc35dbb8a1c6"
+        }
+      ]
+    },
+    {
+      "item": "FullVision1 scan metadata satisfies whole recon gate",
+      "correction": "False underexplicitMATCH_SETUP21. Keep1077 scopedbehavior proof; actualfullVision0 observation/render/minimap/targeting/expiry qualification remains required.",
+      "refs": [
+        {
+          "path": "Design/Roadmap/Skirmish_Expansion/MATCH_SETUP.md",
+          "lines": [
+            21
+          ],
+          "sha256": "4ab56169ce64c4e6abb49af7a3f470dabcd467afac1ba48eef25c55a32c2991a"
+        }
+      ]
+    }
+  ],
+  "smallestMeaningfulRemainingRunGroups": [
+    "Freeze final shared gameplay candidate after provenbugs; refresh relevant shared objective/cap/economy/army/checkpoint/ARIA suites once, then mapapplicability of past scoped passes. No unfocused allsource-reset loop.",
+    "Run prepared grouped effects: infantry1070; corrected vehicle targeted1080+remainingarmedvehicles/Siege;Heli1076;Drone1077 scoped and1091 properfog afterrepair. Retain pairedTouch/API distinctions. Reuse1024/1052/1065 basic queues.",
+    "One groupedStandardAir2 paidFighter+Plane queues/rejection/deathreplacement and legal bilateral capacity; separatelyactualFighterAir hit+AntiAir interception andTransportHeli/Plane real cargo board/move/unload. Pair compatible effects in same disposable Play wherevalid.",
+    "One grouped actual paid-actor checkpoint/specialstates fixture for remainingcargo/research/queued/repair/roleparts; existing1049 normal retainedflight provespublicrestore underunchangeddependencies. Freshnormalsetup/replay/resultcyclecoversidentity/reset;10cyclecleanupbounded.",
+    "CurrentnormalEnglishmanual plusFAapplicability/refresh asneeded;6RegularARIAseed/localeruns onceagainstfinalcandidate. IncorporateStop/takeover/legalR2/result/return anddirect/flankstrategy coverage inthese journeys; do not replacewithtechnicalsmokes.",
+    "DB\u00d7BA\u00d7C20seedfamily sample alternatingstarts; sharedstress/fullStandarddevice measurements andaffectedCampaignregressions remain separately scoped. Do notrun20perrole,60families orunexposedWar/Large forS005.",
+    "Ownernativevisualreview plusrealphonehuman/performance/readability/productacceptance separately; do not claim playerreadyfromEditor-only technicalpass."
+  ],
+  "actionsPerformed": "Read-onlysource/evidenceanalysis andownJSONreport only; no Unity, gameplay/source/config/checkpoint mutation or publication flags."
+}

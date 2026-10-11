@@ -1,0 +1,68 @@
+{
+  "mission": "saga.ch01.m03.radar_warning",
+  "locale": "fa-IR",
+  "nativeRun": 1080,
+  "scope": "T7 old candidate with exact reviewed M1+M3 UI patches; not whole-current-main proof",
+  "wrapperExit": 1,
+  "nativeVictoryResultReturn": "Failed: group guide unavailable after four public normal FullMap recoveries",
+  "normalContacts": {
+    "completed": 19,
+    "expected": 19,
+    "unexpected": 0,
+    "interventions": 0,
+    "fullJourneyStrictTouchAudit": false
+  },
+  "countdownIndependentVisibility": {
+    "postDefenseSamples": 908,
+    "fullMapOpenSamples": 97,
+    "postFullMapCloseTransitions": [
+      {
+        "frame": 9677,
+        "wall": 46566.98372954201,
+        "elapsedMs": 90461,
+        "activePredicatePanel": true,
+        "visibleUntil": "Infinity",
+        "headerRequested": true,
+        "legitimateOwnedSurface": false,
+        "cacheState": "state=ThreatWarningPresentationState visible=True text=کاروان 2 از 2\nدفاع کن · 4 خودرو مونده session=campaign-m03-0000000000000001 attempt=1"
+      },
+      {
+        "frame": 9846,
+        "wall": 46570.779596459004,
+        "elapsedMs": 94260,
+        "activePredicatePanel": true,
+        "visibleUntil": "Infinity",
+        "headerRequested": true,
+        "legitimateOwnedSurface": false,
+        "cacheState": "state=ThreatWarningPresentationState visible=True text=کاروان 2 از 2\nدفاع کن · 3 خودرو مونده session=campaign-m03-0000000000000001 attempt=1"
+      },
+      {
+        "frame": 10024,
+        "wall": 46574.630363250006,
+        "elapsedMs": 98130,
+        "activePredicatePanel": true,
+        "visibleUntil": "Infinity",
+        "headerRequested": true,
+        "legitimateOwnedSurface": false,
+        "cacheState": "state=ThreatWarningPresentationState visible=True text=کاروان 2 از 2\nدفاع کن · 2 خودرو مونده session=campaign-m03-0000000000000001 attempt=1"
+      },
+      {
+        "frame": 10204,
+        "wall": 46578.319202459,
+        "elapsedMs": 101877,
+        "activePredicatePanel": true,
+        "visibleUntil": "Infinity",
+        "headerRequested": true,
+        "legitimateOwnedSurface": false,
+        "cacheState": "state=ThreatWarningPresentationState visible=True text=کاروان 2 از 2\nدفاع کن · 2 خودرو مونده session=campaign-m03-0000000000000001 attempt=1"
+      }
+    ],
+    "postDefenseNonOwnedMissing": 0,
+    "passedVisibilityOnly": true,
+    "nativeCompletionPassed": false
+  },
+  "sourcePrePost": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448",
+  "editorClosedPlaying": false,
+  "editorCompiling": false,
+  "qaRunning": false
+}

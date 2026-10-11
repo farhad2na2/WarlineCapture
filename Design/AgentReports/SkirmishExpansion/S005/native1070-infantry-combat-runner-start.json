@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1070",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1080-apcfast-combat-post-source-manifest.json",
+  "preflightManifest": "final-1070-infantry-combat-preflight-source-manifest.json",
+  "fixtureSha256": "c948d9b6ae65b3e7fdd1223e80e8392e69cd6e818c6ad3a82ff322454554200c",
+  "validationMethod": "S005InfantryCombatEffects1070.RunValidation"
+}

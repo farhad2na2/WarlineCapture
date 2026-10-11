@@ -1,0 +1,92 @@
+using System;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+using Unity.Entities;
+using Game.Components;
+using Game.Configs;
+using Game.Missions.Contracts;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Ecs;
+
+public static class CampaignThreatRebindRegression1075
+{
+    static readonly BindingFlags instance=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static object Read(object o,string key)=>o.GetType().GetField(key,instance)?.GetValue(o)??o.GetType().GetProperty(key,instance)?.GetValue(o);
+    static void Check(bool condition,string message){if(!condition)throw new InvalidOperationException(message);}
+    public static string Run()=>"Loaded actual presenter/header rebind regression; not executed";
+    public static int Validate()
+    {
+        if(EditorApplication.isPlaying)throw new InvalidOperationException("Focused regression requires idle Editor; no active gameplay World changes");
+        string previousLocale=GameLocalization.CurrentLocaleCode;var previousWorld=World.DefaultGameObjectInjectionWorld;
+        var gatewayField=typeof(UiShellRuntimeGateway).GetField("current",BindingFlags.Static|BindingFlags.NonPublic);
+        var previousGateway=(IUiShellRuntimeGateway)gatewayField.GetValue(null);
+        int assertions=0;
+        try
+        {
+            foreach(string locale in new[]{"en","fa-IR"})
+            {
+                GameLocalization.SetLocale(locale,false);
+                object fixture=null,presenter=null;GameObject hud=null;MainMenuPlayUI ui=null;
+                try
+                {
+                    var tests=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("M03WarningInteractionTests")).First(t=>t!=null);
+                    var fixtureType=tests.GetNestedType("Fixture",BindingFlags.NonPublic);
+                    fixture=Activator.CreateInstance(fixtureType,instance,null,new object[]{true},null);
+                    var world=(World)Read(fixture,"World");var em=world.EntityManager;var root=(Entity)Read(fixture,"Root");
+                    World.DefaultGameObjectInjectionWorld=world;UiShellRuntimeGateway.Register((IUiShellRuntimeGateway)typeof(UiShellEcsGateway).GetField("Shared",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null));
+                    var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);runtime.MissionId="saga.ch01.m03.radar_warning";em.SetComponentData(root,runtime);
+                    var defense=em.GetComponentData<CampaignMissionDefenseStateComponent>(root);defense.AcknowledgedGuidanceMask=0x1FF;em.SetComponentData(root,defense);
+                    em.AddBuffer<CampaignMissionDefenseMember>(root);
+                    hud=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab"));
+                    var header=hud.transform.Find("V3Composition/HeaderContent").gameObject;
+                    var banner=header.transform.Find("ThreatJumpPanel").gameObject;var visibility=banner.GetComponent<MatchHudThreatVisibilityView>();
+                    var title=banner.GetComponentsInChildren<TMPro.TMP_Text>(true).Single(t=>t.name=="Title");
+                    ui=new MainMenuPlayUI();ui.BindMatchHudThreatJumpPanel(header);
+                    var presenterType=AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType("Game.Runtime.ThreatWarningPresentationState")).First(t=>t!=null);
+                    presenter=Activator.CreateInstance(presenterType,true);
+                    void Present()=>presenterType.GetMethod("Present").Invoke(presenter,new object[]{world,ui,42f,true});
+                    Present();string stableText=(string)Read(presenter,"_defenseText");
+                    Check(ui.HasPersistentMatchHudThreatWarningPresentation&&banner.activeSelf&&!string.IsNullOrWhiteSpace(title.text),"Initial actual defense presentation absent");assertions++;
+                    var factsBefore=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                    ui.BindMatchHudThreatJumpPanel(header);
+                    Check(!ui.HasPersistentMatchHudThreatWarningPresentation&&!banner.activeSelf&&float.IsNegativeInfinity((float)Read(ui,"_matchHudThreatVisibleUntil")),"Genuine header rebind did not recreate invalid expiry");assertions++;
+                    Present();
+                    Check(ui.HasPersistentMatchHudThreatWarningPresentation&&banner.activeSelf&&(string)Read(presenter,"_defenseText")==stableText,"Cached presenter failed to restore same text after genuine rebind");
+                    Check(em.GetComponentData<CampaignMissionRuntimeComponent>(root).Equals(runtime)&&em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).Equals(factsBefore),"Presenter regression mutated mission state");assertions++;
+                    var wheel=hud.GetComponentInChildren<CommandWheelPanelView>(true);Check(wheel!=null,"Delivered command wheel missing");
+                    wheel.BindRuntimeSectionReferences(wheel.OpenButton,banner);wheel.SetTargetingPreview(true);
+                    Check(!banner.activeSelf&&ui.HasPersistentMatchHudThreatWarningPresentation,"Legitimate wheel suppression did not retain binding validity");assertions++;
+                    Present();Check(!banner.activeSelf,"Presenter fought legitimate existing wheel suppressor");
+                    ui.BindMatchHudThreatJumpPanel(header);Present();Check(!banner.activeSelf&&ui.HasPersistentMatchHudThreatWarningPresentation,"Lost binding repair fought wheel suppression");assertions++;
+                    wheel.SetTargetingPreview(false);Check(banner.activeSelf,"Wheel release did not restore persistent status");assertions++;
+                    var selection=hud.GetComponentInChildren<MatchHudSelectionPanelView>(true);Check(selection!=null,"Delivered selection panel missing");ui.BindMatchHudSelectionPanel(selection);
+                    selection.BindTransportPassengerActions(()=>{},()=>{},()=>{},_=>{});
+                    selection.ApplyTransportPassengers(new MatchHudTransportPassengersModel(true,false,new UiEntityHandle(99,1),0,8,true,new List<MatchHudSelectionPanelPassengerItemModel>()));
+                    selection.ToggleTransportPassengerDrawer();ui.TickMatchHudThreatWarning(42f);
+                    Check(selection.IsPassengerDrawerOpen&&!banner.activeSelf&&ui.HasPersistentMatchHudThreatWarningPresentation,"Genuine passenger drawer hide should retain presentation binding");Present();Check(!banner.activeSelf,"Presenter fought passenger drawer ownership");assertions++;
+                    selection.ToggleTransportPassengerDrawer();ui.TickMatchHudThreatWarning(42f);Check(banner.activeSelf,"Passenger drawer close did not restore status");assertions++;
+                    em.AddComponentData(root,new CampaignMissionCameraTourState{SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,SourceVersion=runtime.SourceVersion});
+                    em.AddComponentData(root,new CampaignMissionOpeningPresentationComponent{Stage=1});
+                    var tourRuntime=runtime;tourRuntime.Phase=MissionPhaseKind.FindSquad;em.SetComponentData(root,tourRuntime);
+                    Check(UiShellRuntimeGateway.TryReadMissionCameraTour(),"Actual camera-tour gateway fixture inactive");ui.TickMatchHudThreatWarning(42f);Check(!banner.activeSelf&&ui.HasPersistentMatchHudThreatWarningPresentation,"Camera tour must hide valid bound status");Present();Check(!banner.activeSelf,"Presenter fought camera-tour ownership");assertions++;
+                    em.SetComponentData(root,runtime);ui.TickMatchHudThreatWarning(42f);Check(banner.activeSelf,"Camera-tour end did not restore status");assertions++;
+                    Debug.Log("[CampaignThreatRebindRegression1075] locale="+locale+" actualPresenter=1 sameRuntimeSessionAttemptText=1 rebindRestored=1 legitimateWheelPassengerTourHides=1 nativeReadinessClaim=0");
+                }
+                finally
+                {
+                    if(presenter!=null)presenter.GetType().GetMethod("Dispose").Invoke(presenter,null);
+                    ui?.Dispose();if(hud!=null)UnityEngine.Object.DestroyImmediate(hud);
+                    World.DefaultGameObjectInjectionWorld=previousWorld;UiShellRuntimeGateway.Register(previousGateway);
+                    (fixture as IDisposable)?.Dispose();
+                }
+            }
+            Debug.Log("[CampaignThreatRebindRegression1075] result=Passed locales=2 assertions="+assertions+" actualPresenterAndHeader=1 nativeReadinessClaim=0");return 0;
+        }
+        catch(Exception e){Debug.LogException(e);Debug.LogError("[CampaignThreatRebindRegression1075] result=Failed");return 1;}
+        finally{World.DefaultGameObjectInjectionWorld=previousWorld;UiShellRuntimeGateway.Register(previousGateway);GameLocalization.SetLocale(previousLocale,false);}
+    }
+}

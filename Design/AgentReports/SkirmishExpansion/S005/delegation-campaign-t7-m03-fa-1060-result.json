@@ -1,0 +1,25 @@
+{
+  "mission": "saga.ch01.m03.radar_warning",
+  "scope": "T7 fa-IR-only",
+  "driver": "CampaignSelectionJourney1060.RunM03FA",
+  "nativeVictoryResultCampaignReturn": "Passed",
+  "wrapperExit": 0,
+  "gestureDispatched": 11,
+  "gestureCompleted": 11,
+  "unexpectedSamples": 0,
+  "physicalInterventions": 0,
+  "fullJourneyStrictTouchAudit": false,
+  "statusContinuity": "Failed independent observer; generic gate skipped actual missing window due waitUntil",
+  "missingActiveEngageRows": 48,
+  "maximumObservedMissingSeconds": 5.398374333999527,
+  "missingElapsedMs": [
+    92858,
+    98490
+  ],
+  "beforeSource": "bd07c31512a9243f6b1bbda10b2d32fc90308d2090dab68ad8f46861b83f46fc",
+  "afterSource": "bd07c31512a9243f6b1bbda10b2d32fc90308d2090dab68ad8f46861b83f46fc",
+  "sourceStable": true,
+  "genericBilingualMarkerExcluded": true,
+  "productionFixApplied": false,
+  "playClosed": true
+}

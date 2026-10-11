@@ -1,0 +1,40 @@
+--- a/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs
++++ b/Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs
+@@ -44,6 +44,8 @@
+ 
+         void TriggerSelectionModeFromHold();
+ 
++        bool HasPersistentMatchHudThreatWarningPresentation { get; }
++
+         bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
+ 
+         void Update();
+--- a/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs
++++ b/Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs
+@@ -2,6 +2,14 @@
+ {
+     public sealed partial class MainMenuPlayUI
+     {
++        // Hidden/requested state belongs to tactical surfaces and camera/passenger
++        // suppression. A header rebind invalidates the expiry instead, so the
++        // persistent defense presenter can safely restore the lost binding.
++        public bool HasPersistentMatchHudThreatWarningPresentation =>
++            _matchHudThreatJumpPanel != null && _matchHudThreatTitle != null &&
++            float.IsPositiveInfinity(_matchHudThreatVisibleUntil) &&
++            !string.IsNullOrWhiteSpace(_matchHudThreatTitle.text);
++
+         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
+         {
+             if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)
+--- a/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
++++ b/Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
+@@ -134,7 +134,8 @@
+             // Keep the defense status present even between warning records. A resolved
+             // scout alert is not the end of the mission or a reason to hide its timer.
+             if (_defenseVisible && _defenseText == text && _defenseSession.Equals(runtime.SessionToken) &&
+-                _defenseAttempt == runtime.AttemptOrdinal) return true;
++                _defenseAttempt == runtime.AttemptOrdinal &&
++                matchUi.HasPersistentMatchHudThreatWarningPresentation) return true;
+             if (!matchUi.TryShowMatchHudThreatWarning(text, float.PositiveInfinity)) return true;
+             _defenseText = text;
+             _defenseVisible = true;

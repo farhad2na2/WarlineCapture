@@ -44,6 +44,8 @@ namespace Game.UI.Contracts
 
         void TriggerSelectionModeFromHold();
 
+        bool HasPersistentMatchHudThreatWarningPresentation { get; }
+
         bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
 
         void Update();

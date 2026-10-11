@@ -491,8 +491,8 @@
     }
   ],
   "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
-  "currentSourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
-  "currentSourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
+  "currentSourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "currentSourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
@@ -506,7 +506,7 @@
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
-  "nextWork": "Complete corrected normal flight recovery, airborne/support role lifecycle, ground combat/service/destination routes, bilateral air capacity and remaining Campaign/preset/stress/performance gates.",
+  "nextWork": "Complete remaining grouped role combat/cargo/recon/recovery checks, StandardAir2 aircraft and source-fit evidence, fresh normal English/Persian manual/ARIA journeys, remaining Campaign M3 and explicit family/stress/performance gates. Earlier scoped proofs retain exact source dependencies; no current full certification.",
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
   "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
@@ -515,5 +515,9 @@
   "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
   "currentGroundPaidQueueCases": 15,
   "recorded0488NativePaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
-  "currentStandardRegularJourneysPending": false
+  "currentStandardRegularJourneysPending": true,
+  "currentRadarSupportProof": "native1068-isolated-paid-radar-support-pass.json",
+  "currentApcFastCombatProof": "native1080-isolated-paid-apcfast-combat-pass.json",
+  "currentDroneDeliveryProof": "native1065-drone-intelstation-no-airport-pass.json",
+  "currentHelipadBasicRolesProof": "native1052-helipad-roles-helipad-no-airport-pass.json"
 }

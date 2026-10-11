@@ -1,0 +1,27 @@
+{
+  "candidateSource": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448",
+  "scope": "T7 focused actual presenter/header regression only; current main full-native claim excluded",
+  "wrapperExit": 0,
+  "result": "Passed",
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "assertions": 20,
+  "actualPresenter": true,
+  "existingM3Fixture": true,
+  "realDeliveredHud": true,
+  "sameRuntimeSessionAttemptTextAcrossRebind": true,
+  "genuineHeaderRebind": true,
+  "wheelSuppressorRespectedAcrossRebindRepair": true,
+  "passengerDrawerSuppressionRespected": true,
+  "actualEcsCameraTourSuppressionRespected": true,
+  "nativeReadiness": false,
+  "playingStarted": false,
+  "productionFilesChanged": "Only exact root-reviewed3file M3 patch added to preserved T7 prior3UI+Pipeline delta",
+  "compilerDecoded": {
+    "status": "completed",
+    "failed": false,
+    "errors": []
+  }
+}

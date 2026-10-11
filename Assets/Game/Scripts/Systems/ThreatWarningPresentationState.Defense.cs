@@ -134,7 +134,8 @@ namespace Game.Runtime
             // Keep the defense status present even between warning records. A resolved
             // scout alert is not the end of the mission or a reason to hide its timer.
             if (_defenseVisible && _defenseText == text && _defenseSession.Equals(runtime.SessionToken) &&
-                _defenseAttempt == runtime.AttemptOrdinal) return true;
+                _defenseAttempt == runtime.AttemptOrdinal &&
+                matchUi.HasPersistentMatchHudThreatWarningPresentation) return true;
             if (!matchUi.TryShowMatchHudThreatWarning(text, float.PositiveInfinity)) return true;
             _defenseText = text;
             _defenseVisible = true;

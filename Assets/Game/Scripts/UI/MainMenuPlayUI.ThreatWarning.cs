@@ -2,6 +2,14 @@ namespace Game.UI.Runtime
 {
     public sealed partial class MainMenuPlayUI
     {
+        // Hidden/requested state belongs to tactical surfaces and camera/passenger
+        // suppression. A header rebind invalidates the expiry instead, so the
+        // persistent defense presenter can safely restore the lost binding.
+        public bool HasPersistentMatchHudThreatWarningPresentation =>
+            _matchHudThreatJumpPanel != null && _matchHudThreatTitle != null &&
+            float.IsPositiveInfinity(_matchHudThreatVisibleUntil) &&
+            !string.IsNullOrWhiteSpace(_matchHudThreatTitle.text);
+
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
         {
             if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)

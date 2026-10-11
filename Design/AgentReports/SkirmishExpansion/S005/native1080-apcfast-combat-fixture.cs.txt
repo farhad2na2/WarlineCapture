@@ -1,0 +1,336 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// Isolated native pipeline fixture. Never counted as normal-input mission acceptance.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005ApcFastDiagnostic1080
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session, boundary, hostileTarget, observationQueue;
+    static LocalTransform hostileOriginalTransform;
+    static UnitGrid hostileOriginalGrid;
+    static int eventBaseline, attackFrame, targetHealthBefore;
+    static readonly string effectPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1080-apcfast-damage-events.jsonl";
+    [Serializable] struct NativeDamageRow { public string role,kind; public int eventId,frame,sourceIndex,sourceVersion,targetIndex,targetVersion,damageApplied,targetHealthAfter,targetHealthBefore,observedCurrentHealth; public uint reservation; public Vector3 sourcePosition,targetPosition; public bool sourceExactPaidMember,targetExactNativeHostile,damageOrEventsInjected; }
+    static readonly string diagnosticPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1080-apcfast-state.jsonl";
+    static readonly string rawPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1080-all-new-damage-events.jsonl";
+    static int rawLastEvent;static double diagnosticDue;
+    [Serializable] struct DiagnosticRow { public string stage,actorAttack,actorCombat,actorMove,actorGrid,actorTransform,actorEngage,actorCooldown,actorTrace,actorPolicy,targetHealth,targetGrid,targetTransform,targetCombat,targetMove,targetIntent,targetPolicy,physicsHit;public int frame,phase,actorIndex,targetIndex,lastObservationEvent;public float actualRange,overlayRange,horizontalDistance;public bool actorAlive,targetAlive,hasAttackAnimation,hasAttackCooldown,hasAttackTrace,hasEngage,selected,actorSuppressed,targetSuppressed,actorDisabled,targetDisabled,actorTransit,targetAvailableByNativeAttackGate,physicsLinecastBlocked; }
+    [Serializable] struct RawEventRow { public int eventId,frame,sourceIndex,sourceVersion,targetIndex,targetVersion,damageApplied,targetHealthAfter;public string kind;public Vector3 sourcePosition,targetPosition;public bool sourceExactPaidApcFast,targetExactRetainedNativeHostile,qualifiedForDamageCase; }
+    static string Read<T>(EntityManager em,Entity actor) where T:unmanaged,IComponentData => em.Exists(actor)&&em.HasComponent<T>(actor)?JsonUtility.ToJson(em.GetComponentData<T>(actor)):"Absent";
+    static void ObserveAllNewDamage(EntityManager em)
+    {
+        if(observationQueue==Entity.Null||!em.Exists(observationQueue)||!em.HasBuffer<CombatDamageObservationElement>(observationQueue))return;
+        var observations=em.GetBuffer<CombatDamageObservationElement>(observationQueue,true);
+        for(int i=0;i<observations.Length;i++)
+        {
+            var o=observations[i];if(o.EventId<=rawLastEvent)continue;
+            bool source=members.Count==1&&o.SourceEntity==members[0],target=o.TargetEntity==hostileTarget;
+            var row=new RawEventRow{eventId=o.EventId,frame=o.Frame,sourceIndex=o.SourceEntity.Index,sourceVersion=o.SourceEntity.Version,targetIndex=o.TargetEntity.Index,targetVersion=o.TargetEntity.Version,damageApplied=o.DamageApplied,targetHealthAfter=o.TargetHealthAfter,kind=o.SourceKind.ToString(),sourcePosition=(Vector3)o.SourceWorldPosition,targetPosition=(Vector3)o.TargetWorldPosition,sourceExactPaidApcFast=source,targetExactRetainedNativeHostile=target,qualifiedForDamageCase=source&&target&&o.SourceKind==CombatDamageSourceKind.DirectFire&&o.DamageApplied>0&&o.EventId>eventBaseline&&o.Frame>=attackFrame};
+            File.AppendAllText(rawPath,JsonUtility.ToJson(row)+"\n");Debug.Log("[S005ApcFastRawDamage] "+JsonUtility.ToJson(row));rawLastEvent=o.EventId;
+        }
+    }
+    static void ObserveState(EntityManager em,string stage)
+    {
+        ObserveAllNewDamage(em);if(members.Count!=1)return;var actor=members[0];bool actorAlive=em.Exists(actor),targetAlive=em.Exists(hostileTarget);
+        var row=new DiagnosticRow{stage=stage,frame=Time.frameCount,phase=phase,actorIndex=actor.Index,targetIndex=hostileTarget.Index,actorAlive=actorAlive,targetAlive=targetAlive,actorAttack=Read<UnitAttack>(em,actor),actorCombat=Read<UnitCombat>(em,actor),actorMove=Read<UnitMove>(em,actor),actorGrid=Read<UnitGrid>(em,actor),actorTransform=Read<LocalTransform>(em,actor),actorEngage=Read<EngageTarget>(em,actor),actorCooldown=Read<UnitAttackCooldownComponent>(em,actor),actorTrace=Read<UnitAttackTraceComponent>(em,actor),actorPolicy=Read<CombatTargetPolicy>(em,actor),targetHealth=Read<UnitHealth>(em,hostileTarget),targetGrid=Read<UnitGrid>(em,hostileTarget),targetTransform=Read<LocalTransform>(em,hostileTarget),targetCombat=Read<UnitCombat>(em,hostileTarget),targetMove=Read<UnitMove>(em,hostileTarget),targetIntent=Read<UnitTarget>(em,hostileTarget),targetPolicy=Read<CombatTargetPolicy>(em,hostileTarget),overlayRange=roles[index].RangeWorld};
+        if(actorAlive){row.hasAttackAnimation=em.HasComponent<UnitAttackAnimationComponent>(actor);row.hasAttackCooldown=em.HasComponent<UnitAttackCooldownComponent>(actor);row.hasAttackTrace=em.HasComponent<UnitAttackTraceComponent>(actor);row.hasEngage=em.HasComponent<EngageTarget>(actor);row.selected=em.HasComponent<SelectedUnitTag>(actor);row.actorSuppressed=em.HasComponent<CampaignMissionCombatSuppressedTag>(actor);row.actorDisabled=em.HasComponent<Disabled>(actor);row.actorTransit=em.HasComponent<UnitSpawnTransitTag>(actor);if(em.HasComponent<UnitAttack>(actor))row.actualRange=em.GetComponentData<UnitAttack>(actor).Range;}
+        if(targetAlive){row.targetSuppressed=em.HasComponent<CampaignMissionCombatSuppressedTag>(hostileTarget);row.targetDisabled=em.HasComponent<Disabled>(hostileTarget);}
+        if(actorAlive&&targetAlive&&em.HasComponent<LocalTransform>(actor)&&em.HasComponent<LocalTransform>(hostileTarget))
+        {
+            var a=em.GetComponentData<LocalTransform>(actor).Position;var b=em.GetComponentData<LocalTransform>(hostileTarget).Position;row.horizontalDistance=math.distance(a.xz,b.xz);
+            row.physicsLinecastBlocked=Physics.Linecast((Vector3)a+Vector3.up,(Vector3)b+Vector3.up,out var hit);row.physicsHit=hit.collider!=null?hit.collider.name:"None";
+            row.targetAvailableByNativeAttackGate=(bool)typeof(UnitAttackSystem).GetMethod("IsTargetAvailableForCombat",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{em,actor,hostileTarget});
+        }
+        if(observationQueue!=Entity.Null&&em.Exists(observationQueue))row.lastObservationEvent=em.GetComponentData<CombatDamageObservationQueueComponent>(observationQueue).LastEventId;
+        File.AppendAllText(diagnosticPath,JsonUtility.ToJson(row)+"\n");Debug.Log("[S005ApcFastDiagnostic] "+JsonUtility.ToJson(row));
+    }
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, index, requestId;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1080-apcfast-combat.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, commandBaseline;
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath)||File.Exists(effectPath)||File.Exists(diagnosticPath)||File.Exists(rawPath))throw new InvalidOperationException("Preserve existing native Touch/effect evidence");File.WriteAllText(touchPath,"");File.WriteAllText(effectPath,"");File.WriteAllText(diagnosticPath,"");File.WriteAllText(rawPath,"");rawLastEvent=0;diagnosticDue=0;
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;
+        deadline=EditorApplication.timeSinceStartup+240;next=0;hostileTarget=observationQueue=Entity.Null;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch; touch=null; inputFrame=-1;
+        Debug.Log("[S005VehicleCombat] scope=IsolatedPaidSingleVehicleNativeDamage normalMission=0 fundingInjected=1 readinessGranted=FullArsenal openingUnitsRetiredExceptNativeEnemyArmoredApc=1 targetPositionHealthVisibilityRetaliationSetup=1 selectionTouch=1 attackPublicNativeApi=1 shotsProjectilesDamageEventsResultsInjected=0 pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005VehicleCombatCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=InputFrame;
+                completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Paid vehicle combat fixture exceeded240seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var wanted in new[]{SkirmishRoleKind.ApcFast})
+                    foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId)&&r.RoleKind==wanted&&r.Producer==SkirmishProducerKind.GroundStaging)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=1)throw new InvalidOperationException("Expected one enabled paid ApcFast, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))
+                {
+                    foreach(var actor in actors)
+                    {
+                        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                        if(hostileTarget==Entity.Null&&owner.FactionId==2&&owner.SessionId.Equals(attempt)&&owner.CapacityReleased==0&&em.GetComponentData<UnitHealth>(actor).Current>0&&em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role==SkirmishRoleKind.ApcArmored&&em.HasComponent<SkirmishSharedActorTag>(actor))hostileTarget=actor;
+                    }
+                    if(hostileTarget==Entity.Null)throw new InvalidOperationException("Actual opening enemy Armored APC target unavailable; no synthetic target fallback.");
+                    foreach(var actor in actors)if(actor!=hostileTarget)Kill(em,actor);
+                }
+                hostileOriginalTransform=em.GetComponentData<LocalTransform>(hostileTarget);
+                hostileOriginalGrid=em.GetComponentData<UnitGrid>(hostileTarget);
+                SkirmishWorldMovementService.ClearIntent(em,hostileTarget);
+                var targetCombat=em.GetComponentData<UnitCombat>(hostileTarget);targetCombat.CanAttack=0;targetCombat.AutoEngage=0;em.SetComponentData(hostileTarget,targetCombat);
+                if(!em.HasComponent<HoldPositionOrderTag>(hostileTarget))em.AddComponent<HoldPositionOrderTag>(hostileTarget);
+                var fog=em.GetComponentData<SkirmishFogStateComponent>(session);fog.DevelopmentFullVision=1;em.SetComponentData(session,fog);
+                using(var observations=em.CreateEntityQuery(typeof(CombatDamageObservationQueueComponent)))
+                {
+                    if(observations.CalculateEntityCount()!=1)throw new InvalidOperationException("Native damage observation singleton unavailable.");
+                    observationQueue=observations.GetSingletonEntity();
+                }
+                if(!em.HasBuffer<CombatDamageObservationElement>(observationQueue))throw new InvalidOperationException("Native observation buffer unavailable; test must not create/append it.");
+                Debug.Log("[S005VehicleHostileSetup] source=ActualOpeningEnemyArmoredApc target="+hostileTarget+" targetCanAttackDisabled=1 developmentFullVisionGranted=1 syntheticTargetSpawn=0 maxHealthOrDomainChanged=0");
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"singlePaidApcFastRuntimeDamageDiagnostic");return;}
+                var role=roles[index];
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))throw new InvalidOperationException("Functional producer missing: "+role.RoleKind);
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005VehiclePaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                if(members.Count!=1)throw new InvalidOperationException("Combat subgroup requires single-member vehicle delivery.");
+                if(!em.Exists(hostileTarget)||em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Retained native hostile target died; no revive fallback.");
+                // Fixture setup occurs BEFORE command/event baseline. The native target's max health/domain/prefab stay intact.
+                var targetHealth=em.GetComponentData<UnitHealth>(hostileTarget);targetHealth.Current=targetHealth.Max;em.SetComponentData(hostileTarget,targetHealth);
+                var combat=em.GetComponentData<UnitCombat>(members[0]);combat.AutoEngage=0;em.SetComponentData(members[0],combat);
+                if(combat.CanAttack==0||!SkirmishExpandedEngagementService.DomainAllows(roles[index].TargetDomains,false,SkirmishPopulationCategory.Ground))throw new InvalidOperationException("Paid native weapon/domain does not support actual ground target.");
+                ObserveState(em,"PreflightBeforeTargetSetup");
+                if(!em.HasComponent<UnitAttack>(members[0]))throw new InvalidOperationException("Actual paid ApcFast lacks UnitAttack; no weapon injection fallback.");
+                var actualWeapon=em.GetComponentData<UnitAttack>(members[0]);
+                float effectiveRange=math.min(actualWeapon.Range,roles[index].RangeWorld);
+                if(effectiveRange<=1f)throw new InvalidOperationException("Actual paid ApcFast has no positive diagnostic range interval.");
+                float distance=math.min(effectiveRange*.5f,8f);
+                Debug.Log("[S005ApcFastRangePreflight] actualWeaponRange="+actualWeapon.Range+" overlayRange="+roles[index].RangeWorld+" targetDistance="+distance+" rangeOrWeaponsChanged=0 targetPlacementInsideActualRange=1 physicsLinecastIsDiagnosticOnly=1");
+                var targetTransform=hostileOriginalTransform;targetTransform.Position=em.GetComponentData<LocalTransform>(members[0]).Position+new float3(distance,0,0);em.SetComponentData(hostileTarget,targetTransform);
+                using(var grids=em.CreateEntityQuery(typeof(GridConfig)))
+                {
+                    if(grids.CalculateEntityCount()!=1)throw new InvalidOperationException("Native grid singleton unavailable.");
+                    var grid=grids.GetSingleton<GridConfig>();var cell=GridUtils.WorldToCell(grid,targetTransform.Position);
+                    if(!GridUtils.InBounds(cell,grid.Width,grid.Height))throw new InvalidOperationException("Hostile target setup exceeds current Campaign grid; no map expansion fallback.");
+                    var targetGrid=hostileOriginalGrid;targetGrid.Cell=cell;em.SetComponentData(hostileTarget,targetGrid);
+                }
+                SkirmishFogService.Reveal(em,hostileTarget);ObserveState(em,"AfterLegalRangeTargetSetup");
+                Debug.Log("[S005VehicleTargetCase] role="+roles[index].RoleKind+" target="+hostileTarget+" targetRole=ApcArmored targetDomain=Ground distance="+distance+" targetHealthResetBeforeOrder=1 hostilePositionInjected=1 ownPositionInjected=0 visibilityGrantedForTechnicalCase=1 mapOrClearanceCertified=0");
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin(); commandBaseline=AriaCommandEvidence.AcceptedCommands;phase=10;caseDeadline=now+45;return;
+            }
+            if(phase==12)
+            {
+                if(EditorApplication.timeSinceStartup>=diagnosticDue){diagnosticDue=EditorApplication.timeSinceStartup+1;ObserveState(em,"WaitingForNativeEffect");}else ObserveAllNewDamage(em);
+                if(touch.IsBusy)return;
+                if(!em.Exists(hostileTarget)||!em.HasComponent<UnitHealth>(hostileTarget))throw new InvalidOperationException("Native hostile target was disposed before effect attribution.");
+                var events=em.GetBuffer<CombatDamageObservationElement>(observationQueue,true);
+                for(int i=0;i<events.Length;i++)
+                {
+                    var observation=events[i];
+                    if(observation.EventId<=eventBaseline||observation.Frame<attackFrame||observation.TargetEntity!=hostileTarget||!members.Contains(observation.SourceEntity)||observation.DamageApplied<=0)continue;
+                    var expected=CombatDamageSourceKind.DirectFire;
+                    if(observation.SourceKind!=expected)throw new InvalidOperationException("Unexpected damage owner for paid role "+roles[index].RoleKind+": "+observation.SourceKind);
+                    int current=em.GetComponentData<UnitHealth>(hostileTarget).Current;
+                    if(observation.TargetHealthAfter>=targetHealthBefore||current>=targetHealthBefore||current>observation.TargetHealthAfter)throw new InvalidOperationException("Native damage event does not match actual observed target health loss.");
+                    var row=new NativeDamageRow{role=roles[index].RoleKind.ToString(),kind=observation.SourceKind.ToString(),eventId=observation.EventId,frame=observation.Frame,sourceIndex=observation.SourceEntity.Index,sourceVersion=observation.SourceEntity.Version,targetIndex=hostileTarget.Index,targetVersion=hostileTarget.Version,damageApplied=observation.DamageApplied,targetHealthAfter=observation.TargetHealthAfter,targetHealthBefore=targetHealthBefore,observedCurrentHealth=current,reservation=receiptId,sourcePosition=(Vector3)observation.SourceWorldPosition,targetPosition=(Vector3)observation.TargetWorldPosition,sourceExactPaidMember=true,targetExactNativeHostile=true,damageOrEventsInjected=false};
+                    File.AppendAllText(effectPath,JsonUtility.ToJson(row)+"\n");
+                    Debug.Log("[S005VehicleNativeDamage] result=Passed role="+roles[index].RoleKind+" event="+observation.EventId+" source="+observation.SourceEntity+" paidReservation="+receiptId+" target="+hostileTarget+" kind="+observation.SourceKind+" damage="+observation.DamageApplied+" healthBefore="+targetHealthBefore+" healthAfter="+observation.TargetHealthAfter+" observedHealth="+current+" shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch");
+                    em.SetComponentData(hostileTarget,hostileOriginalTransform);em.SetComponentData(hostileTarget,hostileOriginalGrid);
+                    foreach(var member in members)Kill(em,member);phase=5;caseDeadline=now+10;return;
+                }
+                if(em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Hostile target died without an exact paid-source native damage event; no attribution fallback.");
+                return;
+            }
+            if(phase==5)
+            {
+                foreach(var member in members)if(em.Exists(member) && em.HasComponent<SkirmishAttemptOwnedComponent>(member) && em.GetComponentData<SkirmishAttemptOwnedComponent>(member).CapacityReleased==0)return;
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)throw new InvalidOperationException("Capacity not fully released after delivered role death.");
+                foreach(var member in members)if(em.Exists(member) && SkirmishProductionService.TryReleaseDeath(em,session,member))throw new InvalidOperationException("Death released capacity twice.");
+                Debug.Log("[S005VehiclePaidQueueDeath] result=Passed role="+roles[index].RoleKind+" capacityReleased=1 idempotent=1 stimulus=HealthZero");results.Add(roles[index].RoleKind.ToString());index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        var visibleTray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var canvas=visibleTray?.GetComponentInParent<Canvas>()?.rootCanvas;
+        if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1)return;
+        inputFrame=Time.frameCount;
+        try
+        {
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11))return;
+            var em=world.EntityManager;
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10)
+            {
+                using var query=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=query.ToEntityArray(Allocator.Temp);
+                bool exact=selected.Length==members.Count;foreach(var actor in selected)exact &= members.Contains(actor);
+                if(!exact)
+                {
+                    if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return;}
+                    if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                    for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&members.Contains(member)){Tap(tray.VisibleCardButton(slot));return;}
+                    if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);
+                    return;
+                }
+                Debug.Log("[S005VehicleNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" input=Touch selectionInjected=0");phase=11;
+            }
+            // Native selection is complete. Attack is an explicitly disclosed public native API command,
+            // outside the Touch receipt envelope; no component-written EngageTarget/shot/damage substitute.
+            AriaCommandEvidence.End();
+            eventBaseline=em.GetComponentData<CombatDamageObservationQueueComponent>(observationQueue).LastEventId;
+            targetHealthBefore=em.GetComponentData<UnitHealth>(hostileTarget).Current;attackFrame=Time.frameCount;
+            if(!SkirmishArmyCommandService.TryAttack(em,session,hostileTarget,out var decision)||!decision.Accepted||decision.IssuedCount!=members.Count)
+                throw new InvalidOperationException("Selected paid native Attack rejected: "+decision.Reason+" issued="+decision.IssuedCount);
+            phase=12;ObserveState(em,"AfterAcceptedPublicAttack");
+            Debug.Log("[S005VehicleNativeAttack] result=Accepted role="+roles[index].RoleKind+" input=PublicNativeApi selectedMembers="+members.Count+" exactTarget="+hostileTarget+" eventBaseline="+eventBaseline+" damageInjected=0 normalTouchAttackCertified=0");
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        if(world!=null&&world.IsCreated&&members.Count==1&&index<roles.Length)try{ObserveState(world.EntityManager,"FinishBeforeCleanup");}catch(Exception diagException){Debug.LogWarning("[S005ApcFastDiagnostic] finalObservationFailed="+diagException.Message);}
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005VehicleCombatInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005VehicleCombat] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending selectionInput=Touch attackInput=PublicNativeApi damageEvidence=RuntimeEvents fullMovementTransportDomainMatrix=NotCertified reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedPaidVehicleDamage:"+reason});
+    }
+}

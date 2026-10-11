@@ -1,0 +1,36 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=CampaignThreatRebindRegression1075.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_4f778ae7/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignThreatRebindRegression1075] locale=en actualPresenter=1 sameRuntimeSessionAttemptText=1 rebindRestored=1 legitimateWheelPassengerTourHides=1 nativeReadinessClaim=0
+UnityEngine.Debug:Log (object)
+CampaignThreatRebindRegression1075:Validate () (at /private/tmp/CampaignThreatRebindRegression1075.cs:77)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_4f778ae7/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignThreatRebindRegression1075] locale=fa-IR actualPresenter=1 sameRuntimeSessionAttemptText=1 rebindRestored=1 legitimateWheelPassengerTourHides=1 nativeReadinessClaim=0
+UnityEngine.Debug:Log (object)
+CampaignThreatRebindRegression1075:Validate () (at /private/tmp/CampaignThreatRebindRegression1075.cs:77)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_4f778ae7/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignThreatRebindRegression1075] result=Passed locales=2 assertions=20 actualPresenterAndHeader=1 nativeReadinessClaim=0
+UnityEngine.Debug:Log (object)
+CampaignThreatRebindRegression1075:Validate () (at /private/tmp/CampaignThreatRebindRegression1075.cs:87)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_4f778ae7/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=CampaignThreatRebindRegression1075.Validate
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_4f778ae7/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

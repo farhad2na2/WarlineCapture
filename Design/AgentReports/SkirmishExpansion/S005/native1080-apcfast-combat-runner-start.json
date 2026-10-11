@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1080",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1073-m3-countdown-rebind-integrated-source-manifest.json",
+  "preflightManifest": "final-1080-apcfast-combat-preflight-source-manifest.json",
+  "fixtureSha256": "3adc00c01762a99f84b4305524887a895b7a4cbe54f3fa2cb130d7373ced8616",
+  "validationMethod": "S005ApcFastDiagnostic1080.RunValidation"
+}

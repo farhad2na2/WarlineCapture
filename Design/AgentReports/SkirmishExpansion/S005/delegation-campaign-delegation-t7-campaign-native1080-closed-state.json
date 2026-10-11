@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new {playing=UnityEditor.EditorApplication.isPlaying,compiling=UnityEditor.EditorApplication.isCompiling,qa=Game.Editor.ExistingEditorValidation.IsRunning,background=UnityEngine.InputSystem.InputSystem.settings.backgroundBehavior.ToString(),editorRoute=UnityEngine.InputSystem.InputSystem.settings.editorInputBehaviorInPlayMode.ToString(),runInBackground=UnityEngine.Application.runInBackground};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "playing": false,
+        "compiling": false,
+        "qa": false,
+        "background": "ResetAndDisableNonBackgroundDevices",
+        "editorRoute": "PointersAndKeyboardsRespectGameViewFocus",
+        "runInBackground": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

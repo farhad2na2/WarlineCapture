@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
-  "sourceFingerprint": "final-1069-drone-runway-home-post-independent-fingerprint.json",
+  "sourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "sourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,8 +13,8 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "compile1062-drone-and-mobile-fixed-status.json",
-  "shippingRuntimeCommit": "818054c154cf2dd1e1af246c6491812b708b8f8d",
+  "currentCompilationProof": "compile1073-m3-rebind-completed-status.json",
+  "shippingRuntimeCommit": "7ba2ebb274db4336a04b168f4c43f5aec32402ad",
   "currentNativeVictories": [
     "native1053-current-manual-fa-IR-seed104734-victory.json"
   ],
@@ -43,7 +43,8 @@
     "Current English/ARIA journeys; remaining checkpoint/result/replay and exposed-preset evidence",
     "Affected Campaign M3/M4 regressions and required family/stress/cleanup/performance checks",
     "Real device/performance acceptance; Mobile pipeline configuration contract and Editor lifecycle conservation passed",
-    "Owner native visual review and real player/device acceptance"
+    "Owner native visual review and real player/device acceptance",
+    "Authored shared-fog/intel readiness: development full vision cannot certify reconnaissance or full catalog; real visibility and hidden-target qualification remains pending"
   ],
   "nextWork": "T7 native1060 M3FA/M4 regressions; main correctedRadar1068, paidVehicle1061 and remaining air/infantry role effects after heavy lane handoff.",
   "historicalReport": "technical-readiness-history-before-native889.json",
@@ -52,7 +53,7 @@
     "status": "Pending",
     "scope": "Normal input qualification on current frozen source"
   },
-  "currentSourceFingerprint": "final-1069-drone-runway-home-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": null,
@@ -424,7 +425,7 @@
     "nativeCurrentWholeSourceAcceptanceClaimed": false
   },
   "currentM02ContentPackRepairProof": "native990-m02-content-pack-binding-repair-pass.json",
-  "latestPushedCommit": "818054c154cf2dd1e1af246c6491812b708b8f8d",
+  "latestPushedCommit": "7ba2ebb274db4336a04b168f4c43f5aec32402ad",
   "currentValidationDriverIssue": {
     "scope": "Campaign selection test actuator timing",
     "failedProofs": [
@@ -537,12 +538,12 @@
   "currentCampaignRegressionMatrix": "native992-1013-1020-1025-1026-shared-campaign-m1-m5-regression-matrix.json",
   "currentGroundMovementQualification": "native1024-isolated-ground-native-touch-movement-pass.json",
   "currentCampaignM04Qualification": {
-    "proof": "native1014-shared-campaign-m04-en-fa-journey-failure.json",
-    "result": "FailedNativeOffscreenTargetDriver",
-    "locale": "en",
-    "stage": "Boarded APC move to transfer marker; driver threw after Show Me",
-    "causeProven": "Required world target offscreen without Show Me in player-action probe; normal minimap camera companion prepared but not tested.",
-    "runtimeRegressionProven": false
+    "proof": "delegation-campaign-t7-m04-1080-result.json",
+    "result": "PassedNativeEnglishPersianVictoryResultCampaignReturn",
+    "sourceHash": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448",
+    "fullSourceUnchanged": true,
+    "normalInput": "Actual required four-specialist drags and APC/helicopter passenger gates; 30/30 companion contacts, zero unexpected/interventions",
+    "scope": "T7 Campaign regression; not whole-current-main S005 certification"
   },
   "currentCampaignM05Qualification": {
     "proof": "native1015-shared-campaign-m05-en-fa-journey-failure.json",
@@ -633,7 +634,7 @@
   ],
   "currentFlightRecoveryStatus": "Native1049 scoped normal-input recovery of original paid flight passed actual Continue/Pause/Save/Continue with exact new paused flight state and positive-time motion; not a fresh uninterrupted complete match.",
   "currentMobileQualitySourceReview": "Native explicit accepted Mobile pipeline and AA0; 23 focused checks1064 passed. Actual paid Drone1065 and three-Heli1052 Play/cleanup preserved the complete07d source. Real device performance remains pending.",
-  "currentCompilation": "compile1062-drone-and-mobile-fixed-status.json",
+  "currentCompilation": "compile1073-m3-rebind-completed-status.json",
   "currentM1GuidanceIntegration": "native1058-M1-guidance-integration-source-delta.json",
   "sourceQualificationNote": "Current main source includes exact M1 guidance patch natively proven EN/FA in T7. Prior main proofs retain their recorded8417 source hash and scoped dependency applicability; no full2de5 main-source pass claimed.",
   "mobileQualityRepair": "native1062-mobile-accepted-pipeline-repair.json",
@@ -653,7 +654,7 @@
     "cleanupWarnings": []
   },
   "currentMobileQualityContractProof": "native1064-focused-current-proof.json",
-  "currentRadarSupportEffect": "native1055-isolated-paid-radar-support-failure.json",
+  "currentRadarSupportEffect": "native1068-isolated-paid-radar-support-pass.json",
   "currentHelipadRolesProducerSmoke": "native1052-helipad-roles-helipad-no-airport-pass.json",
   "focusedNative1069": {
     "result": "Passed",
@@ -670,5 +671,26 @@
     "nativeMatchCount": 0,
     "cleanupWarnings": []
   },
-  "currentDroneRunwayHomeRegressionProof": "native1069-focused-current-proof.json"
+  "currentDroneRunwayHomeRegressionProof": "native1069-focused-current-proof.json",
+  "ownerMobilePreference": "Keep MSAA disabled (explicit owner reply after intentional-change clarification)",
+  "currentM03CountdownVisibility": {
+    "focusedProof": "delegation-campaign-t7-rebind1075-result.json",
+    "actualPresenterChecks": 20,
+    "nativeVisibilityProof": "delegation-campaign-t7-m03-fa-1080-result.json",
+    "nativeRepairVisibility": "Passed independent observer: 908 post-defense samples, 4 actual FullMap closes, zero non-owned missing samples",
+    "wholeNativeJourney": "Failed replacement-cohort input recovery; no current whole-M3 certification",
+    "t7SourceHash": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448"
+  },
+  "currentM03CountdownCandidate": "native1073-m3-countdown-integration-source-delta.json",
+  "currentVehicleCombatEffects": "native1061-isolated-paid-vehicle-combat-failure.json",
+  "currentApcFastCombatDiagnostic": "native1080-isolated-paid-apcfast-combat-pass.json",
+  "currentInfantryCombatEffects": {
+    "nativeRun": 1070,
+    "nativeRuntimeCasesAndCleanup": "Passed all five four-member paid cohorts",
+    "originalRunnerClosure": "native1070-isolated-paid-infantry-combat-failure.json",
+    "offlineSchemaCorrection": "native1070-offline-cohort-schema-evaluation-v2-20261011.json",
+    "scope": "Role-level homogeneous paid cohort mixed-source native damage; individual shooter identities unavailable; no whole mission claim"
+  },
+  "currentFixedWingPairStandardAir2Smoke": "native1074-fixedwing-pair-standard-air2-failure.json",
+  "currentAttackHeliDirectFireEffects": "native1076-attack-heli-combat-helipad-direct-fire-pass.json"
 }

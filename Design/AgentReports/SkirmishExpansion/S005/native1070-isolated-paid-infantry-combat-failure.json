@@ -1,0 +1,590 @@
+{
+  "result": "Failed",
+  "individualShooterRequired": false,
+  "homogeneousPaidCohortRequired": true,
+  "scope": "Isolated actual paid complete Rifle/Gunner/Marksman/Breacher/Rocketeer squads; native Touch selection, public native API Attack; raw exact-member or mixed-source damage events with complete homogeneous paid-cohort attribution and hostile HP loss. Actual opening hostile Infantry for Marksman/Breacher and Ground APC for Rifle/Gunner/Rocketeer; per-role exact native target/domain and position/health/visibility/retaliation setup disclosed. No vehicle/AntiAir/air/transport/domain-matrix/normal whole mission certificate.",
+  "sourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1080-apcfast-combat-post-source-manifest.json",
+  "preflightManifest": "final-1070-infantry-combat-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1070-infantry-combat-pre-dispatch-source-manifest.json",
+  "postManifest": "final-1070-infantry-combat-post-source-manifest.json",
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "log": "native-1070-isolated-paid-infantry-combat.log",
+  "logSha256": "6f7459f9e8350155b371152a2c354922fcc852d23e4743f50c756065b9c4926f",
+  "fixture": "native1070-infantry-combat-fixture.cs.txt",
+  "fixtureSha256": "c948d9b6ae65b3e7fdd1223e80e8392e69cd6e818c6ad3a82ff322454554200c",
+  "touchEvidence": "native1070-infantry-combat.touch.jsonl",
+  "touchSha256": "38327e4662df3d903118bc7d10c989868a0968e8a600c4497c5c376f84e0ca04",
+  "fundingInjected": true,
+  "readinessGranted": "FullArsenal",
+  "openingActorsRetiredExceptActualEnemyGroundAndInfantry": true,
+  "enemyStrategyDisabled": true,
+  "buildingDefenseSystemDisabled": true,
+  "otherDirectFireShootersRetiredOrSuppressed": true,
+  "deathStimulus": "HealthZero",
+  "ownActorPositionsOrSelectionTagsInjected": false,
+  "hostileTargetPositionInjected": true,
+  "hostileTargetHealthResetBeforeOrder": true,
+  "developmentFullVisionGranted": true,
+  "hostileRetaliationDisabled": true,
+  "weaponDamageRangePricesCapsInjected": false,
+  "shotsProjectilesDamageEventsOrResultsInjected": false,
+  "queueRequestedThroughNativeApi": true,
+  "selectionThroughNativeTouch": true,
+  "attackIssuedThroughPublicNativeApi": true,
+  "nativeDamageEvidence": "native1070-infantry-damage-events.jsonl",
+  "nativeDamageEvidenceSha256": "8dc0fce45021936581581a77d57e7b0e135259bdf946a8467041cf90dddcfaff",
+  "roleDamageEvents": [
+    {
+      "role": "Rifle",
+      "kind": "DirectFire",
+      "targetRole": "ApcArmored",
+      "targetDomain": "Ground",
+      "targetAllowedMask": 3,
+      "eventId": 1,
+      "frame": 1031,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 40,
+      "targetHealthAfter": 240,
+      "targetHealthBefore": 280,
+      "observedCurrentHealth": 240,
+      "reservation": 1001,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 915.9000244140625,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceEntityIsNull": true,
+      "completeHomogeneousPaidCohortVerified": true,
+      "targetExactNativeHostile": true,
+      "damageOrEventsInjected": false,
+      "attribution": "HomogeneousPaidCohortMixedNativeSources",
+      "cohortMembers": 4,
+      "eligibleDirectFireShooters": 4
+    },
+    {
+      "role": "Gunner",
+      "kind": "DirectFire",
+      "targetRole": "ApcArmored",
+      "targetDomain": "Ground",
+      "targetAllowedMask": 3,
+      "eventId": 2,
+      "frame": 1714,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 56,
+      "targetHealthAfter": 224,
+      "targetHealthBefore": 280,
+      "observedCurrentHealth": 224,
+      "reservation": 1002,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 915.2999877929688,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceEntityIsNull": true,
+      "completeHomogeneousPaidCohortVerified": true,
+      "targetExactNativeHostile": true,
+      "damageOrEventsInjected": false,
+      "attribution": "HomogeneousPaidCohortMixedNativeSources",
+      "cohortMembers": 4,
+      "eligibleDirectFireShooters": 4
+    },
+    {
+      "role": "Marksman",
+      "kind": "DirectFire",
+      "targetRole": "Rocketeer",
+      "targetDomain": "Infantry",
+      "targetAllowedMask": 1,
+      "eventId": 3,
+      "frame": 2495,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 940,
+      "targetVersion": 7,
+      "damageApplied": 64,
+      "targetHealthAfter": 26,
+      "targetHealthBefore": 90,
+      "observedCurrentHealth": 26,
+      "reservation": 1003,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 916.5,
+        "y": -0.012131994590163231,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceEntityIsNull": true,
+      "completeHomogeneousPaidCohortVerified": true,
+      "targetExactNativeHostile": true,
+      "damageOrEventsInjected": false,
+      "attribution": "HomogeneousPaidCohortMixedNativeSources",
+      "cohortMembers": 4,
+      "eligibleDirectFireShooters": 4
+    },
+    {
+      "role": "Breacher",
+      "kind": "DirectFire",
+      "targetRole": "Rocketeer",
+      "targetDomain": "Infantry",
+      "targetAllowedMask": 5,
+      "eventId": 4,
+      "frame": 3255,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 940,
+      "targetVersion": 7,
+      "damageApplied": 72,
+      "targetHealthAfter": 18,
+      "targetHealthBefore": 90,
+      "observedCurrentHealth": 18,
+      "reservation": 1004,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 914.0999755859375,
+        "y": -0.012131994590163231,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceEntityIsNull": true,
+      "completeHomogeneousPaidCohortVerified": true,
+      "targetExactNativeHostile": true,
+      "damageOrEventsInjected": false,
+      "attribution": "HomogeneousPaidCohortMixedNativeSources",
+      "cohortMembers": 4,
+      "eligibleDirectFireShooters": 4
+    },
+    {
+      "role": "Rocketeer",
+      "kind": "DirectFire",
+      "targetRole": "ApcArmored",
+      "targetDomain": "Ground",
+      "targetAllowedMask": 6,
+      "eventId": 5,
+      "frame": 3985,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 88,
+      "targetHealthAfter": 192,
+      "targetHealthBefore": 280,
+      "observedCurrentHealth": 192,
+      "reservation": 1005,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 916.5,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceEntityIsNull": true,
+      "completeHomogeneousPaidCohortVerified": true,
+      "targetExactNativeHostile": true,
+      "damageOrEventsInjected": false,
+      "attribution": "HomogeneousPaidCohortMixedNativeSources",
+      "cohortMembers": 4,
+      "eligibleDirectFireShooters": 4
+    }
+  ],
+  "diagnosticRows": [
+    {
+      "stage": "BeforeTouchSelection",
+      "role": "Rifle",
+      "frame": 964,
+      "phase": 4,
+      "targetIndex": 962,
+      "lastObservationEvent": 0
+    },
+    {
+      "stage": "ImmediatelyBeforePublicAttack",
+      "role": "Rifle",
+      "frame": 1020,
+      "phase": 11,
+      "targetIndex": 962,
+      "lastObservationEvent": 0
+    },
+    {
+      "stage": "AfterAcceptedPublicAttack",
+      "role": "Rifle",
+      "frame": 1020,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 0
+    },
+    {
+      "stage": "WaitingForNativeEffect",
+      "role": "Rifle",
+      "frame": 1020,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 0
+    },
+    {
+      "stage": "QualifiedNativeEffect",
+      "role": "Rifle",
+      "frame": 1036,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 1
+    },
+    {
+      "stage": "BeforeTouchSelection",
+      "role": "Gunner",
+      "frame": 1672,
+      "phase": 4,
+      "targetIndex": 962,
+      "lastObservationEvent": 1
+    },
+    {
+      "stage": "ImmediatelyBeforePublicAttack",
+      "role": "Gunner",
+      "frame": 1703,
+      "phase": 11,
+      "targetIndex": 962,
+      "lastObservationEvent": 1
+    },
+    {
+      "stage": "AfterAcceptedPublicAttack",
+      "role": "Gunner",
+      "frame": 1703,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 1
+    },
+    {
+      "stage": "WaitingForNativeEffect",
+      "role": "Gunner",
+      "frame": 1703,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 1
+    },
+    {
+      "stage": "QualifiedNativeEffect",
+      "role": "Gunner",
+      "frame": 1723,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 2
+    },
+    {
+      "stage": "BeforeTouchSelection",
+      "role": "Marksman",
+      "frame": 2462,
+      "phase": 4,
+      "targetIndex": 940,
+      "lastObservationEvent": 2
+    },
+    {
+      "stage": "ImmediatelyBeforePublicAttack",
+      "role": "Marksman",
+      "frame": 2486,
+      "phase": 11,
+      "targetIndex": 940,
+      "lastObservationEvent": 2
+    },
+    {
+      "stage": "AfterAcceptedPublicAttack",
+      "role": "Marksman",
+      "frame": 2486,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 2
+    },
+    {
+      "stage": "WaitingForNativeEffect",
+      "role": "Marksman",
+      "frame": 2486,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 2
+    },
+    {
+      "stage": "QualifiedNativeEffect",
+      "role": "Marksman",
+      "frame": 2495,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 3
+    },
+    {
+      "stage": "BeforeTouchSelection",
+      "role": "Breacher",
+      "frame": 3210,
+      "phase": 4,
+      "targetIndex": 940,
+      "lastObservationEvent": 3
+    },
+    {
+      "stage": "ImmediatelyBeforePublicAttack",
+      "role": "Breacher",
+      "frame": 3244,
+      "phase": 11,
+      "targetIndex": 940,
+      "lastObservationEvent": 3
+    },
+    {
+      "stage": "AfterAcceptedPublicAttack",
+      "role": "Breacher",
+      "frame": 3244,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 3
+    },
+    {
+      "stage": "WaitingForNativeEffect",
+      "role": "Breacher",
+      "frame": 3254,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 3
+    },
+    {
+      "stage": "QualifiedNativeEffect",
+      "role": "Breacher",
+      "frame": 3258,
+      "phase": 12,
+      "targetIndex": 940,
+      "lastObservationEvent": 4
+    },
+    {
+      "stage": "BeforeTouchSelection",
+      "role": "Rocketeer",
+      "frame": 3944,
+      "phase": 4,
+      "targetIndex": 962,
+      "lastObservationEvent": 4
+    },
+    {
+      "stage": "ImmediatelyBeforePublicAttack",
+      "role": "Rocketeer",
+      "frame": 3973,
+      "phase": 11,
+      "targetIndex": 962,
+      "lastObservationEvent": 4
+    },
+    {
+      "stage": "AfterAcceptedPublicAttack",
+      "role": "Rocketeer",
+      "frame": 3973,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 4
+    },
+    {
+      "stage": "WaitingForNativeEffect",
+      "role": "Rocketeer",
+      "frame": 3979,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 4
+    },
+    {
+      "stage": "QualifiedNativeEffect",
+      "role": "Rocketeer",
+      "frame": 3985,
+      "phase": 12,
+      "targetIndex": 962,
+      "lastObservationEvent": 5
+    },
+    {
+      "stage": "FinishBeforeCleanup",
+      "role": "None",
+      "frame": 4001,
+      "phase": 2,
+      "targetIndex": 962,
+      "lastObservationEvent": 5
+    }
+  ],
+  "allNewRawNativeDamageEvents": [
+    {
+      "role": "Rifle",
+      "kind": "DirectFire",
+      "eventId": 1,
+      "frame": 1031,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 40,
+      "targetHealthAfter": 240,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 915.9000244140625,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceIsNull": true,
+      "targetExactRetainedNativeHostile": true
+    },
+    {
+      "role": "Gunner",
+      "kind": "DirectFire",
+      "eventId": 2,
+      "frame": 1714,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 56,
+      "targetHealthAfter": 224,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 915.2999877929688,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceIsNull": true,
+      "targetExactRetainedNativeHostile": true
+    },
+    {
+      "role": "Marksman",
+      "kind": "DirectFire",
+      "eventId": 3,
+      "frame": 2495,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 940,
+      "targetVersion": 7,
+      "damageApplied": 64,
+      "targetHealthAfter": 26,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 916.5,
+        "y": -0.012131994590163231,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceIsNull": true,
+      "targetExactRetainedNativeHostile": true
+    },
+    {
+      "role": "Breacher",
+      "kind": "DirectFire",
+      "eventId": 4,
+      "frame": 3255,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 940,
+      "targetVersion": 7,
+      "damageApplied": 72,
+      "targetHealthAfter": 18,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 914.0999755859375,
+        "y": -0.012131994590163231,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceIsNull": true,
+      "targetExactRetainedNativeHostile": true
+    },
+    {
+      "role": "Rocketeer",
+      "kind": "DirectFire",
+      "eventId": 5,
+      "frame": 3985,
+      "sourceIndex": 0,
+      "sourceVersion": 0,
+      "targetIndex": 962,
+      "targetVersion": 13,
+      "damageApplied": 88,
+      "targetHealthAfter": 192,
+      "sourcePosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "targetPosition": {
+        "x": 916.5,
+        "y": 0.00917959213256836,
+        "z": 673.75
+      },
+      "sourceExactPaidMember": false,
+      "sourceIsNull": true,
+      "targetExactRetainedNativeHostile": true
+    }
+  ],
+  "diagnostics": "native1070-infantry-state.jsonl",
+  "diagnosticsSha256": "57029d8c546232dbc884c50e3b91ec6ed14b1172f8f4ad26f0c0376713e0d955",
+  "rawDamageEvidence": "native1070-all-new-damage-events.jsonl",
+  "rawDamageSha256": "d9894549f49b432d1c35f319dc300394c7629bd86e4a5cbdf58d0b14025bb369",
+  "targetSetupAfterNativeTouchSelection": true,
+  "targetDistanceInsideEveryMemberActualAndOverlayRange": true,
+  "ownOffensiveComponentWrites": false,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "antiAirHitCertified": false,
+  "visibilityIntelCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Malformed native damage-event evidence: 'cohort'"
+  ],
+  "nativeMarkers": [
+    "[S005InfantryCombat] scope=IsolatedPaidCompleteInfantryCohortNativeDamage normalMission=0 fundingInjected=1 readinessGranted=FullArsenal openingUnitsRetiredExceptNativeEnemyGroundAndInfantry=1 targetPositionHealthVisibilityRetaliationSetup=1 selectionTouch=1 attackPublicNativeApi=1 shotsProjectilesDamageEventsResultsInjected=0 otherShootersRetiredOrSuppressed=1 buildingDefenseDisabled=1 pricesCapsRatesMapsUnchanged=1",
+    "[S005InfantryNativeAttack] result=Accepted role=Rifle input=PublicNativeApi selectedMembers=4 exactTarget=Entity(962:13) eventBaseline=0 damageInjected=0 normalTouchAttackCertified=0",
+    "[S005InfantryNativeDamage] result=Passed role=Rifle event=1 source=Entity.Null paidReservation=1001 cohortMembers=4 soleEligibleDirectFireCohort=1 attribution=HomogeneousPaidCohortMixedNativeSources individualShooterCertified=0 target=Entity(962:13) kind=DirectFire damage=40 healthBefore=280 healthAfter=240 observedHealth=240 shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch",
+    "[S005InfantryNativeAttack] result=Accepted role=Gunner input=PublicNativeApi selectedMembers=4 exactTarget=Entity(962:13) eventBaseline=1 damageInjected=0 normalTouchAttackCertified=0",
+    "[S005InfantryNativeDamage] result=Passed role=Gunner event=2 source=Entity.Null paidReservation=1002 cohortMembers=4 soleEligibleDirectFireCohort=1 attribution=HomogeneousPaidCohortMixedNativeSources individualShooterCertified=0 target=Entity(962:13) kind=DirectFire damage=56 healthBefore=280 healthAfter=224 observedHealth=224 shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch",
+    "[S005InfantryNativeAttack] result=Accepted role=Marksman input=PublicNativeApi selectedMembers=4 exactTarget=Entity(940:7) eventBaseline=2 damageInjected=0 normalTouchAttackCertified=0",
+    "[S005InfantryNativeDamage] result=Passed role=Marksman event=3 source=Entity.Null paidReservation=1003 cohortMembers=4 soleEligibleDirectFireCohort=1 attribution=HomogeneousPaidCohortMixedNativeSources individualShooterCertified=0 target=Entity(940:7) kind=DirectFire damage=64 healthBefore=90 healthAfter=26 observedHealth=26 shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch",
+    "[S005InfantryNativeAttack] result=Accepted role=Breacher input=PublicNativeApi selectedMembers=4 exactTarget=Entity(940:7) eventBaseline=3 damageInjected=0 normalTouchAttackCertified=0",
+    "[S005InfantryNativeDamage] result=Passed role=Breacher event=4 source=Entity.Null paidReservation=1004 cohortMembers=4 soleEligibleDirectFireCohort=1 attribution=HomogeneousPaidCohortMixedNativeSources individualShooterCertified=0 target=Entity(940:7) kind=DirectFire damage=72 healthBefore=90 healthAfter=18 observedHealth=18 shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch",
+    "[S005InfantryNativeAttack] result=Accepted role=Rocketeer input=PublicNativeApi selectedMembers=4 exactTarget=Entity(962:13) eventBaseline=4 damageInjected=0 normalTouchAttackCertified=0",
+    "[S005InfantryNativeDamage] result=Passed role=Rocketeer event=5 source=Entity.Null paidReservation=1005 cohortMembers=4 soleEligibleDirectFireCohort=1 attribution=HomogeneousPaidCohortMixedNativeSources individualShooterCertified=0 target=Entity(962:13) kind=DirectFire damage=88 healthBefore=280 healthAfter=192 observedHealth=192 shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch",
+    "[S005InfantryCombatInput] dispatched=6 completed=6 acceptedCommands=0 violations=0",
+    "[S005InfantryCombat] result=Passed cases=5 normalInput=0 fullLifecycle=Pending selectionInput=Touch attackInput=PublicNativeApi damageEvidence=RuntimeEvents cohortAttribution=CompleteHomogeneousPaidSquad fullMovementTransportDomainMatrix=NotCertified reason=all5PaidInfantryCohortNativeDamageEffects",
+    "[S005InfantryCombatCleanup] result=Passed attemptsRemoved=1"
+  ]
+}

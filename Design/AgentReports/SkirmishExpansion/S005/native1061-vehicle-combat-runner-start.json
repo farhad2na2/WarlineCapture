@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1061",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1073-m3-countdown-rebind-integrated-source-manifest.json",
+  "preflightManifest": "final-1061-vehicle-combat-preflight-source-manifest.json",
+  "fixtureSha256": "82dd2e9a6774acc8cabb6730df87ea136d8c3689bb4d502da3cea193bbe6a5d0",
+  "validationMethod": "S005VehicleCombatEffects1061.RunValidation"
+}

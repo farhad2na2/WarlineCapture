@@ -67,5 +67,11 @@
       "restoreLine": 277
     },
     "scope": "Parent reported current serialized tier Mobile and Play pipeline switching. This evidence explains a possible in-memory write; persisted write caller still not proven. Mobile Android contract conflict remains; preserve files until intentionally resolved."
+  },
+  "ownerClarification": {
+    "hudMaterialAndFontChanges": "Owner confirms intentional; preserved and pushed in7ba2ebb27",
+    "originalMobileMsaa4Change": "Owner confirms intentional original change, then explicitly chooses Keep MSAA disabled after repair/contract explanation",
+    "acceptedCurrentMobileContract": "Explicit existing accepted Mobile pipeline, antiAliasing0 / asset sample1",
+    "initiatingWriter": "Still not inferred from intentionality confirmation"
   }
 }

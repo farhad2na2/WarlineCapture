@@ -1,0 +1,107 @@
+import hashlib,json,pathlib,re,sys
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+OUTPUT=REPORT/'native1070-offline-cohort-schema-evaluation-v2-20261011.json'
+EXPECTED_FIXTURE='c948d9b6ae65b3e7fdd1223e80e8392e69cd6e818c6ad3a82ff322454554200c'
+ROLES=['Rifle','Gunner','Marksman','Breacher','Rocketeer']
+MASKS=dict(zip(ROLES,[3,3,1,5,6]))
+errors=[]
+def require(ok,message):
+    if not ok:errors.append(message)
+def read(name):return (REPORT/name).read_text()
+def load(name):return json.loads(read(name))
+def lines(name):return [json.loads(line) for line in read(name).splitlines() if line.strip()]
+def sha(name):return hashlib.sha256((REPORT/name).read_bytes()).hexdigest()
+def kv(line):return dict(re.findall(r'(\w+)=([^ ]+)',line))
+def entity(text):
+    match=re.fullmatch(r'Entity\((\d+):(\d+)\)',text)
+    if not match:raise ValueError('Malformed real target entity '+text)
+    return tuple(map(int,match.groups()))
+def one(prefix,role=None):
+    matches=[(i,line) for i,line in enumerate(log_lines) if line.startswith(prefix) and (role is None or kv(line).get('role')==role)]
+    require(len(matches)==1,'Expected exactly one native marker '+prefix+' '+str(role))
+    if len(matches)!=1:raise ValueError('Missing/duplicate marker')
+    return matches[0][0],kv(matches[0][1])
+if OUTPUT.exists():raise RuntimeError('Preserve existing unique offline evaluation')
+original=load('native1070-isolated-paid-infantry-combat-failure.json')
+log_name='native-1070-isolated-paid-infantry-combat.log'
+touch_name='native1070-infantry-combat.touch.jsonl'
+effect_name='native1070-infantry-damage-events.jsonl'
+raw_name='native1070-all-new-damage-events.jsonl'
+diag_name='native1070-infantry-state.jsonl'
+fixture_name='native1070-infantry-combat-fixture.cs.txt'
+log_lines=read(log_name).splitlines()
+case_results=[]
+try:
+    require(original['result']=='Failed' and original['errors']==["Malformed native damage-event evidence: 'cohort'"],'Original failure must be exact nested-schema parser error only')
+    require(original['actualWrapperExit']==0 and original['nativeBridgeExit']==0,'Original wrapper/native must pass')
+    require(read(log_name+'.exit').strip()=='0' and read(log_name+'.wrapper-exit').strip()=='0','Actual completion receipts must be0')
+    require(sha(log_name)==original['logSha256'] and sha(touch_name)==original['touchSha256'],'Original log/Touch hashes changed')
+    require(sha(effect_name)==original['nativeDamageEvidenceSha256'],'Original native effect evidence hash changed')
+    require(sha(fixture_name)==EXPECTED_FIXTURE==original['fixtureSha256'],'Exact executed native cohort audit fixture differs')
+    fixture=read(fixture_name)
+    # Exact hash is authoritative; these checks make runtime audit applicability visible to reviewers.
+    for required in ['owner.FactionId!=1','owner.SessionId.Equals(attempt)','owner.ReservationId!=receiptId','role.Role!=roles[index].RoleKind','role.Category!=SkirmishPopulationCategory.Infantry','if(!members.Contains(actor))throw','if(eligibleCohortShooters!=members.Count)throw','var auditedCohort=AuditCompletePaidCohort(em);','AuditCompletePaidCohort(em);\n            PrepareTargetImmediatelyBeforeAttack(em);']:
+        require(required in fixture,'Actual executed fixture lacks complete native homogeneous cohort audit: '+required)
+    manifests=[load(original[key]) for key in ['preManifest','preflightManifest','preDispatchManifest','postManifest']]
+    require(original['fullSourceUnchanged'] and all(v==manifests[0] for v in manifests),'Original full source manifests differ')
+    fingerprint=load(original['postManifest'].replace('-source-manifest.json','-independent-fingerprint.json'))
+    require(fingerprint['sourceHash']==original['sourceHash'],'Original source fingerprint mismatch')
+    require(not any('[S005InfantryCombat] result=Failed' in line for line in log_lines),'Native failure marker present')
+    _,ending=one('[S005InfantryCombat] result=Passed ')
+    require(ending.get('cases')=='5' and ending.get('normalInput')=='0' and ending.get('cohortAttribution')=='CompleteHomogeneousPaidSquad','Native grouped result marker malformed')
+    one('[S005InfantryCombatCleanup] result=Passed attemptsRemoved=1')
+    _,contact=one('[S005InfantryCombatInput] ')
+    require(int(contact['dispatched'])>0 and contact['dispatched']==contact['completed'] and contact['acceptedCommands']=='0' and contact['violations']=='0','Selection-only Touch completion/audit failed')
+    touches=lines(touch_name)
+    require(bool(touches) and all(row['receiptViolations']==0 and row['unexpected']==0 and row['interventions']==0 and row['acceptedCommands']==0 for row in touches),'Any native Touch row has violation or undisclosed native orders')
+    require(len({(row['device'],row['generation']) for row in touches})==1,'Native Touch ownership changed')
+    require(touches[-1]['completed']==int(contact['completed']) and touches[-1]['dispatched']==int(contact['dispatched']),'Touch final contact counts mismatch summary')
+    require(sum(row['kind']=='Ended' for row in touches)==int(contact['completed']),'Actual completed Touch endpoints missing')
+    events=lines(effect_name);raw=lines(raw_name);diagnostics=lines(diag_name)
+    require([row['role'] for row in events]==ROLES and [row['role'] for row in raw]==ROLES,'Actual ordered role/raw event coverage differs')
+    require(len([line for line in log_lines if line.startswith('[S005InfantryNativeAttack] result=Accepted ')])==5,'Expected exactly five separately accepted API attacks')
+    prior_event=0;prior_reservation=0
+    for event,native_raw in zip(events,raw):
+        role=event['role'];expected_domain='Infantry' if role in ['Marksman','Breacher'] else 'Ground'
+        qi,queue=one('[S005InfantryPaidQueueCase] ',role)
+        si,selection=one('[S005InfantryNativeSelection] result=Passed ',role)
+        ti,target=one('[S005InfantryTargetCase] ',role)
+        ai,attack=one('[S005InfantryNativeAttack] result=Accepted ',role)
+        di,damage=one('[S005InfantryNativeDamage] result=Passed ',role)
+        xi,death=one('[S005InfantryPaidQueueDeath] result=Passed ',role)
+        _,isolation=one('[S005InfantryOtherShooters] ',role)
+        require(qi<si<ti<ai<di<xi,'Actual paid selection/setup/attack/effect/death chronology wrong: '+role)
+        require(queue['delivered']=='4' and int(queue['paid'])>0 and int(queue['producer'])>0 and queue['nativeQueue']=='1' and queue['syntheticSpawn']=='0','Native paid producer delivery malformed: '+role)
+        require(selection['members']=='4' and selection['input']=='Touch' and selection['selectionInjected']=='0' and selection['completePaidSquad']=='1','Complete actual native Touch squad selection missing: '+role)
+        require(isolation['buildingDefenseSystemDisabled']=='1' and isolation['openingUnitsRetired']=='1' and isolation['targetRetaliationDisabled']=='1','Homogeneous native shooter isolation missing: '+role)
+        require(target['targetDomain']==expected_domain and int(target['targetAllowedMask'])==MASKS[role] and target['everyMemberInsideActualRange']=='1' and target['targetSetupAfterTouchSelection']=='1' and target['ownOffensiveComponentsChanged']=='0','Native target domain/range/setup proof differs: '+role)
+        require(float(target['distance'])>0 and float(target['distance'])<float(target['minActualOverlayRange']),'Native target outside actual cohort range: '+role)
+        target_pair=entity(target['target'])
+        require(entity(attack['exactTarget'])==target_pair and attack['selectedMembers']=='4' and attack['input']=='PublicNativeApi' and attack['normalTouchAttackCertified']=='0','Actual accepted API attack/target mismatch: '+role)
+        stages=[row for row in diagnostics if row['role']==role]
+        bystage={stage:[row for row in stages if row['stage']==stage] for stage in ['BeforeTouchSelection','ImmediatelyBeforePublicAttack','AfterAcceptedPublicAttack','QualifiedNativeEffect']}
+        require(all(len(items)==1 for items in bystage.values()),'Native stage evidence missing/duplicate: '+role)
+        attack_frame=bystage['AfterAcceptedPublicAttack'][0]['frame']
+        require(bystage['BeforeTouchSelection'][0]['frame']<=bystage['ImmediatelyBeforePublicAttack'][0]['frame']==attack_frame<=event['frame']<=bystage['QualifiedNativeEffect'][0]['frame'],'Native frame chronology mismatch: '+role)
+        require(bystage['QualifiedNativeEffect'][0]['lastObservationEvent']>=event['eventId'],'Actual observation singleton did not contain qualified event: '+role)
+        require(all(row['targetIndex']==target_pair[0] for row in stages),'Native diagnostic target mismatch: '+role)
+        require(event['eventId']>prior_event and event['eventId']>int(attack['eventBaseline']) and event['frame']>=attack_frame and event['reservation']>prior_reservation,'New actual event/reservation chronology failed: '+role)
+        require(event['kind']=='DirectFire' and event['damageApplied']>0 and event['targetHealthBefore']-event['targetHealthAfter']==event['damageApplied'] and 0<event['observedCurrentHealth']<=event['targetHealthAfter']<event['targetHealthBefore'],'Actual runtime damage/HP conservation failed: '+role)
+        require(event['targetExactNativeHostile'] and not event['damageOrEventsInjected'] and (event['targetIndex'],event['targetVersion'])==target_pair and event['targetDomain']==expected_domain and event['targetAllowedMask']==MASKS[role] and event['targetRole']==target['targetRole'],'Actual legal native target attribution mismatch: '+role)
+        require(event['sourceEntityIsNull'] and not event['sourceExactPaidMember'] and event['sourceIndex']==event['sourceVersion']==0 and event['attribution']=='HomogeneousPaidCohortMixedNativeSources','Native mixed-source schema changed; no invented exact shooter: '+role)
+        require(event['completeHomogeneousPaidCohortVerified'] and event['cohortMembers']==event['eligibleDirectFireShooters']==4 and 'cohort' not in event,'Native complete homogeneous cohort count/schema differs: '+role)
+        require(damage['source']=='Entity.Null' and damage['cohortMembers']=='4' and damage['soleEligibleDirectFireCohort']=='1' and damage['individualShooterCertified']=='0' and damage['attribution']==event['attribution'] and entity(damage['target'])==target_pair,'Native runtime cohort audit log mismatch: '+role)
+        for key,event_key in [('event','eventId'),('paidReservation','reservation'),('damage','damageApplied'),('healthBefore','targetHealthBefore'),('healthAfter','targetHealthAfter'),('observedHealth','observedCurrentHealth')]:require(int(damage[key])==event[event_key],'Actual native damage log/JSON mismatch '+role+':'+key)
+        for key in ['role','kind','eventId','frame','sourceIndex','sourceVersion','targetIndex','targetVersion','damageApplied','targetHealthAfter','sourcePosition','targetPosition']:require(native_raw[key]==event[key],'Raw native event/effect row mismatch '+role+':'+key)
+        require(native_raw['sourceIsNull'] and not native_raw['sourceExactPaidMember'] and native_raw['targetExactRetainedNativeHostile'],'Actual raw homogeneous cohort attribution differs: '+role)
+        require(death['capacityReleased']=='1' and death['idempotent']=='1' and death['stimulus']=='HealthZero','Native lifecycle/death proof missing: '+role)
+        case_results.append(dict(role=role,actualNativeEvent=event,actualPaidProducer=queue,actualTargetSetup=target,actualAttack=attack,runtimeHomogeneousCohortChecked=True,eligibleCohortMembers=4,individualShooterCertified=False,serializedMemberIdsAvailable=False))
+        prior_event=event['eventId'];prior_reservation=event['reservation']
+except (OSError,ValueError,KeyError,TypeError,IndexError) as exception:
+    errors.append('Fail-closed evaluator error: '+str(exception))
+artifact_names=[log_name,log_name+'.exit',log_name+'.wrapper-exit',touch_name,effect_name,raw_name,diag_name,fixture_name,'native1070-isolated-paid-infantry-combat-failure.json']
+proof=dict(result='Failed' if errors else 'PassedScopedIsolatedPaidInfantryCohortEffectsOfflineSchemaCorrection',sameClosedNativeRun=True,newUnityExecution=False,sourceHash=original.get('sourceHash'),fullSourceUnchanged=original.get('fullSourceUnchanged'),originalFailurePreserved=True,firstOfflineEvaluationPreserved=True,firstOfflineFailure='native1070-offline-cohort-schema-evaluation-20261011.json',observerFrameSemantics='Event frame is native simulation frame; Editor observer can run later. Require attackFrame<=eventFrame<=observerFrame and observer LastEventId>=actual event, not invented same-frame equality.',originalFailureProof='native1070-isolated-paid-infantry-combat-failure.json',correctedError="Offline parser expected omitted nested 'cohort'; evaluator uses real primitive native events/counts plus exact executed runtime homogeneous-cohort audit, log/stage/Touch/source checks. Missing fields never fabricated.",scope='Five actual paid complete infantry-role native damage effects. Raw SourceEntity=null retained; role-level attribution established by exact successfully executed fixture enforcing all four live paid role/reservation/ownership members as global sole eligible DirectFire cohort before order and observation, corroborated by primitive native count/event logs. Touch selection; public API Attack. Isolated setup disclosed. No individual shooter or normal whole mission certificate.',memberIdsPersisted=False,perMemberTransformOrShotCounterPersisted=False,nativeRuntimeCohortAuditPassed=not errors,individualShooterCertified=False,normalMissionCertified=False,playerReady=False,fundingAndReadinessInjected=True,hostileTargetPositionHealthVisibilityRetaliationSetup=True,otherShootersSuppressed=True,deathStimulus='HealthZero',roleCases=case_results,artifactSha256={name:sha(name) for name in artifact_names},evaluatorSha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),errors=errors)
+with OUTPUT.open('x') as output:output.write(json.dumps(proof,indent=2)+'\n')
+print(json.dumps(dict(proof=str(OUTPUT),result=proof['result'],cases=len(case_results),errors=errors)))
+sys.exit(3 if errors else 0)

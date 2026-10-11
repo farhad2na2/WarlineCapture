@@ -1,0 +1,32 @@
+{
+  "mission": "saga.ch01.m04.airlift",
+  "nativeRun": 1080,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "scope": "T7 older runtime with exact reviewed M1+M3 UI changes, not whole-current-main certification",
+  "wrapperExit": 0,
+  "nativeVictoryResultCampaignReturn": "Passed both locales",
+  "initialSpecialistSelection": "Real normal visible world group drag, four specialists",
+  "transferSpecialistSelection": "Real normal visible world group drag, four specialists",
+  "APCAndHelicopterPassengerGates": "Actual all four passengers before continuation",
+  "normalInputAudit": {
+    "completed": 30,
+    "expected": 30,
+    "unexpected": 0,
+    "interventions": 0,
+    "maximumStaleCueSeconds": 0,
+    "fullJourneyStrictTouchAudit": false
+  },
+  "qaOnlyInputFixture": "Clone InputSettings IgnoreFocus/AllDeviceInputAlwaysGoesToGameView + runInBackground during validation; exact originals restored in Finish",
+  "sourcePrePost": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448",
+  "closedEditor": {
+    "playing": false,
+    "compiling": false,
+    "qa": false,
+    "background": "ResetAndDisableNonBackgroundDevices",
+    "editorRoute": "PointersAndKeyboardsRespectGameViewFocus",
+    "runInBackground": true
+  }
+}

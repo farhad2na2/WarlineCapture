@@ -1,0 +1,16 @@
+{
+  "result": "ScopedIntegrationCompilerPassedNativePending",
+  "beforeSourceHash": "07d203b5d9ebfb2ccd7bbaaecf1702614d0ac4c2f3e483b1b7a8e19614355e1c",
+  "afterSourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
+  "modified": [
+    "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs",
+    "Assets/Game/Scripts/UI/Contracts/IMatchRuntimeUi.cs",
+    "Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs"
+  ],
+  "added": [],
+  "removed": [],
+  "materialsUnchanged": true,
+  "physicalMapsAndGameplayBudgetsUnchanged": true,
+  "nativeCountdownRegressionPending": true,
+  "scope": "Restore genuinely lost persistent defense-header binding while preserving legitimate surface suppression; no native pass claimed by compilation."
+}

@@ -1,0 +1,379 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// Isolated native pipeline fixture. Never counted as normal-input mission acceptance.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005InfantryCombatEffects1070
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session,boundary,hostileTarget,observationQueue,retainedGroundTarget,retainedInfantryTarget;
+    static readonly Dictionary<Entity,LocalTransform> retainedTransforms=new();
+    static readonly Dictionary<Entity,UnitGrid> retainedGrids=new();
+    static SkirmishPopulationCategory targetCategory;
+    static LocalTransform hostileOriginalTransform;
+    static UnitGrid hostileOriginalGrid;
+    static int eventBaseline, attackFrame, targetHealthBefore;
+    static int eligibleCohortShooters;
+    static readonly string effectPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1070-infantry-damage-events.jsonl";
+    [Serializable] struct NativeDamageRow { public string role,kind,targetRole,targetDomain;public int targetAllowedMask; public int eventId,frame,sourceIndex,sourceVersion,targetIndex,targetVersion,damageApplied,targetHealthAfter,targetHealthBefore,observedCurrentHealth; public uint reservation; public Vector3 sourcePosition,targetPosition; public bool sourceExactPaidMember,sourceEntityIsNull,completeHomogeneousPaidCohortVerified,targetExactNativeHostile,damageOrEventsInjected; public string attribution;public int cohortMembers,eligibleDirectFireShooters;public CohortMemberRow[] cohort; }
+    [Serializable] struct CohortMemberRow { public int index,version,health;public uint reservation;public string role; }
+    static CohortMemberRow[] AuditCompletePaidCohort(EntityManager em)
+    {
+        var cohort=new CohortMemberRow[members.Count];
+        for(int i=0;i<members.Count;i++)
+        {
+            var member=members[i];
+            if(!em.Exists(member)||!em.HasComponent<UnitAttack>(member)||!em.HasComponent<UnitCombat>(member)||em.GetComponentData<UnitCombat>(member).CanAttack==0||em.GetComponentData<UnitHealth>(member).Current<=0)throw new InvalidOperationException("Paid cohort member is not an ordinary live armed native infantry actor.");
+            var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(member);var role=em.GetComponentData<SkirmishUnitRoleComponent>(member);
+            if(owner.FactionId!=1||!owner.SessionId.Equals(attempt)||owner.ReservationId!=receiptId||owner.CapacityReleased!=0||role.Role!=roles[index].RoleKind||role.Category!=SkirmishPopulationCategory.Infantry)throw new InvalidOperationException("Mixed role/reservation/ownership in paid infantry cohort.");
+            cohort[i]=new CohortMemberRow{index=member.Index,version=member.Version,health=em.GetComponentData<UnitHealth>(member).Current,reservation=owner.ReservationId,role=role.Role.ToString()};
+        }
+        eligibleCohortShooters=0;
+        using var q=em.CreateEntityQuery(typeof(UnitAttack),typeof(UnitHealth));using var actors=q.ToEntityArray(Allocator.Temp);
+        foreach(var actor in actors)
+        {
+            if(em.GetComponentData<UnitHealth>(actor).Current<=0||em.HasComponent<StaticGridBlocker>(actor)||em.HasComponent<CampaignMissionCombatSuppressedTag>(actor)||em.HasComponent<SupportPassengerTransitTag>(actor)||em.HasComponent<UnitDeathAnimationComponent>(actor)||em.HasComponent<Disabled>(actor)||em.HasComponent<AirMissileLauncherComponent>(actor)||em.HasComponent<UnitCombat>(actor)&&em.GetComponentData<UnitCombat>(actor).CanAttack==0)continue;
+            if(!members.Contains(actor))throw new InvalidOperationException("Another eligible native DirectFire shooter invalidates homogeneous cohort attribution: "+actor);
+            eligibleCohortShooters++;
+        }
+        if(eligibleCohortShooters!=members.Count)throw new InvalidOperationException("Complete paid cohort does not match global eligible native DirectFire shooter set.");
+        return cohort;
+    }
+    static void SuppressOtherDirectFireActors(EntityManager em)
+    {
+        int disabled=0;using var q=em.CreateEntityQuery(typeof(UnitAttack),typeof(UnitHealth));using var actors=q.ToEntityArray(Allocator.Temp);
+        foreach(var actor in actors){if(actor==retainedGroundTarget||actor==retainedInfantryTarget||members.Contains(actor)||em.GetComponentData<UnitHealth>(actor).Current<=0)continue;if(!em.HasComponent<CampaignMissionCombatSuppressedTag>(actor)){em.AddComponent<CampaignMissionCombatSuppressedTag>(actor);disabled++;}}
+        Debug.Log("[S005InfantryOtherShooters] role="+roles[index].RoleKind+" additionalDirectFireActorsSuppressed="+disabled+" buildingDefenseSystemDisabled=1 openingUnitsRetired=1 targetRetaliationDisabled=1 setupDisclosed=1");
+    }
+    static readonly string diagnosticPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1070-infantry-state.jsonl";
+    static readonly string rawPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1070-all-new-damage-events.jsonl";
+    static int rawLastEvent;static double diagnosticDue;
+    [Serializable] struct ActorDiagnostic { public int index,version;public string health,attack,combat,grid,move,intent,transform,engage,cooldown,trace,policy; }
+    [Serializable] struct DiagnosticRow { public string stage,role;public int frame,phase,targetIndex,lastObservationEvent;public ActorDiagnostic[] cohort;public ActorDiagnostic target; }
+    [Serializable] struct RawEventRow { public string role,kind;public int eventId,frame,sourceIndex,sourceVersion,targetIndex,targetVersion,damageApplied,targetHealthAfter;public Vector3 sourcePosition,targetPosition;public bool sourceExactPaidMember,sourceIsNull,targetExactRetainedNativeHostile; }
+    static string Read<T>(EntityManager em,Entity actor) where T:unmanaged,IComponentData => em.Exists(actor)&&em.HasComponent<T>(actor)?JsonUtility.ToJson(em.GetComponentData<T>(actor)):"Absent";
+    static ActorDiagnostic ReadActor(EntityManager em,Entity actor)=>new ActorDiagnostic{index=actor.Index,version=actor.Version,health=Read<UnitHealth>(em,actor),attack=Read<UnitAttack>(em,actor),combat=Read<UnitCombat>(em,actor),grid=Read<UnitGrid>(em,actor),move=Read<UnitMove>(em,actor),intent=Read<UnitTarget>(em,actor),transform=Read<LocalTransform>(em,actor),engage=Read<EngageTarget>(em,actor),cooldown=Read<UnitAttackCooldownComponent>(em,actor),trace=Read<UnitAttackTraceComponent>(em,actor),policy=Read<CombatTargetPolicy>(em,actor)};
+    static void ObserveAllNewDamage(EntityManager em)
+    {
+        if(observationQueue==Entity.Null||!em.Exists(observationQueue)||!em.HasBuffer<CombatDamageObservationElement>(observationQueue))return;
+        var events=em.GetBuffer<CombatDamageObservationElement>(observationQueue,true);
+        foreach(var o in events)
+        {
+            if(o.EventId<=rawLastEvent)continue;
+            var row=new RawEventRow{role=roles!=null&&index<roles.Length?roles[index].RoleKind.ToString():"None",kind=o.SourceKind.ToString(),eventId=o.EventId,frame=o.Frame,sourceIndex=o.SourceEntity.Index,sourceVersion=o.SourceEntity.Version,targetIndex=o.TargetEntity.Index,targetVersion=o.TargetEntity.Version,damageApplied=o.DamageApplied,targetHealthAfter=o.TargetHealthAfter,sourcePosition=(Vector3)o.SourceWorldPosition,targetPosition=(Vector3)o.TargetWorldPosition,sourceExactPaidMember=members.Contains(o.SourceEntity),sourceIsNull=o.SourceEntity==Entity.Null,targetExactRetainedNativeHostile=o.TargetEntity==hostileTarget};
+            File.AppendAllText(rawPath,JsonUtility.ToJson(row)+"\n");Debug.Log("[S005InfantryRawDamage] "+JsonUtility.ToJson(row));rawLastEvent=o.EventId;
+        }
+    }
+    static void ObserveDiagnostic(EntityManager em,string stage)
+    {
+        ObserveAllNewDamage(em);var cohort=new ActorDiagnostic[members.Count];for(int i=0;i<members.Count;i++)cohort[i]=ReadActor(em,members[i]);
+        var row=new DiagnosticRow{stage=stage,role=roles!=null&&index<roles.Length?roles[index].RoleKind.ToString():"None",frame=Time.frameCount,phase=phase,targetIndex=hostileTarget.Index,cohort=cohort,target=ReadActor(em,hostileTarget),lastObservationEvent=observationQueue!=Entity.Null&&em.Exists(observationQueue)?em.GetComponentData<CombatDamageObservationQueueComponent>(observationQueue).LastEventId:0};
+        File.AppendAllText(diagnosticPath,JsonUtility.ToJson(row)+"\n");Debug.Log("[S005InfantryDiagnostic] "+JsonUtility.ToJson(row));
+    }
+    static void PrepareTargetImmediatelyBeforeAttack(EntityManager em)
+    {
+        if(!em.Exists(hostileTarget)||em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Native target died before public Attack; no revival fallback.");
+        float minRange=roles[index].RangeWorld;float3 center=float3.zero;
+        foreach(var member in members){var attack=em.GetComponentData<UnitAttack>(member);if(attack.Range<=0)throw new InvalidOperationException("Paid infantry actual native range is zero.");minRange=math.min(minRange,attack.Range);center+=em.GetComponentData<LocalTransform>(member).Position;}center/=members.Count;
+        float distance=math.min(minRange*.3f,6f);if(distance<=1f)throw new InvalidOperationException("Actual/overlay minimum range cannot support bounded native target setup.");
+        var targetTransform=hostileOriginalTransform;targetTransform.Position=center+new float3(distance,0,0);
+        foreach(var member in members){float actual=em.GetComponentData<UnitAttack>(member).Range;float d=math.distance(em.GetComponentData<LocalTransform>(member).Position.xz,targetTransform.Position.xz);if(d>=math.min(actual,roles[index].RangeWorld)*.95f)throw new InvalidOperationException("Target setup cannot put complete native cohort inside actual/overlay ranges without moving own actors.");}
+        using var grids=em.CreateEntityQuery(typeof(GridConfig));if(grids.CalculateEntityCount()!=1)throw new InvalidOperationException("Native grid singleton unavailable.");var grid=grids.GetSingleton<GridConfig>();var cell=GridUtils.WorldToCell(grid,targetTransform.Position);if(!GridUtils.InBounds(cell,grid.Width,grid.Height))throw new InvalidOperationException("Hostile target setup exceeds Campaign grid.");
+        // Target-only setup and baseline are synchronous in the same native callback, immediately before API Attack.
+        SkirmishWorldMovementService.ClearIntent(em,hostileTarget);var health=em.GetComponentData<UnitHealth>(hostileTarget);health.Current=health.Max;em.SetComponentData(hostileTarget,health);em.SetComponentData(hostileTarget,targetTransform);var targetGrid=hostileOriginalGrid;targetGrid.Cell=cell;em.SetComponentData(hostileTarget,targetGrid);SkirmishFogService.Reveal(em,hostileTarget);
+        ObserveDiagnostic(em,"ImmediatelyBeforePublicAttack");
+        Debug.Log("[S005InfantryTargetCase] role="+roles[index].RoleKind+" target="+hostileTarget+" targetRole="+em.GetComponentData<SkirmishUnitRoleComponent>(hostileTarget).Role+" targetDomain="+targetCategory+" targetAllowedMask="+(int)roles[index].TargetDomains+" minActualOverlayRange="+minRange+" distance="+distance+" everyMemberInsideActualRange=1 targetSetupAfterTouchSelection=1 ownOffensiveComponentsChanged=0 targetHealthResetBeforeOrder=1 hostilePositionInjected=1 ownPositionInjected=0 visibilityGrantedForTechnicalCase=1 mapOrClearanceCertified=0");
+    }
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem,buildingDefenseSystem;
+    static bool buildingDefenseEnabled,changedBuildingDefense;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, index, requestId;
+    static uint receiptId, precedingReceipt;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1070-infantry-combat.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, commandBaseline;
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath)||File.Exists(effectPath)||File.Exists(diagnosticPath)||File.Exists(rawPath))throw new InvalidOperationException("Preserve existing native Touch/effect evidence");File.WriteAllText(touchPath,"");File.WriteAllText(effectPath,"");File.WriteAllText(diagnosticPath,"");File.WriteAllText(rawPath,"");rawLastEvent=0;diagnosticDue=0;members.Clear();
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=changedBuildingDefense=false;results.Clear();world=null;
+        deadline=EditorApplication.timeSinceStartup+600;next=0;hostileTarget=observationQueue=retainedGroundTarget=retainedInfantryTarget=Entity.Null;retainedTransforms.Clear();retainedGrids.Clear();
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch; touch=null; inputFrame=-1;
+        Debug.Log("[S005InfantryCombat] scope=IsolatedPaidCompleteInfantryCohortNativeDamage normalMission=0 fundingInjected=1 readinessGranted=FullArsenal openingUnitsRetiredExceptNativeEnemyGroundAndInfantry=1 targetPositionHealthVisibilityRetaliationSetup=1 selectionTouch=1 attackPublicNativeApi=1 shotsProjectilesDamageEventsResultsInjected=0 otherShootersRetiredOrSuppressed=1 buildingDefenseDisabled=1 pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005InfantryCombatCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=InputFrame;
+                completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Paid infantry combat fixture exceeded600seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var wanted in new[]{SkirmishRoleKind.Rifle,SkirmishRoleKind.Gunner,SkirmishRoleKind.Marksman,SkirmishRoleKind.Breacher,SkirmishRoleKind.Rocketeer})
+                    foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId)&&r.RoleKind==wanted&&r.Producer==SkirmishProducerKind.Barracks)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=5)throw new InvalidOperationException("Expected5 complete paid infantry roles, found "+roles.Length);
+                attempt=state.SessionId;
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                buildingDefenseSystem=world.Unmanaged.GetExistingUnmanagedSystem<BuildingDefenseAttackSystem>();
+                if(buildingDefenseSystem!=SystemHandle.Null){buildingDefenseEnabled=world.Unmanaged.ResolveSystemStateRef(buildingDefenseSystem).Enabled;world.Unmanaged.ResolveSystemStateRef(buildingDefenseSystem).Enabled=false;changedBuildingDefense=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))
+                {
+                    foreach(var actor in actors)
+                    {
+                        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                        if(owner.FactionId!=2||!owner.SessionId.Equals(attempt)||owner.CapacityReleased!=0||em.GetComponentData<UnitHealth>(actor).Current<=0||!em.HasComponent<SkirmishSharedActorTag>(actor))continue;
+                        var nativeRole=em.GetComponentData<SkirmishUnitRoleComponent>(actor);
+                        if(retainedGroundTarget==Entity.Null&&nativeRole.Role==SkirmishRoleKind.ApcArmored&&nativeRole.Category==SkirmishPopulationCategory.Ground)retainedGroundTarget=actor;
+                        if(retainedInfantryTarget==Entity.Null&&nativeRole.Category==SkirmishPopulationCategory.Infantry)retainedInfantryTarget=actor;
+                    }
+                    if(retainedGroundTarget==Entity.Null||retainedInfantryTarget==Entity.Null)throw new InvalidOperationException("Actual opening hostile Ground APC and Infantry targets required; no synthetic target fallback.");
+                    foreach(var actor in actors)if(actor!=retainedGroundTarget&&actor!=retainedInfantryTarget)Kill(em,actor);
+                }
+                foreach(var target in new[]{retainedGroundTarget,retainedInfantryTarget})
+                {
+                    retainedTransforms.Add(target,em.GetComponentData<LocalTransform>(target));retainedGrids.Add(target,em.GetComponentData<UnitGrid>(target));
+                    SkirmishWorldMovementService.ClearIntent(em,target);
+                    var targetCombat=em.GetComponentData<UnitCombat>(target);targetCombat.CanAttack=0;targetCombat.AutoEngage=0;em.SetComponentData(target,targetCombat);
+                    if(!em.HasComponent<HoldPositionOrderTag>(target))em.AddComponent<HoldPositionOrderTag>(target);
+                }
+                var fog=em.GetComponentData<SkirmishFogStateComponent>(session);fog.DevelopmentFullVision=1;em.SetComponentData(session,fog);
+                using(var observations=em.CreateEntityQuery(typeof(CombatDamageObservationQueueComponent)))
+                {
+                    if(observations.CalculateEntityCount()!=1)throw new InvalidOperationException("Native damage observation singleton unavailable.");
+                    observationQueue=observations.GetSingletonEntity();
+                }
+                if(!em.HasBuffer<CombatDamageObservationElement>(observationQueue))throw new InvalidOperationException("Native observation buffer unavailable; test must not create/append it.");
+                Debug.Log("[S005InfantryHostileSetup] source=ActualOpeningEnemyGroundAndInfantry groundTarget="+retainedGroundTarget+" infantryTarget="+retainedInfantryTarget+" targetCanAttackDisabled=1 developmentFullVisionGranted=1 syntheticTargetSpawn=0 maxHealthOrDomainChanged=0");
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"all5PaidInfantryCohortNativeDamageEffects");return;}
+                var role=roles[index];
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))throw new InvalidOperationException("Functional producer missing: "+role.RoleKind);
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005InfantryPaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                if(members.Count!=Math.Max(1,roles[index].SquadMembers)||members.Count<2)throw new InvalidOperationException("Infantry subgroup requires every member of the actual paid squad, not individual picking.");
+                targetCategory=roles[index].RoleKind is SkirmishRoleKind.Marksman or SkirmishRoleKind.Breacher?SkirmishPopulationCategory.Infantry:SkirmishPopulationCategory.Ground;
+                hostileTarget=targetCategory==SkirmishPopulationCategory.Infantry?retainedInfantryTarget:retainedGroundTarget;
+                if(!SkirmishExpandedEngagementService.DomainAllows(roles[index].TargetDomains,false,targetCategory))throw new InvalidOperationException("Authored infantry role cannot target selected actual native hostile category.");
+                if(em.GetComponentData<SkirmishUnitRoleComponent>(hostileTarget).Category!=targetCategory||!em.HasComponent<CombatTargetPolicy>(hostileTarget)||em.GetComponentData<CombatTargetPolicy>(hostileTarget).Domain!=(targetCategory==SkirmishPopulationCategory.Infantry?CombatTargetDomain.Infantry:CombatTargetDomain.Ground))throw new InvalidOperationException("Retained native hostile category/policy differs from selected legal target domain.");
+                hostileOriginalTransform=retainedTransforms[hostileTarget];hostileOriginalGrid=retainedGrids[hostileTarget];
+                if(!em.Exists(hostileTarget)||em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Retained native hostile target died; no revive fallback.");
+                // Selection occurs with both native targets at their original far-away positions.
+                // No own offensive component writes; relocate/reset only atomically before public Attack.
+                SuppressOtherDirectFireActors(em);AuditCompletePaidCohort(em);
+                ObserveDiagnostic(em,"BeforeTouchSelection");
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin(); commandBaseline=AriaCommandEvidence.AcceptedCommands;phase=10;caseDeadline=now+45;return;
+            }
+            if(phase==12)
+            {
+                if(now>=diagnosticDue){ObserveDiagnostic(em,"WaitingForNativeEffect");diagnosticDue=now+1;}
+                ObserveAllNewDamage(em);
+                if(touch.IsBusy)return;
+                if(!em.Exists(hostileTarget)||!em.HasComponent<UnitHealth>(hostileTarget))throw new InvalidOperationException("Native hostile target was disposed before effect attribution.");
+                var auditedCohort=AuditCompletePaidCohort(em);
+                var events=em.GetBuffer<CombatDamageObservationElement>(observationQueue,true);
+                for(int i=0;i<events.Length;i++)
+                {
+                    var observation=events[i];
+                    if(observation.EventId<=eventBaseline||observation.Frame<attackFrame||observation.TargetEntity!=hostileTarget||(observation.SourceEntity!=Entity.Null&&!members.Contains(observation.SourceEntity))||observation.DamageApplied<=0)continue;
+                    var expected=CombatDamageSourceKind.DirectFire;
+                    if(observation.SourceKind!=expected)throw new InvalidOperationException("Unexpected damage owner for paid role "+roles[index].RoleKind+": "+observation.SourceKind);
+                    int current=em.GetComponentData<UnitHealth>(hostileTarget).Current;
+                    if(observation.TargetHealthAfter>=targetHealthBefore||current>=targetHealthBefore||current>observation.TargetHealthAfter)throw new InvalidOperationException("Native damage event does not match actual observed target health loss.");
+                    var row=new NativeDamageRow{role=roles[index].RoleKind.ToString(),kind=observation.SourceKind.ToString(),targetRole=em.GetComponentData<SkirmishUnitRoleComponent>(hostileTarget).Role.ToString(),targetDomain=targetCategory.ToString(),targetAllowedMask=(int)roles[index].TargetDomains,eventId=observation.EventId,frame=observation.Frame,sourceIndex=observation.SourceEntity.Index,sourceVersion=observation.SourceEntity.Version,targetIndex=hostileTarget.Index,targetVersion=hostileTarget.Version,damageApplied=observation.DamageApplied,targetHealthAfter=observation.TargetHealthAfter,targetHealthBefore=targetHealthBefore,observedCurrentHealth=current,reservation=receiptId,sourcePosition=(Vector3)observation.SourceWorldPosition,targetPosition=(Vector3)observation.TargetWorldPosition,sourceExactPaidMember=observation.SourceEntity!=Entity.Null,sourceEntityIsNull=observation.SourceEntity==Entity.Null,completeHomogeneousPaidCohortVerified=true,attribution=observation.SourceEntity==Entity.Null?"HomogeneousPaidCohortMixedNativeSources":"ExactPaidMember",cohortMembers=members.Count,eligibleDirectFireShooters=eligibleCohortShooters,cohort=auditedCohort,targetExactNativeHostile=true,damageOrEventsInjected=false};
+                    File.AppendAllText(effectPath,JsonUtility.ToJson(row)+"\n");
+                    Debug.Log("[S005InfantryNativeDamage] result=Passed role="+roles[index].RoleKind+" event="+observation.EventId+" source="+observation.SourceEntity+" paidReservation="+receiptId+" cohortMembers="+members.Count+" soleEligibleDirectFireCohort=1 attribution="+row.attribution+" individualShooterCertified="+(row.sourceExactPaidMember?1:0)+" target="+hostileTarget+" kind="+observation.SourceKind+" damage="+observation.DamageApplied+" healthBefore="+targetHealthBefore+" healthAfter="+observation.TargetHealthAfter+" observedHealth="+current+" shotsProjectilesDamageEventsInjected=0 attackInput=PublicNativeApi selectionInput=Touch");
+                    ObserveDiagnostic(em,"QualifiedNativeEffect");
+                    SkirmishWorldMovementService.ClearIntent(em,hostileTarget);
+                    em.SetComponentData(hostileTarget,hostileOriginalTransform);em.SetComponentData(hostileTarget,hostileOriginalGrid);
+                    foreach(var member in members)Kill(em,member);phase=5;caseDeadline=now+10;return;
+                }
+                if(em.GetComponentData<UnitHealth>(hostileTarget).Current<=0)throw new InvalidOperationException("Hostile target died without an exact paid-source native damage event; no attribution fallback.");
+                return;
+            }
+            if(phase==5)
+            {
+                foreach(var member in members)if(em.Exists(member) && em.HasComponent<SkirmishAttemptOwnedComponent>(member) && em.GetComponentData<SkirmishAttemptOwnedComponent>(member).CapacityReleased==0)return;
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0)throw new InvalidOperationException("Capacity not fully released after delivered role death.");
+                foreach(var member in members)if(em.Exists(member) && SkirmishProductionService.TryReleaseDeath(em,session,member))throw new InvalidOperationException("Death released capacity twice.");
+                Debug.Log("[S005InfantryPaidQueueDeath] result=Passed role="+roles[index].RoleKind+" capacityReleased=1 idempotent=1 stimulus=HealthZero");results.Add(roles[index].RoleKind.ToString());index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        var visibleTray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var canvas=visibleTray?.GetComponentInParent<Canvas>()?.rootCanvas;
+        if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1)return;
+        inputFrame=Time.frameCount;
+        try
+        {
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11))return;
+            var em=world.EntityManager;
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10)
+            {
+                using var query=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=query.ToEntityArray(Allocator.Temp);
+                bool exact=selected.Length==members.Count;foreach(var actor in selected)exact &= members.Contains(actor);
+                if(!exact)
+                {
+                    if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return;}
+                    if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                    for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&members.Contains(member)){Tap(tray.VisibleCardButton(slot));return;}
+                    if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);
+                    return;
+                }
+                Debug.Log("[S005InfantryNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" input=Touch selectionInjected=0 completePaidSquad=1");phase=11;
+            }
+            // Native selection is complete. Attack is an explicitly disclosed public native API command,
+            // outside the Touch receipt envelope; no component-written EngageTarget/shot/damage substitute.
+            AriaCommandEvidence.End();
+            AuditCompletePaidCohort(em);
+            PrepareTargetImmediatelyBeforeAttack(em);
+            eventBaseline=em.GetComponentData<CombatDamageObservationQueueComponent>(observationQueue).LastEventId;
+            targetHealthBefore=em.GetComponentData<UnitHealth>(hostileTarget).Current;attackFrame=Time.frameCount;
+            if(!SkirmishArmyCommandService.TryAttack(em,session,hostileTarget,out var decision)||!decision.Accepted||decision.IssuedCount!=members.Count)
+                throw new InvalidOperationException("Selected paid native Attack rejected: "+decision.Reason+" issued="+decision.IssuedCount);
+            phase=12;
+            ObserveDiagnostic(em,"AfterAcceptedPublicAttack");
+            Debug.Log("[S005InfantryNativeAttack] result=Accepted role="+roles[index].RoleKind+" input=PublicNativeApi selectedMembers="+members.Count+" exactTarget="+hostileTarget+" eventBaseline="+eventBaseline+" damageInjected=0 normalTouchAttackCertified=0");
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        if(world!=null&&world.IsCreated){try{ObserveDiagnostic(world.EntityManager,"FinishBeforeCleanup");}catch(Exception diagnosticError){Debug.LogWarning("[S005InfantryDiagnostic] finalSnapshotFailed="+diagnosticError.Message);}}
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005InfantryCombatInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        if(changedBuildingDefense&&world!=null&&world.IsCreated&&buildingDefenseSystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(buildingDefenseSystem).Enabled=buildingDefenseEnabled;
+        changedEnemy=changedBuildingDefense=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005InfantryCombat] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending selectionInput=Touch attackInput=PublicNativeApi damageEvidence=RuntimeEvents cohortAttribution=CompleteHomogeneousPaidSquad fullMovementTransportDomainMatrix=NotCertified reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedPaidInfantryDamage:"+reason});
+    }
+}

@@ -18,7 +18,11 @@ namespace Game.Editor
 {
     public static partial class SkirmishS002AriaRunHarness
     {
-        private const int FixedWingQualificationTankers = 3;
+        // Native883 spent924 aggregate factory-seconds waiting for Oil.
+        // Buy four Oil trucks while funding aircraft, then use the existing
+        // paid retirement/purchase flow to switch to two Oil / four Tankers.
+        private const int FixedWingQualificationOilTrucks = 4;
+        private const int FixedWingQualificationTankers = 2;
         private static bool fixedWingCycleOnly, fixedWingNativeFire;
         private static bool fixedWingMaterialProductionPaused;
         private static int fixedWingStep, fixedWingPages, fixedWingFirstFuel, fixedWingTouchdownFuel;

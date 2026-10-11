@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using Game.Configs;
+using UnityEditor;
+public class S005ExistingCampaignSourceInventory890 {
+ public static object Run() {
+  var paths=new[]{
+   "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+   "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH04M04GroundedSignal/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH05M02TrustUnderFire/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH05M03NetworkCollapse/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH05M04LastCorridor/Definition.asset",
+   "Assets/Game/GeneratedOperationMaps/CH05M05CommandNode/Definition.asset"};
+  var rows=new List<string>();
+  foreach(var path in paths) {
+   var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(path);
+   if(map==null) {rows.Add("missing="+path);continue;}
+   bool metadata=map.TryValidateMetadata(out var error),local=map.TryValidateLocalContentReferences(out var localError);
+   var surface=AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
+   rows.Add("definition="+path+"|metadata="+metadata+"|error="+error+"|local="+local+"|localError="+localError+"|identity="+map.SourceIdentityHash+"|content="+map.ContentHash+"|scene="+AssetDatabase.GUIDToAssetPath(map.SourceSceneReference.AssetGUID)+"|playableMin="+map.Bounds.PlayableMin+"|playableMax="+map.Bounds.PlayableMax+"|surfaceOrigin="+surface?.GridOrigin+"|surfaceDimensions="+surface?.Dimensions+"|surfaceHash="+surface?.ComputeRuntimeBlobHash());
+  }
+  return "readOnly=1 physicalSourceModified=0 missionBindingModified=0 nativeClearanceCertified=0 capacityCertified=0 playerReady=0\n"+string.Join("\n",rows);
+ }
+}

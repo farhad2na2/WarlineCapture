@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Game.Components;
+using Game.Composition;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+public class S005SouthernSectorNativePointAudit890 {
+ const BindingFlags Instance=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+ const BindingFlags Static=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static;
+ static object Get(object value,string name) => value.GetType().GetField(name,Instance)?.GetValue(value) ?? value.GetType().GetProperty(name,Instance)?.GetValue(value);
+ public static object Run() {
+  var clock=System.Diagnostics.Stopwatch.StartNew();var rows=new List<string>();
+  var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+  var bootstrap=Get(scene,"MatchBootstrap");var context=Get(bootstrap,"BuildingUiCommandContext");
+  var callback=Get(context,"CanConfirmBuildingPlacement");
+  var harness=typeof(Game.Editor.SkirmishS002AriaRunHarness);
+  var source=harness.GetMethod("FindAirportPlacementSource",Static).Invoke(null,new object[]{callback,new HashSet<object>(),0});
+  if(source==null)throw new Exception("Missing live native placement source");
+  var definitions=Get(source,"BuildingDefinitionPrefabSystemHelper");
+  var validator=Get(source,"BuildingPlacementAdapterCompositionSystemHelper");
+  var method=validator.GetType().GetMethod("IsPlacementValid",Instance);var parameters=method.GetParameters();
+  var effective=Delegate.CreateDelegate(parameters[8].ParameterType,harness.GetMethod("AirportEffectiveRect",Static));
+  var occupied=Delegate.CreateDelegate(parameters[9].ParameterType,harness.GetMethod("AirportOverlapsOccupant",Static));
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;
+  using var query=em.CreateEntityQuery(typeof(GridConfig),typeof(DynamicBlockerComponent));
+  var entity=query.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(entity);var roads=em.GetBuffer<GridRoad>(entity,true);var blockers=em.GetComponentData<DynamicBlockerComponent>(entity);
+  foreach(var kind in new[]{"Barracks","GroundStaging","Fabrication","Helipad"}) {
+   var definition=definitions.GetType().GetMethod("FindConfiguredDefinition",Instance).Invoke(definitions,new object[]{kind});
+   if(definition==null){rows.Add("kind="+kind+" nativeDefinitionMissing=1");continue;}
+   var footprint=(Vector2Int)Get(definition,"FootprintCells");
+   foreach(var point in new[]{new Vector3(935,0,235),new Vector3(1387.8f,0,235),new Vector3(935,0,285),new Vector3(1387.8f,0,285),new Vector3(935,0,335),new Vector3(1387.8f,0,335)}) {
+    var cell=Game.Runtime.GridUtils.WorldToCell(grid,point);var origin=new Vector2Int(cell.x-footprint.x/2,cell.y-footprint.y/2);
+    bool valid=(bool)method.Invoke(validator,new object[]{source,definition,origin,footprint,false,grid,roads,blockers,effective,occupied});
+    var rect=(RectInt)effective.DynamicInvoke(source,definition,origin,grid,false);
+    rows.Add("kind="+kind+" desiredCentre="+point+" origin="+origin+" effectiveRect="+rect+" nativeValid="+valid);
+   }
+  }
+  return "scope=ReadOnlyNativePointSamplesExistingS005Source physicalSourceModified=0 actorsResourcesOrdersInjected=0 scenarioBindingChanged=0 capacityCertified=0 playerReady=0 inspectionMilliseconds="+clock.ElapsedMilliseconds+"\n"+string.Join("\n",rows);
+ }
+}

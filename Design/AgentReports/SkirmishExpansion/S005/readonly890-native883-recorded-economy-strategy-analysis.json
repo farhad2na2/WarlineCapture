@@ -1,0 +1,362 @@
+{
+  "scope": "Read-only analysis of closed native883 recorded native economy; not a new simulation or readiness proof",
+  "sourceHash": "8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29",
+  "source": "s005-aria-live-155926-en-5741be6d351d471ab5fda9d0ccc408ed.jsonl.economy.jsonl",
+  "observations": "Pumps retain substantial/full stock while factories accumulate924.2 aggregate seconds blocked on Oil. This points to delivery throughput/allocation, not insufficient Oil extraction, during this recorded strategy. It does not prove four trucks will suffice.",
+  "nextHypothesis": "Normal paid four-Oil/two-Tanker opening, followed by existing native transition to two-Oil/four-Tankers within support cap6. No rate/budget/reserve/deadline/map change.",
+  "playerReady": false,
+  "snapshots": [
+    {
+      "materials": 10,
+      "fabricated": 100,
+      "spent": 540,
+      "oilToFactories": 40.0,
+      "oilToRefineries": 40.0,
+      "aggregateFactoryOilBlockedSeconds": 116.6,
+      "elapsed": 99.1,
+      "receivedFuel": 8.0,
+      "unhauledFuel": 52.0,
+      "pumpStock": 194.02175903320312,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "materials": 120,
+      "fabricated": 450,
+      "spent": 780,
+      "oilToFactories": 96.0,
+      "oilToRefineries": 200.0,
+      "aggregateFactoryOilBlockedSeconds": 225.3,
+      "elapsed": 205.5,
+      "receivedFuel": 192.0,
+      "unhauledFuel": 40.0,
+      "pumpStock": 260.38077545166016,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        }
+      ]
+    },
+    {
+      "materials": 220,
+      "fabricated": 750,
+      "spent": 980,
+      "oilToFactories": 152.0,
+      "oilToRefineries": 336.0,
+      "aggregateFactoryOilBlockedSeconds": 328.9,
+      "elapsed": 295.9,
+      "receivedFuel": 376.0,
+      "unhauledFuel": 36.0,
+      "pumpStock": 339.4918212890625,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        }
+      ]
+    },
+    {
+      "materials": 280,
+      "fabricated": 1050,
+      "spent": 1220,
+      "oilToFactories": 208.0,
+      "oilToRefineries": 440.0,
+      "aggregateFactoryOilBlockedSeconds": 442.2,
+      "elapsed": 401.8,
+      "receivedFuel": 592.0,
+      "unhauledFuel": 188.0,
+      "pumpStock": 396.09283447265625,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "materials": 100,
+      "fabricated": 1350,
+      "spent": 1700,
+      "oilToFactories": 280.0,
+      "oilToRefineries": 520.0,
+      "aggregateFactoryOilBlockedSeconds": 574.0,
+      "elapsed": 507.0,
+      "receivedFuel": 824.0,
+      "unhauledFuel": 128.0,
+      "pumpStock": 396.05433654785156,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "materials": 100,
+      "fabricated": 1650,
+      "spent": 2000,
+      "oilToFactories": 328.0,
+      "oilToRefineries": 608.0,
+      "aggregateFactoryOilBlockedSeconds": 673.6,
+      "elapsed": 597.3,
+      "receivedFuel": 1016.0,
+      "unhauledFuel": 64.0,
+      "pumpStock": 400.0,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "materials": 450,
+      "fabricated": 2000,
+      "spent": 2000,
+      "oilToFactories": 400.0,
+      "oilToRefineries": 688.0,
+      "aggregateFactoryOilBlockedSeconds": 793.6,
+      "elapsed": 703.6,
+      "receivedFuel": 1200.0,
+      "unhauledFuel": 112.0,
+      "pumpStock": 396.1246795654297,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        }
+      ]
+    },
+    {
+      "materials": 180,
+      "fabricated": 2250,
+      "spent": 2520,
+      "oilToFactories": 448.0,
+      "oilToRefineries": 792.0,
+      "aggregateFactoryOilBlockedSeconds": 897.7,
+      "elapsed": 794.5,
+      "receivedFuel": 1376.0,
+      "unhauledFuel": 64.0,
+      "pumpStock": 386.0027618408203,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 1,
+          "status": 2,
+          "blocked": 1
+        },
+        {
+          "id": 15,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        },
+        {
+          "id": 16,
+          "enabled": 1,
+          "status": 1,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "materials": 140,
+      "fabricated": 2350,
+      "spent": 2660,
+      "oilToFactories": 472.0,
+      "oilToRefineries": 912.0,
+      "aggregateFactoryOilBlockedSeconds": 924.2,
+      "elapsed": 899.7,
+      "receivedFuel": 1560.0,
+      "unhauledFuel": 112.0,
+      "pumpStock": 400.0,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 15,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 16,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        }
+      ]
+    },
+    {
+      "materials": 140,
+      "fabricated": 2350,
+      "spent": 2660,
+      "oilToFactories": 472.0,
+      "oilToRefineries": 1024.0,
+      "aggregateFactoryOilBlockedSeconds": 924.2,
+      "elapsed": 1004.8,
+      "receivedFuel": 1832.0,
+      "unhauledFuel": 72.0,
+      "pumpStock": 400.0,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 15,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 16,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        }
+      ]
+    },
+    {
+      "materials": 140,
+      "fabricated": 2350,
+      "spent": 2660,
+      "oilToFactories": 472.0,
+      "oilToRefineries": 1136.0,
+      "aggregateFactoryOilBlockedSeconds": 924.2,
+      "elapsed": 1079.9,
+      "receivedFuel": 1968.0,
+      "unhauledFuel": 176.0,
+      "pumpStock": 400.0,
+      "factories": [
+        {
+          "id": 11,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 15,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        },
+        {
+          "id": 16,
+          "enabled": 0,
+          "status": 3,
+          "blocked": 4
+        }
+      ]
+    }
+  ]
+}

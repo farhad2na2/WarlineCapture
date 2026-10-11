@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SouthernSectorNativePointAudit890.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 133,
+      "executeMs": 22,
+      "assemblyName": "PipelineRunScript_S005SouthernSectorNativePointAudit890_03085c0e244d444d9a364b85488426d6",
+      "success": true,
+      "result": "scope=ReadOnlyNativePointSamplesExistingS005Source physicalSourceModified=0 actorsResourcesOrdersInjected=0 scenarioBindingChanged=0 capacityCertified=0 playerReady=0 inspectionMilliseconds=15\nkind=Barracks desiredCentre=(935.00, 0.00, 235.00) origin=(921, 228) effectiveRect=(x:921, y:228, width:28, height:15) nativeValid=False\nkind=Barracks desiredCentre=(1387.80, 0.00, 235.00) origin=(1373, 228) effectiveRect=(x:1373, y:228, width:28, height:15) nativeValid=False\nkind=Barracks desiredCentre=(935.00, 0.00, 285.00) origin=(921, 278) effectiveRect=(x:921, y:278, width:28, height:15) nativeValid=False\nkind=Barracks desiredCentre=(1387.80, 0.00, 285.00) origin=(1373, 278) effectiveRect=(x:1373, y:278, width:28, height:15) nativeValid=False\nkind=Barracks desiredCentre=(935.00, 0.00, 335.00) origin=(921, 328) effectiveRect=(x:921, y:328, width:28, height:15) nativeValid=False\nkind=Barracks desiredCentre=(1387.80, 0.00, 335.00) origin=(1373, 328) effectiveRect=(x:1373, y:328, width:28, height:15) nativeValid=False\nkind=GroundStaging nativeDefinitionMissing=1\nkind=Fabrication nativeDefinitionMissing=1\nkind=Helipad desiredCentre=(935.00, 0.00, 235.00) origin=(927, 228) effectiveRect=(x:927, y:228, width:16, height:15) nativeValid=False\nkind=Helipad desiredCentre=(1387.80, 0.00, 235.00) origin=(1379, 228) effectiveRect=(x:1379, y:228, width:16, height:15) nativeValid=False\nkind=Helipad desiredCentre=(935.00, 0.00, 285.00) origin=(927, 278) effectiveRect=(x:927, y:278, width:16, height:15) nativeValid=False\nkind=Helipad desiredCentre=(1387.80, 0.00, 285.00) origin=(1379, 278) effectiveRect=(x:1379, y:278, width:16, height:15) nativeValid=False\nkind=Helipad desiredCentre=(935.00, 0.00, 335.00) origin=(927, 328) effectiveRect=(x:927, y:328, width:16, height:15) nativeValid=False\nkind=Helipad desiredCentre=(1387.80, 0.00, 335.00) origin=(1379, 328) effectiveRect=(x:1379, y:328, width:16, height:15) nativeValid=False"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

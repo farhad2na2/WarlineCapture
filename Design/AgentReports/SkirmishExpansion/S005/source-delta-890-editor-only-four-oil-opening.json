@@ -1,0 +1,14 @@
+{
+  "beforeSourceHash": "c3947d8db9153fe43c26eeaa9d8f7782f45d83abb2f0da1f206b960ab0fd1ef4",
+  "afterSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "changed": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "physicalMapsUnchanged": true,
+  "missionBindingsUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "strategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match."
+}

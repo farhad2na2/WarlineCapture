@@ -1,0 +1,20 @@
+import json,pathlib
+p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+proof=json.loads((p/'native883-normal-paid-strike-cycle-failure.json').read_text())
+rows=[json.loads(x) for x in (p/(proof['trace']+'.economy.jsonl')).read_text().splitlines()]
+snapshots=[]
+for target in [100,200,300,400,500,600,700,800,900,1000,1080]:
+ row=min(rows,key=lambda r:abs(r['elapsed']-target));values={};stores=[];factories=[]
+ for encoded in row['values']:
+  if '=' not in encoded or not encoded.split('=',1)[1].startswith('{'):continue
+  kind,text=encoded.split('=',1);v=json.loads(text)
+  if kind=='Materials':values.update(materials=v['Current'],fabricated=v['LifetimeFabricated'],spent=v['LifetimeSpent'])
+  if kind=='FabricationTelemetry':values.update(aggregateFactoryOilBlockedSeconds=round(v['NoOilInputBlockedSeconds'],1))
+  if kind=='OilLogistics':values.update(oilToFactories=v['OilDeliveredToFabricationDepots'],oilToRefineries=v['OilDeliveredToRefineries'])
+  if kind=='Storage':stores.append(v)
+  if kind=='Fabrication':factories.append(dict(id=v['RuntimeBuildingId'],enabled=v['ProductionEnabled'],status=v['Status'],blocked=v['BlockReason']))
+ values.update(elapsed=round(row['elapsed'],1),receivedFuel=sum(v['ReceivedHaulerFuelBarrels'] for v in stores),unhauledFuel=sum(v['StoredFuelBarrels'] for v in stores if v['FuelBarrelsPerDay']>0),pumpStock=sum(v['StoredOilBarrels'] for v in stores if v['OilBarrelsPerDay']>0),factories=factories)
+ snapshots.append(values)
+result=dict(scope='Read-only analysis of closed native883 recorded native economy; not a new simulation or readiness proof',sourceHash=proof['sourceHash'],source=proof['trace']+'.economy.jsonl',observations='Pumps retain substantial/full stock while factories accumulate924.2 aggregate seconds blocked on Oil. This points to delivery throughput/allocation, not insufficient Oil extraction, during this recorded strategy. It does not prove four trucks will suffice.',nextHypothesis='Normal paid four-Oil/two-Tanker opening, followed by existing native transition to two-Oil/four-Tankers within support cap6. No rate/budget/reserve/deadline/map change.',playerReady=False,snapshots=snapshots)
+(p/'readonly890-native883-recorded-economy-strategy-analysis.json').write_text(json.dumps(result,indent=2)+'\n')
+print('recorded economy analysis saved; hypothesis remains unproven')

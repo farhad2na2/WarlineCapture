@@ -623,7 +623,8 @@ namespace Game.Editor
                 materialsPriorityStartedAt = now;
                 Debug.Log("[S005MaterialsPriority] phase=Begin factory=" + materialsPriorityFactoryId +
                     " truck=" + em.GetComponentData<SkirmishAttemptOwnedComponent>(materialsPriorityTruck).StableObjectId +
-                    " qualificationOilTarget=3 qualificationTankerTarget=3 input=TouchPending");
+                    " qualificationOilTarget=" + FixedWingQualificationOilTrucks +
+                    " qualificationTankerTarget=" + FixedWingQualificationTankers + " input=TouchPending");
             }
             if (!em.Exists(materialsPriorityTruck) || !em.Exists(materialsPriorityFactory) || now - materialsPriorityStartedAt > 30)
             {

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005SouthernSectorNativePointAudit890.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "The type or namespace name 'GridUtils' does not exist in the namespace 'Game.Runtime' (are you missing an assembly reference?)",
+          "line": 33,
+          "column": 13,
+          "id": "CS0234"
+        }
+      ],
+      "compileMs": 195,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005SouthernSectorNativePointAudit890_174afd234f294a8580f1c677093ded30",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

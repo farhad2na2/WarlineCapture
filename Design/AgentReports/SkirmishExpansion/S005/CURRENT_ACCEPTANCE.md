@@ -1,13 +1,15 @@
 # S005 current acceptance
 
-**Not technically ready / not player-ready.** Source `c3947d8db9153fe43c26eeaa9d8f7782f45d83abb2f0da1f206b960ab0fd1ef4`.
+**Not technically ready / not player-ready.** Current source `a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3`.
 
-Shipping Oil source optimization is committed and pushed in `0b1fd7401`. Native882 passed focused logistics, production, economy, Fuel-grid and approach regressions. Since then only two Editor diagnostic files changed; the complete source delta confirms runtime, physical maps, mission bindings and all966 materials unchanged. Compilation is clean.
+Native890 passed a normal-input paid Strike cycle: production and taxi, first takeoff and firing, accepted Return, home touchdown, physical post-touchdown Fuel delivery, refuelling and a second airborne sortie before the fixed1080-second deadline. Wrapper and native bridge exited0. All286 recorded contacts ended with no audit errors. PRE/POST source fingerprints match. Proof: `native890-normal-paid-strike-cycle-scoped-pass.json`.
 
-Native883 used normal input and normal budgets: paid Strike delivery, takeoff/fire, accepted Return, home touchdown and physical post-touchdown Fuel delivery were observed. All302 contacts ended. **The second sortie failed**: fixed1080-second Draw with158.3 usable Fuel versus880 required. This is partial lifecycle evidence, not complete aircraft or mission acceptance.
+The qualification strategy now starts with four Oil trucks and two Tankers, then uses normal paid purchases and empty-cargo retirement to reach two Oil trucks and four Tankers. Support cap6, prices, economic rates,880 reserve, match deadline and Campaign physical source remain unchanged. Exactly three Editor strategy files changed in this checkpoint; compilation passed. Shipping Oil routing fix is already pushed in `0b1fd7401`; native882 focused regressions remain runtime-equivalent evidence, not exact whole-source evidence.
 
-Existing Campaign CityEdgeAirfield metadata/preview and native S004 observations are recorded in readonly884/native888/native889. Native889 tested16384 coarse samples,13390 in-grid footprints, withzero valid Airports. The launched grid retains its existing restricted source/sector mask; the scan is not exhaustive physical-source impossibility evidence. No S005 rebind is justified or performed. Compiler/setup mistakes885–887 are retained separately from source-fit observations.
+This aircraft proof does not certify the second home return, other aircraft roles, bilateral capacity, all22 enabled role lifecycles or a complete mission. Fresh EN/FA manual and ARIA missions with result/return, recovery, affected Campaign M1–M5 and family/stress/cleanup/performance checks remain pending. Old native victories predate the shipping runtime changes and are historical.
 
-Next: address observed Oil-haul starvation while funding aircraft on the unchanged S005 source. Preserve support cap6, prices/rates,880 reserve and1080-second deadline. Full aircraft and bilateral capacity,22 enabled role lifecycles, fresh EN/FA manual/ARIA wins/result/return, recovery, affected Campaign regressions and stress/cleanup/performance remain pending. Owner visual review is deferred; human/device acceptance remains separate.
+Native883's failed second sortie and source assessment/setup failures885–887 remain retained. Native889's restricted native Campaign airfield scan found no coarse legal Airport sites, but does not prove exhaustive physical-source impossibility. No S005 map rebind was made.
 
-Machine-readable current authority: `TECHNICAL_READINESS_CURRENT.json`. Earlier reports and failed evidence remain in `technical-readiness-history-before-native889.json` and `acceptance-history-before-native889.md`; old victories are not promoted to the current candidate.
+Owner native visual review is deferred until technically ready. Real human/device acceptance is pending and reported separately. The shipped catalog remains InProgress; the validation launch fixture is Editor-memory only.
+
+Machine-readable authority: `TECHNICAL_READINESS_CURRENT.json`. Next: current-runtime complete normal-input journeys, then remaining aircraft/recovery/role/capacity and mission regressions.

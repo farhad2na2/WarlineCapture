@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "c3947d8db9153fe43c26eeaa9d8f7782f45d83abb2f0da1f206b960ab0fd1ef4",
-  "sourceFingerprint": "final-889-existing-airfield-source-fit-post-independent-fingerprint.json",
+  "sourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "sourceFingerprint": "final-890-four-oil-opening-pre-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,7 +13,7 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "compile-889-existing-airfield-source-fit-status.json",
+  "currentCompilationProof": "compile-890-four-oil-opening-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
@@ -22,10 +22,11 @@
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
     "shippingRuntimeEquivalent": true,
-    "delta": "source-delta-889-editor-only-existing-source-assessment.json"
+    "delta": "source-delta-890-editor-only-four-oil-opening.json",
+    "note": "Editor-only changes since shipping runtime0b1fd7401; native882 remains shipping-runtime equivalent, not exact whole-source equivalent."
   },
-  "currentFixedWingCycleProof": "native883-normal-paid-strike-cycle-failure.json",
-  "aircraftCycleStatus": "Takeoff/fire/Return/home touchdown/post-touchdown physical delivery observed; second-sortie fuel/deadline gate FAILED",
+  "currentFixedWingCycleProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
+  "aircraftCycleStatus": "Native890 passed paid Strike production, native fire, accepted Return, home touchdown, physical Fuel delivery, refuel and second airborne sortie before fixed1080-second deadline. Second return, bilateral capacity and full mission remain pending.",
   "existingCampaignAirfieldInventory": "readonly884-existing-campaign-airfield-source-assessment.json",
   "existingCampaignAirfieldObservation": "native889-existing-campaign-airfield-native-source-observation.json",
   "latestSourceAssessmentFailures": [
@@ -34,7 +35,7 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Complete normal-input aircraft return/refuel/second-sortie within fixed1080-second match",
+    "Remaining aircraft roles, second home return and mid-taxi Save/Continue",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
     "Fresh normal-input EN/FA manual and ARIA journeys; result and return",
@@ -42,6 +43,10 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Address observed Oil-haul starvation during aircraft funding on unchanged S005 source. Existing CityEdgeAirfield assessment found no valid coarse Airport sample and does not justify a rebind. Keep scenario budgets, support cap6, fuel reserve and match deadline unchanged.",
-  "historicalReport": "technical-readiness-history-before-native889.json"
+  "nextWork": "Fresh normal-input complete S005 EN/FA ARIA and manual journeys; remaining aircraft/recovery/all-role and bilateral capacity; affected Campaign/family regressions.",
+  "historicalReport": "technical-readiness-history-before-native889.json",
+  "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
+  "nextNativeRun": null,
+  "currentSourceFingerprint": "final-890-resumed-paid-cycle-closed-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json"
 }

@@ -226,16 +226,33 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || !target.NeedsSelection) return;
             _selectionActionRequested=true;
-            _embeddedTutorialView.SetNormalSelectionInstruction(_activeCommandMode==TacticalCommandMode.Select,target.DragSelection);
             if(_activeCommandMode!=TacticalCommandMode.Select)
-            {Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;}
+            {
+                _embeddedTutorialView.SetNormalSelectionInstruction(false,target.DragSelection);
+                Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;
+            }
             if(target.DragSelection)
             {
                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
+                // First Contact's normal card selects its full four-soldier squad.
+                // If HUD chrome blocks the world drag, guide that visible existing control.
+                if (!_highlightPresentationSystem.TryObserveVisibleSelectionDrag(out _, out _) &&
+                    UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var mission) &&
+                    mission.MissionId == "saga.ch01.m01.first_contact" &&
+                    _highlightPresentationSystem.TryShowPresentedSquadTutorialControl("ui.aria.select_group"))
+                {
+                    _embeddedTutorialView.SetNormalSquadCardSelectionInstruction();
+                    return;
+                }
+                _embeddedTutorialView.SetNormalSelectionInstruction(true,true);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
                 {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
-            else ShowTutorialWorld(target.Selection,true);
+            else
+            {
+                _embeddedTutorialView.SetNormalSelectionInstruction(true,false);
+                ShowTutorialWorld(target.Selection,true);
+            }
         }
 
         private void ShowSelectionOrControl(Button button,string key)

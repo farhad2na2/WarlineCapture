@@ -59,6 +59,26 @@ namespace Game.UI.Runtime
             return _selectionBoxRequested && _selectionBox!=null && _selectionBox.gameObject.activeInHierarchy &&
                 SelectionDragIsUnobstructed();
         }
+        internal bool TryShowPresentedSquadTutorialControl(string captionKey)
+        {
+            var button = ResolveSquadTutorialControl();
+            if (button == null || !button.IsActive() || !button.IsInteractable()) return false;
+            var rect = button.transform as RectTransform;
+            var canvas = button.GetComponentInParent<Canvas>()?.rootCanvas;
+            Camera eventCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            Vector2 point = RectTransformUtility.WorldToScreenPoint(eventCamera, rect.TransformPoint(rect.rect.center));
+            if (!Screen.safeArea.Contains(point)) return false;
+            var events = EventSystem.current;
+            if (events != null)
+            {
+                var pointer = new PointerEventData(events) { position = point };
+                _selectionHits.Clear(); events.RaycastAll(pointer, _selectionHits);
+                if (_selectionHits.Count == 0 || !(_selectionHits[0].gameObject.transform == button.transform ||
+                    _selectionHits[0].gameObject.transform.IsChildOf(button.transform))) return false;
+            }
+            ShowTutorialControl(button, captionKey);
+            return HasVisibleDirectTutorialTarget;
+        }
         private bool SelectionDragIsUnobstructed()
         {
             var events = EventSystem.current;

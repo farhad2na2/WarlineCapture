@@ -18,6 +18,17 @@ namespace Game.UI.Runtime
                 ApplyInteractionState(Game.Tactical.Contracts.TacticalCommandMode.None,false);
             selectionInstruction=null;
         }
+        internal void SetNormalSquadCardSelectionInstruction()
+        {
+            bool fa = UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");
+            selectionInstruction = fa
+                ? "کارت «گروه تفنگدار» رو بزن تا هر چهار سرباز انتخاب بشن."
+                : "Tap the Rifle Squad card to select all four soldiers.";
+            if (_currentInstructionBody != selectionInstruction)
+                ApplyInstruction(UiShellRuntimeGateway.Localization.Get("ui.aria.normal_selection.title", fa ? "نیروها رو انتخاب کن" : "Select units"),
+                    selectionInstruction, UiTutorialNarrationPhase.PrimaryAction);
+            SetContinueAvailable(false);
+        }
         internal void SetNormalSelectionInstruction(bool selectMode,bool drag)
         {
             bool fa=UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");

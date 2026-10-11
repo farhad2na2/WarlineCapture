@@ -1,0 +1,95 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using Game.Components;
+using Game.Missions.Contracts;
+using Game.UI.Runtime;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+public static class CampaignSelectionReadOnly1037
+{
+    static string path; static double due; static bool sawMission;
+    [Serializable] sealed class Actor
+    {
+        public string entity, position, group, role, target;
+        public int faction, element, health, maxHealth;
+        public bool exists, selected, holding, moving, engaged;
+        public float range; public byte autoEngage;
+    }
+    [Serializable] sealed class Observation
+    {
+        public double wallTime;public float gameTime;public string mission,phase,outcome;
+        public int elapsedMs,hostileTotal,hostileDefeated,squadLost;
+        public string title,body,source,cohortRows,guideBlockers,cameraPose;public int cohortCount,cohortSelected;public bool sourceSelected,dragSelection,visibleDrag;public string dragStart,dragEnd;public byte coreBreached,forwardPostDestroyed,rosterFault,postBound,postDamaged;
+        public bool publicHasTarget,publicNeedsSelection;public int requiredSelection;
+        public string commandMode,selection,destination;public Actor[] actors;
+        public bool readOnly=true,actorOrOrderInjected=false;
+    }
+    public static string Run()=>"Loaded read-only Campaign defense observer; not attached";
+    public static void Install(string evidencePath)
+    {
+        EditorApplication.update-=Observe; path=evidencePath;due=0;sawMission=false;
+        File.WriteAllText(path,"{\"observer\":\"CampaignSelectionReadOnly1037\",\"writesToGameState\":false}\n");
+        EditorApplication.update+=Observe;
+    }
+    public static void Stop()=>EditorApplication.update-=Observe;
+    static void Observe()
+    {
+        try
+        {
+            if(!EditorApplication.isPlaying){if(sawMission)Stop();return;}
+            double now=EditorApplication.timeSinceStartup;if(now<due)return;due=now+.25;
+            var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;
+            var em=world.EntityManager;using var q=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent));
+            if(q.CalculateEntityCount()!=1)return;var root=q.GetSingletonEntity();
+            var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(runtime.MissionId.ToString()!="saga.ch01.m01.first_contact"&&runtime.MissionId.ToString()!="saga.ch01.m04.airlift")return;sawMission=true;
+            var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            var o=new Observation{wallTime=now,gameTime=Time.unscaledTime,mission=runtime.MissionId.ToString(),phase=runtime.Phase.ToString(),outcome=runtime.Outcome.ToString(),elapsedMs=facts.ElapsedMilliseconds,hostileTotal=facts.HostileTotalCount,hostileDefeated=facts.HostileDefeatedCount,squadLost=facts.SquadLossCount,coreBreached=facts.CoreBreached,forwardPostDestroyed=facts.ForwardPostDestroyed,rosterFault=facts.HostileRosterIntegrityFault,postBound=facts.ForwardPostBound,postDamaged=facts.ForwardPostDamaged};
+            o.publicHasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var tutorial);
+            o.publicNeedsSelection=tutorial.NeedsSelection;o.requiredSelection=tutorial.RequiredSelectionCount;
+            o.dragSelection=tutorial.DragSelection;
+            var aria=UnityEngine.Object.FindAnyObjectByType<Game.UI.Runtime.AriaTutorialBriefingView>();o.title=aria?.TitleText?.text;o.body=aria?.BodyText?.text;
+            if(em.HasComponent<CampaignMissionGuidanceProjectionComponent>(root)){var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);o.source=guidance.SourceEntity.ToString();o.sourceSelected=em.Exists(guidance.SourceEntity)&&em.HasComponent<SelectedUnitTag>(guidance.SourceEntity);}
+            var match=UnityEngine.Object.FindAnyObjectByType<Game.Composition.MatchSceneView>();
+            object bootstrap=match?.GetType().GetProperty("MatchBootstrap",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(match);
+            object menu=bootstrap?.GetType().GetProperty("MainMenu").GetValue(bootstrap);
+            object assistant=menu?.GetType().GetField("_matchHudAssistantUiSystem",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(menu);
+            object highlight=assistant?.GetType().GetField("_highlightPresentationSystem",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(assistant);
+            if(highlight!=null){var args=new object[]{Vector2.zero,Vector2.zero};o.visibleDrag=(bool)highlight.GetType().GetMethod("TryObserveVisibleSelectionDrag",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(highlight,args);o.dragStart=args[0].ToString();o.dragEnd=args[1].ToString();
+                var blocker=new List<string>();foreach(Vector2 point in new[]{(Vector2)args[0],(Vector2)args[1],((Vector2)args[0]+(Vector2)args[1])*.5f}){var hits=new List<UnityEngine.EventSystems.RaycastResult>();var events=UnityEngine.EventSystems.EventSystem.current;if(events!=null)events.RaycastAll(new UnityEngine.EventSystems.PointerEventData(events){position=point},hits);blocker.Add(point+":"+string.Join(",",hits.ConvertAll(x=>x.gameObject.name)));}o.guideBlockers=string.Join("|",blocker);
+            }
+            o.selection=tutorial.Selection.ToString();o.destination=tutorial.Destination.ToString();
+            if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))o.commandMode=command.ActiveCommandMode.ToString();
+            var actors=new List<Actor>();
+            using var cohort=em.CreateEntityQuery(typeof(CampaignMissionUnitRoleComponent),typeof(Faction),typeof(LocalTransform));
+            using var entities=cohort.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach(var e in entities)
+            {
+                var roleCheck=em.GetComponentData<CampaignMissionUnitRoleComponent>(e);if(!roleCheck.SessionToken.Equals(runtime.SessionToken))continue;
+                var a=new Actor{entity=e.ToString(),faction=em.GetComponentData<Faction>(e).Id,exists=em.Exists(e)};
+                if(a.exists)
+                {
+                    if(em.HasComponent<LocalTransform>(e))a.position=em.GetComponentData<LocalTransform>(e).Position.ToString();
+                    if(em.HasComponent<UnitHealth>(e)){var h=em.GetComponentData<UnitHealth>(e);a.health=h.Current;a.maxHealth=h.Max;}
+                    if(em.HasComponent<CampaignMissionUnitRoleComponent>(e)){var role=em.GetComponentData<CampaignMissionUnitRoleComponent>(e);a.group=role.UnitGroupId.ToString();a.role=role.MissionRoleId.ToString();}
+                    a.selected=em.HasComponent<SelectedUnitTag>(e);a.holding=em.HasComponent<HoldPositionOrderTag>(e);
+                    a.moving=em.HasComponent<UnitPathRequest>(e)||em.HasComponent<UnitPathFollow>(e);
+                    a.engaged=em.HasComponent<EngageTarget>(e);if(a.engaged)a.target=em.GetComponentData<EngageTarget>(e).Target.ToString();
+                    if(em.HasComponent<UnitAttack>(e))a.range=em.GetComponentData<UnitAttack>(e).Range;
+                    if(em.HasComponent<UnitCombat>(e))a.autoEngage=em.GetComponentData<UnitCombat>(e).AutoEngage;
+                }
+                actors.Add(a);
+            }
+            o.actors=actors.ToArray();o.cohortCount=actors.Count;o.cohortSelected=actors.FindAll(x=>x.selected).Count;
+            o.cohortRows=string.Join("|",actors.ConvertAll(x=>x.entity+" role="+x.role+" group="+x.group+" faction="+x.faction+" health="+x.health+"/"+x.maxHealth+" selected="+x.selected+" pos="+x.position));
+            if(match?.WorldCamera!=null)o.cameraPose=match.WorldCamera.transform.position+"/"+match.WorldCamera.transform.eulerAngles+"/fov="+match.WorldCamera.fieldOfView;
+            File.AppendAllText(path,JsonUtility.ToJson(o)+"\n");
+            if(runtime.Outcome!=MissionOutcomeKind.None)Stop();
+        }
+        catch(Exception error){Stop();try{File.WriteAllText(path+".observer-error.txt",error.ToString());}catch{}}
+    }
+}

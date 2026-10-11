@@ -1,0 +1,22 @@
+{
+  "result": "IntegratedAndCompilerPassed",
+  "sourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
+  "previousSourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "modified": [
+    "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs",
+    "Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs"
+  ],
+  "added": [],
+  "removed": [],
+  "patchSha256": "1df63ecd4ff2778768963b0b3d834f87f8a45580c972ee2ffe6d42ddd7130758",
+  "nativeProductionEvidence": "delegation-campaign-t7-m01-1042-result.json",
+  "nativeEvidenceWholeSourceHash": "4a4cb922ddb9e83e218f1d37f8d3cfd398b794726efd9a08e48b2b5aac6ed60c",
+  "nativeEvidenceScope": "Exact integrated production UI patch tested in T7 native M1 EN/FA; main-specific full source not replayed. T7 older positive-time air code differs; M1 ground-squad guidance does not depend on aircraft pause update.",
+  "compilerEvidence": "compile1058-integrated-M1-guidance-status.json",
+  "review": "delegation-M1-visible-card-production-review-20261011.json",
+  "physicalMapsChanged": false,
+  "sourceFitCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

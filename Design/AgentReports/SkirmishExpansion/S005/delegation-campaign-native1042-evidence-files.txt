@@ -1,0 +1,13 @@
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-M1-visible-card-production.patch
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1042-result.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-CampaignSelectionJourney1042.cs.txt
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-CampaignSelectionReadOnly1037.cs.txt
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-delegation-t7-campaign-m01-1042.log
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-delegation-t7-campaign-m01-1042.log.exit
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-delegation-t7-campaign-m01-1042.log.dispatch.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-delegation-t7-campaign-m01-1042-observation.jsonl
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-card-focused-final-pre-independent-fingerprint.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-card-focused-final-pre-source-manifest.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-card-native1042-post-independent-fingerprint.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-card-native1042-post-source-manifest.json
+Design/AgentReports/SkirmishExpansion/S005/delegation-campaign-t7-m01-1042-screens

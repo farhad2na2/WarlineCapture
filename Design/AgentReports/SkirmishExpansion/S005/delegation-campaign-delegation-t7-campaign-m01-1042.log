@@ -1,0 +1,1208 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets executeMethod=CampaignSelectionJourney1042.RunM01
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_d33137a5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20261011-075725
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:Run () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:42)
+Game.Editor.CampaignTutorialEntryEditorProbe:RunJourney (int) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:74)
+Game.Editor.CampaignTutorialEntryEditorProbe:RunM01Journey () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:61)
+System.Reflection.MethodBase:Invoke (object,object[])
+CampaignSelectionJourney1042:Start (int) (at /private/tmp/CampaignSelectionJourney1042.cs:45)
+CampaignSelectionJourney1042:RunM01 () (at /private/tmp/CampaignSelectionJourney1042.cs:27)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_d33137a5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:441)
+Game.Editor.CampaignTutorialEntryEditorProbe:Run () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:47)
+Game.Editor.CampaignTutorialEntryEditorProbe:RunJourney (int) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:74)
+Game.Editor.CampaignTutorialEntryEditorProbe:RunM01Journey () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:61)
+System.Reflection.MethodBase:Invoke (object,object[])
+CampaignSelectionJourney1042:Start (int) (at /private/tmp/CampaignSelectionJourney1042.cs:45)
+CampaignSelectionJourney1042:RunM01 () (at /private/tmp/CampaignSelectionJourney1042.cs:27)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_d33137a5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch01.m01.first_contact scenario=scenario.ch01.m01.first_contact operationMap=opmap.ch01.district_edge_01
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:241)
+
+[FrameRateDiag:PreGame] fps=1.7 avgFrame=598.4ms updateAvg=0.4ms updateMax=0.4ms cpuFrame=23.9ms cpuMain=5.4ms cpuRender=1.9ms gpu=3.9ms drawCalls=10 batches=0 setPass=36 tris=1964 verts=5632 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=1.00,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8848MB reserved=10746MB mono=3153MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.2ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=25 source=profilerCounters drawCalls=10 batches=0 setPass=36 tris=1964 verts=5632 topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, Metadata, MapSurface, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:474)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:178)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:766)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag:PreGame] fps=13.6 avgFrame=73.7ms updateAvg=0.0ms updateMax=0.0ms cpuFrame=9.0ms cpuMain=3.7ms cpuRender=9.0ms gpu=27.4ms drawCalls=10 batches=41 setPass=36 tris=1964 verts=5632 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9402MB reserved=11011MB mono=3154MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.0ms stepStats=none topSystems=disabled markers=disabled
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=1438 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag:PreGame] fps=0.5 avgFrame=2186.8ms updateAvg=6.7ms updateMax=13.0ms cpuFrame=598.4ms cpuMain=572.3ms cpuRender=1.0ms gpu=0.4ms drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=10150MB reserved=11398MB mono=3129MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.5ms stepStats=none topSystems=disabled markers=disabled
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:490)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:605)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] waiting frame=35 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] ready frame=36 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Update hitch frame=37 BuildingPlacement=962.0ms, GC=0/0/0, Total=980.5ms
+[PerfDiag] slowUpdate frame=37 total=980.5ms gc=0/0/0 cpuFrame=21.2ms cpuMain=12.1ms cpuRender=1.1ms gpu=5.9ms steps=RoadBuild=2.4ms, BuildingPlacement=962.0ms, Selection=14.7ms, DayNight=0.0ms, CitizenPopulation=0.1ms, MainMenu=1.3ms units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 memory=alloc=10193MB reserved=11434MB mono=3134MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=38 Gap=1001.7ms GC=0/0/0 LastSteps=RoadBuild=2.4ms, BuildingPlacement=962.0ms, Selection=14.7ms, DayNight=0.0ms, CitizenPopulation=0.1ms, MainMenu=1.3ms
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[FreezeDetect] Frame gap frame=39 Gap=690.2ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.1ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.0ms
+[FrameRateDiag] fps=2.3 avgFrame=433.1ms updateAvg=90.2ms updateMax=980.5ms cpuFrame=47.7ms cpuMain=41.6ms cpuRender=0.3ms gpu=6.4ms drawCalls=10 batches=0 setPass=33 tris=1971 verts=5643 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=10212MB reserved=11441MB mono=3138MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=LiveContractObserved configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 authoredVehicles=22
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|41 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:621)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Frame gap frame=51 Gap=293.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=1.6ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.5ms
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.first_launch.complete_vision_slice session=campaign-m01-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:180)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[FrameRateDiag] fps=34.6 avgFrame=28.9ms updateAvg=1.5ms updateMax=24.8ms cpuFrame=8.4ms cpuMain=5.8ms cpuRender=1.2ms gpu=8.3ms drawCalls=402 batches=0 setPass=69 tris=3438719 verts=5307014 units=4960 models=53 sourceKeys=4984 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=10279MB reserved=11477MB mono=3164MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=132 source=profilerCounters drawCalls=402 batches=0 setPass=69 tris=3438719 verts=5307014 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=1323 total=26.6ms gc=0/0/0 cpuFrame=27.1ms cpuMain=24.7ms cpuRender=1.3ms gpu=7.4ms steps=RoadBuild=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.5ms units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 drawCalls=388 batches=0 setPass=69 tris=3218881 verts=4880665 memory=alloc=9458MB reserved=11267MB mono=3202MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.FindSquad.En bus=Voice requestId=5 played=1 status=Presented reason=Played at=31.53 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/en replay=FirstClear lesson=1 visible text and cue
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:147)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=1 body=Press Select on the command bar.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[CampaignPlayerJourney] action=1:SelectCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Update hitch frame=1524 Selection=1076.7ms, GC=0/0/0, Total=1084.6ms
+[PerfDiag] slowUpdate frame=1524 total=1084.6ms gc=0/0/0 cpuFrame=12.4ms cpuMain=9.3ms cpuRender=0.4ms gpu=9.3ms steps=RoadBuild=0.0ms, Selection=1076.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.9ms units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 drawCalls=405 batches=0 setPass=87 tris=3274603 verts=4974879 memory=alloc=9458MB reserved=11267MB mono=3217MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[CampaignNativeSelection] actualCardGuideObserved=1 body=Tap the Rifle Squad card to select all four soldiers. inputInjected=0
+UnityEngine.Debug:Log (object)
+CampaignSelectionJourney1042:Frame () (at /private/tmp/CampaignSelectionJourney1042.cs:126)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=1525 Gap=1181.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=1076.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.9ms
+[CampaignNativeSelection] input=Touch presentedRifleSquadCard=1 required=4 cardGestures=1 actorOrSelectionInjected=0 actualPresentedCardFallback=Verified
+UnityEngine.Debug:Log (object)
+CampaignSelectionJourney1042:Frame () (at /private/tmp/CampaignSelectionJourney1042.cs:131)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.MoveToCover.En bus=Voice requestId=9 played=1 status=Presented reason=Played at=36.60 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=2 body=Tap MOVE to select the move command.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FrameRateDiag] fps=42.6 avgFrame=23.5ms updateAvg=2.8ms updateMax=14.7ms cpuFrame=13.3ms cpuMain=9.8ms cpuRender=0.5ms gpu=9.0ms drawCalls=423 batches=0 setPass=106 tris=3288639 verts=4999390 units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9470MB reserved=11268MB mono=3226MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=1656 source=profilerCounters drawCalls=423 batches=0 setPass=106 tris=3288639 verts=4999390 topSystems=disabled markers=disabled
+[CampaignPlayerJourney] action=2:MoveCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.MoveDestination.En bus=Voice requestId=12 played=1 status=Presented reason=Played at=39.29 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] settled lesson=2 phase=MoveToCover outcome=None produced=0 guidance=MoveToCover body=Tap the highlighted destination to move your squad.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:178)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:231)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[PerfDiag] slowUpdate frame=1887 total=31.0ms gc=0/0/0 cpuFrame=11.1ms cpuMain=8.8ms cpuRender=1.5ms gpu=7.8ms steps=RoadBuild=0.0ms, Selection=28.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.6ms units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 drawCalls=428 batches=0 setPass=106 tris=3292285 verts=5005876 memory=alloc=9503MB reserved=11237MB mono=3241MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=14 played=1 status=Presented reason=Played at=41.53 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=3 body=Your squad is moving to the marked cover position.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.ConfirmThreat.En bus=Voice requestId=15 played=1 status=Presented reason=Played at=47.62 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] action=3:AttackCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.AttackTarget.En bus=Voice requestId=18 played=1 status=Presented reason=Played at=49.15 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] settled lesson=3 phase=ConfirmThreat outcome=None produced=0 guidance=ConfirmThreat body=Tap the highlighted enemy to issue the attack.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:178)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:231)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[BuildingSelectionFrameDiag] object=AttackTargetSelectionMarkerRuntime parent=RuntimeUi center=(1792.500, 0.430, 732.500) yaw=180.000 requested=(1.000,1.000) rendered=(1.000,1.000) surfaceY=0.310 targetHeight=1.250 groundY=0.390 topY=1.720
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingSelectionNativeDiagnostic:Log (string) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:312)
+Game.Runtime.PremiumWorldSelectionFrameView:LogGeometryDiagnostic (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single,single,single,single,single) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:131)
+Game.Runtime.PremiumWorldSelectionFrameView:Configure (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single,UnityEngine.Color,UnityEngine.Color) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:58)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ConfigureAttackTargetBoundaryView (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:971)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ShowAttackTargetSelectionMarker (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.GridConfig,UnityEngine.Vector3,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:437)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ShowAttackOrderMarker (Unity.Entities.EntityManager,Unity.Entities.Entity,UnityEngine.Vector3,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:352)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:TryShowCommandResultMarker (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandResultElement,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:155)
+Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessAttackCommandRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context,bool) (at Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs:972)
+Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass15_0:<Initialize>g__UpdateSelectionRuntimePhases|8 () (at Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs:434)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:163)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[PerfDiag] slowUpdate frame=2526 total=112.7ms gc=0/0/0 cpuFrame=12.2ms cpuMain=9.7ms cpuRender=1.6ms gpu=6.1ms steps=RoadBuild=0.0ms, Selection=110.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.6ms units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 drawCalls=412 batches=0 setPass=113 tris=3203983 verts=4849889 memory=alloc=8750MB reserved=10863MB mono=3326MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=20 played=1 status=Presented reason=Played at=51.47 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FreezeDetect] Frame gap frame=2527 Gap=151.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=110.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.6ms
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.Engage.En bus=Voice requestId=21 played=1 status=Presented reason=Played at=51.54 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=54.4 avgFrame=18.4ms updateAvg=3.3ms updateMax=112.7ms cpuFrame=14.6ms cpuMain=12.1ms cpuRender=1.7ms gpu=10.0ms drawCalls=410 batches=0 setPass=93 tris=3230155 verts=4892414 units=4960 models=29 sourceKeys=4960 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8750MB reserved=10863MB mono=3328MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=2543 source=profilerCounters drawCalls=410 batches=0 setPass=93 tris=3230155 verts=4892414 topSystems=disabled markers=disabled
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=40.00 damage=7 target=entity=629:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=669:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=40.00 damage=20 target=entity=649:5 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=105/125 attacker=entity=655:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(1792,732) hp=41/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=40.44 damage=7 target=entity=649:5 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=118/125 attacker=entity=655:5 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(1792,732) hp=41/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=40.89 damage=7 target=entity=629:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=669:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=40.94 damage=13 target=entity=649:5 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=112/125 attacker=entity=662:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(1793,737) hp=79/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=41.75 damage=7 target=entity=629:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=669:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=53/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=41.87 damage=13 target=entity=649:5 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=112/125 attacker=entity=662:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(1793,737) hp=47/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=42.61 damage=7 target=entity=629:5 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=669:5 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=21/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=42.80 damage=13 target=entity=649:5 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=112/125 attacker=entity=662:5 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(1793,737) hp=15/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.SecureCorridor.En bus=Voice requestId=71 played=0 status=Culled reason=GameplayInactive at=62.13 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=en
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:110)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ShowLoading region=LoadingLayer route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ShowLoading region=LoadingLayer route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:87)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ShowLoading region=LoadingLayer
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[OperationMapSourceScene] stage=SceneUnloadRequested
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryBeginOperationMapContentUnload (string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:92)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:387)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+UnityEngine.Debug:Log (object)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:UpdateUnload () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:361)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:Update () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:120)
+Game.Composition.MatchSceneView:UpdateOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:449)
+Game.Composition.MatchSceneView:UpdateOperationMapContentUnload () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:102)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:399)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=6 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=6 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=6 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch01.m01.first_contact scenario=scenario.ch01.m01.first_contact operationMap=opmap.ch01.district_edge_01
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:241)
+
+[FrameRateDiag:PreGame] fps=45.1 avgFrame=22.2ms updateAvg=2.0ms updateMax=10.7ms cpuFrame=6.8ms cpuMain=1.9ms cpuRender=0.4ms gpu=3.6ms drawCalls=8 batches=0 setPass=32 tris=1966 verts=5636 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=1.00,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8624MB reserved=10715MB mono=3112MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.0ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=3494 source=profilerCounters drawCalls=8 batches=0 setPass=32 tris=1966 verts=5636 topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, Metadata, MapSurface, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:474)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:178)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:766)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=360 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag:PreGame] fps=15.8 avgFrame=63.4ms updateAvg=0.2ms updateMax=0.5ms cpuFrame=11.6ms cpuMain=7.8ms cpuRender=0.4ms gpu=0.3ms drawCalls=9 batches=0 setPass=30 tris=1965 verts=5631 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9416MB reserved=10997MB mono=3477MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.4ms stepStats=none topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:490)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:605)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[SkirmishPlacementGeometry] geometry=4200 buildingBounds=4200 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:64)
+Game.Runtime.BuildingPlacementInvalidCellCacheCompositionSystemHelper:EnsureAuthoredGeometry (Unity.Entities.EntityManager,Unity.Entities.EntityQuery,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs:40)
+Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper:IsPlacementValid (Game.Runtime.BuildingGameplaySourceCompositionSystemHelper,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper/GetEffectivePlacementRectDelegate,Game.Runtime.BuildingPlacementAdapterCompositionSystemHelper/OverlapsAnyPlacementOccupantDelegate) (at Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs:129)
+Game.Runtime.BuildingRuntimeContextCompositionSystemHelper/<>c__DisplayClass7_0:<CreateBuildingRuntimeContextSource>b__4 (Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent) (at Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs:97)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:92)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnInitialBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Runtime.RuntimeBuildingEntity&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:329)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TrySpawnRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:134)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryPlaceRuntimeBuilding (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,UnityEngine.GameObject,UnityEngine.Vector2Int,string,string,System.Nullable`1<UnityEngine.Vector2Int>,int,bool,System.Nullable`1<byte>,bool,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/SpawnRuntimeBuildingResult&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs:161)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:488)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:164)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:114)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:70)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:111)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] waiting frame=3504 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:2,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] ready frame=3505 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag] fps=8.3 avgFrame=120.0ms updateAvg=0.3ms updateMax=1.0ms cpuFrame=9.6ms cpuMain=6.3ms cpuRender=1.7ms gpu=5.8ms drawCalls=353 batches=0 setPass=47 tris=3349836 verts=5153885 units=4961 models=53 sourceKeys=4985 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9389MB reserved=10965MB mono=3487MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandStarted sequence=7 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.first_launch.complete_vision_slice session=campaign-m01-0000000000000002 attempt=2
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:180)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[FrameRateDiag:PreGame] fps=21.5 avgFrame=46.6ms updateAvg=1.2ms updateMax=7.3ms cpuFrame=17.1ms cpuMain=13.1ms cpuRender=2.0ms gpu=8.8ms drawCalls=402 batches=0 setPass=78 tris=3351048 verts=5156309 units=4961 models=53 sourceKeys=4985 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9389MB reserved=10964MB mono=3494MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.1ms, MainMenu=1.4ms stepStats=none topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandCompleted sequence=7 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=7 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[FrameRateDiag] fps=50.8 avgFrame=19.7ms updateAvg=2.6ms updateMax=7.7ms cpuFrame=14.2ms cpuMain=10.9ms cpuRender=0.6ms gpu=1.9ms drawCalls=421 batches=0 setPass=72 tris=3603628 verts=5596159 units=4961 models=53 sourceKeys=4985 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9368MB reserved=10940MB mono=3504MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=3803 source=profilerCounters drawCalls=421 batches=0 setPass=72 tris=3603628 verts=5596159 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=52.8 avgFrame=18.9ms updateAvg=2.5ms updateMax=8.4ms cpuFrame=14.8ms cpuMain=10.8ms cpuRender=2.1ms gpu=24.7ms drawCalls=399 batches=0 setPass=72 tris=3447646 verts=5309515 units=4961 models=52 sourceKeys=4984 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9347MB reserved=10935MB mono=3515MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=47.6 avgFrame=21.0ms updateAvg=2.8ms updateMax=10.1ms cpuFrame=19.2ms cpuMain=15.1ms cpuRender=1.9ms gpu=24.6ms drawCalls=353 batches=0 setPass=71 tris=3093738 verts=4656326 units=4961 models=41 sourceKeys=4973 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9340MB reserved=10918MB mono=3521MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=53.9 avgFrame=18.5ms updateAvg=2.3ms updateMax=7.4ms cpuFrame=13.1ms cpuMain=10.2ms cpuRender=1.9ms gpu=11.0ms drawCalls=338 batches=0 setPass=71 tris=3001639 verts=4501802 units=4961 models=30 sourceKeys=4962 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9329MB reserved=10910MB mono=3122MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=53.3 avgFrame=18.8ms updateAvg=2.4ms updateMax=7.9ms cpuFrame=14.1ms cpuMain=10.3ms cpuRender=2.1ms gpu=14.8ms drawCalls=381 batches=0 setPass=71 tris=3081376 verts=4639971 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9319MB reserved=10904MB mono=3125MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=4333 source=profilerCounters drawCalls=381 batches=0 setPass=71 tris=3081376 verts=4639971 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.FindSquad.Fa bus=Voice requestId=77 played=1 status=Presented reason=Played at=86.81 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/fa-IR replay=Replay lesson=1 visible text and cue
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:147)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=4389 Gap=181.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.5ms
+[FrameRateDiag] fps=42.3 avgFrame=23.7ms updateAvg=4.6ms updateMax=14.2ms cpuFrame=15.6ms cpuMain=13.0ms cpuRender=1.8ms gpu=7.7ms drawCalls=407 batches=0 setPass=93 tris=3154644 verts=4767541 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9318MB reserved=10899MB mono=3135MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=1 body=دکمهٔ «انتخاب» رو توی نوار فرمان بزن.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4426 Gap=160.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.0ms
+[FreezeDetect] Frame gap frame=4427 Gap=182.8ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.1ms
+[FreezeDetect] Frame gap frame=4461 Gap=169.9ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.7ms
+[CampaignPlayerJourney] action=1:SelectCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[CampaignNativeSelection] actualCardGuideObserved=1 body=ﮐﺎﺭﺕ »ﮔﺮﻭﻩ ﺗﻔﻨﮕﺪﺍﺭ« ﺭﻭ ﺑﺰﻥ ﺗﺎ ﻫﺮ ﭼﻬﺎﺭ ﺳﺮﺑﺎﺯ ﺍﻧﺘﺨﺎﺏ ﺑﺸﻦ. inputInjected=0
+UnityEngine.Debug:Log (object)
+CampaignSelectionJourney1042:Frame () (at /private/tmp/CampaignSelectionJourney1042.cs:126)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4482 Gap=172.8ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=8.0ms
+[FrameRateDiag] fps=31.9 avgFrame=31.4ms updateAvg=5.5ms updateMax=12.4ms cpuFrame=17.5ms cpuMain=15.1ms cpuRender=1.8ms gpu=10.1ms drawCalls=412 batches=0 setPass=96 tris=3185772 verts=4822027 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9301MB reserved=10895MB mono=3147MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CampaignNativeSelection] input=Touch presentedRifleSquadCard=1 required=4 cardGestures=2 actorOrSelectionInjected=0 actualPresentedCardFallback=Verified
+UnityEngine.Debug:Log (object)
+CampaignSelectionJourney1042:Frame () (at /private/tmp/CampaignSelectionJourney1042.cs:131)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.MoveToCover.Fa bus=Voice requestId=81 played=1 status=Presented reason=Played at=90.85 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=2 body=«حرکت» رو بزن تا دستور حرکت انتخاب بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4552 Gap=197.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=3.2ms
+[FrameRateDiag] fps=37.8 avgFrame=26.5ms updateAvg=5.2ms updateMax=13.5ms cpuFrame=15.7ms cpuMain=12.9ms cpuRender=2.2ms gpu=7.7ms drawCalls=418 batches=0 setPass=111 tris=3187602 verts=4826920 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9267MB reserved=10891MB mono=3159MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=4589 Gap=162.0ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=3.7ms
+[CampaignPlayerJourney] action=2:MoveCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.MoveDestination.Fa bus=Voice requestId=84 played=1 status=Presented reason=Played at=93.49 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=41.4 avgFrame=24.2ms updateAvg=4.0ms updateMax=9.9ms cpuFrame=18.1ms cpuMain=14.3ms cpuRender=0.8ms gpu=8.4ms drawCalls=425 batches=0 setPass=110 tris=3203790 verts=4853629 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9269MB reserved=10889MB mono=3172MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CampaignPlayerJourney] settled lesson=2 phase=MoveToCover outcome=None produced=0 guidance=MoveToCover body=حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:178)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4662 Gap=179.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.9ms
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:231)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4674 Gap=219.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.1ms
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedMoveTitle bus=Voice requestId=86 played=1 status=Presented reason=Played at=95.82 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=22.9 avgFrame=43.6ms updateAvg=6.5ms updateMax=19.9ms cpuFrame=25.6ms cpuMain=22.0ms cpuRender=0.8ms gpu=18.3ms drawCalls=417 batches=0 setPass=105 tris=3199756 verts=4846844 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9271MB reserved=10888MB mono=3180MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=4689 source=profilerCounters drawCalls=417 batches=0 setPass=105 tris=3199756 verts=4846844 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=34.0 avgFrame=29.4ms updateAvg=6.0ms updateMax=11.8ms cpuFrame=20.8ms cpuMain=17.5ms cpuRender=2.7ms gpu=17.3ms drawCalls=404 batches=0 setPass=103 tris=3152164 verts=4763765 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9277MB reserved=10885MB mono=3193MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=31.6 avgFrame=31.7ms updateAvg=6.3ms updateMax=12.6ms cpuFrame=51.2ms cpuMain=45.4ms cpuRender=2.6ms gpu=7.6ms drawCalls=402 batches=0 setPass=103 tris=3123123 verts=4710204 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9282MB reserved=10883MB mono=3205MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=3 body=گروهت داره به محل پوشش مشخص‌شده می‌ره.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:171)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4860 Gap=185.2ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=11.1ms
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.ConfirmThreat.Fa bus=Voice requestId=87 played=1 status=Presented reason=Played at=101.90 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=27.8 avgFrame=36.0ms updateAvg=6.4ms updateMax=14.8ms cpuFrame=23.1ms cpuMain=20.4ms cpuRender=2.7ms gpu=18.8ms drawCalls=404 batches=0 setPass=107 tris=3114351 verts=4694519 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9288MB reserved=10882MB mono=3216MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=4892 Gap=169.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.8ms
+[CampaignPlayerJourney] action=3:AttackCommand
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:210)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.AttackTarget.Fa bus=Voice requestId=90 played=1 status=Presented reason=Played at=103.33 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=34.2 avgFrame=29.3ms updateAvg=4.9ms updateMax=12.4ms cpuFrame=31.2ms cpuMain=25.7ms cpuRender=2.7ms gpu=7.5ms drawCalls=412 batches=0 setPass=117 tris=3114911 verts=4695423 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9295MB reserved=10840MB mono=3227MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[CampaignPlayerJourney] settled lesson=3 phase=ConfirmThreat outcome=None produced=0 guidance=ConfirmThreat body=حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:178)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[FreezeDetect] Frame gap frame=4968 Gap=171.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=3.4ms
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:RecordAction (string,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:236)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:231)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[BuildingSelectionFrameDiag] object=AttackTargetSelectionMarkerRuntime parent=RuntimeUi center=(1792.500, 0.430, 732.500) yaw=180.000 requested=(1.000,1.000) rendered=(1.000,1.000) surfaceY=0.310 targetHeight=1.250 groundY=0.390 topY=1.720
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingSelectionNativeDiagnostic:Log (string) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:312)
+Game.Runtime.PremiumWorldSelectionFrameView:LogGeometryDiagnostic (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single,single,single,single,single) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:131)
+Game.Runtime.PremiumWorldSelectionFrameView:Configure (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single,UnityEngine.Color,UnityEngine.Color) (at Assets/Game/Scripts/Systems/PremiumWorldSelectionFrameView.cs:58)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ConfigureAttackTargetBoundaryView (UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector2,single,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:971)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ShowAttackTargetSelectionMarker (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.GridConfig,UnityEngine.Vector3,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:437)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:ShowAttackOrderMarker (Unity.Entities.EntityManager,Unity.Entities.Entity,UnityEngine.Vector3,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:352)
+Game.Runtime.SelectionOrderMarkerPresentationSystemHelper:TryShowCommandResultMarker (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandResultElement,single) (at Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs:155)
+Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessAttackCommandRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context,bool) (at Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs:972)
+Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass15_0:<Initialize>g__UpdateSelectionRuntimePhases|8 () (at Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs:434)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:163)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Update hitch frame=4988 Selection=164.5ms, GC=0/0/0, Total=169.7ms
+[PerfDiag] slowUpdate frame=4988 total=169.7ms gc=0/0/0 cpuFrame=17.9ms cpuMain=15.1ms cpuRender=1.9ms gpu=11.2ms steps=RoadBuild=0.0ms, Selection=164.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.1ms units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 drawCalls=412 batches=0 setPass=117 tris=3114911 verts=4695423 memory=alloc=9337MB reserved=10836MB mono=3269MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=92 played=1 status=Presented reason=Played at=105.76 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FreezeDetect] Frame gap frame=4989 Gap=222.5ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=164.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.1ms
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.Engage.Fa bus=Voice requestId=93 played=1 status=Presented reason=Played at=105.84 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FrameRateDiag] fps=34.9 avgFrame=28.6ms updateAvg=6.0ms updateMax=169.7ms cpuFrame=16.9ms cpuMain=12.1ms cpuRender=2.0ms gpu=24.1ms drawCalls=414 batches=0 setPass=96 tris=3182405 verts=4811186 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9338MB reserved=10835MB mono=3272MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=5018 source=profilerCounters drawCalls=414 batches=0 setPass=96 tris=3182405 verts=4811186 topSystems=disabled markers=disabled
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=88.25 damage=7 target=entity=392:17 name='Rifleman Male II' source='Unit_Chr_Soldier_Male_02_Alt_02' faction=1 cell=(1791,719) hp=118/125 attacker=entity=866:11 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(1792,732) hp=105/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=88.25 damage=7 target=entity=840:11 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=880:11 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=88.25 damage=13 target=entity=860:11 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=112/125 attacker=entity=873:11 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(1793,737) hp=95/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=88.73 damage=7 target=entity=860:11 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=118/125 attacker=entity=866:11 name='Insurgent Raider Male III' source='Unit_Chr_Insurgent_Male_03' faction=2 cell=(1792,732) hp=41/105
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=89.15 damage=7 target=entity=840:11 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=880:11 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=85/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=89.21 damage=13 target=entity=860:11 name='Rifleman Female I' source='Unit_Chr_Soldier_Female_02_Alt_01' faction=1 cell=(1793,719) hp=112/125 attacker=entity=873:11 name='Insurgent Rifleman Female I' source='Unit_Chr_Insurgent_Female_01' faction=2 cell=(1793,737) hp=79/95
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[FrameRateDiag] fps=41.9 avgFrame=23.8ms updateAvg=3.2ms updateMax=11.8ms cpuFrame=17.5ms cpuMain=13.8ms cpuRender=2.2ms gpu=15.8ms drawCalls=366 batches=0 setPass=89 tris=3087876 verts=4646477 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9341MB reserved=10809MB mono=3278MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[AudioDiag] Suppressed Alert.Unit.UnderAttack reason=GenericUnderAttackAlertDisabled sourceSystem=UnitAttackSystem requestedAt=90.02 damage=7 target=entity=840:11 name='Rifleman Male IV' source='Unit_Chr_Soldier_Male_02_Alt_04' faction=1 cell=(1789,719) hp=118/125 attacker=entity=880:11 name='Insurgent Sidearm Fighter Female II' source='Unit_Chr_Insurgent_Female_02' faction=2 cell=(1789,734) hp=53/85
+UnityEngine.Debug:Log (object)
+Game.Runtime.UnitAttackSystem:LogSuppressedUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,int,single,string,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:519)
+Game.Runtime.UnitAttackSystem:TryEmitUnitUnderAttackAudio (Unity.Entities.EntityManager,Unity.Entities.Entity,single,Unity.Entities.Entity,int,string) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:471)
+Game.Runtime.UnitAttackSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Systems/UnitAttackSystem.cs:395)
+Game.Runtime.UnitAttackSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[FrameRateDiag] fps=44.2 avgFrame=22.6ms updateAvg=3.2ms updateMax=12.4ms cpuFrame=16.6ms cpuMain=12.9ms cpuRender=2.0ms gpu=11.7ms drawCalls=348 batches=0 setPass=88 tris=2905038 verts=4341981 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9343MB reserved=10804MB mono=3285MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=52.6 avgFrame=19.0ms updateAvg=2.9ms updateMax=10.5ms cpuFrame=18.2ms cpuMain=14.2ms cpuRender=2.0ms gpu=14.1ms drawCalls=314 batches=0 setPass=86 tris=2832214 verts=4219904 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9364MB reserved=10802MB mono=3294MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FrameRateDiag] fps=45.8 avgFrame=21.8ms updateAvg=3.0ms updateMax=10.9ms cpuFrame=14.7ms cpuMain=11.7ms cpuRender=0.6ms gpu=0.3ms drawCalls=345 batches=0 setPass=86 tris=3020320 verts=4534525 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9392MB reserved=10783MB mono=3302MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=5476 Gap=192.1ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=13.9ms
+[FrameRateDiag] fps=42.3 avgFrame=23.6ms updateAvg=3.2ms updateMax=17.3ms cpuFrame=14.9ms cpuMain=11.7ms cpuRender=1.9ms gpu=9.6ms drawCalls=364 batches=0 setPass=109 tris=3030412 verts=4551517 units=4961 models=29 sourceKeys=4961 sourceKeyFallbackVisuals=0 initialSpawnConfigs=2 impostors=0 render=screen=1920x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9421MB reserved=10779MB mono=3315MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=5476 source=profilerCounters drawCalls=364 batches=0 setPass=109 tris=3030412 verts=4551517 topSystems=disabled markers=disabled
+[AudioDiag] Playback event=VO.ARIA.Tutorial.M01.SecureCorridor.Fa bus=Voice requestId=143 played=0 status=Culled reason=GameplayInactive at=116.51 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=fa-IR
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickJourney (Unity.Entities.EntityManager,Unity.Entities.Entity,double) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:110)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:105)
+Game.Editor.CampaignTutorialEntryEditorProbe:TickGameView () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs:54)
+UnityEngine.Canvas:SendWillRenderCanvases () (at /Users/bokken/build/output/unity/unity/Modules/UI/ScriptBindings/UICanvas.bindings.cs:123)
+
+[UiShellPresentation] stage=CommandStarted sequence=8 kind=ShowLoading region=LoadingLayer route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=8 kind=ShowLoading region=LoadingLayer route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:87)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=8 kind=ShowLoading region=LoadingLayer
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[OperationMapSourceScene] stage=SceneUnloadRequested
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryBeginOperationMapContentUnload (string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:92)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:387)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+UnityEngine.Debug:Log (object)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:UpdateUnload () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:361)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:Update () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:120)
+Game.Composition.MatchSceneView:UpdateOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:449)
+Game.Composition.MatchSceneView:UpdateOperationMapContentUnload () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:102)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:399)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellPresentation] stage=CommandStarted sequence=9 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=9 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=9 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignTutorialEntryEditorProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:242)
+Game.Editor.CampaignTutorialEntryEditorProbe:Tick () (at Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs:202)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignNativeSelection] result=Passed gestures=2 completed=2 unexpected=0 interventions=0 staleCueDeferrals=0 maximumStaleSeconds=0.000 staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0
+UnityEngine.Debug:Log (object)
+CampaignSelectionJourney1042:Finish () (at /private/tmp/CampaignSelectionJourney1042.cs:238)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=CampaignSelectionJourney1042.RunM01
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

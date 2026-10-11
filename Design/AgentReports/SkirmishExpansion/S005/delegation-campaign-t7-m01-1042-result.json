@@ -1,0 +1,27 @@
+{
+  "mission": "M1",
+  "run": "1042",
+  "result": "Passed",
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "nativeVictoryAndCampaignReturn": true,
+  "input": "normal visible Rifle Squad card Touch + original journey world/control input",
+  "cardGestures": 2,
+  "completed": 2,
+  "unexpected": 0,
+  "interventions": 0,
+  "healthySelectedCohort": 4,
+  "sourceHash": "4a4cb922ddb9e83e218f1d37f8d3cfd398b794726efd9a08e48b2b5aac6ed60c",
+  "wholeMainSourcePass": false,
+  "scope": "T7 current94d runtime plus narrow three-file M1 card guidance patch; older air movement dependency differs from current main. Synthetic edit-mode fixture fails on unrendered Canvas geometry and remains failed evidence; native production guidance proved in both locales.",
+  "markers": [
+    "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact",
+    "[CampaignNativeSelection] result=Passed gestures=2 completed=2 unexpected=0 interventions=0 staleCueDeferrals=0 maximumStaleSeconds=0.000 staleCueBoundSeconds=3 fullJourneyStrictTouchAudit=0",
+    "[ExistingEditorValidation] result=Passed executeMethod=CampaignSelectionJourney1042.RunM01"
+  ],
+  "logSha256": "5c16a1473f3c82fd9af7f8e2db7eea7bec8c74aa0e2ba87bd5ff34be05e54374",
+  "actualPresentedCardFallback": true,
+  "bilingualCardInstructionObserved": true
+}

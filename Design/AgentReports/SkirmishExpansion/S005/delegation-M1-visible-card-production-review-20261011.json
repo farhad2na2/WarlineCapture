@@ -1,0 +1,22 @@
+{
+  "result": "ReadOnlyReviewNoConcreteActionableProductionDefectsFound",
+  "patch": "/private/tmp/delegation-campaign-M1-visible-card-production.patch",
+  "patchSha256": "1df63ecd4ff2778768963b0b3d834f87f8a45580c972ee2ffe6d42ddd7130758",
+  "scope": "Three production UI partial files; M1-only visible Rifle-card fallback when world drag cannot be observed. No gameplay order, Campaign map, resource, completion or producer changes.",
+  "sourceEditsByReviewer": false,
+  "editorControlByReviewer": false,
+  "checkedDependencies": [
+    "MatchHudAssistantUiSystemHelper.NextAction.TickNextTutorialAction presentation/null/suspension guards",
+    "MatchHudAssistantUiSystemHelper.ShowMe.RefreshShowMeAvailability selection override reset",
+    "AssistantHighlightPresentationSystemHelper.NextAction.ShowTutorialControl hides drag guide/world ring and binds actual normal control",
+    "AssistantHighlightPresentationSystemHelper.SelectionDrag.ShowTutorialSelectionBox replaces previous cue before fallback",
+    "AssistantHighlightPresentationSystemHelper.Guidance.BindSquadTray resolves existing first Soldier/Rifle card",
+    "MatchHudSquadTrayView.AssistantGuidanceTarget and native button binding",
+    "AriaTutorialBriefingView.SetSelectionActionAvailable removes old selectionInstruction when requirement ends"
+  ],
+  "findings": [],
+  "nullSafety": "Embedded tutorial guarded by TickNextTutorialAction; highlight helper is readonly initialized. New control helper checks null/inactive/noninteractable Button. Standard Unity Button UI has RectTransform; no concrete supported-hierarchy null path found. Shared localization/EventSystem assumptions match existing UI code.",
+  "cueClearing": "Successful card cue calls ShowTutorialControl\u2192HideSelectionDrag; failed card checks retain existing world drag cue. Hidden/suspended/no recommendation clears direct cue. When selection ends RefreshShowMeAvailability clears override through SetSelectionActionAvailable(false).",
+  "visualInputScope": "Checks safe-area center and first EventSystem hit belongs to existing Button or descendant; does not silently issue troop orders. Actual M1 card selects normal four-soldier group.",
+  "validationLimits": "Parent reports native T7 EN/FA1042 passed; this audit did not execute it or certify merged/current main source. No synthetic tests or new acceptance gates added."
+}

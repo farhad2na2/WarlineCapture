@@ -3,28 +3,23 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
-  "sourceFingerprint": "final-930-fullmap-input-pre-independent-fingerprint.json",
+  "sourceHash": "2de5dafe83cb8b8226a562562cdbe40300d284f9113cc696d90865ce656318b2",
+  "sourceFingerprint": "final-1053-current-manual-fa-IR-seed104734-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native945",
-  "activeLog": "native-945-normal-strike-returntaxi-save-continue.log",
-  "activeScope": "S005AircraftRecovery945.RunTaxiValidation",
-  "activePreManifest": "final-963-shared-campaign-m02-post-source-manifest.json",
-  "currentCompilationProof": "compile-930-fullmap-input-status.json",
-  "shippingRuntimeCommit": "0b1fd7401",
+  "activeRun": null,
+  "activeLog": null,
+  "activeScope": null,
+  "activePreManifest": null,
+  "currentCompilationProof": "compile-1046-air-pause-fixed-status.json",
+  "shippingRuntimeCommit": "241b417868a327e436805db82ed842898fc9bacc",
   "currentNativeVictories": [
-    "native934-current-fresh-aria-en-seed104734-victory.json",
-    "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
-    "native936-current-fresh-aria-en-seed130368-victory.json",
-    "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
-    "native938-current-fresh-aria-en-seed155926-victory.json",
-    "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
+    "native1053-current-manual-fa-IR-seed104734-victory.json"
   ],
-  "currentAriaBaselineMatrix": "native934-939-current-fresh-aria-seed-matrix.json",
-  "currentManualLocalePair": "native932-933-current-manual-en-fa-locale-pair.json",
+  "currentAriaBaselineMatrix": null,
+  "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
@@ -43,30 +38,23 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
+    "Fresh normal paid Strike flight Save/Continue; native taxi recovery has a scoped pass",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
-    "Fresh current-candidate checkpoint/recovery and exposed-preset evidence",
-    "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
+    "Remaining checkpoint/result/replay and exposed-preset evidence",
+    "Remaining affected Campaign M1/M3/M4 regressions, family stress, cleanup and performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Run affected Campaign M1-M5 regressions, then native aircraft taxi/flight recovery, remaining enabled-role lifecycles/capacity, other recovery/preset and stress/performance gates.",
+  "nextWork": "Native recorded flight Continue/Pause/Save after pause fix; T7 independent Campaign M1/M4 real visible input; diagnose Drone fixture actual serialized drawer view before production; grouped remaining role effects and acceptance gates.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Normal input qualification on current frozen source"
+    "status": "PreparedAwaitingHeavyLane",
+    "scope": "NativeDrone1057 legal placement diagnostics; groupedHelipad1052 andRadar1055 compile-checked; T7M1/M4 owns heavy Play lane"
   },
-  "currentSourceFingerprint": "final-939-aria-fa-IR-seed155926-post-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1058-m1-guidance-integrated-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
-  "currentFreshAriaSeedProofs": [
-    "native934-current-fresh-aria-en-seed104734-victory.json",
-    "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
-    "native936-current-fresh-aria-en-seed130368-victory.json",
-    "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
-    "native938-current-fresh-aria-en-seed155926-victory.json",
-    "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
-  ],
+  "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": null,
   "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
   "latestPreviousCandidateAriaProofs": [
@@ -168,12 +156,11 @@
   },
   "shippingNativeSurfaceSpawnCommit": "629318bbf",
   "currentManualControlsProofs": [
-    "native932-current-manual-en-seed130368-victory.json",
-    "native933-current-manual-fa-IR-seed104734-victory.json"
+    "native1053-current-manual-fa-IR-seed104734-victory.json"
   ],
-  "currentManualControlsProof": "native933-current-manual-fa-IR-seed104734-victory.json",
+  "currentManualControlsProof": "native1053-current-manual-fa-IR-seed104734-victory.json",
   "currentCombatSaveContinueProof": "native932-current-manual-en-seed130368-victory.json",
-  "manualLocaleStatus": "Current-source normal manual EN combat Save/Continue and FA fresh journeys passed with native frozen result/return and full input/source audits.",
+  "manualLocaleStatus": "Fresh current-source FA manual full match passed. Earlier EN/manual and ARIA baselines retain their original hashes and scoped applicability; fresh current-source EN/ARIA pending.",
   "focusedNative923": {
     "result": "Passed",
     "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
@@ -263,15 +250,28 @@
   "currentFirstAriaSeedLocalePair": "native934-935-current-first-aria-seed-locale-pair.json",
   "recordedPreviousSourceFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
-  "currentStandardRegularJourneysPassed": true,
-  "ariaLocaleStatus": "Current-source fresh ARIA three-seed EN/FA Standard Regular baseline passed with native menu/Play/Confirm, frozen result/return, strict contact/receipt and full source audits; separate from family20 and supplemental presets.",
+  "currentStandardRegularJourneysPassed": false,
+  "ariaLocaleStatus": "Fresh baseline pending after aircraft pause fix; six previous-source complete journeys retained historically.",
   "currentCampaignRegressionProofs": [
     "native940-shared-campaign-m01-en-fa-journey-failure.json",
     "native948-shared-campaign-m01-en-fa-journey-failure.json",
     "native953-shared-campaign-m01-en-fa-journey-pass.json",
     "native954-shared-campaign-m02-en-fa-journey-failure.json",
     "native958-shared-campaign-m02-en-fa-journey-failure.json",
-    "native963-shared-campaign-m02-en-fa-journey-failure.json"
+    "native963-shared-campaign-m02-en-fa-journey-failure.json",
+    "native972-shared-campaign-m02-en-fa-journey-failure.json",
+    "native992-shared-campaign-m02-en-fa-journey-pass.json",
+    "native991-shared-campaign-m01-en-fa-journey-failure.json",
+    "native996-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1000-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1006-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1012-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1013-shared-campaign-m03-en-fa-journey-failure.json",
+    "native1014-shared-campaign-m04-en-fa-journey-failure.json",
+    "native1015-shared-campaign-m05-en-fa-journey-failure.json",
+    "native1020-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1025-shared-campaign-m04-en-fa-journey-failure.json",
+    "native1026-shared-campaign-m05-en-fa-journey-pass.json"
   ],
   "focusedNative947": {
     "result": "Passed",
@@ -337,5 +337,299 @@
     "logSha256": "92d6287bfe035173c78436733ef4577d1e150926333be4b63a9dd1922d8396d4",
     "normalPlayerJourneyCertified": false
   },
-  "currentSharedTechnicalProof": "native962-focused-current-proof.json"
+  "currentSharedTechnicalProof": "native962-focused-current-proof.json",
+  "currentM02PlacementDefect": {
+    "status": "NativeEnglishPersianBuildProductionVictoryReturnPassed",
+    "proof": "native992-shared-campaign-m02-en-fa-journey-pass.json",
+    "logicalAndCatalogRepairCommitted": "ed8601203"
+  },
+  "currentAircraftRecoveryProofs": [
+    "native945-normal-paid-strike-returntaxi-save-continue-failure.json",
+    "native945-980-normal-paid-strike-taxi-save-continue-pass.json",
+    "native978-normal-paid-strike-flight-save-continue-failure.json",
+    "native1018-normal-paid-strike-flight-save-continue-failure.json"
+  ],
+  "focusedNative976": {
+    "result": "Failed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-945-aircraft-returntaxi-recovery-post-source-manifest.json",
+    "postSourceManifest": "retained-strike-taxi-continue-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-976-retained-strike-taxi-continue.log",
+    "requiredPassMarker": "[S005RetainedTaxiContinue] result=Passed",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative977": {
+    "result": "Failed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "retained-strike-taxi-continue-source-manifest.json",
+    "postSourceManifest": "final-977-retained-strike-taxi-continue-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-977-retained-strike-taxi-continue.log",
+    "requiredPassMarker": "[S005RetainedTaxiContinue] result=Passed",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative979": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-977-retained-strike-taxi-continue-post-source-manifest.json",
+    "postSourceManifest": "final-979-retained-strike-taxi-continue-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-979-retained-strike-taxi-continue.log",
+    "requiredPassMarker": "[S005RetainedTaxiContinue] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative980": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-979-retained-strike-taxi-continue-post-source-manifest.json",
+    "postSourceManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-980-retained-strike-taxi-continue.log",
+    "requiredPassMarker": "[S005RetainedTaxiContinue] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentTaxiRecoveryStatus": "PassedScopedNormalSplitSessionTaxiRecovery",
+  "currentTaxiRecoveryProof": "native945-980-normal-paid-strike-taxi-save-continue-pass.json",
+  "currentM02LogicalRepairProof": "native988-m02-logical-build-lot-repair-pass.json",
+  "currentS005CandidateSourceApplicability": {
+    "proof": "native990-s005-unchanged-dependencies-source-applicability.json",
+    "scope": "Changes confined to Campaign M2 Editor builder, logical map and matching chapter catalog binding; no S005 runtime or physical source changes. Current whole-source native journeys pending.",
+    "wholeSourceIdentical": false,
+    "s005CandidateSourceUnchanged": true,
+    "nativeCurrentWholeSourceAcceptanceClaimed": false
+  },
+  "currentM02ContentPackRepairProof": "native990-m02-content-pack-binding-repair-pass.json",
+  "latestPushedCommit": "84d2a54eb72cc7aed9e8f5957ca66ecda709f61e",
+  "currentValidationDriverIssue": {
+    "scope": "Campaign selection test actuator timing",
+    "failedProofs": [
+      "native991-shared-campaign-m01-en-fa-journey-failure.json",
+      "native996-shared-campaign-m01-en-fa-journey-failure.json",
+      "native1000-shared-campaign-m01-en-fa-journey-failure.json"
+    ],
+    "sourceChanged": false,
+    "productionInputFixClaimed": false,
+    "currentRetry": null,
+    "status": "M1 selection tap hit native HUD Move while trying world selection; unsafe fallback rejected in prepared1020. M3/M4/M5 independent runs proceeding.",
+    "latestFailedProof": "native1012-shared-campaign-m01-en-fa-journey-failure.json",
+    "observerFailure": "readonly1010-selection-observer-failure.json",
+    "observerProof": "readonly1019-selection-observation.json",
+    "nextPreparedFixture": "prepared-CampaignSelectionJourney1020.cs.txt"
+  },
+  "preparedGroundMovementQualification": {
+    "fixture": "prepared-S005GroundMovement1024.cs.txt",
+    "sha256": "3b9ab30b9abca460ea8e81166ca6ba84c2b4fa70d6c2c06f440e05e7189b2e21",
+    "executed": true,
+    "scope": "Disclosed isolated native API queues + actual Touch selection/Move. Motion origins captured at verified Move acceptance; automatic earlier haul motion cannot satisfy the check."
+  },
+  "preparedCampaignSelectionQualification": {
+    "fixture": "prepared-CampaignSelectionJourney1012.cs.txt",
+    "executed": false,
+    "equalsPassed953DriverAfterClassNameNormalization": true,
+    "scope": "Native Campaign compatibility regression; UI raycast and screen-position commands with Touch selection companion. Strict full-journey Touch and human/device acceptance separate."
+  },
+  "latestAircraftFlightRecoveryFailure": {
+    "result": "Failed",
+    "scope": "Normal paid Strike flight or return-taxi Pause/Save/Continue using checked native touch controls; no complete-match win or full aircraft lifecycle claimed",
+    "mode": "Flight",
+    "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+    "fullSourceUnchanged": true,
+    "preManifest": "final-1006-shared-campaign-m01-post-source-manifest.json",
+    "postManifest": "final-978-aircraft-flight-recovery-post-source-manifest.json",
+    "actualWrapperExit": 1,
+    "nativeBridgeExit": 1,
+    "log": "native-978-normal-strike-flight-save-continue.log",
+    "logSha256": "56d2f49addd45194b1efd82698b44e65d1d219ae1f24f3b7f727dc794835760a",
+    "trace": "s005-aria-live-155926-en-f18c5c0754ed46ae9f6893be6a508934.jsonl",
+    "inputAudit": {
+      "recordedContacts": 276,
+      "completedContacts": 276,
+      "phases": {
+        "Menu": 9,
+        "PlayerResume": 267
+      },
+      "terminalCancellations": [],
+      "errors": [],
+      "strictRecordedContacts": true,
+      "strictAllContactsEnded": true,
+      "nativeMenuContactsRecorded": true,
+      "terminalContactsRecorded": false,
+      "completeMatchCertified": false,
+      "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+      "trace": "s005-aria-live-155926-en-f18c5c0754ed46ae9f6893be6a508934.jsonl.touch.jsonl",
+      "sha256": "ec2a13758814d0b79a148dc14bb0c2e9a3acfb0e91b46f29e527d97c5b146e9a"
+    },
+    "fixture": "native978-normal-aircraft-recovery-fixture.cs.txt",
+    "fixtureSha256": "f1c54bc70f8dce410aa8b98fad87d0a6b146ad5bb7b7cf13737b44d1f78fbe72",
+    "fixtureDriverStateChangesOnly": true,
+    "actorsResourcesOrdersSelectionCheckpointInjected": false,
+    "pausedCheckpointAircraftPartsExact": false,
+    "paidReceiptPreserved": false,
+    "sameAttempt": false,
+    "oldPhysicalGone": false,
+    "runwayGeometryAndSpeedsPreserved": false,
+    "clockBoundedNativeMotion": false,
+    "nativeMarkers": [
+      "[S005AircraftRecovery] scope=NormalTouchPaidStrikeSaveContinue mode=Flight actorsResourcesOrdersSelectionCheckpointInjected=0 matchBudgetsClockUnchanged=1 completeMatchCertified=0",
+      "[S005AircraftRecovery] phase=Trigger mode=Flight receipt=1005 air={\"HomePosition\":{\"x\":1375.5,\"y\":0.8241641521453857,\"z\":189.5},\"HomeCell\":{\"x\":1375,\"y\":189},\"HomeInitialized\":1,\"ReturningHome\":0,\"Airborne\":1,\"UsesRunway\":1,\"TakeoffRolling\":0,\"LandingRolling\":0,\"AttackRunActive\":1,\"AttackManeuverTurnSign\":-1,\"AttackPassGoalCell\":{\"x\":1362,\"y\":687},\"ReturnApproachInitialized\":0,\"RunwayTakeoffPosition\":{\"x\":1310.3250732421875,\"y\":0.7941641807556152,\"z\":184.3225555419922},\"RunwayTakeoffCell\":{\"x\":1310,\"y\":184},\"RunwayLandingPosition\":{\"x\":1520.4349365234375,\"y\":0.7941641807556152,\"z\":184.35731506347657},\"RunwayLandingCell\":{\"x\":1520,\"y\":184},\"AttackRunExitPosition\":{\"x\":1347.5887451171875,\"y\":30.081745147705079,\"z\":739.400390625},\"FixedWingCruiseY\":30.081745147705079,\"FixedWingCruiseYInitialized\":1} position=float3(1384.055f, 30.08175f, 615.3773f) input=ExistingNativePauseSaveContinueControls",
+      "[S005PlayerSaveResume] result=Failed step=1 reason=Player Save/Resume timed out at step=1"
+    ],
+    "errors": [
+      "Wrapper/native bridge failure",
+      "Missing [S005AircraftRecovery] result=Passed mode=Flight",
+      "Missing [S005AircraftRecovery] phase=PausedSnapshot",
+      "Missing [S005AircraftRecovery] phase=DiskVerified schema7=1 pausedAircraftPartsExact=1",
+      "Missing [S005PlayerSaveResume] result=Passed input=Touch",
+      "Missing paid Strike native recovery receipt audit"
+    ],
+    "countsForFreshAriaSeedBaseline": false,
+    "countedWin": false,
+    "fullLifecycleCertified": false,
+    "technicallyReady": false,
+    "playerReady": false,
+    "realHumanDeviceAcceptance": false,
+    "failureCause": "Validation driver transitioned at FirstSortie step6 after opening the native command wheel; its ScrimButton blocked Pause until the step1 timeout. No snapshot or Continue was reached.",
+    "nextPreparedFixture": "prepared-S005AircraftRecovery1018.cs.txt",
+    "nextFixtureChange": "Trigger at actual airborne cruising step5, before command-wheel UI; no actor/resource/order/clock changes."
+  },
+  "currentPaidStrikeFirstSortieObservation": "native978-current-paid-strike-first-sortie-observation.json",
+  "preparedFlightRecoveryQualification": {
+    "fixture": "prepared-S005AircraftRecovery1018.cs.txt",
+    "executed": false,
+    "trigger": "Actual flight in step5 before command wheel",
+    "sha256": "a53110c25afe9f299e90c5af294dd83520cb043c24cb46610b7d21cf08c6f576"
+  },
+  "currentCampaignM03Qualification": {
+    "proof": "native1013-shared-campaign-m03-en-fa-journey-failure.json",
+    "result": "FailedNativeDefeat",
+    "locale": "en",
+    "stage": "Convoy 1/2 after radar/position/Hold; friendly rifles dead by defense elapsed200",
+    "evidence": "native1013-campaign-m03-screens/3-journey-defense-status-200.png",
+    "sourceChanged": false,
+    "causeProven": false,
+    "status": "Campaign compatibility gate open; distinguish test strategy/input from runtime regression before modifying gameplay."
+  },
+  "currentCampaignRegressionMatrix": "native992-1013-1020-1025-1026-shared-campaign-m1-m5-regression-matrix.json",
+  "currentGroundMovementQualification": "native1024-isolated-ground-native-touch-movement-pass.json",
+  "currentCampaignM04Qualification": {
+    "proof": "native1014-shared-campaign-m04-en-fa-journey-failure.json",
+    "result": "FailedNativeOffscreenTargetDriver",
+    "locale": "en",
+    "stage": "Boarded APC move to transfer marker; driver threw after Show Me",
+    "causeProven": "Required world target offscreen without Show Me in player-action probe; normal minimap camera companion prepared but not tested.",
+    "runtimeRegressionProven": false
+  },
+  "currentCampaignM05Qualification": {
+    "proof": "native1015-shared-campaign-m05-en-fa-journey-failure.json",
+    "result": "FailedNativeOffscreenTargetDriver",
+    "locale": "en",
+    "stage": "Gate/transmitter actions advanced to archive move; driver threw after Show Me",
+    "runtimeRegressionProven": false
+  },
+  "currentNativeGroundBasicMovementStatus": "PassedScopedNativeGroundMovement",
+  "currentNativeGroundBasicMovementRoleCount": 15,
+  "currentNativeGroundBasicMovementReceiptAudit": "native1024-ground-move-receipt-audit.json",
+  "currentDroneProducerSmoke": "native1051-drone-intelstation-no-airport-failure.json",
+  "focusedNative1043": {
+    "result": "Failed",
+    "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1040-drone-producer-post-source-manifest.json",
+    "postSourceManifest": "final-1043-air-pause-reproduction-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-1043-air-pause-zero-delta-reproduction.log",
+    "requiredPassMarker": "[S005AirPauseRegression] result=Passed",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative1044": {
+    "result": "Failed",
+    "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1043-air-pause-reproduction-post-source-manifest.json",
+    "postSourceManifest": "final-1044-air-pause-reproduction-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-1044-air-pause-zero-delta-reproduction.log",
+    "requiredPassMarker": "[S005AirPauseRegression] result=Passed",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative1046": {
+    "result": "Passed",
+    "sourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1046-air-pause-fixed-pre-source-manifest.json",
+    "postSourceManifest": "final-1046-air-pause-fixed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1046-air-pause-conservation-fixed.log",
+    "requiredPassMarker": "[AirPauseConservationTests] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentAircraftPauseFixProof": "native1046-focused-current-proof.json",
+  "currentSourceDelta": "native1046-air-pause-fixed-source-delta.json",
+  "currentRetainedFlightRecovery": "native1049-retained-flight-pause-save-continue-pass.json",
+  "qualificationBeforePauseFix": {
+    "sourceScope": "Historical baseline before shared aircraft pause fix; exact hashes remain in each proof",
+    "proofs": {
+      "currentNativeVictories": [
+        "native934-current-fresh-aria-en-seed104734-victory.json",
+        "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
+        "native936-current-fresh-aria-en-seed130368-victory.json",
+        "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
+        "native938-current-fresh-aria-en-seed155926-victory.json",
+        "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
+      ],
+      "currentFreshAriaSeedProofs": [
+        "native934-current-fresh-aria-en-seed104734-victory.json",
+        "native935-current-fresh-aria-fa-IR-seed104734-victory.json",
+        "native936-current-fresh-aria-en-seed130368-victory.json",
+        "native937-current-fresh-aria-fa-IR-seed130368-victory.json",
+        "native938-current-fresh-aria-en-seed155926-victory.json",
+        "native939-current-fresh-aria-fa-IR-seed155926-victory.json"
+      ],
+      "currentAriaBaselineMatrix": "native934-939-current-fresh-aria-seed-matrix.json",
+      "currentManualLocalePair": "native932-933-current-manual-en-fa-locale-pair.json",
+      "currentStandardRegularJourneysPassed": true
+    }
+  },
+  "previousSourceManualControlsProofs": [
+    "native932-current-manual-en-seed130368-victory.json",
+    "native933-current-manual-fa-IR-seed104734-victory.json"
+  ],
+  "currentFlightRecoveryStatus": "Native1049 scoped normal-input recovery of original paid flight passed actual Continue/Pause/Save/Continue with exact new paused flight state and positive-time motion; not a fresh uninterrupted complete match.",
+  "currentMobileQualitySourceReview": "delegation-unexpected-source-delta-review-20261011.json; independent Mobile MSAA4 edit conflicts with existing0 contract, owner provenance pending; no device pass claimed.",
+  "currentCompilation": "compile1058-integrated-M1-guidance-status.json",
+  "currentM1GuidanceIntegration": "native1058-M1-guidance-integration-source-delta.json",
+  "sourceQualificationNote": "Current main source includes exact M1 guidance patch natively proven EN/FA in T7. Prior main proofs retain their recorded8417 source hash and scoped dependency applicability; no full2de5 main-source pass claimed."
 }

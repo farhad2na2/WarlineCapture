@@ -1,5 +1,5 @@
 {
-  "status": "PreparedNotExecuted",
+  "status": "PartiallyExecuted",
   "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
   "checks": [
     {
@@ -7,25 +7,29 @@
       "scope": "Normal paid Strike return taxi Save/Continue",
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunTaxiValidation",
-      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json"
+      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
+      "status": "PreparedNotExecuted"
     },
     {
       "run": "native946",
       "scope": "Normal paid Strike flight Save/Continue",
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunFlightValidation",
-      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json"
+      "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
+      "status": "PreparedNotExecuted"
     },
     {
       "run": "native947",
       "scope": "Automated checkpoint staging, transients, support and strike codec/conservation fixtures; no native player journey",
       "driver": "/private/tmp/S005CheckpointTechnical947.cs",
       "entry": "S005CheckpointTechnical947.RunValidation",
-      "dryCompileProof": "compile947-checkpoint-technical-fixture-dry-run.json"
+      "dryCompileProof": "compile947-checkpoint-technical-fixture-dry-run.json",
+      "status": "PassedTechnicalScope",
+      "executedProof": "native947-focused-current-proof.json"
     }
   ],
   "readinessEstablished": false,
-  "executionOrder": "After fresh ARIA baseline and affected Campaign regression closure; no concurrent stateful validation on the same Editor",
+  "executionOrder": "Checkpoint technical947 completed after the ARIA baseline; normal aircraft945/946 await affected Campaign closure. No concurrent stateful validation on the same Editor.",
   "preparedDriverCopies": [
     {
       "file": "prepared-S005AircraftRecovery945.cs.txt",
@@ -37,7 +41,7 @@
     },
     {
       "file": "prepared-s005-run-aircraft-recovery-945.py.txt",
-      "sha256": "9c122acee7dde2201797069fb91f12e5f7f82de7c337dacf78e0efae9c82deef"
+      "sha256": "44cbe8cf6700b257d37a15b04a1d51c70fbd7c2d64be9f603ecd5ec9144697c7"
     },
     {
       "file": "prepared-s005-close-aircraft-recovery-current.py.txt",
@@ -46,6 +50,22 @@
     {
       "file": "prepared-s005-run-campaign-940.py.txt",
       "sha256": "b0bffdd56f62bdc3bf6ce074aacf7c458f71378e6b9bfb4f81fa739060976831"
+    },
+    {
+      "file": "prepared-CampaignSelectionJourney948.cs.txt",
+      "sha256": "f0d6a61ab33f643058116661e022deab8098eda4669b4e78dd18838a36a96eb3"
+    },
+    {
+      "file": "prepared-CampaignSelectionJourney953.cs.txt",
+      "sha256": "329a1fe9cc10b56f7f288a1285e8f6c904f8b51d81e253bee8ec282bce788ac4"
+    },
+    {
+      "file": "prepared-s005-run-campaign-948.py.txt",
+      "sha256": "b527d6784a58ab063435aaa3cead92c1bd6b7764de3eef8ccb0fb6c056f83de3"
+    },
+    {
+      "file": "prepared-s005-run-campaign-953.py.txt",
+      "sha256": "e40ec2632d372f648ea92ee45f92948a472b463ed94ad6863e7b2b5adf37a183"
     }
   ]
 }

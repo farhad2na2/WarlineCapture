@@ -33,3 +33,9 @@ Native937: ARIA fa-IR seed130368, Victory at236.853s. Normal journey audits pass
 Native938: ARIA en seed155926, Victory at240.696s. Normal journey audits passed; actual wrapper0/bridge0; full source unchanged=True. Proof `native938-current-fresh-aria-en-seed155926-victory.json`.
 
 Native939: ARIA fa-IR seed155926, Victory at240.917s. Normal journey audits passed; actual wrapper0/bridge0; full source unchanged=True. Proof `native939-current-fresh-aria-fa-IR-seed155926-victory.json`.
+
+Native940: Campaign M1 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native940-shared-campaign-m01-en-fa-journey-failure.json`.
+
+Native948: Campaign M1 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native948-shared-campaign-m01-en-fa-journey-failure.json`.
+
+Native947: current-source checkpoint staging/conservation, transient, support and Strike recovery technical suites passed; actual wrapper0/bridge0, all suite markers present and complete source unchanged. Negative missing-footprint and incomplete-map cases are intentional fixtures. No normal aircraft journey or full X36 closure is claimed. Proof `native947-focused-current-proof.json`.

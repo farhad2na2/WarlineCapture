@@ -9,10 +9,10 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": null,
-  "activeLog": null,
-  "activeScope": null,
-  "activePreManifest": null,
+  "activeRun": "native953",
+  "activeLog": "native-953-shared-campaign-m01-en-fa-journey.log",
+  "activeScope": "CampaignSelectionJourney953.RunM01",
+  "activePreManifest": "final-947-checkpoint-conservation-technical-post-source-manifest.json",
   "currentCompilationProof": "compile-930-fullmap-input-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [
@@ -264,5 +264,42 @@
   "recordedPreviousSourceFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
   "currentStandardRegularJourneysPassed": true,
-  "ariaLocaleStatus": "Current-source fresh ARIA three-seed EN/FA Standard Regular baseline passed with native menu/Play/Confirm, frozen result/return, strict contact/receipt and full source audits; separate from family20 and supplemental presets."
+  "ariaLocaleStatus": "Current-source fresh ARIA three-seed EN/FA Standard Regular baseline passed with native menu/Play/Confirm, frozen result/return, strict contact/receipt and full source audits; separate from family20 and supplemental presets.",
+  "currentCampaignRegressionProofs": [
+    "native940-shared-campaign-m01-en-fa-journey-failure.json",
+    "native948-shared-campaign-m01-en-fa-journey-failure.json"
+  ],
+  "focusedNative947": {
+    "result": "Passed",
+    "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-948-shared-campaign-m01-post-source-manifest.json",
+    "postSourceManifest": "final-947-checkpoint-conservation-technical-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-947-checkpoint-conservation-technical.log",
+    "requiredPassMarker": "[S005CheckpointTechnical] result=Passed staging=1 transient=1 support=1 strike=1",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [],
+    "actualWrapperExit": 0,
+    "nativeBridgeExit": 0,
+    "scope": "Current-source isolated checkpoint conservation/transient/support/Strike fixtures; no normal player journey or complete recovery gate certified",
+    "requiredSuiteMarkers": [
+      "[SkirmishNativeRecoveryStagingValidation] result=Passed",
+      "[SkirmishNativeCheckpointTransientTests] result=Passed",
+      "[SkirmishNativeSupportRecoveryTests] result=Passed",
+      "[SkirmishNativeStrikeRecoveryTests] result=Passed",
+      "[S005CheckpointTechnical] result=Passed"
+    ],
+    "requiredSuiteMarkersPresent": true,
+    "logSha256": "f23d05edb2a05d2cb2a9c76d7fd46637af2dcee16896b5fe42d9148c21e41602",
+    "expectedNegativeRecoveryCases": [
+      "NativeStructurePrefabOrFootprintMissing:Building_Barrack",
+      "NativeRecoveryTimedOut:NativePhysicalMapCensusIncomplete"
+    ],
+    "normalPlayerRecoveryCertified": false
+  },
+  "currentCheckpointTechnicalProof": "native947-focused-current-proof.json"
 }

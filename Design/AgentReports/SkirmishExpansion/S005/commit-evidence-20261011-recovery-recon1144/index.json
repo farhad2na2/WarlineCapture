@@ -1,0 +1,1260 @@
+{
+  "format": "S005ClosedRecoveryReconLosslessGzip.v1",
+  "dependencies": [
+    {
+      "directory": "commit-evidence-20261011-main-fog-guidance-selected",
+      "indexSha256": "8f741d6a3001216da95cbfc824af075997d0c48abe6a67b1f7f0a055430a8443"
+    },
+    {
+      "directory": "commit-evidence-20261011-main-fog-guidance-supplement1136",
+      "indexSha256": "5d1cf4e3972338dd590bcf7f7d784e3bbe101c0152006ff1298745b45b89b76c"
+    }
+  ],
+  "files": [
+    {
+      "originalPath": "/private/tmp/S005BoardedRecovery1144.cs",
+      "sha256": "21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26",
+      "bytes": 66992,
+      "object": "objects/21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26.gz"
+    },
+    {
+      "originalPath": "/private/tmp/S005DroneFogRecon1140.cs",
+      "sha256": "ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c",
+      "bytes": 65332,
+      "object": "objects/ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c.gz"
+    },
+    {
+      "originalPath": "/private/tmp/drone-fog1140-public-staging-manifest.json",
+      "sha256": "0d1a19056c88eb7862405cf3472302db53b4134b9771e73313aac8af35080261",
+      "bytes": 714,
+      "object": "objects/0d1a19056c88eb7862405cf3472302db53b4134b9771e73313aac8af35080261.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/S005BoardedRecovery1138.cs.original",
+      "sha256": "79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53",
+      "bytes": 59200,
+      "object": "objects/79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/diagnosis.json",
+      "sha256": "9349ef6bc95aade943aa856a943e129235ed923477f8f2d19cb7874cbfe16f27",
+      "bytes": 1831,
+      "object": "objects/9349ef6bc95aade943aa856a943e129235ed923477f8f2d19cb7874cbfe16f27.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/fixture-successor.patch",
+      "sha256": "05e5b3059eb180e7d2ca0374d86937b49eb2f6a44cf7647191d924e7e6a275fb",
+      "bytes": 15692,
+      "object": "objects/05e5b3059eb180e7d2ca0374d86937b49eb2f6a44cf7647191d924e7e6a275fb.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/manifest.json",
+      "sha256": "50cc7fa4dd2805928f8da2706f587c69482153cbdb6085f25b78a9b4068cab1c",
+      "bytes": 1710,
+      "object": "objects/50cc7fa4dd2805928f8da2706f587c69482153cbdb6085f25b78a9b4068cab1c.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/runner-successor.patch",
+      "sha256": "2dd9a8b56f949ce16f6643ed9bc2632422436e40824fe9fbfa6e8f96e3aa267a",
+      "bytes": 20939,
+      "object": "objects/2dd9a8b56f949ce16f6643ed9bc2632422436e40824fe9fbfa6e8f96e3aa267a.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/s005-run-boarded-recovery-1138.py.original",
+      "sha256": "2acf6c894afc4bcac2099289d5553079496d60de300297095b2bf373610b7dff",
+      "bytes": 20668,
+      "object": "objects/2acf6c894afc4bcac2099289d5553079496d60de300297095b2bf373610b7dff.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-boarded1144-typed-marker-revision/typed-marker-parser-tests.json",
+      "sha256": "95d37d65299d2d35748f1fc5c010f23c2ec9056d9c26d1e756540b529c4cbf5a",
+      "bytes": 2807,
+      "object": "objects/95d37d65299d2d35748f1fc5c010f23c2ec9056d9c26d1e756540b529c4cbf5a.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-run-boarded-recovery-1144.py",
+      "sha256": "98b996afca735237f27f9f3b8f6080056148bc94b38a739501c013dbec0331dc",
+      "bytes": 23176,
+      "object": "objects/98b996afca735237f27f9f3b8f6080056148bc94b38a739501c013dbec0331dc.gz"
+    },
+    {
+      "originalPath": "/private/tmp/s005-run-drone-fog-recon-1140.py",
+      "sha256": "018f36ae6a0e1df307e8f08a9ffb7934be87a258ee2e11a1fbc9efda0d4c2242",
+      "bytes": 12397,
+      "object": "objects/018f36ae6a0e1df307e8f08a9ffb7934be87a258ee2e11a1fbc9efda0d4c2242.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1098-reviewed-dry-run.json",
+      "sha256": "8d6892ab1e1d1670b9b924fa8c4372636b0ba422fda802f71494e38b39a771da",
+      "bytes": 697,
+      "object": "objects/8d6892ab1e1d1670b9b924fa8c4372636b0ba422fda802f71494e38b39a771da.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1138-reviewed-dry-run.json",
+      "sha256": "ff29554f580c8fbd4db93a099925f8ff7256e829c8e4bf3e979c450d37c3c8da",
+      "bytes": 3126,
+      "object": "objects/ff29554f580c8fbd4db93a099925f8ff7256e829c8e4bf3e979c450d37c3c8da.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1140-reviewed-dry-run.json",
+      "sha256": "abacb516285c16143f7fba39478825f5b039fe2b6e88eddf833d29871687c088",
+      "bytes": 696,
+      "object": "objects/abacb516285c16143f7fba39478825f5b039fe2b6e88eddf833d29871687c088.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/compile1144-reviewed-dry-run.json",
+      "sha256": "699071bf4539fb7d8d52724a5484f7fff4c75eaed9a857e7f01a6a47eb1e423e",
+      "bytes": 3126,
+      "object": "objects/699071bf4539fb7d8d52724a5484f7fff4c75eaed9a857e7f01a6a47eb1e423e.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1098.placement.jsonl",
+      "sha256": "a5944c05b527bddee19d1968ca468e2f01287f74f74aa050dbcc760ffd99cd07",
+      "bytes": 1673,
+      "object": "objects/a5944c05b527bddee19d1968ca468e2f01287f74f74aa050dbcc760ffd99cd07.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1098.touch.jsonl",
+      "sha256": "513b5fb0474b071066e5be67b1f065d18c9519e4d5f57616fd9b755173755150",
+      "bytes": 75060,
+      "object": "objects/513b5fb0474b071066e5be67b1f065d18c9519e4d5f57616fd9b755173755150.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1140.placement.jsonl",
+      "sha256": "badd64b9310f2ad8d18fe5b4cc925aafe7e96a5150b4fc216c08eec5fcd0fadf",
+      "bytes": 1673,
+      "object": "objects/badd64b9310f2ad8d18fe5b4cc925aafe7e96a5150b4fc216c08eec5fcd0fadf.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog-recon1140.touch.jsonl",
+      "sha256": "0e1e9d14e5b8d45b72844abbae3f1db013ca0a2bd18e2d8071e4c0f9b037c900",
+      "bytes": 85060,
+      "object": "objects/0e1e9d14e5b8d45b72844abbae3f1db013ca0a2bd18e2d8071e4c0f9b037c900.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog1098-prepared.json",
+      "sha256": "29ee147c73a944d99ffc19d99ce3416f7a6ed6e477bb53efa4e03e5567bf44e2",
+      "bytes": 2445,
+      "object": "objects/29ee147c73a944d99ffc19d99ce3416f7a6ed6e477bb53efa4e03e5567bf44e2.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-drone-fog1140-prepared.json",
+      "sha256": "84a713565c0c9734c196ef7b422d3f8c43c2e27aea79442f60fe8b650d0aa0a6",
+      "bytes": 7339,
+      "object": "objects/84a713565c0c9734c196ef7b422d3f8c43c2e27aea79442f60fe8b650d0aa0a6.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-post-independent-fingerprint.json",
+      "sha256": "5e0ebb0ba2280f7e7f8d7435d4a3c27ef8b48ebcdbe2a69935cf363abfc74756",
+      "bytes": 369,
+      "object": "objects/5e0ebb0ba2280f7e7f8d7435d4a3c27ef8b48ebcdbe2a69935cf363abfc74756.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-post-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-pre-dispatch-independent-fingerprint.json",
+      "sha256": "07b012950fafd5293aa4626844377f752e1642dccbc9b8a55ea041a59b21f1fe",
+      "bytes": 369,
+      "object": "objects/07b012950fafd5293aa4626844377f752e1642dccbc9b8a55ea041a59b21f1fe.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-pre-dispatch-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-preflight-independent-fingerprint.json",
+      "sha256": "46e067a47fd97c435e62d5d1ee285464159d927ce731c609204a35b6fefc5a6a",
+      "bytes": 368,
+      "object": "objects/46e067a47fd97c435e62d5d1ee285464159d927ce731c609204a35b6fefc5a6a.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1098-drone-fog-recon-producer-preflight-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-post-independent-fingerprint.json",
+      "sha256": "e5e6ab21d1a6e7dd3ee387b14d4c95b7a00d1e25ad85db17278ea749eb8b6670",
+      "bytes": 369,
+      "object": "objects/e5e6ab21d1a6e7dd3ee387b14d4c95b7a00d1e25ad85db17278ea749eb8b6670.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-post-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-pre-dispatch-independent-fingerprint.json",
+      "sha256": "9447713751f8183370faa191c218eadca97c8c3576e9d84bfa609aea63baa521",
+      "bytes": 367,
+      "object": "objects/9447713751f8183370faa191c218eadca97c8c3576e9d84bfa609aea63baa521.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-pre-dispatch-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-preflight-independent-fingerprint.json",
+      "sha256": "cf443db57097008466cb028dc456084df4b6845c36083eba39bec8baca8a3a69",
+      "bytes": 369,
+      "object": "objects/cf443db57097008466cb028dc456084df4b6845c36083eba39bec8baca8a3a69.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1138-boarded-recovery-preflight-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-post-independent-fingerprint.json",
+      "sha256": "85d1767f0bea27bd44cbd5082b402d70d57a3bb6ffee6aaaf06d2f236dc75ff0",
+      "bytes": 369,
+      "object": "objects/85d1767f0bea27bd44cbd5082b402d70d57a3bb6ffee6aaaf06d2f236dc75ff0.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-post-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-pre-dispatch-independent-fingerprint.json",
+      "sha256": "af5ddac041e620dca3d7feaeec5fec9bf6d56bee904087ad966f5d942920628c",
+      "bytes": 369,
+      "object": "objects/af5ddac041e620dca3d7feaeec5fec9bf6d56bee904087ad966f5d942920628c.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-pre-dispatch-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-pre-independent-fingerprint.json",
+      "sha256": "137886b6ddd0a045de282acc22abb46597fe1db0960f7ec3cafbb54552bd1001",
+      "bytes": 369,
+      "object": "objects/137886b6ddd0a045de282acc22abb46597fe1db0960f7ec3cafbb54552bd1001.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-pre-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-preflight-independent-fingerprint.json",
+      "sha256": "42543be1e52561d2c0c8ee1327fab6b3c7a6975b0a2bfc611ab6aa5b9fc48aba",
+      "bytes": 368,
+      "object": "objects/42543be1e52561d2c0c8ee1327fab6b3c7a6975b0a2bfc611ab6aa5b9fc48aba.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1140-drone-fog-recon-producer-preflight-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-post-independent-fingerprint.json",
+      "sha256": "64d7e2a9487a6e8d9aaa27d1e306d90f499127d6e5c16e42d5d9db226ad02a4c",
+      "bytes": 369,
+      "object": "objects/64d7e2a9487a6e8d9aaa27d1e306d90f499127d6e5c16e42d5d9db226ad02a4c.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-post-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-pre-dispatch-independent-fingerprint.json",
+      "sha256": "a9df7945c954f64b9281fc2da86633f30b9ededdbc333e99fee7f2ab6576fc21",
+      "bytes": 369,
+      "object": "objects/a9df7945c954f64b9281fc2da86633f30b9ededdbc333e99fee7f2ab6576fc21.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-pre-dispatch-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-pre-independent-fingerprint.json",
+      "sha256": "c04146e5f3088812cb7c4a82325a26388246fbe0a5751102168b7310446883dd",
+      "bytes": 369,
+      "object": "objects/c04146e5f3088812cb7c4a82325a26388246fbe0a5751102168b7310446883dd.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-pre-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-preflight-independent-fingerprint.json",
+      "sha256": "04e00967ce8cbe75e680ea89806dbfddd5be28b0836e0ed7323f73a73d98ad87",
+      "bytes": 369,
+      "object": "objects/04e00967ce8cbe75e680ea89806dbfddd5be28b0836e0ed7323f73a73d98ad87.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/final-1144-boarded-recovery-preflight-source-manifest.json",
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1098-drone-fog-recon-producer-fixture.json",
+      "sha256": "84d575eda026c9d33c5087a9f24fed203f696af5d4172d331634b594f0f0e415",
+      "bytes": 758,
+      "object": "objects/84d575eda026c9d33c5087a9f24fed203f696af5d4172d331634b594f0f0e415.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1138-boarded-recovery-fixture.json",
+      "sha256": "92d9f742e5f01cf9db6037d7ec99bffb768d86731f04fe889d0e231710113f72",
+      "bytes": 3189,
+      "object": "objects/92d9f742e5f01cf9db6037d7ec99bffb768d86731f04fe889d0e231710113f72.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1140-drone-fog-recon-producer-fixture.json",
+      "sha256": "283f5a6cf13534d8af7540e982c6394e93735942a531cbd38c519f271d717788",
+      "bytes": 757,
+      "object": "objects/283f5a6cf13534d8af7540e982c6394e93735942a531cbd38c519f271d717788.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/load1144-boarded-recovery-fixture.json",
+      "sha256": "caafd4cbfd8429890ff2ede8d0892f237866ab1daeebd305799eb5c42268502a",
+      "bytes": 3189,
+      "object": "objects/caafd4cbfd8429890ff2ede8d0892f237866ab1daeebd305799eb5c42268502a.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log",
+      "sha256": "79ede0e51b01e6b1820778b157e8751a7d14395d1242d3e66e9b4956acbb7a44",
+      "bytes": 129797,
+      "object": "objects/79ede0e51b01e6b1820778b157e8751a7d14395d1242d3e66e9b4956acbb7a44.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log.dispatch.json",
+      "sha256": "72b13fe876a88b16310fbefa4ccf7370d421f4d82a5d46fc8ec0c4b66e5e9656",
+      "bytes": 1014,
+      "object": "objects/72b13fe876a88b16310fbefa4ccf7370d421f4d82a5d46fc8ec0c4b66e5e9656.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log.exit",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log.wrapper-exit",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1138-isolated-paid-boarded-recovery.log",
+      "sha256": "8a2373014765b45afa99fe550e3ce1d70131f0a908754b00488b0ac34978f5ad",
+      "bytes": 214620,
+      "object": "objects/8a2373014765b45afa99fe550e3ce1d70131f0a908754b00488b0ac34978f5ad.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1138-isolated-paid-boarded-recovery.log.dispatch.json",
+      "sha256": "eb563f524fd88d4cd49b822e6dd917c2349e7bd512de1c18430abd42092798e8",
+      "bytes": 1002,
+      "object": "objects/eb563f524fd88d4cd49b822e6dd917c2349e7bd512de1c18430abd42092798e8.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1138-isolated-paid-boarded-recovery.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1138-isolated-paid-boarded-recovery.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1140-drone-fog-recon-intel-scan-auto-return-smoke.log",
+      "sha256": "84e99ed6918501f294bf463528e8d52b952388225f5019d83def89db3b8b02df",
+      "bytes": 117669,
+      "object": "objects/84e99ed6918501f294bf463528e8d52b952388225f5019d83def89db3b8b02df.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1140-drone-fog-recon-intel-scan-auto-return-smoke.log.dispatch.json",
+      "sha256": "ae363632a669eb0c8e689746516cd46351012cfa8e1405e962240d274c305c96",
+      "bytes": 1014,
+      "object": "objects/ae363632a669eb0c8e689746516cd46351012cfa8e1405e962240d274c305c96.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1140-drone-fog-recon-intel-scan-auto-return-smoke.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1140-drone-fog-recon-intel-scan-auto-return-smoke.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1144-isolated-paid-boarded-recovery.log",
+      "sha256": "e117623bce25c908fa2744fb3ae5d1ec8876be6c9422181a58fbb07c1f2116c7",
+      "bytes": 234639,
+      "object": "objects/e117623bce25c908fa2744fb3ae5d1ec8876be6c9422181a58fbb07c1f2116c7.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1144-isolated-paid-boarded-recovery.log.dispatch.json",
+      "sha256": "aa082589bfedb90bac35710b98f3abdd8de43aae69b14406ea5c1580940fba9d",
+      "bytes": 1002,
+      "object": "objects/aa082589bfedb90bac35710b98f3abdd8de43aae69b14406ea5c1580940fba9d.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1144-isolated-paid-boarded-recovery.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native-1144-isolated-paid-boarded-recovery.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-drone-fog-recon-events.jsonl",
+      "sha256": "48cfa373a2fab2d1537ac1fb6154373b4fe36aa7811c91b03e72410dd9e256e8",
+      "bytes": 1208,
+      "object": "objects/48cfa373a2fab2d1537ac1fb6154373b4fe36aa7811c91b03e72410dd9e256e8.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-drone-fog-recon-intel-scan-auto-return-failure.json",
+      "sha256": "6f8476280d8978408f91f03dc357df991e75317f880e05ff20d9e4d853532b27",
+      "bytes": 11596,
+      "object": "objects/6f8476280d8978408f91f03dc357df991e75317f880e05ff20d9e4d853532b27.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-drone-fog-recon-producer-fixture.cs.txt",
+      "sha256": "d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817",
+      "bytes": 62405,
+      "object": "objects/d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-drone-fog-recon-runner-start.json",
+      "sha256": "b297f9ecdd4c35653f20484bbfa99dcf779e86809a0b825924bb4baee3cf22a6",
+      "bytes": 479,
+      "object": "objects/b297f9ecdd4c35653f20484bbfa99dcf779e86809a0b825924bb4baee3cf22a6.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-placement-0-AfterCompletedGroundTouch.png",
+      "sha256": "1df92f8d0d0f6d337c05e23b475feeb775e7738daae17335096176962e67bd7f",
+      "bytes": 2951290,
+      "object": "objects/1df92f8d0d0f6d337c05e23b475feeb775e7738daae17335096176962e67bd7f.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-placement-0-BeforeCandidateTouchOrNativeNavigation.png",
+      "sha256": "b2663363b7d9c92a358093a722fcdb65b7a29dbc849b503d37350520ac33c998",
+      "bytes": 3177066,
+      "object": "objects/b2663363b7d9c92a358093a722fcdb65b7a29dbc849b503d37350520ac33c998.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-boarded-apcfast-native-checkpoint.json",
+      "sha256": "1e246e6426262f72b6bb7c9530edc75b5a7789dce658b24a3bf5e2b8fa825436",
+      "bytes": 10177988,
+      "object": "objects/1e246e6426262f72b6bb7c9530edc75b5a7789dce658b24a3bf5e2b8fa825436.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-boarded-recovery-fixture.cs.txt",
+      "sha256": "79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53",
+      "bytes": 59200,
+      "object": "objects/79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-boarded-recovery-runner-start.json",
+      "sha256": "4ae694460660dda36726a6dcd23cd9a8d586dbf75ae2328f84d054c8ae133edf",
+      "bytes": 484,
+      "object": "objects/4ae694460660dda36726a6dcd23cd9a8d586dbf75ae2328f84d054c8ae133edf.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-boarded-recovery.touch.jsonl",
+      "sha256": "8254f106f0aa3de914821b0fd072c1cb89027a5953d82aaf545ccd23f685c064",
+      "bytes": 37739,
+      "object": "objects/8254f106f0aa3de914821b0fd072c1cb89027a5953d82aaf545ccd23f685c064.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-isolated-paid-boarded-recovery-failure.json",
+      "sha256": "c8b9d2266ac1cfacd52f61e1a37129739e82e8b7240101740962c126be0692b6",
+      "bytes": 71155,
+      "object": "objects/c8b9d2266ac1cfacd52f61e1a37129739e82e8b7240101740962c126be0692b6.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-drone-fog-recon-events.jsonl",
+      "sha256": "30ce6b419ea680202e7015ee016f1dbb89ed0b89758b2d3912a11636ea9c2012",
+      "bytes": 4935,
+      "object": "objects/30ce6b419ea680202e7015ee016f1dbb89ed0b89758b2d3912a11636ea9c2012.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-drone-fog-recon-intel-scan-auto-return-pass.json",
+      "sha256": "773c7f5fee5b2e5125e6cc41ff240cc7fda8bf392286815f834abdb70cc23010",
+      "bytes": 15280,
+      "object": "objects/773c7f5fee5b2e5125e6cc41ff240cc7fda8bf392286815f834abdb70cc23010.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-drone-fog-recon-producer-fixture.cs.txt",
+      "sha256": "ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c",
+      "bytes": 65332,
+      "object": "objects/ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-drone-fog-recon-runner-start.json",
+      "sha256": "89e9670959c20d2bec999c04650ef117676eae417a6e139dff82da1d5fb994ad",
+      "bytes": 492,
+      "object": "objects/89e9670959c20d2bec999c04650ef117676eae417a6e139dff82da1d5fb994ad.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-fog-lastseen.png",
+      "sha256": "49220ebcf4d50455840276c76eb176bfc64c8b8fce1e02e87443fcb12f357666",
+      "bytes": 3121638,
+      "object": "objects/49220ebcf4d50455840276c76eb176bfc64c8b8fce1e02e87443fcb12f357666.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-fog-unknown.png",
+      "sha256": "af7a9200aef03a0a7207cd56f5f53967ea632024399a52809b008d44e4f5b7a1",
+      "bytes": 3079914,
+      "object": "objects/af7a9200aef03a0a7207cd56f5f53967ea632024399a52809b008d44e4f5b7a1.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-fog-visible.png",
+      "sha256": "e2b6e6a888b929c5fe7952941e0d84249496831830f0a4422cd6541b2a7a48fa",
+      "bytes": 3141325,
+      "object": "objects/e2b6e6a888b929c5fe7952941e0d84249496831830f0a4422cd6541b2a7a48fa.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-placement-0-AfterCompletedGroundTouch.png",
+      "sha256": "3d65ea40abf4f61c39c5539425b03658695705345993f7bcecbf350e0c1e63ba",
+      "bytes": 2951370,
+      "object": "objects/3d65ea40abf4f61c39c5539425b03658695705345993f7bcecbf350e0c1e63ba.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-placement-0-BeforeCandidateTouchOrNativeNavigation.png",
+      "sha256": "223a76c3fa390b81bbcf1e5591cee953c8736a66730f0a1c2dade458ba96bd37",
+      "bytes": 3177047,
+      "object": "objects/223a76c3fa390b81bbcf1e5591cee953c8736a66730f0a1c2dade458ba96bd37.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-boarded-apcfast-native-checkpoint.json",
+      "sha256": "c99f252dc44c5249e75499ca354713b52bfe78bf50eaec4e9936ad5f8dbfc873",
+      "bytes": 10177989,
+      "object": "objects/c99f252dc44c5249e75499ca354713b52bfe78bf50eaec4e9936ad5f8dbfc873.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-boarded-recovery-fixture.cs.txt",
+      "sha256": "21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26",
+      "bytes": 66992,
+      "object": "objects/21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-boarded-recovery-runner-start.json",
+      "sha256": "c08c2ecce46856799ef474cddb692ff323fb538252cf28bff1e3214916f2edd6",
+      "bytes": 475,
+      "object": "objects/c08c2ecce46856799ef474cddb692ff323fb538252cf28bff1e3214916f2edd6.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-boarded-recovery.touch.jsonl",
+      "sha256": "72e1cac0f86fce7358f93e9c1cdfbcb42233264f041eb18ba15aec07ffc9bb04",
+      "bytes": 39373,
+      "object": "objects/72e1cac0f86fce7358f93e9c1cdfbcb42233264f041eb18ba15aec07ffc9bb04.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-isolated-paid-boarded-recovery-pass.json",
+      "sha256": "dc0c0c94e48f188289adadbd088ef579482d5a5d61028b955fce7e507fdb6950",
+      "bytes": 84250,
+      "object": "objects/dc0c0c94e48f188289adadbd088ef579482d5a5d61028b955fce7e507fdb6950.gz"
+    },
+    {
+      "originalPath": "Design/AgentReports/SkirmishExpansion/S005/review1144-root-native-marker-successor.json",
+      "sha256": "dd8bb21f4736ee0b39a3e4f9b5d1607d9511601f520af18b52d27027dfdf9ea1",
+      "bytes": 751,
+      "object": "objects/dd8bb21f4736ee0b39a3e4f9b5d1607d9511601f520af18b52d27027dfdf9ea1.gz"
+    }
+  ],
+  "objects": [
+    {
+      "sha256": "21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26",
+      "bytes": 66992,
+      "object": "objects/21b2574e4ac6cb1d268a81c7bd5df1ad15d8941094971518cdd9b0fde992cf26.gz",
+      "gzipSha256": "7c4ef8713bdf45e70f085d2597c06b6b7e666fa065706941de5c167b7d8119b8",
+      "gzipBytes": 15959,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c",
+      "bytes": 65332,
+      "object": "objects/ff25f0553e627733d6765cd5022fd59176ab281716ba478f8bf6229fa5b8446c.gz",
+      "gzipSha256": "81f5f4dfebc7c89c395b5f5c6ee1be50e29ec1ddf58269d9eeaff93e449f0cda",
+      "gzipBytes": 16328,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "0d1a19056c88eb7862405cf3472302db53b4134b9771e73313aac8af35080261",
+      "bytes": 714,
+      "object": "objects/0d1a19056c88eb7862405cf3472302db53b4134b9771e73313aac8af35080261.gz",
+      "gzipSha256": "d79034e68cbeb2f25fe61064c85247a3db7bcc5ef621e84b0896079bf16fdfc7",
+      "gzipBytes": 450,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53",
+      "bytes": 59200,
+      "object": "objects/79530801d1b57595fe8fedb34b38daaa5570f07599b5b05159b8be1320231c53.gz",
+      "gzipSha256": "c3f48b3f63a5f54ab6b709f8aa0a6f93b75a78060275e3e2f0c5668f4f7eddec",
+      "gzipBytes": 14291,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "9349ef6bc95aade943aa856a943e129235ed923477f8f2d19cb7874cbfe16f27",
+      "bytes": 1831,
+      "object": "objects/9349ef6bc95aade943aa856a943e129235ed923477f8f2d19cb7874cbfe16f27.gz",
+      "gzipSha256": "5f6c04be0365e466a8c11d5e9bd6c9ec7647ea6a2f4133b0fc76073491ebd409",
+      "gzipBytes": 926,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "05e5b3059eb180e7d2ca0374d86937b49eb2f6a44cf7647191d924e7e6a275fb",
+      "bytes": 15692,
+      "object": "objects/05e5b3059eb180e7d2ca0374d86937b49eb2f6a44cf7647191d924e7e6a275fb.gz",
+      "gzipSha256": "fab37c4fe17b0cca1eac6c46bfd82bb032b40f7cfb82638060c9591a34f6ee5d",
+      "gzipBytes": 4706,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "50cc7fa4dd2805928f8da2706f587c69482153cbdb6085f25b78a9b4068cab1c",
+      "bytes": 1710,
+      "object": "objects/50cc7fa4dd2805928f8da2706f587c69482153cbdb6085f25b78a9b4068cab1c.gz",
+      "gzipSha256": "d82989c75ede0b07e00aff3b1fb56fa695e9b15084e20a82db197c9bbdc4c228",
+      "gzipBytes": 755,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "2dd9a8b56f949ce16f6643ed9bc2632422436e40824fe9fbfa6e8f96e3aa267a",
+      "bytes": 20939,
+      "object": "objects/2dd9a8b56f949ce16f6643ed9bc2632422436e40824fe9fbfa6e8f96e3aa267a.gz",
+      "gzipSha256": "4bf50aa6aafebf41269fe437554e3e9705899fc62a40bd0c666efcecef728b80",
+      "gzipBytes": 5953,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "2acf6c894afc4bcac2099289d5553079496d60de300297095b2bf373610b7dff",
+      "bytes": 20668,
+      "object": "objects/2acf6c894afc4bcac2099289d5553079496d60de300297095b2bf373610b7dff.gz",
+      "gzipSha256": "55fb127daa3d7da4fefe1c3d3f5e6c9b0747392544dbf6b79bee58f26f2a8e2a",
+      "gzipBytes": 6479,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "95d37d65299d2d35748f1fc5c010f23c2ec9056d9c26d1e756540b529c4cbf5a",
+      "bytes": 2807,
+      "object": "objects/95d37d65299d2d35748f1fc5c010f23c2ec9056d9c26d1e756540b529c4cbf5a.gz",
+      "gzipSha256": "1604561a2b654b940cc3bc0946c63a361f86466598db0f72f4f65225e8897cd9",
+      "gzipBytes": 563,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "98b996afca735237f27f9f3b8f6080056148bc94b38a739501c013dbec0331dc",
+      "bytes": 23176,
+      "object": "objects/98b996afca735237f27f9f3b8f6080056148bc94b38a739501c013dbec0331dc.gz",
+      "gzipSha256": "e200fda802454ed8f450923b1f190c5b704bc1c9ef60c5504ed4f3c9c850dc49",
+      "gzipBytes": 6999,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "018f36ae6a0e1df307e8f08a9ffb7934be87a258ee2e11a1fbc9efda0d4c2242",
+      "bytes": 12397,
+      "object": "objects/018f36ae6a0e1df307e8f08a9ffb7934be87a258ee2e11a1fbc9efda0d4c2242.gz",
+      "gzipSha256": "c631b432401f589a327fa56347523b506df498bb78611197e95ad1e4ffe6fbd8",
+      "gzipBytes": 4393,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "8d6892ab1e1d1670b9b924fa8c4372636b0ba422fda802f71494e38b39a771da",
+      "bytes": 697,
+      "object": "objects/8d6892ab1e1d1670b9b924fa8c4372636b0ba422fda802f71494e38b39a771da.gz",
+      "gzipSha256": "6c9e705b57e62d5b0a0398990e1cb739b60831b3962cb299cb80a9dd4b2e8cf1",
+      "gzipBytes": 361,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "ff29554f580c8fbd4db93a099925f8ff7256e829c8e4bf3e979c450d37c3c8da",
+      "bytes": 3126,
+      "object": "objects/ff29554f580c8fbd4db93a099925f8ff7256e829c8e4bf3e979c450d37c3c8da.gz",
+      "gzipSha256": "d57f46d72fecba7da05a3b8e034cd2b982c55d4bfe68120a668bb584f6e93de1",
+      "gzipBytes": 670,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "abacb516285c16143f7fba39478825f5b039fe2b6e88eddf833d29871687c088",
+      "bytes": 696,
+      "object": "objects/abacb516285c16143f7fba39478825f5b039fe2b6e88eddf833d29871687c088.gz",
+      "gzipSha256": "eb07dd4019929a5fb1976782537c3a6f2900092f83db449c65359a3f6f4ae3a5",
+      "gzipBytes": 360,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "699071bf4539fb7d8d52724a5484f7fff4c75eaed9a857e7f01a6a47eb1e423e",
+      "bytes": 3126,
+      "object": "objects/699071bf4539fb7d8d52724a5484f7fff4c75eaed9a857e7f01a6a47eb1e423e.gz",
+      "gzipSha256": "bf1010826c88a985c5c4cc076ffcfa7938b5295ca550463133fa7355fe322673",
+      "gzipBytes": 669,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "a5944c05b527bddee19d1968ca468e2f01287f74f74aa050dbcc760ffd99cd07",
+      "bytes": 1673,
+      "object": "objects/a5944c05b527bddee19d1968ca468e2f01287f74f74aa050dbcc760ffd99cd07.gz",
+      "gzipSha256": "a42749c592a66026b349560be2a980104f9f15baba35e9d62d998e561bc024de",
+      "gzipBytes": 611,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "513b5fb0474b071066e5be67b1f065d18c9519e4d5f57616fd9b755173755150",
+      "bytes": 75060,
+      "object": "objects/513b5fb0474b071066e5be67b1f065d18c9519e4d5f57616fd9b755173755150.gz",
+      "gzipSha256": "4d921c336af5489e6b96dc4997cad5e8fa14083a9b8a761b3625429bd499b6a7",
+      "gzipBytes": 6418,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "badd64b9310f2ad8d18fe5b4cc925aafe7e96a5150b4fc216c08eec5fcd0fadf",
+      "bytes": 1673,
+      "object": "objects/badd64b9310f2ad8d18fe5b4cc925aafe7e96a5150b4fc216c08eec5fcd0fadf.gz",
+      "gzipSha256": "6cfc21fa6114fab4b436673172cc89eabad6f1437e7d1968fca73e75ebb76816",
+      "gzipBytes": 610,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "0e1e9d14e5b8d45b72844abbae3f1db013ca0a2bd18e2d8071e4c0f9b037c900",
+      "bytes": 85060,
+      "object": "objects/0e1e9d14e5b8d45b72844abbae3f1db013ca0a2bd18e2d8071e4c0f9b037c900.gz",
+      "gzipSha256": "917f56c21c13b70ef9ef84e82c9a30f098370fe03a0f16a5637fb7e274bd3f88",
+      "gzipBytes": 7286,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "29ee147c73a944d99ffc19d99ce3416f7a6ed6e477bb53efa4e03e5567bf44e2",
+      "bytes": 2445,
+      "object": "objects/29ee147c73a944d99ffc19d99ce3416f7a6ed6e477bb53efa4e03e5567bf44e2.gz",
+      "gzipSha256": "af0b040282a2b13b3eab7dc146857389a8d1a97b2e49d7738d65a8bf2c5fef78",
+      "gzipBytes": 1256,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "84a713565c0c9734c196ef7b422d3f8c43c2e27aea79442f60fe8b650d0aa0a6",
+      "bytes": 7339,
+      "object": "objects/84a713565c0c9734c196ef7b422d3f8c43c2e27aea79442f60fe8b650d0aa0a6.gz",
+      "gzipSha256": "d6fabf474b6d482366d0703312bd00babfd6061ae09e5914cdd1916614500839",
+      "gzipBytes": 3156,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "5e0ebb0ba2280f7e7f8d7435d4a3c27ef8b48ebcdbe2a69935cf363abfc74756",
+      "bytes": 369,
+      "object": "objects/5e0ebb0ba2280f7e7f8d7435d4a3c27ef8b48ebcdbe2a69935cf363abfc74756.gz",
+      "gzipSha256": "e34bdda34f6c91cb4eaf53a43bb608d3d51d525af02b86c2a51a35feb9bca3ae",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170",
+      "bytes": 6926382,
+      "object": "../commit-evidence-20261011-main-fog-guidance-supplement1136/objects/86d1b2d509683d9459114a39b2a62a02e704a729155eb5e679a68ef32b028170.gz",
+      "gzipSha256": "1af0dfaa6600d6dca0771bb49d52f4eb79d234d181cefba57b3421893941f8a4",
+      "gzipBytes": 1842672,
+      "storage": "SharedExistingCommittedObject"
+    },
+    {
+      "sha256": "07b012950fafd5293aa4626844377f752e1642dccbc9b8a55ea041a59b21f1fe",
+      "bytes": 369,
+      "object": "objects/07b012950fafd5293aa4626844377f752e1642dccbc9b8a55ea041a59b21f1fe.gz",
+      "gzipSha256": "b75c30d1f3062d727cda8e22b5e198e1042e0009b69543327305cf3195e16525",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "46e067a47fd97c435e62d5d1ee285464159d927ce731c609204a35b6fefc5a6a",
+      "bytes": 368,
+      "object": "objects/46e067a47fd97c435e62d5d1ee285464159d927ce731c609204a35b6fefc5a6a.gz",
+      "gzipSha256": "3f9cd06cf45e10fdfce532d18f1c332bde19954ef4dfe2a0fcc17d58e8f18ddb",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "e5e6ab21d1a6e7dd3ee387b14d4c95b7a00d1e25ad85db17278ea749eb8b6670",
+      "bytes": 369,
+      "object": "objects/e5e6ab21d1a6e7dd3ee387b14d4c95b7a00d1e25ad85db17278ea749eb8b6670.gz",
+      "gzipSha256": "e49fa8fd60ad169ebcfc26c5e63f5e174343adff668e90c34e5299f2c3766046",
+      "gzipBytes": 283,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "9447713751f8183370faa191c218eadca97c8c3576e9d84bfa609aea63baa521",
+      "bytes": 367,
+      "object": "objects/9447713751f8183370faa191c218eadca97c8c3576e9d84bfa609aea63baa521.gz",
+      "gzipSha256": "a2767b0e61f4d37bf9dd154821cb667c054b6848ce23b13acf7638a8d18f74e3",
+      "gzipBytes": 282,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "cf443db57097008466cb028dc456084df4b6845c36083eba39bec8baca8a3a69",
+      "bytes": 369,
+      "object": "objects/cf443db57097008466cb028dc456084df4b6845c36083eba39bec8baca8a3a69.gz",
+      "gzipSha256": "414f4630285b0443fb2be5758c20eab6a215c99b914057527e56a7e2d5aa021d",
+      "gzipBytes": 283,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "85d1767f0bea27bd44cbd5082b402d70d57a3bb6ffee6aaaf06d2f236dc75ff0",
+      "bytes": 369,
+      "object": "objects/85d1767f0bea27bd44cbd5082b402d70d57a3bb6ffee6aaaf06d2f236dc75ff0.gz",
+      "gzipSha256": "0df389da6c31233125a008651c122b9f59af52ee23340fed1b51bdf465d90c59",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "af5ddac041e620dca3d7feaeec5fec9bf6d56bee904087ad966f5d942920628c",
+      "bytes": 369,
+      "object": "objects/af5ddac041e620dca3d7feaeec5fec9bf6d56bee904087ad966f5d942920628c.gz",
+      "gzipSha256": "c46e70b687888a759d11feb042a20367b3b9733a61b0288b67bc3c2030f7c1f4",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "137886b6ddd0a045de282acc22abb46597fe1db0960f7ec3cafbb54552bd1001",
+      "bytes": 369,
+      "object": "objects/137886b6ddd0a045de282acc22abb46597fe1db0960f7ec3cafbb54552bd1001.gz",
+      "gzipSha256": "9f663fd8d6e4053623de1c22ff82c4f3b48cfe6faa68e8d3ecaa0cdacc3933f5",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "42543be1e52561d2c0c8ee1327fab6b3c7a6975b0a2bfc611ab6aa5b9fc48aba",
+      "bytes": 368,
+      "object": "objects/42543be1e52561d2c0c8ee1327fab6b3c7a6975b0a2bfc611ab6aa5b9fc48aba.gz",
+      "gzipSha256": "a94ace56b70edbf9ba161ef7c195e0c1f72815097bbef8ef2610e5873e58c137",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "64d7e2a9487a6e8d9aaa27d1e306d90f499127d6e5c16e42d5d9db226ad02a4c",
+      "bytes": 369,
+      "object": "objects/64d7e2a9487a6e8d9aaa27d1e306d90f499127d6e5c16e42d5d9db226ad02a4c.gz",
+      "gzipSha256": "7721bc46ed38e58a4e13aec3b51eab09ab7da1e39b26310d57508929656e5491",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "a9df7945c954f64b9281fc2da86633f30b9ededdbc333e99fee7f2ab6576fc21",
+      "bytes": 369,
+      "object": "objects/a9df7945c954f64b9281fc2da86633f30b9ededdbc333e99fee7f2ab6576fc21.gz",
+      "gzipSha256": "ab3fad827b65be1df5e1b7ad9c9325382cf3f0058af48d37d1642b968ab1e6a8",
+      "gzipBytes": 282,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "c04146e5f3088812cb7c4a82325a26388246fbe0a5751102168b7310446883dd",
+      "bytes": 369,
+      "object": "objects/c04146e5f3088812cb7c4a82325a26388246fbe0a5751102168b7310446883dd.gz",
+      "gzipSha256": "276f64efd7e92d622f3a25f9cd1b82c8d874d431fc8bc3d0a31ad67847d161f4",
+      "gzipBytes": 283,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "04e00967ce8cbe75e680ea89806dbfddd5be28b0836e0ed7323f73a73d98ad87",
+      "bytes": 369,
+      "object": "objects/04e00967ce8cbe75e680ea89806dbfddd5be28b0836e0ed7323f73a73d98ad87.gz",
+      "gzipSha256": "c38927d0e5914954972a5f9c41891a58b0697d93bfb813e19a74ce739cb9fc2d",
+      "gzipBytes": 284,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "84d575eda026c9d33c5087a9f24fed203f696af5d4172d331634b594f0f0e415",
+      "bytes": 758,
+      "object": "objects/84d575eda026c9d33c5087a9f24fed203f696af5d4172d331634b594f0f0e415.gz",
+      "gzipSha256": "f98f5d0c6e1ad76c3a95f646fa0016302c1056d8131c190005d4162c5f2fc297",
+      "gzipBytes": 411,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "92d9f742e5f01cf9db6037d7ec99bffb768d86731f04fe889d0e231710113f72",
+      "bytes": 3189,
+      "object": "objects/92d9f742e5f01cf9db6037d7ec99bffb768d86731f04fe889d0e231710113f72.gz",
+      "gzipSha256": "c04f9b9ae77b32913dc6a08360091d30dc63df2934ebb7f268739eaa5062bf66",
+      "gzipBytes": 717,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "283f5a6cf13534d8af7540e982c6394e93735942a531cbd38c519f271d717788",
+      "bytes": 757,
+      "object": "objects/283f5a6cf13534d8af7540e982c6394e93735942a531cbd38c519f271d717788.gz",
+      "gzipSha256": "af0c1e39bffef58a4b0fd54e3cc85f67a6cbe702aba702f23f73977f3baf6d0a",
+      "gzipBytes": 409,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "caafd4cbfd8429890ff2ede8d0892f237866ab1daeebd305799eb5c42268502a",
+      "bytes": 3189,
+      "object": "objects/caafd4cbfd8429890ff2ede8d0892f237866ab1daeebd305799eb5c42268502a.gz",
+      "gzipSha256": "4f0c6d63abb7512b4abb67924ffa806365171d8b80367ea0d8a8cc7915cfbac6",
+      "gzipBytes": 719,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "79ede0e51b01e6b1820778b157e8751a7d14395d1242d3e66e9b4956acbb7a44",
+      "bytes": 129797,
+      "object": "objects/79ede0e51b01e6b1820778b157e8751a7d14395d1242d3e66e9b4956acbb7a44.gz",
+      "gzipSha256": "2b57ff9c4ac07f88f9bdf10c6c7cb812a6fc936caf24a15e0947e7bdec84d58d",
+      "gzipBytes": 14737,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "72b13fe876a88b16310fbefa4ccf7370d421f4d82a5d46fc8ec0c4b66e5e9656",
+      "bytes": 1014,
+      "object": "objects/72b13fe876a88b16310fbefa4ccf7370d421f4d82a5d46fc8ec0c4b66e5e9656.gz",
+      "gzipSha256": "e11875755dc3cc79e462f2cc072ec477f575ed336b050110bd312add13484c6e",
+      "gzipBytes": 486,
+      "storage": "NewObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b.gz",
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "bytes": 1,
+      "gzipSha256": "efbe30fab335f4aef6f7e9665fbba9424fac8e4cf0f9201ba5a530520031c3c8",
+      "gzipBytes": 21,
+      "storage": "SharedExistingCommittedObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865.gz",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "gzipSha256": "c28cc69d141393e44a931229323624ef7b8c5bde3ee047ca9b87332daef23c82",
+      "gzipBytes": 22,
+      "storage": "SharedExistingCommittedObject"
+    },
+    {
+      "sha256": "8a2373014765b45afa99fe550e3ce1d70131f0a908754b00488b0ac34978f5ad",
+      "bytes": 214620,
+      "object": "objects/8a2373014765b45afa99fe550e3ce1d70131f0a908754b00488b0ac34978f5ad.gz",
+      "gzipSha256": "3fe4627d0592e26393ae09467b46fbc69489c594e3b36a0118fcfd6421890e08",
+      "gzipBytes": 21076,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "eb563f524fd88d4cd49b822e6dd917c2349e7bd512de1c18430abd42092798e8",
+      "bytes": 1002,
+      "object": "objects/eb563f524fd88d4cd49b822e6dd917c2349e7bd512de1c18430abd42092798e8.gz",
+      "gzipSha256": "8ba9d718a6cd2d49afd330c48c6f832ca37769c503e867a626be1e8c56a2df15",
+      "gzipBytes": 478,
+      "storage": "NewObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9.gz",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "gzipSha256": "afcc354d84b1c14e57b84114b9e424be57992d03d9db6c8e9c25deb4fa66ff7f",
+      "gzipBytes": 21,
+      "storage": "SharedExistingCommittedObject"
+    },
+    {
+      "object": "../commit-evidence-20261011-main-fog-guidance-selected/objects/9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa.gz",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "bytes": 2,
+      "gzipSha256": "89ed3b723e0e40d8957a2df55fcb04d57b6d95fa665c5fe67b098df7f29694ae",
+      "gzipBytes": 22,
+      "storage": "SharedExistingCommittedObject"
+    },
+    {
+      "sha256": "84e99ed6918501f294bf463528e8d52b952388225f5019d83def89db3b8b02df",
+      "bytes": 117669,
+      "object": "objects/84e99ed6918501f294bf463528e8d52b952388225f5019d83def89db3b8b02df.gz",
+      "gzipSha256": "fc5e8a5d1648e337440718577bec87f6598cb14e3237aed8130fb524d7184f31",
+      "gzipBytes": 13944,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "ae363632a669eb0c8e689746516cd46351012cfa8e1405e962240d274c305c96",
+      "bytes": 1014,
+      "object": "objects/ae363632a669eb0c8e689746516cd46351012cfa8e1405e962240d274c305c96.gz",
+      "gzipSha256": "f76afc203daed16fe3773eaa60f7793ed6b4e16eb4497f5be58cc131d716c313",
+      "gzipBytes": 486,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "e117623bce25c908fa2744fb3ae5d1ec8876be6c9422181a58fbb07c1f2116c7",
+      "bytes": 234639,
+      "object": "objects/e117623bce25c908fa2744fb3ae5d1ec8876be6c9422181a58fbb07c1f2116c7.gz",
+      "gzipSha256": "f25fe1bfc74dfb4a704f512634faca1c1d861cef4771dba930c4c40e5559c921",
+      "gzipBytes": 22140,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "aa082589bfedb90bac35710b98f3abdd8de43aae69b14406ea5c1580940fba9d",
+      "bytes": 1002,
+      "object": "objects/aa082589bfedb90bac35710b98f3abdd8de43aae69b14406ea5c1580940fba9d.gz",
+      "gzipSha256": "da152827aab0c7d6ab73adb4167d41d2f2dbfbdbd56fac959ef8007d97520534",
+      "gzipBytes": 478,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "48cfa373a2fab2d1537ac1fb6154373b4fe36aa7811c91b03e72410dd9e256e8",
+      "bytes": 1208,
+      "object": "objects/48cfa373a2fab2d1537ac1fb6154373b4fe36aa7811c91b03e72410dd9e256e8.gz",
+      "gzipSha256": "b52a7c26af3fbd505d029426eb644a7785dd44f14892ef02014016d26e25c902",
+      "gzipBytes": 440,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "6f8476280d8978408f91f03dc357df991e75317f880e05ff20d9e4d853532b27",
+      "bytes": 11596,
+      "object": "objects/6f8476280d8978408f91f03dc357df991e75317f880e05ff20d9e4d853532b27.gz",
+      "gzipSha256": "3487ff4be1b2f2b2cf6de478ca65bf208cfad95c354af9a39dcf655d60caed84",
+      "gzipBytes": 3407,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817",
+      "bytes": 62405,
+      "object": "objects/d083d12bc772a6bb0c67d5eea21fb1565979a78904715ff34c3a0d8ee2c28817.gz",
+      "gzipSha256": "0e845589d8248619d1e96da84cb6bc953c0807a57d72329d32ca0f4f37b0d859",
+      "gzipBytes": 15678,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "b297f9ecdd4c35653f20484bbfa99dcf779e86809a0b825924bb4baee3cf22a6",
+      "bytes": 479,
+      "object": "objects/b297f9ecdd4c35653f20484bbfa99dcf779e86809a0b825924bb4baee3cf22a6.gz",
+      "gzipSha256": "99261b57333e072881b144795d9c0ab9f6b651e39b2dcd602a955c9f5caa7422",
+      "gzipBytes": 325,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "1df92f8d0d0f6d337c05e23b475feeb775e7738daae17335096176962e67bd7f",
+      "bytes": 2951290,
+      "object": "objects/1df92f8d0d0f6d337c05e23b475feeb775e7738daae17335096176962e67bd7f.gz",
+      "gzipSha256": "9faecacffb3a761c8daab2a3df8dc0ccd64097f2d903a74d3ede367ed4d5a861",
+      "gzipBytes": 2951732,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "b2663363b7d9c92a358093a722fcdb65b7a29dbc849b503d37350520ac33c998",
+      "bytes": 3177066,
+      "object": "objects/b2663363b7d9c92a358093a722fcdb65b7a29dbc849b503d37350520ac33c998.gz",
+      "gzipSha256": "1c18414ff03b025afc04cccdccf2648ec393951af2d3f2972a8d6e86b78ddbe6",
+      "gzipBytes": 3177639,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "1e246e6426262f72b6bb7c9530edc75b5a7789dce658b24a3bf5e2b8fa825436",
+      "bytes": 10177988,
+      "object": "objects/1e246e6426262f72b6bb7c9530edc75b5a7789dce658b24a3bf5e2b8fa825436.gz",
+      "gzipSha256": "63bb646373df995cba1d6f5642a746a70ee297473fe5fcab96e135dd609f0030",
+      "gzipBytes": 848390,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "4ae694460660dda36726a6dcd23cd9a8d586dbf75ae2328f84d054c8ae133edf",
+      "bytes": 484,
+      "object": "objects/4ae694460660dda36726a6dcd23cd9a8d586dbf75ae2328f84d054c8ae133edf.gz",
+      "gzipSha256": "0195db63c83243be46d7a1924725eb02a828d1c6c44f6ddb566401aecf2c027a",
+      "gzipBytes": 326,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "8254f106f0aa3de914821b0fd072c1cb89027a5953d82aaf545ccd23f685c064",
+      "bytes": 37739,
+      "object": "objects/8254f106f0aa3de914821b0fd072c1cb89027a5953d82aaf545ccd23f685c064.gz",
+      "gzipSha256": "65ad996151de9d5dff4a3bcb04eaa6f7f6b26c5634fbd813759351722be42f96",
+      "gzipBytes": 3327,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "c8b9d2266ac1cfacd52f61e1a37129739e82e8b7240101740962c126be0692b6",
+      "bytes": 71155,
+      "object": "objects/c8b9d2266ac1cfacd52f61e1a37129739e82e8b7240101740962c126be0692b6.gz",
+      "gzipSha256": "207bea5b00658c2fe126f7b8f54dda209122c5ae99ae8c47715f3f36e93b2e43",
+      "gzipBytes": 7159,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "30ce6b419ea680202e7015ee016f1dbb89ed0b89758b2d3912a11636ea9c2012",
+      "bytes": 4935,
+      "object": "objects/30ce6b419ea680202e7015ee016f1dbb89ed0b89758b2d3912a11636ea9c2012.gz",
+      "gzipSha256": "dbbfc05e0cbb821bbf0d1c85afa48381b2dd9464d4f13baee012f954c474381d",
+      "gzipBytes": 1059,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "773c7f5fee5b2e5125e6cc41ff240cc7fda8bf392286815f834abdb70cc23010",
+      "bytes": 15280,
+      "object": "objects/773c7f5fee5b2e5125e6cc41ff240cc7fda8bf392286815f834abdb70cc23010.gz",
+      "gzipSha256": "a897a4e8f8a929d665a696633b1135980398f9ba6d6f530efef7fc86f1087a08",
+      "gzipBytes": 4123,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "89e9670959c20d2bec999c04650ef117676eae417a6e139dff82da1d5fb994ad",
+      "bytes": 492,
+      "object": "objects/89e9670959c20d2bec999c04650ef117676eae417a6e139dff82da1d5fb994ad.gz",
+      "gzipSha256": "d1a67ea317c9aa0d199d824e79938bd483073a956e0b255d29f3549bd7a690ba",
+      "gzipBytes": 314,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "49220ebcf4d50455840276c76eb176bfc64c8b8fce1e02e87443fcb12f357666",
+      "bytes": 3121638,
+      "object": "objects/49220ebcf4d50455840276c76eb176bfc64c8b8fce1e02e87443fcb12f357666.gz",
+      "gzipSha256": "67b7d4d1bb9582412943140f211e3e58f02d111360cd15f45d7237ee4e7f04f8",
+      "gzipBytes": 3122308,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "af7a9200aef03a0a7207cd56f5f53967ea632024399a52809b008d44e4f5b7a1",
+      "bytes": 3079914,
+      "object": "objects/af7a9200aef03a0a7207cd56f5f53967ea632024399a52809b008d44e4f5b7a1.gz",
+      "gzipSha256": "4aa80f6a756b90d5bdb22a5fdf4ad7bcfa845a7d75b2b0f5d5c4cb7e3682db44",
+      "gzipBytes": 3080561,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "e2b6e6a888b929c5fe7952941e0d84249496831830f0a4422cd6541b2a7a48fa",
+      "bytes": 3141325,
+      "object": "objects/e2b6e6a888b929c5fe7952941e0d84249496831830f0a4422cd6541b2a7a48fa.gz",
+      "gzipSha256": "2ea408cbde74ed0aaa8ba428a479cece831d02931c7cc0570936f188a2075ebc",
+      "gzipBytes": 3141959,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "3d65ea40abf4f61c39c5539425b03658695705345993f7bcecbf350e0c1e63ba",
+      "bytes": 2951370,
+      "object": "objects/3d65ea40abf4f61c39c5539425b03658695705345993f7bcecbf350e0c1e63ba.gz",
+      "gzipSha256": "e21746a9049e43814a9670e0a04beb46fdd68be38d29f10876fd9fc5d11f3ce3",
+      "gzipBytes": 2951812,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "223a76c3fa390b81bbcf1e5591cee953c8736a66730f0a1c2dade458ba96bd37",
+      "bytes": 3177047,
+      "object": "objects/223a76c3fa390b81bbcf1e5591cee953c8736a66730f0a1c2dade458ba96bd37.gz",
+      "gzipSha256": "151f68a082d37ab535e93983e4fd445e480c4cfee86e237a5c4c41627489d9d5",
+      "gzipBytes": 3177625,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "c99f252dc44c5249e75499ca354713b52bfe78bf50eaec4e9936ad5f8dbfc873",
+      "bytes": 10177989,
+      "object": "objects/c99f252dc44c5249e75499ca354713b52bfe78bf50eaec4e9936ad5f8dbfc873.gz",
+      "gzipSha256": "8ef0aa2b4dddc7dd3cfa3bc5daf29ce2c091b8fdfd5cfa79542c92a7c6516501",
+      "gzipBytes": 848387,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "c08c2ecce46856799ef474cddb692ff323fb538252cf28bff1e3214916f2edd6",
+      "bytes": 475,
+      "object": "objects/c08c2ecce46856799ef474cddb692ff323fb538252cf28bff1e3214916f2edd6.gz",
+      "gzipSha256": "e0307f6abb4c4f21b7b5d5905f028bccd32859a14d9fc1e3ac71e4d166e9cce9",
+      "gzipBytes": 306,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "72e1cac0f86fce7358f93e9c1cdfbcb42233264f041eb18ba15aec07ffc9bb04",
+      "bytes": 39373,
+      "object": "objects/72e1cac0f86fce7358f93e9c1cdfbcb42233264f041eb18ba15aec07ffc9bb04.gz",
+      "gzipSha256": "77d4fafb5d3923d16790d5f33d559e8ffadb23518fc4cc9137c896e6a94a9649",
+      "gzipBytes": 3351,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "dc0c0c94e48f188289adadbd088ef579482d5a5d61028b955fce7e507fdb6950",
+      "bytes": 84250,
+      "object": "objects/dc0c0c94e48f188289adadbd088ef579482d5a5d61028b955fce7e507fdb6950.gz",
+      "gzipSha256": "029007f14657bb6cdb2229cc6673fb64e6a3647461fdca1bfea655cf7a065d3e",
+      "gzipBytes": 7827,
+      "storage": "NewObject"
+    },
+    {
+      "sha256": "dd8bb21f4736ee0b39a3e4f9b5d1607d9511601f520af18b52d27027dfdf9ea1",
+      "bytes": 751,
+      "object": "objects/dd8bb21f4736ee0b39a3e4f9b5d1607d9511601f520af18b52d27027dfdf9ea1.gz",
+      "gzipSha256": "d9987e66d6074fd666f6de66ddb95eaad337b223bde1875a9bc035250477aed1",
+      "gzipBytes": 502,
+      "storage": "NewObject"
+    }
+  ],
+  "runs": [
+    {
+      "run": "1098",
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1098-drone-fog-recon-intel-scan-auto-return-failure.json",
+      "pre": "final-1136-integrated-post-source-manifest.json",
+      "post": "final-1098-drone-fog-recon-producer-post-source-manifest.json",
+      "log": "native-1098-drone-fog-recon-intel-scan-auto-return-smoke.log",
+      "nativeExit": 1,
+      "wrapperExit": 1,
+      "result": "Failed",
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a"
+    },
+    {
+      "run": "1138",
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1138-isolated-paid-boarded-recovery-failure.json",
+      "pre": "final-1098-drone-fog-recon-producer-post-source-manifest.json",
+      "post": "final-1138-boarded-recovery-post-source-manifest.json",
+      "log": "native-1138-isolated-paid-boarded-recovery.log",
+      "nativeExit": 0,
+      "wrapperExit": 0,
+      "result": "Failed",
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a"
+    },
+    {
+      "run": "1140",
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1140-drone-fog-recon-intel-scan-auto-return-pass.json",
+      "pre": "final-1140-drone-fog-recon-producer-pre-source-manifest.json",
+      "post": "final-1140-drone-fog-recon-producer-post-source-manifest.json",
+      "log": "native-1140-drone-fog-recon-intel-scan-auto-return-smoke.log",
+      "nativeExit": 0,
+      "wrapperExit": 0,
+      "result": "PassedScopedIsolatedPaidDroneNativeSharedFog",
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a"
+    },
+    {
+      "run": "1144",
+      "proofPath": "Design/AgentReports/SkirmishExpansion/S005/native1144-isolated-paid-boarded-recovery-pass.json",
+      "pre": "final-1144-boarded-recovery-pre-source-manifest.json",
+      "post": "final-1144-boarded-recovery-post-source-manifest.json",
+      "log": "native-1144-isolated-paid-boarded-recovery.log",
+      "nativeExit": 0,
+      "wrapperExit": 0,
+      "result": "PassedScopedIsolatedBoardedNativeRecovery",
+      "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a"
+    }
+  ],
+  "readiness": {
+    "technicalSuite14Passed": true,
+    "actualDroneReconPassed": true,
+    "actualBoardedApcRecoveryAndTypedMarkersPassed": true,
+    "normalMissionCertified": false,
+    "deviceCertified": false,
+    "playerReady": false
+  },
+  "statistics": {
+    "aliases": 96,
+    "uniqueObjects": 76,
+    "newGzipBytes": 23527806
+  }
+}

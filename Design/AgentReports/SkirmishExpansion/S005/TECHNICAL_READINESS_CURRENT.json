@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "17beb4a4660270386fff38479d1c72427645d5b9fb2329d6ecabff4d4a02c332",
-  "sourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
+  "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+  "sourceFingerprint": "final-1136-integrated-post-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,11 +13,9 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "compile1073-m3-rebind-completed-status.json",
-  "shippingRuntimeCommit": "7ba2ebb274db4336a04b168f4c43f5aec32402ad",
-  "currentNativeVictories": [
-    "native1053-current-manual-fa-IR-seed104734-victory.json"
-  ],
+  "currentCompilationProof": "native1136-s002-native-compile.json",
+  "shippingRuntimeCommit": "82006da1af6263df643e00663c94c15da71fbc31",
+  "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
   "currentManualLocalePair": null,
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
@@ -46,14 +44,14 @@
     "Owner native visual review and real player/device acceptance",
     "Authored shared-fog/intel readiness: development full vision cannot certify reconnaissance or full catalog; real visibility and hidden-target qualification remains pending"
   ],
-  "nextWork": "T7 native1060 M3FA/M4 regressions; main correctedRadar1068, paidVehicle1061 and remaining air/infantry role effects after heavy lane handoff.",
+  "nextWork": "Current shared-fog native Drone/recovery/aircraft checks, then fresh normal ARIA/manual/result/return journeys and scoped shared Campaign regressions.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Normal input qualification on current frozen source"
+    "status": "PendingPreparedNativeReplay",
+    "scope": "Corrected normal-input ARIA1151 EN104734; populated recon recovery1150, bilateral aircraft1106, air effects1148 and Plane cargo1122."
   },
-  "currentSourceFingerprint": "final-1073-m3-countdown-rebind-integrated-independent-fingerprint.json",
+  "currentSourceFingerprint": "final-1136-integrated-post-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "currentFreshAriaSeedProofs": [],
   "latestFreshAriaFailure": null,
@@ -425,7 +423,7 @@
     "nativeCurrentWholeSourceAcceptanceClaimed": false
   },
   "currentM02ContentPackRepairProof": "native990-m02-content-pack-binding-repair-pass.json",
-  "latestPushedCommit": "7ba2ebb274db4336a04b168f4c43f5aec32402ad",
+  "latestPushedCommit": "16002fae1d6c668a10929e2131f42e01ac76d3f4",
   "currentValidationDriverIssue": {
     "scope": "Campaign selection test actuator timing",
     "failedProofs": [
@@ -672,7 +670,14 @@
     "cleanupWarnings": []
   },
   "currentDroneRunwayHomeRegressionProof": "native1069-focused-current-proof.json",
-  "ownerMobilePreference": "Keep MSAA disabled (explicit owner reply after intentional-change clarification)",
+  "ownerMobilePreference": {
+    "decision": "Keep MSAA disabled",
+    "actualMainQuality": "Mobile",
+    "actualMainMsaa": 0,
+    "actualPipeline": "Assets/Settings/Mobile_RPAsset.asset",
+    "actualPipelineSampleCount": 1,
+    "evidence": "native1118-shared-fog-native-configuration.json"
+  },
   "currentM03CountdownVisibility": {
     "focusedProof": "delegation-campaign-t7-rebind1075-result.json",
     "actualPresenterChecks": 20,
@@ -682,7 +687,7 @@
     "t7SourceHash": "6680316ed4edc40c659495145386696438e93ea3b0569f35883b5d4242be1448"
   },
   "currentM03CountdownCandidate": "native1073-m3-countdown-integration-source-delta.json",
-  "currentVehicleCombatEffects": "native1061-isolated-paid-vehicle-combat-failure.json",
+  "currentVehicleCombatEffects": "native1081-isolated-paid-vehicle-combat-pass.json",
   "currentApcFastCombatDiagnostic": "native1080-isolated-paid-apcfast-combat-pass.json",
   "currentInfantryCombatEffects": {
     "nativeRun": 1070,
@@ -691,6 +696,254 @@
     "offlineSchemaCorrection": "native1070-offline-cohort-schema-evaluation-v2-20261011.json",
     "scope": "Role-level homogeneous paid cohort mixed-source native damage; individual shooter identities unavailable; no whole mission claim"
   },
-  "currentFixedWingPairStandardAir2Smoke": "native1074-fixedwing-pair-standard-air2-failure.json",
-  "currentAttackHeliDirectFireEffects": "native1076-attack-heli-combat-helipad-direct-fire-pass.json"
+  "currentFixedWingPairStandardAir2Smoke": {
+    "nativeRun": 1092,
+    "nativeRuntimeCasesAndCleanup": "Passed paid Fighter, Plane, actual Standard Air2 refusal and paid Fighter replacement",
+    "originalRunnerClosure": "native1092-fixedwing-capacity-failure.json",
+    "offlineLifecycleCorrection": "native1092-offline-lifecycle-evaluation-v2-20261011.json",
+    "scope": "Isolated native paid production, Touch flight, capacity and death/replacement; disclosed pre-baseline Materials refill; no air combat, Plane cargo, bilateral airport or full mission certificate"
+  },
+  "currentAttackHeliDirectFireEffects": "native1076-attack-heli-combat-helipad-direct-fire-pass.json",
+  "currentPaidVehicleCombatEffects": "native1081-isolated-paid-vehicle-combat-pass.json",
+  "currentPaidTransportEffects": "native1101-isolated-paid-paid-transport-pass.json",
+  "sharedFogRepairStatus": {
+    "status": "All49FogFocusedCasesQualifiedOnT7MainIntegrationPending",
+    "native1099": "Failed actual native Scan assertion; test source omitted required UnitMove. Reviewed followup preserves native eligibility, allows current opposing observer Scan and fixes fixture;1100 actual focused rerun passed19. Original failure retained.",
+    "pendingProductionEdges": [
+      "main integration of56reviewed unique codefiles with final native compilefix/test-only impact-count correction",
+      "native authored sharedFog developmentFullVision0 configuration",
+      "current-source normal-input recon, checkpoint and complete mission journeys"
+    ],
+    "mainAssetsChangedByFogRepair": true,
+    "physicalCampaignMapsChanged": false,
+    "normalMissionCertified": false,
+    "native1100": {
+      "result": "Passed19IsolatedActualSystemCases",
+      "sourceHash": "716a82778047d254ad3b2fbe0cfe6c6dcb13325ee6cc4f307e48f746b4da0e0f",
+      "fullSourceUnchanged": true,
+      "checkout": "T7",
+      "proof": "delegation-t7-fog1100-closure.json",
+      "nativeReceipt": 0,
+      "compilerErrors": [],
+      "normalMissionCertified": false
+    },
+    "native1110": {
+      "result": "Passed9IsolatedActualLedgerAndCheckpointCases",
+      "sourceHash": "a40cf4c72fc8f1d576cb7931e52f4920d81df39f46736b925d3afcc94925027f",
+      "fullSourceUnchanged": true,
+      "checkout": "T7",
+      "proof": "delegation-fog-ledger-t7-artifacts/delegation-t7-fog1110-preserve/closure.json",
+      "nativeReceipt": 0,
+      "normalMissionCertified": false,
+      "preflightIssue": "Import restored cached Mobile MSAA4; preflight issue preserved. This scoped ledger result does not certify Mobile quality. Actual and serialized MSAA0 restored before1111."
+    },
+    "native1111": {
+      "result": "Passed19IsolatedCoreRegressionAfterLedgerExtraction",
+      "sourceHash": "390091c5e9b977162ed156b0cb74da86dd8d8fc68a58b9c5b8677ffb4e0c71d9",
+      "fullSourceUnchanged": true,
+      "checkout": "T7",
+      "proof": "delegation-fog-ledger-t7-artifacts/delegation-t7-fog1111-preserve/closure.json",
+      "nativeReceipt": 0,
+      "actualAndSerializedMobileMsaa": 0,
+      "normalMissionCertified": false
+    },
+    "native1112": {
+      "result": "Passed13ActualConsumerCases",
+      "sourceHash": "d491a06049f2ec45b6ddcdfe2a0025f9ae00add57203e67ac71b1abff37ec17a",
+      "fullSourceUnchanged": true,
+      "checkout": "T7",
+      "nativeReceipt": 0,
+      "normalMissionCertified": false,
+      "qualityScope": "Initial actualMobile used defaultPC pipelineMSAA4 despite savedAA0; scopedfogPASS retained, no qualitypass inferred."
+    },
+    "native1113": {
+      "result": "FailedFixtureExpectedOneGroundImpactRequestNativeProducerEmitsTwo",
+      "nativeReceipt": 1,
+      "failurePreserved": true,
+      "productionVisibilityGatesWeakened": false
+    },
+    "native1117": {
+      "result": "Passed8ActualRequestPlaybackCases",
+      "sourceHash": "72c3698f8db8d836ec8ba4d92a5d8b243b5779c90d2b769ac8c2170f99360f55",
+      "fullSourceUnchanged": true,
+      "checkout": "T7",
+      "nativeReceipt": 0,
+      "normalMissionCertified": false,
+      "actualAndSavedMobileMsaa": 0,
+      "activePipeline": "Assets/Settings/Mobile_RPAsset.asset",
+      "urpSampleCount": 1
+    },
+    "consumerEvidenceIndex": "delegation-fog-consumer-t7-artifacts/evidence-index.json",
+    "mainIntegration": "58 reviewed C# files and15 native-generated metas applied; actual native compilation completed zero errors",
+    "mainSharedFogDevelopmentFullVision": 0,
+    "mainConfigurationEvidence": "native1118-shared-fog-native-configuration.json",
+    "guidanceNativePlayQualification": "delegation-aircraft-guidance1116-native-play.json",
+    "integrated1118": {
+      "result": "FailedRetained",
+      "sourceHash": "f3101ec1099eb38268edc27adb398bff3a78d1a0383b10615a6a960eee785394",
+      "compilerErrors": 0,
+      "failure": "ExpandedAria enemy-counter fixture expected recruitment without observer2 knowledge; native observed fixture repair pending",
+      "proof": "native1118-focused-current-proof.json",
+      "wholeMissionCertified": false
+    },
+    "mainIntegrationQualification": {
+      "result": "PassedFocused14Suites",
+      "proof": "native1136-focused-current-proof.json",
+      "authoredFullVision": 0,
+      "fogCases": 49,
+      "normalInputMission": "Pending"
+    }
+  },
+  "latestBoardedRecoveryDiagnostic": {
+    "nativeRun": 1078,
+    "readonlyUiEvidence": "native1078-readonly-pause-candidate-diagnostic.json",
+    "cause": "Fixture returns after first PauseButton name even when native Touch is rejected. First candidate is disabled Narrative playback Pause; actual match HeaderContent Pause is interactable.",
+    "productionMatchPauseDefectEstablished": false,
+    "next": "Unique1102 uses successful native candidate selection; failed1078 preserved."
+  },
+  "currentBoardedTransportRecovery": "native1144-isolated-paid-boarded-recovery-pass.json",
+  "currentApcTransportEffects": {
+    "nativeRun": 1097,
+    "wholeRun": "FailedMissingHelipadPrerequisite",
+    "scopedOfflineQualification": "native1097-offline-two-apc-scoped-evaluation-20261011.json",
+    "qualifiedRoles": [
+      "ApcFast",
+      "ApcArmored"
+    ],
+    "wholeMissionCertified": false
+  },
+  "previousFailedVehicleCombatEffects": "native1061-isolated-paid-vehicle-combat-failure.json",
+  "currentHelicopterTransportCleanupReview": "native1101-paid-helicopter-scoped-qualification-and-cleanup-review.json",
+  "currentBilateralAirportPrerequisite": "native1104-isolated-paid-bilateral-airport-pass.json",
+  "currentBilateralAirportScope": "Independently paid300 Materials true owner1/owner2 nativeAirport construction on current unchangedCampaign geometry passed; Air2 configuration measured, fouractualpaidaircraft/taxi/takeoff/return/combat remain pending.",
+  "focusedNative1118": {
+    "result": "Failed",
+    "sourceHash": "f3101ec1099eb38268edc27adb398bff3a78d1a0383b10615a6a960eee785394",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1118-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1118-integrated-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-1118-integrated-technical.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1118] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative1128": {
+    "result": "Failed",
+    "sourceHash": "a778d321dee5161fe32bc15b0a2bbba97fd790eaa046d0931c7ccf4feeab7680",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1128-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1128-integrated-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-1128-integrated-technical.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1128] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative1132": {
+    "result": "Failed",
+    "sourceHash": "15717d5d6e8de85c81f7b9e442c3d9833187bdbe0732b9d728f91616b9e22519",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1132-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1132-integrated-post-source-manifest.json",
+    "wrapperExitCode": 1,
+    "log": "native-1132-integrated-technical.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1132] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": false,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative1136": {
+    "result": "Passed",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-1136-integrated-pre-source-manifest.json",
+    "postSourceManifest": "final-1136-integrated-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-1136-integrated-technical.log",
+    "requiredPassMarker": "[S005IntegratedTechnical1136] result=Passed suites=14 fogCases=49 guidanceCases=2 actualMobileMsaa=0 nativePlayerJourneys=0 deviceCertified=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentIntegratedTechnicalQualification": {
+    "result": "Passed",
+    "suites": 14,
+    "fogCases": 49,
+    "guidanceCases": 2,
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "proof": "native1136-focused-current-proof.json",
+    "compilerErrors": 0,
+    "wrapperExit": 0,
+    "nativeExit": 0,
+    "normalMissionCertified": false,
+    "deviceCertified": false
+  },
+  "currentDroneSharedFogEffects": "native1140-drone-fog-recon-intel-scan-auto-return-pass.json",
+  "lastPushedTechnicalMilestone": {
+    "commit": "82006da1a",
+    "destination": "origin/main",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "suiteProof": "native1136-focused-current-proof.json",
+    "technicalReady": false,
+    "playerReady": false
+  },
+  "currentBoardedTransportRecoveryNotes": {
+    "nativeExecution": "PassedScopedIsolatedBoardedNativeRecovery",
+    "independentRunner": "Passed",
+    "proof": "native1144-isolated-paid-boarded-recovery-pass.json",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "scope": "Actual paid APC160/Rifle4 native Board/Pause/SaveExit/publicContinue, same attempt and receipts, loaded Move/ExitAll, restored body scale, actual four marker creation and same identities hiding via normal visible cards, all capacity counters conserved and released.",
+    "nativeTouchDispatched": 36,
+    "nativeTouchCompleted": 36,
+    "acceptedMoveCommands": 2,
+    "receiptViolations": 0,
+    "selectionMarkerQualificationPending": false,
+    "shippingS005Planned": true,
+    "normalMissionCertified": false,
+    "deviceCertified": false
+  },
+  "currentDroneSharedFogQualification": {
+    "result": "PassedScopedIsolatedPaidDroneNativeSharedFog",
+    "proof": "native1140-drone-fog-recon-intel-scan-auto-return-pass.json",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "coverage": "One actual paid IntelStation Drone140; single public enemy staging deployment survey; exact actual paid-source native Scan/Visible/frozen LastSeen/20s natural expiry, automatic return/home landing, death capacity cleanup.",
+    "nativeTouchDispatched": 19,
+    "nativeTouchCompleted": 19,
+    "receiptViolations": 0,
+    "sharedFog": 1,
+    "developmentFullVision": 0,
+    "normalMissionCertified": false,
+    "deviceCertified": false
+  },
+  "currentPopulatedFogNativeRecovery": "native1146-populated-fog-public-save-continue-failure.json",
+  "historicalNativeVictoriesBeforeSharedFogIntegration": [
+    "native1053-current-manual-fa-IR-seed104734-victory.json"
+  ],
+  "currentPopulatedFogNativeRecoveryNotes": {
+    "result": "Failed",
+    "proof": "native1146-populated-fog-public-save-continue-failure.json",
+    "sourceHash": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "failure": "External fixture required nearest HUD canvas pixel width equal to Screen width at startup ownership handoff, before actual Pause/Save. Native Scan Visible/frozen LastSeen passed; no saved checkpoint or Continue occurred.",
+    "nativeSaveContinueCertified": false,
+    "productionDefectEstablished": false,
+    "successor": "External1150 under preparation; loaded1146 immutable."
+  },
+  "lastNormalAriaPreflightAttempt": {
+    "run": "1142",
+    "result": "FailedBeforeLoadNoMissionRun",
+    "evidence": "native1142-before-load-native-idle.json",
+    "reason": "eval command rejected unsupported timeout_ms flag; no fixture loaded, ownership claimed, Play entered or match run.",
+    "successor": "1151 pending external runner correction"
+  }
 }

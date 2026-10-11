@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005RetainedFlightPauseSaveContinue1049.cs",
+      "entry": "S005RetainedFlightPauseSaveContinue1049.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 395,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_S005RetainedFlightPauseSaveContinue1049_3daab10acbde4cc996022a98bc1a2eb3",
+      "success": true,
+      "result": "Prepared fixture; load only, execute via repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

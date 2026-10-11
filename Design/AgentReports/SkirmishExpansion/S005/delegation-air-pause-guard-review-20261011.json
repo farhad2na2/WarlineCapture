@@ -62,5 +62,15 @@
   ],
   "noSourceEditsByReviewer": true,
   "noEditorsControlled": true,
-  "playerReady": false
+  "playerReady": false,
+  "wholeSourceDeltaCaveat": {
+    "currentReportedSourceHash": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+    "unrelatedModifiedSourceFiles": [
+      "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+      "ProjectSettings/QualitySettings.asset"
+    ],
+    "reviewReport": "Design/AgentReports/SkirmishExpansion/S005/delegation-unexpected-source-delta-review-20261011.json",
+    "meaning": "One runtime file change describes the reviewed air fix, not the entire working-tree source delta."
+  }
 }

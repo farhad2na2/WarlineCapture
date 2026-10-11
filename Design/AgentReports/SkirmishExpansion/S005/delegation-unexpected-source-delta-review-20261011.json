@@ -1,0 +1,49 @@
+{
+  "result": "ScopedReadOnlySourceDeltaReview",
+  "currentWholeSourceHashReportedByOwner": "8417a1d738f2ea61693becedd3e66ba85c2ba7592ee1c31606d5683b3d2869cb",
+  "sourceMutationsByReviewer": false,
+  "editorControlByReviewer": false,
+  "files": [
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "sha256": "1979b9dcc11f4352d430316bc03d07da178485b973179cda1c45445c3e12ccc8",
+      "mtimeUtc": "2026-10-11T07:28:39.266459+00:00",
+      "bytes": 1577877
+    },
+    {
+      "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+      "sha256": "4d8905f129c000e6ebddbcff4d0753305345db9109ff6f900de89bb8bb8a7d58",
+      "mtimeUtc": "2026-10-11T07:28:39.556941+00:00",
+      "bytes": 534984
+    },
+    {
+      "path": "ProjectSettings/QualitySettings.asset",
+      "sha256": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e",
+      "mtimeUtc": "2026-10-11T07:28:39.152281+00:00",
+      "bytes": 6873
+    }
+  ],
+  "changes": [
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "delta": "One V3GradientLayer m_Material null\u2192existing anodized-metal GUID69d6cf277441448398c96d3fe6bf8fbe. militaryMaterial=Automatic, fill gold/brown resolves AnodizedMetal via existing material getter.",
+      "classification": "Consistent with serializing an already resolved UI material; initiating caller not proven."
+    },
+    {
+      "path": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+      "delta": "Adds Unicode8592 left-arrow glyph2102 and its packed atlas rectangle; embedded atlas changed.",
+      "classification": "Consistent with dynamic TMP fallback glyph population; initiating caller not proven."
+    },
+    {
+      "path": "ProjectSettings/QualitySettings.asset",
+      "delta": "Mobile antiAliasing 0\u21924.",
+      "classification": "Behavioral project quality change, not a necessary consequence of air pause fix.",
+      "concreteConflict": "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs:564 expects antiAliasing: 0 to avoid MSAA bandwidth cost for 60 FPS."
+    }
+  ],
+  "timing": "Three unrelated assets/settings written within405ms at07:28:39UTC, about9s after owner wrote air runtime/test source and before compile finished07:29:05UTC. Grouped Editor flush plausible; timestamp correlation is not caller attribution.",
+  "boundedLogObservation": "Persistent Editor log around refresh showed Asset Pipeline Refresh initiated by StopAssetImportingV2(ForceSynchronousImport | ForceDomainReload); no line attributing these three writes to a named source tool in bounded inspected window.",
+  "runtimeSearch": "No direct QualitySettings.antiAliasing setter found in Assets/Game/Scripts. SettingsService calls SetQualityLevel. RenderTexture antiAliasing assignments do not explain a persisted quality-tier setting.",
+  "recommendation": "Keep pause-fix commit scoped to UnitAirMovementSystem plus its new tests/meta. Preserve unrelated changes for owner investigation. Mobile MSAA delta needs intentional resolution and AndroidVisualQualityValidation validation before whole-source technical acceptance. Existing gameplay proofs remain historical/scoped, not fresh whole8417 acceptance.",
+  "wholeMissionCertified": false
+}

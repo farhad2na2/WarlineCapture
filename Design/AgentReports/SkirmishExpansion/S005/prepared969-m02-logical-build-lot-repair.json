@@ -22,5 +22,5 @@
   "budgetChanges": false,
   "guardRelaxations": false,
   "nativeBilingualJourneyRequired": true,
-  "blockedUntil": "Active aircraft945/946 source-frozen validation closes"
+  "blockedUntil": "Native977 retained aircraft Continue closes. Native946 did not run after native945 fixture failure; corrected flight recovery remains pending after the Campaign logical repair."
 }

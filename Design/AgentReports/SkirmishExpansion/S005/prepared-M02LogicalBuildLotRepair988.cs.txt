@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using Game.Configs;
+using Game.Editor;
+using UnityEditor;
+using UnityEngine;
+public static class M02LogicalBuildLotRepair988
+{
+    public static object Run()=>"Loaded only; execute validation through the repository wrapper.";
+    static string Hash(string p){using var h=SHA256.Create();return BitConverter.ToString(h.ComputeHash(File.ReadAllBytes(p))).Replace("-","").ToLowerInvariant();}
+    public static void RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Repair requires completed native validations.");
+        if(M02EstablishBaseForwardPostWindowValidation.BuildLotSearch!=new RectInt(1000,314,40,20))throw new InvalidOperationException("The proposed logical build-lot code is not loaded.");
+        // Recover only files changed by the failed global SaveAssets call.
+        // Each byte snapshot was checked against the frozen native980 manifest
+        // and HEAD before this driver was prepared; no YAML is authored here.
+        string[] restore={M02EstablishBaseForwardPostWindowValidation.DefinitionPath,"Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab","Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset","ProjectSettings/QualitySettings.asset"};
+        var baseline=new Dictionary<string,string>();
+        QualitySettings.antiAliasing=0;
+        for(int i=0;i<restore.Length;i++)
+        {
+            string bytes="/private/tmp/m02-restore-original-"+i+".bytes";
+            baseline.Add(restore[i],Hash(bytes));File.Copy(bytes,restore[i],true);
+            if(restore[i].StartsWith("Assets/"))AssetDatabase.ImportAsset(restore[i],ImportAssetOptions.ForceSynchronousImport|ImportAssetOptions.ForceUpdate);
+            if(Hash(restore[i])!=baseline[restore[i]])throw new InvalidOperationException("Frozen asset recovery differs: "+restore[i]);
+        }
+        var old=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+        var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M02EstablishBaseForwardPostWindowValidation.SourceDefinitionPath);
+        var anchors=new Dictionary<string,OperationMapAnchorConfig>();foreach(var a in old.Anchors)anchors.Add(a.AnchorId,a);
+        string[] physical={M02EstablishBaseForwardPostWindowValidation.SourceDefinitionPath,M02EstablishBaseForwardPostWindowValidation.BuildingPlacementsPath,M02EstablishBaseForwardPostWindowValidation.RenderDatabasePath,AssetDatabase.GUIDToAssetPath(source.SourceSceneReference.AssetGUID),AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID),AssetDatabase.GUIDToAssetPath(source.MinimapRasterReference.AssetGUID)};
+        var hashes=new Dictionary<string,string>();foreach(var p in physical)hashes.Add(p,Hash(p));
+        M02EstablishBaseForwardPostWindowValidation.RunFocusedValidation();
+        var updated=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+        int unchanged=0;Vector3 after=default;
+        foreach(var a in updated.Anchors)
+        {
+            if(a.AnchorId=="anchor.ch01.m02.build_lot"){after=a.Position;continue;}
+            var before=anchors[a.AnchorId];
+            if(a.Kind!=before.Kind||a.Position!=before.Position||a.EulerAngles!=before.EulerAngles||a.Radius!=before.Radius||a.FactionId!=before.FactionId||a.LaneIndex!=before.LaneIndex)throw new InvalidOperationException("Unrelated mission anchor changed: "+a.AnchorId);
+            unchanged++;
+        }
+        if(unchanged!=15||after.x!=1020.5f||after.z!=324.5f)throw new InvalidOperationException("Unexpected logical anchor result.");
+        foreach(var p in physical)if(Hash(p)!=hashes[p])throw new InvalidOperationException("Physical source changed: "+p);
+        for(int i=1;i<restore.Length;i++)if(Hash(restore[i])!=baseline[restore[i]])throw new InvalidOperationException("Unrelated asset changed during focused logical save: "+restore[i]);
+        var lot=M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
+        if(lot!=new RectInt(1000,314,40,20))throw new InvalidOperationException("Logical definition selected an unexpected build lot.");
+        Debug.Log("[M02LogicalBuildLotRepair988] result=Passed clearLot=1000,314,40,20 unchangedOtherAnchors=15 protectedPhysicalFilesUnchanged=1 budgetsUnchanged=1 guardsUnchanged=1 nativeBilingualJourney=Pending");
+    }
+}

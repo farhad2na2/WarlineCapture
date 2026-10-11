@@ -1,0 +1,26 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "f3b533b57b6e569883254abd9755a6e33faf1372b84dbc7473d82f3406cecfb1",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-988-m02-logical-build-lot-repair-post-source-manifest.json",
+  "postManifest": "final-972-shared-campaign-m02-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-972-shared-campaign-m02-en-fa-journey.log",
+  "logSha256": "0d7f5782958687c6aa5d1a7eb14372f6661d5313db451dac52650bb5c8808c57",
+  "mission": "saga.ch01.m02.establish_base",
+  "victories": [],
+  "screenshots": [],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "No native screenshots",
+    "Missing audited native selection companion pass marker"
+  ]
+}

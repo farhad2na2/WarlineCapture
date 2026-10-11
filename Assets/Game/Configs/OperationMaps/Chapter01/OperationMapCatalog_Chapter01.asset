@@ -81,7 +81,7 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch01.forward_post_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: b1c94518610b4bbcd0ce6ee3678e272a3bf505819b9eea52be44224657ba0ce6
+      contentHash: 38c954491c457a856a9f7932cd4b9b50f7615571c3b2fee311602fa6b4641f18
   - definition: {fileID: 11400000, guid: 650740e21f42641739622a6c499eb11e, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.hospital_corridor_01

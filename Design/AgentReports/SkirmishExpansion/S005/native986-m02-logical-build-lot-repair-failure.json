@@ -1,0 +1,28 @@
+{
+  "result": "Failed",
+  "scope": "Logical M2 construction-anchor repair; native bilingual mission regression pending",
+  "sourceHash": "ab096de1f1ab5c8462e5f9a9c1f405c92943ecb93f56d06ce554e2550793858c",
+  "preManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "postManifest": "final-986-m02-logical-build-lot-repair-post-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset",
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs",
+    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+    "ProjectSettings/QualitySettings.asset"
+  ],
+  "materialsUnchanged": true,
+  "allOtherSourceFilesUnchanged": false,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-986-m02-logical-build-lot-repair.log",
+  "logSha256": "a742fa05668d864f6703f7d94d1e72136e8757113c94a837171e6406c34aa3ff",
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Source delta exceeds the two authorized logical M2 repair files",
+    "Missing [M02LogicalBuildLotRepair986] result=Passed"
+  ],
+  "normalPlayerJourneyCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

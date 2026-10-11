@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/M02LogicalBuildLotRepair986.cs",
+      "entry": "M02LogicalBuildLotRepair986.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 106,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_M02LogicalBuildLotRepair986_e9f142d2ad5445c789cebb60caa23628",
+      "success": true,
+      "result": "Loaded only; execute validation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "Exact-byte restoration of the failed global SaveAssets collateral; no unrelated owner work replaced",
+  "baselineGitRevision": "6286cbabc",
+  "baselineManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "restoredFiles": [
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+    "ProjectSettings/QualitySettings.asset"
+  ],
+  "m02LogicalResetBeforeFocusedRebuild": true,
+  "evidence": "native988-m02-logical-build-lot-repair-pass.json",
+  "allOtherSourceFilesUnchanged": true
+}

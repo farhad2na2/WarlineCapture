@@ -1,0 +1,18 @@
+{
+  "result": "PassedScopedSourceApplicability",
+  "oldSourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "preManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "postManifest": "final-990-m02-content-pack-binding-repair-post-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset",
+    "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs"
+  ],
+  "allOther38593SourceFilesByteIdentical": true,
+  "all966MaterialsByteIdentical": true,
+  "scope": "S005 runtime/UI/setup/physical source and dependencies unchanged; current Campaign M2 logical repair needs fresh actual Campaign journeys. Existing S005 results retain their original whole-source hashes and are not represented as new executions.",
+  "newNativeWholeSourceAcceptanceClaimed": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

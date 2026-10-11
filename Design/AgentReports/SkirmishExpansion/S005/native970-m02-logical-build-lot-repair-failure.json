@@ -1,0 +1,29 @@
+{
+  "result": "Failed",
+  "scope": "Logical M2 construction-anchor repair; native bilingual mission regression pending",
+  "sourceHash": "60b5b49bcdd69287e2d92d33d4512f76ef555993963f712f80096dff74eb7c81",
+  "preManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "postManifest": "final-970-m02-logical-build-lot-repair-post-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs"
+  ],
+  "materialsUnchanged": true,
+  "allOtherSourceFilesUnchanged": false,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-970-m02-logical-build-lot-repair.log",
+  "logSha256": "7d0b4bf90b15741046a718f7ba78ae1f3f59b4f73a293ff191c78afebc0091d3",
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Source delta exceeds the two authorized logical M2 repair files",
+    "Missing [M02EstablishBaseForwardPostWindowValidation] result=Passed",
+    "Missing [M02LogicalBuildLotRepair970] result=Passed"
+  ],
+  "normalPlayerJourneyCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "observedFailureReason": "Stale authoring source-definition SHA pin; source definition is unchanged from the frozen native980 baseline.",
+  "sourceDeltaIsSubsetOfAuthorizedFiles": true,
+  "unauthorizedSourceChanges": false,
+  "logicalAssetNotYetRegenerated": true
+}

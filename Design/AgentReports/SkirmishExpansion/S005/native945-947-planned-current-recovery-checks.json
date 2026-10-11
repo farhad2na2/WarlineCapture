@@ -1,5 +1,5 @@
 {
-  "status": "PartiallyExecuted",
+  "status": "RecoveryTaxiAndLogicalRepairPassedOtherGatesPending",
   "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
   "checks": [
     {
@@ -8,7 +8,10 @@
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunTaxiValidation",
       "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
-      "status": "RunningNormalInput"
+      "status": "FailedValidationAssumption",
+      "executedProof": "native945-normal-paid-strike-returntaxi-save-continue-failure.json",
+      "reason": "Driver incorrectly required immutable prefab UnitMove in serialized mutable checkpoint parts. Native save contains its actual UnitAir/UnitAirMovement/LocalTransform parts. Original failure retained.",
+      "replacementProof": "native945-980-normal-paid-strike-taxi-save-continue-pass.json"
     },
     {
       "run": "native946",
@@ -16,7 +19,8 @@
       "driver": "/private/tmp/S005AircraftRecovery945.cs",
       "entry": "S005AircraftRecovery945.RunFlightValidation",
       "dryCompileProof": "compile945-aircraft-recovery-fixture-dry-run.json",
-      "status": "QueuedAfterNative945"
+      "status": "NotExecutedStoppedAfterNative945",
+      "replacement": "Corrected aircraft recovery fixture S005AircraftRecovery978"
     },
     {
       "run": "native947",
@@ -29,7 +33,7 @@
     }
   ],
   "readinessEstablished": false,
-  "executionOrder": "947 checkpoint technical and 962 shared technical checks completed. Campaign M1 passed bilingual regression; M2 actual blocked construction lot retained as an open defect. Normal aircraft945/946 run sequentially while a source-only M2 logical repair is prepared; no concurrent stateful validation.",
+  "executionOrder": "945 normal taxi Save retained after a fixture failure; 980 native retained-save Continue passed with separate strict input audits. 988 logical M2 authoring repair passed after retaining 970/986 failures and restoring only verified collateral saves. Campaign972 M2 runs first, then M1/M3/M4/M5; corrected flight recovery remains pending.",
   "preparedDriverCopies": [
     {
       "file": "prepared-S005AircraftRecovery945.cs.txt",
@@ -82,6 +86,27 @@
     {
       "file": "prepared-CampaignInputJourney963.cs.txt",
       "sha256": "ebbedbb6b84225cc24a32bc3cc4efd6aa056a04a536f4b360e19505dcde5f5b6"
+    }
+  ],
+  "additionalPreparedChecks": [
+    {
+      "run": "native988",
+      "scope": "Campaign M2 logical build-lot repair; focused save and preserved other anchors",
+      "status": "PassedLogicalScope",
+      "proof": "native988-m02-logical-build-lot-repair-pass.json"
+    },
+    {
+      "runs": "native971-975",
+      "scope": "Current-source Campaign M1-M5 bilingual native player-action regression",
+      "status": "RunningM2First",
+      "runner": "prepared-s005-run-campaign-971.py.txt",
+      "driver": "prepared-CampaignInputJourney971.cs.txt"
+    },
+    {
+      "run": "native978",
+      "scope": "Corrected normal paid Strike flight Save/Continue",
+      "status": "PreparedNotExecuted",
+      "driver": "prepared-S005AircraftRecovery978.cs.txt"
     }
   ]
 }

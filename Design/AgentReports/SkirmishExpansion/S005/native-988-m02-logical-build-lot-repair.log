@@ -1,0 +1,29 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=M02LogicalBuildLotRepair988.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_5b542724/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=10 buildLot=1000,314,40,20
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseForwardPostWindowValidation:RunFocusedValidation () (at Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs:78)
+M02LogicalBuildLotRepair988:RunValidation () (at /private/tmp/M02LogicalBuildLotRepair988.cs:35)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_5b542724/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[M02LogicalBuildLotRepair988] result=Passed clearLot=1000,314,40,20 unchangedOtherAnchors=15 protectedPhysicalFilesUnchanged=1 budgetsUnchanged=1 guardsUnchanged=1 nativeBilingualJourney=Pending
+UnityEngine.Debug:Log (object)
+M02LogicalBuildLotRepair988:RunValidation () (at /private/tmp/M02LogicalBuildLotRepair988.cs:50)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_5b542724/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=M02LogicalBuildLotRepair988.RunValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_5b542724/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

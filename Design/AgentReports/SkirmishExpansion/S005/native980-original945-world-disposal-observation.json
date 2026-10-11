@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var type=System.AppDomain.CurrentDomain.GetAssemblies().Select(a=>a.GetType(\"S005AircraftRecovery945\")).First(t=>t!=null); var world=(Unity.Entities.World)type.GetField(\"ownedWorld\",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).GetValue(null); return new { originalNative945WorldReferenceExists=world!=null, originalNative945WorldDisposed=world!=null&&!world.IsCreated, actorsOrInputsModified=false };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "originalNative945WorldReferenceExists": true,
+        "originalNative945WorldDisposed": true,
+        "actorsOrInputsModified": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

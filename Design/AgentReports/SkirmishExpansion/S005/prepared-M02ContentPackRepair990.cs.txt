@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using Game.Configs;
+using Game.Editor;
+using UnityEditor;
+using UnityEngine;
+public static class M02ContentPackRepair990
+{
+ public static object Run()=>"Loaded only; use the repository wrapper.";
+ static void Require(bool ok,string message){if(!ok)throw new InvalidOperationException(message);}
+ public static void RunValidation()
+ {
+  Require(!EditorApplication.isPlayingOrWillChangePlaymode,"An active native mission must finish first.");
+  var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+  var catalog=AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
+  Require(map!=null&&catalog!=null,"Missing canonical assets.");
+  var original=new List<OperationMapCatalogEntryConfig>();foreach(var entry in catalog.Entries)original.Add(entry);
+  var anchors=new List<OperationMapAnchorConfig>();foreach(var anchor in map.Anchors)anchors.Add(anchor);
+  string logicalBefore=File.ReadAllText(M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+  M02EstablishBaseForwardPostWindowValidation.RunFocusedValidation();
+  Require(File.ReadAllText(M02EstablishBaseForwardPostWindowValidation.DefinitionPath)==logicalBefore,"Already repaired logical definition changed.");
+  Require(catalog.TryValidate(out string error),error);
+  Require(catalog.Entries.Length==original.Count,"Catalog entry count changed.");
+  int changed=0;
+  for(int i=0;i<original.Count;i++)
+  {
+   var before=original[i];var after=catalog.Entries[i];
+   Require(before.Definition==after.Definition&&before.ContentPack.ContentPackId==after.ContentPack.ContentPackId&&before.ContentPack.DeliveryKind==after.ContentPack.DeliveryKind,"Unrelated catalog identity changed.");
+   if(after.Definition==map){Require(after.ContentPack.ContentHash==map.ContentHash&&after.ContentPack.ContentVersion==map.ContentVersion,"M2 content-pack binding does not match.");changed++;}
+   else Require(before.ContentPack.ContentHash==after.ContentPack.ContentHash&&before.ContentPack.ContentVersion==after.ContentPack.ContentVersion,"Other mission content pack changed.");
+  }
+  Require(changed==1,"Expected exactly one M2 binding.");
+  var lot=M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
+  Require(lot==new RectInt(1000,314,40,20),"Clear lot drifted.");
+  Debug.Log("[M02ContentPackRepair990] result=Passed catalogEntries="+original.Count+" updatedM02Binding=1 unrelatedEntriesUnchanged=1 logicalMapUnchanged=1 clearLot=1000,314,40,20 nativeJourney=Pending");
+ }
+}

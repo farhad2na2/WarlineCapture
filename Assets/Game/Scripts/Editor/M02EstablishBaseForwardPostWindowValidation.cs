@@ -24,8 +24,10 @@ namespace Game.Editor
         public const string RenderDatabasePath =
             "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/" +
             "OperationMapRenderDatabaseBakeConfig.asset";
+        // Pin the current shared Campaign definition, verified against the native980
+        // full source manifest; preserve the physical identity checks below.
         public const string SourceDefinitionSha256 =
-            "f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6";
+            "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8";
         public const string BuildingPlacementsSha256 =
             "f5d54abe4dca19b4b2deca889f46fb8196bef98e0e4ee7cb3daa511a2606358b";
         public const string MapId = "opmap.ch01.forward_post_01";
@@ -35,11 +37,14 @@ namespace Game.Editor
         public const int ExpectedAnchorCount = 16;
 
         public static readonly RectInt PlayableWindow = new(780, 270, 320, 200);
-        // The former lot (1004,370) sat immediately beside the transport helipad at
-        // (1006.93,393.26). This exact flat apron keeps the doubled Barracks centered,
-        // moves it farther right/south in the battle view, and clears the helicopter cluster.
-        public static readonly RectInt BuildLotSearch = new(1006, 330, 40, 20);
+        // The previous (1006,330) lot intersects the current authored road/blocker mask.
+        // This nearby apron clears the full 40x20 lot in the native road, sidewalk,
+        // scenery and dynamic-blocker census while retaining the Campaign physical map.
+        public static readonly RectInt BuildLotSearch = new(1000, 314, 40, 20);
         public static readonly Vector2Int BuildLotSize = new(40, 20);
+
+        // Keep the opening focus inside the military core while framing the nearby clear apron.
+        private const float PlanningBuildLotWeight = 0.4f;
 
         private static readonly RectInt MilitaryBaseOperationalCore = new(820, 340, 200, 105);
         private static readonly RectInt RejectedOldMarketWindow = new(1672, 680, 240, 176);
@@ -70,6 +75,7 @@ namespace Game.Editor
                     PopulateLogicalDefinition(logical, source, ref blob.Value, buildLot);
                     ValidateLogicalDefinition(
                         logical, source, ref blob.Value, placements, renderDatabase, buildLot);
+                    RefreshContentPackBinding(logical);
                     Debug.Log($"{Marker} buildLot={buildLot.xMin},{buildLot.yMin},{buildLot.width},{buildLot.height}");
                 }
             }
@@ -111,6 +117,32 @@ namespace Game.Editor
                     source.SourceIdentityHash == "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900" &&
                     source.ContentHash == "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
                 "Accepted dense-city source identity drifted.");
+        }
+
+        private static void RefreshContentPackBinding(OperationMapDefinition logical)
+        {
+            // Keep the existing catalog entry paired with this logical definition.
+            // Rebuilding all chapter catalogs would save unrelated authoring state.
+            OperationMapCatalogConfig catalog = Load<OperationMapCatalogConfig>(
+                M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
+            SerializedObject serialized = new(catalog);
+            SerializedProperty entries = serialized.FindProperty("entries");
+            int matches = 0;
+            for (int index = 0; index < entries.arraySize; index++)
+            {
+                SerializedProperty entry = entries.GetArrayElementAtIndex(index);
+                if (entry.FindPropertyRelative("definition").objectReferenceValue != logical)
+                    continue;
+                SerializedProperty pack = entry.FindPropertyRelative("contentPack");
+                Set(pack, "contentVersion", logical.ContentVersion);
+                Set(pack, "contentHash", logical.ContentHash);
+                matches++;
+            }
+
+            Require(matches == 1, "M02 requires exactly one existing chapter content-pack binding.");
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            Require(catalog.TryValidate(out string error), error);
+            AssetDatabase.SaveAssetIfDirty(catalog);
         }
 
         private static RectInt SelectBuildLot(
@@ -254,11 +286,19 @@ namespace Game.Editor
 
             Vector3[] positions = new Vector3[seeds.Length];
             for (int index = 0; index < seeds.Length; index++)
-                positions[index] = ResolveAnchorPosition(ref surface, seeds[index]);
+            {
+                // Relocating the construction lot must not resample unrelated
+                // authored deployment or civilian anchor elevations.
+                bool preserveExisting = index != 3 && logical.OperationMapId == MapId &&
+                                        logical.Anchors.Length == ExpectedAnchorCount;
+                positions[index] = preserveExisting
+                    ? FindAnchor(logical, seeds[index].Id).Position
+                    : ResolveAnchorPosition(ref surface, seeds[index]);
+            }
 
             Vector3 planningPosition = new(995f, 95f, 468f);
             Vector3 battlePosition = new(952f, 36f, 430f);
-            Vector3 planningTarget = Vector3.Lerp(positions[2], positions[3], 0.56f);
+            Vector3 planningTarget = Vector3.Lerp(positions[2], positions[3], PlanningBuildLotWeight);
             Vector3 planningEuler = LookEuler(planningPosition, planningTarget);
             Vector3 battleEuler = LookEuler(battlePosition, Vector3.Lerp(positions[7], positions[8], 0.5f));
 
@@ -328,7 +368,7 @@ namespace Game.Editor
             Require(logical.TryValidateMetadata(out string error), error);
             Require(logical.TryValidateLocalContentReferences(out error), error);
             EditorUtility.SetDirty(logical);
-            AssetDatabase.SaveAssets();
+            AssetDatabase.SaveAssetIfDirty(logical);
             NormalizeGeneratedYaml(DefinitionPath);
         }
 
@@ -412,7 +452,7 @@ namespace Game.Editor
             Vector3 cinematicFocus = Vector3.Lerp(
                 forwardPost,
                 buildLotFocus,
-                0.56f);
+                PlanningBuildLotWeight);
             Require(HorizontalDistance(cameraStart, cinematicFocus) <= 75f,
                 "M02 opening focus must remain a local zoom over the authored military-base area.");
             Vector2Int focusCell = new(

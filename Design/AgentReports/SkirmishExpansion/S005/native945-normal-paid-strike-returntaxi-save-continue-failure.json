@@ -1,0 +1,62 @@
+{
+  "result": "Failed",
+  "scope": "Normal paid Strike flight or return-taxi Pause/Save/Continue using checked native touch controls; no complete-match win or full aircraft lifecycle claimed",
+  "mode": "ReturnTaxi",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-963-shared-campaign-m02-post-source-manifest.json",
+  "postManifest": "final-945-aircraft-returntaxi-recovery-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-945-normal-strike-returntaxi-save-continue.log",
+  "logSha256": "fc35cb7591f04d93348b8ae8e1576584b12cc4079fd1d0b96c346ba749c2c494",
+  "trace": "s005-aria-live-155926-en-59bf4ee75f05490ca99f13a75691de29.jsonl",
+  "inputAudit": {
+    "recordedContacts": 284,
+    "completedContacts": 284,
+    "phases": {
+      "Menu": 9,
+      "PlayerResume": 275
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-59bf4ee75f05490ca99f13a75691de29.jsonl.touch.jsonl",
+    "sha256": "8dc908ac44534d661fee1a1c035eae7c0e86ecc46caacd1f51d58869c373a07a"
+  },
+  "fixture": "native945-normal-aircraft-recovery-fixture.cs.txt",
+  "fixtureSha256": "39597111e2b79d92e5b65a50030ced89940a9559c147d30f257043e20df5e1db",
+  "fixtureDriverStateChangesOnly": true,
+  "actorsResourcesOrdersSelectionCheckpointInjected": false,
+  "pausedCheckpointAircraftPartsExact": false,
+  "paidReceiptPreserved": false,
+  "sameAttempt": false,
+  "oldPhysicalGone": false,
+  "runwayGeometryAndSpeedsPreserved": false,
+  "clockBoundedNativeMotion": false,
+  "nativeMarkers": [
+    "[S005AircraftRecovery] scope=NormalTouchPaidStrikeSaveContinue mode=ReturnTaxi actorsResourcesOrdersSelectionCheckpointInjected=0 matchBudgetsClockUnchanged=1 completeMatchCertified=0",
+    "[S005AircraftRecovery] phase=Trigger mode=ReturnTaxi receipt=1005 air={\"HomePosition\":{\"x\":1374.5,\"y\":0.8241641521453857,\"z\":189.5},\"HomeCell\":{\"x\":1374,\"y\":189},\"HomeInitialized\":1,\"ReturningHome\":1,\"Airborne\":0,\"UsesRunway\":1,\"TakeoffRolling\":0,\"LandingRolling\":0,\"AttackRunActive\":0,\"AttackManeuverTurnSign\":1,\"AttackPassGoalCell\":{\"x\":1362,\"y\":687},\"ReturnApproachInitialized\":0,\"RunwayTakeoffPosition\":{\"x\":1309.3250732421875,\"y\":0.7941641807556152,\"z\":184.3225555419922},\"RunwayTakeoffCell\":{\"x\":1309,\"y\":184},\"RunwayLandingPosition\":{\"x\":1519.4349365234375,\"y\":0.7941641807556152,\"z\":184.35731506347657},\"RunwayLandingCell\":{\"x\":1519,\"y\":184},\"AttackRunExitPosition\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"FixedWingCruiseY\":0.0,\"FixedWingCruiseYInitialized\":0} position=float3(1519.435f, 0.7941642f, 184.3573f) input=ExistingNativePauseSaveContinueControls",
+    "[S005AircraftRecovery] phase=PausedSnapshot elapsed=960.0227 physicalEntities=4983 air={\"HomePosition\":{\"x\":1374.5,\"y\":0.8241641521453857,\"z\":189.5},\"HomeCell\":{\"x\":1374,\"y\":189},\"HomeInitialized\":1,\"ReturningHome\":1,\"Airborne\":0,\"UsesRunway\":1,\"TakeoffRolling\":0,\"LandingRolling\":0,\"AttackRunActive\":0,\"AttackManeuverTurnSign\":1,\"AttackPassGoalCell\":{\"x\":1362,\"y\":687},\"ReturnApproachInitialized\":0,\"RunwayTakeoffPosition\":{\"x\":1309.3250732421875,\"y\":0.7941641807556152,\"z\":184.3225555419922},\"RunwayTakeoffCell\":{\"x\":1309,\"y\":184},\"RunwayLandingPosition\":{\"x\":1519.4349365234375,\"y\":0.7941641807556152,\"z\":184.35731506347657},\"RunwayLandingCell\":{\"x\":1519,\"y\":184},\"AttackRunExitPosition\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"FixedWingCruiseY\":0.0,\"FixedWingCruiseYInitialized\":0} movement={\"CruiseHeight\":11.393912315368653,\"RunwayTaxiSpeed\":15.0} transform={\"Position\":{\"x\":1515.1370849609375,\"y\":0.7950538396835327,\"z\":184.5098114013672},\"Scale\":1.0,\"Rotation\":{\"value\":{\"x\":0.0,\"y\":-0.6944564580917358,\"z\":0.0,\"w\":0.7195347547531128}}}",
+    "[S005AircraftRecovery] result=Failed reason=System.InvalidOperationException: Paid aircraft checkpoint parts missing/duplicated."
+  ],
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing [S005AircraftRecovery] result=Passed mode=ReturnTaxi",
+    "Missing [S005AircraftRecovery] phase=DiskVerified schema7=1 pausedAircraftPartsExact=1",
+    "Missing [S005PlayerSaveResume] result=Passed input=Touch",
+    "Missing paid Strike native recovery receipt audit",
+    "Aircraft-specific recovery failed"
+  ],
+  "countsForFreshAriaSeedBaseline": false,
+  "countedWin": false,
+  "fullLifecycleCertified": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "realHumanDeviceAcceptance": false
+}

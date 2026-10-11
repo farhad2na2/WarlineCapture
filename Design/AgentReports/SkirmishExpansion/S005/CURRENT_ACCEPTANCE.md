@@ -2,9 +2,9 @@
 
 **Not technically ready / not player-ready.** Catalog remains InProgress. This is the current status; prior candidate narratives and failed evidence remain in `CURRENT_ACCEPTANCE-history-through-native934.md` and their original proofs. `TECHNICAL_READINESS_CURRENT.json` records the active validation and completed proofs.
 
-Current source: `816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26`. Existing Campaign map, materials, fixed gameplay budgets and S005 binding are unchanged. Compilation completed without errors (`compile-930-fullmap-input-status.json`).
+Current whole-source hash: `cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146`. Compiler diagnostics are clear. Since the S005 baseline below, only the Campaign M2 logical map, its Editor builder and matching chapter catalog hash changed. All S005 runtime/UI/setup/physical dependencies and all 966 materials remain byte-identical; see `native990-s005-unchanged-dependencies-source-applicability.json`. Fresh affected Campaign journeys are running.
 
-## Passed on the current source
+## Passed on the S005 baseline source (`816a3ae…`)
 
 - Shared selection/input regressions: native930, including full-map Open/Close preserving the next deliberate world command. Actual wrapper/bridge0; full source PRE/POST matched. Legacy pass marker reports65 tests, while the executed suite contains69 RunCase calls. See `native930-focused-current-proof.json`.
 - Normal paid Heavy APC boarding and recovery: native931, four passengers boarded, schema7 Save/Continue preserved the attempt and paid280 receipt,4978 old physical entities removed, four restored passenger links and hidden visuals verified, then four unloaded through native controls. Strict input/source audits passed. This is a focused recovery case, not a full-match win. See `native931-normal-boarded-save-continue-unload-pass.json`.
@@ -49,3 +49,19 @@ Native958: Campaign M2 bilingual player-action regression Failed; wrapper1/bridg
 Native962: all eight current shared Skirmish technical suites passed (combined setup, acceptance, catalog, economy, facility economy, objective, army and ARIA); actual wrapper0/bridge0, all exact suite markers, complete source unchanged. This is fixture evidence, separate from remaining role lifecycles, Campaign journeys, family stress and device gates. Proof `native962-focused-current-proof.json`.
 
 Native963: Campaign M2 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native963-shared-campaign-m02-en-fa-journey-failure.json`.
+
+Native945: normal paid Strike ReturnTaxi Save/Continue Failed; wrapper1/bridge1, full source unchanged=True. Scoped aircraft recovery, no counted win or full lifecycle certificate. Proof `native945-normal-paid-strike-returntaxi-save-continue-failure.json`.
+
+Native945/980 retained native taxi recovery PassedScopedNormalSplitSessionTaxiRecovery: original normal paid Strike/Pause/Save and new native menu Continue, exact saved mutable parts/receipt/runway geometry, restored native taxi motion, separate strict contact audits and full source closure. The original945 and follow-up976/977 fixture failures, plus native979 legacy QA-completion marker inconsistency, remain retained. No full mission win/lifecycle/capacity certification. Proof `native945-980-normal-paid-strike-taxi-save-continue-pass.json`.
+
+Native970 logical Campaign M2 build-lot repair Failed; full source delta limited to its Editor builder and logical definition=False. Existing physical map/materials and S005 candidate dependencies unchanged. Native M1–M5 regression remains pending. Proof `native970-m02-logical-build-lot-repair-failure.json`.
+
+Native986 logical Campaign M2 build-lot repair Failed; full source delta limited to its Editor builder and logical definition=False. Existing physical map/materials and S005 candidate dependencies unchanged. Native M1–M5 regression remains pending. Proof `native986-m02-logical-build-lot-repair-failure.json`.
+
+Native988 logical Campaign M2 build-lot repair Passed; full source delta limited to its Editor builder and logical definition=True. Existing physical map/materials and S005 candidate dependencies unchanged. Native M1–M5 regression remains pending. Proof `native988-m02-logical-build-lot-repair-pass.json`.
+
+Native972: Campaign M2 bilingual player-action regression Failed; wrapper1/bridge1; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native972-shared-campaign-m02-en-fa-journey-failure.json`.
+
+Native972 retained failure: catalog packaging still had the old M2 logical hash and mission could not launch. Native990 synchronized only its matching content-pack entry: Passed; other 31 entries/logical map/materials unchanged. Proof `native990-m02-content-pack-binding-repair-pass.json`. Native bilingual regression remains pending.
+
+Native992: Campaign M2 bilingual player-action regression Passed; wrapper0/bridge0; full source unchanged=True. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `native992-shared-campaign-m02-en-fa-journey-pass.json`.

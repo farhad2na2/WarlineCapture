@@ -1,0 +1,21 @@
+{
+  "result": "Passed",
+  "scope": "Logical M2 construction-anchor repair; native bilingual mission regression pending",
+  "sourceHash": "f3b533b57b6e569883254abd9755a6e33faf1372b84dbc7473d82f3406cecfb1",
+  "preManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "postManifest": "final-988-m02-logical-build-lot-repair-post-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset",
+    "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs"
+  ],
+  "materialsUnchanged": true,
+  "allOtherSourceFilesUnchanged": true,
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "log": "native-988-m02-logical-build-lot-repair.log",
+  "logSha256": "f486a397500d408af23c735f17382693535bce68d562cf1b295ef0ccd2c2b3d9",
+  "errors": [],
+  "normalPlayerJourneyCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

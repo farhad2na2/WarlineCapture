@@ -1,0 +1,24 @@
+{
+  "result": "Passed",
+  "scope": "M2 logical content-pack synchronization; actual bilingual native mission pending",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "preManifest": "final-972-shared-campaign-m02-post-source-manifest.json",
+  "postManifest": "final-990-m02-content-pack-binding-repair-post-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+    "Assets/Game/Scripts/Editor/M02EstablishBaseForwardPostWindowValidation.cs"
+  ],
+  "allOtherSourceFilesUnchanged": true,
+  "materialsUnchanged": true,
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "log": "native-990-m02-content-pack-binding-repair.log",
+  "logSha256": "060884871188406f6e493c1ab62aaf6cddb4436ac0d7f19ddce216b0f1463be9",
+  "catalogEntries": 32,
+  "updatedM02Binding": 1,
+  "unrelatedEntriesUnchanged": true,
+  "logicalMapUnchanged": true,
+  "errors": [],
+  "technicallyReady": false,
+  "playerReady": false
+}

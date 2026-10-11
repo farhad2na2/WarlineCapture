@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc26",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-979-retained-strike-taxi-continue-post-source-manifest.json",
+  "postSourceManifest": "final-980-retained-strike-taxi-continue-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-980-retained-strike-taxi-continue.log",
+  "requiredPassMarker": "[S005RetainedTaxiContinue] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

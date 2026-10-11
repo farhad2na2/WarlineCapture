@@ -1,0 +1,78 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded/readiness fixture: actual native paid queues, delivered role/domain binding, native Touch squad selection and Move, observed displacement, HealthZero death stimulus, native idempotent cap release and owned-session cleanup. Not a normal whole mission or combat/service/full lifecycle certificate.",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1015-shared-campaign-m05-post-source-manifest.json",
+  "postManifest": "final-1016-ground-native-touch-movement-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1016-isolated-ground-native-touch-movement.log",
+  "logSha256": "1eb01ffc9354cbfde5b7956f3764c427e52a20c7697d6639d49bcf814ba6778a",
+  "measuredRoles": {
+    "queue": [
+      "Rifle",
+      "Gunner"
+    ],
+    "selection": [
+      "Rifle",
+      "Gunner"
+    ],
+    "movement": [
+      "Rifle"
+    ],
+    "death": [
+      "Rifle"
+    ]
+  },
+  "inputAudit": {
+    "recordedContacts": 8,
+    "completedContacts": 8,
+    "phases": {
+      "Runtime": 8
+    },
+    "terminalCancellations": [],
+    "errors": [
+      {
+        "driver": [
+          188,
+          1
+        ],
+        "reason": "unexpected input, intervention or receipt violation"
+      }
+    ],
+    "strictRecordedContacts": false,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": false,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "native1016-ground-movement.touch.jsonl",
+    "sha256": "53f03e474ff4e299c00f1ff6e892ced4c2e5127035d7d2bfa67a1b2dafb907ba"
+  },
+  "touchEvidence": "native1016-ground-movement.touch.jsonl",
+  "fixture": "native1016-ground-native-touch-movement-fixture.cs.txt",
+  "fixtureSha256": "09e5329fd09e1668429df5b24f3dd512a76a977b6417675bf5e6c2afa82e1330",
+  "fundingInjected": true,
+  "readinessGranted": "FullArsenal",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "queueRequestedThroughNativeApi": true,
+  "selectionAndMovementThroughNativeTouch": true,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "countedWin": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failed",
+    "Missing [S005GroundMovement] result=Passed cases=15",
+    "Missing exact 15-role queue/Touch-selection/Touch-movement/death coverage",
+    "Native Touch contact audit failed"
+  ],
+  "failureCause": "Disclosed API production emitted Production/receipt0 outside native Touch. The fixture mistakenly kept its Touch audit active across that API queue phase; actual Rifle and Gunner Move commands had verified nonzero receipts.",
+  "commandEvidence": "s005-aria-live-104734-en-daa737e2f30c446c990fc271471ad1fd.jsonl.commands.jsonl",
+  "actualUiMoveCommandsVerified": true,
+  "productionRuntimeBugProven": false
+}

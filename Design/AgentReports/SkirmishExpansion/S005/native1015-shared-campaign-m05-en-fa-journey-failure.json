@@ -1,0 +1,35 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1014-shared-campaign-m04-post-source-manifest.json",
+  "postManifest": "final-1015-shared-campaign-m05-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1015-shared-campaign-m05-en-fa-journey.log",
+  "logSha256": "746a58ff6be9b5a098bbdc3566809b8155b6edcf17c56b3e9392ec9272699cf4",
+  "mission": "saga.ch01.m05.breach_assault",
+  "victories": [],
+  "screenshots": [
+    "native1015-campaign-m05-screens/5-journey-lesson-1-ContinueLessonButton.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-1.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-2-SelectCommand.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-2-ShowMeButton.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-2.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-4-MoveCommand.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-4-ShowMeButton.png",
+    "native1015-campaign-m05-screens/5-journey-lesson-4.png",
+    "native1015-campaign-m05-screens/5-opening.png"
+  ],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "Missing audited native selection companion pass marker"
+  ]
+}

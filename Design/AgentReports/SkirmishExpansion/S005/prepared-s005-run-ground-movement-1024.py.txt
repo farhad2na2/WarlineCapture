@@ -1,0 +1,53 @@
+import hashlib,json,pathlib,re,subprocess,sys
+
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+p=root/'Design/AgentReports/SkirmishExpansion/S005'
+pre=sys.argv[1]
+state=json.loads((p/'TECHNICAL_READINESS_CURRENT.json').read_text())
+assert state['activeRun'] is None
+assert not (p/'load1024-ground-movement.json').exists()
+assert json.loads((p/pre.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']==state['sourceHash']
+fixture=pathlib.Path('/private/tmp/S005GroundMovement1024.cs')
+r=subprocess.run(['rtk','proxy','unity','command','run_script','--file',str(fixture),'--entry','S005GroundMovement1024.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+(p/'load1024-ground-movement.json').write_text(r.stdout)
+loaded=json.loads(r.stdout)
+assert r.returncode==0 and loaded['success'] and loaded['data']['result']['success']
+log='native-1024-isolated-ground-native-touch-movement.log'
+subprocess.run(['rtk','proxy','python3','/private/tmp/s005-start-reused-bounded.py','1024',log,'S005GroundMovement1024.RunValidation',pre],cwd=root)
+wrapper=int((p/(log+'.wrapper-exit')).read_text())
+bridge=int((p/(log+'.exit')).read_text()) if (p/(log+'.exit')).exists() else None
+post='final-1024-ground-native-touch-movement-post'
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True)
+post+='-source-manifest.json'
+same=json.loads((p/pre).read_text())==json.loads((p/post).read_text())
+sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+t=(p/log).read_text(errors='replace')
+errors=[]
+if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failed')
+if not same:errors.append('Full source changed')
+for marker in ('[S005GroundMovement] result=Passed cases=15','[S005GroundMovementCleanup] result=Passed'):
+    if marker not in t:errors.append('Missing '+marker)
+measured={key:re.findall(pattern,t) for key,pattern in {
+    'queue':r'\[S005GroundPaidQueueCase\] role=(\S+)',
+    'selection':r'\[S005GroundNativeSelection\] result=Passed role=(\S+)',
+    'movement':r'\[S005GroundNativeMovement\] result=Passed role=(\S+)',
+    'verifiedMoveReceipt':r'\[S005GroundNativeMoveReceipt\] role=(\S+) receipt=\d+ verified=1',
+    'death':r'\[S005GroundPaidQueueDeath\] result=Passed role=(\S+)'
+}.items()}
+expected=set(measured['queue'])
+if len(expected)!=15 or any(len(rows)!=15 or set(rows)!=expected for rows in measured.values()):errors.append('Missing exact 15-role queue/Touch-selection/verified-Move-receipt/Touch-movement/death coverage')
+touch=p/'native1024-ground-movement.touch.jsonl'
+audit=None
+if touch.exists():
+    r=subprocess.run(['rtk','proxy','python3','Tools/CI/audit_skirmish_native_contacts.py',str(touch)],cwd=root,capture_output=True,text=True)
+    audit=json.loads(r.stdout)
+    if not audit['strictRecordedContacts'] or not audit['strictAllContactsEnded'] or audit['errors']:errors.append('Native Touch contact audit failed')
+else:errors.append('No retained native Touch contact stream')
+name='native1024-isolated-ground-native-touch-movement-'+('pass' if not errors else 'failure')+'.json'
+(p/'native1024-ground-native-touch-movement-fixture.cs.txt').write_bytes(fixture.read_bytes())
+d=dict(result='PassedScopedNativeGroundMovement' if not errors else 'Failed',scope='Isolated funded/readiness fixture: actual native paid queues, delivered role/domain binding, native Touch squad selection and Move, observed displacement, HealthZero death stimulus, native idempotent cap release and owned-session cleanup. Not a normal whole mission or combat/service/full lifecycle certificate.',sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest(),measuredRoles=measured,inputAudit=audit,touchEvidence=touch.name,fixture='native1024-ground-native-touch-movement-fixture.cs.txt',fixtureSha256=hashlib.sha256(fixture.read_bytes()).hexdigest(),fundingInjected=True,readinessGranted='FullArsenal',enemyStrategyDisabled=True,deathStimulus='HealthZero',actorPositionsSelectionOrdersInjected=False,queueRequestedThroughNativeApi=True,selectionAndMovementThroughNativeTouch=True,motionOriginAfterVerifiedMoveReceipt=True,destinationArrivalCertified=False,combatAndServiceCertified=False,normalMissionCertified=False,fullLifecycleCertified=False,countedWin=False,technicallyReady=False,playerReady=False,errors=errors)
+(p/name).write_text(json.dumps(d,indent=2)+'\n')
+f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text());assert s['activeRun']=='native1024';s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None);s['preparedGroundMovementQualification']['executed']=True;s['currentGroundMovementQualification']=name;f.write_text(json.dumps(s,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as md:md.write(f'\nNative1024: isolated 15-ground-role native Touch selection/movement qualification {d["result"]}, wrapper{wrapper}/bridge{bridge}; full source unchanged={same}. Funding/readiness and HealthZero death stimuli disclosed. Combat/service and normal whole mission are separate gates. Proof `{name}`.\n')
+print(json.dumps(dict(proof=name,result=d['result'],errors=errors)),flush=True)
+sys.exit(3 if errors else 0)

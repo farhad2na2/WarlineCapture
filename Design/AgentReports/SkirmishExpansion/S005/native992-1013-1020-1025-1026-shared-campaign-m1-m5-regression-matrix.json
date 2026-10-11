@@ -1,0 +1,21 @@
+{
+  "result": "Failed",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "proofs": [
+    "native992-shared-campaign-m02-en-fa-journey-pass.json",
+    "native1013-shared-campaign-m03-en-fa-journey-failure.json",
+    "native1020-shared-campaign-m01-en-fa-journey-failure.json",
+    "native1025-shared-campaign-m04-en-fa-journey-failure.json",
+    "native1026-shared-campaign-m05-en-fa-journey-pass.json"
+  ],
+  "missions": 5,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "scope": "Shared Campaign native player-action regression; separate from strict Touch and human/device acceptance",
+  "normalMissionOutcomeNotInjected": true,
+  "strictNativeTouchAudit": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -1,0 +1,33 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-991-shared-campaign-m01-post-source-manifest.json",
+  "postManifest": "final-996-shared-campaign-m01-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-996-shared-campaign-m01-en-fa-journey.log",
+  "logSha256": "d018875ba892be223e26c694fdb69a7549abb7c428681bb237c256fd106bb899",
+  "mission": "saga.ch01.m01.first_contact",
+  "victories": [],
+  "screenshots": [
+    "native996-campaign-m01-screens/1-journey-lesson-1-SelectCommand.png",
+    "native996-campaign-m01-screens/1-journey-lesson-1-ShowMeButton.png",
+    "native996-campaign-m01-screens/1-journey-lesson-1.png",
+    "native996-campaign-m01-screens/1-journey-lesson-2-SelectCommand.png",
+    "native996-campaign-m01-screens/1-journey-lesson-2-settled.png",
+    "native996-campaign-m01-screens/1-journey-lesson-2.png",
+    "native996-campaign-m01-screens/1-opening.png"
+  ],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "Missing audited native selection companion pass marker"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1020-shared-campaign-m01-post-source-manifest.json",
+  "postManifest": "final-1025-shared-campaign-m04-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1025-shared-campaign-m04-en-fa-journey.log",
+  "logSha256": "b01edf3f84771f232e0f73cfc2f88a527efffb4e03b86a9279b943c3417e96f2",
+  "mission": "saga.ch01.m04.airlift",
+  "victories": [],
+  "screenshots": [
+    "native1025-campaign-m04-screens/4-journey-lesson-1-ContinueLessonButton.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-1.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-2-SelectCommand.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-2-settled.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-2.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-3-MoveCommand.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-3-ShowMeButton.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-3-world-Move.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-3-world.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-3.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-4-SelectCommand.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-4-settled.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-4.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-5-SelectCommand.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-5-settled.png",
+    "native1025-campaign-m04-screens/4-journey-lesson-5.png",
+    "native1025-campaign-m04-screens/4-opening.png"
+  ],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "Missing audited native selection companion pass marker"
+  ]
+}

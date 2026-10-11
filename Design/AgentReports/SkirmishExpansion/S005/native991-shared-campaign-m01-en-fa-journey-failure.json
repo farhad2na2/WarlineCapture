@@ -1,0 +1,29 @@
+{
+  "result": "Failed",
+  "scope": "Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-992-shared-campaign-m02-post-source-manifest.json",
+  "postManifest": "final-991-shared-campaign-m01-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-991-shared-campaign-m01-en-fa-journey.log",
+  "logSha256": "b59d9ed859c917d3b6c55bfd9626028ab417c83ffbfe2921112a8cad31bee074",
+  "mission": "saga.ch01.m01.first_contact",
+  "victories": [],
+  "screenshots": [
+    "native991-campaign-m01-screens/1-journey-lesson-1-SelectCommand.png",
+    "native991-campaign-m01-screens/1-journey-lesson-1.png",
+    "native991-campaign-m01-screens/1-opening.png"
+  ],
+  "normalMissionOutcomeNotInjected": true,
+  "availabilityAndGuidanceFixture": true,
+  "strictNativeTouchAudit": false,
+  "realHumanDeviceAcceptance": false,
+  "errors": [
+    "Wrapper/native bridge failure",
+    "Missing exact bilingual native victories",
+    "Missing successful result and campaign return marker",
+    "Missing audited native selection companion pass marker"
+  ]
+}

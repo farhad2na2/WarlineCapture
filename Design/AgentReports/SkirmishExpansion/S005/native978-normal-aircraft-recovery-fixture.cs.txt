@@ -1,0 +1,126 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Game.UI.Runtime;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEditor;
+using UnityEngine;
+
+// External normal-input recovery driver. Changes only the existing Editor
+// driver's next step; it never writes actors, orders, resources or checkpoints.
+public static class S005AircraftRecovery978
+{
+    static readonly BindingFlags stat=BindingFlags.Static|BindingFlags.NonPublic;
+    static readonly BindingFlags inst=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+    static Type Harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static TaskCompletionSource<int> done;
+    static int phase;
+    static bool flight,sawPlay,passed,diskChecked;
+    static uint receipt;
+    static Entity oldActor;
+    static string attempt;
+    static UnitAirComponent pausedAir;
+    static UnitAirMovement pausedMovement;
+    static UnitMove pausedMove;
+    static LocalTransform pausedTransform;
+    static float pausedElapsed;
+    static World ownedWorld;
+    public static object Run()=>"Loaded only; run through repository wrapper.";
+    public static Task<int> RunTaxiValidation()=>Start(false);
+    public static Task<int> RunFlightValidation()=>Start(true);
+    static object Get(string name)=>Harness.GetField(name,stat).GetValue(null);
+    static void Set(string name,object value)=>Harness.GetField(name,stat).SetValue(null,value);
+    static Task<int> Start(bool inFlight)
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Existing Play session.");
+        done=new TaskCompletionSource<int>();phase=0;flight=inFlight;sawPlay=passed=diskChecked=false;ownedWorld=null;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorStrikeCycleProbe();
+        EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;
+        Debug.Log("[S005AircraftRecovery] scope=NormalTouchPaidStrikeSaveContinue mode="+(flight?"Flight":"ReturnTaxi")+" actorsResourcesOrdersSelectionCheckpointInjected=0 matchBudgetsClockUnchanged=1 completeMatchCertified=0");
+        return done.Task;
+    }
+    static bool Session(EntityManager em,out Entity session)
+    {
+        using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+        session=q.CalculateEntityCount()==1?q.GetSingletonEntity():Entity.Null;return session!=Entity.Null;
+    }
+    static Entity Actor(EntityManager em)
+    {
+        using var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitAirComponent),typeof(UnitHealth));
+        using var es=q.ToEntityArray(Allocator.Temp);Entity found=Entity.Null;
+        foreach(var e in es){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(o.FactionId!=1 || o.ReservationId!=receipt || o.SessionId.ToString()!=attempt || em.GetComponentData<SkirmishUnitRoleComponent>(e).Role!=SkirmishRoleKind.Strike || em.GetComponentData<UnitHealth>(e).Current<=0)continue;if(found!=Entity.Null)throw new InvalidOperationException("Duplicate paid Strike.");found=e;}
+        if(found==Entity.Null)throw new InvalidOperationException("Paid Strike missing.");return found;
+    }
+    static void Tick()
+    {
+        if(!EditorApplication.isPlayingOrWillChangePlaymode){if(sawPlay){EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;bool cleanup=ownedWorld==null || !ownedWorld.IsCreated;if(!cleanup){using var q=ownedWorld.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));cleanup=q.IsEmptyIgnoreFilter;}Debug.Log("[S005AircraftRecoveryCleanup] result="+(cleanup?"Passed":"Failed")+" completeMatchCertified=0");done.TrySetResult(passed&&diskChecked&&cleanup?0:1);}return;}
+        if(!EditorApplication.isPlaying)return;sawPlay=true;
+        try{
+            var w=World.DefaultGameObjectInjectionWorld;if(w==null || !w.IsCreated)return;ownedWorld=w;var em=w.EntityManager;
+            if(phase==0)
+            {
+                if(!(bool)Get("playerResumeProbeActive") || (int)Get("playerResumeStep")!=0 || (int)Get("fixedWingStep")!=(flight?6:7) || !Session(em,out var s))return;
+                receipt=(uint)Get("fixedWingReceipt");attempt=em.GetComponentData<SkirmishExpandedSessionComponent>(s).SessionId.ToString();var actor=Actor(em);var air=em.GetComponentData<UnitAirComponent>(actor);var pos=em.GetComponentData<LocalTransform>(actor).Position;
+                if(flight ? air.Airborne==0 || air.TakeoffRolling!=0 : air.Airborne!=0 || air.ReturningHome==0 || air.LandingRolling!=0 || math.distance(pos,air.HomePosition)<=20)return;
+                oldActor=actor;Set("playerResumePaidRole",SkirmishRoleKind.Strike);Set("playerResumePaidCost",520);Set("playerResumeReceipt",receipt);Set("playerResumeCombat",false);Set("playerResumeBoarded",false);
+                Set("playerResumeStep",1);Set("playerResumeDeadline",EditorApplication.timeSinceStartup+180d);
+                Environment.SetEnvironmentVariable("WARLINE_S005_NATIVE_RECOVERY_ONLY","1");phase=1;
+                Debug.Log("[S005AircraftRecovery] phase=Trigger mode="+(flight?"Flight":"ReturnTaxi")+" receipt="+receipt+" air="+JsonUtility.ToJson(air)+" position="+pos+" input=ExistingNativePauseSaveContinueControls");
+            }
+            if(phase==1 && (int)Get("playerResumeStep")==2 && Session(em,out var session))
+            {
+                if(!UiShellRuntimeGateway.TryReadSkirmish(out var model) || !model.Paused)throw new InvalidOperationException("Pause snapshot not paused.");
+                var a=Actor(em);pausedAir=em.GetComponentData<UnitAirComponent>(a);pausedMovement=em.GetComponentData<UnitAirMovement>(a);pausedMove=em.GetComponentData<UnitMove>(a);pausedTransform=em.GetComponentData<LocalTransform>(a);pausedElapsed=(float)Get("playerResumeSavedElapsed");
+                if(flight ? pausedAir.Airborne==0 || pausedAir.TakeoffRolling!=0 : pausedAir.Airborne!=0 || pausedAir.ReturningHome==0 || pausedAir.LandingRolling!=0 || math.distance(pausedTransform.Position,pausedAir.HomePosition)<=5)throw new InvalidOperationException("Required native flight/taxi state ended before actual Pause.");
+                var old=(List<Entity>)Get("playerResumeOldEntities");old.Clear();using var q=em.CreateEntityQuery(new EntityQueryDesc {Any=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),ComponentType.ReadOnly<OperationMapBuildingComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities});using var es=q.ToEntityArray(Allocator.Temp);foreach(var e in es)old.Add(e);
+                phase=2;Debug.Log("[S005AircraftRecovery] phase=PausedSnapshot elapsed="+pausedElapsed+" physicalEntities="+old.Count+" air="+JsonUtility.ToJson(pausedAir)+" movement="+JsonUtility.ToJson(pausedMovement)+" transform="+JsonUtility.ToJson(pausedTransform));
+            }
+            if(phase==2 && !Session(em,out _))
+            {
+                object[] args={"S005",null,null};bool ok=(bool)typeof(SkirmishNativePlayerSaveService).GetMethod("TryRead",stat).Invoke(null,args);
+                if(!ok)throw new InvalidOperationException("Native saved snapshot missing.");var snapshot=args[1];if((string)snapshot.GetType().GetField("SessionId",inst).GetValue(snapshot)!=attempt)throw new InvalidOperationException("Saved attempt changed.");
+                object parts=null;int count=0;
+                foreach(var a in (IEnumerable)snapshot.GetType().GetField("Actors",inst).GetValue(snapshot)){var candidate=a.GetType().GetField("Parts",inst).GetValue(a);if(!TryPart<SkirmishAttemptOwnedComponent>(candidate,out var owner) || owner.ReservationId!=receipt || owner.FactionId!=1)continue;parts=candidate;count++;}
+                if(count!=1 || !TryPart<UnitAirComponent>(parts,out var savedAir) || !TryPart<UnitAirMovement>(parts,out var savedMovement) || !TryPart<LocalTransform>(parts,out var savedTransform))throw new InvalidOperationException("Paid aircraft checkpoint parts missing/duplicated.");
+                if(JsonUtility.ToJson(savedAir)!=JsonUtility.ToJson(pausedAir) || JsonUtility.ToJson(savedMovement)!=JsonUtility.ToJson(pausedMovement) || JsonUtility.ToJson(savedTransform)!=JsonUtility.ToJson(pausedTransform))throw new InvalidOperationException("Saved aircraft differs from paused native state.");
+                diskChecked=true;phase=3;Debug.Log("[S005AircraftRecovery] phase=DiskVerified schema7=1 pausedAircraftPartsExact=1 receipt="+receipt);
+            }
+        }catch(Exception e){Fail(e);}
+    }
+    static bool TryPart<T>(object parts,out T value) where T:unmanaged,IComponentData
+    {
+        var type=typeof(SkirmishNativePlayerSaveService).Assembly.GetType("Game.Runtime.SkirmishNativeCheckpointParts");object[] args={parts,null};bool ok=(bool)type.GetMethod("TryReadComponent",stat).MakeGenericMethod(typeof(T)).Invoke(null,args);value=ok?(T)args[1]:default;return ok;
+    }
+    static void Observe(string message,string stack,LogType type)
+    {
+        if(!message.StartsWith("[S005PlayerSaveResume] result=Passed",StringComparison.Ordinal))return;
+        try{
+            if(phase!=3 || !diskChecked)throw new InvalidOperationException("Recovery completed without exact paused/disk verification.");
+            var em=World.DefaultGameObjectInjectionWorld.EntityManager;if(!Session(em,out var s) || em.GetComponentData<SkirmishExpandedSessionComponent>(s).SessionId.ToString()!=attempt)throw new InvalidOperationException("Restored attempt mismatch.");
+            var a=Actor(em);if(a==oldActor || em.Exists(oldActor))throw new InvalidOperationException("Old paid aircraft survived recovery.");
+            var air=em.GetComponentData<UnitAirComponent>(a);var movement=em.GetComponentData<UnitAirMovement>(a);var move=em.GetComponentData<UnitMove>(a);var pos=em.GetComponentData<LocalTransform>(a).Position;
+            if(!air.HomePosition.Equals(pausedAir.HomePosition) || !air.HomeCell.Equals(pausedAir.HomeCell) || !air.RunwayTakeoffPosition.Equals(pausedAir.RunwayTakeoffPosition) || !air.RunwayTakeoffCell.Equals(pausedAir.RunwayTakeoffCell) || !air.RunwayLandingPosition.Equals(pausedAir.RunwayLandingPosition) || !air.RunwayLandingCell.Equals(pausedAir.RunwayLandingCell) || air.UsesRunway!=pausedAir.UsesRunway || JsonUtility.ToJson(movement)!=JsonUtility.ToJson(pausedMovement) || JsonUtility.ToJson(move)!=JsonUtility.ToJson(pausedMove))throw new InvalidOperationException("Restored native home/runway geometry or speeds changed.");
+            float elapsed=em.GetComponentData<SkirmishObjectiveClockComponent>(s).ElapsedSeconds;float delta=math.max(0,elapsed-pausedElapsed);
+            if(flight ? air.Airborne==0 || air.TakeoffRolling!=0 : air.Airborne!=0 || air.LandingRolling!=0 || air.ReturningHome==0 && math.distance(pos,air.HomePosition)>1.5f)throw new InvalidOperationException("Restored native flight/taxi state inconsistent.");
+            // Horizontal speed plus the native maximum climb rate bounds 3D
+            // displacement; taxi uses the actual restored runway speed.
+            float allowed=(flight?move.Speed+math.max(8,move.Speed*.55f):movement.RunwayTaxiSpeed)*delta+2;
+            if(math.distance(pos,pausedTransform.Position)>allowed)throw new InvalidOperationException("Restored aircraft displaced beyond native clock allowance.");
+            if(!flight && (em.HasComponent<AttackMoveOrder>(a) || em.HasComponent<EngageTarget>(a) || em.HasComponent<UnitTarget>(a) || em.GetComponentData<UnitCombat>(a).AutoEngage!=0))throw new InvalidOperationException("Restored taxi retained an attack order.");
+            passed=true;phase=4;Debug.Log("[S005AircraftRecovery] result=Passed mode="+(flight?"Flight":"ReturnTaxi")+" nativePauseSaveContinue=1 paidReceiptPreserved=1 sameAttempt=1 oldPhysicalGone=1 pausedDiskPartsExact=1 runwayGeometryPreserved=1 nativeMotionBounded=1 elapsedDelta="+delta+" displacement="+math.distance(pos,pausedTransform.Position)+" countedWin=0 completeMatchCertified=0");
+        }catch(Exception e){passed=false;Debug.LogError("[S005AircraftRecovery] result=Failed reason="+e);}
+    }
+    static void Fail(Exception e)
+    {
+        phase=-1;passed=false;Debug.LogError("[S005AircraftRecovery] result=Failed reason="+e);
+        Harness.GetMethod("Finish",stat).Invoke(null,new object[]{true,"aircraftRecovery="+e.Message});
+    }
+}

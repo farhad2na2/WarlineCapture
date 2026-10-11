@@ -1,0 +1,113 @@
+{
+  "result": "Failed",
+  "scope": "Isolated funded/readiness fixture: actual native paid queues, delivered role/domain binding, native Touch squad selection and Move, observed displacement, HealthZero death stimulus, native idempotent cap release and owned-session cleanup. Not a normal whole mission or combat/service/full lifecycle certificate.",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "preManifest": "final-1016-ground-native-touch-movement-post-source-manifest.json",
+  "postManifest": "final-1023-ground-native-touch-movement-post-source-manifest.json",
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "log": "native-1023-isolated-ground-native-touch-movement.log",
+  "logSha256": "ab4a8f0fc4ba7723cf16072e9c80e7547ff0e9b5347418ad535806b12f7f65a2",
+  "measuredRoles": {
+    "queue": [
+      "Rifle",
+      "Gunner",
+      "Marksman",
+      "Breacher",
+      "Rocketeer",
+      "Car",
+      "ApcFast",
+      "ApcArmored",
+      "Radar",
+      "LogisticsTruck"
+    ],
+    "selection": [
+      "Rifle",
+      "Gunner",
+      "Marksman",
+      "Breacher",
+      "Rocketeer",
+      "Car",
+      "ApcFast",
+      "ApcArmored",
+      "Radar",
+      "LogisticsTruck"
+    ],
+    "movement": [
+      "Rifle",
+      "Gunner",
+      "Marksman",
+      "Breacher",
+      "Rocketeer",
+      "Car",
+      "ApcFast",
+      "ApcArmored",
+      "Radar"
+    ],
+    "death": [
+      "Rifle",
+      "Gunner",
+      "Marksman",
+      "Breacher",
+      "Rocketeer",
+      "Car",
+      "ApcFast",
+      "ApcArmored",
+      "Radar"
+    ]
+  },
+  "inputAudit": {
+    "recordedContacts": 43,
+    "completedContacts": 42,
+    "phases": {
+      "Runtime": 43
+    },
+    "terminalCancellations": [],
+    "errors": [
+      {
+        "contact": [
+          189,
+          1,
+          43
+        ],
+        "kinds": [
+          "Dispatched",
+          "Began"
+        ]
+      }
+    ],
+    "strictRecordedContacts": false,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": false,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "native1023-ground-movement.touch.jsonl",
+    "sha256": "cb5b700ac6074113738d7a748371100ec4c995b444a35aa10751ed44226f2260"
+  },
+  "touchEvidence": "native1023-ground-movement.touch.jsonl",
+  "fixture": "native1023-ground-native-touch-movement-fixture.cs.txt",
+  "fixtureSha256": "a44cba282f3aac92ddded974251af98c62fe8132d935d2aa68f65870d972c296",
+  "fundingInjected": true,
+  "readinessGranted": "FullArsenal",
+  "enemyStrategyDisabled": true,
+  "deathStimulus": "HealthZero",
+  "actorPositionsSelectionOrdersInjected": false,
+  "queueRequestedThroughNativeApi": true,
+  "selectionAndMovementThroughNativeTouch": true,
+  "normalMissionCertified": false,
+  "fullLifecycleCertified": false,
+  "countedWin": false,
+  "technicallyReady": false,
+  "playerReady": false,
+  "errors": [
+    "Wrapper/native bridge failed",
+    "Missing [S005GroundMovement] result=Passed cases=15",
+    "Missing exact 15-role queue/Touch-selection/Touch-movement/death coverage",
+    "Native Touch contact audit failed"
+  ],
+  "failureCause": "Logistics Truck had native automatic haul displacement before pending UI Move release. Fixture prematurely evaluated motion while its last gesture was still busy: dispatched43/completed42/accepted0, no receipt violation. Next fixture resets motion origins only after a verified actual Move receipt and waits for the contact to end.",
+  "productionRuntimeBugProven": false,
+  "partialCompletedRoles": 9
+}

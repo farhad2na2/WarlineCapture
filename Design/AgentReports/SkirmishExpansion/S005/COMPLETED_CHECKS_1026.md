@@ -1,0 +1,13 @@
+# Completed checks through native1026
+
+S005 remains in progress. Technical readiness and player readiness are false. This report records closed runs only; native1018 flight recovery is still active and is excluded.
+
+- Native1024 passed all 15 enabled ground roles through real paid queue APIs, delivered role/domain checks, native Touch selection, a verified Move receipt, and at least 5 metres of movement by every member after that receipt. HealthZero death stimuli verified capacity release and owned-session cleanup. This isolated fixture grants funding/readiness and disables enemy strategy. Destination arrival, combat/service and a complete normal mission are not certified. The independently checked Touch stream has 63 dispatched and 63 completed contacts, with no unexpected samples or interventions.
+- Native1026 passed Campaign M5 in English and Persian through native mission victories and campaign return. Its input scope combines raycast UI clicks, screen-position command requests and a native Touch selection/camera companion; it is not a complete strict Touch or human/device certificate.
+- Campaign M2's bilingual native journey remains passed by native992. Current Campaign M1/M3/M4 gates remain open. Native1013 reached native defeat; the cause remains unresolved. Native1020 and native1025 stalled in selection guidance. These failures do not prove a production-input defect.
+- Native978 bought and delivered a Strike aircraft for its normal 520 cost and observed takeoff, first native fire, and fuel expenditure. Its recovery driver then failed to open Pause after opening a command wheel. No Save/Continue success is claimed. The failed evidence and first-sortie observation are retained separately.
+- Native1016 and native1023 ground-fixture failures are retained. The former incorrectly included API production in its Touch receipt scope; the latter counted a Logistics Truck's prior automatic hauling displacement before its Move gesture completed. Native1024 fixes both fixture errors and audits the actual Move receipt before measuring movement.
+
+All these closed runs preserve full source hash `cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146`. No gameplay source, budgets, map geometry or scenery was changed during these runs. Visual direction review and real player/device acceptance remain separate gates.
+
+Authoritative proofs: `native1024-isolated-ground-native-touch-movement-pass.json`, `native1024-ground-move-receipt-audit.json`, `native1026-shared-campaign-m05-en-fa-journey-pass.json`, `native992-1013-1020-1025-1026-shared-campaign-m1-m5-regression-matrix.json`, `native978-normal-paid-strike-flight-save-continue-failure.json`, and `native978-current-paid-strike-first-sortie-observation.json`.

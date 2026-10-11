@@ -1,0 +1,70 @@
+{
+  "result": "Passed",
+  "scope": "Offline exact-role verification of logged actual Move receipts and after-acceptance displacement origins",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "log": "native-1024-isolated-ground-native-touch-movement.log",
+  "logSha256": "d49e727dce5d0f037b9303d09d30c7f4fdea1c2d8ca13c42d59cc9a5d9c1ef8d",
+  "receipts": [
+    {
+      "role": "Rifle",
+      "receipt": 321
+    },
+    {
+      "role": "Gunner",
+      "receipt": 325
+    },
+    {
+      "role": "Marksman",
+      "receipt": 329
+    },
+    {
+      "role": "Breacher",
+      "receipt": 333
+    },
+    {
+      "role": "Rocketeer",
+      "receipt": 337
+    },
+    {
+      "role": "Car",
+      "receipt": 344
+    },
+    {
+      "role": "ApcFast",
+      "receipt": 348
+    },
+    {
+      "role": "ApcArmored",
+      "receipt": 352
+    },
+    {
+      "role": "Radar",
+      "receipt": 356
+    },
+    {
+      "role": "LogisticsTruck",
+      "receipt": 360
+    },
+    {
+      "role": "Tanker",
+      "receipt": 364
+    },
+    {
+      "role": "AntiAir",
+      "receipt": 368
+    },
+    {
+      "role": "Tank",
+      "receipt": 372
+    },
+    {
+      "role": "ApcHeavy",
+      "receipt": 376
+    },
+    {
+      "role": "Siege",
+      "receipt": 380
+    }
+  ],
+  "actorsOrdersOrCountersMutated": false
+}

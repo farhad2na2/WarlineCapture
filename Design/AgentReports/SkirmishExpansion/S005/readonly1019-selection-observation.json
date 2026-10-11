@@ -1,0 +1,14 @@
+{
+  "scope": "Read-only 12-second post-selection observation of failed1012 Campaign M1 retry",
+  "rows": 729,
+  "observedPublishedCommand": "Move",
+  "observedSelectedCount": 2,
+  "observedGuidanceSourceEntityIndex": 0,
+  "observerError": null,
+  "evidence": "readonly1019-campaign-selection.csv",
+  "fixture": "readonly1019-selection-observer.cs.txt",
+  "warning": "The sampled late window had a null guidance source and did not capture the transition itself. Both the log and native screenshot place the last fallback tap over the Move HUD region; do not infer a production input defect or a successful selection.",
+  "gameplayMutated": false,
+  "sourceChanged": false,
+  "inputInjectedByObserver": false
+}

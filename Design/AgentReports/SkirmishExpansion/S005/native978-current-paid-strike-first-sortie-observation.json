@@ -1,0 +1,40 @@
+{
+  "result": "PassedScopedFirstSortieObservation",
+  "sourceHash": "cc14c5935f440345473572de59ccc11841bcb05e901ead30585f0d9f312df146",
+  "fullSourceUnchanged": true,
+  "sourceRecoveryRun": "native978-normal-paid-strike-flight-save-continue-failure.json",
+  "log": "native-978-normal-strike-flight-save-continue.log",
+  "logSha256": "56d2f49addd45194b1efd82698b44e65d1d219ae1f24f3b7f727dc794835760a",
+  "strictContactAudit": {
+    "recordedContacts": 276,
+    "completedContacts": 276,
+    "phases": {
+      "Menu": 9,
+      "PlayerResume": 267
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-f18c5c0754ed46ae9f6893be6a508934.jsonl.touch.jsonl",
+    "sha256": "ec2a13758814d0b79a148dc14bb0c2e9a3acfb0e91b46f29e527d97c5b146e9a"
+  },
+  "markers": [
+    "[S005LocalFuelRoute] result=Delivered source=18 destination=19 input=Touch nativeOrderObserved=1 loadedCargoObserved=1 receivedAdded=8 resourcesOrOrdersInjected=0",
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 parkingTransitComplete=1 atHome=1 receipt=1005",
+    "[S005FuelFleet] result=Passed nativeOil=2 nativeTankers=4 supportUsed=6 supportCap=6 tankerCost=140 input=Touch normalBudget=1 resourcesOrOrdersInjected=0",
+    "[S005LocalFuelRoute] result=Delivered source=18 destination=19 input=Touch nativeOrderObserved=1 loadedCargoObserved=1 receivedAdded=24 resourcesOrOrdersInjected=0",
+    "[S005FixedWingCycle] phase=FirstSortie airborne=1 nativeFire=1 fuelSpent=101",
+    "[S005AircraftRecoveryCleanup] result=Passed completeMatchCertified=0"
+  ],
+  "scope": "Actual paid Strike delivery, native fuel hauling, takeoff and first firing in the normal input run; overall recovery run failed before Pause because of validation-driver command-wheel sequencing. No mission win or completed recovery/lifecycle claimed.",
+  "resourcesActorsOrdersSelectionInjected": false,
+  "completeRecovery": false,
+  "countedWin": false,
+  "fullLifecycleCertified": false,
+  "playerReady": false
+}

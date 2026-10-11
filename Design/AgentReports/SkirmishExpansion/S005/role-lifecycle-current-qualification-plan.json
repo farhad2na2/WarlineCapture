@@ -490,13 +490,14 @@
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
-  "nextWork": "Current manual/boarding recovery passed. Finish current ARIA baseline, then aircraft lifecycles/capacity/recovery and remaining role movement/attack/service.",
+  "nextWork": "Current manual, boarded recovery and fresh ARIA baseline passed. Complete aircraft recovery/capacity and remaining role movement/attack/service, Campaign, recovery/preset and stress/performance gates.",
   "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
   "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability",
   "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
-  "currentAriaBaselineMatrix": null,
+  "currentAriaBaselineMatrix": "native934-939-current-fresh-aria-seed-matrix.json",
   "recorded711AriaMatrix": "native909-914-current-fresh-aria-seed-matrix.json",
   "recorded711BakedInventory": "readonly911-current-role-inventory-proof.json",
   "currentGroundPaidQueueCases": 15,
-  "recorded0488NativePaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json"
+  "recorded0488NativePaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
+  "currentStandardRegularJourneysPending": false
 }

@@ -9,7 +9,7 @@ Current source: `816a3ae39556d1bc1308eb67ec466e7859cb6dc6a56cdde5b084620a4fc5dc2
 - Shared selection/input regressions: native930, including full-map Open/Close preserving the next deliberate world command. Actual wrapper/bridge0; full source PRE/POST matched. Legacy pass marker reports65 tests, while the executed suite contains69 RunCase calls. See `native930-focused-current-proof.json`.
 - Normal paid Heavy APC boarding and recovery: native931, four passengers boarded, schema7 Save/Continue preserved the attempt and paid280 receipt,4978 old physical entities removed, four restored passenger links and hidden visuals verified, then four unloaded through native controls. Strict input/source audits passed. This is a focused recovery case, not a full-match win. See `native931-normal-boarded-save-continue-unload-pass.json`.
 - Complete English and Persian manual matches: native932–933, victories at306.749s and131.645s, both with home HP800, strict touch/receipt audits, frozen result and Main Menu return. The English match includes combat Save/Continue with the paid AntiAir220 receipt preserved and the same attempt resumed. See `native932-933-current-manual-en-fa-locale-pair.json`.
-- First fresh ARIA baseline run: native934, English seed104734, victory at227.608s with home HP800, strict touch/receipt audit and frozen result/Adjust Setup return. The remaining three-seed × two-locale baseline is running; completion is recorded separately, not inferred from this first win.
+- Complete fresh ARIA baseline: native934–939, three seeds in English and Persian on Standard/Regular. All six normal journey audits passed, including native menu/Play/Confirm, frozen result/Adjust Setup return, strict touch/receipt and full source equality. Per-locale outcomes and timings are recorded in `native934-939-current-fresh-aria-seed-matrix.json`; this minimum baseline does not substitute for family20 or additional exposed presets.
 
 These are agent-operated native controls in the Editor, not real human or phone acceptance.
 
@@ -21,7 +21,7 @@ Native890's normal paid Strike production/flight/fire/Return/touchdown/refuel/se
 
 ## Pending gates
 
-Finish the current fresh ARIA baseline; validate remaining enabled-role movement/combat/service lifecycles, aircraft taxi/flight recovery and bilateral parking/runway capacity; close remaining checkpoint/result/replay and exposed-preset cases; run affected Campaign M1–M5 regressions and applicable family/stress/cleanup/performance checks. Owner native visual review is deferred until technically ready. Real player/device acceptance remains a separate gate.
+Validate remaining enabled-role movement/combat/service lifecycles, aircraft taxi/flight recovery and bilateral parking/runway capacity; close remaining checkpoint/result/replay and exposed-preset cases; run affected Campaign M1–M5 regressions and applicable family/stress/cleanup/performance checks. Owner native visual review is deferred until technically ready. Real player/device acceptance remains a separate gate.
 
 
 Native935: ARIA fa-IR seed104734, Victory at224.826s. Normal journey audits passed; actual wrapper0/bridge0; full source unchanged=True. Proof `native935-current-fresh-aria-fa-IR-seed104734-victory.json`.

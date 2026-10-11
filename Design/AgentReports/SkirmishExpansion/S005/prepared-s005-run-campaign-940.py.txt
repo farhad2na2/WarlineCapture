@@ -9,7 +9,7 @@ for n,m in [(940,1),(941,2),(942,3),(943,4),(944,5)]:
     method=f'Game.Editor.CampaignTutorialEntryEditorProbe.RunM{m:02d}Journey'
     f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text())
     assert s['activeRun'] is None and not (p/log).exists()
-    assert json.loads((p/pre.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']==s['currentSourceHash']
+    assert json.loads((p/pre.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']==s['sourceHash']
     s.update(activeRun=f'native{n}',activeLog=log,activeScope=method,activePreManifest=pre)
     f.write_text(json.dumps(s,indent=2)+'\n')
     wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','2400','--log',str(p/log),'--','-executeMethod',method],cwd=root).returncode

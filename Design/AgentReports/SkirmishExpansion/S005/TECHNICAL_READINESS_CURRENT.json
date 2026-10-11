@@ -43,7 +43,6 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Finish current-source fresh ARIA three-seed EN/FA baseline; current manual locale pair and boarded recovery passed",
     "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
@@ -51,7 +50,7 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Finish frozen-source ARIA baseline, then aircraft taxi/flight recovery, remaining enabled-role lifecycles/capacity and Campaign regressions.",
+  "nextWork": "Run affected Campaign M1-M5 regressions, then native aircraft taxi/flight recovery, remaining enabled-role lifecycles/capacity, other recovery/preset and stress/performance gates.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
@@ -263,5 +262,7 @@
   "currentNativeGroundQueueDeathApplicability": "native923-ground-api-current-scope-applicability.json",
   "currentFirstAriaSeedLocalePair": "native934-935-current-first-aria-seed-locale-pair.json",
   "recordedPreviousSourceFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
-  "currentBakedInventory": "readonly936-current-role-inventory-proof.json"
+  "currentBakedInventory": "readonly936-current-role-inventory-proof.json",
+  "currentStandardRegularJourneysPassed": true,
+  "ariaLocaleStatus": "Current-source fresh ARIA three-seed EN/FA Standard Regular baseline passed with native menu/Play/Confirm, frozen result/return, strict contact/receipt and full source audits; separate from family20 and supplemental presets."
 }

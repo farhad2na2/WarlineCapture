@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; using var q=em.CreateEntityQuery(typeof(Game.Components.RtsSelectionInputStateComponent)); return q.CalculateEntityCount()==1 ? UnityEngine.JsonUtility.ToJson(q.GetSingleton<Game.Components.RtsSelectionInputStateComponent>()) : \"NoSingleState\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "{\"QueuedMoveOrderToken\":80,\"DragStart\":{\"x\":1203.4923095703125,\"y\":535.4420776367188},\"DragCurrent\":{\"x\":1203.4923095703125,\"y\":535.4420776367188},\"LastPointerPosition\":{\"x\":1203.4923095703125,\"y\":535.4420776367188},\"PointerPressedOverUi\":0,\"IsDraggingSelection\":0,\"IgnoreNextLeftMouseRelease\":0,\"SkipNextWorldReleaseAfterSelection\":0,\"IgnoreWorldCommandsUntilFrame\":8041,\"IgnoreUiClickUntilRelease\":0,\"SelectionModeHoldArmed\":0,\"SelectionModeHoldStartTime\":0.0,\"HasQueuedMoveOrder\":0,\"QueuedMoveOrderScreenPosition\":{\"x\":0.0,\"y\":0.0},\"QueuedMoveOrderFrame\":-1,\"LastLiveSelectionRect\":{\"x\":1203.4923095703125,\"y\":535.4420776367188,\"z\":1203.4923095703125,\"w\":535.4420776367188},\"HasLiveSelectionRect\":0,\"LastKnownPointerPosition\":{\"x\":2284.0,\"y\":124.0},\"HasLastKnownPointerPosition\":1,\"ActiveCommandMode\":9,\"ActiveCommandModeFrame\":8007,\"ActiveCommandModeOneShot\":1,\"ActiveCommandModeRequiresWorldTarget\":1,\"ActiveBoardCommandDirection\":1,\"BoardPassengerDragArmed\":0,\"HasLastMoveTargetClick\":0,\"LastMoveTargetClickScreenPosition\":{\"x\":0.0,\"y\":0.0},\"LastMoveTargetClickTime\":0.0}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -9,10 +9,10 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native922",
-  "activeLog": "native-922-current-manual-en-seed155926.log",
-  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorBoardedApcSaveResumeEn",
-  "activePreManifest": "final-921-current-manual-fa-IR-seed104734-post-source-manifest.json",
+  "activeRun": "native924",
+  "activeLog": "native-924-isolated-board-api.log",
+  "activeScope": "S005BoardApi924.RunValidation",
+  "activePreManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
   "currentCompilationProof": "compile-919-spawn-surface-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
@@ -43,17 +43,13 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Validate native surface spawn repair, rerun combat Save/Continue/manual, then refresh normal ARIA and remaining role/recovery/capacity gates.",
+  "nextWork": "Diagnose native boarding rejection; retain current manual EN/FA wins, qualify aircraft/roles and refresh ARIA matrix on frozen source.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "runs": [
-      921,
-      922
-    ],
-    "scope": "Persian normal manual journey and boarded APC Save/Continue after successful native920 combat/manual closure",
-    "runner": "/private/tmp/s005-run-manual-921.py",
-    "status": "WaitingForNative920ActualVerdict"
+    "status": "ActiveIsolatedDiagnostic",
+    "run": 924,
+    "scope": "Rifle plus Heavy APC native target resolver and direct boarding API. Funds/readiness/selection/native API order injected only into disposable fixture; no normal mission acceptance."
   },
   "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
@@ -118,7 +114,7 @@
   },
   "sharedAriaDefenseCommit": "5b98cb427",
   "currentBakedRoleInventory": null,
-  "latestCurrentManualFailure": null,
+  "latestCurrentManualFailure": "native922-current-manual-en-seed155926-failure.json",
   "recorded711Qualification": {
     "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
     "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
@@ -164,5 +160,22 @@
   ],
   "currentManualControlsProof": "native921-current-manual-fa-IR-seed104734-victory.json",
   "currentCombatSaveContinueProof": "native920-current-manual-en-seed130368-victory.json",
-  "manualLocaleStatus": "Passed native920 combat Save/Continue EN and native921 fresh manual FA; frozen result/Main Menu return, complete input/receipt audits, wrapper/bridge0 and matching full source."
+  "manualLocaleStatus": "Passed native920 combat Save/Continue EN and native921 fresh manual FA; frozen result/Main Menu return, complete input/receipt audits, wrapper/bridge0 and matching full source.",
+  "focusedNative923": {
+    "result": "Passed",
+    "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-922-failed-manual-en-seed155926-post-source-manifest.json",
+    "postSourceManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-923-isolated-ground-paid-queues.log",
+    "requiredPassMarker": "[S005GroundPaidQueues] result=Passed cases=15",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "currentGroundPaidQueueProof": "native923-scoped-native-ground-paid-queues-pass.json",
+  "boardedRecoveryStatus": "Native922 Failed before save: no boarding targets after a complete transport-target gesture. Ten seats available, four valid selected Rifle soldiers; retained diagnostics. No recovery/mission acceptance claimed."
 }

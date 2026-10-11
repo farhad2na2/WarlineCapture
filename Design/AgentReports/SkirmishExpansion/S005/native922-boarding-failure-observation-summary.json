@@ -1,0 +1,17 @@
+{
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "result": "FailedBeforeSave",
+  "failureProof": "native922-current-manual-en-seed155926-failure.json",
+  "actualCarrierPaid": 280,
+  "actualCarrierRole": "ApcHeavy",
+  "capacity": 10,
+  "passengers": 0,
+  "selectedRifleAlive": 4,
+  "nativeBoardTargets": 0,
+  "nativeMode": "Board",
+  "pointerSuppressionsCleared": true,
+  "scope": "Read-only observations; no extra orders/resources/actor writes. Native924 API probe remains a distinct isolated test.",
+  "staleManualFailureCounters": "The native922 failure logged actions91/attackReceipts13 retained from native921 because manual play had not started in922. These counters cannot certify922 input or combat. Its own trace/contact stream and failed verdict are authoritative.",
+  "normalMissionAcceptance": false,
+  "playerReady": false
+}

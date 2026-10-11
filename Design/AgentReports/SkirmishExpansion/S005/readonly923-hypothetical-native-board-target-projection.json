@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyPointer923.cs",
+      "entry": "S005ReadOnlyPointer923.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 106,
+      "executeMs": 6,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyPointer923_57919b0230034ac99c9c127ef095d140",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyHypotheticalTargetProjection",
+        "actorsResourcesOrdersInjected": false,
+        "main": "Main Camera",
+        "native": "Main Camera",
+        "same": true,
+        "screen": "{\"x\":4036.326904296875,\"y\":-189.89834594726563,\"z\":31.687999725341798}",
+        "flatOk": true,
+        "flatCell": "{\"x\":962,\"y\":645}",
+        "surfaceOk": true,
+        "surfaceCell": "{\"x\":962,\"y\":645}",
+        "surfaceWorld": "{\"x\":962.2991943359375,\"y\":0.009180404245853424,\"z\":645.6792602539063}",
+        "limitation": "Projection of native922 carrier location on isolated native923; not a reproduction of the absent transport or the original camera pose."
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

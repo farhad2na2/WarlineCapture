@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var view=UnityEngine.Object.FindAnyObjectByType<Game.Composition.MatchSceneView>(); if(view==null)return \"NoLiveView\"; var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic; var boot=view.GetType().GetField(\"matchBootstrapSystem\",flags).GetValue(view); var action=(System.Delegate)boot.GetType().GetField(\"_selectionRuntimeUpdate\",flags).GetValue(boot); var target=action.Target; var context=target.GetType().GetField(\"pointerTargetCommandContext\",flags).GetValue(target); var camera=(UnityEngine.Camera)context.GetType().GetField(\"WorldCamera\",flags).GetValue(context); return new{contextReady=target.GetType().GetField(\"hasPointerTargetCommandContext\",flags).GetValue(target),nativeCamera=camera?.name,mainCamera=UnityEngine.Camera.main?.name,same=camera==UnityEngine.Camera.main};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "contextReady": false,
+        "nativeCamera": null,
+        "mainCamera": "Main Camera",
+        "same": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

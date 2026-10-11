@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyBoard922.cs",
+      "entry": "S005ReadOnlyBoard922.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "The name 'UiShellRuntimeGateway' does not exist in the current context",
+          "line": 3,
+          "column": 301,
+          "id": "CS0103"
+        }
+      ],
+      "compileMs": 139,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyBoard922_ed33ba0f564b4db0b69b5f7ef12467a9",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

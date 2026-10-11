@@ -1,0 +1,489 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var view=UnityEngine.Object.FindAnyObjectByType<Game.Composition.MatchSceneView>(); if(view==null)return \"NoLiveMatchView\"; var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic; var boot=view.GetType().GetField(\"matchBootstrapSystem\",flags).GetValue(view); var action=(System.Delegate)boot.GetType().GetField(\"_selectionRuntimeUpdate\",flags).GetValue(boot); if(action?.Target==null)return \"NoLiveSelectionDelegate\"; return System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(action.Target.GetType().GetFields(flags),f=>new {name=f.Name,type=f.FieldType.FullName}));"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "name": "explicitAttackTargetModeActive",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "rtsSelectionInputSystem",
+          "type": "Game.Runtime.RtsSelectionInputCompositionSystemHelper"
+        },
+        {
+          "name": "mainMenuPlayUi",
+          "type": "Game.UI.Contracts.IMatchRuntimeUi"
+        },
+        {
+          "name": "roadBuildReadState",
+          "type": "Game.Runtime.RoadBuildReadModelCompositionSystemHelper"
+        },
+        {
+          "name": "roadBuildReadModel",
+          "type": "Game.Runtime.RoadBuildReadModelCompositionSystemHelper"
+        },
+        {
+          "name": "buildingPlacementInteractionSystem",
+          "type": "Game.Runtime.BuildingPlacementInteractionCompositionSystemHelper"
+        },
+        {
+          "name": "buildingInteraction",
+          "type": "Game.Runtime.BuildingPlacementInteractionCompositionSystemHelper"
+        },
+        {
+          "name": "buildingPlacementInteractionContext",
+          "type": "Game.Runtime.BuildingPlacementInteractionCompositionSystemHelper+Context"
+        },
+        {
+          "name": "buildingInteractionContext",
+          "type": "Game.Runtime.BuildingPlacementInteractionCompositionSystemHelper+Context"
+        },
+        {
+          "name": "hasRuntimeInputContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "hasRuntimeCameraContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "hasCommandResultFlushContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "matchHudSelectionPanelView",
+          "type": "Game.UI.Contracts.IMatchHudSelectionPanelView"
+        },
+        {
+          "name": "selectionHudFeedbackSystem",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper"
+        },
+        {
+          "name": "selectionBuildingInteraction",
+          "type": "Game.Runtime.SelectionBuildingInteractionCompositionSystemHelper"
+        },
+        {
+          "name": "selectionUiCommand",
+          "type": "Game.Runtime.SelectionUiCommandUiSystemHelper"
+        },
+        {
+          "name": "buildingUiQueryContext",
+          "type": "Game.Runtime.BuildingUiQueryUiSystemHelper+Context"
+        },
+        {
+          "name": "pendingMaterialFabricationEntity",
+          "type": "Unity.Entities.Entity"
+        },
+        {
+          "name": "pendingMaterialFabricationRequestId",
+          "type": "System.Int32"
+        },
+        {
+          "name": "matchHudSquadTrayView",
+          "type": "Game.UI.Contracts.IMatchHudSquadTrayView"
+        },
+        {
+          "name": "entityManager",
+          "type": "Unity.Entities.EntityManager"
+        },
+        {
+          "name": "resolveSelectionCardPortraitSprite",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+ResolveSelectionPortraitSpriteDelegate"
+        },
+        {
+          "name": "runtimeGameplayStateSystem",
+          "type": "Game.Runtime.RuntimeGameplayStateSystem"
+        },
+        {
+          "name": "matchHudSquadTraySelectionSystem",
+          "type": "Game.Runtime.MatchHudSquadTraySelectionUiSystemHelper"
+        },
+        {
+          "name": "rtsSelectionCommandResultFlushSystem",
+          "type": "Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper"
+        },
+        {
+          "name": "focusedUnitLifecycleSystem",
+          "type": "Game.Runtime.FocusedUnitLifecycleCompositionSystemHelper"
+        },
+        {
+          "name": "selectionStateSystem",
+          "type": "Game.Runtime.SelectionStateCompositionSystemHelper"
+        },
+        {
+          "name": "moveTargetCommandQueueQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "runtimeConfig",
+          "type": "Game.Runtime.SelectionRuntimeConfigStartupSystemHelper+State"
+        },
+        {
+          "name": "rtsSelectionFocusCommandSystem",
+          "type": "Game.Runtime.RtsSelectionFocusCommandCompositionSystemHelper"
+        },
+        {
+          "name": "rtsSelectionRuntimeInputSystem",
+          "type": "Game.Runtime.RtsSelectionRuntimeInputCompositionSystemHelper"
+        },
+        {
+          "name": "focusedUnitUiReadModelSystem",
+          "type": "Game.Runtime.FocusedUnitUiReadModelUiSystemHelper"
+        },
+        {
+          "name": "unitTransportCapacitySystem",
+          "type": "Game.Runtime.UnitTransportCapacitySystem"
+        },
+        {
+          "name": "refreshFocusedUnitAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+RefreshFocusedUnitDelegate"
+        },
+        {
+          "name": "transportPassengerPanelItems",
+          "type": "System.Collections.Generic.List`1[[Game.UI.Contracts.MatchHudSelectionPanelPassengerItemModel, Game.UI.Contracts, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        {
+          "name": "resolveSelectedBuildingPortraitSprite",
+          "type": "System.Func`1[[UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        {
+          "name": "resolveActiveSquadTrayPortraitSpriteAction",
+          "type": "System.Func`1[[UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        {
+          "name": "hasSelectedBuildingAction",
+          "type": "System.Func`1[[System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"
+        },
+        {
+          "name": "selectedBuildingLabelAction",
+          "type": "System.Func`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"
+        },
+        {
+          "name": "tryGetSelectedBuildingResourceStorageAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+TryGetSelectedBuildingResourceStorageDelegate"
+        },
+        {
+          "name": "tryGetSelectedBuildingResourceStorageSnapshotAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+TryGetSelectedBuildingResourceStorageSnapshotDelegate"
+        },
+        {
+          "name": "tryGetSelectedMaterialFabricationReadModelAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+TryGetSelectedMaterialFabricationReadModelDelegate"
+        },
+        {
+          "name": "isBoardCommandAvailableAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+IsBoardCommandAvailableDelegate"
+        },
+        {
+          "name": "hasSelectedBoardAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+HasSelectedBoardActionDelegate"
+        },
+        {
+          "name": "tryGetSelectedBuildingHealthAction",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+TryGetSelectedBuildingHealthDelegate"
+        },
+        {
+          "name": "tacticalFollowCameraModeSystem",
+          "type": "Game.Runtime.TacticalFollowCameraModeSystemHelper"
+        },
+        {
+          "name": "lastCommandPreviewActive",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "isValidBoardTransportPreviewTargetAction",
+          "type": "Game.Runtime.SelectionOrderMarkerPresentationSystemHelper+IsPreviewTargetValidWithSourceDelegate"
+        },
+        {
+          "name": "isValidBoardPassengerPreviewTargetAction",
+          "type": "Game.Runtime.SelectionOrderMarkerPresentationSystemHelper+IsPreviewTargetValidWithSourceDelegate"
+        },
+        {
+          "name": "rtsSelectionRuntimeCameraSystem",
+          "type": "Game.Runtime.RtsSelectionRuntimeCameraSystemHelper"
+        },
+        {
+          "name": "selectionUiCamera",
+          "type": "Game.Runtime.SelectionUiCameraSystemHelper"
+        },
+        {
+          "name": "hasLastNormalPointerState",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "lastNormalPointerPosition",
+          "type": "UnityEngine.Vector2"
+        },
+        {
+          "name": "lastNormalPointerPressed",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "lastSelectionUiRefreshVersion",
+          "type": "System.Int32"
+        },
+        {
+          "name": "nextSelectionUiRefreshAt",
+          "type": "System.Double"
+        },
+        {
+          "name": "lastTacticalFollowCameraFeedbackSequence",
+          "type": "System.Int32"
+        },
+        {
+          "name": "hasTacticalFollowCameraContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "tacticalFollowCameraContext",
+          "type": "Game.Runtime.TacticalFollowCameraModeSystemHelper+Context"
+        },
+        {
+          "name": "hasLastTacticalFollowPose",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "lastTacticalFollowPoseSource",
+          "type": "Game.Components.TacticalFollowCameraPoseSource"
+        },
+        {
+          "name": "lastTacticalFollowOrthographic",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "lastTacticalFollowDesiredPosition",
+          "type": "UnityEngine.Vector3"
+        },
+        {
+          "name": "lastTacticalFollowLookAt",
+          "type": "UnityEngine.Vector3"
+        },
+        {
+          "name": "rtsCameraRequestSystem",
+          "type": "Game.Runtime.RtsCameraRequestSystem"
+        },
+        {
+          "name": "runtimeInputContext",
+          "type": "Game.Runtime.RtsSelectionRuntimeInputCompositionSystemHelper+Context"
+        },
+        {
+          "name": "nextAuthoredCameraCheck",
+          "type": "System.Single"
+        },
+        {
+          "name": "defaultRuntimeConfig",
+          "type": "Game.Runtime.SelectionRuntimeConfigStartupSystemHelper+State"
+        },
+        {
+          "name": "hasAuthoredCameraProfile",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "authoredCameraGeneration",
+          "type": "System.Int32"
+        },
+        {
+          "name": "runtimeCameraContext",
+          "type": "Game.Runtime.RtsSelectionRuntimeCameraSystemHelper+Context"
+        },
+        {
+          "name": "commandResultFlushContext",
+          "type": "Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper+Context"
+        },
+        {
+          "name": "rtsCameraSystem",
+          "type": "Game.Runtime.RtsCameraSystem"
+        },
+        {
+          "name": "rtsSelectionPointerTargetCommandSystem",
+          "type": "Game.Runtime.RtsSelectionPointerTargetCommandCompositionSystemHelper"
+        },
+        {
+          "name": "selectionOrderMarkerSystem",
+          "type": "Game.Runtime.SelectionOrderMarkerPresentationSystemHelper"
+        },
+        {
+          "name": "resolvedMatchIntroStateQuery",
+          "type": "Game.UI.Contracts.IMatchIntroStateQuery"
+        },
+        {
+          "name": "selectionScreenMarkers",
+          "type": "Game.Runtime.SelectionScreenMarkerUiSystemHelper"
+        },
+        {
+          "name": "selectedMoveOrderCommandSystem",
+          "type": "Game.Runtime.SelectedMoveOrderCommandSystem"
+        },
+        {
+          "name": "attackOrderCommandSystem",
+          "type": "Game.Runtime.AttackOrderCommandSystem"
+        },
+        {
+          "name": "scanIntelCommandSystem",
+          "type": "Game.Runtime.ScanIntelCommandSystem"
+        },
+        {
+          "name": "transportBoardingCommandSystem",
+          "type": "Game.Runtime.TransportBoardingCommandSystem"
+        },
+        {
+          "name": "unitMoveOrderSystem",
+          "type": "Game.Runtime.UnitMoveOrderSystem"
+        },
+        {
+          "name": "unitTransportAirPickupSystem",
+          "type": "Game.Runtime.UnitTransportAirPickupSystem"
+        },
+        {
+          "name": "selectedMoveQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "moveTargetRuntimeStateQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "moveTargetSelectedMoveQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "selectAllCommandQueueQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "immediateRespawnQueueQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "immediateBuildingRuntimeStateQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "selectedTagQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "gridConfigQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "mapSurfaceQuery",
+          "type": "Unity.Entities.EntityQuery"
+        },
+        {
+          "name": "applyHudSelectionAction",
+          "type": "System.Action`2[[Unity.Entities.EntityManager, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[Unity.Entities.Entity, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        {
+          "name": "hasPointerTargetCommandContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "pointerTargetCommandContext",
+          "type": "Game.Runtime.RtsSelectionPointerTargetCommandCompositionSystemHelper+Context"
+        },
+        {
+          "name": "focusableUnitLookupSystem",
+          "type": "Game.Runtime.FocusableUnitLookupCameraSystemHelper"
+        },
+        {
+          "name": "buildingTargetMoveOrderSystem",
+          "type": "Game.Runtime.BuildingTargetMoveOrderSystem"
+        },
+        {
+          "name": "selectionUiReadModelLookup",
+          "type": "Game.Runtime.SelectionUiReadModelLookup"
+        },
+        {
+          "name": "visibleUnitSelectionSystem",
+          "type": "Game.Runtime.VisibleUnitSelectionCameraSystemHelper"
+        },
+        {
+          "name": "visibleSelectionScratch",
+          "type": "System.Collections.Generic.List`1[[Unity.Entities.Entity, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+        },
+        {
+          "name": "hasHudFeedbackContext",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "hudFeedbackContext",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+Context"
+        },
+        {
+          "name": "resolveSelectionPortraitSprite",
+          "type": "Game.Runtime.SelectionHudFeedbackUiSystemHelper+ResolveSelectionPortraitSpriteDelegate"
+        },
+        {
+          "name": "buildingUiQuery",
+          "type": "Game.Runtime.BuildingUiQueryUiSystemHelper"
+        },
+        {
+          "name": "applyHudSquadSelectionAction",
+          "type": "System.Action`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"
+        },
+        {
+          "name": "selectionRuntimeQueryWorld",
+          "type": "Unity.Entities.World"
+        },
+        {
+          "name": "focusedUnitCommandSystem",
+          "type": "Game.Runtime.FocusedUnitCommandSystem"
+        },
+        {
+          "name": "selectedUnitOrderSnapshotSystem",
+          "type": "Game.Runtime.SelectedUnitOrderSnapshotCompositionSystemHelper"
+        },
+        {
+          "name": "selectionRuntimeDiagnosticsSystem",
+          "type": "Game.Runtime.SelectionRuntimeDiagnosticsSystemHelper"
+        },
+        {
+          "name": "attackModeOrderSnapshotText",
+          "type": "System.String"
+        },
+        {
+          "name": "attackModeOrderSnapshotActive",
+          "type": "System.Boolean"
+        },
+        {
+          "name": "selectionRectangleRequestSystem",
+          "type": "Game.Runtime.SelectionRectangleRequestCompositionSystemHelper"
+        },
+        {
+          "name": "applyRectangleHudSelectionAction",
+          "type": "Game.Runtime.SelectionRectangleRequestCompositionSystemHelper+ApplyHudSelectionAction"
+        },
+        {
+          "name": "applyRectangleHudSquadSelectionAction",
+          "type": "Game.Runtime.SelectionRectangleRequestCompositionSystemHelper+ApplyHudSquadSelectionAction"
+        },
+        {
+          "name": "trySelectFirstBuildingInScreenRect",
+          "type": "System.Func`2[[UnityEngine.Rect, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"
+        },
+        {
+          "name": "clearHudSelectionAction",
+          "type": "System.Action"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

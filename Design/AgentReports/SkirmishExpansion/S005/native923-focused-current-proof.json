@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-922-failed-manual-en-seed155926-post-source-manifest.json",
+  "postSourceManifest": "final-923-isolated-ground-queues-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "native-923-isolated-ground-paid-queues.log",
+  "requiredPassMarker": "[S005GroundPaidQueues] result=Passed cases=15",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

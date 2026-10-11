@@ -1,0 +1,29 @@
+import argparse,json,pathlib,subprocess
+ap=argparse.ArgumentParser()
+for x in ('run','log','trace','pre','post'):ap.add_argument('--'+x,required=True)
+ap.add_argument('--seed',type=int,default=104734);ap.add_argument('--locale',default='fa-IR');ap.add_argument('--boarded',action='store_true');ap.add_argument('--recovery',action='store_true')
+a=ap.parse_args();p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+pre=json.loads((p/a.pre).read_text());post=json.loads((p/a.post).read_text());assert pre==post,'Source changed'
+h=json.loads((p/a.post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+log=(p/a.log).read_text(errors='replace')
+assert (p/(a.log+'.exit')).read_text().strip()=='0','Native bridge exit missing/nonzero'
+census=[x for x in log.splitlines() if x.startswith('[SkirmishAcceptanceCensus] result=Passed')];assert census and all((' seed='+str(a.seed)+' ') in (' '+x+' ') for x in census),'Actual seed mismatch'
+required=['[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU','[S004ManualReceiptAudit] result=Passed','[S004ManualNative] result=Passed outcome=Victory','[SkirmishValidationExit] result=Requested code=0']
+assert all(x in log for x in required),'Required manual markers missing';assert 'code='+h in log,'Native source census mismatch'
+assert (p/(a.log+'.wrapper-exit')).read_text().strip()=='0','Actual wrapper failed'
+rows=[json.loads(l) for l in (p/a.trace).read_text().splitlines()];out=rows[-1];assert out['phase']=='Finished' and out['outcome']=='Victory' and out['clockPaused']==1 and out['simulationActive']==0
+r=subprocess.run(['python3','Tools/CI/audit_skirmish_native_contacts.py',str(p/(a.trace+'.touch.jsonl'))],capture_output=True,text=True,check=True);audit=json.loads(r.stdout);assert audit['strictRecordedContacts'] and audit['strictAllContactsEnded'] and not audit['errors'] and audit['terminalContactsRecorded']
+name='native'+a.run+'-current-'+('boarded-savecontinue-manual' if a.boarded else 'manual')+'-'+a.locale+'-seed'+str(a.seed)+'-victory.json'
+d={'mission':'S005','result':'Passed','sourceHash':h,'wrapperExit':0,'actualWrapperExit':int((p/(a.log+'.wrapper-exit')).read_text()),'nativeBridgeExit':int((p/(a.log+'.exit')).read_text()),'locale':a.locale,'seed':a.seed,'size':'Standard','difficulty':'Regular','mode':'ManualControlsDriver','realHumanDeviceAcceptance':False,'ariaStarted':False,'normalInput':True,'normalSpeedGuard':'Native TickManualControls rejects any active timeScale other than 1; passed native manual verdict required','outcome':out,'frozenResult':True,'returnTarget':'MAIN MENU','inputAudit':audit,'sourceManifestUnchanged':True,'preManifest':a.pre,'postManifest':a.post,'log':a.log,'trace':a.trace,'nativeMarkers':[l for l in log.splitlines() if l.startswith(('[S004ManualReceiptAudit]','[S004ManualNative] result='))],'playerReady':False}
+if a.recovery:
+    assert '[S005PlayerSaveResume] result=Passed' in log,'Combat recovery marker missing'
+    d['combatSaveContinue']=True;d['recoveryMarkers']=[l for l in log.splitlines() if l.startswith('[S005PlayerSaveResume] result=Passed')]
+if a.boarded:
+    assert '[S005PassengerSave] result=Passed' in log and '[S005PlayerSaveResume] result=Passed' in log,'Boarded recovery markers missing'
+    d['boardedSaveContinue']=True;d['recoveryMarkers']=[l for l in log.splitlines() if l.startswith(('[S005PassengerSave] result=Passed','[S005PlayerSaveResume] result=Passed'))]
+(p/name).write_text(json.dumps(d,indent=2)+'\n');f=p/'TECHNICAL_READINESS_CURRENT.json';state=json.loads(f.read_text());assert state['sourceHash']==h;state.setdefault('currentManualControlsProofs',[]);
+if name not in state['currentManualControlsProofs']:state['currentManualControlsProofs'].append(name);state['currentManualControlsProof']=name;
+if a.boarded:state.setdefault('currentBoardedRecoveryProofs',[]).append(name)
+state['activeRun']=state['activeLog']=state['activeScope']=state['activePreManifest']=None;f.write_text(json.dumps(state,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as f:f.write('\nNative'+a.run+' PASS current-source '+a.locale+' '+('boarded recovery and ' if a.boarded else '')+'manual-controls driver: Victory '+str(out['elapsed'])+'s, native receipt audit and frozen result/Main Menu return passed; wrapper0 and unchanged full source/material manifest. This is agent-operated normal input, not real human/device acceptance. Full mission gates remain open.\n')
+print(json.dumps({'proof':name,'outcome':out,'inputErrors':len(audit['errors']),'sourceHash':h}))

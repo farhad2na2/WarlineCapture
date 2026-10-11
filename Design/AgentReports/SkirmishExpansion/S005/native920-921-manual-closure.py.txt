@@ -1,0 +1,11 @@
+import argparse,pathlib,json,subprocess,re,hashlib
+ap=argparse.ArgumentParser()
+for x in ('run','locale','seed','pre'):ap.add_argument('--'+x,required=True)
+ap.add_argument('--log');ap.add_argument('--boarded',action='store_true');ap.add_argument('--recovery',action='store_true');a=ap.parse_args();p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005');log=a.log or f'native-{a.run}-current-manual-{a.locale}-seed{a.seed}.log';exitfile=p/(log+'.wrapper-exit');assert exitfile.exists(),'Actual wrapper exit unavailable';code=int(exitfile.read_text());assert code==0,f'Actual wrapper exit {code}'
+census=[x for x in (p/log).read_text().splitlines() if x.startswith('[SkirmishAcceptanceCensus] result=Passed')];assert census and all((' seed='+a.seed+' ') in (' '+x+' ') for x in census),'Actual native census seed disagrees with requested proof seed'
+post=f'final-{a.run}-current-manual-{a.locale}-seed{a.seed}-post';subprocess.run(['python3','/private/tmp/warline-s005-source-manifest.py',post],check=True)
+tag='fa' if a.locale=='fa-IR' else a.locale;xs=[x.name for x in p.glob(f's005-aria-live-{a.seed}-{tag}-*.jsonl') if re.fullmatch(f's005-aria-live-{a.seed}-{tag}-[0-9a-f]{{32}}.jsonl',x.name) and x.stat().st_mtime>=(p/log).stat().st_birthtime-1];assert len(xs)==1,xs
+cmd=['python3','/private/tmp/s005-finalize-manual-current.py','--run',a.run,'--log',log,'--trace',xs[0],'--pre',a.pre,'--post',post+'-source-manifest.json','--seed',a.seed,'--locale',a.locale]
+if a.boarded:cmd.append('--boarded')
+if a.recovery:cmd.append('--recovery')
+subprocess.run(cmd,check=True);kind='boarded-savecontinue-manual' if a.boarded else 'manual';f=p/f'native{a.run}-current-{kind}-{a.locale}-seed{a.seed}-victory.json';d=json.loads(f.read_text());d['wrapperExitArtifact']=exitfile.name;d['logSha256']=hashlib.sha256((p/log).read_bytes()).hexdigest();d['terminalClockChecks']='Native delayed terminal probe requires Playing=0, Paused=1 and unchanged elapsed/HP/simulation inactivity before normal result return.';f.write_text(json.dumps(d,indent=2)+'\n')

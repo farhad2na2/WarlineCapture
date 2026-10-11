@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyMovement915.cs",
+      "entry": "S005ReadOnlyMovement915.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 128,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyMovement915_5f2455cf66a74cabb92481c0e1e47343",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyMovementObservation",
+        "actorsResourcesOrdersInjected": false,
+        "rows": []
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlySurface915.cs",
+      "entry": "S005ReadOnlySurface915.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 164,
+      "executeMs": 6,
+      "assemblyName": "PipelineRunScript_S005ReadOnlySurface915_b7203aeae29f42a59c487a640e8234ac",
+      "success": false,
+      "error": "Runtime Error",
+      "errorDetails": "ArgumentException: A component with type:Game.Components.UnitTarget has not been added to the entity. Entities Journaling may be able to help determine more information. Please enable Entities Journaling for a more helpful error message.\n  at Unity.Entities.EntityComponentStore.AssertEntityHasComponent (Unity.Entities.Entity entity, Unity.Entities.ComponentType componentType) [0x00026] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityComponentStoreDebug.cs:342 \n  at Unity.Entities.EntityComponentStore.AssertEntityHasComponent (Unity.Entities.Entity entity, Unity.Entities.TypeIndex componentTypeIndex) [0x00000] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityComponentStoreDebug.cs:364 \n  at Unity.Entities.EntityDataAccess.GetComponentData[T] (Unity.Entities.Entity entity) [0x00006] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityDataAccess.cs:1229 \n  at Unity.Entities.EntityManager.GetComponentData[T] (Unity.Entities.Entity entity) [0x00006] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityManager.cs:420 \n  at S005ReadOnlySurface915.Inspect (Unity.Entities.EntityManager em, Unity.Entities.Entity u, Unity.Entities.Entity ge) [0x00091] in /private/tmp/S005ReadOnlySurface915.cs:7 \n  at S005ReadOnlySurface915.Run () [0x002a6] in /private/tmp/S005ReadOnlySurface915.cs:5 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 "
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

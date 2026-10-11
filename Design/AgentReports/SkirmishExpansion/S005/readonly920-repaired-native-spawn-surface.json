@@ -1,0 +1,493 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlySurface920.cs",
+      "entry": "S005ReadOnlySurface920.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 82,
+      "executeMs": 9,
+      "assemblyName": "PipelineRunScript_S005ReadOnlySurface920_501a687966624bc5964412214bf31a83",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyMovementObservation",
+        "actorsResourcesOrdersInjected": false,
+        "rows": [
+          {
+            "id": "role.rocketeer.1.1.1",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1291228,\"LayerId\":0,\"LastSampledHeight\":0.20321154594421388,\"LastSampledNormal\":{\"x\":0.1212109699845314,\"y\":0.9918888211250305,\"z\":0.03826845437288284},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "surfaceObservation": {
+              "samples": [
+                {
+                  "kind": "RecordedUnitSurfaceId",
+                  "found": true,
+                  "sample": "{\"Cell\":{\"x\":988,\"y\":630},\"SurfaceId\":1291228,\"LayerId\":0,\"Height\":0.24917978048324586,\"Normal\":{\"x\":-0.007879635319113732,\"y\":0.9770748019218445,\"z\":-0.2127501666545868},\"SlopeDegrees\":12.292104721069336,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 988,
+                  "y": 630,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":988,\"y\":630},\"SurfaceId\":1291228,\"LayerId\":0,\"Height\":0.24917978048324586,\"Normal\":{\"x\":-0.007879635319113732,\"y\":0.9770748019218445,\"z\":-0.2127501666545868},\"SlopeDegrees\":12.292104721069336,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 1362,
+                  "y": 687,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":1362,\"y\":687},\"SurfaceId\":1408338,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":65535,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                }
+              ],
+              "gridPlaneEscapeWithin60": true,
+              "visited": 5371,
+              "goalWalkable": 1,
+              "goalBlocked": false,
+              "goalFriendly": 255,
+              "limitation": "Read-only primary surface and 2D local grid diagnostics; not a complete native route certificate."
+            },
+            "neighbours": [
+              {
+                "x": 987,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 988,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 989,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 987,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 988,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 989,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 987,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 988,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 989,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.0",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1326048,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "surfaceObservation": {
+              "samples": [
+                {
+                  "kind": "RecordedUnitSurfaceId",
+                  "found": true,
+                  "sample": "{\"Cell\":{\"x\":992,\"y\":647},\"SurfaceId\":1326048,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":31,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 992,
+                  "y": 647,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":992,\"y\":647},\"SurfaceId\":1326048,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":31,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 1362,
+                  "y": 687,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":1362,\"y\":687},\"SurfaceId\":1408338,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":65535,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                }
+              ],
+              "gridPlaneEscapeWithin60": true,
+              "visited": 5982,
+              "goalWalkable": 1,
+              "goalBlocked": false,
+              "goalFriendly": 255,
+              "limitation": "Read-only primary surface and 2D local grid diagnostics; not a complete native route certificate."
+            },
+            "neighbours": [
+              {
+                "x": 991,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 992,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 993,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 991,
+                "y": 647,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 992,
+                "y": 647,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 993,
+                "y": 647,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 991,
+                "y": 648,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 992,
+                "y": 648,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 993,
+                "y": 648,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.2",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1291244,\"LayerId\":0,\"LastSampledHeight\":0.17417311668395997,\"LastSampledNormal\":{\"x\":0.005613485351204872,\"y\":0.9934402704238892,\"z\":0.11421486735343933},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "surfaceObservation": {
+              "samples": [
+                {
+                  "kind": "RecordedUnitSurfaceId",
+                  "found": true,
+                  "sample": "{\"Cell\":{\"x\":1004,\"y\":630},\"SurfaceId\":1291244,\"LayerId\":0,\"Height\":0.24917978048324586,\"Normal\":{\"x\":-0.007879635319113732,\"y\":0.9770748019218445,\"z\":-0.2127501666545868},\"SlopeDegrees\":12.292104721069336,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 1004,
+                  "y": 630,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":1004,\"y\":630},\"SurfaceId\":1291244,\"LayerId\":0,\"Height\":0.24917978048324586,\"Normal\":{\"x\":-0.007879635319113732,\"y\":0.9770748019218445,\"z\":-0.2127501666545868},\"SlopeDegrees\":12.292104721069336,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 1362,
+                  "y": 687,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":1362,\"y\":687},\"SurfaceId\":1408338,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":65535,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                }
+              ],
+              "gridPlaneEscapeWithin60": true,
+              "visited": 5615,
+              "goalWalkable": 1,
+              "goalBlocked": false,
+              "goalFriendly": 255,
+              "limitation": "Read-only primary surface and 2D local grid diagnostics; not a complete native route certificate."
+            },
+            "neighbours": [
+              {
+                "x": 1003,
+                "y": 629,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 1004,
+                "y": 629,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 1005,
+                "y": 629,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 1003,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1004,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1005,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1003,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1004,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1005,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.3",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1289183,\"LayerId\":0,\"LastSampledHeight\":0.2537304162979126,\"LastSampledNormal\":{\"x\":-0.1348460614681244,\"y\":0.9698653817176819,\"z\":-0.20292311906814576},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "surfaceObservation": {
+              "samples": [
+                {
+                  "kind": "RecordedUnitSurfaceId",
+                  "found": true,
+                  "sample": "{\"Cell\":{\"x\":991,\"y\":629},\"SurfaceId\":1289183,\"LayerId\":0,\"Height\":0.24917978048324586,\"Normal\":{\"x\":-0.13400372862815858,\"y\":0.969556450843811,\"z\":-0.20494689047336579},\"SlopeDegrees\":14.173999786376954,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 990,
+                  "y": 630,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":990,\"y\":630},\"SurfaceId\":1291230,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.007861839607357979,\"y\":0.9984536170959473,\"z\":-0.0550328753888607},\"SlopeDegrees\":3.1867804527282717,\"SurfaceType\":1,\"MovementMask\":15,\"Flags\":1,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                },
+                {
+                  "kind": "CellPrimarySurface",
+                  "x": 1362,
+                  "y": 687,
+                  "primary": true,
+                  "sample": "{\"Cell\":{\"x\":1362,\"y\":687},\"SurfaceId\":1408338,\"LayerId\":0,\"Height\":0.009179778397083283,\"Normal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"SlopeDegrees\":0.0,\"SurfaceType\":0,\"MovementMask\":65535,\"Flags\":0,\"FirstConnectionIndex\":0,\"ConnectionCount\":0}"
+                }
+              ],
+              "gridPlaneEscapeWithin60": true,
+              "visited": 5440,
+              "goalWalkable": 1,
+              "goalBlocked": false,
+              "goalFriendly": 255,
+              "limitation": "Read-only primary surface and 2D local grid diagnostics; not a complete native route certificate."
+            },
+            "neighbours": [
+              {
+                "x": 989,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 990,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 991,
+                "y": 629,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 989,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 990,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 991,
+                "y": 630,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 989,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 990,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 991,
+                "y": 631,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

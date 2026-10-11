@@ -1,0 +1,14 @@
+import pathlib,json,subprocess,sys
+p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+first='native920-current-manual-en-seed130368-victory.json'
+d=json.loads((p/first).read_text());assert d['result']=='Passed' and d['combatSaveContinue'];pre=d['postManifest'];proofs=[first]
+for n,locale,seed,method,flags in [(921,'fa-IR',104734,'RunS005EditorManualFa',[]),(922,'en',155926,'RunS005EditorBoardedApcSaveResumeEn',['--boarded'])]:
+ log=f'native-{n}-current-manual-{locale}-seed{seed}.log'
+ r=subprocess.run(['rtk','proxy','python3','/private/tmp/s005-start-reused-bounded.py',str(n),log,'Game.Editor.SkirmishS002AriaRunHarness.'+method,pre])
+ if r.returncode:
+  subprocess.run(['rtk','proxy','python3','/private/tmp/s005-close-manual-failure-current.py',str(n),locale,str(seed),log,pre]);sys.exit(r.returncode)
+ r=subprocess.run(['rtk','proxy','python3','/private/tmp/s005-close-manual-current.py','--run',str(n),'--locale',locale,'--seed',str(seed),'--log',log,'--pre',pre]+flags)
+ if r.returncode:sys.exit(r.returncode)
+ kind='boarded-savecontinue-manual' if '--boarded' in flags else 'manual';name=f'native{n}-current-{kind}-{locale}-seed{seed}-victory.json';d=json.loads((p/name).read_text());proofs.append(name);pre=d['postManifest'];print(json.dumps(dict(completed=n,proof=name)),flush=True)
+ if n==921:
+  name='native920-921-current-manual-en-fa-locale-pair.json';pair=dict(result='Passed',sourceHash=d['sourceHash'],proofs=proofs[:2],normalInput=True,ariaStarted=False,realHumanDeviceAcceptance=False,technicallyReady=False,playerReady=False);(p/name).write_text(json.dumps(pair,indent=2)+'\n');f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text());s['currentManualLocalePair']=name;f.write_text(json.dumps(s,indent=2)+'\n')

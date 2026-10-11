@@ -1,0 +1,377 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyMovement915.cs",
+      "entry": "S005ReadOnlyMovement915.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 288,
+      "executeMs": 2,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyMovement915_ecf680be6ce748089b3773a763ca5f61",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyMovementObservation",
+        "actorsResourcesOrdersInjected": false,
+        "rows": [
+          {
+            "id": "role.rocketeer.1.1.1",
+            "intent": null,
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": null,
+            "attackMove": null,
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1285050,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.023650657385587693,\"y\":0.9460263252258301,\"z\":-0.32322564721107485},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 953,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 954,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 955,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 953,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 954,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 955,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 953,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 954,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 955,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.3",
+            "intent": null,
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": null,
+            "attackMove": null,
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1285052,\"LayerId\":0,\"LastSampledHeight\":0.24917984008789063,\"LastSampledNormal\":{\"x\":0.21333377063274384,\"y\":0.9244463443756104,\"z\":-0.31605005264282229},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 956,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 957,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 626,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 956,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 957,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 627,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 956,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 957,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 628,
+                "walkable": 1,
+                "blocked": true,
+                "count": 1,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.2",
+            "intent": null,
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": null,
+            "attackMove": null,
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1276875,\"LayerId\":0,\"LastSampledHeight\":0.2391796112060547,\"LastSampledNormal\":{\"x\":0.007894354872405529,\"y\":0.9946886897087097,\"z\":0.10262661427259445},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 971,
+                "y": 623,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 972,
+                "y": 623,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 973,
+                "y": 623,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 971,
+                "y": 624,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 972,
+                "y": 624,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 973,
+                "y": 624,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 971,
+                "y": 625,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 972,
+                "y": 625,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 973,
+                "y": 625,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "role.rocketeer.1.1.0",
+            "intent": null,
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": null,
+            "attackMove": null,
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1321918,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 957,
+                "y": 644,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 644,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 959,
+                "y": 644,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 957,
+                "y": 645,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 645,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 959,
+                "y": 645,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 957,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 958,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 959,
+                "y": 646,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,377 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyMovement915.cs",
+      "entry": "S005ReadOnlyMovement915.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 70,
+      "executeMs": 13,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyMovement915_90b45dc9be0e40bc804934353fb72053",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyMovementObservation",
+        "actorsResourcesOrdersInjected": false,
+        "rows": [
+          {
+            "id": "production.1002.1",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1396007,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 1318,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "production.1002.3",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1396007,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 1318,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "production.1002.0",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1396007,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 1318,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1319,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1320,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          },
+          {
+            "id": "production.1002.2",
+            "intent": "{\"DestinationX\":1370.0,\"DestinationZ\":679.5,\"Active\":1,\"Order\":2,\"Cooldown\":0.0,\"Engaged\":0,\"NoSharedPathSeconds\":0.0,\"LastProgressX\":0.0,\"LastProgressZ\":0.0,\"SharedStalled\":0}",
+            "move": "{\"Speed\":4.0,\"WalkSpeed\":1.4500000476837159,\"RoadSpeedMultiplier\":1.1200000047683716,\"ArriveDistance\":0.05000000074505806}",
+            "target": "{\"Cell\":{\"x\":1362,\"y\":687}}",
+            "attackMove": "{\"Destination\":{\"x\":1362,\"y\":687},\"Position\":{\"x\":1362.5,\"y\":0.0,\"z\":687.5},\"RetryAt\":0.0}",
+            "combat": "{\"AggroRangeCells\":16,\"ChaseBreakDistance\":150.0,\"CanAttack\":1,\"AutoEngage\":1}",
+            "attack": "{\"Range\":24.0,\"CooldownSeconds\":1.0,\"Damage\":22,\"TraceColor\":{\"x\":1.0,\"y\":0.550000011920929,\"z\":0.20000000298023225,\"w\":1.0},\"TraceWidth\":0.44999998807907107,\"TraceScrollSpeed\":6.0,\"TraceDashDensity\":1.0,\"TraceVisibleSeconds\":0.4000000059604645,\"TracerEveryNthShot\":1}",
+            "surface": "{\"SurfaceId\":1396005,\"LayerId\":0,\"LastSampledHeight\":0.00917959213256836,\"LastSampledNormal\":{\"x\":0.0,\"y\":1.0,\"z\":0.0},\"HasSurface\":1,\"IsGrounded\":1}",
+            "footprint": "{\"Size\":{\"x\":1,\"y\":1}}",
+            "held": false,
+            "neighbours": [
+              {
+                "x": 1316,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1317,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 680,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1316,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1317,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 681,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1316,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1317,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              },
+              {
+                "x": 1318,
+                "y": 682,
+                "walkable": 1,
+                "blocked": false,
+                "count": 0,
+                "friendly": 255
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

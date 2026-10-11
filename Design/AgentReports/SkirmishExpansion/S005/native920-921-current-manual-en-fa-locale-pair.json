@@ -1,0 +1,13 @@
+{
+  "result": "Passed",
+  "sourceHash": "0488a707b0f2c2dfdd4f3d882b853d6ab615746b635fcda8cb7d3a11ea6e0d0c",
+  "proofs": [
+    "native920-current-manual-en-seed130368-victory.json",
+    "native921-current-manual-fa-IR-seed104734-victory.json"
+  ],
+  "normalInput": true,
+  "ariaStarted": false,
+  "realHumanDeviceAcceptance": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

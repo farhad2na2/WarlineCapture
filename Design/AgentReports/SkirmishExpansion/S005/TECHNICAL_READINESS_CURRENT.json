@@ -9,15 +9,15 @@
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
   "deviceAcceptance": "Pending; no human/device acceptance claimed",
-  "activeRun": "native920",
-  "activeLog": "native-920-current-manual-en-seed130368.log",
-  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorCombatSaveResumeEn",
-  "activePreManifest": "final-919-initial-spawn-surface-post-source-manifest.json",
+  "activeRun": "native922",
+  "activeLog": "native-922-current-manual-en-seed155926.log",
+  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorBoardedApcSaveResumeEn",
+  "activePreManifest": "final-921-current-manual-fa-IR-seed104734-post-source-manifest.json",
   "currentCompilationProof": "compile-919-spawn-surface-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
-  "currentManualLocalePair": null,
+  "currentManualLocalePair": "native920-921-current-manual-en-fa-locale-pair.json",
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
@@ -39,7 +39,6 @@
     "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
-    "Fresh normal-input EN/FA manual journeys; result and return",
     "Fresh current-candidate checkpoint/recovery and exposed-preset evidence",
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
@@ -48,8 +47,13 @@
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
   "nextNativeRun": {
-    "status": "Pending",
-    "scope": "Normal input qualification on current frozen source"
+    "runs": [
+      921,
+      922
+    ],
+    "scope": "Persian normal manual journey and boarded APC Save/Continue after successful native920 combat/manual closure",
+    "runner": "/private/tmp/s005-run-manual-921.py",
+    "status": "WaitingForNative920ActualVerdict"
   },
   "currentSourceFingerprint": "final-919-spawn-surface-final-pre-independent-fingerprint.json",
   "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
@@ -152,5 +156,13 @@
     "playerReady": false,
     "nativeMatchCount": 0,
     "cleanupWarnings": []
-  }
+  },
+  "shippingNativeSurfaceSpawnCommit": "629318bbf",
+  "currentManualControlsProofs": [
+    "native920-current-manual-en-seed130368-victory.json",
+    "native921-current-manual-fa-IR-seed104734-victory.json"
+  ],
+  "currentManualControlsProof": "native921-current-manual-fa-IR-seed104734-victory.json",
+  "currentCombatSaveContinueProof": "native920-current-manual-en-seed130368-victory.json",
+  "manualLocaleStatus": "Passed native920 combat Save/Continue EN and native921 fresh manual FA; frozen result/Main Menu return, complete input/receipt audits, wrapper/bridge0 and matching full source."
 }

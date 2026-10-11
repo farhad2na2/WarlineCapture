@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "command": "command recompile_status",
+  "data": {
+    "command": "recompile_status",
+    "parameters": {},
+    "result": "{\"status\":\"completed\",\"failed\":true,\"errors\":[\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(418,13): error CS0103: The name 'SessionState' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(419,13): error CS0103: The name 'SessionState' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(419,70): error CS0103: The name 'EditorSettings' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(420,13): error CS0103: The name 'SessionState' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(420,67): error CS0103: The name 'EditorSettings' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(421,13): error CS0103: The name 'EditorSettings' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(422,13): error CS0103: The name 'EditorSettings' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(422,52): error CS0103: The name 'EnterPlayModeOptions' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(423,13): error CS0103: The name 'AssetDatabase' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(424,13): error CS0103: The name 'SessionState' does not exist in the current context\",\"Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs(451,27): error CS0103: The name 'SkirmishExpansionCatalogConfig' does not exist in the current context\"]}",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

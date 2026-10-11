@@ -1,0 +1,15 @@
+{
+  "beforeSourceHash": "8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29",
+  "afterSourceHash": "467889acb86a9eb427db2a5430aec27dcaaf47338db10d9e98dbce5c6ca57bd8",
+  "changed": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "physicalMapsUnchanged": true,
+  "missionBindingsUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "purpose": "Editor-only read-only clearance diagnostic observes the currently launched logical map instead of a hardcoded S005 asset, and permits the protected S004 Campaign source observation. No shipping source choice or acceptance gate change.",
+  "exactWholeSourceEquivalent": false,
+  "olderFullMissionWinsRecertified": false
+}

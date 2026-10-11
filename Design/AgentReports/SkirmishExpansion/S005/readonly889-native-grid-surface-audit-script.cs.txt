@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using Game.Components;
+using Game.Runtime;
+using Unity.Entities;
+using Unity.Mathematics;
+public class S005CampaignAirfieldNativeSurfaceAudit889 {
+ public static object Run() {
+  var rows=new List<string>();
+  foreach(var world in World.All) {
+   if(!world.IsCreated) continue;
+   var em=world.EntityManager;
+   using var match=em.CreateEntityQuery(typeof(SkirmishMatchState));
+   if(match.CalculateEntityCount()!=1) continue;
+   using var query=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+   if(query.CalculateEntityCount()!=1) {rows.Add("surfaceCount="+query.CalculateEntityCount());continue;}
+   var surface=query.GetSingleton<MapSurfaceComponent>();
+   using var grids=em.CreateEntityQuery(typeof(GridConfig),typeof(DynamicBlockerComponent));
+   if(grids.CalculateEntityCount()==1) {
+    var gridEntity=grids.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(gridEntity);var blocks=em.GetComponentData<DynamicBlockerComponent>(gridEntity);var roads=em.GetBuffer<GridRoad>(gridEntity,true);
+    int blocked=0,roadCount=0;for(int i=0;i<grid.Width*grid.Height;i++){if(blocks.Blocked.IsCreated&&blocks.Blocked.IsSet(i))blocked++;if(roads[i].Value!=0)roadCount++;}
+    rows.Add("grid="+grid.Width+"x"+grid.Height+" origin="+grid.Origin+" blocked="+blocked+" roads="+roadCount);
+    foreach(var cell in new[]{new int2(500,450),new int2(700,450),new int2(500,560),new int2(700,560),new int2(500,800)}) {var i=cell.y*grid.Width+cell.x;rows.Add("gridCell="+cell+" blocked="+(blocks.Blocked.IsCreated&&blocks.Blocked.IsSet(i))+" road="+roads[i].Value);}
+   }
+   var map=SkirmishS004Environment.LoadMapForSession(em);
+   rows.Add("world="+world.Name+" map="+map?.name+" dimensions="+surface.Dimensions+" gridOrigin="+surface.GridOrigin+" cellSize="+surface.CellSize+" data="+surface.HasSurfaceData);
+   if(!surface.SurfaceBlob.IsCreated) continue;
+   ref var blob=ref surface.SurfaceBlob.Value;
+   foreach(var point in new[]{new int2(500,560),new int2(700,560),new int2(900,560),new int2(500,620),new int2(700,620),new int2(900,620),new int2(500,450),new int2(900,450),new int2(1200,650)}) {
+    bool found=MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob,point,out var sample);
+    rows.Add("cell="+point+" found="+found+" height="+sample.Height+" slope="+sample.SlopeDegrees+" type="+sample.SurfaceType+" flags="+sample.Flags+" mask="+sample.MovementMask);
+   }
+  }
+  return "readOnly=1 sourceModified=0 readinessCertified=0; "+string.Join("; ",rows);
+ }
+}

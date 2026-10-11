@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode) throw new System.Exception(\"Owned launch already closed; unexpected Play session prevents preference cleanup.\"); var restored = new System.Collections.Generic.List<string>(); if(UnityEditor.SessionState.GetBool(\"Warline.MissionValidation.ResumeRefresh\",false)) { UnityEditor.AssetDatabase.AllowAutoRefresh(); UnityEditor.SessionState.SetBool(\"Warline.MissionValidation.ResumeRefresh\",false); restored.Add(\"ownedRefreshSuspensionReleased\"); } if(UnityEditor.SessionState.GetBool(\"S004EditorJourney.OptionsSaved\",false)) { UnityEditor.EditorSettings.enterPlayModeOptionsEnabled = UnityEditor.SessionState.GetBool(\"S004EditorJourney.OptionsEnabled\",false); UnityEditor.EditorSettings.enterPlayModeOptions = (UnityEditor.EnterPlayModeOptions)UnityEditor.SessionState.GetInt(\"S004EditorJourney.Options\",0); UnityEditor.SessionState.SetBool(\"S004EditorJourney.OptionsSaved\",false); restored.Add(\"ownedOriginalEditorOptionsRestored\"); } return string.Join(\";\",restored);"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "ownedOriginalEditorOptionsRestored"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

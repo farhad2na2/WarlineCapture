@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005AirportScanProgress889.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 84,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005AirportScanProgress889_9715e86bc33e4858b2aca2e081c5c4d0",
+      "success": true,
+      "result": "{\"stride\":16,\"diagnosticWatchdogSeconds\":600,\"samples\":3756,\"tested\":3532,\"cachedClear\":3532,\"frames\":1792,\"pairChecks\":0,\"campaignPolicyRejected\":0,\"surfaceRejected\":0,\"sceneryRejected\":2086,\"roadRejected\":0,\"waterRejected\":0,\"occupantRejected\":0,\"otherRejected\":1446,\"previewMutated\":false,\"physicalSourceModified\":false,\"capacityCertified\":false,\"playerReady\":false,\"logicalPlayableOnly\":false,\"scope\":\"ReadOnlyWholeExistingCampaignAirfieldViaProtectedS004Binding\",\"limitation\":\"Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.\",\"sites\":[],\"playablePairs\":[]}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

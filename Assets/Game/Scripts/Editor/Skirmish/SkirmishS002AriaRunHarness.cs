@@ -313,7 +313,7 @@ namespace Game.Editor
                     int actualHeight=png[20]<<24|png[21]<<16|png[22]<<8|png[23];
                     if(actualWidth!=width || actualHeight!=height)
                         throw new InvalidOperationException("Native map capture dimensions differ from requested dimensions.");
-                    if (catalogId == "S005" && Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
+                    if (Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
                         !TickReadOnlyS005AirportSourceFit())
                     { next = now + .01d; return false; }
                     if (catalogId == "S005") CaptureS005NativeCheckpointStaging(prefix);
@@ -791,7 +791,7 @@ namespace Game.Editor
                         // The opening roster was already audited before the first scan frame.
                         // Live combat may destroy actors while this observational scan yields;
                         // those normal lifecycle changes are not failed opening initialization.
-                        if (catalogId == "S005" && Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
+                        if (Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
                             airportSourceFitScan != null && airportSourceFitScan.frames > 0)
                         {
                             if (!CaptureNativeReview(now)) return;

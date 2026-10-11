@@ -1,0 +1,33 @@
+{
+  "result": "CompletedObservationNoSampledLegalAirport",
+  "sourceHash": "c3947d8db9153fe43c26eeaa9d8f7782f45d83abb2f0da1f206b960ab0fd1ef4",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-889-existing-airfield-source-fit-pre-source-manifest.json",
+  "postSourceManifest": "final-889-existing-airfield-source-fit-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "nativeBridgeExitCode": 0,
+  "log": "native-889-existing-campaign-airfield-source-fit.log",
+  "scan": "../S004/_Evidence/s004-aria-live-104733-en-1ae976710e154f9d8d7e32ce4b04f5c3.jsonl.airport-source-fit.json",
+  "observedCatalog": "S004",
+  "observedProfile": "AirMobile/Established",
+  "samples": 16384,
+  "tested": 13390,
+  "nativeValid": 0,
+  "firstRejectionCounts": {
+    "campaignPolicyRejected": 0,
+    "surfaceRejected": 920,
+    "sceneryRejected": 7750,
+    "roadRejected": 0,
+    "waterRejected": 0,
+    "occupantRejected": 0,
+    "otherRejected": 4720
+  },
+  "nativeGridObservation": "readonly889-native-airfield-grid-and-surface-audit.json",
+  "interpretation": "The launched S004 grid has1893104 blocked cells, compared with22840 authored blocked cells in source metadata. The broad scan retains this existing source/sector restriction. It is not a clearance scan against an unrestricted new logical layout. 7750 tested samples overlap authored scenery;4720 fail another native grid gate;920 fail foundation surface rules.",
+  "optionalPrefixInterpretation": "cachedClear is not geometry-clear evidence: optional prefix was not populated. Full native placement validator is authoritative.",
+  "limitation": "Coarse sampling is not an exhaustive impossibility proof. No valid sample or capacity/timing qualification supports rebinding S005 to this airfield. No source, logical bounds, mission binding or gameplay budget changed.",
+  "sourceSelectionChanged": false,
+  "capacityCertified": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -1,0 +1,734 @@
+{
+  "mission": "S005",
+  "status": "InProgress",
+  "technicallyReady": false,
+  "playerReady": false,
+  "sourceHash": "4f03ea91fd3b9dd633300bc88271c0105bffea16a899359424f6ebe0fc970c21",
+  "sourceFingerprint": "final-887-existing-airfield-source-fit-pre-independent-fingerprint.json",
+  "physicalSource": "Existing Campaign dense city",
+  "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+  "visualReview": "Owner deferred until technical readiness",
+  "deviceAcceptance": "Pending",
+  "focusedCurrentProof": null,
+  "activeRun": "native889",
+  "activeLog": "native-889-existing-campaign-airfield-source-fit.log",
+  "nativeCurrentSource": [],
+  "priorCandidateRecovery": {
+    "sourceHash": "45fec66e1f6c98ae3aae21e18b7923ad31ab2b8bcb8c2db3e7cff07460773420",
+    "proofs": [
+      "native637-current-english-save-continue-resumed-victory.json",
+      "native638-current-farsi-save-continue-resumed-victory.json"
+    ],
+    "countsForCurrentSource": false
+  },
+  "pending": [
+    "Complete final-source exposed no-Support ARIA baseline and family stress coverage",
+    "Current-source normal Save/Continue including combat, boarded passengers and actual in-transit delivery recovery refresh",
+    "Advanced-air timing, return/refuel/second sortie and bilateral capacity",
+    "Complete enabled Combined Arms native role lifecycles and viable approach evidence",
+    "Separate real device/player acceptance and deferred owner visual review"
+  ],
+  "priorCandidateNative": [
+    "native646-stable-placement-rear-spawn-en-seed130368-victory.json",
+    "native647-stable-placement-rear-spawn-fa-seed130368-victory.json",
+    "native658-airport-camera-hq-return-factory-controls-pass.json"
+  ],
+  "latestFailedAirProofs": [
+    "native648-rear-spawn-air-timing-failure.json",
+    "native650-supply-relative-airport-strike-delivery-cycle-failure.json",
+    "native652-bounded-search-paid-strike-camera-failure.json",
+    "native659-paid-strike-factory-controls-air-timing-failure.json",
+    "native663-shared-hauler-alternate-path-cancellation-failure.json",
+    "native667-shared-hauler-movement-air-timing-failure.json",
+    "native669-close-supply-paid-strike-air-timing-failure.json",
+    "native689-paid-strike-runaway-takeoff-failure.json",
+    "native695-early-factory-fuel-deadline-failure.json",
+    "native696-native-strike-takeoff-fire-touchdown-refuel-second-sortie-deadline-failure.json",
+    "native697-paid-strike-physical-input-interruption-failure.json",
+    "native698-delivery-taxi-command-race-fuel-exhaustion-failure.json",
+    "native704-airport-camera-placement-failure.json",
+    "native705-paid-strike-parking-flight-return-refuel-deadline-failure.json",
+    "native706-physical-input-interruption-failure.json",
+    "native707-paid-industry-long-haul-first-sortie-fuel-failure.json",
+    "native708-local-store-long-oil-routes-fuel-deadline-failure.json",
+    "native709-native-strike-flight-return-refuel-second-sortie-deadline-failure.json",
+    "native734-three-oil-three-tanker-native-flight-return-second-sortie-deadline-failure.json",
+    "native737-service-approach-native-air-return-deadline-failure.json",
+    "native740-live-vehicle-service-bay-native-air-return-deadline-failure.json",
+    "native744-occupancy-fixed-native-air-return-deadline-failure.json",
+    "native745-forward-search-native-air-return-deadline-failure.json",
+    "native749-native-strike-landing-second-reserve-timeout-failure.json"
+  ],
+  "latestFailedFactoryProof": "native654-factory-selected-missing-panel-scroll-failure.json",
+  "priorNativeFactoryControl": [
+    "native656-native-factory-scroll-pause-resume-pass.json"
+  ],
+  "activeScope": "Game.Editor.SkirmishS002AriaRunHarness.RunExistingCampaignAirfieldWholeSourceFitAndExit",
+  "nextWork": "Complete native886 read-only actual Airport-clearance scan through protected S004 existing Campaign airfield binding. This is source assessment, not S005 placement/capacity/air timing acceptance. No mission binding changed.",
+  "priorFocusedQualificationCompile": {
+    "result": "Passed",
+    "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
+    "wrapperExit": 0,
+    "log": "tests-657-public-hq-camera-factory-return-compile.log",
+    "marker": "[SkirmishInitialPlacementTests] result=Passed seeds=3 allocationLayouts=3 checkpointSpawnTests=2 nativeMissionAcceptance=Pending",
+    "nativeCameraFactoryControl": "Passed: native658 scoped camera excursion and factory pause/resume"
+  },
+  "focusedRuntimeRegressions": {
+    "proof": "focused665-666-shared-hauler-alternate-path-pass.json",
+    "newPendingPathCases": 3,
+    "existingResourceAndLogisticsCases": 55,
+    "result": "Passed",
+    "nativeReadiness": "Pending",
+    "newAlternateAndPendingPathCases": 6
+  },
+  "focusedQualificationCompile": "focused668-supply-plots-before-factory-expansion-compile-pass.json",
+  "priorNativeHaulerMovementProof": "native667-shared-hauler-movement-air-timing-failure.json",
+  "currentNativeVictories": [],
+  "exposedSetupAudit": "current-exposed-setup-audit.json",
+  "unexposedPresets": {
+    "sizes": [
+      "War",
+      "LargeWar"
+    ],
+    "difficulties": [
+      "Recruit",
+      "Veteran",
+      "Commander"
+    ],
+    "certified": false,
+    "publicationAuthorized": false
+  },
+  "currentAriaBaselineMatrix": null,
+  "currentBasicSaveContinueProofs": [],
+  "priorRuntimeEquivalentBaseline": {
+    "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+    "ariaMatrix": "current-standard-regular-aria-matrix-670-675-pass.json",
+    "basicSaveContinue": [
+      "native676-current-savecontinue-en-seed104734-victory.json",
+      "native677-current-savecontinue-fa-IR-seed104734-victory.json"
+    ],
+    "nativeProofs": [
+      "native669-close-supply-paid-strike-air-timing-failure.json",
+      "native670-current-aria-en-seed104734-victory.json",
+      "native671-current-aria-fa-IR-seed104734-victory.json",
+      "native672-current-aria-en-seed130368-victory.json",
+      "native673-current-aria-fa-IR-seed130368-victory.json",
+      "native674-current-aria-en-seed155926-victory.json",
+      "native675-current-aria-fa-IR-seed155926-victory.json",
+      "native676-current-savecontinue-en-seed104734-victory.json",
+      "native677-current-savecontinue-fa-IR-seed104734-victory.json",
+      "native678-manual-controls-disk-full-failure.json",
+      "native679-manual-escort-acknowledgment-defeat.json"
+    ],
+    "changedFiles": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs"
+    ],
+    "shippingRuntimeConfigsAndPhysicalMapUnchanged": false,
+    "countsForExactCurrentFullSource": false,
+    "runtimeChangedAfterEvidence": "Shared UnitAirMovementSystem takeoff arrival; prior wins retained, no current-source claim"
+  },
+  "latestFailedBoardedProof": "native687-boarded-pass-manual-popup-stall-failure.json",
+  "priorRuntimeEquivalentManualControlsProof": "native680-current-manual-fa-IR-seed104734-victory.json",
+  "priorQualificationSource": "76373a937df917e5e2a616ea9ba932f240e481f41de9a0943871c7ae1908bdfd",
+  "currentSupportRuntimeGap": "native683-support-inactive-runtime-gap.json",
+  "supportReleaseScope": {
+    "authority": "Design/Roadmap/Support/PLAN.md:78",
+    "instruction": "Do not make Support a prerequisite for releasing an otherwise accepted no-Support baseline; recertify when it is added.",
+    "classification": "Unfinished planned native Support extension. Missing policy correctly denies Support; not by itself a baseline runtime defect.",
+    "nativeSupportCertification": "Pending; no with-Support acceptance claimed",
+    "baselineReleaseBlockedBySupportAlone": false
+  },
+  "futureSupportAcceptance": "With/without-Support, native per-faction policy/readiness/route/fuel, consent/Stop and cleanup remain pending before Support exposure. Current no-Support baseline may release independently under PLAN.md.",
+  "nextNativeRun": {
+    "status": "Running",
+    "scope": "RunS005EditorDiagnosedStrikeCycleProbe"
+  },
+  "infrastructure": {
+    "diskFreeGiBAtAbort": 1.5,
+    "diskFreeGiBAfterOwnedEditorClosed": 2.1,
+    "action": "Ended only owned validation via authorized abort method; source/evidence preserved",
+    "blocking": null,
+    "userQuestion": "Disk capacity recovered; cleanup completed.",
+    "diskFreeGiBAfterCleanup": 59.63,
+    "cleanupEvidence": "disk-cleanup-2026-10-08.json"
+  },
+  "priorRuntimeEquivalentFocusedRecoveryProof": "native686-focused-paid-boarded-passenger-recovery-pass.json",
+  "currentManualControlsProofs": [],
+  "currentManualControlsProof": null,
+  "currentBoardedRecoveryProofs": [],
+  "sourceFingerprintPending": false,
+  "latestRuntimeChange": "source-delta-836-bounded-hauler-depot-retry.json",
+  "priorCandidateBoardedManualProof": "native688-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+  "focusedRunwayRegressions": "focused693-694-shared-runway-liftoff-pass.json",
+  "latestNativeAircraftProgress": {
+    "proof": "native749-native-strike-landing-second-reserve-timeout-failure.json",
+    "paidStrike": true,
+    "nativeParking": true,
+    "nativeTakeoffAndFire": true,
+    "returnInput": true,
+    "touchdown": true,
+    "secondSortie": false
+  },
+  "historicalSourceDelta670To689": {
+    "previousFullSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+    "currentFullSourceHash": "8a76d72d08cef9a3f88b2ac02ea9cd399cf82cd2c71c9ed7ac58561677883423",
+    "changedFiles": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+    ],
+    "runtimeAndConfigUnchanged": false,
+    "physicalMapUnchanged": true,
+    "allMaterialHashesUnchanged": true,
+    "exactCurrentSourceRunsPending": true,
+    "retainedBaseline": "current-standard-regular-aria-matrix-670-675-pass.json",
+    "retainedManualRecovery": "native688-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+    "latestRuntimeChange": "Shared runway takeoff arrival"
+  },
+  "historicalSourceDeltaVerifiedAgainstNative680": {
+    "changedFiles": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ManualProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+    ],
+    "allMaterialsIdentical": true,
+    "shippingRuntimeConfigurationAndPhysicalMapUnchanged": true
+  },
+  "historicalSourceDeltaVerifiedAgainstBaseline670": "source-delta-689-versus-baseline670.json",
+  "sourceDeltaFromFocusedRunwayRegressions": "source-delta-709-original-supply-cluster-driver-only.json",
+  "sharedRunwayNativeValidation": {
+    "scopedTakeoffFireReturnTouchdownObserved": true,
+    "proof": "native696-native-strike-takeoff-fire-touchdown-refuel-second-sortie-deadline-failure.json",
+    "fullCyclePassed": false,
+    "currentSourceDifferenceFromFocused694": "Editor purchase strategy only",
+    "countedWin": false,
+    "playerReady": false
+  },
+  "latestFocusedFailure": "native881-oil-supply-cycle-reassignment-fixture-failure.json",
+  "focusedDeliveryTaxiProof": "focused701-production-taxi-queued-command-pass.json",
+  "deliveryTransitCheckpointReproduction": {
+    "log": "tests-702-delivery-taxi-checkpoint-reproduction.log",
+    "sourceHash": "e7b2cd80afabc9fdd4cbc55099f32939b4dfaab46e4c0bf16f36d84cd26e469b",
+    "preSourceManifest": "tests-702-delivery-taxi-checkpoint-reproduction-pre-source-manifest.json",
+    "postSourceManifest": "tests-702-delivery-transit-checkpoint-failure-post-source-manifest.json",
+    "sourceUnchanged": true,
+    "wrapperExitCode": 0,
+    "requiredPassMarkerMissing": true,
+    "failedAssertion": "Save/Continue must keep a mid-taxi aircraft in delivery transit until parking completes.",
+    "result": "Failed"
+  },
+  "focusedParkingFlightRecoveryProof": "focused703-shared-production-parking-flight-checkpoint-pass.json",
+  "sharedProductionParkingNativeValidation": {
+    "proof": "native705-paid-strike-parking-flight-return-refuel-deadline-failure.json",
+    "parkingTransitComplete": true,
+    "nativeRunwayInitialized": true,
+    "takeoffFireHomeLanding": true,
+    "sameRuntimeAsFocused703": true,
+    "nativeSaveDuringTaxiStillPending": true,
+    "secondSortiePending": true
+  },
+  "historicalQualificationChange695": {
+    "previousSourceHash": "e0a413507b7151078bc7e86d519a2d5e77fa1b67c18b0bbe3e838daf8835faa7",
+    "files": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs"
+    ],
+    "runtimeAndConfigUnchanged": true,
+    "change": "Pay for the extra oil pump/factory before filling four-truck/two-tanker fleet; identical costs/counts/caps",
+    "staticDiffCheck": "Passed",
+    "nativeValidation": "Running native695"
+  },
+  "historicalNativeAircraftProgress696": {
+    "paidStrike": true,
+    "nativeRunwayTakeoff": true,
+    "nativeFire": true,
+    "returnInput": true,
+    "nativeTouchdownAtHome": true,
+    "fuelAtTouchdown": 593,
+    "fuelAfterRefuelingBeforeDeadline": 809,
+    "secondSortie": false
+  },
+  "historicalSourceDelta697VersusFocused694": "source-delta-697-versus-focused694.json",
+  "currentAriaFailedAttempts": [],
+  "priorBaselineAttempt710To713": {
+    "sourceHash": "626c833f1ad22248d51eccbe1ecb4a1d94dc5eb15af4b2b24f27394335575ee1",
+    "victories": [
+      {
+        "seed": 104734,
+        "locale": "en",
+        "mode": "ARIA",
+        "proof": "native710-current-aria-en-seed104734-victory.json"
+      },
+      {
+        "seed": 130368,
+        "locale": "en",
+        "mode": "ARIA",
+        "proof": "native712-current-aria-en-seed130368-victory.json"
+      }
+    ],
+    "failures": [
+      "native711-current-aria-fa-IR-seed104734-defeat.json",
+      "native713-current-aria-fa-IR-seed130368-defeat.json"
+    ],
+    "shippingRuntimeUnchangedByRegressionTest": true
+  },
+  "focusedOpeningDefenseProof": "focused714-715-shared-combined-arms-opening-defense-pass.json",
+  "historicalQualificationOnlyChange709": {
+    "proof": "source-delta-709-original-supply-cluster-driver-only.json",
+    "runtimeAndConfigUnchangedFromFocused703": true,
+    "change": "Two factories, original Oil source, local second refinery/store; four Oil trucks/two Tankers; normal cost2280; original HQ reserve retained",
+    "nativeValidation": "Closed failed native709: second-sortie timing unresolved"
+  },
+  "latestSharedAriaChange": {
+    "proof": "focused714-715-shared-combined-arms-opening-defense-pass.json",
+    "nativeFirstConfirmation": "native716-current-aria-fa-IR-seed104734-victory.json",
+    "change": "Combined Arms reuses the bounded opening-defense sequence; first native run cancelled placement without a paid tower, then won. Defense affordability/site success is not claimed.",
+    "normalRulesAndPhysicalMapUnchanged": true,
+    "allAffectedMissionJourneysStillPending": true
+  },
+  "latestFailedRecoveryProof": "native722-public-continue-retry-driver-state-timeout-failure.json",
+  "priorRuntimeEquivalentAria716To721": {
+    "sourceHash": "ba35c99af680bae25aa9df70c9a55c8b55ebdcd771647f49150301b5a88b2566",
+    "proof": "current-standard-regular-aria-matrix-716-721-pass.json",
+    "victories": [
+      {
+        "seed": 104734,
+        "locale": "fa-IR",
+        "mode": "ARIA",
+        "proof": "native716-current-aria-fa-IR-seed104734-victory.json"
+      },
+      {
+        "seed": 130368,
+        "locale": "fa-IR",
+        "mode": "ARIA",
+        "proof": "native717-current-aria-fa-IR-seed130368-victory.json"
+      },
+      {
+        "seed": 155926,
+        "locale": "fa-IR",
+        "mode": "ARIA",
+        "proof": "native718-current-aria-fa-IR-seed155926-victory.json"
+      },
+      {
+        "seed": 104734,
+        "locale": "en",
+        "mode": "ARIA",
+        "proof": "native719-current-aria-en-seed104734-victory.json"
+      },
+      {
+        "seed": 130368,
+        "locale": "en",
+        "mode": "ARIA",
+        "proof": "native720-current-aria-en-seed130368-victory.json"
+      },
+      {
+        "seed": 155926,
+        "locale": "en",
+        "mode": "ARIA",
+        "proof": "native721-current-aria-en-seed155926-victory.json"
+      }
+    ],
+    "shippingRuntimeConfigsAndPhysicalMapUnchanged": false,
+    "countsForExactCurrentFullSource": false,
+    "sourceDeltaProof": "source-delta-723-continue-driver-only.json",
+    "runtimeChangedAfterEvidence": "Shared logistics service bays and DynamicOccupancyRebuildSystem membership corrected; historical evidence retained, not current certification"
+  },
+  "historicalFarsiAria716To718": {
+    "result": "Passed",
+    "seeds": [
+      104734,
+      130368,
+      155926
+    ],
+    "wins": 3,
+    "proofs": [
+      "native716-current-aria-fa-IR-seed104734-victory.json",
+      "native717-current-aria-fa-IR-seed130368-victory.json",
+      "native718-current-aria-fa-IR-seed155926-victory.json"
+    ],
+    "fullBilingualMatrixComplete": false,
+    "playerReady": false
+  },
+  "latestValidationDriverChange": "source-delta-764-preview-camera-observer-only.json",
+  "currentBasicSaveContinueMatrix": null,
+  "latestUnacceptedManualProof": "native725-boarded-manual-terminal-clock-discrepancy.json",
+  "priorSourceBeforeTerminalClockFix": {
+    "sourceHash": "69efe7634459e836193e538902799ee7f9b68945f7f84cd08fd0aef042b9a5e5",
+    "nativeCurrentSource": [
+      "native723-current-savecontinue-en-seed104734-victory.json",
+      "native724-current-savecontinue-fa-IR-seed104734-victory.json"
+    ],
+    "basicSaveContinue": [
+      "native723-current-savecontinue-en-seed104734-victory.json",
+      "native724-current-savecontinue-fa-IR-seed104734-victory.json"
+    ],
+    "countsForCurrentSource": false
+  },
+  "latestFailedMenuProof": "native728-menu-controls-timeout-failure.json",
+  "latestTerminalClockNativeProof": "native729-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+  "currentManualLocalePair": null,
+  "latestFailedCombatRecoveryProof": "native732-combat-recovery-pass-full-manual-audit-reset-failure.json",
+  "priorRuntimeEquivalentManual729To730": {
+    "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+    "nativeProofs": [
+      "native729-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+      "native730-current-manual-fa-IR-seed104734-victory.json"
+    ],
+    "manualLocalePair": {
+      "sourceHash": "b1e45c638920b11fcd2613ec2dd8acd872c091b131f9d02bd8596e6849b48d54",
+      "en": "native729-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+      "fa-IR": "native730-current-manual-fa-IR-seed104734-victory.json",
+      "result": "Passed normal-input driver; real human/device acceptance separate"
+    },
+    "boardedRecovery": [
+      "native729-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    ],
+    "shippingRuntimeConfigsAndPhysicalMapUnchanged": false,
+    "countsForExactCurrentFullSource": false,
+    "delta": "source-delta-732-combat-close-map-driver-only.json",
+    "runtimeChangedAfterEvidence": "Shared logistics service bays and DynamicOccupancyRebuildSystem membership corrected; historical evidence retained, not current certification"
+  },
+  "currentCombatRecoveryProofs": [],
+  "latestCombatRecovery": "Historical normal combat recovery passed before current shipping Return/fuel/Oil fixes; current-source refresh pending.",
+  "priorSourceBeforeServiceApproachFix": {
+    "sourceHash": "2a81b1c316f92e1d431bfb0e85ba577bd9be4373cda2a614622c7411aa136cbb",
+    "nativeProofs": [
+      "native733-current-manual-en-seed155926-victory.json"
+    ],
+    "combatRecoveryProofs": [
+      "native733-current-manual-en-seed155926-victory.json"
+    ],
+    "countsForCurrentSource": false
+  },
+  "confirmedRuntimeDefect": "native740-confirmed-shared-occupancy-query-filter-alias.json",
+  "confirmedRuntimeDefectStatus": "Fixed: seven regression cases plus live query non-alias/all-membership and all three tanker tracking records. Complete mission air timing still failed.",
+  "focusedCurrentProofs": [],
+  "focusedShippingRuntimeEquivalentProofs": [
+    "native796-shared-oil-air-fuel-regression-pass.json"
+  ],
+  "latestFailedSupplyStrategyProof": "native748-close-factory-supply-ack-watchdog-failure.json",
+  "currentSourceFingerprint": "final-883-resumed-paid-cycle-closed-post-independent-fingerprint.json",
+  "latestAircraftProgress": "native883-normal-paid-strike-cycle-failure.json",
+  "activeActualSeed": null,
+  "activeArtifactSeedLabel": null,
+  "activeEvidenceNote": null,
+  "activePreManifest": "final-889-existing-airfield-source-fit-pre-source-manifest.json",
+  "latestSourceFitFailure": "native753-readonly-scan-opening-roster-drift-failure.json",
+  "latestSourceFitDiagnostic": "native755-readonly-playable-air-fit-completed.json",
+  "sourceFitNecessaryGate": {
+    "sampledLegalSites": 8,
+    "sampledNonOverlappingPairs": 17,
+    "physicalMapChanged": false,
+    "logicalBoundsChanged": false,
+    "bilateralNativeCapacityCertified": false,
+    "proof": "native755-readonly-playable-air-fit-completed.json",
+    "jointNormalConstructionProof": "native769-joint-paid-airport-construction-pass.json"
+  },
+  "latestSourceFitNativePlacementFailure": "native763-joint-placement-preview-camera-failure.json",
+  "latestCameraObservation": "native758-compile-repaired-southern-camera-observation.json",
+  "priorManualJourneysBeforeFullMapFit": {
+    "proofs": [
+      "native750-current-manual-en-seed130368-victory.json",
+      "native751-current-manual-fa-IR-seed104734-victory.json"
+    ],
+    "sourceDelta": "source-delta-752-readonly-whole-source-air-fit-driver-only.json",
+    "shippingRuntimeConfigsAndPhysicalMapUnchanged": false,
+    "countsForExactCurrentFullSource": false,
+    "scope": "Normal input EN combat Save/Continue Victory180.576, FA manual Victory169.534, frozen results/MainMenu, actual wrapper0 and strict contacts passed on identical shipping runtime/config/map.",
+    "delta": "source-delta-758-southern-camera-driver-only.json",
+    "priorCumulativeDelta": "source-delta-755-finer-playable-air-fit-driver-only.json",
+    "boardedRecoveryProof": "native756-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+    "countsForCurrentSource": false,
+    "currentDifference": "Shared full-map layout edge reachability changed; normal UI journeys require refresh"
+  },
+  "latestNativeLaunchFailure": "native799-normal-menu-launch-failure.json",
+  "currentNativeCameraProof": null,
+  "focusedShippingRuntimeEquivalentProof": "focused759-760-shared-full-map-edge-fit-pass.json",
+  "nativeCameraShippingRuntimeEquivalentProof": "native762-shared-full-map-southern-camera-pass.json",
+  "sourceDeltaFromMapFitProofs": "source-delta-764-preview-camera-observer-only.json",
+  "latestNativePreviewCameraFailure": "native764-preview-full-map-input-interception-failure.json",
+  "currentNativePreviewCameraProof": null,
+  "currentJointAirportConstructionProof": null,
+  "currentAriaRecoveryProofs": [],
+  "currentFreshAriaSeedMatrix": null,
+  "currentFreshAriaSeedProofs": [],
+  "latestFreshAriaFailure": "native774-current-fresh-aria-fa-IR-seed104734-failure.json",
+  "currentFreshAriaSeedFailures": [],
+  "latestAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
+  "previousFullSourceBefore781": {
+    "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+    "qualificationProofsRetained": true,
+    "shippingRuntimeEquivalent": true,
+    "exactCurrentFullSourceCertification": false,
+    "delta": "source-delta-781-paid-third-factory-strategy-only.json"
+  },
+  "latestQualificationStrategyChange": "source-delta-799-owned-producer-relative-full-presented-defense.json",
+  "qualificationOnlySourceChangesSinceBaseline": [
+    "source-delta-781-paid-third-factory-strategy-only.json",
+    "source-delta-782-normal-local-tanker-route-only.json",
+    "source-delta-783-existing-airport-objective-proximity-strategy.json",
+    "source-delta-785-focused-return-tests-and-own-state-observation.json"
+  ],
+  "priorShippingRuntimeEquivalentBaseline": {
+    "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+    "proof": "native773-778-current-fresh-aria-seed-matrix.json",
+    "shippingRuntimeEquivalent": false,
+    "exactWholeSourceEquivalent": false,
+    "note": "Historical baseline predates aircraft Return/fuel and expanded Oil reservation fixes; new native confirmation pending."
+  },
+  "activePreSourceManifest": null,
+  "latestFocusedAircraftReturnProof": "native789-aircraft-return-command-fix-focused-pass.json",
+  "latestConfirmedAircraftReturnDefect": "native788-corrected-return-old-runtime-control-failure.json",
+  "latestShippingRuntimeChange": "source-delta-796-shared-oil-air-fuel-and-sequential-purchases.json",
+  "latestQualificationDriverFix": "source-delta-800-stable-native-menu-transition-acknowledgment.json",
+  "latestConfirmedAircraftFuelDefect": "native792-runway-approach-fuel-accounting-control-failure.json",
+  "latestFocusedAircraftFuelProof": "native796-shared-oil-air-fuel-regression-pass.json",
+  "latestConfirmedOilRoutingDefect": "native795-incoming-oil-reservation-demand-control-failure.json",
+  "latestFocusedSharedOilAirProof": "native805-current-compilation-shared-regressions-pass.json",
+  "latestFocusedOilRoutingProof": "native796-shared-oil-air-fuel-regression-pass.json",
+  "historicalBaselineBeforeAircraftReturnFuelOilFixes": {
+    "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+    "countsForCurrentSource": false,
+    "reason": "Shared aircraft Return/fuel and expanded Oil reservation runtime changed; native recertification pending.",
+    "nativeCurrentSource": [
+      "native770-current-manual-en-seed130368-victory.json",
+      "native771-current-fa-checkpoint-aria-recovery-victory.json",
+      "native772-current-manual-fa-IR-seed104734-victory.json",
+      "native773-current-fresh-aria-en-seed104734-victory.json",
+      "native775-current-fresh-aria-en-seed130368-victory.json",
+      "native776-current-fresh-aria-fa-IR-seed130368-victory.json",
+      "native777-current-fresh-aria-en-seed155926-victory.json",
+      "native778-current-fresh-aria-fa-IR-seed155926-victory.json",
+      "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    ],
+    "currentManualControlsProofs": [
+      "native770-current-manual-en-seed130368-victory.json",
+      "native772-current-manual-fa-IR-seed104734-victory.json",
+      "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    ],
+    "currentManualControlsProof": "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json",
+    "currentBoardedRecoveryProofs": [
+      "native779-current-boarded-savecontinue-manual-en-seed155926-victory.json"
+    ],
+    "currentAriaRecoveryProofs": [
+      "native771-current-fa-checkpoint-aria-recovery-victory.json"
+    ],
+    "currentFreshAriaSeedMatrix": {
+      "status": "CompletedBaselineThresholdMet",
+      "proof": "native773-778-current-fresh-aria-seed-matrix.json",
+      "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+      "wins": 5,
+      "defeats": 1,
+      "locales": {
+        "en": {
+          "runs": 3,
+          "wins": 3,
+          "defeats": 0
+        },
+        "fa-IR": {
+          "runs": 3,
+          "wins": 2,
+          "defeats": 1
+        }
+      },
+      "failedSeedRetained": true
+    },
+    "currentFreshAriaSeedProofs": [
+      "native773-current-fresh-aria-en-seed104734-victory.json",
+      "native775-current-fresh-aria-en-seed130368-victory.json",
+      "native776-current-fresh-aria-fa-IR-seed130368-victory.json",
+      "native777-current-fresh-aria-en-seed155926-victory.json",
+      "native778-current-fresh-aria-fa-IR-seed155926-victory.json"
+    ],
+    "currentFreshAriaSeedFailures": [
+      "native774-current-fresh-aria-fa-IR-seed104734-failure.json"
+    ],
+    "currentNativeCameraProof": "native768-preview-map-camera-and-controls-pass.json",
+    "currentNativePreviewCameraProof": "native768-preview-map-camera-and-controls-pass.json",
+    "currentJointAirportConstructionProof": "native769-joint-paid-airport-construction-pass.json"
+  },
+  "sourceDeltaFromSharedRegressionProof": [
+    "source-delta-798-bidirectional-paid-air-card-and-known-site-revalidation.json",
+    "source-delta-799-owned-producer-relative-full-presented-defense.json"
+  ],
+  "activeCandidateInvalidated": null,
+  "concurrentSurfaceDelta": "source-delta-801-concurrent-surface-work.json",
+  "currentCompilationProof": "native831-integrated-pr62-placement-compile-pass.json",
+  "commitCheckpoint": {
+    "commit": "02d9a9b4f348389e1a684d51d524310acf276d13",
+    "remote": "origin/main",
+    "pushVerified": true
+  },
+  "latestConfirmedSharedPlacementDefects": "native807-shared-placement-old-runtime-control-failure.json",
+  "latestFocusedPlacementClearanceProof": "native831-integrated-pr62-placement-compile-pass.json",
+  "latestCompilationRunFailure": "native809-native-audit-compile-wrapper-resource-failure.json",
+  "latestNativePlacementClearanceFailure": "native811-native-clearance-audit-combined-visual-bounds-failure.json",
+  "latestBroadPrefabFootprintFailure": "native812-broad-prefab-clinic-footprint-audit-failure.json",
+  "latestWrapperPreflightFailure": "native813-hub-closed-wrapper-preflight-failure.json",
+  "latestNativeStartingPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
+  "latestNativePaidPlacementFailure": "native817-paid-factory-vegetation-overlap-failure.json",
+  "activeSourceRepair": null,
+  "latestCompilationFailure": "native847-source-fit-warmup-compiler-failure.json",
+  "latestNativeFailure": "native828-paid-placement-clearance-scoped-completion-failure.json",
+  "latestRenderPackagingProof": "native824-current-shared-map-render-packaging-pass.json",
+  "latestCompilationProof": "native848-focused-current-proof.json",
+  "latestNativePaidPlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
+  "latestNativePlacementClearance": "native832-integrated-native-starting-paid-clearance-pass.json",
+  "latestConfirmedSharedPlacementDefectsStatus": "Shared placement correction passed integrated native starting14 and paid20 buildings; Campaign normal journeys remain a separate pending gate",
+  "latestShippingPlacementChange": "Shared roads/sidewalk whole-cell clearance, packed and legacy trees/solid props, every legacy mesh range, and cold ordinary-player cache initialization.",
+  "priorNativePlacementClearanceBeforePr62": "native830-current-native-starting-paid-clearance-pass.json",
+  "currentIntegratedPlacementAcceptance": "Passed native831 compilation/10 focused cases and native832 normal starting/paid construction; complete mission and device acceptance remain pending",
+  "latestObservedHaulerStalls": "native833-read-only-hauler-travel-stalls.json",
+  "focusedNative836": {
+    "result": "Passed",
+    "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-836-hauler-depot-retry-pre-source-manifest.json",
+    "postSourceManifest": "final-836-captured-depot-route-correction-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-836-captured-depot-route-correction.log",
+    "requiredPassMarker": "[HaulerDepotMazeValidation] result=Passed tests=6",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [
+      "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+    ]
+  },
+  "focusedNative837": {
+    "result": "Passed",
+    "sourceHash": "cfe1a6c4bc94af5391d381ba790eb3b4047aaeeaf9ec30dc80b35cbd7207c1b3",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-836-captured-depot-route-correction-closed-post-source-manifest.json",
+    "postSourceManifest": "final-837-hauler-pathfinding-performance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-837-hauler-correction-pathfinding-performance.log",
+    "requiredPassMarker": "[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": [
+      "Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again."
+    ]
+  },
+  "haulerPathCorrection": {
+    "nativeReproduction": "native834-normal-paid-strike-cycle-failure.json",
+    "focusedBaselineFailure": "native835-captured-depot-regression-baseline-failure.json",
+    "focusedCorrection": "native836-focused-current-proof.json",
+    "sharedPerformance": "native837-focused-current-proof.json",
+    "normalInputFollowUp": "native838-current-placement-and-hauler-movement-observations.json",
+    "status": "FocusedPassedNativeMovementObservedAircraftStillFailed"
+  },
+  "currentPlacementObservation": "native838-current-placement-and-hauler-movement-observations.json",
+  "latestReadOnlySourceFitFailure": "native843-current-census-and-partial-source-fit.json",
+  "latestValidationDispatchFailure": "native847-late-focused-wrapper-handoff-failure.json",
+  "focusedNative842": {
+    "result": "Passed",
+    "sourceHash": "20ba39477e813f17899e5c773cc5ce21f95c37f9c6a623e0cd6a0a1e2f176721",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-841-chunk-scenery-reader-pre-source-manifest.json",
+    "postSourceManifest": "final-842-chunk-scenery-reader-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-842-chunk-scenery-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative845": {
+    "result": "Passed",
+    "sourceHash": "1b746a14b3a499342b3243e727ce25ec43b495acb575bd8e0d49e44938224cbd",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-844-call-local-scenery-and-balanced-supply-pre-source-manifest.json",
+    "postSourceManifest": "final-845-call-local-scenery-clearance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-845-call-local-scenery-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "latestShippingSceneryReaderChange": "Chunk iteration and call-local mesh-array/name/bounds metadata, preserving enabled masks, complete multi-mesh bounds and fresh per-call source edits.",
+  "latestReadOnlyAirportSiteObservations": "native846-current-reader-and-source-fit-observations.json",
+  "focusedNative848": {
+    "result": "Passed",
+    "sourceHash": "61e1b0aeed57a7ecc67ec2022f2eb631daada2dab26425d47fd90a2cfc3aaa02",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-847-late-focused-handoff-closed-post-source-manifest.json",
+    "postSourceManifest": "final-848-current-clearance-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "native-848-current-clearance-focused.log",
+    "requiredPassMarker": "[SharedSceneryClearanceValidation] result=Passed cases=11 failures=0",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "latestReadOnlyAirportSourceFit": "native849-current-unassisted-source-fit-proof.json",
+  "focusedNative854": {
+    "result": "Passed",
+    "sourceHash": "bf460941af9ae42d8c6cf3108515a2fe22680da263cfbad20ca4fd3644815272",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-854-multi-factory-priority-green-pre-source-manifest.json",
+    "postSourceManifest": "final-854-multi-factory-priority-green-closed-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "nativeBridgeExitCode": 0,
+    "log": "native-854-multi-factory-priority-green.log",
+    "requiredPassMarker": "[SkirmishFacilityEconomyProfileTests] result=Passed tests=8",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "tests": 8,
+    "scope": "Focused automated economy/profile and independent Factory priority regressions; normal-input mission remains pending.",
+    "nativeMatchCount": 0,
+    "playerReady": false
+  },
+  "latestOwnerPauseProof": "native855-owner-paused-incomplete-proof.json",
+  "latestRecoverySourceDriftFailure": "native857-boarded-savecontinue-observed-victory-source-drift-failure.json",
+  "currentSourceFitProof": "native859-current-map-source-fit-pass.json",
+  "priorFocusedClearanceProof": "native848-focused-current-proof.json",
+  "currentCompileProof": "compile-876-empty-selection-camera-status-retry.json",
+  "currentSharedBuildingClearanceProof": "native860-compact-paid-building-clearance-pass.json",
+  "latestFailedFactoryRedirectProof": "native861-factory-redirect-cargo-race-failure.json",
+  "currentDeferredCameraProof": "native863-deferred-factory-camera-scoped-pass.json",
+  "latestNativeInputDiagnostic": "native870-single-actor-retirement-scoped-pass.json",
+  "priorGameplayWorldBindingProofs": {
+    "sourceHash": "443cf0e29636cec87329c4ba9ab7af4525e945330ef15cb0aa2158a34b2a6bb9",
+    "focused": "native872-gameplay-world-binding-focused-pass.json",
+    "nativeInputProbes": [
+      "native873-gameplay-world-binding-native-input-pass.json",
+      "native874-gameplay-world-binding-native-input-pass.json"
+    ],
+    "countsForCurrentFullSource": false
+  },
+  "currentEmptySelectionCameraProof": "native876-empty-selection-factory-camera-scoped-pass.json",
+  "latestOilRouteReproduction": "native878-oil-supply-cycle-before-fix-reproduction.json",
+  "latestOilRouteRegressionFailure": "native879-oil-supply-cycle-fixture-failure.json",
+  "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
+  "currentFixedWingCycleProof": null,
+  "currentOilSupplyCycleProofApplicability": {
+    "proof": "native882-oil-supply-cycle-shared-regressions-pass.json",
+    "exactWholeSourceEquivalent": false,
+    "shippingRuntimeEquivalent": true,
+    "delta": "source-delta-887-editor-only-existing-source-assessment.json"
+  },
+  "currentAircraftFailureApplicability": {
+    "proof": "native883-normal-paid-strike-cycle-failure.json",
+    "exactWholeSourceEquivalent": false,
+    "shippingRuntimeEquivalent": true,
+    "observedTakeoffFireReturnHome": true,
+    "fullCyclePassed": false
+  },
+  "existingCampaignAirfieldInventory": "readonly884-existing-campaign-airfield-source-assessment.json",
+  "latestSourceAssessmentFailure": "native886-existing-source-seed-entry-failure.json"
+}

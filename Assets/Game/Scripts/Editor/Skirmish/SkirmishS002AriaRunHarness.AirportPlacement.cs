@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
+using Game.Configs;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
@@ -10,6 +11,7 @@ using Game.UI.Runtime;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -389,6 +391,7 @@ namespace Game.Editor
         private sealed class AirportSourceFitScan
         {
             public int stride = 32, diagnosticWatchdogSeconds = 600, samples, tested, cachedClear, frames, pairChecks;
+            public int campaignPolicyRejected, surfaceRejected, sceneryRejected, roadRejected, waterRejected, occupantRejected, otherRejected;
             public bool previewMutated, physicalSourceModified, capacityCertified, playerReady, logicalPlayableOnly;
             public string scope = "ReadOnlyWholeExistingSourceCoarseNativeValidator";
             public string limitation = "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.";
@@ -411,6 +414,51 @@ namespace Game.Editor
                 scope = "ReadOnlyLogicalPlayableCoarseNativeValidator" };
         }
 
+        public static void RunExistingCampaignAirfieldSourceFitAndExit()
+            => RunExistingCampaignAirfieldSourceFit(true);
+
+        public static void RunExistingCampaignAirfieldWholeSourceFitAndExit()
+            => RunExistingCampaignAirfieldSourceFit(false);
+
+        private static void RunExistingCampaignAirfieldSourceFit(bool logicalPlayableOnly)
+        {
+            // Observe S004's existing Campaign airfield binding before making
+            // any S005 logical-source change. No Campaign asset is modified.
+            SessionState.SetBool("S004EditorJourney.OptionsSaved", true);
+            SessionState.SetBool("S004EditorJourney.OptionsEnabled", EditorSettings.enterPlayModeOptionsEnabled);
+            SessionState.SetInt("S004EditorJourney.Options", (int)EditorSettings.enterPlayModeOptions);
+            EditorSettings.enterPlayModeOptionsEnabled = true;
+            EditorSettings.enterPlayModeOptions |= EnterPlayModeOptions.DisableDomainReload;
+            AssetDatabase.DisallowAutoRefresh();
+            SessionState.SetBool("Warline.MissionValidation.ResumeRefresh", true);
+            airportSourceFitScan = new AirportSourceFitScan { stride = 16, logicalPlayableOnly = logicalPlayableOnly,
+                scope = logicalPlayableOnly ? "ReadOnlyExistingCampaignAirfieldViaProtectedS004Binding" : "ReadOnlyWholeExistingCampaignAirfieldViaProtectedS004Binding" };
+            airportSourceFitCursor = 0;
+            nativeReviewStage = 0;
+            nativeReviewSizeApplied = false;
+            Environment.SetEnvironmentVariable("WARLINE_S003_NATIVE_REVIEW", "1");
+            Environment.SetEnvironmentVariable("WARLINE_MAP_REVIEW_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", "1");
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
+            Environment.SetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY", null);
+            Environment.SetEnvironmentVariable("WARLINE_S002_SEED", "104733");
+            Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", "en");
+            try { RunS004AriaAndExit(); }
+            catch
+            {
+                AssetDatabase.AllowAutoRefresh();
+                SessionState.SetBool("Warline.MissionValidation.ResumeRefresh", false);
+                EditorSettings.enterPlayModeOptionsEnabled = SessionState.GetBool("S004EditorJourney.OptionsEnabled", false);
+                EditorSettings.enterPlayModeOptions = (EnterPlayModeOptions)SessionState.GetInt("S004EditorJourney.Options", 0);
+                SessionState.SetBool("S004EditorJourney.OptionsSaved", false);
+                Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", null);
+                Environment.SetEnvironmentVariable("WARLINE_S003_NATIVE_REVIEW", null);
+                Environment.SetEnvironmentVariable("WARLINE_MAP_REVIEW_ONLY", null);
+                Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", null);
+                throw;
+            }
+        }
+
         private static bool TickReadOnlyS005AirportSourceFit()
         {
             var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
@@ -422,9 +470,9 @@ namespace Game.Editor
                 !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out var em) ||
                 !ReadAirportGrid(source, out _, out var grid, out var roads, out var blockers))
                 throw new InvalidOperationException("Read-only Airport source-fit has no native definition/grid.");
-            var map = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.OperationMapDefinition>(
-                "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset");
-            if (map == null) throw new InvalidOperationException("Read-only Airport source-fit has no logical map.");
+            var map = Game.Runtime.SkirmishS004Environment.LoadMapForSession(em);
+            if (map == null)
+                throw new InvalidOperationException("Read-only Airport source-fit has no launched logical map.");
             var logicalMin = GridUtils.WorldToCell(grid, map.Bounds.PlayableMin);
             var logicalMax = GridUtils.WorldToCell(grid, map.Bounds.PlayableMax);
             var scan = airportSourceFitScan ??= new AirportSourceFitScan();
@@ -441,6 +489,9 @@ namespace Game.Editor
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.EnsureAuthoredGeometry(
                 em, source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery, grid);
+            using var surfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            bool hasSurface = surfaceQuery.CalculateEntityCount() == 1;
+            var surface = hasSurface ? surfaceQuery.GetSingleton<MapSurfaceComponent>() : default;
             var budget = System.Diagnostics.Stopwatch.StartNew();
             int frameSamples = 0;
             // This observational fixture needs longer than the opening screenshot
@@ -448,7 +499,7 @@ namespace Game.Editor
             if (scan.frames == 0) deadline = UnityEditor.EditorApplication.timeSinceStartup + scan.diagnosticWatchdogSeconds;
             scan.frames++;
             if (scan.frames % 60 == 0)
-                Debug.Log("[S005ReadOnlyAirSourceFit] phase=Progress cursor=" + airportSourceFitCursor +
+                Debug.Log("[SkirmishReadOnlyAirSourceFit] catalog=" + catalogId + " phase=Progress cursor=" + airportSourceFitCursor +
                     " total=" + total + " nativeValid=" + scan.sites.Count + " frames=" + scan.frames);
             while (airportSourceFitCursor < total && frameSamples++ < 32 && budget.Elapsed.TotalMilliseconds < 8)
             {
@@ -465,7 +516,20 @@ namespace Game.Editor
                 if (source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasCachedInvalidCellInFootprint(rect.position, rect.size)) continue;
                 scan.cachedClear++;
                 if (!source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(source, definition,
-                    origin, definition.FootprintCells, rotated, grid, roads, blockers, AirportEffectiveRect, AirportOverlapsOccupant)) continue;
+                    origin, definition.FootprintCells, rotated, grid, roads, blockers, AirportEffectiveRect, AirportOverlapsOccupant))
+                {
+                    // Attribute the first native gate that rejected this sample.
+                    // The full validator above remains the only acceptance test.
+                    var cache = source.BuildingPlacementInvalidCellCacheCompositionSystemHelper;
+                    if (!CampaignMissionBuildingPlacementPolicy.IsAllowed(source, definition, rect)) scan.campaignPolicyRejected++;
+                    else if (!hasSurface || !BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(surface, rect)) scan.surfaceRejected++;
+                    else if (cache.AuthoredBuildings.Overlaps(grid, rect.position, rect.size)) scan.sceneryRejected++;
+                    else if (cache.RoadSurfaces.OverlapsWater(grid, rect.position, rect.size)) scan.waterRejected++;
+                    else if (cache.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, rect.position, rect.size)) scan.roadRejected++;
+                    else if (AirportOverlapsOccupant(source, rect)) scan.occupantRejected++;
+                    else scan.otherRejected++;
+                    continue;
+                }
                 var footprint = source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(definition, rotated);
                 scan.sites.Add(new AirportSourceFitSite { origin = origin, rotated = rotated, effectiveRect = rect,
                     insideLogicalPlayable = rect.xMin >= logicalMin.x && rect.yMin >= logicalMin.y && rect.xMax <= logicalMax.x && rect.yMax <= logicalMax.y,
@@ -483,7 +547,7 @@ namespace Game.Editor
             }
             string path = LiveTracePath() + ".airport-source-fit.json";
             System.IO.File.WriteAllText(path, JsonUtility.ToJson(scan, true));
-            Debug.Log("[S005ReadOnlyAirSourceFit] result=Completed stride=" + scan.stride + " samples=" + scan.samples +
+            Debug.Log("[SkirmishReadOnlyAirSourceFit] catalog=" + catalogId + " result=Completed stride=" + scan.stride + " samples=" + scan.samples +
                 " tested=" + scan.tested + " nativeValid=" + scan.sites.Count + " playableNonOverlappingPairs=" + scan.playablePairs.Count +
                 " frames=" + scan.frames + " previewMutated=0 physicalSourceModified=0 capacityCertified=0 playerReady=0 path=" + path);
             Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", null);

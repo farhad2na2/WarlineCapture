@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var paths = new string[] { \"Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset\", \"Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset\", \"Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset\", \"Assets/Game/Resources/SkirmishS004OperationMap.asset\" }; var rows = new System.Collections.Generic.List<string>(); foreach (var path in paths) { var map = UnityEditor.AssetDatabase.LoadAssetAtPath<Game.Configs.OperationMapDefinition>(path); if(map==null) throw new System.Exception(\"Missing \" + path); string error; var metadata = map.TryValidateMetadata(out error); var local = map.TryValidateLocalContentReferences(out var localError); var scene = UnityEditor.AssetDatabase.GUIDToAssetPath(map.SourceSceneReference.AssetGUID); rows.Add(path + \"|metadata=\" + metadata + \"|error=\" + error + \"|local=\" + local + \"|localError=\" + localError + \"|scene=\" + scene + \"|identity=\" + map.SourceIdentityHash + \"|content=\" + map.ContentHash); } return string.Join(\"\\n\", rows);"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset|metadata=True|error=|local=True|localError=|scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity|identity=3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db|content=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22\nAssets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset|metadata=True|error=|local=True|localError=|scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity|identity=3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db|content=6d76d3be9c739e6ba8603635df5538da00f9220a91b0cc61f2c1b9cf2f70ddeb\nAssets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset|metadata=True|error=|local=True|localError=|scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity|identity=3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db|content=c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe\nAssets/Game/Resources/SkirmishS004OperationMap.asset|metadata=True|error=|local=True|localError=|scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity|identity=3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db|content=e5a78e5b35d94ed9908a0969bbeca3e513d17fdea01265e566ee00916725d914"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

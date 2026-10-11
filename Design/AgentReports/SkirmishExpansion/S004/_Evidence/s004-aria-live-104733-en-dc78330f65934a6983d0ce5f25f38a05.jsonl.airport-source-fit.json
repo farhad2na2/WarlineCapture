@@ -1,0 +1,18 @@
+{
+    "stride": 16,
+    "diagnosticWatchdogSeconds": 600,
+    "samples": 1900,
+    "tested": 970,
+    "cachedClear": 970,
+    "frames": 197,
+    "pairChecks": 0,
+    "previewMutated": false,
+    "physicalSourceModified": false,
+    "capacityCertified": false,
+    "playerReady": false,
+    "logicalPlayableOnly": true,
+    "scope": "ReadOnlyExistingCampaignAirfieldViaProtectedS004Binding",
+    "limitation": "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.",
+    "sites": [],
+    "playablePairs": []
+}

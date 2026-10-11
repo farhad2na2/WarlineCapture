@@ -1,0 +1,14 @@
+{
+  "beforeSourceHash": "8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29",
+  "afterSourceHash": "c3947d8db9153fe43c26eeaa9d8f7782f45d83abb2f0da1f206b960ab0fd1ef4",
+  "changed": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeUnchanged": true,
+  "physicalMapsUnchanged": true,
+  "missionBindingsUnchanged": true,
+  "allMaterialsUnchanged": true,
+  "materialCount": 966,
+  "exactWholeSourceEquivalent": false
+}

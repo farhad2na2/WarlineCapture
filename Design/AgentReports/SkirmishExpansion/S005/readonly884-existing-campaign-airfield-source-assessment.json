@@ -1,0 +1,40 @@
+{
+  "result": "PassedReadOnlyExistingSourceInventory",
+  "sourceHash": "8e60f78ab75264bb039b93da82b27f489f4e96d26359f9f10e872af6a4156d29",
+  "preSourceManifest": "final-883-resumed-paid-cycle-closed-post-source-manifest.json",
+  "postSourceManifest": "final-884-readonly-airfield-assessment-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "campaignConsumers": [
+    "CH01-M04",
+    "CH04-M01"
+  ],
+  "protectedSkirmishConsumer": "S004",
+  "definition": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+  "runtimeScene": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity",
+  "runtimeSceneSha256": "8318b7a60796f4cc56ebad03bacb8958cfc64ea18e5c4b4b3affeb1ba875ad4b",
+  "preparedScene": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+  "preparedSceneSha256": "74003bc083ffa78df42be00630046e9b85d5a26651e922894d35aba55ab851c9",
+  "sourceIdentityHash": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+  "metadataAndLocalReferencesValid": true,
+  "previewOpenedAndClosedWithoutSave": true,
+  "previewObjects": 32524,
+  "previewRenderers": 25127,
+  "existingRunwayCentres": [
+    [
+      595.33,
+      560
+    ],
+    [
+      804.67,
+      560
+    ]
+  ],
+  "definitionAudit": "native884-readonly-existing-campaign-airfield-definition-audit.json",
+  "previewAudit": "readonly884-campaign-airfield-preview-audit.json",
+  "S005BindingChanged": false,
+  "physicalSourceChanged": false,
+  "nativePlacementClearanceCertified": false,
+  "nativeAircraftCapacityCertified": false,
+  "betterAirTimingProven": false,
+  "playerReady": false
+}

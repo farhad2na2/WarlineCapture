@@ -1,0 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+public class S005CampaignAirfieldPreviewAudit884 {
+ public static object Run() {
+  string path="Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity";
+  var scene=EditorSceneManager.OpenPreviewScene(path);
+  try {
+   var rows=new List<string>();int objects=0,renderers=0,colliders=0;
+   foreach(var root in scene.GetRootGameObjects()) {
+    foreach(var t in root.GetComponentsInChildren<Transform>(true)) {objects++;string n=t.name.ToLowerInvariant();if(n.Contains("runway")||n.Contains("airfield")||n.Contains("grid")||n.Contains("surface"))rows.Add("landmark="+t.name+" position="+t.position+" scale="+t.lossyScale);}
+    foreach(var r in root.GetComponentsInChildren<Renderer>(true))renderers++;
+    foreach(var c in root.GetComponentsInChildren<Collider>(true))colliders++;
+   }
+   return "readOnlyPreview=1 nativeClearanceCertified=0 capacityCertified=0 source="+path+" objects="+objects+" renderers="+renderers+" colliders="+colliders+"; "+string.Join("; ",rows);
+  } finally {EditorSceneManager.ClosePreviewScene(scene);}
+ }
+}

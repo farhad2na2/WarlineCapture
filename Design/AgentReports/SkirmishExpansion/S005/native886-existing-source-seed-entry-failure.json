@@ -1,0 +1,14 @@
+{
+  "result": "FailedBeforeNativeStartup",
+  "sourceHash": "467889acb86a9eb427db2a5430aec27dcaaf47338db10d9e98dbce5c6ca57bd8",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-886-existing-airfield-source-fit-pre-source-manifest.json",
+  "postSourceManifest": "final-886-existing-airfield-source-fit-post-source-manifest.json",
+  "wrapperExitCode": 1,
+  "nativeBridgeExitCode": 1,
+  "log": "native-886-existing-campaign-airfield-source-fit.log",
+  "failure": "S004 protected validation seed range is104733/130367/155925, whereas new entry incorrectly reused S005 seed104734. No native source scene or clearance scan began. Preserve seed ranges; fix diagnostic entry.",
+  "nativeSourceScanStarted": false,
+  "sourceSelectionChanged": false,
+  "playerReady": false
+}

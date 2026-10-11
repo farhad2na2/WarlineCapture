@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005CampaignAirfieldNativeSurfaceAudit889.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 236,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005CampaignAirfieldNativeSurfaceAudit889_c48ed32889044ad385f172e3df2d7806",
+      "success": true,
+      "result": "readOnly=1 sourceModified=0 readinessCertified=0; world=Default World map=SkirmishS004OperationMap dimensions=int2(2048, 1024) gridOrigin=float3(0f, 0f, 0f) cellSize=1 data=1; cell=int2(500, 560) found=True height=0.08 slope=0 type=Plaza flags=None mask=AllGroundUnits, AirGrounded; cell=int2(700, 560) found=True height=0 slope=0 type=Terrain flags=None mask=AllGroundUnits, AirGrounded; cell=int2(900, 560) found=True height=0.08 slope=0 type=Plaza flags=None mask=AllGroundUnits, AirGrounded; cell=int2(500, 620) found=True height=0.03 slope=0 type=Plaza flags=None mask=AllGroundUnits, AirGrounded; cell=int2(700, 620) found=True height=0 slope=0 type=Road flags=Road mask=AllGroundUnits, AirGrounded; cell=int2(900, 620) found=True height=0.03 slope=0 type=Plaza flags=None mask=AllGroundUnits, AirGrounded; cell=int2(500, 450) found=True height=0 slope=0 type=Terrain flags=None mask=AllGroundUnits, AirGrounded, BuildingPlacement; cell=int2(900, 450) found=True height=0 slope=0 type=Terrain flags=None mask=AllGroundUnits, AirGrounded, BuildingPlacement; cell=int2(1200, 650) found=True height=0 slope=0 type=Blocked flags=None mask=None"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

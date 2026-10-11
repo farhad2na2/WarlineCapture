@@ -1,0 +1,12 @@
+{
+  "result": "FailedCompilerImports",
+  "sourceHash": "d577e5ad0a9aa3f25af4950bae9e58cbf425919ade807d8d8af89e030521a1f1",
+  "preSourceManifest": "final-885-existing-airfield-source-fit-pre-source-manifest.json",
+  "postSourceManifest": "final-885-existing-airfield-source-fit-compile-failed-post-source-manifest.json",
+  "sourceUnchanged": true,
+  "compileStatus": "compile-885-existing-airfield-source-fit-status.json",
+  "nativeRunStarted": false,
+  "wrapperRunStarted": false,
+  "failure": "New Editor diagnostic was missing UnityEditor and Game.Configs imports. Compiler diagnostics retained; add imports and recompile before any native scan.",
+  "playerReady": false
+}

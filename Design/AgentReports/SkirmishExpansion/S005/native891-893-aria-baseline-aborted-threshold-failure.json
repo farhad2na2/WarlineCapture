@@ -1,0 +1,19 @@
+{
+  "result": "FailedMinimumTwoWinsPerLocale",
+  "scope": "Early termination of failed baseline; remaining seeds not exercised on this candidate",
+  "sourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "locale": "en",
+  "runsCompleted": 2,
+  "wins": 0,
+  "maximumPossibleWinsWithRemainingSeeds": 1,
+  "requiredWins": 2,
+  "completedProofs": [
+    "native891-current-fresh-aria-en-seed104734-failure.json",
+    "native892-current-fresh-aria-fa-IR-seed104734-failure.json",
+    "native893-current-fresh-aria-en-seed130368-failure.json"
+  ],
+  "remainingSeedsRequiredAfterRepair": true,
+  "fullMatrixCompleted": false,
+  "technicallyReady": false,
+  "playerReady": false
+}

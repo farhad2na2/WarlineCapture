@@ -1,0 +1,14 @@
+{
+  "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "sourceHash": "c8e3d3acfa65060a31a87ab60f188e99aa7a91423f4fbbcc2cf9bee8a9ded783",
+  "changedSourceFiles": [
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs"
+  ],
+  "changedMaterials": [],
+  "scope": "Skirmish watch defense target now uses GuardTower instead of Campaign tutorial RoadBarrier preference. No new scenario branch or map change.",
+  "campaignTutorialSelectorUnchanged": true,
+  "nativeFlightMovementFuelReturnProductionAndEconomySourcesUnchanged": true,
+  "wholeRuntimeEquivalent": false,
+  "pricesRatesCapsReservesDeadlineAndBindingsUnchanged": true,
+  "completeMissionAfterAriaFixPending": true
+}

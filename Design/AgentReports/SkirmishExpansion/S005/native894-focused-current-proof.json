@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "c8e3d3acfa65060a31a87ab60f188e99aa7a91423f4fbbcc2cf9bee8a9ded783",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-894-defense-tower-pre-source-manifest.json",
+  "postSourceManifest": "final-894-defense-tower-focused-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "tests-894-shared-aria-defense-tower.log",
+  "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

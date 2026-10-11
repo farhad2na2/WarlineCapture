@@ -27,6 +27,7 @@ namespace Game.UI.Contracts
         public bool CanAffordTanker;
         public int TankersCommitted;
         public bool CombinedArmsField, RocketeerRecruitPending;
+        public bool PresentedHomeThreat;
         public int OwnStructureAttackUnits;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;

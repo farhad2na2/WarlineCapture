@@ -83,8 +83,76 @@ namespace Game.Tests.Editor
             view.PlacementOpen = false;
             view.Time = 15;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.DefensesPlaced, "A completed tap without a new presented tower is not a purchase.");
+            view.OwnDefenseTowers = 1;
+            view.Time = 16;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(1, plan.DefensesPlaced);
             Assert.AreEqual(0, plan.AssaultStarted);
+        }
+
+        [Test]
+        public void LegacyDefenseConfirmationDoesNotWaitForUnavailableBuildingCensus()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = false, Time = 15, Infantry = 16,
+                PlayerHealth = 800, EnemyHealth = 800,
+                DefenseBuild = new AriaTouchTarget { Id = 50, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent
+            { DefenseStage = 3, DefenseDeadline = 75, DefenseActions = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing, Actions = 2 };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(1, plan.DefensesPlaced);
+            Assert.AreEqual(2, plan.DefenseStage, "Legacy confirmation must continue without an expanded-only census.");
+        }
+
+        [Test]
+        public void PresentedHomeRaidUsesSquadAttackAndResumesObjectiveOnlyAfterItClears()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, PresentedHomeThreat = true,
+                PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true, Time = 10,
+                ExpandedAssaultMask = 3, ExpandedPageCount = 1,
+                FocusPlayer = new AriaTouchTarget { Id = 51, Available = true },
+                Squad0 = new AriaTouchTarget { Id = 10, Available = true },
+                Squad1 = new AriaTouchTarget { Id = 11, Available = true },
+                Attack = new AriaTouchTarget { Id = 12, Available = true },
+                ThreatGround = new AriaTouchTarget { Id = -20006, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent { AssaultIssued = 1, StructureOrdered = 1 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(51, output.TargetId, "Camera guidance cannot issue a defensive troop order.");
+            touch.Actions++;
+            view.Time++;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(10, output.TargetId);
+            view.ExpandedSelectedMask = 1;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(11, output.TargetId);
+            view.ExpandedSelectedMask = 3;
+            view.ExpandedSelectedGroups = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(12, output.TargetId);
+            view.AttackMode = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(-20006, output.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.WorldTarget, output.Kind);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(5, plan.HomeDefenseStage, "An offered target is not a completed defensive order.");
+            touch.Actions++;
+            view.AttackMode = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(8, plan.HomeDefenseStage);
+            view.PresentedHomeThreat = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.HomeDefenseStage);
+            Assert.AreEqual(0, plan.AssaultIssued, "A defensive order cannot certify an enemy-base assault.");
         }
 
         [Test]
@@ -1175,6 +1243,8 @@ namespace Game.Tests.Editor
                 suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault(false);
                 suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault(true);
                 suite.CombinedArmsPreservesStructureForceBeforeBuyingRifles();
+                suite.LegacyDefenseConfirmationDoesNotWaitForUnavailableBuildingCensus();
+                suite.PresentedHomeRaidUsesSquadAttackAndResumesObjectiveOnlyAfterItClears();
                 suite.FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity();
                 suite.SharedScoringUsesEligibilityAndHidesHostileCash();
                 suite.EnemyStrategyRecruitsThroughSharedProduceAndLeavesPlayerStocks();

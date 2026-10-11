@@ -1,0 +1,37 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using Game.Components;
+using Game.Composition;
+using Unity.Entities;
+using UnityEngine;
+public class S005ReadOnlyDefensePlacement897 {
+ const BindingFlags Instance=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+ const BindingFlags Static=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static;
+ static object Get(object o,string n)=>o.GetType().GetField(n,Instance)?.GetValue(o)??o.GetType().GetProperty(n,Instance)?.GetValue(o);
+ public static object Run(){
+  var timer=System.Diagnostics.Stopwatch.StartNew();var rows=new List<string>();
+  var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+  var callback=Get(Get(Get(scene,"MatchBootstrap"),"BuildingUiCommandContext"),"CanConfirmBuildingPlacement");
+  var h=typeof(Game.Editor.SkirmishS002AriaRunHarness);
+  var source=h.GetMethod("FindAirportPlacementSource",Static).Invoke(null,new object[]{callback,new HashSet<object>(),0});
+  var definitions=Get(source,"BuildingDefinitionPrefabSystemHelper");object definition=null;
+  foreach(var item in (IEnumerable)Get(definitions,"_configuredSpawnableDefinitions")){
+   var prefab=Get(item,"Prefab") as GameObject;
+   if(prefab!=null&&prefab.name=="Building_GuardTower"){definition=item;break;}
+  }
+  if(definition==null)throw new Exception("Native GuardTower definition missing");
+  var footprint=(Vector2Int)Get(definition,"FootprintCells");
+  var validator=Get(source,"BuildingPlacementAdapterCompositionSystemHelper");var method=validator.GetType().GetMethod("IsPlacementValid",Instance);var pars=method.GetParameters();
+  var effective=Delegate.CreateDelegate(pars[8].ParameterType,h.GetMethod("AirportEffectiveRect",Static));
+  var occupied=Delegate.CreateDelegate(pars[9].ParameterType,h.GetMethod("AirportOverlapsOccupant",Static));
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;using var q=em.CreateEntityQuery(typeof(GridConfig),typeof(DynamicBlockerComponent));var e=q.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(e);var roads=em.GetBuffer<GridRoad>(e,true);var blockers=em.GetComponentData<DynamicBlockerComponent>(e);
+  var hud=UnityEngine.Object.FindAnyObjectByType<Game.UI.Runtime.SkirmishMatchView>();
+  var home=(Vector3)Get(hud,"PlayerBaseObjectivePosition");var enemy=(Vector3)Get(hud,"EnemyBaseObjectivePosition");var forward=enemy-home;forward.y=0;forward.Normalize();var side=new Vector3(-forward.z,0,forward.x);
+  void Sample(string label,Vector3 point){var cell=GridUtils.WorldToCell(grid,point);var origin=new Vector2Int(cell.x-footprint.x/2,cell.y-footprint.y/2);bool valid=(bool)method.Invoke(validator,new object[]{source,definition,origin,footprint,false,grid,roads,blockers,effective,occupied});var screen=Camera.main.WorldToScreenPoint(point);rows.Add(label+" centre="+point+" origin="+origin+" nativeValid="+valid+" screen="+screen+" safe="+Screen.safeArea.Contains(screen));}
+  for(int i=0;i<6;i++)Sample("CurrentSite"+i,home+forward*(25+i/2*10)+side*(i%2==0?18:-18));
+  for(int radius=24;radius<=40;radius+=8)for(int i=0;i<8;i++){float angle=i*Mathf.PI/4;Sample("Ring"+radius+"Angle"+(i*45),home+forward*(Mathf.Cos(angle)*radius)+side*(Mathf.Sin(angle)*radius));}
+  return "scope=ReadOnlyNativeDefensePlacement samples=30 physicalSourceModified=0 actorsResourcesOrdersInjected=0 inspectionMilliseconds="+timer.ElapsedMilliseconds+"\n"+string.Join("\n",rows);
+ }
+}

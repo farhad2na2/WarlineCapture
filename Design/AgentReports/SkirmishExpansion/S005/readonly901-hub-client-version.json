@@ -1,0 +1,9 @@
+{
+  "hubPid": 629,
+  "editorPid": 23352,
+  "hubVersion": "3.22.2",
+  "hubClientVersion": "1.18.3+d7ffd15",
+  "scope": "Read-only installed process/client metadata; GUI validation retained. No licensing process restart, reset, IPC cleanup or direct Editor launch.",
+  "batchmodeRetestPerformed": false,
+  "reason": "Active Editors retained; current required wrapper uses GUI licensing. Separate licensing compatibility retest not substituted for mission validation."
+}

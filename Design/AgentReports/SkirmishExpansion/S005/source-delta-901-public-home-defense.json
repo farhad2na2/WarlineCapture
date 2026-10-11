@@ -1,0 +1,17 @@
+{
+  "previousSourceHash": "c8e3d3acfa65060a31a87ab60f188e99aa7a91423f4fbbcc2cf9bee8a9ded783",
+  "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d",
+  "changedSourceFiles": [
+    "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs"
+  ],
+  "changedMaterials": [],
+  "scope": "Shared expanded ARIA reacts to presented home threats through normal controls; defense search beside/behind home and purchase census confirmation.",
+  "nativeFlightMovementFuelReturnProductionAndEconomySourcesUnchanged": true,
+  "wholeRuntimeEquivalent": false,
+  "pricesRatesCapsReservesDeadlineAndBindingsUnchanged": true,
+  "completeMissionAfterAriaFixPending": true
+}

@@ -15,6 +15,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public uint SweepRosterRevision;
         public int EconomicMilestones, MaterialsHighWater;
         public int ObservedPageIndex;
+        public int HomeDefenseStage, HomeDefenseAction, HomeDefensePage;
+        public float HomeDefenseObserveUntil;
         public byte AssaultDistanceObserved;
         public float BestAssaultDistance;
         // Separate from the legacy two-tower opening. A legal preview alone never

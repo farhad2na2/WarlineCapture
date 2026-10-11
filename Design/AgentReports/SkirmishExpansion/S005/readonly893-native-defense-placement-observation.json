@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyDefensePlacement893.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 79,
+      "executeMs": 43,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyDefensePlacement893_c3dc0b581f63407d8037ddb1c7b2d99a",
+      "success": true,
+      "result": "scope=ReadOnlyNativeDefensePlacement samples=30 physicalSourceModified=0 actorsResourcesOrdersInjected=0 inspectionMilliseconds=34\nCurrentSite0 centre=(954.11, 0.01, 677.67) origin=(953, 675) nativeValid=False\nCurrentSite1 centre=(955.83, 0.01, 641.71) origin=(954, 639) nativeValid=False\nCurrentSite2 centre=(964.10, 0.01, 678.15) origin=(963, 676) nativeValid=True\nCurrentSite3 centre=(965.82, 0.01, 642.19) origin=(964, 640) nativeValid=False\nCurrentSite4 centre=(974.09, 0.01, 678.62) origin=(973, 676) nativeValid=False\nCurrentSite5 centre=(975.81, 0.01, 642.67) origin=(974, 640) nativeValid=False\nRing24Angle0 centre=(953.97, 0.01, 659.64) origin=(952, 657) nativeValid=False\nRing24Angle45 centre=(946.14, 0.01, 676.26) origin=(945, 674) nativeValid=False\nRing24Angle90 centre=(928.86, 0.01, 682.47) origin=(927, 680) nativeValid=True\nRing24Angle135 centre=(912.24, 0.01, 674.64) origin=(911, 672) nativeValid=False\nRing24Angle180 centre=(906.03, 0.01, 657.36) origin=(905, 655) nativeValid=False\nRing24Angle225 centre=(913.86, 0.01, 640.74) origin=(912, 638) nativeValid=False\nRing24Angle270 centre=(931.14, 0.01, 634.53) origin=(930, 632) nativeValid=False\nRing24Angle315 centre=(947.76, 0.01, 642.36) origin=(946, 640) nativeValid=False\nRing32Angle0 centre=(961.96, 0.01, 660.03) origin=(960, 658) nativeValid=False\nRing32Angle45 centre=(951.52, 0.01, 682.18) origin=(950, 680) nativeValid=False\nRing32Angle90 centre=(928.47, 0.01, 690.46) origin=(927, 688) nativeValid=True\nRing32Angle135 centre=(906.32, 0.01, 680.02) origin=(905, 678) nativeValid=False\nRing32Angle180 centre=(898.04, 0.01, 656.97) origin=(897, 654) nativeValid=False\nRing32Angle225 centre=(908.48, 0.01, 634.82) origin=(907, 632) nativeValid=True\nRing32Angle270 centre=(931.53, 0.01, 626.54) origin=(930, 624) nativeValid=False\nRing32Angle315 centre=(953.68, 0.01, 636.98) origin=(952, 634) nativeValid=False\nRing40Angle0 centre=(969.95, 0.01, 660.41) origin=(968, 658) nativeValid=True\nRing40Angle45 centre=(956.90, 0.01, 688.10) origin=(955, 686) nativeValid=False\nRing40Angle90 centre=(928.09, 0.01, 698.45) origin=(927, 696) nativeValid=True\nRing40Angle135 centre=(900.40, 0.01, 685.40) origin=(899, 683) nativeValid=True\nRing40Angle180 centre=(890.05, 0.01, 656.59) origin=(889, 654) nativeValid=True\nRing40Angle225 centre=(903.10, 0.01, 628.90) origin=(902, 626) nativeValid=False\nRing40Angle270 centre=(931.91, 0.01, 618.55) origin=(930, 616) nativeValid=False\nRing40Angle315 centre=(959.60, 0.01, 631.60) origin=(958, 629) nativeValid=False"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

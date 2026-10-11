@@ -1,0 +1,1545 @@
+{
+  "scope": "Offline native891 actor and public-input evidence analysis; not planner-accessible information, no native mutation",
+  "sourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "outcome": {
+    "elapsed": 134.425,
+    "phase": "Finished",
+    "outcome": "Defeat",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 134.425,
+    "clockPaused": 1,
+    "playerBaseHp": -1,
+    "enemyBaseHp": 800,
+    "playerUnits": 23,
+    "pathRequests": 1,
+    "pathFollowing": 19,
+    "leadX": 921.395,
+    "leadZ": 605.066
+  },
+  "defenseConstructionAttempts": [
+    {
+      "elapsed": 30.513324737548828,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 5
+    },
+    {
+      "elapsed": 32.52510070800781,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 5
+    },
+    {
+      "elapsed": 34.531219482421875,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 6
+    },
+    {
+      "elapsed": 36.5537223815918,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 7
+    },
+    {
+      "elapsed": 38.58204650878906,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 7
+    },
+    {
+      "elapsed": 40.586605072021484,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 8
+    },
+    {
+      "elapsed": 42.58222198486328,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 10
+    },
+    {
+      "elapsed": 44.58720397949219,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 11
+    },
+    {
+      "elapsed": 46.623191833496094,
+      "intent": "BuildDefense",
+      "materials": 380,
+      "infantry": 16,
+      "actions": 12
+    }
+  ],
+  "defenseMaterialsObservedUnchanged": true,
+  "nearHomeEnemySamples": [
+    {
+      "elapsed": 82.8,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 97.6,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1029.6986083984375,
+            "y": 0.02497309073805809,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 94.2,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1027.75,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 96.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1030.3944091796875,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 84.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 89.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1021.6605834960938,
+            "y": 6.128110885620117,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 86.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1019.7120361328125,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 88.9,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1022.3565673828125,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 86.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 82.1,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1013.6195068359375,
+            "y": 6.1872029304504395,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 78.4,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1011.6709594726562,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 81.0,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1014.3154907226562,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 92.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1026.3304443359375,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 88.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 74.4,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1005.5953979492188,
+            "y": 6.2698187828063965,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 70.6,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1003.6468505859375,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 73.2,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1006.2913818359375,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 84.9,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1018.3062744140625,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 90.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 66.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 997.54443359375,
+            "y": 0.02497309073805809,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 62.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 995.5958862304688,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 65.4,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 998.2404174804688,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 77.0,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1010.2553100585938,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 92.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 59.4,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 989.5501708984375,
+            "y": 0.02497309073805809,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 55.1,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 987.6016235351562,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 57.7,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 990.2461547851562,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 69.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 1002.2610473632812,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 94.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 61.5,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 994.2012329101562,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 52.3,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5816040039062,
+            "y": 3.9677042961120605,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5074462890625,
+            "y": 3.989220380783081,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 54.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.3496704101562,
+            "y": 4.890134334564209,
+            "z": 673.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 96.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 53.7,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 986.14013671875,
+            "y": 3.990272283554077,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 52.3,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5816040039062,
+            "y": 3.9677042961120605,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5074462890625,
+            "y": 3.989220380783081,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 54.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.3496704101562,
+            "y": 4.890134334564209,
+            "z": 673.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 98.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 52.3,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5816040039062,
+            "y": 3.9677042961120605,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5074462890625,
+            "y": 3.989220380783081,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 54.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.3496704101562,
+            "y": 4.890134334564209,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.491455078125,
+            "y": 3.997880697250366,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 100.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 52.3,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5816040039062,
+            "y": 3.9677042961120605,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.5074462890625,
+            "y": 3.989220380783081,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 54.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.3496704101562,
+            "y": 4.890134334564209,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 52.2,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 984.491455078125,
+            "y": 3.997880697250366,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 102.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 47.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 979.3011474609375,
+            "y": 4.00551700592041,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 47.2,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 979.2269897460938,
+            "y": 3.996461868286133,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 47.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 979.289306640625,
+            "y": 4.004063606262207,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 50.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 979.4481811523438,
+            "y": 4.930416584014893,
+            "z": 673.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 104.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 39.9,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 971.2943115234375,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 39.8,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 971.2201538085938,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 39.9,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 971.282470703125,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 43.4,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 971.4413452148438,
+            "y": 0.02497309073805809,
+            "z": 673.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 106.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 36.9,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 963.446533203125,
+            "y": 0.02497309073805809,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 37.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 969.06396484375,
+            "y": -0.00695209763944149,
+            "z": 666.06396484375
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 37.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 969.0556030273438,
+            "y": -0.00695209763944149,
+            "z": 666.0556030273438
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 37.6,
+          "health": 78.0,
+          "engaged": true,
+          "position": {
+            "x": 969.0115966796875,
+            "y": -0.00695209763944149,
+            "z": 666.0115966796875
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 108.9,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 38.1,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 969.3126220703125,
+            "y": 0.010001877322793007,
+            "z": 666.4712524414062
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 38.2,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 969.4832763671875,
+            "y": 0.010001877322793007,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 36.8,
+          "health": 74.0,
+          "engaged": true,
+          "position": {
+            "x": 963.3385620117188,
+            "y": -0.00695209763944149,
+            "z": 673.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 38.0,
+          "health": 54.0,
+          "engaged": false,
+          "position": {
+            "x": 969.347900390625,
+            "y": 0.02497309073805809,
+            "z": 666.347900390625
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 111.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 36.4,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 967.4324951171875,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 36.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 967.08642578125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 36.3,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 967.3182373046875,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 36.8,
+          "health": 42.0,
+          "engaged": true,
+          "position": {
+            "x": 963.3385620117188,
+            "y": -0.00695209763944149,
+            "z": 673.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 113.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 33.7,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 964.3983154296875,
+            "y": 0.010001877322793007,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 34.0,
+          "health": 54.0,
+          "engaged": false,
+          "position": {
+            "x": 964.702392578125,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 34.3,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 965.0198974609375,
+            "y": 0.02497309073805809,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 34.3,
+          "health": 26.0,
+          "engaged": false,
+          "position": {
+            "x": 961.629150390625,
+            "y": 0.010001877322793007,
+            "z": 671.629150390625
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 115.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 29.4,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 959.3145751953125,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 29.2,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 959.1043090820312,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 29.0,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 958.8945922851562,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 31.6,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 959.098388671875,
+            "y": -0.00695209763944149,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 117.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 29.4,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 959.3145751953125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 29.2,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 959.1043090820312,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 29.0,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 958.8945922851562,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 31.6,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 959.098388671875,
+            "y": -0.00695209763944149,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 119.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 29.4,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 959.3145751953125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 29.2,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 959.1043090820312,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 29.0,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 958.8945922851562,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 31.6,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 959.098388671875,
+            "y": -0.00695209763944149,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 121.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 29.4,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 959.3145751953125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 29.2,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 959.1043090820312,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 29.0,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 958.8945922851562,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 31.6,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 959.098388671875,
+            "y": -0.00695209763944149,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 123.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 28.0,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 957.6663208007812,
+            "y": 0.010001877322793007,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 30.8,
+          "health": 26.0,
+          "engaged": false,
+          "position": {
+            "x": 958.029296875,
+            "y": 0.010001877322793007,
+            "z": 670.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 27.6,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 957.0961303710938,
+            "y": 0.010001877322793007,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 28.3,
+          "health": 54.0,
+          "engaged": false,
+          "position": {
+            "x": 958.0296020507812,
+            "y": 0.010001877322793007,
+            "z": 666.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 125.0,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.009795952588319778,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.10909337550401688,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 127.1,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 129.1,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 131.1,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 133.1,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": true,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": true,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": true,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        }
+      ]
+    },
+    {
+      "elapsed": 134.4,
+      "visibleTechnicalActorObservation": [
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": false,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": false,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.3",
+          "role": "Rocketeer",
+          "distance": 24.1,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 952.50439453125,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.1",
+          "role": "Rocketeer",
+          "distance": 23.7,
+          "health": 90.0,
+          "engaged": false,
+          "position": {
+            "x": 952.0758056640625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.0",
+          "role": "Rocketeer",
+          "distance": 24.0,
+          "health": 54.0,
+          "engaged": false,
+          "position": {
+            "x": 952.4390869140625,
+            "y": -0.00695209763944149,
+            "z": 666.5
+          }
+        },
+        {
+          "id": "role.rocketeer.2.5.2",
+          "role": "Rocketeer",
+          "distance": 25.7,
+          "health": 26.0,
+          "engaged": false,
+          "position": {
+            "x": 950.489501953125,
+            "y": 0.09213227778673172,
+            "z": 670.5
+          }
+        }
+      ]
+    }
+  ],
+  "hypothesis": "Inspect legal visible defensive placement coverage and response to public home threats; do not change enemy resources or normal-input outcomes",
+  "certifiesReadiness": false
+}

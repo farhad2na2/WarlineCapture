@@ -1,0 +1,11 @@
+{
+  "scope": "Offline closure script assertion; no game/project source changes",
+  "observedWrapper": 1,
+  "observedBridge": 1,
+  "incorrectExpected": 2,
+  "correctExpected": 1,
+  "reason": "Existing Editor bridge and repository wrapper normalize unsuccessful native validation to1; native normal Defeat remains failed counted-win evidence",
+  "originalErrors": [
+    "Wrapper/bridge outcome mismatch"
+  ]
+}

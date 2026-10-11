@@ -1,0 +1,18 @@
+{
+  "scope": "Only task-owned Python queue runner",
+  "pid": 9575,
+  "command": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python /private/tmp/s005-run-matrix-903.py",
+  "signal": "SIGSTOP",
+  "currentNativeMissionContinues": true,
+  "unityAndWrapperProcessesStopped": false,
+  "reason": "Prevent next queued source-51d7 run from starting while preserving current normal-input Persian mission. Native placement census is unavailable on legacy non-expanded screens; repair pending after current source closure.",
+  "queueDiscardedAfterCurrentWrapperExit": 0,
+  "onlyPythonRunnerTerminated": true,
+  "currentNativeMissionCompleted": true,
+  "remainingSource51RunsNotLaunched": [
+    904,
+    905,
+    906,
+    907
+  ]
+}

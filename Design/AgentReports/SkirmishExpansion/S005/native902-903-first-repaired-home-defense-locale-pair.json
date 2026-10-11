@@ -1,0 +1,30 @@
+{
+  "result": "PassedEnglishPersianOnRecordedSource",
+  "runs": [
+    {
+      "proof": "native902-current-fresh-aria-en-seed104734-victory.json",
+      "locale": "en",
+      "seed": 104734,
+      "elapsed": 227.562,
+      "playerBaseHp": 800,
+      "actualWrapperExit": 0,
+      "allContactsEnded": true,
+      "contacts": 73,
+      "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d"
+    },
+    {
+      "proof": "native903-current-fresh-aria-fa-IR-seed104734-victory.json",
+      "locale": "fa-IR",
+      "seed": 104734,
+      "elapsed": 233.034,
+      "playerBaseHp": 800,
+      "actualWrapperExit": 0,
+      "allContactsEnded": true,
+      "contacts": 73,
+      "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d"
+    }
+  ],
+  "completeMatrix": false,
+  "countsOnLaterSource": false,
+  "note": "Both normal-input victories preceded the legacy-only compatibility guard. Native908 focused checks and a fresh full current-source matrix follow; these wins remain pinned to source51d7."
+}

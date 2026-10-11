@@ -1,0 +1,9 @@
+{
+  "result": "NotLaunched",
+  "actualWrapperExit": 65,
+  "reason": "Wrapper ran inside filesystem/process sandbox; process-list access was denied, so Hub check produced a false closed result. Unsandboxed read-only process verification confirms existing Hub PID629 and Editor PID23352. Retrying the same checked wrapper with required process/IPC access.",
+  "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d",
+  "normalMissionProof": false,
+  "compileAndFocusedChecksPending": true,
+  "hubActuallyClosed": false
+}

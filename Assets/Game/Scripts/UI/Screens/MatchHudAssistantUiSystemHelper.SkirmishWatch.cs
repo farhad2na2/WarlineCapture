@@ -183,19 +183,25 @@ namespace Game.UI.Runtime
                     view.UpgradeReadiness = view.DrawerOpen ? ObserveWatchButton(watchBuild?.ReadinessButton) : openBuild;
                 }
             }
-            // The defense card can sit below the drawer viewport at wide aspect
-            // ratios. Publish the visible scroll gesture before its button tap.
-            view.DefenseBuild = ObserveScrollableButton(
-                _highlightPresentationSystem.ResolveBuildTutorialControl(true, true, out _));
+            // Skirmish defense plans place firing towers on ordinary ground.
+            // The Campaign lesson prefers a road barrier, whose placement rules
+            // do not match those sites. Resolve the tower's actual catalog controls,
+            // including category changes and scrolling, without changing that lesson.
+            if (watchCatalog == null) watchCatalog = Object.FindAnyObjectByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include);
+            view.DefenseBuild = !model.Expanded
+                ? ObserveWatchButton(_highlightPresentationSystem.ResolveBuildTutorialControl(true, true, out _))
+                : view.DrawerOpen
+                    ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_GuardTower")
+                    : ObserveWatchButton(_commandControlsView?.BuildButton);
             if (watchPlacement == null) watchPlacement = Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             view.PlacementOpen = watchPlacement != null && watchPlacement.HasPendingPlacement;
             if (view.PlacementOpen)
             {
                 view.PlacementConfirm = ObserveWatchButton(watchPlacement.ConfirmButton);
                 view.PlacementCancel = ObserveWatchButton(watchPlacement.CancelButton);
-                view.Site0 = ObserveDefenseSite(0); view.Site1 = ObserveDefenseSite(1);
-                view.Site2 = ObserveDefenseSite(2); view.Site3 = ObserveDefenseSite(3);
-                view.Site4 = ObserveDefenseSite(4); view.Site5 = ObserveDefenseSite(5);
+                view.Site0 = ObserveDefenseSite(0, view.ExpandedSession); view.Site1 = ObserveDefenseSite(1, view.ExpandedSession);
+                view.Site2 = ObserveDefenseSite(2, view.ExpandedSession); view.Site3 = ObserveDefenseSite(3, view.ExpandedSession);
+                view.Site4 = ObserveDefenseSite(4, view.ExpandedSession); view.Site5 = ObserveDefenseSite(5, view.ExpandedSession);
                 view.PadSite0 = ObserveHomePadSite(0); view.PadSite1 = ObserveHomePadSite(1);
                 view.PadSite2 = ObserveHomePadSite(2); view.PadSite3 = ObserveHomePadSite(3);
             }
@@ -222,12 +228,25 @@ namespace Game.UI.Runtime
             }
             return value;
         }
-        private AriaTouchTarget ObserveDefenseSite(int index)
+        private AriaTouchTarget ObserveDefenseSite(int index, bool expanded)
         {
             if (watchSkirmish == null || Camera.main == null) return default;
             var forward = watchSkirmish.EnemyBaseObjectivePosition - watchSkirmish.PlayerBaseObjectivePosition;
             forward.y = 0; forward.Normalize(); var side = new Vector3(-forward.z, 0, forward.x);
-            var world = watchSkirmish.PlayerBaseObjectivePosition + forward * (25 + index / 2 * 10) + side * (index % 2 == 0 ? 18 : -18);
+            // Search beside and behind home as well as the front. Dense Campaign
+            // streets can block every forward site. Native preview/confirm stays
+            // authoritative; these points are only ordinary visible touch targets.
+            Vector3 offset = index switch
+            {
+                0 => side * 24f,
+                1 => -(forward + side) * 22.6274f,
+                2 => -forward * 40f,
+                3 => (-forward + side) * 28.2843f,
+                4 => side * 40f,
+                _ => forward * 40f
+            };
+            var world = watchSkirmish.PlayerBaseObjectivePosition + (expanded ? offset :
+                forward * (25 + index / 2 * 10) + side * (index % 2 == 0 ? 18 : -18));
             var point = Camera.main.WorldToScreenPoint(world);
             return new AriaTouchTarget { Id = -20100 - index, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20100 - index, true) };
@@ -453,7 +472,8 @@ namespace Game.UI.Runtime
             int frontCount = Mathf.Min(4, friendlies);
             for (int i = 0; i < frontCount; i++) armyCenter += watchFront[i];
             armyCenter /= frontCount;
-            MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default;
+            MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
+            float homeDistance = 120f * 120f;
             float trackedDistance = 12 * 12;
             foreach (var enemy in watchMap.PresentedContacts)
             {
@@ -463,6 +483,11 @@ namespace Game.UI.Runtime
                 var groundPoint = Camera.main.WorldToScreenPoint(enemy.Model.Position);
                 if (watchSkirmish != null && watchSkirmish.EnemyBaseObjectiveAlive &&
                     ((Vector2)groundPoint - watchSkirmish.VisibleEnemyBasePoint).sqrMagnitude < 1) continue;
+                if (watchSkirmish != null)
+                {
+                    float distance = (enemy.Model.Position - watchSkirmish.PlayerBaseObjectivePosition).sqrMagnitude;
+                    if (distance < homeDistance) { homeDistance = distance; homeThreat = enemy; }
+                }
                 float nearest = (enemy.Model.Position - armyCenter).sqrMagnitude;
                 float continuity = (enemy.Model.Position - watchThreatPosition).sqrMagnitude;
                 if (watchThreatTracked && nearest <= 90 * 90 && continuity < trackedDistance)
@@ -480,6 +505,10 @@ namespace Game.UI.Runtime
             // Reacquire spatially when markers are pooled; no hidden entity identity
             // or world order crosses into the touch planner.
             if (tracked.Marker != null) chosen = tracked;
+            // A displayed contact threatening our labelled home takes priority
+            // over the outgoing column. Only presented minimap contacts are read.
+            view.PresentedHomeThreat = homeThreat.Marker != null;
+            if (view.PresentedHomeThreat) chosen = homeThreat;
             watchThreatTracked = chosen.Marker != null;
             if (watchThreatTracked) watchThreatPosition = chosen.Model.Position;
             if (chosen.Marker == null || watchRaycast == null || UnityEngine.EventSystems.EventSystem.current == null) return;
@@ -510,7 +539,7 @@ namespace Game.UI.Runtime
             view.ThreatNearForce = (chosen.Model.Position - armyCenter).sqrMagnitude <= 60 * 60;
             var point = Camera.main.WorldToScreenPoint(chosen.Model.Position + Vector3.up);
             bool onScreen = point.z > 0 && point.x > 0 && point.y > 0 && point.x < Screen.width && point.y < Screen.height;
-            view.ThreatGround = ObserveClearAttackGround(chosen.Model.Position, armyCenter - chosen.Model.Position, -20006, 35);
+            view.ThreatGround = ObserveClearAttackGround(chosen.Model.Position, armyCenter - chosen.Model.Position, -20006, view.PresentedHomeThreat ? 18f : 35f);
             view.Threat = new AriaTouchTarget { Id = -20002, Position = point, Available = onScreen && WatchTargetIsReachable(point, -20002, true) };
         }
 

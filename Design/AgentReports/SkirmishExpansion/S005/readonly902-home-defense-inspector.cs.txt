@@ -1,0 +1,10 @@
+using Unity.Entities;
+using Game.UI.Shell.Contracts.Ecs;
+public class S005ReadOnlyHomeDefense902 {
+ public static object Run(){
+  var em=World.DefaultGameObjectInjectionWorld.EntityManager;
+  using var q=em.CreateEntityQuery(typeof(AriaSkirmishObservationComponent),typeof(AriaSkirmishPlanComponent));
+  var e=q.GetSingletonEntity();var v=em.GetComponentData<AriaSkirmishObservationComponent>(e).Value;var p=em.GetComponentData<AriaSkirmishPlanComponent>(e);
+  return new {scope="ReadOnlyPresentedHomeDefense",v.Time,v.PresentedHomeThreat,v.OwnDefenseTowers,v.OwnMaterials,v.Infantry,v.PlayerHealth,v.EnemyHealth,p.DefenseStage,p.DefensesPlaced,p.DefenseSite,p.HomeDefenseStage,p.HomeDefensePage,p.AssaultIssued,threat=v.Threat.Available,ground=v.ThreatGround.Available,p.Intent};
+ }
+}

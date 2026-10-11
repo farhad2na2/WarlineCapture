@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-901-public-home-defense-pre-source-manifest.json",
+  "postSourceManifest": "final-901-public-home-defense-focused-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "tests-901-public-home-defense.log",
+  "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

@@ -1,0 +1,33 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var catalog=UnityEngine.Object.FindAnyObjectByType<Game.UI.Runtime.BuildDrawerCatalogRuntimeView>(UnityEngine.FindObjectsInactive.Include); string key=null,producer=null;int cost=0;Game.UI.Contracts.BuildingUiCommandFailure failure=default; bool selected=catalog!=null && catalog.TryReadSelectedRequest(out key,out cost,out failure,out producer);var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;using var q=em.CreateEntityQuery(typeof(Game.Components.RuntimeBuildingCombatInfo),typeof(Game.Components.UnitSourcePrefabKey));using var es=q.ToEntityArray(Unity.Collections.Allocator.Temp);var towers=new System.Collections.Generic.List<int>();foreach(var e in es){var b=em.GetComponentData<Game.Components.RuntimeBuildingCombatInfo>(e);if(b.OwnerFactionId==1 && em.GetComponentData<Game.Components.UnitSourcePrefabKey>(e).Value.ToString()==\"Building_GuardTower\")towers.Add(b.RuntimeBuildingId);}return new {scope=\"ReadOnlyOwnDefenseUi\",selected,key,cost,failure=failure.ToString(),towers};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyOwnDefenseUi",
+        "selected": true,
+        "key": "Unit_Veh_Truck_Tanker",
+        "cost": 140,
+        "failure": "None",
+        "towers": [
+          13
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -347,6 +347,7 @@ namespace Game.UI.Shell.Ecs
                 // Only attempt construction when its normal visible controls exist.
                 if (!view.DefenseBuild.Available || !view.FocusPlayer.Available)
                 { plan.DefenseStage = 4; return false; }
+                plan.DefensesPlaced = view.OwnDefenseTowers;
                 plan.DefenseStage = 1; plan.DefenseActions = touch.Actions;
                 plan.DefenseDeadline = view.Time + 75;
             }
@@ -368,7 +369,14 @@ namespace Game.UI.Shell.Ecs
             {
                 if (view.PlacementOpen) { Target(view.PlacementConfirm, false, ref output); return true; }
                 if (touch.Actions <= plan.DefenseActions) return true;
-                plan.DefensesPlaced++;
+                // A completed tap alone is not a purchased firing tower. Wait for
+                // the public own-building census before advancing construction.
+                if (view.ExpandedSession)
+                {
+                    if (view.OwnDefenseTowers <= plan.DefensesPlaced) return true;
+                    plan.DefensesPlaced = view.OwnDefenseTowers;
+                }
+                else plan.DefensesPlaced++; // Legacy observations have no building census.
                 plan.DefensePositioned = 0; plan.DefenseSite++;
                 if (plan.DefensesPlaced < 2) { plan.DefenseStage = 2; plan.DefenseReadyAt = view.Time + 1; }
                 else { plan.DefenseStage = 4; plan.OpeningUntil = view.Time + 180; plan.Intent = AriaSkirmishIntent.Recruit; return false; }
@@ -611,6 +619,7 @@ namespace Game.UI.Shell.Ecs
                 touch.GestureRequested = 0;
                 return;
             }
+            if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
             // An air-capable starting force cannot leave its base undefended.
             // Reuse the visible, bounded construction sequence used by legacy
             // skirmishes after the first reinforcement squad arrives.
@@ -829,6 +838,95 @@ namespace Game.UI.Shell.Ecs
             }
             plan.Intent = AriaSkirmishIntent.Inspect;
             output.Kind = AriaPlayObservationKind.Waiting;
+        }
+
+        private static bool StepPresentedHomeDefense(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            if (!view.PresentedHomeThreat)
+            {
+                if (plan.HomeDefenseStage != 0)
+                {
+                    plan.HomeDefenseStage = 0;
+                    // Defensive orders do not prove the enemy-base sweep was issued.
+                    plan.AssaultIssued = plan.PagedToAssault = plan.AssaultSelecting = plan.StructureOrdered = 0;
+                    plan.PagesOrdered = plan.AssaultPageSeen = 0;
+                }
+                return false;
+            }
+            plan.Intent = AriaSkirmishIntent.DefendBase;
+            // Finish through the same player controls before selecting defenders.
+            if (view.PlacementOpen) { Target(view.PlacementCancel, false, ref output); return true; }
+            if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
+            if (view.MapOpen) { Target(view.CloseMap, false, ref output); return true; }
+            if (plan.HomeDefenseStage == 0)
+            {
+                if (!view.FocusPlayer.Available) return true;
+                plan.DefenseStage = 4;
+                plan.HomeDefenseAction = touch.Actions;
+                plan.HomeDefenseStage = 1;
+                Target(view.FocusPlayer, false, ref output);
+                return true;
+            }
+            if (plan.HomeDefenseStage == 1)
+            {
+                if (touch.Actions <= plan.HomeDefenseAction)
+                { Target(view.FocusPlayer, false, ref output); return true; }
+                if (view.ExpandedPageIndex > 0)
+                { Target(view.PreviousSquadPage, false, ref output); return true; }
+                plan.HomeDefenseStage = 2;
+            }
+            if (plan.HomeDefenseStage == 2)
+            {
+                if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
+                { Target(view.ClearSquadSelection, false, ref output); return true; }
+                plan.HomeDefenseStage = 3;
+            }
+            if (plan.HomeDefenseStage == 3)
+            {
+                int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
+                if (pending != 0)
+                { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
+                plan.HomeDefenseStage = view.ExpandedAssaultMask == 0 ? 6 : 4;
+            }
+            if (plan.HomeDefenseStage == 4)
+            {
+                if (!view.AttackMode) { Target(view.Attack, false, ref output); return true; }
+                var threat = view.ThreatGround.Available ? view.ThreatGround : view.Threat;
+                if (!threat.Available) { Target(view.FocusPlayer, false, ref output); return true; }
+                plan.HomeDefenseAction = touch.Actions;
+                plan.HomeDefenseStage = 5;
+                Target(threat, true, ref output);
+                return true;
+            }
+            if (plan.HomeDefenseStage == 5)
+            {
+                if (touch.Actions <= plan.HomeDefenseAction || view.AttackMode)
+                { Target(view.ThreatGround.Available ? view.ThreatGround : view.Threat, true, ref output); return true; }
+                plan.HomeDefenseStage = 6;
+            }
+            if (plan.HomeDefenseStage == 6)
+            {
+                if (view.NextSquadPage.Available)
+                {
+                    plan.HomeDefensePage = view.ExpandedPageIndex;
+                    plan.HomeDefenseStage = 7;
+                    Target(view.NextSquadPage, false, ref output);
+                    return true;
+                }
+                plan.HomeDefenseObserveUntil = view.Time + 8f;
+                plan.HomeDefenseStage = 8;
+            }
+            if (plan.HomeDefenseStage == 7)
+            {
+                if (view.ExpandedPageIndex == plan.HomeDefensePage)
+                    Target(view.NextSquadPage, false, ref output);
+                else plan.HomeDefenseStage = 2;
+                return true;
+            }
+            if (view.Time >= plan.HomeDefenseObserveUntil) plan.HomeDefenseStage = 0;
+            return true;
         }
 
         private static bool StepAircraftCycle(in AriaSkirmishObservation view,

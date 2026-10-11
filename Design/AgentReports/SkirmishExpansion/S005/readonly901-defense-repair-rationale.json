@@ -1,0 +1,30 @@
+{
+  "previousCandidateSource": "c8e3d3acfa65060a31a87ab60f188e99aa7a91423f4fbbcc2cf9bee8a9ded783",
+  "failedRuns": [
+    {
+      "proof": "native895-current-fresh-aria-en-seed104734-failure.json",
+      "outcome": "Defeat",
+      "seconds": 134.017,
+      "contacts": 62,
+      "nativeJourney": true
+    },
+    {
+      "proof": "native896-current-fresh-aria-fa-IR-seed104734-failure.json",
+      "outcome": "Defeat",
+      "seconds": 134.243,
+      "contacts": 62,
+      "nativeJourney": true
+    },
+    {
+      "proof": "native897-current-fresh-aria-en-seed130368-failure.json",
+      "outcome": "Defeat",
+      "seconds": 136.04,
+      "contacts": 62,
+      "nativeJourney": true
+    }
+  ],
+  "diagnosis": "Forward ordinary-ground search exhausted without a paid tower purchase; existing tower census was misattributed. Expanded ARIA did not respond to the opening raid at home.",
+  "readOnlyPlacementProof": "readonly897-native-defense-screen-placement-observation.json",
+  "newSource": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d",
+  "normalInputValidationPending": true
+}

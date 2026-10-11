@@ -3,8 +3,8 @@
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
-  "sourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
-  "sourceFingerprint": "final-890-four-oil-opening-pre-independent-fingerprint.json",
+  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "sourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
   "physicalSource": "Existing Campaign dense city",
   "physicalSourceSceneSha256": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
   "visualReview": "Owner deferred until technically ready",
@@ -13,7 +13,7 @@
   "activeLog": null,
   "activeScope": null,
   "activePreManifest": null,
-  "currentCompilationProof": "compile-890-four-oil-opening-status.json",
+  "currentCompilationProof": "compile-908-legacy-defense-compatibility-status.json",
   "shippingRuntimeCommit": "0b1fd7401",
   "currentNativeVictories": [],
   "currentAriaBaselineMatrix": null,
@@ -21,9 +21,10 @@
   "currentOilSupplyCycleProof": "native882-oil-supply-cycle-shared-regressions-pass.json",
   "currentOilSupplyCycleProofApplicability": {
     "exactWholeSourceEquivalent": false,
-    "shippingRuntimeEquivalent": true,
-    "delta": "source-delta-890-editor-only-four-oil-opening.json",
-    "note": "Editor-only changes since shipping runtime0b1fd7401; native882 remains shipping-runtime equivalent, not exact whole-source equivalent."
+    "shippingRuntimeEquivalent": false,
+    "validatedSubsystemEquivalent": true,
+    "delta": "source-delta-908-legacy-defense-compatibility.json",
+    "note": "Scoped recorded source proof retained; native flight/return/fuel/Oil/production/map code unchanged by shared ARIA UI/contract/planner changes. Full mission refresh required."
   },
   "currentFixedWingCycleProof": "native890-normal-paid-strike-cycle-scoped-pass.json",
   "aircraftCycleStatus": "Native890 passed paid Strike production, native fire, accepted Return, home touchdown, physical Fuel delivery, refuel and second airborne sortie before fixed1080-second deadline. Second return, bilateral capacity and full mission remain pending.",
@@ -35,7 +36,7 @@
     "native887-existing-source-map-lookup-failure.json"
   ],
   "pending": [
-    "Remaining aircraft roles, second home return and mid-taxi Save/Continue",
+    "Remaining enabled aircraft-role lifecycles and recovery during taxi/flight",
     "Bilateral aircraft parking/taxi/launch/return and full profile capacity",
     "Every enabled role X37 lifecycle",
     "Fresh normal-input EN/FA manual and ARIA journeys; result and return",
@@ -43,10 +44,72 @@
     "Affected Campaign M1-M5 regressions and family/stress/cleanup/performance gates",
     "Owner native visual review and real player/device acceptance"
   ],
-  "nextWork": "Fresh normal-input complete S005 EN/FA ARIA and manual journeys; remaining aircraft/recovery/all-role and bilateral capacity; affected Campaign/family regressions.",
+  "nextWork": "Focused legacy/expanded ARIA tests, then complete current-source three-seed EN/FA matrix.",
   "historicalReport": "technical-readiness-history-before-native889.json",
   "qualificationStrategy": "Four paid/starting Oil trucks and two Tankers for aircraft funding; existing paid transition to two Oil/four Tankers. Same support cap6, normal prices, rates, reserve and1080-second match.",
-  "nextNativeRun": null,
-  "currentSourceFingerprint": "final-890-resumed-paid-cycle-closed-post-independent-fingerprint.json",
-  "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json"
+  "nextNativeRun": {
+    "status": "Pending",
+    "scope": "Normal input qualification on current frozen source"
+  },
+  "currentSourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
+  "latestAircraftProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
+  "currentFreshAriaSeedProofs": [],
+  "latestFreshAriaFailure": "native897-current-fresh-aria-en-seed130368-failure.json",
+  "currentFailedAriaBaseline": "native895-897-aria-baseline-aborted-threshold-failure.json",
+  "latestPreviousCandidateAriaProofs": [
+    "native902-current-fresh-aria-en-seed104734-victory.json",
+    "native903-current-fresh-aria-fa-IR-seed104734-victory.json"
+  ],
+  "currentFixedWingCycleApplicability": {
+    "exactWholeSourceEquivalent": false,
+    "nativeAircraftSubsystemEquivalent": true,
+    "delta": "source-delta-908-legacy-defense-compatibility.json",
+    "note": "Scoped recorded source proof retained; native flight/return/fuel/Oil/production/map code unchanged by shared ARIA UI/contract/planner changes. Full mission refresh required."
+  },
+  "focusedNative894": {
+    "result": "Passed",
+    "sourceHash": "c8e3d3acfa65060a31a87ab60f188e99aa7a91423f4fbbcc2cf9bee8a9ded783",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-894-defense-tower-pre-source-manifest.json",
+    "postSourceManifest": "final-894-defense-tower-focused-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "tests-894-shared-aria-defense-tower.log",
+    "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "focusedNative901": {
+    "result": "Passed",
+    "sourceHash": "51d7189bbf8a77f790d3f61ff25fb69a381c4bbefe4dd8ba9581a09932f3983d",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-901-public-home-defense-pre-source-manifest.json",
+    "postSourceManifest": "final-901-public-home-defense-focused-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "tests-901-public-home-defense.log",
+    "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  },
+  "towerObservation895Correction": "Native read-only census found an own existing tower; full input/materials trace confirms canceled placement without a paid tower purchase. Initial progress attribution was incorrect.",
+  "focusedNative908": {
+    "result": "Passed",
+    "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+    "sourceUnchanged": true,
+    "preSourceManifest": "final-908-legacy-defense-compatibility-pre-source-manifest.json",
+    "postSourceManifest": "final-908-legacy-defense-compatibility-focused-post-source-manifest.json",
+    "wrapperExitCode": 0,
+    "log": "tests-908-legacy-defense-compatibility.log",
+    "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+    "requiredPassMarkerPresent": true,
+    "compilerErrors": [],
+    "playerReady": false,
+    "nativeMatchCount": 0,
+    "cleanupWarnings": []
+  }
 }

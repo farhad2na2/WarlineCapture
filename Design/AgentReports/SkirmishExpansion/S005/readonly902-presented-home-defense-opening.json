@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005ReadOnlyHomeDefense902.cs",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 252,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005ReadOnlyHomeDefense902_6d76ef36e5df4160849c0c39c8f7058f",
+      "success": true,
+      "result": {
+        "scope": "ReadOnlyPresentedHomeDefense",
+        "Time": 84.53324,
+        "PresentedHomeThreat": false,
+        "OwnDefenseTowers": 2,
+        "OwnMaterials": 240,
+        "Infantry": 16,
+        "PlayerHealth": 800,
+        "EnemyHealth": 800,
+        "DefenseStage": 4,
+        "DefensesPlaced": 2,
+        "DefenseSite": 2,
+        "HomeDefenseStage": 0,
+        "HomeDefensePage": 0,
+        "AssaultIssued": 0,
+        "threat": false,
+        "ground": false,
+        "Intent": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

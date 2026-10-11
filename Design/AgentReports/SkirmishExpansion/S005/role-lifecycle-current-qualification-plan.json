@@ -317,7 +317,7 @@
         "refuel/rearm where supported"
       ],
       "currentSourceCertified": false,
-      "stage": "Current-source scoped paid cycle passed; second return, death/capacity release, bilateral capacity and cleanup remain pending.",
+      "stage": "Scoped paid cycle passed at recorded source; native flight/return/refuel/production subsystem unchanged. Death/capacity release, bilateral capacity and cleanup pending.",
       "historicalInventory": "native359-current-baked-role-census.json",
       "scopedNativeProgress": "native890-normal-paid-strike-cycle-scoped-pass.json",
       "scopedNativeProof": "native890-normal-paid-strike-cycle-scoped-pass.json"
@@ -398,9 +398,9 @@
       "historicalInventory": "native359-current-baked-role-census.json"
     }
   ],
-  "sourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
-  "currentSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
-  "currentSourceFingerprint": "final-890-resumed-paid-cycle-closed-post-independent-fingerprint.json",
+  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "currentSourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "currentSourceFingerprint": "final-908-legacy-defense-compatibility-pre-independent-fingerprint.json",
   "status": "InProgress",
   "technicallyReady": false,
   "playerReady": false,
@@ -414,5 +414,7 @@
   "currentRecoveryStagingCertified": false,
   "airportQualification": "Native769 joint paid same-faction Airport construction is historical. Current bilateral parking/taxi/launch/return and profile capacity remain pending.",
   "latestRetainedAircraftFailure": "native883-normal-paid-strike-cycle-failure.json",
-  "nextWork": "Fresh normal-input complete S005 EN/FA ARIA and manual journeys; remaining aircraft/recovery/all-role and bilateral capacity; affected Campaign/family regressions."
+  "nextWork": "Close native home-defense mission, then EN/FA matrix/manual/recovery and required roster/capacity gates.",
+  "previousSourceHash": "a661093e4bc750255912c2b3ca5de7d1280c41ca2a475df0d8147f7f5a28f3f3",
+  "currentAircraftCycleProofApplicability": "TECHNICAL_READINESS_CURRENT.json:currentFixedWingCycleApplicability"
 }

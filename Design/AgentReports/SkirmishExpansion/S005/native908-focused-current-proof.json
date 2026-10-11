@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "sourceHash": "7118519680c7b620bbfdf5be504333b49ae7bf451fc854b1297d6f105a7363f1",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-908-legacy-defense-compatibility-pre-source-manifest.json",
+  "postSourceManifest": "final-908-legacy-defense-compatibility-focused-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "log": "tests-908-legacy-defense-compatibility.log",
+  "requiredPassMarker": "[SkirmishExpandedAriaTests] result=Passed",
+  "requiredPassMarkerPresent": true,
+  "compilerErrors": [],
+  "playerReady": false,
+  "nativeMatchCount": 0,
+  "cleanupWarnings": []
+}

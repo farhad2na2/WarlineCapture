@@ -1,0 +1,11 @@
+{
+  "result": "Passed",
+  "missions": 25,
+  "imageFilesVerified": 185,
+  "evidenceFilesVerified": 257,
+  "localLinksVerified": 479,
+  "sourceHashChecks": "passed",
+  "normalInputPlaythroughs": 0,
+  "deviceAcceptance": "pending",
+  "scope": "Report integrity and evidence files only"
+}

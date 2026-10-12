@@ -1,0 +1,59 @@
+{
+  "state": "visual_verification_complete_integration_pending",
+  "workspace": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit",
+  "branch": "codex/campaign-visual-audit-20261011",
+  "editorPid": 7486,
+  "pipelinePort": 7803,
+  "activeShellSession": null,
+  "activeLog": null,
+  "activeMethod": "Game.Editor.CampaignVisualAudit20261011.CaptureRemainingCampaignSequence",
+  "remainingSequenceIndices": [
+    15,
+    17,
+    18,
+    19,
+    2,
+    4,
+    5
+  ],
+  "targetedRun04Completed": [
+    0,
+    8,
+    22,
+    23,
+    24,
+    3,
+    7,
+    9
+  ],
+  "packedParity": "Passed",
+  "sourceSha256": "bc250a60f2fb3050c691265273df13a7bea3fa2420fe4bef1a58debad75d2ace",
+  "doNotEditAssetsWhileCaptureRuns": true,
+  "recommendedFinalRefreshIndices": [
+    1,
+    6,
+    10,
+    11,
+    12,
+    13,
+    14,
+    16,
+    20,
+    21
+  ],
+  "integration": "not committed; origin/main website-only new commit 5e69c0e6c; no tracked path overlap with active main agent at last check",
+  "powerRelayReview": "Convoy first-action focus is intentional. Earlier rifle framing concern superseded.",
+  "localIncidentalChanges": [
+    "Assets/Settings/Pipeline/EditorPipelineManager.asset",
+    "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+  ],
+  "acceptance": "full normal-input and Android pending",
+  "guardedFinalRefreshSession": null,
+  "guardedFinalRefresh": "Waits for remaining-native-02.log.exit=0 and 7-capture pass marker, then runs visual-fix-04 indices 1,6,10,11,12,13,14,16,20,21 sequentially. Do not launch duplicate captures.",
+  "remainingSequenceResult": "Passed exit=0 captures=7",
+  "nativeCaptureCoverage": 25,
+  "implementationStaged": true,
+  "allFinalCapturesComplete": true,
+  "finalEvidenceCheck": "Passed",
+  "checkpointUtc": "2026-10-12T17:54:08.737310+00:00"
+}

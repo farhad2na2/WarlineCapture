@@ -1,0 +1,687 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch05.m05.command_node",
+    "activeMissionId": "saga.ch05.m05.command_node",
+    "activeMapId": "opmap.ch05.command_node",
+    "run": "visual-fix-01",
+    "error": "",
+    "missionOutcome": "Defeat",
+    "missionPhase": "Result",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 5860,
+    "roles": [
+        {
+            "role": "role.hostile.node",
+            "group": "group.ch05.m05.node",
+            "position": {
+                "x": 1066.5,
+                "y": 0.695542573928833,
+                "z": 426.5
+            },
+            "openingViewport": {
+                "x": 0.49110785126686098,
+                "y": 0.7166755795478821,
+                "z": 208.0809326171875
+            }
+        },
+        {
+            "role": "role.hostile.exterior",
+            "group": "group.ch05.m05.exterior",
+            "position": {
+                "x": 1152.5,
+                "y": 0.5226160287857056,
+                "z": 426.5
+            },
+            "openingViewport": {
+                "x": 0.7402015924453735,
+                "y": 0.7160746455192566,
+                "z": 208.23069763183595
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 982.5,
+                "y": 0.540722131729126,
+                "z": 426.5
+            },
+            "openingViewport": {
+                "x": 0.24780112504959107,
+                "y": 0.7161375880241394,
+                "z": 208.2150115966797
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 970.5,
+                "y": 0.7519701719284058,
+                "z": 426.5
+            },
+            "openingViewport": {
+                "x": 0.2127896249294281,
+                "y": 0.7168718576431274,
+                "z": 208.0320587158203
+            }
+        },
+        {
+            "role": "role.hostile.qassem",
+            "group": "group.ch05.m05.core",
+            "position": {
+                "x": 1152.5,
+                "y": 0.009179770946502686,
+                "z": 480.5
+            },
+            "openingViewport": {
+                "x": 0.7122328877449036,
+                "y": 0.9025171995162964,
+                "z": 235.67190551757813
+            }
+        },
+        {
+            "role": "role.friendly.engineer",
+            "group": "group.ch05.m05.engineer",
+            "position": {
+                "x": 1006.5,
+                "y": -0.01269199326634407,
+                "z": 330.5
+            },
+            "openingViewport": {
+                "x": 0.2633053958415985,
+                "y": 0.22347180545330048,
+                "z": 160.700439453125
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch05.m05.specialist",
+            "position": {
+                "x": 998.5,
+                "y": -0.10787606984376908,
+                "z": 342.5
+            },
+            "openingViewport": {
+                "x": 0.243007093667984,
+                "y": 0.30006152391433718,
+                "z": 166.78211975097657
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 978.5,
+                "y": 0.5284597277641296,
+                "z": 416.5
+            },
+            "openingViewport": {
+                "x": 0.22973933815956117,
+                "y": 0.6757184267044067,
+                "z": 203.2262725830078
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 976.5,
+                "y": 0.42812827229499819,
+                "z": 417.5
+            },
+            "openingViewport": {
+                "x": 0.2245994210243225,
+                "y": 0.6795047521591187,
+                "z": 203.8131103515625
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 977.5,
+                "y": 0.4271007776260376,
+                "z": 419.5
+            },
+            "openingViewport": {
+                "x": 0.22888967394828797,
+                "y": 0.6876925826072693,
+                "z": 204.81387329101563
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch05.m05.specialist",
+            "position": {
+                "x": 1002.5,
+                "y": -0.2602759599685669,
+                "z": 341.5
+            },
+            "openingViewport": {
+                "x": 0.25693535804748537,
+                "y": 0.2935485541820526,
+                "z": 166.41415405273438
+            }
+        },
+        {
+            "role": "role.hostile.core",
+            "group": "group.ch05.m05.core",
+            "position": {
+                "x": 1131.5,
+                "y": -0.01269199326634407,
+                "z": 458.5
+            },
+            "openingViewport": {
+                "x": 0.666236162185669,
+                "y": 0.8312143087387085,
+                "z": 224.6922607421875
+            }
+        },
+        {
+            "role": "role.hostile.exterior",
+            "group": "group.ch05.m05.exterior",
+            "position": {
+                "x": 1138.5,
+                "y": 0.48561564087867739,
+                "z": 425.5
+            },
+            "openingViewport": {
+                "x": 0.7001018524169922,
+                "y": 0.71199631690979,
+                "z": 207.7628173828125
+            }
+        },
+        {
+            "role": "role.hostile.core",
+            "group": "group.ch05.m05.core",
+            "position": {
+                "x": 1132.5,
+                "y": -0.014069706201553345,
+                "z": 461.5
+            },
+            "openingViewport": {
+                "x": 0.6677992939949036,
+                "y": 0.8413289785385132,
+                "z": 226.19326782226563
+            }
+        },
+        {
+            "role": "role.hostile.core",
+            "group": "group.ch05.m05.core",
+            "position": {
+                "x": 1128.5,
+                "y": -0.009007377550005913,
+                "z": 460.5
+            },
+            "openingViewport": {
+                "x": 0.6574851870536804,
+                "y": 0.8379892706871033,
+                "z": 225.68894958496095
+            }
+        },
+        {
+            "role": "role.hostile.core",
+            "group": "group.ch05.m05.core",
+            "position": {
+                "x": 1130.5,
+                "y": -0.009007377550005913,
+                "z": 458.5
+            },
+            "openingViewport": {
+                "x": 0.6635542511940002,
+                "y": 0.8312278389930725,
+                "z": 224.68907165527345
+            }
+        },
+        {
+            "role": "role.hostile.exterior",
+            "group": "group.ch05.m05.exterior",
+            "position": {
+                "x": 1142.5,
+                "y": 0.35821354389190676,
+                "z": 425.5
+            },
+            "openingViewport": {
+                "x": 0.711601197719574,
+                "y": 0.7115552425384522,
+                "z": 207.87313842773438
+            }
+        },
+        {
+            "role": "role.hostile.exterior",
+            "group": "group.ch05.m05.exterior",
+            "position": {
+                "x": 1141.5,
+                "y": 0.4281283915042877,
+                "z": 428.5
+            },
+            "openingViewport": {
+                "x": 0.7072646617889404,
+                "y": 0.7235887050628662,
+                "z": 209.31240844726563
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m05.escort",
+            "position": {
+                "x": 980.5,
+                "y": 0.42812827229499819,
+                "z": 418.5
+            },
+            "openingViewport": {
+                "x": 0.23708075284957887,
+                "y": 0.6836104393005371,
+                "z": 204.31304931640626
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m05.staff.clinic",
+            "position": {
+                "x": 905.5,
+                "y": -0.01771872490644455,
+                "z": 468.5
+            },
+            "openingViewport": {
+                "x": 0.06920811533927918,
+                "y": 0.8644142746925354,
+                "z": 229.69598388671876
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m05.staff.clinic",
+            "position": {
+                "x": 906.5,
+                "y": -0.020289074629545213,
+                "z": 472.5
+            },
+            "openingViewport": {
+                "x": 0.07553353905677796,
+                "y": 0.8772907853126526,
+                "z": 231.69796752929688
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m05.staff.utility",
+            "position": {
+                "x": 1238.5,
+                "y": -0.01771872490644455,
+                "z": 471.5
+            },
+            "openingViewport": {
+                "x": 0.9406865835189819,
+                "y": 0.8740997910499573,
+                "z": 231.19578552246095
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m05.staff.utility",
+            "position": {
+                "x": 1242.5,
+                "y": -0.02010265737771988,
+                "z": 470.5
+            },
+            "openingViewport": {
+                "x": 0.9520946741104126,
+                "y": 0.8708764910697937,
+                "z": 230.69790649414063
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 1069.56787109375,
+                "y": 159.88418579101563,
+                "z": 286.0547790527344
+            },
+            "euler": {
+                "x": 60.00423049926758,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1069.5772705078125,
+                "y": -0.000004951473783876281,
+                "z": 378.3475646972656
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 1115.0,
+                "y": 134.40956115722657,
+                "z": 375.0098876953125
+            },
+            "euler": {
+                "x": 60.00423049926758,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1115.0,
+                "y": 0.16990642249584199,
+                "z": 452.5
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 1066.5,
+                "y": 65.65021514892578,
+                "z": 389.0047912597656
+            },
+            "euler": {
+                "x": 60.00423049926758,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1066.5,
+                "y": 0.695542573928833,
+                "z": 426.5
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 1080.0,
+                "y": 1054.28564453125,
+                "z": 78.49249267578125
+            },
+            "euler": {
+                "x": 60.00423049926758,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1080.0,
+                "y": 480.0,
+                "z": 410.0
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-clinic",
+            "file": "story-clinic.png",
+            "position": {
+                "x": 906.0,
+                "y": 81.92439270019531,
+                "z": 392.6423645019531
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 906.0,
+                "y": 0.009179776534438134,
+                "z": 450.0
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-utility",
+            "file": "story-utility.png",
+            "position": {
+                "x": 1240.0,
+                "y": 81.92439270019531,
+                "z": 392.6423645019531
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1240.0,
+                "y": 0.009179776534438134,
+                "z": 450.0
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-core_audit",
+            "file": "story-core_audit.png",
+            "position": {
+                "x": 1130.0,
+                "y": 81.92439270019531,
+                "z": 407.6423645019531
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1130.0,
+                "y": 0.009179776534438134,
+                "z": 465.0
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-audit_release",
+            "file": "story-audit_release.png",
+            "position": {
+                "x": 1130.0,
+                "y": 82.43439483642578,
+                "z": 418.6423645019531
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1130.0,
+                "y": 0.5191797614097595,
+                "z": 476.0
+            },
+            "fov": 50.002281188964847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [
+        "faction=0 building=building_command_clinic count=1",
+        "faction=2 building=tent_regular count=1",
+        "faction=2 building=building_barrack count=1",
+        "faction=2 building=building_oilpump count=1",
+        "faction=2 building=building_fuel_bladder count=1",
+        "faction=2 building=building_ammunition_depot count=1",
+        "faction=0 building=tent_regular count=0",
+        "faction=0 building=tent_expert count=0",
+        "faction=0 building=tent_contractor count=0",
+        "faction=0 building=building_barrack count=0",
+        "faction=0 building=building_helipad count=0",
+        "faction=0 building=building_ammunition_depot count=0",
+        "faction=0 building=building_fuel_bladder count=0",
+        "faction=0 building=building_airport count=0",
+        "faction=0 building=building_satelite_dish count=0",
+        "faction=0 building=building_guardtower count=0",
+        "faction=0 building=building_guardtower_big count=0",
+        "faction=0 building=tent_refugee count=0",
+        "faction=0 building=portaloo count=0",
+        "faction=0 building=building_road_barrier count=0",
+        "faction=0 building=wall_dirt_straight count=0",
+        "faction=0 building=building_oilpump count=0",
+        "faction=0 building=building_house count=0",
+        "faction=0 building=building_refinery count=0",
+        "faction=0 building=building_refinery_big count=0",
+        "faction=0 building=wall_fence_straight count=0",
+        "faction=0 building=gasstation count=0",
+        "faction=0 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=0 building=building_hall count=0",
+        "faction=0 building=building_shop count=0",
+        "faction=0 building=sm_bld_village_hatch_01 count=0",
+        "faction=0 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=0 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=0 building=building_watertank count=0",
+        "faction=0 building=m05_breach_road_barrier count=0",
+        "faction=0 building=ch02m01_road_obstruction count=0",
+        "faction=0 building=supplyline_building_oilpump count=0",
+        "faction=0 building=supplyline_building_refinery count=0",
+        "faction=0 building=supplyline_reserve_depot count=0",
+        "faction=0 building=building_steelpush_reservedepot count=0",
+        "faction=0 building=building_splitfront_supportdepot count=0",
+        "faction=0 building=routereopened_recordsoffice count=0",
+        "faction=0 building=building_armorbreak_reservedepot count=0",
+        "faction=0 building=building_citywide_reservedepot count=0",
+        "faction=0 building=building_citywide_clinic count=0",
+        "faction=0 building=building_citywide_utility count=0",
+        "faction=0 building=building_trust_shelter count=0",
+        "faction=0 building=building_trust_broadcast count=0",
+        "faction=0 building=building_trust_reservedepot count=0",
+        "faction=0 building=building_network_civic count=0",
+        "faction=0 building=building_network_audit count=0",
+        "faction=0 building=building_network_reservedepot count=0",
+        "faction=0 building=building_corridor_civic count=0",
+        "faction=0 building=building_corridor_receivingdepot count=0",
+        "faction=0 building=building_corridor_reservedepot count=0",
+        "faction=0 building=building_command_utility count=0",
+        "faction=0 building=building_command_audit count=0",
+        "faction=0 building=building_command_reservedepot count=0",
+        "faction=2 building=tent_expert count=0",
+        "faction=2 building=tent_contractor count=0",
+        "faction=2 building=building_helipad count=0",
+        "faction=2 building=building_airport count=0",
+        "faction=2 building=building_satelite_dish count=0",
+        "faction=2 building=building_guardtower count=0",
+        "faction=2 building=building_guardtower_big count=0",
+        "faction=2 building=tent_refugee count=0",
+        "faction=2 building=portaloo count=0",
+        "faction=2 building=building_road_barrier count=0",
+        "faction=2 building=wall_dirt_straight count=0",
+        "faction=2 building=building_house count=0",
+        "faction=2 building=building_refinery count=0",
+        "faction=2 building=building_refinery_big count=0",
+        "faction=2 building=wall_fence_straight count=0",
+        "faction=2 building=gasstation count=0",
+        "faction=2 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=2 building=building_hall count=0",
+        "faction=2 building=building_shop count=0",
+        "faction=2 building=sm_bld_village_hatch_01 count=0",
+        "faction=2 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=2 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=2 building=building_watertank count=0",
+        "faction=2 building=m05_breach_road_barrier count=0",
+        "faction=2 building=ch02m01_road_obstruction count=0",
+        "faction=2 building=supplyline_building_oilpump count=0",
+        "faction=2 building=supplyline_building_refinery count=0",
+        "faction=2 building=supplyline_reserve_depot count=0",
+        "faction=2 building=building_steelpush_reservedepot count=0",
+        "faction=2 building=building_splitfront_supportdepot count=0",
+        "faction=2 building=routereopened_recordsoffice count=0",
+        "faction=2 building=building_armorbreak_reservedepot count=0",
+        "faction=2 building=building_citywide_reservedepot count=0",
+        "faction=2 building=building_citywide_clinic count=0",
+        "faction=2 building=building_citywide_utility count=0",
+        "faction=2 building=building_trust_shelter count=0",
+        "faction=2 building=building_trust_broadcast count=0",
+        "faction=2 building=building_trust_reservedepot count=0",
+        "faction=2 building=building_network_civic count=0",
+        "faction=2 building=building_network_audit count=0",
+        "faction=2 building=building_network_reservedepot count=0",
+        "faction=2 building=building_corridor_civic count=0",
+        "faction=2 building=building_corridor_receivingdepot count=0",
+        "faction=2 building=building_corridor_reservedepot count=0",
+        "faction=2 building=building_command_clinic count=0",
+        "faction=2 building=building_command_utility count=0",
+        "faction=2 building=building_command_audit count=0",
+        "faction=2 building=building_command_reservedepot count=0"
+    ],
+    "spawnRequests": [
+        "building=Building_Command_Clinic faction=0 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 origin=int2(39, 144) footprint=int2(14, 12)",
+        "building=Building_Command_Utility faction=0 status=2 result=2 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 origin=int2(0, 0) footprint=int2(0, 0)",
+        "building=Building_Command_Audit faction=0 status=2 result=2 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 origin=int2(0, 0) footprint=int2(0, 0)",
+        "building=Building_Command_ReserveDepot faction=1 status=2 result=2 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 origin=int2(0, 0) footprint=int2(0, 0)"
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.154383659362793,
+    "lightStates": [
+        "name=Directional Light enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light (1) enabled=True active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": [
+        {
+            "name": "story-clinic",
+            "source": "Assets/Game/GeneratedOperationMaps/CH05M05CommandNode/Definition.asset",
+            "objectPath": "anchor.ch05.m05.clinic",
+            "sourceHash": "",
+            "focus": {
+                "x": 906.0,
+                "y": 0.009179776534438134,
+                "z": 450.0
+            },
+            "distance": 100.0
+        },
+        {
+            "name": "story-utility",
+            "source": "Assets/Game/GeneratedOperationMaps/CH05M05CommandNode/Definition.asset",
+            "objectPath": "anchor.ch05.m05.utility",
+            "sourceHash": "",
+            "focus": {
+                "x": 1240.0,
+                "y": 0.009179776534438134,
+                "z": 450.0
+            },
+            "distance": 100.0
+        },
+        {
+            "name": "story-core_audit",
+            "source": "Assets/Game/GeneratedOperationMaps/CH05M05CommandNode/Definition.asset",
+            "objectPath": "anchor.ch05.m05.core_audit",
+            "sourceHash": "",
+            "focus": {
+                "x": 1130.0,
+                "y": 0.009179776534438134,
+                "z": 465.0
+            },
+            "distance": 100.0
+        },
+        {
+            "name": "story-audit_release",
+            "source": "Assets/Game/GeneratedOperationMaps/CH05M05CommandNode/Definition.asset",
+            "objectPath": "anchor.ch05.m05.audit_release",
+            "sourceHash": "",
+            "focus": {
+                "x": 1130.0,
+                "y": 0.5191797614097595,
+                "z": 476.0
+            },
+            "distance": 100.0
+        }
+    ]
+}

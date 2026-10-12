@@ -1,0 +1,7 @@
+destinationRoadClearance=Passed groups=2 relocated=0
+GRADED ROAD JOIN (320.20, 1.12, 445.03) to=(320.20, 0.48, 445.03) commonHeight=0.8011252 road=Map_CityEdgeAirfield/Roads/RoadChunk_1_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (330.20, 0.48, 445.03) to=(330.20, 0.14, 445.03) commonHeight=0.3110742 road=Map_CityEdgeAirfield/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+roadGradeSeamValidation=Passed pairedEnds=4 maxAllowedHeightError=0.005m
+REMOVED FALSE TERMINAL Map_CityEdgeAirfield/Roads/RoadChunk_1_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(320.20, 0.96, 445.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_CityEdgeAirfield/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(320.20, 0.56, 445.03) reason=connected authored road at different height
+gradedJoins=2 terminalSurfaces=0 removedFalseEnds=2 relocatedDestinations=0 protectedHash=3694ab1a71ba7d8d036f3346969350e0a40457255168afbfc7d082cb22c058ea

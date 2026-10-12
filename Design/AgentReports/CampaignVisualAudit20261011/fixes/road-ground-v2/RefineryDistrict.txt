@@ -1,0 +1,3 @@
+gradedDunes=0
+protectedHash=2e8769000c355e3cc8959bb6a7d540efb7d3dc07dd83efe3decb10318fa09572
+collisionAndRoadFootprints=unchanged

@@ -1,0 +1,1 @@
+Checked wrapper dispatch failed before an executeMethod log was created. Pipeline connection unavailable during Editor assembly reload; no matching validation ownership. Existing Editor preserved. Retry only the same repository wrapper after compilation finishes. No licensing recovery or alternate Unity invocation used.

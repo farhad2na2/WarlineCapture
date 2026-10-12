@@ -1,0 +1,12 @@
+scene=Assets/Game/Scenes/Match.unity
+camera=Main Camera position=774.119,40.05,602.781 rotation=60.035,0,0
+cameraPostProcessing=True cameraAntialiasing=FastApproximateAntialiasing cameraVolumeLayerMask=1
+renderSettings fog=False fogColor=0.7,0.69,0.65,1 fogDensity=0.0014 ambientMode=Trilight ambientSky=0.79,0.86,0.96,1 ambientEquator=0.72,0.73,0.74,1 ambientGround=0.48,0.42,0.34,1 ambientIntensity=1 reflectionIntensity=1
+ambientProbe[0]=0.448502,0.106423,0,0,0,0,0.004453,0,0.013359
+ambientProbe[1]=0.470918,0.153297,0,0,0,0,0.003279,0,0.009838
+ambientProbe[2]=0.505725,0.222299,0,0,0,0,0.000211,0,0.000634
+light=Sun type=Directional color=1,0.977,0.935,1 intensity=1.25 shadowStrength=1 rotation=36,328,0
+light=Directional Light type=Directional color=1,0.977,0.935,1 intensity=1.25 shadowStrength=1 rotation=63.694,104.245,301.002
+light=Directional Light (1) type=Directional color=0.871,0.839,1,1 intensity=0.12 shadowStrength=1 rotation=38.339,341.054,218.3
+volume=Global Volume global=True priority=0 weight=1 instantiated=False profile=Military_Demo_Gameplay profilePath=Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Lighting/Military_Demo_Gameplay.asset
+volume=Global Volume global=True priority=0 weight=1 instantiated=False profile=Military_Demo_Gameplay profilePath=Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Lighting/Military_Demo_Gameplay.asset

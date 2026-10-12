@@ -1,0 +1,268 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m04.airlift",
+    "activeMissionId": "saga.ch01.m04.airlift",
+    "activeMapId": "opmap.ch01.airlift_airfield_review",
+    "run": "01",
+    "error": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 2487,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 837.5,
+                "y": -0.022891245782375337,
+                "z": 608.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 834.5,
+                "y": -0.021871764212846757,
+                "z": 607.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 832.5,
+                "y": -0.022899260744452478,
+                "z": 610.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 844.5,
+                "y": -0.022891245782375337,
+                "z": 612.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 846.5,
+                "y": -0.021871764212846757,
+                "z": 612.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 848.5,
+                "y": -0.022899260744452478,
+                "z": 609.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 837.5,
+                "y": -0.021871764212846757,
+                "z": 612.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 843.5,
+                "y": -0.021871764212846757,
+                "z": 609.5
+            }
+        },
+        {
+            "role": "role.friendly.rescue_apc",
+            "group": "group.ch01.m04.carrier",
+            "position": {
+                "x": 850.5,
+                "y": 0.0,
+                "z": 613.5
+            }
+        },
+        {
+            "role": "role.friendly.airlift",
+            "group": "group.ch01.m04.aircraft",
+            "position": {
+                "x": 763.5,
+                "y": 0.04999999701976776,
+                "z": 652.5
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 913.5,
+                "y": 0.0007175710052251816,
+                "z": 655.5
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 910.5,
+                "y": 0.0027406085282564165,
+                "z": 652.5
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 908.5,
+                "y": 0.003101503476500511,
+                "z": 657.5
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 908.5,
+                "y": 0.0005311537533998489,
+                "z": 653.5
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 939.5,
+                "y": -0.0181871484965086,
+                "z": 483.5
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 937.5,
+                "y": -0.0181871484965086,
+                "z": 479.5
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 939.5,
+                "y": -0.024684594944119455,
+                "z": 477.5
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 943.5,
+                "y": -0.02324947714805603,
+                "z": 478.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 849.9927978515625,
+                "y": 40.049774169921878,
+                "z": 586.8993530273438
+            },
+            "euler": {
+                "x": 60.02357482910156,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 849.9944458007813,
+                "y": 5.577949195867404e-7,
+                "z": 610.000732421875
+            },
+            "fov": 50.01665115356445,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 940.0,
+                "y": 134.24473571777345,
+                "z": 402.30523681640627
+            },
+            "euler": {
+                "x": 60.02357482910156,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 940.0,
+                "y": -0.021077092736959459,
+                "z": 479.75
+            },
+            "fov": 50.01665115356445,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 939.5,
+                "y": 64.94913482666016,
+                "z": 446.0267333984375
+            },
+            "euler": {
+                "x": 60.02357482910156,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 939.5,
+                "y": -0.0181871484965086,
+                "z": 483.5
+            },
+            "fov": 50.01665115356445,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 825.0,
+                "y": 1027.800537109375,
+                "z": 264.0276184082031
+            },
+            "euler": {
+                "x": 60.02357482910156,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 825.0,
+                "y": 480.0,
+                "z": 580.0
+            },
+            "fov": 50.01665115356445,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ]
+}

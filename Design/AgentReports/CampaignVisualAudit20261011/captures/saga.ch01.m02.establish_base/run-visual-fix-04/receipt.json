@@ -1,0 +1,173 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m02.establish_base",
+    "activeMissionId": "saga.ch01.m02.establish_base",
+    "activeMapId": "opmap.ch01.forward_post_01",
+    "run": "visual-fix-04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 404,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 925.5,
+                "y": 0.4828355610370636,
+                "z": 422.5
+            },
+            "openingViewport": {
+                "x": 0.2793206572532654,
+                "y": 1.1161446571350098,
+                "z": 154.69007873535157
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 918.5,
+                "y": 0.4271007776260376,
+                "z": 421.5
+            },
+            "openingViewport": {
+                "x": 0.2513008117675781,
+                "y": 1.11173677444458,
+                "z": 154.2380828857422
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 926.5,
+                "y": 0.4271087944507599,
+                "z": 427.5
+            },
+            "openingViewport": {
+                "x": 0.28673461079597475,
+                "y": 1.1354877948760987,
+                "z": 157.23956298828126
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 920.5,
+                "y": 0.42812827229499819,
+                "z": 431.5
+            },
+            "openingViewport": {
+                "x": 0.2666875720024109,
+                "y": 1.1508312225341797,
+                "z": 159.23965454101563
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 982.098388671875,
+                "y": 89.96012115478516,
+                "z": 268.1495056152344
+            },
+            "euler": {
+                "x": 59.98374557495117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 982.105224609375,
+                "y": 7.449398253811523e-7,
+                "z": 320.1250915527344
+            },
+            "fov": 50.0,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 922.75,
+                "y": 134.6532440185547,
+                "z": 348.2119140625
+            },
+            "euler": {
+                "x": 59.98374557495117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 922.75,
+                "y": 0.441293329000473,
+                "z": 425.75
+            },
+            "fov": 50.0,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 925.5,
+                "y": 65.4240951538086,
+                "z": 384.9815673828125
+            },
+            "euler": {
+                "x": 59.98374557495117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 925.5,
+                "y": 0.4828355610370636,
+                "z": 422.5
+            },
+            "fov": 50.0,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 940.0,
+                "y": 214.2959747314453,
+                "z": 255.84918212890626
+            },
+            "euler": {
+                "x": 59.98374557495117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 940.0,
+                "y": 16.7104549407959,
+                "z": 370.0
+            },
+            "fov": 50.0,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [],
+    "spawnRequests": [],
+    "cameraSettled": true,
+    "warmupSeconds": 8.5780611038208,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=BeautifyLighting enabled=True active=True intensity=1.15 shadows=Soft scene=Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity"
+    ],
+    "supplementalTargets": []
+}

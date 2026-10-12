@@ -1,0 +1,2 @@
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Runways/SM_Env_Runway_01 leftOuter=True rightOuter=True footprint=209.3429x33.29212
+Protected transforms, colliders, owners, mission bindings and runway XZ footprint unchanged.

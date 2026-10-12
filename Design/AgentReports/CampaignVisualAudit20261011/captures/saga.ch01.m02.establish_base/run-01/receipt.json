@@ -1,0 +1,142 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m02.establish_base",
+    "activeMissionId": "saga.ch01.m02.establish_base",
+    "activeMapId": "opmap.ch01.forward_post_01",
+    "run": "01",
+    "error": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 675,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 918.5,
+                "y": 0.4271007776260376,
+                "z": 421.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 925.5,
+                "y": 0.4828355610370636,
+                "z": 422.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 926.5,
+                "y": 0.4271087944507599,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 920.5,
+                "y": 0.42812827229499819,
+                "z": 431.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 1008.4343872070313,
+                "y": 39.8470458984375,
+                "z": 288.0598449707031
+            },
+            "euler": {
+                "x": 39.28434371948242,
+                "y": 8.567973136901856,
+                "z": -5.515238967745972e-7
+            },
+            "focus": {
+                "x": 1015.6951904296875,
+                "y": 0.000001084872565115802,
+                "z": 336.2236328125
+            },
+            "fov": 38.00486755371094,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 904.227294921875,
+                "y": 98.93284606933594,
+                "z": 307.5073547363281
+            },
+            "euler": {
+                "x": 39.451839447021487,
+                "y": 8.90303897857666,
+                "z": 2.764241457953176e-7
+            },
+            "focus": {
+                "x": 922.75,
+                "y": 0.441293329000473,
+                "z": 425.75
+            },
+            "fov": 37.53577423095703,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 909.5374145507813,
+                "y": 48.08430480957031,
+                "z": 364.28582763671877
+            },
+            "euler": {
+                "x": 39.451839447021487,
+                "y": 8.90303897857666,
+                "z": 2.764241457953176e-7
+            },
+            "focus": {
+                "x": 918.5,
+                "y": 0.4271007776260376,
+                "z": 421.5
+            },
+            "fov": 37.53577423095703,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 912.7310180664063,
+                "y": 161.70875549316407,
+                "z": 195.92433166503907
+            },
+            "euler": {
+                "x": 39.451839447021487,
+                "y": 8.90303897857666,
+                "z": 2.764241457953176e-7
+            },
+            "focus": {
+                "x": 940.0,
+                "y": 16.7104549407959,
+                "z": 370.0
+            },
+            "fov": 37.53577423095703,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ]
+}

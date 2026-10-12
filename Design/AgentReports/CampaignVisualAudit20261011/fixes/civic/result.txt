@@ -1,0 +1,3 @@
+Ground material renderers=16
+Market stock props=39
+Canonical identities and gameplay building owners unchanged. Forecourt is a flush stone shared crossing; original road and navigation footprint retained.

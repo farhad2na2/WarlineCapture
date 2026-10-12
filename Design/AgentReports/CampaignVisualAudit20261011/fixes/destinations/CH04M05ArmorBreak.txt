@@ -1,0 +1,2 @@
+CampaignDestinationV2_20261011_19_relief kind=aid anchor=(1900.00, 0.03, 480.00) group=(1908.00, 0.05, 480.00) owner=Map_Frontier/Props/SM_Prop_MedicalBox_01
+CampaignDestinationV2_20261011_19_radar kind=service anchor=(1440.00, 0.00, 529.00) group=(1444.21, 0.02, 539.16) owner=Map_Frontier/Props/SM_Prop_Missle_Crate_01

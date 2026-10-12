@@ -1,0 +1,20 @@
+grid=2048,1024 origin=float3(0f, 0f, 0f) cell=1
+BuildingPlacementAuthoredRoadCache.mask cells=24800
+BuildingPlacementAuthoredRoadCache.sidewalkMask cells=0
+BuildingPlacementAuthoredBuildingCache.mask cells=269633
+GridRoad cells=0
+steel-reserve rejected BuildingPlacementAuthoredRoadCache.mask=0
+steel-reserve rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+steel-reserve rejected BuildingPlacementAuthoredBuildingCache.mask=362
+steel-reserve rejected GridRoad=0
+steel-reserve nearestClear=(870, 650);(870, 651);(870, 652);(870, 653);(870, 654);(870, 655);(870, 656);(870, 657);(870, 658);(870, 659);(870, 660);(870, 661)
+steel-barracks rejected BuildingPlacementAuthoredRoadCache.mask=0
+steel-barracks rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+steel-barracks rejected BuildingPlacementAuthoredBuildingCache.mask=201
+steel-barracks rejected GridRoad=0
+steel-barracks nearestClear=(696, 715);(695, 715);(696, 716);(694, 715);(695, 716);(696, 717);(693, 715);(694, 716);(695, 717);(692, 715);(693, 716);(694, 717)
+supply-refinery rejected BuildingPlacementAuthoredRoadCache.mask=0
+supply-refinery rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+supply-refinery rejected BuildingPlacementAuthoredBuildingCache.mask=65
+supply-refinery rejected GridRoad=0
+supply-refinery nearestClear=(741, 460);(742, 460);(741, 459);(742, 459);(741, 458);(742, 458);(741, 457);(742, 457);(741, 456);(742, 456);(741, 455);(742, 455)

@@ -1,0 +1,98 @@
+[
+  {
+    "index": 16,
+    "title": "Steel Push",
+    "priority": "P0 launch issue; P1 art",
+    "openingStatus": "invalid-result-visible",
+    "intent": "Defend a working Fuel reserve and Relay approach against a credible armoured attack.",
+    "observed": "The captured HUD is already a RESERVE DEFENSE FAILED result, so it is not a usable opening view. The log independently reports failed placement of Building_SteelPush_ReserveDepot at (805,650) and Building_Barrack at (740,650). Environment views show a large flat sandy approach, aligned enemy vehicles and highly repeated oil infrastructure, with little visible defended-site identity. The independent repeat records missionOutcome=Defeat after settling. Its result also says Fuel site INTACT, so investigate initial Relay-approach/failure rules as well as placement; the logs do not alone prove the exact defeat cause.",
+    "camera": "Resolve and reproduce the initial placement/failure gate before approving an opening camera. Then frame friendly armor, reserve entrance and the incoming column together without hiding the Fuel site behind tanks or HUD.",
+    "light": "The RefineryDistrict repeat confirms the source Sun and Match directional key both enabled at intensity 1.25, with Match fill 0.12. Compare one intentional key after fixing launch correctness; keep tanks and reserve infrastructure separated from bright slab/sand values.",
+    "ground": "After placement is valid, use compacted access tracks and bounded concrete loading aprons to explain how the reserve is serviced. Add contained heavy-vehicle wear; preserve current routes, army budgets and defense distances.",
+    "props": "Make the reserve a recognisable defended logistics site with pump/control equipment, sensible storage grouping and a marked civilian allocation area. Restore the intended authoritative functional owner before adding decoration.",
+    "landscape": "Break up the empty approach through broad material variation and grouped sparse vegetation at edges, leaving a clear armoured engagement corridor.",
+    "focusAnchors": [
+      "squad_a",
+      "armor_support",
+      "civilians",
+      "contact"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  },
+  {
+    "index": 17,
+    "title": "Split Front",
+    "priority": "P1",
+    "intent": "Distinguish a defended forward base, a verified artillery battery and protected civilian shelters.",
+    "observed": "The opening communicates a line of tanks near small plain buildings, but the wider view is a sparse flat field between repetitive pumps and refinery columns. The two fronts have little distinct ground or prop identity.",
+    "camera": "Keep base defenders visible while showing the launcher's first target direction. Provide a deliberate camera-only battery view and return point, rather than pulling the player into a visually anonymous empty field.",
+    "light": "Use material and silhouette contrast to separate battery, base and shelters; confirm source/Match light enablement before exposure changes.",
+    "ground": "Give the base a compacted service yard, the verified battery a restrained disturbed-ground signature and civilian shelters maintained access paths. Connect each to existing road edges with deliberate shoulder/sidewalk transitions.",
+    "props": "Add clear but compact command, ammunition and maintenance clusters around the base and battery, with domestic water and shade details at the shelters. Do not decorate protected shelters as military targets.",
+    "landscape": "Replace evenly dispersed saplings and isolated rocks with small contextual groups; keep both fronts and long-range firing visibility legible.",
+    "focusAnchors": [
+      "squad_a",
+      "armor_support",
+      "civilians",
+      "contact"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  },
+  {
+    "index": 18,
+    "title": "Grounded Signal",
+    "priority": "P1",
+    "intent": "Unload specialists at the apron, recover military relay hardware and leave by APC while protecting the civilian terminal.",
+    "observed": "The opening shows only part of the transport aircraft, an APC and a sandy gap beside the road. The relay is a small object in a very large fenced blank concrete square shared with a helipad; the terminal's civilian purpose is weak in the inspected views. The focused terminal view reads as identical aircraft hangars and open slabs; the relay sits almost alone in its large fenced square. These destinations need distinct civilian and military support details.",
+    "camera": "Show the aircraft unloading point, specialists and APC together. Give the relay and protected terminal separate camera-only views with visible entrances, keeping the civilian destination out of the military target framing.",
+    "light": "The settled native receipt confirms both the source Sun and Match directional key enabled at intensity 1.25, plus Match fill 0.12. Compare a single intended key before changing exposure. Preserve aircraft/specialist contrast and separate terminal pedestrian paving from military relay concrete.",
+    "ground": "Apply the runway-end and taxiway transition pass here too. Make the specialist unloading point a coherent apron edge with a flush APC crossover; distinguish relay service concrete from the terminal pedestrian forecourt. The separate source endpoint pass confirms the same raw outer ends and shoulder treatment on two adjoining runway modules. Treat only the assembled outer ends as operational thresholds.",
+    "props": "Create a compact relay installation around its actual owner: cabinets, cable reels, generator and a service canopy. Give the terminal a few grouped benches, luggage carts and covered passenger access, preserving staff and vehicle clearance.",
+    "landscape": "Blend sandy margins into the airport shoulder; remove the visual impression of rocks randomly scattered through servicing space without altering playable boundaries.",
+    "focusAnchors": [
+      "plane",
+      "specialists",
+      "carrier",
+      "relay",
+      "civilian_terminal"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  },
+  {
+    "index": 19,
+    "title": "Armor Break",
+    "priority": "P1",
+    "intent": "Coordinate combined arms to defeat a military command group while protecting the relief corridor and Fuel depot.",
+    "observed": "The opening is mostly empty sand and a road corner, with tanks at the top edge. Inspection shows a grid of sparse damaged buildings and an enormous repeated concrete aircraft apron. The military command destination and protected relief corridor have weak visual distinction.",
+    "camera": "Frame the initial radar/air-defense/armor group at a useful command scale; then show the assault approach and protected relief lane with camera guidance only. Keep the initial infantry above the bottom controls.",
+    "light": "Preserve target identification against asphalt and pale aprons. Verify this source's actual light ownership, then add restrained material-value separation rather than flattening all surfaces with ambient fill.",
+    "ground": "Use depot concrete, heavy-vehicle track wear and a more maintained relief lane to distinguish the mission's spaces. Finish the sand-road-sidewalk junctions and aircraft-service pavement seams while keeping the existing footprint.",
+    "props": "Create recognisable command and logistics clusters at the real objectives: antenna/command equipment, repair staging and protected relief supplies. Reduce parade-like repetition among nonfunctional aircraft scenery only where ownership permits; do not alter actual forces.",
+    "landscape": "Give existing settlement edges a coherent foundation and rubble gradient. Keep the armored corridor open instead of inventing new mountains or narrowing it with decoration.",
+    "focusAnchors": [
+      "radar",
+      "launcher_air",
+      "launcher_ground",
+      "command_squad",
+      "relief",
+      "contact"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  }
+]

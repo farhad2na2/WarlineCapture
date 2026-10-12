@@ -1,0 +1,95 @@
+[
+  {
+    "index": 5,
+    "title": "Gridlock",
+    "priority": "P1",
+    "intent": "A road crew restores a damaged service corridor so relief can reach the hospital.",
+    "observed": "Large plain transverse barriers, sand strips intruding onto asphalt, scattered cars and a distant shed dominate the route. The work sites and hospital function are weakly differentiated from generic battlefield rubble.",
+    "camera": "Start with Fadi, crew and the nearest work site in the usable centre of the screen, then offer an overview showing the second site and hospital direction.",
+    "light": "Preserve daylight visibility of crew and relief vehicles; use warmer work-zone accents against neutral asphalt rather than a global orange cast.",
+    "ground": "Give each authored blockage a believable cause, such as a broken pavement edge and contained rubble, while preserving its exact gameplay footprint. Repair the sidewalk-to-damaged-shoulder transitions and the exposed sand/asphalt intersections.",
+    "props": "Dress the two work sites differently with cones, a small tool staging area and compact material piles. Give the hospital delivery point a clear accessible entrance, medical-service sign and grouped aid crates; keep route and worker access open.",
+    "landscape": "Blend nearby rock shelves into the residential ground; reduce the sense of separate floating village islands through paths and consistent foundation treatment.",
+    "focusAnchors": [
+      "site_a",
+      "site_b",
+      "hospital",
+      "workers"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-detail",
+      "objective-context"
+    ]
+  },
+  {
+    "index": 6,
+    "title": "Supply Line",
+    "priority": "P0 placement verification; P1 art",
+    "intent": "Understand the Oil to refinery to Fuel-storage chain as a working industrial site.",
+    "observed": "The opening is largely identical white slabs, pipe racks and repeated red processing units. The roadside gate is a gap in a fence across a sandy verge. Storage and processing areas have little visual hierarchy at tactical distance. The native log reports a failed SupplyLine_Building_Refinery placement at (740,475); verify the intended functional facility before accepting this mission or dressing the area.",
+    "camera": "Frame the first hauler and its loading destination, then give a concise overview of the three logistics stages; avoid letting foreground pipe racks dominate the first decision.",
+    "light": "Preserve readable pipe and vehicle shadows on concrete. Reduce the nearly uniform bright apron values through materials and local wear before changing exposure.",
+    "ground": "Differentiate loading bay, processing apron and storage approach with concrete panel scale, local oil staining, drains and wheel paths. Build a flush, legible road-to-gate crossover with deliberate curb transitions.",
+    "props": "Give oil loading a pump/hose cluster, the refinery a maintenance cabinet group and Fuel storage a bund/inspection-side identity. Use existing decorative assets and keep the working loading/spawn envelopes clear.",
+    "landscape": "Replace even edge gravel scatter with drainage and dust accumulation along fence bases; keep the distant industrial silhouette readable.",
+    "focusAnchors": [
+      "oil",
+      "refinery",
+      "storage",
+      "oil_hauler",
+      "fuel_hauler"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  },
+  {
+    "index": 7,
+    "title": "Market Lifeline",
+    "priority": "P1",
+    "intent": "Keep an active market supplied while distinguishing legitimate paperwork from a copied transfer.",
+    "observed": "The first quick capture caught rocks and trees during the camera transition. The repeat settles after 11.97 seconds and correctly shows the convoy on the boulevard; this is not a persistent off-target camera defect. The route still repeats the damaged highway composition, with scattered wrecks and sand intrusions and little market receiving activity near the convoy/manifest locations.",
+    "camera": "Retain the settled convoy framing. Check whether the pre-control transition can finish sooner, and keep ARIA instruction timing aligned with the useful view. Give manifest and market-receiving destinations clear camera-only focus points without spoiling verification.",
+    "light": "Maintain neutral daylight and locally distinct canopy colours so the civilian market feels active without masking friendly/hostile colours.",
+    "ground": "Create an identifiable market receiving apron connected to the boulevard; reserve pedestrian stone paving around stalls and compacted service ground beside truck unloading. Finish curb drops and crossings at the access points.",
+    "props": "Prioritise the user's bazaar request here: group produce, textile and household-goods stalls; include loading carts and a shaded manifest desk at each authored transfer point. Differentiate transfers through inspectable details, without visually revealing hidden guilt before verification.",
+    "landscape": "Move visual emphasis from oversized foreground rocks to shopfronts and pedestrian routes; retain existing movement geometry and civilian clearance.",
+    "focusAnchors": [
+      "manifest",
+      "corrupt_manifest",
+      "delivery",
+      "convoy"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  },
+  {
+    "index": 8,
+    "title": "Power Relay",
+    "priority": "P1",
+    "intent": "Recognise a power substation, its repair point and a safer route for displaced families.",
+    "observed": "The initial frame is mostly a truck, asphalt and sand. The utility yard reads as an evenly spaced field of poles on a blank slab, with little equipment detail. The long straight roadside fence and generic container yard make the protected route hard to distinguish visually.",
+    "camera": "Show engineers and the repair destination first, with a camera-only route overview that clearly distinguishes the longer protected service road from the exposed shortcut.",
+    "light": "Keep small engineer silhouettes readable at the repair bay. Local equipment and paving contrast should carry the substation identity, not an overall darkening.",
+    "ground": "Differentiate the utility yard with gravel equipment beds, concrete access strips and cable-trench covers inside existing traversable limits. Finish gate crossovers and sidewalk endings; use restrained wheel wear to reinforce the safe service route.",
+    "props": "Place transformer/switchgear silhouettes, insulator groups, cabinets and cable reels around the repair area, plus a compact sheltered receiving point for families. Avoid dressing every pole identically or placing props on mission routes.",
+    "landscape": "Use sparse vegetation beyond the utility fence and service drainage at the slab edge; keep industrial and shelter ground treatments distinct.",
+    "focusAnchors": [
+      "repair",
+      "safe_route",
+      "short_route",
+      "shelter"
+    ],
+    "evidence": [
+      "opening-hud",
+      "objective-context",
+      "objective-detail"
+    ]
+  }
+]

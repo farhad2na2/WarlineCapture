@@ -1,0 +1,139 @@
+{
+    "result": "Failed",
+    "missionId": "saga.ch04.m02.steel_push",
+    "activeMissionId": "saga.ch04.m02.steel_push",
+    "activeMapId": "opmap.ch04.steel_push_refinery_approach",
+    "run": "03",
+    "error": "System.NotImplementedException: The method or operation is not implemented.\n  at Unity.Collections.NativeList`1[T].System.Collections.Generic.IEnumerable<T>.GetEnumerator () [0x00000] in ./Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections/NativeList.cs:885 \n  at System.Linq.Enumerable+SelectEnumerableIterator`2[TSource,TResult].MoveNext () [0x00011] in <cb951819652d428c85bd75cb224d8506>:0 \n  at System.String.Join (System.String separator, System.Collections.Generic.IEnumerable`1[T] values) [0x00015] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at Game.Editor.MapVariants.OtherMapSurfacePolish.InspectPlacement (Unity.Entities.EntityManager em, System.String output) [0x00343] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignInspection.cs:67 \n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x0069a] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:179 ",
+    "missionOutcome": "",
+    "missionPhase": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 2610,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.armor_support",
+            "position": {
+                "x": 778.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.tank_front",
+            "position": {
+                "x": 760.5,
+                "y": 0.0,
+                "z": 624.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.armor_support",
+            "position": {
+                "x": 744.5,
+                "y": 0.0,
+                "z": 622.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.armor_support",
+            "position": {
+                "x": 748.5,
+                "y": 0.0,
+                "z": 632.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.infantry",
+            "position": {
+                "x": 789.5,
+                "y": -0.021871764212846757,
+                "z": 624.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.infantry",
+            "position": {
+                "x": 789.5,
+                "y": -0.022891245782375337,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.infantry",
+            "position": {
+                "x": 790.5,
+                "y": -0.021871764212846757,
+                "z": 626.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m02.infantry",
+            "position": {
+                "x": 791.5,
+                "y": -0.022899260744452478,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.hostile.convoy",
+            "group": "group.ch04.m02.vanguard",
+            "position": {
+                "x": 592.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.hostile.convoy",
+            "group": "group.ch04.m02.main_body",
+            "position": {
+                "x": 569.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.hostile.convoy",
+            "group": "group.ch04.m02.vanguard",
+            "position": {
+                "x": 580.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.hostile.convoy",
+            "group": "group.ch04.m02.main_body",
+            "position": {
+                "x": 557.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        },
+        {
+            "role": "role.hostile.convoy",
+            "group": "group.ch04.m02.main_body",
+            "position": {
+                "x": 545.5,
+                "y": 0.0,
+                "z": 625.5
+            }
+        }
+    ],
+    "views": [],
+    "cameraSettled": true,
+    "warmupSeconds": 8.008576393127442,
+    "lightStates": [],
+    "supplementalTargets": []
+}

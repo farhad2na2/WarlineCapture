@@ -1,0 +1,13 @@
+MissingMemberException: Game.Tests.Editor.CampaignOpeningVisualFramingTests
+Game.Editor.ExistingEditorValidation.Run (System.String executeMethod, System.String logFile) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:91)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Tests.Editor.CampaignOpeningVisualFramingTests.RunFocusedValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_7ff835c3/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

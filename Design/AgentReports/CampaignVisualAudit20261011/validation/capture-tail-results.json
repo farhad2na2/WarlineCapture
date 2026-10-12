@@ -1,0 +1,82 @@
+[
+  {
+    "index": 20,
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "run": "02",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": true,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2942/2979.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m01.citywide_alert/run-02/receipt.json"
+  },
+  {
+    "index": 21,
+    "missionId": "saga.ch05.m02.trust_under_fire",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": false,
+    "error": "",
+    "receipt": "captures/saga.ch05.m02.trust_under_fire/run-01/receipt.json"
+  },
+  {
+    "index": 22,
+    "missionId": "saga.ch05.m03.network_collapse",
+    "run": "01",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": false,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2935/2972.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m03.network_collapse/run-01/receipt.json"
+  },
+  {
+    "index": 22,
+    "missionId": "saga.ch05.m03.network_collapse",
+    "run": "02",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": true,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2935/2972.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m03.network_collapse/run-02/receipt.json"
+  },
+  {
+    "index": 23,
+    "missionId": "saga.ch05.m04.last_corridor",
+    "run": "01",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": false,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2935/2972.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m04.last_corridor/run-01/receipt.json"
+  },
+  {
+    "index": 23,
+    "missionId": "saga.ch05.m04.last_corridor",
+    "run": "02",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": true,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2935/2972.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m04.last_corridor/run-02/receipt.json"
+  },
+  {
+    "index": 24,
+    "missionId": "saga.ch05.m05.command_node",
+    "run": "01",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": false,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2633/2695.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m05.command_node/run-01/receipt.json"
+  },
+  {
+    "index": 24,
+    "missionId": "saga.ch05.m05.command_node",
+    "run": "02",
+    "wrapperExit": 1,
+    "passed": false,
+    "reimport": true,
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2633/2695.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "receipt": "captures/saga.ch05.m05.command_node/run-02/receipt.json"
+  }
+]

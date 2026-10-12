@@ -1,0 +1,35 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=CampaignOpeningVisualFramingTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_fd597b23/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Expected: greater than 0
+  But was:  -3.8806355f
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+CampaignOpeningVisualFramingTests.Visible (Game.Components.CampaignMissionOpeningPresentationComponent& opening, Unity.Mathematics.float3 point) (at Assets/Tests/Editor/CampaignOpeningVisualFramingTests.cs:28)
+CampaignOpeningVisualFramingTests.EstablishBaseShowsWholeAuthoredConstructionArea () (at Assets/Tests/Editor/CampaignOpeningVisualFramingTests.cs:62)
+CampaignOpeningVisualFramingTests.RunFocusedValidation () (at Assets/Tests/Editor/CampaignOpeningVisualFramingTests.cs:69)
+UnityEngine.Debug:LogException(Exception)
+CampaignOpeningVisualFramingTests:RunFocusedValidation() (at Assets/Tests/Editor/CampaignOpeningVisualFramingTests.cs:72)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignOpeningVisualFraming] result=Failed
+UnityEngine.Debug:LogError (object)
+CampaignOpeningVisualFramingTests:RunFocusedValidation () (at Assets/Tests/Editor/CampaignOpeningVisualFramingTests.cs:72)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_fd597b23/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=CampaignOpeningVisualFramingTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_fd597b23/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

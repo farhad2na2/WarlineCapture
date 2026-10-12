@@ -1,0 +1,16 @@
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+RESTORED INSTANCE BASELINE Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt oldMesh=Library/unity default resources
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(420.20, 2.19, 505.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(420.20, 0.14, 505.03) direction=(-1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(980.20, 0.14, 505.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(980.20, 2.37, 505.03) direction=(-1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(420.20, 2.88, 385.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(420.20, 0.14, 385.03) direction=(-1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(980.20, 0.14, 385.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(980.20, 2.74, 385.03) direction=(-1.00, 0.00, 0.00)

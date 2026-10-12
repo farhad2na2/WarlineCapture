@@ -1,0 +1,14 @@
+CampaignDestinationV2_20261011_1_comms_focus retained verified existing group
+CampaignDestinationV2_20261011_2_ground_sensor retained verified existing group
+CampaignDestinationV2_20261011_4_archive retained verified existing group
+CampaignDestinationV2_20261011_5_hospital retained verified existing group
+CampaignDestinationV2_20261011_5_site_a retained verified existing group
+CampaignDestinationV2_20261011_5_site_b retained verified existing group
+CampaignDestinationV2_20261011_7_manifest retained verified existing group
+CampaignDestinationV2_20261011_7_corrupt_manifest retained verified existing group
+CampaignDestinationV2_20261011_7_delivery kind=market anchor=(797.00, 1.54, 451.00) group=(790.00, 0.16, 463.00) owner=AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Rug_10 (7)
+CampaignDestinationV2_20261011_10_manifest kind=market anchor=(707.00, 1.46, 430.00) group=(690.00, 0.21, 458.00) owner=AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform__Props/SM_Prop_Table_Outdoor_01 (5)/CampaignDestinationV2_20261011_7_manifest/SM_Prop_Basket_03
+CampaignDestinationV2_20261011_11_delivery kind=domestic anchor=(735.00, 1.54, 421.00) group=(723.00, 0.25, 439.00) owner=AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform___UnmappedBuildings/SM_Prop_Makeshift_Fence_02/CampaignDestinationV2_20261011_7_corrupt_manifest/SM_Prop_Pot_01
+CampaignDestinationV2_20261011_12_delivery kind=domestic anchor=(746.00, 1.54, 420.00) group=(739.00, 0.11, 449.00) owner=AuthoredOperationMapEntityPresentation/RenderOnly/Props/__SourceTransform__Map/__SourceTransform___UnmappedBuildings/SM_Prop_Makeshift_Fence_02/CampaignDestinationV2_20261011_7_corrupt_manifest/SM_Prop_Pot_01
+CampaignDestinationV2_20261011_13_specialists retained verified existing group
+CampaignDestinationV2_20261011_14_core retained verified existing group

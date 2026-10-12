@@ -50,7 +50,7 @@ namespace Game.Editor
         public const string SourceSurface="Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", SourceGrid="Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
         public const string SourceMinimap="Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png";
         public static string[] ProtectedSources=>new[]{SourceDefinition,SourceScene,SourceBinding,SourceSurface,SourceGrid,SourceMinimap};
-        public static readonly RectInt[] BuildingLots={new(899,444,14,12),new(1199,444,14,12),new(1059,444,14,12),new(1076,378,26,25)};
+        public static readonly RectInt[] BuildingLots={new(899,444,14,12),new(1206,448,14,12),new(1059,444,14,12),new(1076,378,26,25)};
         public static void Build()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Network Collapse generation requires edit mode.");ReportBuilderRevision();
@@ -409,7 +409,7 @@ namespace Game.Editor
                     ("staff_one",906,470,OperationMapAnchorKind.Civilian,0,3),
                     ("staff_two",1206,470,OperationMapAnchorKind.Civilian,0,3),
                     ("civic_1_origin",899,444,OperationMapAnchorKind.Build,0,1),
-                    ("civic_2_origin",1199,444,OperationMapAnchorKind.Build,0,1),
+                    ("civic_2_origin",1206,448,OperationMapAnchorKind.Build,0,1),
                     ("audit_origin",1059,444,OperationMapAnchorKind.Build,0,1),
                     ("audit_gate",1066,438,OperationMapAnchorKind.Objective,1,6),
                     ("extraction",1006,426,OperationMapAnchorKind.Objective,1,8),

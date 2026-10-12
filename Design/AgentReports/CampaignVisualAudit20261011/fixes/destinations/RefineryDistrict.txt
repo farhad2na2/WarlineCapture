@@ -1,0 +1,7 @@
+CampaignDestinationV2_20261011_6_oil kind=fuel anchor=(573.00, 0.03, 520.00) group=(581.00, 0.06, 520.00) owner=Map_RefineryDistrict/Props/SM_Prop_Fence_01
+CampaignDestinationV2_20261011_6_refinery kind=service anchor=(741.00, 0.03, 472.00) group=(746.66, 0.06, 477.66) owner=Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01
+CampaignDestinationV2_20261011_6_storage kind=fuel anchor=(941.00, 0.00, 540.00) group=(934.49, 0.03, 524.29) owner=Map_RefineryDistrict/Props/SM_Prop_Barrel_Stack_01
+CampaignDestinationV2_20261011_8_repair kind=service anchor=(813.00, 0.03, 487.00) group=(821.00, 0.06, 487.00) owner=Map_RefineryDistrict/Props/SM_Prop_Fence_01
+CampaignDestinationV2_20261011_8_shelter kind=domestic anchor=(885.00, 0.00, 385.00) group=(892.39, 0.03, 388.06) owner=Map_RefineryDistrict/Props/SM_Prop_Crate_Wood_01
+CampaignDestinationV2_20261011_16_civilians kind=aid anchor=(835.00, 0.00, 625.00) group=(859.75, 0.03, 649.75) owner=Map_RefineryDistrict/Props/SM_Prop_Powerpole_02
+CampaignDestinationV2_20261011_17_civilians kind=domestic anchor=(707.00, 0.00, 668.00) group=(688.52, 0.03, 660.35) owner=Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01

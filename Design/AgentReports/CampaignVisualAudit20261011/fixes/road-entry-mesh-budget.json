@@ -1,0 +1,60 @@
+{
+  "stage": "before exact-payload mesh consolidation",
+  "maps": {
+    "DenseCity": {
+      "meshes": 104,
+      "vertices": 225072,
+      "maxMeshVertices": 7437
+    },
+    "CityEdgeAirfield": {
+      "meshes": 121,
+      "vertices": 147654,
+      "maxMeshVertices": 1425
+    },
+    "RefineryDistrict": {
+      "meshes": 114,
+      "vertices": 134838,
+      "maxMeshVertices": 1251
+    },
+    "AshLinePort": {
+      "meshes": 220,
+      "vertices": 273048,
+      "maxMeshVertices": 1425
+    },
+    "CH04M04GroundedSignal": {
+      "meshes": 12,
+      "vertices": 14919,
+      "maxMeshVertices": 1425
+    },
+    "CH04M05ArmorBreak": {
+      "meshes": 279,
+      "vertices": 340503,
+      "maxMeshVertices": 1425
+    },
+    "CH05M01CitywideAlert": {
+      "meshes": 39,
+      "vertices": 56466,
+      "maxMeshVertices": 6738
+    },
+    "CH05M02TrustUnderFire": {
+      "meshes": 216,
+      "vertices": 268044,
+      "maxMeshVertices": 1425
+    },
+    "CH05M03NetworkCollapse": {
+      "meshes": 39,
+      "vertices": 56466,
+      "maxMeshVertices": 6738
+    },
+    "CH05M04LastCorridor": {
+      "meshes": 39,
+      "vertices": 56466,
+      "maxMeshVertices": 6738
+    },
+    "CH05M05CommandNode": {
+      "meshes": 39,
+      "vertices": 56466,
+      "maxMeshVertices": 6738
+    }
+  }
+}

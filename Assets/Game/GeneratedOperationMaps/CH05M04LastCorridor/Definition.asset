@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 4
   sourceIdentityHash: 7ff979c30a26d7986ecacf250d889b7d299eccce38117a6754962eea495fc37b
-  contentHash: f2cb98c48c10370d47d65c0494dfd4051ef22f2738159ad62d2048c5adca536c
-  generatedMetadataHash: f2cb98c48c10370d47d65c0494dfd4051ef22f2738159ad62d2048c5adca536c
+  contentHash: e9b2c3383a770311fa27511a3ef719bd2916023de7839005ce11ddfbe62597cb
+  generatedMetadataHash: e9b2c3383a770311fa27511a3ef719bd2916023de7839005ce11ddfbe62597cb
   sourceBinding:
     sourceOperationMapId: 
     sourceIdentityHash: 
@@ -105,21 +105,21 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch05.m04.fuel_receive
     kind: 4
-    position: {x: 1234, y: 0.009179777, z: 356}
+    position: {x: 1213, y: 0.009179777, z: 380}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch05.m04.receiving_origin
     kind: 4
-    position: {x: 1233, y: 0.009179777, z: 444}
+    position: {x: 1233, y: 0.009179777, z: 455}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch05.m04.receiving
     kind: 2
-    position: {x: 1240, y: 0.009179777, z: 450}
+    position: {x: 1240, y: 0.009179777, z: 461}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 0

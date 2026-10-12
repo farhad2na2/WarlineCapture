@@ -1,0 +1,349 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m01.first_contact",
+    "activeMissionId": "saga.ch01.m01.first_contact",
+    "activeMapId": "opmap.ch01.district_edge_01",
+    "run": "02",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "FindSquad",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 631,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m01.command_squad",
+            "position": {
+                "x": 1792.5,
+                "y": 0.3075282871723175,
+                "z": 693.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m01.command_squad",
+            "position": {
+                "x": 1795.5,
+                "y": -0.013719668611884117,
+                "z": 690.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m01.command_squad",
+            "position": {
+                "x": 1789.5,
+                "y": 0.27913978695869448,
+                "z": 692.5
+            }
+        },
+        {
+            "role": "role.hostile.patrol",
+            "group": "group.ch01.m01.hostile_patrol",
+            "position": {
+                "x": 1792.5,
+                "y": 0.30951204895973208,
+                "z": 732.5
+            }
+        },
+        {
+            "role": "role.hostile.patrol",
+            "group": "group.ch01.m01.hostile_patrol",
+            "position": {
+                "x": 1793.5,
+                "y": -0.014069885015487671,
+                "z": 737.5
+            }
+        },
+        {
+            "role": "role.hostile.patrol",
+            "group": "group.ch01.m01.hostile_patrol",
+            "position": {
+                "x": 1789.5,
+                "y": 0.30422884225845339,
+                "z": 734.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m01.command_squad",
+            "position": {
+                "x": 1790.5,
+                "y": 0.3123239576816559,
+                "z": 688.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 1783.001220703125,
+                "y": 43.951656341552737,
+                "z": 657.9420776367188
+            },
+            "euler": {
+                "x": 39.98664474487305,
+                "y": 9.98605728149414,
+                "z": 2.7857609552484066e-7
+            },
+            "focus": {
+                "x": 1792.072021484375,
+                "y": -4.978801371180452e-7,
+                "z": 709.5501708984375
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 1771.2393798828125,
+                "y": 99.80429077148438,
+                "z": 617.8724365234375
+            },
+            "euler": {
+                "x": 39.98664474487305,
+                "y": 9.98605728149414,
+                "z": 2.7857609552484066e-7
+            },
+            "focus": {
+                "x": 1791.8333740234375,
+                "y": 0.19989033043384553,
+                "z": 734.8333129882813
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 1782.53515625,
+                "y": 48.505191802978519,
+                "z": 675.906005859375
+            },
+            "euler": {
+                "x": 39.98664474487305,
+                "y": 9.98605728149414,
+                "z": 2.7857609552484066e-7
+            },
+            "focus": {
+                "x": 1792.5,
+                "y": 0.30951204895973208,
+                "z": 732.5
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 1767.9761962890625,
+                "y": 132.9033660888672,
+                "z": 631.5599975585938
+            },
+            "euler": {
+                "x": 39.98664474487305,
+                "y": 9.98605728149414,
+                "z": 2.7857609552484066e-7
+            },
+            "focus": {
+                "x": 1792.0,
+                "y": 16.7104549407959,
+                "z": 768.0
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "civic-hall-01-context",
+            "file": "civic-hall-01-context.png",
+            "position": {
+                "x": 1038.4808349609375,
+                "y": 104.30825805664063,
+                "z": 471.00946044921877
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1038.4808349609375,
+                "y": 6.010000228881836,
+                "z": 539.838623046875
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "civic-hall-01-front",
+            "file": "civic-hall-01-front.png",
+            "position": {
+                "x": 1038.4808349609375,
+                "y": 96.11673736572266,
+                "z": 452.5107116699219
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1038.4808349609375,
+                "y": 6.010000228881836,
+                "z": 515.6041259765625
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "civic-hall-02-context",
+            "file": "civic-hall-02-context.png",
+            "position": {
+                "x": 563.480712890625,
+                "y": 104.208251953125,
+                "z": 321.50946044921877
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 563.480712890625,
+                "y": 5.909999847412109,
+                "z": 390.3386535644531
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "civic-hall-02-front",
+            "file": "civic-hall-02-front.png",
+            "position": {
+                "x": 563.480712890625,
+                "y": 96.01673889160156,
+                "z": 303.0107727050781
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 563.480712890625,
+                "y": 5.909999847412109,
+                "z": 366.10418701171877
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-civilian_safe_zone",
+            "file": "story-civilian_safe_zone.png",
+            "position": {
+                "x": 1750.0,
+                "y": 81.92439270019531,
+                "z": 697.642333984375
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1750.0,
+                "y": 0.009179778397083283,
+                "z": 755.0
+            },
+            "fov": 36.003753662109378,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.507635116577149,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=BeautifyLighting enabled=True active=True intensity=1.15 shadows=Soft scene=Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity"
+    ],
+    "supplementalTargets": [
+        {
+            "name": "civic-hall-01-context",
+            "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "objectPath": "AuthoredOperationMapEntityPresentation/GameplayBuildings/HandmadeCity/Building_0020_SM_Bld_Hall_01/IntactVisual/SM_Bld_Hall_01",
+            "sourceHash": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+            "focus": {
+                "x": 1038.4808349609375,
+                "y": 6.010000228881836,
+                "z": 539.838623046875
+            },
+            "distance": 120.0
+        },
+        {
+            "name": "civic-hall-01-front",
+            "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "objectPath": "AuthoredOperationMapEntityPresentation/GameplayBuildings/HandmadeCity/Building_0020_SM_Bld_Hall_01/IntactVisual/SM_Bld_Hall_01",
+            "sourceHash": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+            "focus": {
+                "x": 1038.4808349609375,
+                "y": 6.010000228881836,
+                "z": 515.6041259765625
+            },
+            "distance": 110.0
+        },
+        {
+            "name": "civic-hall-02-context",
+            "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "objectPath": "AuthoredOperationMapEntityPresentation/GameplayBuildings/HandmadeCity/Building_0021_SM_Bld_Hall_01/IntactVisual/SM_Bld_Hall_01",
+            "sourceHash": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+            "focus": {
+                "x": 563.480712890625,
+                "y": 5.909999847412109,
+                "z": 390.3386535644531
+            },
+            "distance": 120.0
+        },
+        {
+            "name": "civic-hall-02-front",
+            "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "objectPath": "AuthoredOperationMapEntityPresentation/GameplayBuildings/HandmadeCity/Building_0021_SM_Bld_Hall_01/IntactVisual/SM_Bld_Hall_01",
+            "sourceHash": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+            "focus": {
+                "x": 563.480712890625,
+                "y": 5.909999847412109,
+                "z": 366.10418701171877
+            },
+            "distance": 110.0
+        },
+        {
+            "name": "story-civilian_safe_zone",
+            "source": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset",
+            "objectPath": "anchor.ch01.m01.civilian_safe_zone",
+            "sourceHash": "",
+            "focus": {
+                "x": 1750.0,
+                "y": 0.009179778397083283,
+                "z": 755.0
+            },
+            "distance": 100.0
+        }
+    ]
+}

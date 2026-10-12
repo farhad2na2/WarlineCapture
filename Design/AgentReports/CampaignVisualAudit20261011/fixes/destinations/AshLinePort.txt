@@ -1,0 +1,3 @@
+CampaignDestinationV2_20261011_9_relief_goal kind=aid anchor=(620.00, 0.00, 385.00) group=(632.25, 0.05, 414.56) owner=Map_AshLinePort/Props/SM_Prop_Barrel_02
+CampaignDestinationV2_20261011_9_fuel_goal kind=fuel anchor=(740.00, 0.00, 505.00) group=(740.00, 0.05, 513.00) owner=Map_AshLinePort/Props/SM_Prop_Container_01
+CampaignDestinationV2_20261011_9_records kind=records anchor=(605.00, 0.00, 595.00) group=(616.00, 0.05, 595.00) owner=Map_AshLinePort/Props/SM_Prop_Crate_Large_01

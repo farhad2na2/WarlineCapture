@@ -1,0 +1,1 @@
+Initial compile failed: CampaignSourceVisualAudit20261011.cs(40,43) CS1061, ReadOnlySpan<OperationMapAnchorConfig> has no Where. Corrected audit helper to enumerate Anchors.ToArray(); no production code changed.

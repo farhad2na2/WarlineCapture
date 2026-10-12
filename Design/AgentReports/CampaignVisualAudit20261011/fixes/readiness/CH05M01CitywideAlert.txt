@@ -1,0 +1,8 @@
+source=Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity
+before=a4bd236d9cae3a66334a88044c7d6c6875ca2746fe93686c4b73886df9ea241f
+after=913c7262e1984200052e64e7ca4a80f981fad94d5e53d1dbef58326cfb6b08c1
+transferredIdentities=37
+expectedGenerated=2942
+expectedRenderOnly=2617
+expectedBuildings=325
+All removed identities verified against live intact building attachments. Runtime predicate unchanged.

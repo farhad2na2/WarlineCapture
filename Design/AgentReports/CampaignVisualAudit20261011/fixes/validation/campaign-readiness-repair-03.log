@@ -1,0 +1,52 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.RepairRefinementReadiness
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RefinementReadinessRepair] map=CH05M01CitywideAlert generated=2942 renderOnly=2617 transferred=37
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairRefinementReadiness () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RefinementOwnershipFinalize.cs:60)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RefinementReadinessRepair] map=CH05M03NetworkCollapse generated=2935 renderOnly=2621 transferred=37
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairRefinementReadiness () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RefinementOwnershipFinalize.cs:60)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RefinementReadinessRepair] map=CH05M04LastCorridor generated=2935 renderOnly=2618 transferred=37
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairRefinementReadiness () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RefinementOwnershipFinalize.cs:60)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RefinementReadinessRepair] map=CH05M05CommandNode generated=2633 renderOnly=2355 transferred=62
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairRefinementReadiness () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RefinementOwnershipFinalize.cs:60)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[RefinementReadinessRepair] result=Passed repaired=4
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairRefinementReadiness () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RefinementOwnershipFinalize.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.RepairRefinementReadiness
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_93369d00/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

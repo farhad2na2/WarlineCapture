@@ -1,0 +1,45 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.RepairSupplyDestinationLots
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_489923a4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:ImportAsset (string,UnityEditor.ImportAssetOptions)
+Game.Editor.MapVariants.OtherMapSurfacePolish/<>c__DisplayClass37_0:<BuildDestinationPads>b__2 (UnityEngine.Material) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:59)
+System.Linq.Enumerable:ToArray<UnityEngine.Material> (System.Collections.Generic.IEnumerable`1<UnityEngine.Material>)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:19)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairCampaignDestinationRoadClearance (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,Game.Editor.MapVariants.OtherMapSurfacePolish/RefinementProtection,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationRoadClearance.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairSupplyDestinationLots () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignFunctionalLotRepair.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_489923a4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=RefineryDistrict pads=7 materials=4 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:68)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairCampaignDestinationRoadClearance (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,Game.Editor.MapVariants.OtherMapSurfacePolish/RefinementProtection,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationRoadClearance.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairSupplyDestinationLots () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignFunctionalLotRepair.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_489923a4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignFunctionalLots] result=Passed moved=2 requiredOrigins=unchanged runtimeVerification=pending
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairSupplyDestinationLots () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignFunctionalLotRepair.cs:32)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_489923a4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.RepairSupplyDestinationLots
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_489923a4/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

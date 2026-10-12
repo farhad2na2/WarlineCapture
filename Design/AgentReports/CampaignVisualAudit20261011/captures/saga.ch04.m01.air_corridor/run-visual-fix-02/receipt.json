@@ -1,0 +1,498 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch04.m01.air_corridor",
+    "activeMissionId": "saga.ch04.m01.air_corridor",
+    "activeMapId": "opmap.ch04.air_corridor_airfield_review",
+    "run": "visual-fix-02",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 1311,
+    "roles": [
+        {
+            "role": "role.friendly.ground_sensor",
+            "group": "group.ch04.m01.ground_sensor",
+            "position": {
+                "x": 631.5,
+                "y": 0.0,
+                "z": 598.5
+            },
+            "openingViewport": {
+                "x": 0.3720247149467468,
+                "y": 0.4742448627948761,
+                "z": 91.04629516601563
+            }
+        },
+        {
+            "role": "role.friendly.launcher",
+            "group": "group.ch04.m01.launcher_north",
+            "position": {
+                "x": 668.5,
+                "y": 0.0,
+                "z": 601.5
+            },
+            "openingViewport": {
+                "x": 0.615190863609314,
+                "y": 0.5047623515129089,
+                "z": 92.54576873779297
+            }
+        },
+        {
+            "role": "role.friendly.launcher",
+            "group": "group.ch04.m01.launcher_west",
+            "position": {
+                "x": 602.5,
+                "y": 0.0,
+                "z": 611.5
+            },
+            "openingViewport": {
+                "x": 0.20126765966415406,
+                "y": 0.5997089147567749,
+                "z": 97.54402160644531
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.vanguard",
+            "position": {
+                "x": 430.5,
+                "y": 18.0,
+                "z": 557.5
+            },
+            "openingViewport": {
+                "x": -1.9172664880752564,
+                "y": -0.05982285737991333,
+                "z": 54.963191986083987
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.vanguard",
+            "position": {
+                "x": 428.5,
+                "y": 18.0,
+                "z": 559.5
+            },
+            "openingViewport": {
+                "x": -1.8956378698349,
+                "y": -0.01663905382156372,
+                "z": 55.96284484863281
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.vanguard",
+            "position": {
+                "x": 428.5,
+                "y": 18.0,
+                "z": 563.5
+            },
+            "openingViewport": {
+                "x": -1.813004493713379,
+                "y": 0.06525969505310059,
+                "z": 57.96214294433594
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.main_body",
+            "position": {
+                "x": 977.5,
+                "y": 18.0,
+                "z": 690.5
+            },
+            "openingViewport": {
+                "x": 2.122173309326172,
+                "y": 1.263548493385315,
+                "z": 121.43992614746094
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.main_body",
+            "position": {
+                "x": 982.5,
+                "y": 18.0,
+                "z": 688.5
+            },
+            "openingViewport": {
+                "x": 2.1606712341308595,
+                "y": 1.2544664144515992,
+                "z": 120.44027709960938
+            }
+        },
+        {
+            "role": "role.hostile.aircraft",
+            "group": "group.ch04.m01.main_body",
+            "position": {
+                "x": 982.5,
+                "y": 18.0,
+                "z": 692.5
+            },
+            "openingViewport": {
+                "x": 2.133554458618164,
+                "y": 1.2724815607070923,
+                "z": 122.4395751953125
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m01.escort",
+            "position": {
+                "x": 648.5,
+                "y": -0.022891245782375337,
+                "z": 589.5
+            },
+            "openingViewport": {
+                "x": 0.4838256537914276,
+                "y": 0.3762357532978058,
+                "z": 86.56768798828125
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m01.escort",
+            "position": {
+                "x": 651.5,
+                "y": -0.021871764212846757,
+                "z": 592.5
+            },
+            "openingViewport": {
+                "x": 0.5046431422233582,
+                "y": 0.4099792540073395,
+                "z": 88.06629180908203
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 650.8218994140625,
+                "y": 79.95083618164063,
+                "z": 554.88720703125
+            },
+            "euler": {
+                "x": 60.011573791503909,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 650.8289184570313,
+                "y": 0.00000271551834885031,
+                "z": 601.0263671875
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 705.0,
+                "y": 152.2495880126953,
+                "z": 547.8604125976563
+            },
+            "euler": {
+                "x": 60.011573791503909,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 705.0,
+                "y": 18.0,
+                "z": 625.3333129882813
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 430.5,
+                "y": 82.95948028564453,
+                "z": 520.0131225585938
+            },
+            "euler": {
+                "x": 60.011573791503909,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 430.5,
+                "y": 18.0,
+                "z": 557.5
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 710.0,
+                "y": 1087.99853515625,
+                "z": 259.1355895996094
+            },
+            "euler": {
+                "x": 60.011573791503909,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 710.0,
+                "y": 480.0,
+                "z": 610.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-01-end-a",
+            "file": "runway-01-end-a.png",
+            "position": {
+                "x": 490.6571044921875,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 490.6571044921875,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-01-end-b",
+            "file": "runway-01-end-b.png",
+            "position": {
+                "x": 700.0,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 700.0,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-02-end-a",
+            "file": "runway-02-end-a.png",
+            "position": {
+                "x": 699.9999389648438,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 699.9999389648438,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-02-end-b",
+            "file": "runway-02-end-b.png",
+            "position": {
+                "x": 909.3428344726563,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 909.3428344726563,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-ground_sensor",
+            "file": "story-ground_sensor.png",
+            "position": {
+                "x": 630.0,
+                "y": 81.91521453857422,
+                "z": 542.642333984375
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 630.0,
+                "y": 0.0,
+                "z": 600.0
+            },
+            "fov": 50.00820541381836,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [
+        "faction=1 building=building_barrack count=1",
+        "faction=1 building=tent_regular count=0",
+        "faction=1 building=tent_expert count=0",
+        "faction=1 building=tent_contractor count=0",
+        "faction=1 building=building_helipad count=0",
+        "faction=1 building=building_ammunition_depot count=0",
+        "faction=1 building=building_fuel_bladder count=0",
+        "faction=1 building=building_airport count=0",
+        "faction=1 building=building_satelite_dish count=0",
+        "faction=1 building=building_guardtower count=0",
+        "faction=1 building=building_guardtower_big count=0",
+        "faction=1 building=tent_refugee count=0",
+        "faction=1 building=portaloo count=0",
+        "faction=1 building=building_road_barrier count=0",
+        "faction=1 building=wall_dirt_straight count=0",
+        "faction=1 building=building_oilpump count=0",
+        "faction=1 building=building_house count=0",
+        "faction=1 building=building_refinery count=0",
+        "faction=1 building=building_refinery_big count=0",
+        "faction=1 building=wall_fence_straight count=0",
+        "faction=1 building=gasstation count=0",
+        "faction=1 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=1 building=building_hall count=0",
+        "faction=1 building=building_shop count=0",
+        "faction=1 building=sm_bld_village_hatch_01 count=0",
+        "faction=1 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=1 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=1 building=building_watertank count=0",
+        "faction=1 building=m05_breach_road_barrier count=0",
+        "faction=1 building=ch02m01_road_obstruction count=0",
+        "faction=1 building=supplyline_building_oilpump count=0",
+        "faction=1 building=supplyline_building_refinery count=0",
+        "faction=1 building=supplyline_reserve_depot count=0",
+        "faction=1 building=building_steelpush_reservedepot count=0",
+        "faction=1 building=building_splitfront_supportdepot count=0",
+        "faction=1 building=routereopened_recordsoffice count=0",
+        "faction=1 building=building_armorbreak_reservedepot count=0",
+        "faction=1 building=building_citywide_reservedepot count=0",
+        "faction=1 building=building_citywide_clinic count=0",
+        "faction=1 building=building_citywide_utility count=0",
+        "faction=1 building=building_trust_shelter count=0",
+        "faction=1 building=building_trust_broadcast count=0",
+        "faction=1 building=building_trust_reservedepot count=0",
+        "faction=1 building=building_network_civic count=0",
+        "faction=1 building=building_network_audit count=0",
+        "faction=1 building=building_network_reservedepot count=0",
+        "faction=1 building=building_corridor_civic count=0",
+        "faction=1 building=building_corridor_receivingdepot count=0",
+        "faction=1 building=building_corridor_reservedepot count=0",
+        "faction=1 building=building_command_clinic count=0",
+        "faction=1 building=building_command_utility count=0",
+        "faction=1 building=building_command_audit count=0",
+        "faction=1 building=building_command_reservedepot count=0"
+    ],
+    "spawnRequests": [
+        "building=Building_Barrack faction=1 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=0 requirePreferred=0 preferred=int2(515, 597) origin=int2(503, 585) footprint=int2(28, 15)"
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.000489234924317,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Sun enabled=True active=True intensity=1.2 shadows=Soft scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": [
+        {
+            "name": "runway-01-end-a",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "6ca53b30fe1df22f744e433a96ed1425aeb2e1b5a26565d9cceded68da0b4161",
+            "focus": {
+                "x": 490.6571044921875,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-01-end-b",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "6ca53b30fe1df22f744e433a96ed1425aeb2e1b5a26565d9cceded68da0b4161",
+            "focus": {
+                "x": 700.0,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-02-end-a",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "6ca53b30fe1df22f744e433a96ed1425aeb2e1b5a26565d9cceded68da0b4161",
+            "focus": {
+                "x": 699.9999389648438,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-02-end-b",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "6ca53b30fe1df22f744e433a96ed1425aeb2e1b5a26565d9cceded68da0b4161",
+            "focus": {
+                "x": 909.3428344726563,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "story-ground_sensor",
+            "source": "Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset",
+            "objectPath": "anchor.ch04.m01.ground_sensor",
+            "sourceHash": "",
+            "focus": {
+                "x": 630.0,
+                "y": 0.0,
+                "z": 600.0
+            },
+            "distance": 100.0
+        }
+    ]
+}

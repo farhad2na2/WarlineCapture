@@ -1,0 +1,2 @@
+CampaignDestinationV2_20261011_3_specialists kind=airfield anchor=(910.00, 0.03, 655.00) group=(905.79, 0.06, 644.84) owner=Map_CityEdgeAirfield/Props/SM_Prop_Bed_Medical_01
+CampaignDestinationV2_20261011_15_ground_sensor kind=service anchor=(630.00, 0.00, 600.00) group=(636.51, 0.06, 615.71) owner=Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01

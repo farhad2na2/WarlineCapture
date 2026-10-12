@@ -1,0 +1,15 @@
+{
+    "missionId": "saga.ch01.m01.first_contact",
+    "kind": "source-runway-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+    "sourceHashBefore": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+    "sourceHashAfter": "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b",
+    "graphics": "Metal",
+    "files": [
+        "DenseCity-source-runway-detail.png",
+        "DenseCity-source-runway-overview.png",
+        "DenseCity-source-runway-runway-01-end-a.png",
+        "DenseCity-source-runway-runway-01-end-b.png"
+    ],
+    "scope": "Authored runway-end inspection; no runtime actors/HUD; overview suppresses fog/post processing, detail uses authored lighting"
+}

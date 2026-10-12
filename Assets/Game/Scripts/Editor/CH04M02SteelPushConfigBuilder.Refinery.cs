@@ -37,10 +37,10 @@ namespace Game.Editor
                     samples++;
                 }
                 (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
-                    ("forward_post",805,650,OperationMapAnchorKind.Base,1,12),
-                    ("fuel_reserve",805,650,OperationMapAnchorKind.Build,1,1),
-                    ("initial_barracks",740,650,OperationMapAnchorKind.Build,1,1),
-                    ("build_zone",775,655,OperationMapAnchorKind.Build,1,38),
+                    ("forward_post",882,661,OperationMapAnchorKind.Base,1,12),
+                    ("fuel_reserve",870,650,OperationMapAnchorKind.Build,1,1),
+                    ("initial_barracks",814,600,OperationMapAnchorKind.Build,1,1),
+                    ("build_zone",795,640,OperationMapAnchorKind.Build,1,38),
                     ("squad_a",760,625,OperationMapAnchorKind.Deployment,1,2),
                     ("squad_b",748,618,OperationMapAnchorKind.Deployment,1,.5f),
                     ("tank_support_b",748,632,OperationMapAnchorKind.Deployment,1,.5f),

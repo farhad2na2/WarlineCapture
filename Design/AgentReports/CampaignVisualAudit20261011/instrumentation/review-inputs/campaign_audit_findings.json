@@ -1,0 +1,120 @@
+{
+  "owner_priorities": [
+    "Make all 25 Campaign missions more visually convincing, not simply more textured.",
+    "Replace the implausible asphalt treatment in front of the city hall and bazaar with a coherent civic/public-space treatment; add meaningful bazaar props.",
+    "Give both ends of runways believable thresholds, markings, shoulders and ground transitions.",
+    "Resolve connections where roads without sidewalks abruptly meet roads with sidewalks."
+  ],
+  "missions": [
+    {
+      "index": 0,
+      "title": "First Contact",
+      "priority": "P1",
+      "intent": "A readable first encounter in a living Old Market, with a protected civilian route.",
+      "observed": "The settled opening keeps the street axis but places the nearest soldiers against the bottom tutorial/command controls. Native close views at the civilian safe-zone anchor show a narrow asphalt cross street running directly across the civic hall entrance, a perpendicular lane aimed at the doorway, isolated canopies and fragmented pale paving. Supplemental mesh-name scans also frame two smaller hall instances elsewhere; the primary civic-frontage evidence is story-civilian_safe_zone plus objective-detail.",
+      "camera": "Keep the patrol street axis; pull back only enough to include the command squad and the first safe civilian turn above the bottom HUD. Use the hall as the distant orientation landmark rather than the main encounter.",
+      "light": "Retain warm masonry with cooler, readable alley shadows. Reduce the chalky value similarity between white paving and facades; verify the active key light before changing exposure.",
+      "ground": "Treat the hall entrance as a pedestrian stone forecourt with an explicit vehicle edge. Vary paving by use: large civic slabs, small market setts, compacted service-lane dust. Terminate asphalt and curbs deliberately at the plaza.",
+      "props": "Build short stall clusters facing real pedestrian aisles: produce baskets, rolled rugs, shaded counters, handcarts and loading crates. Keep the patrol corridor and civilian turn unobstructed; give the safe route a legible entrance rather than random scattered props.",
+      "landscape": "Blend building foundations and curb edges into sand with restrained accumulation; stop repeating tiny rubble uniformly across every parcel.",
+      "focusAnchors": [
+        "patrol_objective",
+        "civilian_safe_zone",
+        "civilian_evacuation"
+      ],
+      "evidence": [
+        "opening-hud",
+        "objective-detail",
+        "mission-overview"
+      ]
+    },
+    {
+      "index": 1,
+      "title": "Establish Base",
+      "priority": "P1",
+      "intent": "Reopen an abandoned forward post and understand immediately where the new Barracks belongs.",
+      "observed": "The empty sand/helipad opening persists after a 9.35-second warmup with cameraSettled=true. The squad and existing camp sit outside the useful center while ARIA asks to open Build. The overview presents a busy aircraft depot and repeated tent rows, competing with the abandoned-forward-post story.",
+      "camera": "Reframe around the actual legal Barracks build area and command squad, keeping the access gate in view. Confirm the construction instruction points to visible terrain and does not frame the helipad as the build target.",
+      "light": "Keep clear daylight construction readability; strengthen grounded contact contrast around slab edges and tent feet without making the open build area dark.",
+      "ground": "Join the camp gate to its service apron with compacted wheel tracks and a believable slab-to-sand shoulder. Keep the build footprint clear; distinguish reserved building ground from aircraft servicing pavement. The shared DenseCity runway endpoint preview also shows a broad sand intrusion across its pavement edge near industrial tanks; audit that overlap and the raw ends before applying surface detail.",
+      "props": "Use a few disused-post cues at the edges: folded shelter, stacked barriers, supply pallets and a weathered gate sign. Consolidate repeated tents into recognisable sleeping, repair and logistics groups without touching functional units.",
+      "landscape": "Replace evenly spaced rock scatter beside the build view with small natural groups; retain a readable clear construction area.",
+      "focusAnchors": [
+        "friendly_spawn",
+        "defense_boundary",
+        "comms_focus"
+      ],
+      "evidence": [
+        "opening-hud",
+        "objective-context",
+        "mission-overview"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Radar Warning",
+      "priority": "P1",
+      "intent": "Read two incoming convoy approaches and defend a credible forward-post checkpoint.",
+      "observed": "The first view centres a very wide divided road and pale median. Farther along, wrecks scatter across both carriageways, while the road has locally abrupt sand intrusions. A small watchtower and barriers do not yet make the defense line visually distinct from the boulevard.",
+      "camera": "Frame the squad, sensor and incoming road together; use a short camera-only overview for the two approaches, then return to a readable tactical distance.",
+      "light": "Preserve a stable daylight key and enough value contrast for approaching vehicles against dark asphalt and for the sensor against pale sand.",
+      "ground": "Finish median terminations and junction curb continuity. Group repair patches and tyre wear around the checkpoint; inspect each sand intrusion as either deliberate damage with a transition or an unwanted overlap.",
+      "props": "Dress the post with a small radar support cluster, cable route, generator and ordered blast barriers. Cluster wreckage into a believable incident off the drivable convoy lane instead of evenly distributing cars.",
+      "landscape": "Retain the ridgeline as an approach silhouette; add a coarse-to-fine rock transition at its foot, without filling vehicle clearance.",
+      "focusAnchors": [
+        "ground_sensor",
+        "contact",
+        "squad_a"
+      ],
+      "evidence": [
+        "opening-hud",
+        "objective-detail",
+        "objective-context"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Airlift",
+      "priority": "P1",
+      "intent": "A two-stage rescue with an unmistakable specialist pickup, APC route and helicopter landing area.",
+      "observed": "The opening shows a broad bright concrete apron and very small soldiers. Inspection views reveal a narrow runway-like asphalt rectangle with a parked transport, abrupt ends and sparse surrounding airport infrastructure. The wide diagnostic view exposes the rectangular terrain edge; this is not proof that the shipping camera can reach that edge. Fresh source endpoint views confirm bare square-cut outer ends with no threshold bars or identifiers, an unblended sand shoulder and a parallel road separating the runway from the main apron. Two adjoining mesh modules make one continuous strip; their inner endpoints are not extra runway thresholds.",
+      "camera": "Keep APC, squad and the first destination legible in the opening. Provide a camera-only overview connecting the specialist pickup to the landing pad; avoid using whole-map bounds to determine normal zoom.",
+      "light": "The apron is very pale. Tune concrete roughness and slab-value variation before increasing global contrast. The legacy diagnostics list disabled lights too, so their duplicate entries do not prove double lighting.",
+      "ground": "Give both runway ends threshold bars, end lines and appropriately oriented identifiers; add continuous shoulders, restrained touchdown wear and a compacted end transition inside the existing footprint. Align taxiway centrelines, hold markings and apron pavement at actual joins.",
+      "props": "Add coherent perimeter-side servicing groups: baggage cart, cones, fire equipment and a sheltered specialist waiting area. Keep runway, aircraft envelopes and the rescue/APC path clear.",
+      "landscape": "Make the airport fence/ground edge and sparse vegetation intentional; reduce the uniformly scattered shrubs and repeated ground spots around the apron.",
+      "focusAnchors": [
+        "specialists",
+        "landing",
+        "carrier"
+      ],
+      "evidence": [
+        "opening-hud",
+        "objective-context",
+        "mission-overview"
+      ]
+    },
+    {
+      "index": 4,
+      "title": "Breach Assault",
+      "priority": "P1",
+      "intent": "Read a fortified relay compound with a gate, transmitter and recoverable archive.",
+      "observed": "The opening crops the target compound against the top HUD. The objective detail shows a mostly empty sand rectangle, two guard towers, a small shed and a bright dish, separated from the boulevard by an undifferentiated sandy gap.",
+      "camera": "Move the initial focus toward the gate enough to show gate, squad and at least the transmitter silhouette simultaneously; keep the target structure below the resource header.",
+      "light": "Use building and tower shadows to articulate the compound; preserve gate readability. Check light enablement before assigning cause to the multiple light names in the diagnostic list.",
+      "ground": "Add a coherent gate apron and worn internal service path connecting gate, transmitter and archive. Finish the sidewalk crossing at the entrance with a dropped curb and clear pavement material change.",
+      "props": "Create a compact communications installation: equipment cabinets, cable trays, generator, maintenance crates and protected archive doorway. Keep every gameplay target visually distinct and accessible; no duplicate functional objects.",
+      "landscape": "Blend the rear rock shelf and wall base with grounded rubble bands, avoiding isolated identical boulders across the empty yard.",
+      "focusAnchors": [
+        "gate",
+        "core",
+        "archive"
+      ],
+      "evidence": [
+        "opening-hud",
+        "objective-context",
+        "objective-detail"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+destinationRoadClearance=Passed groups=2 relocated=0
+roadGradeSeamValidation=Passed pairedEnds=0 maxAllowedHeightError=0.005m
+FINISHED TERMINAL SURFACE Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(2064.20, 0.14, 529.03) ground=0
+FINISHED TERMINAL SURFACE Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(2064.20, 0.29, 525.25) ground=0
+FINISHED TERMINAL SURFACE Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(2064.20, 0.29, 525.25) ground=0
+FINISHED TERMINAL SURFACE Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(2064.20, 0.29, 532.75) ground=0
+FINISHED TERMINAL SURFACE Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(2064.20, 0.29, 532.75) ground=0
+gradedJoins=0 terminalSurfaces=5 removedFalseEnds=0 relocatedDestinations=0 protectedHash=beee88fbe26d4be1b32c322b0048bb12a092643f91b2b0563001f40f63d8a96d

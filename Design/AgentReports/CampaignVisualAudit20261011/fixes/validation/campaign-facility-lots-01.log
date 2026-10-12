@@ -1,0 +1,29 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.CampaignPlacementFixes20261011.ApplyQualifiedLots
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_9df4581a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=25 maps=32
+UnityEngine.Debug:Log (object)
+Game.Editor.M01FirstContactConfigBuilder:RefreshChapterCatalogs () (at Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs:75)
+Game.Editor.CampaignPlacementFixes20261011:ApplyQualifiedLots () (at Assets/Game/Scripts/Editor/CampaignPlacementFixes20261011.cs:49)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_9df4581a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignQualifiedLots] result=Passed steelReserve=870,650 steelBarracks=814,600 refinery=741,472 unchanged=physicalSources,budgets,missionIds runtimePlacementVerification=pending
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignPlacementFixes20261011:ApplyQualifiedLots () (at Assets/Game/Scripts/Editor/CampaignPlacementFixes20261011.cs:50)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_9df4581a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CampaignPlacementFixes20261011.ApplyQualifiedLots
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_9df4581a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -1,0 +1,11 @@
+grid=440,220 origin=float3(860f, 0f, 300f) cell=1
+BuildingPlacementAuthoredRoadCache.mask cells=25232
+BuildingPlacementAuthoredRoadCache.sidewalkMask cells=0
+BuildingPlacementAuthoredBuildingCache.mask cells=18474
+GridRoad cells=0
+Building_Network_Civic preferred=339,144 footprint=14,12 world=1199,444
+Building_Network_Civic rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Network_Civic rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Network_Civic rejected BuildingPlacementAuthoredBuildingCache.mask=90
+Building_Network_Civic rejected GridRoad=0
+Building_Network_Civic nearestClearGrid=(346, 148);(346, 149);(347, 148);(346, 150);(347, 149);(348, 148);(346, 151);(347, 150);(348, 149);(347, 151);(346, 152);(348, 150)

@@ -1,0 +1,349 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch05.m02.trust_under_fire",
+    "activeMissionId": "saga.ch05.m02.trust_under_fire",
+    "activeMapId": "opmap.ch05.trust_under_fire",
+    "run": "01",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 1936,
+    "roles": [
+        {
+            "role": "role.friendly.escort.south",
+            "group": "group.ch05.m02.escort.south",
+            "position": {
+                "x": 549.5,
+                "y": -0.021871764212846757,
+                "z": 378.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.north",
+            "group": "group.ch05.m02.escort.north",
+            "position": {
+                "x": 550.5,
+                "y": 0.0,
+                "z": 504.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.south",
+            "group": "group.ch05.m02.escort.south",
+            "position": {
+                "x": 549.5,
+                "y": 0.0,
+                "z": 384.5
+            }
+        },
+        {
+            "role": "role.friendly.convoy.north",
+            "group": "group.ch05.m02.convoy.north",
+            "position": {
+                "x": 468.5,
+                "y": 0.0,
+                "z": 505.5
+            }
+        },
+        {
+            "role": "role.friendly.convoy.south",
+            "group": "group.ch05.m02.convoy.south",
+            "position": {
+                "x": 472.5,
+                "y": 0.0,
+                "z": 384.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.south",
+            "group": "group.ch05.m02.escort.south",
+            "position": {
+                "x": 550.5,
+                "y": -0.022899260744452478,
+                "z": 375.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.south",
+            "group": "group.ch05.m02.escort.south",
+            "position": {
+                "x": 552.5,
+                "y": -0.021871764212846757,
+                "z": 377.5
+            }
+        },
+        {
+            "role": "role.friendly.engineer",
+            "group": "group.ch05.m02.engineer",
+            "position": {
+                "x": 605.5,
+                "y": -0.021871764212846757,
+                "z": 505.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.north",
+            "group": "group.ch05.m02.escort.north",
+            "position": {
+                "x": 550.5,
+                "y": -0.022891245782375337,
+                "z": 499.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.south",
+            "group": "group.ch05.m02.escort.south",
+            "position": {
+                "x": 551.5,
+                "y": -0.022891245782375337,
+                "z": 379.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.north",
+            "group": "group.ch05.m02.escort.north",
+            "position": {
+                "x": 552.5,
+                "y": -0.021871764212846757,
+                "z": 498.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.north",
+            "group": "group.ch05.m02.escort.north",
+            "position": {
+                "x": 551.5,
+                "y": 0.00710047222673893,
+                "z": 495.5
+            }
+        },
+        {
+            "role": "role.friendly.escort.north",
+            "group": "group.ch05.m02.escort.north",
+            "position": {
+                "x": 548.5,
+                "y": -0.021871764212846757,
+                "z": 497.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m02.staff.south",
+            "position": {
+                "x": 928.5,
+                "y": 0.0007173046469688416,
+                "z": 421.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m02.staff.south",
+            "position": {
+                "x": 931.5,
+                "y": 0.003101237118244171,
+                "z": 418.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m02.staff.north",
+            "position": {
+                "x": 929.5,
+                "y": 0.0005308873951435089,
+                "z": 538.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m02.staff.north",
+            "position": {
+                "x": 932.5,
+                "y": 0.003101237118244171,
+                "z": 541.5
+            }
+        },
+        {
+            "role": "role.hostile.north",
+            "group": "group.ch05.m02.hostile.north",
+            "position": {
+                "x": 780.5,
+                "y": 0.0,
+                "z": 506.5
+            }
+        },
+        {
+            "role": "role.hostile.south",
+            "group": "group.ch05.m02.hostile.south",
+            "position": {
+                "x": 799.5,
+                "y": 0.0,
+                "z": 386.5
+            }
+        },
+        {
+            "role": "role.hostile.north",
+            "group": "group.ch05.m02.hostile.north",
+            "position": {
+                "x": 778.5,
+                "y": 0.011812584474682808,
+                "z": 519.5
+            }
+        },
+        {
+            "role": "role.hostile.north",
+            "group": "group.ch05.m02.hostile.north",
+            "position": {
+                "x": 782.5,
+                "y": 0.006750255823135376,
+                "z": 520.5
+            }
+        },
+        {
+            "role": "role.hostile.south",
+            "group": "group.ch05.m02.hostile.south",
+            "position": {
+                "x": 800.5,
+                "y": -0.0181871484965086,
+                "z": 370.5
+            }
+        },
+        {
+            "role": "role.hostile.south",
+            "group": "group.ch05.m02.hostile.south",
+            "position": {
+                "x": 802.5,
+                "y": -0.02324947714805603,
+                "z": 373.5
+            }
+        },
+        {
+            "role": "role.hostile.relay",
+            "group": "group.ch05.m02.hostile.relay",
+            "position": {
+                "x": 515.5,
+                "y": 0.011812584474682808,
+                "z": 640.5
+            }
+        },
+        {
+            "role": "role.hostile.relay",
+            "group": "group.ch05.m02.hostile.relay",
+            "position": {
+                "x": 535.5,
+                "y": 0.006750255823135376,
+                "z": 650.5
+            }
+        },
+        {
+            "role": "role.hostile.relay",
+            "group": "group.ch05.m02.hostile.relay",
+            "position": {
+                "x": 555.5,
+                "y": 0.005315138027071953,
+                "z": 640.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 542.5757446289063,
+                "y": 40.04999542236328,
+                "z": 422.0219421386719
+            },
+            "euler": {
+                "x": 60.0348014831543,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 542.57763671875,
+                "y": 0.0000013633807611768134,
+                "z": 445.1152038574219
+            },
+            "fov": 50.024871826171878,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 774.8076782226563,
+                "y": 134.28164672851563,
+                "z": 424.77386474609377
+            },
+            "euler": {
+                "x": 60.0348014831543,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 774.8076782226563,
+                "y": 0.0006503738113678992,
+                "z": 502.19232177734377
+            },
+            "fov": 50.024871826171878,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 928.5,
+                "y": 64.97538757324219,
+                "z": 384.0394592285156
+            },
+            "euler": {
+                "x": 60.0348014831543,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 928.5,
+                "y": 0.0007173046469688416,
+                "z": 421.5
+            },
+            "fov": 50.024871826171878,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 700.0,
+                "y": 1114.1767578125,
+                "z": 134.37130737304688
+            },
+            "euler": {
+                "x": 60.0348014831543,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 700.0,
+                "y": 480.0,
+                "z": 500.0
+            },
+            "fov": 50.024871826171878,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 6.006293773651123,
+    "lightStates": [
+        "name=Directional Light (1) enabled=True active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Sun enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/OperationMaps/CH05M02TrustUnderFire/RuntimeBinding.unity",
+        "name=Directional Light enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

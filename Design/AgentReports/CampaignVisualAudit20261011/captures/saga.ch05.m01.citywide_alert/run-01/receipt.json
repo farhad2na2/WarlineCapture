@@ -1,0 +1,16 @@
+{
+    "result": "Failed",
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "activeMissionId": "",
+    "activeMapId": "",
+    "run": "01",
+    "error": "System.TimeoutException: phase=1 frames=72765 submitted=True\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001a3] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:122 ",
+    "gameplayStarted": false,
+    "quality": "",
+    "graphics": "",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 0,
+    "roles": [],
+    "views": []
+}

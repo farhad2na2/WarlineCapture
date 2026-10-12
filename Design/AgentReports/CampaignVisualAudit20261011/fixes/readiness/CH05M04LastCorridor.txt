@@ -1,0 +1,8 @@
+source=Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity
+before=7900465a1e25f4e2256f38b11a124efdbe0a200d6d446aa600cfdb17d4fd8a78
+after=0cb1b5f5dc34feff25a333198eaafb7ce321c3e9b5a6bb67f6d518adcf3aba30
+transferredIdentities=37
+expectedGenerated=2935
+expectedRenderOnly=2618
+expectedBuildings=317
+All removed identities verified against live intact building attachments. Runtime predicate unchanged.

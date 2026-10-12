@@ -1,0 +1,411 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch02.m05.route_reopened",
+    "activeMissionId": "saga.ch02.m05.route_reopened",
+    "activeMapId": "opmap.ch02.route_reopened_port_review",
+    "run": "visual-fix-04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 3626,
+    "roles": [
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_a",
+            "position": {
+                "x": 607.5,
+                "y": -0.021871764212846757,
+                "z": 525.5
+            },
+            "openingViewport": {
+                "x": 0.3632906973361969,
+                "y": 0.6115185618400574,
+                "z": 112.96273803710938
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_a",
+            "position": {
+                "x": 605.5,
+                "y": -0.022899260744452478,
+                "z": 523.5
+            },
+            "openingViewport": {
+                "x": 0.3512979745864868,
+                "y": 0.5959200859069824,
+                "z": 111.96392822265625
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_a",
+            "position": {
+                "x": 606.5,
+                "y": -0.022891245782375337,
+                "z": 527.5
+            },
+            "openingViewport": {
+                "x": 0.35919907689094546,
+                "y": 0.6268320083618164,
+                "z": 113.96331787109375
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_b",
+            "position": {
+                "x": 613.5,
+                "y": 0.00812796875834465,
+                "z": 534.5
+            },
+            "openingViewport": {
+                "x": 0.3993116617202759,
+                "y": 0.6785778403282166,
+                "z": 117.43537902832031
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_b",
+            "position": {
+                "x": 614.5,
+                "y": 0.0071084871888160709,
+                "z": 533.5
+            },
+            "openingViewport": {
+                "x": 0.4040396809577942,
+                "y": 0.6713935732841492,
+                "z": 116.93641662597656
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_a",
+            "position": {
+                "x": 603.5,
+                "y": -0.021871764212846757,
+                "z": 526.5
+            },
+            "openingViewport": {
+                "x": 0.34263095259666445,
+                "y": 0.6192119121551514,
+                "z": 113.46258544921875
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_b",
+            "position": {
+                "x": 617.5,
+                "y": 0.00812796875834465,
+                "z": 534.5
+            },
+            "openingViewport": {
+                "x": 0.41985440254211428,
+                "y": 0.6785778403282166,
+                "z": 117.43537902832031
+            }
+        },
+        {
+            "role": "role.route.engineer",
+            "group": "group.ch02.m05.engineers",
+            "position": {
+                "x": 627.5,
+                "y": 0.0005308873951435089,
+                "z": 496.5
+            },
+            "openingViewport": {
+                "x": 0.465658962726593,
+                "y": 0.3545290529727936,
+                "z": 98.44776153564453
+            }
+        },
+        {
+            "role": "role.route.engineer",
+            "group": "group.ch02.m05.engineers",
+            "position": {
+                "x": 623.5,
+                "y": 0.0005308873951435089,
+                "z": 495.5
+            },
+            "openingViewport": {
+                "x": 0.4408538341522217,
+                "y": 0.3443056344985962,
+                "z": 97.94791412353516
+            }
+        },
+        {
+            "role": "role.route.relief_convoy",
+            "group": "group.ch02.m05.relief",
+            "position": {
+                "x": 720.5,
+                "y": 0.0,
+                "z": 385.5
+            },
+            "openingViewport": {
+                "x": 1.7267745733261109,
+                "y": -2.2324743270874025,
+                "z": 42.965187072753909
+            }
+        },
+        {
+            "role": "role.route.fuel_convoy",
+            "group": "group.ch02.m05.fuel",
+            "position": {
+                "x": 640.5,
+                "y": 0.0,
+                "z": 505.5
+            },
+            "openingViewport": {
+                "x": 0.5433200001716614,
+                "y": 0.4420696794986725,
+                "z": 102.94685363769531
+            }
+        },
+        {
+            "role": "role.route.hostile",
+            "group": "group.ch02.m05.hostile_b",
+            "position": {
+                "x": 603.5,
+                "y": -0.024684594944119455,
+                "z": 635.5
+            },
+            "openingViewport": {
+                "x": 0.39368462562561037,
+                "y": 1.1832275390625,
+                "z": 167.9483642578125
+            }
+        },
+        {
+            "role": "role.route.hostile",
+            "group": "group.ch02.m05.hostile_b",
+            "position": {
+                "x": 606.5,
+                "y": -0.02324947714805603,
+                "z": 637.5
+            },
+            "openingViewport": {
+                "x": 0.405022531747818,
+                "y": 1.190187931060791,
+                "z": 168.9468231201172
+            }
+        },
+        {
+            "role": "role.route.hostile",
+            "group": "group.ch02.m05.hostile_a",
+            "position": {
+                "x": 604.5,
+                "y": -0.024684594944119455,
+                "z": 621.5
+            },
+            "openingViewport": {
+                "x": 0.3928094208240509,
+                "y": 1.1321566104888917,
+                "z": 160.95050048828126
+            }
+        },
+        {
+            "role": "role.route.hostile",
+            "group": "group.ch02.m05.hostile_b",
+            "position": {
+                "x": 605.5,
+                "y": -0.0181871484965086,
+                "z": 633.5
+            },
+            "openingViewport": {
+                "x": 0.4002698063850403,
+                "y": 1.1762374639511109,
+                "z": 166.94305419921876
+            }
+        },
+        {
+            "role": "role.route.rifle",
+            "group": "group.ch02.m05.squad_b",
+            "position": {
+                "x": 614.5,
+                "y": 0.009693114086985588,
+                "z": 537.5
+            },
+            "openingViewport": {
+                "x": 0.4056510925292969,
+                "y": 0.6997596025466919,
+                "z": 118.93357849121094
+            }
+        },
+        {
+            "role": "role.route.hostile",
+            "group": "group.ch02.m05.hostile_a",
+            "position": {
+                "x": 607.5,
+                "y": -0.02324947714805603,
+                "z": 620.5
+            },
+            "openingViewport": {
+                "x": 0.4037512540817261,
+                "y": 1.1283479928970338,
+                "z": 160.4494171142578
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 633.1055908203125,
+                "y": 91.94391632080078,
+                "z": 458.8597717285156
+            },
+            "euler": {
+                "x": 60.01011276245117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 633.1029052734375,
+                "y": -4.042231012135744e-7,
+                "z": 511.9247741699219
+            },
+            "fov": 50.00223922729492,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 618.9705810546875,
+                "y": 134.23764038085938,
+                "z": 468.08251953125
+            },
+            "euler": {
+                "x": 60.01011276245117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 618.9705810546875,
+                "y": -0.009968824684619904,
+                "z": 545.558837890625
+            },
+            "fov": 50.00223922729492,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 607.5,
+                "y": 64.9366455078125,
+                "z": 488.0114440917969
+            },
+            "euler": {
+                "x": 60.01011276245117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 607.5,
+                "y": -0.021871764212846757,
+                "z": 525.5
+            },
+            "fov": 50.00223922729492,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 655.0,
+                "y": 1032.05419921875,
+                "z": 183.90115356445313
+            },
+            "euler": {
+                "x": 60.01011276245117,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 655.0,
+                "y": 480.0,
+                "z": 502.5
+            },
+            "fov": 50.00223922729492,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [
+        "faction=2 building=routereopened_recordsoffice count=1",
+        "faction=2 building=tent_regular count=0",
+        "faction=2 building=tent_expert count=0",
+        "faction=2 building=tent_contractor count=0",
+        "faction=2 building=building_barrack count=0",
+        "faction=2 building=building_helipad count=0",
+        "faction=2 building=building_ammunition_depot count=0",
+        "faction=2 building=building_fuel_bladder count=0",
+        "faction=2 building=building_airport count=0",
+        "faction=2 building=building_satelite_dish count=0",
+        "faction=2 building=building_guardtower count=0",
+        "faction=2 building=building_guardtower_big count=0",
+        "faction=2 building=tent_refugee count=0",
+        "faction=2 building=portaloo count=0",
+        "faction=2 building=building_road_barrier count=0",
+        "faction=2 building=wall_dirt_straight count=0",
+        "faction=2 building=building_oilpump count=0",
+        "faction=2 building=building_house count=0",
+        "faction=2 building=building_refinery count=0",
+        "faction=2 building=building_refinery_big count=0",
+        "faction=2 building=wall_fence_straight count=0",
+        "faction=2 building=gasstation count=0",
+        "faction=2 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=2 building=building_hall count=0",
+        "faction=2 building=building_shop count=0",
+        "faction=2 building=sm_bld_village_hatch_01 count=0",
+        "faction=2 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=2 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=2 building=building_watertank count=0",
+        "faction=2 building=m05_breach_road_barrier count=0",
+        "faction=2 building=ch02m01_road_obstruction count=0",
+        "faction=2 building=supplyline_building_oilpump count=0",
+        "faction=2 building=supplyline_building_refinery count=0",
+        "faction=2 building=supplyline_reserve_depot count=0",
+        "faction=2 building=building_steelpush_reservedepot count=0",
+        "faction=2 building=building_splitfront_supportdepot count=0",
+        "faction=2 building=building_armorbreak_reservedepot count=0",
+        "faction=2 building=building_citywide_reservedepot count=0",
+        "faction=2 building=building_citywide_clinic count=0",
+        "faction=2 building=building_citywide_utility count=0",
+        "faction=2 building=building_trust_shelter count=0",
+        "faction=2 building=building_trust_broadcast count=0",
+        "faction=2 building=building_trust_reservedepot count=0",
+        "faction=2 building=building_network_civic count=0",
+        "faction=2 building=building_network_audit count=0",
+        "faction=2 building=building_network_reservedepot count=0",
+        "faction=2 building=building_corridor_civic count=0",
+        "faction=2 building=building_corridor_receivingdepot count=0",
+        "faction=2 building=building_corridor_reservedepot count=0",
+        "faction=2 building=building_command_clinic count=0",
+        "faction=2 building=building_command_utility count=0",
+        "faction=2 building=building_command_audit count=0",
+        "faction=2 building=building_command_reservedepot count=0"
+    ],
+    "spawnRequests": [
+        "building=RouteReopened_RecordsOffice faction=2 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=0 requirePreferred=1 preferred=int2(581, 591) origin=int2(581, 591) footprint=int2(14, 8)"
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.013130187988282,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Sun enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/RuntimeBinding.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

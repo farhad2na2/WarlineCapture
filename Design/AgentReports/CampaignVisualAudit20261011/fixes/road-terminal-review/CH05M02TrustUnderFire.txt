@@ -1,0 +1,36 @@
+destinationRoadClearance=Passed groups=3 relocated=0
+GRADED ROAD JOIN (360.20, 3.14, 505.03) to=(360.20, 2.99, 505.03) commonHeight=3.061285 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (370.20, 2.99, 505.03) to=(370.20, 2.76, 505.03) commonHeight=2.875803 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (380.20, 2.76, 505.03) to=(380.20, 2.52, 505.03) commonHeight=2.643559 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (390.20, 2.52, 505.03) to=(390.20, 2.29, 505.03) commonHeight=2.408337 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (400.20, 2.29, 505.03) to=(400.20, 2.15, 505.03) commonHeight=2.220689 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (420.20, 2.19, 505.03) to=(420.20, 0.14, 505.03) commonHeight=1.165714 road=Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (980.20, 0.14, 505.03) to=(980.20, 2.37, 505.03) commonHeight=1.25571 road=Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1010.20, 2.53, 505.03) to=(1010.20, 2.68, 505.03) commonHeight=2.607232 road=Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1020.20, 2.68, 505.03) to=(1020.20, 2.84, 505.03) commonHeight=2.760316 road=Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1030.20, 2.84, 505.03) to=(1030.20, 2.96, 505.03) commonHeight=2.901535 road=Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (330.20, 3.58, 385.03) to=(330.20, 3.43, 385.03) commonHeight=3.502455 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (340.20, 3.43, 385.03) to=(340.20, 3.12, 385.03) commonHeight=3.274493 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (350.20, 3.12, 385.03) to=(350.20, 2.75, 385.03) commonHeight=2.936304 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (360.20, 2.75, 385.03) to=(360.20, 2.44, 385.03) commonHeight=2.598114 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (370.20, 2.44, 385.03) to=(370.20, 2.30, 385.03) commonHeight=2.370153 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (390.20, 2.34, 385.03) to=(390.20, 2.51, 385.03) commonHeight=2.424214 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (400.20, 2.51, 385.03) to=(400.20, 2.69, 385.03) commonHeight=2.60003 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (410.20, 2.69, 385.03) to=(410.20, 2.88, 385.03) commonHeight=2.787184 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (420.20, 2.88, 385.03) to=(420.20, 0.14, 385.03) commonHeight=1.510556 road=Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (980.20, 0.14, 385.03) to=(980.20, 2.74, 385.03) commonHeight=1.439343 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (990.20, 2.74, 385.03) to=(990.20, 2.48, 385.03) commonHeight=2.607333 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1000.20, 2.48, 385.03) to=(1000.20, 2.20, 385.03) commonHeight=2.340461 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1010.20, 2.20, 385.03) to=(1010.20, 2.02, 385.03) commonHeight=2.112484 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1040.20, 2.09, 385.03) to=(1040.20, 2.28, 385.03) commonHeight=2.186548 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (1070.20, 2.66, 385.03) to=(1070.20, 2.89, 385.03) commonHeight=2.775868 road=Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+roadGradeSeamValidation=Passed pairedEnds=50 maxAllowedHeightError=0.005m
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(420.20, 1.68, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(420.20, 0.65, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(980.20, 0.70, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_6_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(980.20, 1.81, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(420.20, 2.15, 385.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(420.20, 0.83, 385.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(980.20, 0.79, 385.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_AshLinePort/Roads/RoadChunk_6_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(980.20, 2.02, 385.03) reason=connected authored road at different height
+gradedJoins=25 terminalSurfaces=0 removedFalseEnds=8 relocatedDestinations=0 protectedHash=adab82d6e947ded9becbaa2ae9a8be2d4181e2bd21b5e2128ec1f417f5f5b741

@@ -1,0 +1,8 @@
+source=Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity
+before=5080fb28eb94b6167e1ea8dfdd5fe5f91c3a288d2084aad708954bb0b4584c4a
+after=d64ed8f7d4fb91a4f473f05890989b83e6f1de656dcf7e2ebe376f124fa5b917
+transferredIdentities=37
+expectedGenerated=2935
+expectedRenderOnly=2621
+expectedBuildings=314
+All removed identities verified against live intact building attachments. Runtime predicate unchanged.

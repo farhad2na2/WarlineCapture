@@ -1,0 +1,1534 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ReviewCampaignRoadTerminals
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CityEdgeAirfield
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=RefineryDistrict
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=AshLinePort
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH04M04GroundedSignal
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH04M05ArmorBreak
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M01CitywideAlert
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M02TrustUnderFire
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M03NetworkCollapse
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M04LastCorridor
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M05CommandNode
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairCampaignDestinationRoadClearance (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,Game.Editor.MapVariants.OtherMapSurfacePolish/RefinementProtection,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationRoadClearance.cs:66)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=DenseCity pads=14 materials=9 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:68)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RepairCampaignDestinationRoadClearance (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,Game.Editor.MapVariants.OtherMapSurfacePolish/RefinementProtection,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationRoadClearance.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:31)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'Quad' does not match filename 'DenseCity_2f4ad27d5d813c553209'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_44fb1bcecc7da475b9ad'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_6ec25b597d5ef7295e1c'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_b820e0051c2975a3249a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_abde86d201cc668c5872'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_e05e78dcf0bffeb80114'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_b1ac1b1e221208a25da1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_cedb4f188be65475146d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_243a38cb2f73532bd6e6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d11add71a98e8e267d1f'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_ef37ea19ea22ee1b117d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c3f0ad1298ec141af729'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f0744f7815f1fe13a739'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_634edd96a8bd58dd6b2d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_022cd63aa45543433a15'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_7a46a4a61dd5e2e73284'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_122ee96067a24d7a13bc'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a2de1671882dfadd5ec0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0d6cfea4701d9094dde4'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_00077c7fbf4207a21c62'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_39111a9eec9c559a41b6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c805e263ca08b0318b85'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_276a801c1a80efb9fdce'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_8e6799d5ad958a782827'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_e35c7f2aa74e74bd0112'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_1fabacb2102409e9ea2b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d37dac60df7f4e18cd7e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_67d8194daf99f0c8d584'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f5c6efb21137e13411eb'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0faa0a38f010b89d855b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_90bde8e3e6f8429dbb8e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_93ad9f895d3014c8da66'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f481982ee2764b4b5618'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_1d995cbadc5451a325fd'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d4fd6354fbc4b2d2effe'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_af582063fab2b7a8a4c8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_57f66d2f432e797eecd9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3aed50b081ad2b3724a1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_39865230b6a6018c9538'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_07c9832ebaa020b68fef'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_c93cbd8b1a8ba3b9bf54'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3c5fea2d73facfe8d247'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_8a5fd3207de50270c7cb'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_b679bddb3b7748e51e63'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a39b2f35f8ee908abe58'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_8242304d81c5748ed10e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c52e21026465609cbef2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0f600ea885f1f8462cff'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d80c86b8945dd5bd4534'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_313b5f3f2bde6f9300a6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_407dd46c025a81047fdd'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c3d966d48194fcaa5f09'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f533c2389c66dcb4017a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_4a1f639e601731e3cd26'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_260281df8021b3335aa7'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_bb8e425c38fc06b14ce5'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a4716bb862936f2cfe13'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_92bcac35c768e6693d87'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a393ca215b2772241c69'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_dde0b232c0c96334c870'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_5b7356614327f7b94181'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_2f2617dafb4638d0dce9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_8dabb7263758816c7134'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_7dd7c1efa26eb558368d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f81aae6e0f3fe7895285'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_2727451ea6f3fff5b6ab'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a965e5fc4ac0c94ea5ac'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_db8fac1d3f14524894a2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_7f24fc07103b5ace433f'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_75483f7526f4a7885df6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_45044bae891bc63f4a9f'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3601c3d57ab9c510d6b9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3d2a739e6014ecb9a121'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_9367559615c82b6ef4c2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_515f0dc29726c0ad5cd4'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_217bd407bf11c4b61603'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_ef3061698e9e2e4366b9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_aa47124aecd6c0c0e886'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_7e2f7e6a04c36dd0cd49'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_16b9062a6a781d9dde5c'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_1943e667d9660a74cf75'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d5db910577f964e6abb5'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_140d60525848d44be6a3'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_5dadeda4f4842c67fe76'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_361cc8066a304658e893'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_fd61d7ccf5ff2a6e3b78'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_1dddb45285878e46d308'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a2ae98049d630747354e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_de19ff7672db50241526'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_b3364ee2c966b404296a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_94d19df99d3b5d9983ac'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f9b1a245a8cb93a63de8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_305144bf0e83c22ecac3'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_d21153aca5b7ee79be64'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_fdac0a621f96e72c0563'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_c6baa542c050d7763717'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3bc5782e363a0fdb6b67'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_380d5918bdaa089e182e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a4a531e8488afd0efc39'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c591a5840f5f208325a4'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_8deb41feac4a3381f19d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_33fe50cc2fa2b2ccd1e7'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_926e724c418bee0cd240'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_562b7694ea25f559c89b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_2fa587ea1d8fe0cdb285'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_b7e421505c0c0f2dee29'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_254e48ea3e70bb3bb1f8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_9d3f6ca4254ac367b7a4'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_12a2770e2c03eb08066a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0fa7ed60ccf5bbeaa584'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_4783feed2a5a77dabb64'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_4dbba17425ecdaf73488'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_656ff048304b682037df'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_fae4762739c238064a3c'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_95bcab8e678b6e934af0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_d237ad1353acf59ac5da'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_38c189208dd72eff72a7'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0f5d35059a5d52a68a79'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_367d5d46ab9308f7e876'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_2626d549751fb75229b6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_ca950ee43dcf2732584a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_fcc575c6c60103835f93'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_0a52a36ea66ee72aa9a6'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_5fda86081d3885c2a2b8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_6759d9d3e1b033fad024'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_7d72e95d2a95664bae90'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_e98b2d0d92fa7a2be3f8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_eff5f133a38667575f9d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_9ccdf2ebb05ff4922849'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_359cdb368c9167146772'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_4bd17884cbcc65cf636a'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_8ec68508317758ec4c59'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_ba1b451b97f1246184ca'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_c0006673d88b29d8bf77'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_e6c347924066e43717c4'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_e3d1fa6fc7ab4bcb7d12'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_ceb21f73ba0dad21af7d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_6c2de8036a1b6ef6e7bd'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_34520164b97b03c9d90e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_a388da5461d399aa6719'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_b530ef75cc9debc8dde3'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_fcb307b96efb88477da9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_770f06b9253cdb388620'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_535e4c02de4fc857759e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_67cbbb653e8f6c3a437e'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_75bcfa484417b2dd9d49'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_beab7ec4518c93b7aceb'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_3256b1c20ae2963d5163'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_25d13b51764bb6e8c001'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_60fa607b5237d02da5f2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Quad' does not match filename 'DenseCity_74d188e65bcc3efc3da2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_bf607859a7e9be59caf9'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_663290e29e15b975e884'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_f80b0cdfc255a0b99b67'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'SM_Env_Sidewalk_Straight_02' does not match filename 'DenseCity_82bb5ceec57364a42eb1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:LowerCampaignTerminalCurbs (string,UnityEngine.MeshRenderer,UnityEngine.MeshRenderer[],System.Collections.Generic.List`1<UnityEngine.Vector4>,System.Collections.Generic.List`1<string>,System.Collections.Generic.List`1<System.Tuple`3<string, UnityEngine.Vector3, single>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignTerminalCurbs.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:46)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRoadTerminalReview] map=DenseCity gradedJoins=0 terminalSurfaces=155 removedFalseEnds=0 relocatedDestinations=6
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:52)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRenderReconciliation] result=Passed rows=124305 marketStockRows=52 destinationRows=85
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignRenderReconciliation20261011:Inspect () (at Assets/Game/Scripts/Editor/CampaignRenderReconciliation20261011.cs:51)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:62)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] result=Passed removedFalseEnds=0 rejectedAssetsUnreferenced=true
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:63)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ReviewCampaignRoadTerminals
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_eb02518e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

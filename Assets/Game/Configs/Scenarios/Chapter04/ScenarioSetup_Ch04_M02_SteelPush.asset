@@ -194,8 +194,8 @@ MonoBehaviour:
     baseAnchorId: anchor.ch04.m02.forward_post
     buildZone:
       anchorId: anchor.ch04.m02.build_zone
-      halfWidthCells: 65
-      halfHeightCells: 25
+      halfWidthCells: 105
+      halfHeightCells: 40
     delayedWave:
       unitGroupId: 
       routeId: 

@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
-  contentHash: 03bac33d1658075a087045a19a2dd7ce1458a90d6f5e3130ad2230d473b456b1
-  generatedMetadataHash: 03bac33d1658075a087045a19a2dd7ce1458a90d6f5e3130ad2230d473b456b1
+  contentHash: d6f98651ecdf824ec03abf6858fe9d73245ed5cedaa3d921d9d4fb21546980d4
+  generatedMetadataHash: d6f98651ecdf824ec03abf6858fe9d73245ed5cedaa3d921d9d4fb21546980d4
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.refinerydistrict_prepared
     sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
@@ -84,7 +84,7 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch02.m02.refinery
     kind: 2
-    position: {x: 740, y: 0.03, z: 475}
+    position: {x: 741, y: 0.03, z: 472}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 5
     factionId: 1

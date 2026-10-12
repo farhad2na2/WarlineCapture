@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
-  contentHash: 6a5fc500346082a96a449e2b161a2e4e7481f2d1be024c634237ed6dc60a3a08
-  generatedMetadataHash: 6a5fc500346082a96a449e2b161a2e4e7481f2d1be024c634237ed6dc60a3a08
+  contentHash: c35ccfd027ed18dfb4f284eac996b26115b9cf2c8af4eaf2fc0b10c7153f85f8
+  generatedMetadataHash: c35ccfd027ed18dfb4f284eac996b26115b9cf2c8af4eaf2fc0b10c7153f85f8
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.refinerydistrict_prepared
     sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
@@ -77,28 +77,28 @@ MonoBehaviour:
   anchors:
   - anchorId: anchor.ch04.m02.forward_post
     kind: 7
-    position: {x: 805, y: 0, z: 650}
+    position: {x: 882, y: 3.4199998, z: 661}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch04.m02.fuel_reserve
     kind: 4
-    position: {x: 805, y: 0, z: 650}
+    position: {x: 870, y: 0.07, z: 650}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch04.m02.initial_barracks
     kind: 4
-    position: {x: 740, y: 0, z: 650}
+    position: {x: 814, y: 0.03, z: 600}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch04.m02.build_zone
     kind: 4
-    position: {x: 775, y: 0, z: 655}
+    position: {x: 795, y: 0, z: 640}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 38
     factionId: 1

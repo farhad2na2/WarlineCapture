@@ -1,0 +1,3 @@
+Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01 leftOuter=True rightOuter=False footprint=209.3429x33.29212
+Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01 leftOuter=False rightOuter=True footprint=209.3429x33.29212
+Protected transforms, colliders, owners, mission bindings and runway XZ footprint unchanged.

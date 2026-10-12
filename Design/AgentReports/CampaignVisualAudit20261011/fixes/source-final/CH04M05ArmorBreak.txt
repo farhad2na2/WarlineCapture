@@ -1,0 +1,1 @@
+ROAD TERMINAL Map_Frontier/Roads/RoadChunk_13_4/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(2064.20, 0.14, 529.03) direction=(1.00, 0.00, 0.00)

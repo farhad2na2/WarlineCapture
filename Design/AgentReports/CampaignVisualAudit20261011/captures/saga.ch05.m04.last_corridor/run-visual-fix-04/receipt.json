@@ -1,0 +1,616 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch05.m04.last_corridor",
+    "activeMissionId": "saga.ch05.m04.last_corridor",
+    "activeMapId": "opmap.ch05.last_corridor",
+    "run": "visual-fix-04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 2371,
+    "roles": [
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 980.5,
+                "y": 0.42812827229499819,
+                "z": 417.5
+            },
+            "openingViewport": {
+                "x": 0.5671244859695435,
+                "y": 0.4480166435241699,
+                "z": 67.37149047851563
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 980.5,
+                "y": 0.4271087944507599,
+                "z": 418.5
+            },
+            "openingViewport": {
+                "x": 0.5666296482086182,
+                "y": 0.4620705842971802,
+                "z": 67.87187194824219
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 977.5,
+                "y": 0.5218127965927124,
+                "z": 416.5
+            },
+            "openingViewport": {
+                "x": 0.5406314134597778,
+                "y": 0.43441522121429446,
+                "z": 66.79083251953125
+            }
+        },
+        {
+            "role": "role.friendly.reinforcement",
+            "group": "group.ch05.m04.reinforcement",
+            "position": {
+                "x": 952.5,
+                "y": 0.4281283915042877,
+                "z": 431.5
+            },
+            "openingViewport": {
+                "x": 0.3338361978530884,
+                "y": 0.6276891827583313,
+                "z": 74.36449432373047
+            }
+        },
+        {
+            "role": "role.friendly.reinforcement",
+            "group": "group.ch05.m04.reinforcement",
+            "position": {
+                "x": 950.5,
+                "y": 0.42710089683532717,
+                "z": 430.5
+            },
+            "openingViewport": {
+                "x": 0.3163926899433136,
+                "y": 0.6159749627113342,
+                "z": 73.86588287353516
+            }
+        },
+        {
+            "role": "role.friendly.reinforcement",
+            "group": "group.ch05.m04.reinforcement",
+            "position": {
+                "x": 952.5,
+                "y": 0.4926828444004059,
+                "z": 433.5
+            },
+            "openingViewport": {
+                "x": 0.33591705560684206,
+                "y": 0.65120530128479,
+                "z": 75.30757141113281
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 970.5,
+                "y": 0.45000016689300539,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 0.4781278371810913,
+                "y": 0.4897562563419342,
+                "z": 68.85104370117188
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 982.5,
+                "y": 0.45000016689300539,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 0.5831927061080933,
+                "y": 0.4897562563419342,
+                "z": 68.85104370117188
+            }
+        },
+        {
+            "role": "role.friendly.escort",
+            "group": "group.ch05.m04.escort",
+            "position": {
+                "x": 978.5,
+                "y": 0.4281283915042877,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 0.548157274723053,
+                "y": 0.4895893633365631,
+                "z": 68.8699951171875
+            }
+        },
+        {
+            "role": "role.friendly.reinforcement",
+            "group": "group.ch05.m04.reinforcement",
+            "position": {
+                "x": 949.5,
+                "y": 0.08596198260784149,
+                "z": 434.5
+            },
+            "openingViewport": {
+                "x": 0.3140072822570801,
+                "y": 0.6588456630706787,
+                "z": 76.15941619873047
+            }
+        },
+        {
+            "role": "role.friendly.engineer",
+            "group": "group.ch05.m04.engineer",
+            "position": {
+                "x": 1006.5,
+                "y": -0.01269199326634407,
+                "z": 330.5
+            },
+            "openingViewport": {
+                "x": 1.3311991691589356,
+                "y": -2.9782142639160158,
+                "z": 24.296871185302736
+            }
+        },
+        {
+            "role": "role.friendly.fuel",
+            "group": "group.ch05.m04.fuel",
+            "position": {
+                "x": 940.5,
+                "y": 0.45000016689300539,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 0.215465247631073,
+                "y": 0.4897562563419342,
+                "z": 68.85104370117188
+            }
+        },
+        {
+            "role": "role.friendly.medicine",
+            "group": "group.ch05.m04.medicine",
+            "position": {
+                "x": 940.5,
+                "y": 0.4643988609313965,
+                "z": 432.5
+            },
+            "openingViewport": {
+                "x": 0.23820872604846955,
+                "y": 0.6395562887191773,
+                "z": 74.83257293701172
+            }
+        },
+        {
+            "role": "role.friendly.key_carrier",
+            "group": "group.ch05.m04.key_carrier",
+            "position": {
+                "x": 990.5,
+                "y": 0.009179770946502686,
+                "z": 330.5
+            },
+            "openingViewport": {
+                "x": 0.9345680475234985,
+                "y": -2.9804470539093019,
+                "z": 24.277923583984376
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m04.staff",
+            "position": {
+                "x": 1240.5,
+                "y": -0.02010265737771988,
+                "z": 472.5
+            },
+            "openingViewport": {
+                "x": 2.193281650543213,
+                "y": 0.9968937635421753,
+                "z": 95.2322998046875
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m04.staff",
+            "position": {
+                "x": 1239.5,
+                "y": -0.01771872490644455,
+                "z": 469.5
+            },
+            "openingViewport": {
+                "x": 2.213958740234375,
+                "y": 0.9751474857330322,
+                "z": 93.73174285888672
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m04.staff",
+            "position": {
+                "x": 1241.5,
+                "y": -0.01771872490644455,
+                "z": 468.5
+            },
+            "openingViewport": {
+                "x": 2.236072540283203,
+                "y": 0.9677351713180542,
+                "z": 93.23223876953125
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m04.staff",
+            "position": {
+                "x": 1238.5,
+                "y": -0.020289074629545213,
+                "z": 470.5
+            },
+            "openingViewport": {
+                "x": 2.1984357833862306,
+                "y": 0.982455313205719,
+                "z": 94.23346710205078
+            }
+        },
+        {
+            "role": "role.infrastructure.broken_link",
+            "group": "group.ch05.m04.broken_link",
+            "position": {
+                "x": 1130.5,
+                "y": 0.45000016689300539,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 1.8789924383163453,
+                "y": 0.4897562563419342,
+                "z": 68.85104370117188
+            }
+        },
+        {
+            "role": "role.hostile.blockade",
+            "group": "group.ch05.m04.hostile.blockade",
+            "position": {
+                "x": 1172.5,
+                "y": 0.4500000476837158,
+                "z": 420.5
+            },
+            "openingViewport": {
+                "x": 2.2467198371887209,
+                "y": 0.4897562563419342,
+                "z": 68.85104370117188
+            }
+        },
+        {
+            "role": "role.hostile.blockade",
+            "group": "group.ch05.m04.hostile.blockade",
+            "position": {
+                "x": 1160.5,
+                "y": 0.4283140003681183,
+                "z": 418.5
+            },
+            "openingViewport": {
+                "x": 2.1653637886047365,
+                "y": 0.4620794653892517,
+                "z": 67.87083435058594
+            }
+        },
+        {
+            "role": "role.hostile.route",
+            "group": "group.ch05.m04.hostile.route",
+            "position": {
+                "x": 1138.5,
+                "y": 0.46199119091033938,
+                "z": 432.5
+            },
+            "openingViewport": {
+                "x": 1.8331741094589234,
+                "y": 0.6395353078842163,
+                "z": 74.83465576171875
+            }
+        },
+        {
+            "role": "role.hostile.route",
+            "group": "group.ch05.m04.hostile.route",
+            "position": {
+                "x": 1139.5,
+                "y": 0.21506786346435548,
+                "z": 434.5
+            },
+            "openingViewport": {
+                "x": 1.8198370933532715,
+                "y": 0.6599878072738648,
+                "z": 76.04756927490235
+            }
+        },
+        {
+            "role": "role.hostile.blockade",
+            "group": "group.ch05.m04.hostile.blockade",
+            "position": {
+                "x": 1161.5,
+                "y": 0.4296935498714447,
+                "z": 422.5
+            },
+            "openingViewport": {
+                "x": 2.1263957023620607,
+                "y": 0.516326367855072,
+                "z": 69.86763000488281
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 972.9981689453125,
+                "y": 60.425315856933597,
+                "z": 386.6789855957031
+            },
+            "euler": {
+                "x": 60.03306579589844,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 973.0067138671875,
+                "y": 0.0000015742571122245864,
+                "z": 421.5187072753906
+            },
+            "fov": 50.02357482910156,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 1186.300048828125,
+                "y": 134.51455688476563,
+                "z": 365.5774841308594
+            },
+            "euler": {
+                "x": 60.03306579589844,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1186.300048828125,
+                "y": 0.23592376708984376,
+                "z": 443.0
+            },
+            "fov": 50.02357482910156,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 1240.5,
+                "y": 64.95343017578125,
+                "z": 435.0374755859375
+            },
+            "euler": {
+                "x": 60.03306579589844,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1240.5,
+                "y": -0.02010265737771988,
+                "z": 472.5
+            },
+            "fov": 50.02357482910156,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 1080.0,
+                "y": 1054.452392578125,
+                "z": 78.78164672851563
+            },
+            "euler": {
+                "x": 60.03306579589844,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1080.0,
+                "y": 480.0,
+                "z": 410.0
+            },
+            "fov": 50.02357482910156,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [
+        "faction=0 building=building_corridor_civic count=1",
+        "faction=1 building=building_corridor_reservedepot count=1",
+        "faction=1 building=building_corridor_receivingdepot count=1",
+        "faction=2 building=tent_regular count=1",
+        "faction=2 building=building_barrack count=1",
+        "faction=2 building=building_oilpump count=1",
+        "faction=2 building=building_fuel_bladder count=1",
+        "faction=2 building=building_ammunition_depot count=1",
+        "faction=0 building=tent_regular count=0",
+        "faction=0 building=tent_expert count=0",
+        "faction=0 building=tent_contractor count=0",
+        "faction=0 building=building_barrack count=0",
+        "faction=0 building=building_helipad count=0",
+        "faction=0 building=building_ammunition_depot count=0",
+        "faction=0 building=building_fuel_bladder count=0",
+        "faction=0 building=building_airport count=0",
+        "faction=0 building=building_satelite_dish count=0",
+        "faction=0 building=building_guardtower count=0",
+        "faction=0 building=building_guardtower_big count=0",
+        "faction=0 building=tent_refugee count=0",
+        "faction=0 building=portaloo count=0",
+        "faction=0 building=building_road_barrier count=0",
+        "faction=0 building=wall_dirt_straight count=0",
+        "faction=0 building=building_oilpump count=0",
+        "faction=0 building=building_house count=0",
+        "faction=0 building=building_refinery count=0",
+        "faction=0 building=building_refinery_big count=0",
+        "faction=0 building=wall_fence_straight count=0",
+        "faction=0 building=gasstation count=0",
+        "faction=0 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=0 building=building_hall count=0",
+        "faction=0 building=building_shop count=0",
+        "faction=0 building=sm_bld_village_hatch_01 count=0",
+        "faction=0 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=0 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=0 building=building_watertank count=0",
+        "faction=0 building=m05_breach_road_barrier count=0",
+        "faction=0 building=ch02m01_road_obstruction count=0",
+        "faction=0 building=supplyline_building_oilpump count=0",
+        "faction=0 building=supplyline_building_refinery count=0",
+        "faction=0 building=supplyline_reserve_depot count=0",
+        "faction=0 building=building_steelpush_reservedepot count=0",
+        "faction=0 building=building_splitfront_supportdepot count=0",
+        "faction=0 building=routereopened_recordsoffice count=0",
+        "faction=0 building=building_armorbreak_reservedepot count=0",
+        "faction=0 building=building_citywide_reservedepot count=0",
+        "faction=0 building=building_citywide_clinic count=0",
+        "faction=0 building=building_citywide_utility count=0",
+        "faction=0 building=building_trust_shelter count=0",
+        "faction=0 building=building_trust_broadcast count=0",
+        "faction=0 building=building_trust_reservedepot count=0",
+        "faction=0 building=building_network_civic count=0",
+        "faction=0 building=building_network_audit count=0",
+        "faction=0 building=building_network_reservedepot count=0",
+        "faction=0 building=building_corridor_receivingdepot count=0",
+        "faction=0 building=building_corridor_reservedepot count=0",
+        "faction=0 building=building_command_clinic count=0",
+        "faction=0 building=building_command_utility count=0",
+        "faction=0 building=building_command_audit count=0",
+        "faction=0 building=building_command_reservedepot count=0",
+        "faction=1 building=tent_regular count=0",
+        "faction=1 building=tent_expert count=0",
+        "faction=1 building=tent_contractor count=0",
+        "faction=1 building=building_barrack count=0",
+        "faction=1 building=building_helipad count=0",
+        "faction=1 building=building_ammunition_depot count=0",
+        "faction=1 building=building_fuel_bladder count=0",
+        "faction=1 building=building_airport count=0",
+        "faction=1 building=building_satelite_dish count=0",
+        "faction=1 building=building_guardtower count=0",
+        "faction=1 building=building_guardtower_big count=0",
+        "faction=1 building=tent_refugee count=0",
+        "faction=1 building=portaloo count=0",
+        "faction=1 building=building_road_barrier count=0",
+        "faction=1 building=wall_dirt_straight count=0",
+        "faction=1 building=building_oilpump count=0",
+        "faction=1 building=building_house count=0",
+        "faction=1 building=building_refinery count=0",
+        "faction=1 building=building_refinery_big count=0",
+        "faction=1 building=wall_fence_straight count=0",
+        "faction=1 building=gasstation count=0",
+        "faction=1 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=1 building=building_hall count=0",
+        "faction=1 building=building_shop count=0",
+        "faction=1 building=sm_bld_village_hatch_01 count=0",
+        "faction=1 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=1 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=1 building=building_watertank count=0",
+        "faction=1 building=m05_breach_road_barrier count=0",
+        "faction=1 building=ch02m01_road_obstruction count=0",
+        "faction=1 building=supplyline_building_oilpump count=0",
+        "faction=1 building=supplyline_building_refinery count=0",
+        "faction=1 building=supplyline_reserve_depot count=0",
+        "faction=1 building=building_steelpush_reservedepot count=0",
+        "faction=1 building=building_splitfront_supportdepot count=0",
+        "faction=1 building=routereopened_recordsoffice count=0",
+        "faction=1 building=building_armorbreak_reservedepot count=0",
+        "faction=1 building=building_citywide_reservedepot count=0",
+        "faction=1 building=building_citywide_clinic count=0",
+        "faction=1 building=building_citywide_utility count=0",
+        "faction=1 building=building_trust_shelter count=0",
+        "faction=1 building=building_trust_broadcast count=0",
+        "faction=1 building=building_trust_reservedepot count=0",
+        "faction=1 building=building_network_civic count=0",
+        "faction=1 building=building_network_audit count=0",
+        "faction=1 building=building_network_reservedepot count=0",
+        "faction=1 building=building_corridor_civic count=0",
+        "faction=1 building=building_command_clinic count=0",
+        "faction=1 building=building_command_utility count=0",
+        "faction=1 building=building_command_audit count=0",
+        "faction=1 building=building_command_reservedepot count=0",
+        "faction=2 building=tent_expert count=0",
+        "faction=2 building=tent_contractor count=0",
+        "faction=2 building=building_helipad count=0",
+        "faction=2 building=building_airport count=0",
+        "faction=2 building=building_satelite_dish count=0",
+        "faction=2 building=building_guardtower count=0",
+        "faction=2 building=building_guardtower_big count=0",
+        "faction=2 building=tent_refugee count=0",
+        "faction=2 building=portaloo count=0",
+        "faction=2 building=building_road_barrier count=0",
+        "faction=2 building=wall_dirt_straight count=0",
+        "faction=2 building=building_house count=0",
+        "faction=2 building=building_refinery count=0",
+        "faction=2 building=building_refinery_big count=0",
+        "faction=2 building=wall_fence_straight count=0",
+        "faction=2 building=gasstation count=0",
+        "faction=2 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=2 building=building_hall count=0",
+        "faction=2 building=building_shop count=0",
+        "faction=2 building=sm_bld_village_hatch_01 count=0",
+        "faction=2 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=2 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=2 building=building_watertank count=0",
+        "faction=2 building=m05_breach_road_barrier count=0",
+        "faction=2 building=ch02m01_road_obstruction count=0",
+        "faction=2 building=supplyline_building_oilpump count=0",
+        "faction=2 building=supplyline_building_refinery count=0",
+        "faction=2 building=supplyline_reserve_depot count=0",
+        "faction=2 building=building_steelpush_reservedepot count=0",
+        "faction=2 building=building_splitfront_supportdepot count=0",
+        "faction=2 building=routereopened_recordsoffice count=0",
+        "faction=2 building=building_armorbreak_reservedepot count=0",
+        "faction=2 building=building_citywide_reservedepot count=0",
+        "faction=2 building=building_citywide_clinic count=0",
+        "faction=2 building=building_citywide_utility count=0",
+        "faction=2 building=building_trust_shelter count=0",
+        "faction=2 building=building_trust_broadcast count=0",
+        "faction=2 building=building_trust_reservedepot count=0",
+        "faction=2 building=building_network_civic count=0",
+        "faction=2 building=building_network_audit count=0",
+        "faction=2 building=building_network_reservedepot count=0",
+        "faction=2 building=building_corridor_civic count=0",
+        "faction=2 building=building_corridor_receivingdepot count=0",
+        "faction=2 building=building_corridor_reservedepot count=0",
+        "faction=2 building=building_command_clinic count=0",
+        "faction=2 building=building_command_utility count=0",
+        "faction=2 building=building_command_audit count=0",
+        "faction=2 building=building_command_reservedepot count=0"
+    ],
+    "spawnRequests": [
+        "building=Building_Corridor_Civic faction=0 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 preferred=int2(373, 155) origin=int2(373, 155) footprint=int2(14, 12)",
+        "building=Building_Corridor_ReserveDepot faction=1 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 preferred=int2(216, 78) origin=int2(216, 78) footprint=int2(26, 25)",
+        "building=Building_Corridor_ReceivingDepot faction=1 status=1 result=0 aiPlanOwner=False initialConfigOwner=False authoredStartingGrant=1 requirePreferred=1 preferred=int2(353, 80) origin=int2(353, 80) footprint=int2(26, 25)"
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.022321701049805,
+    "lightStates": [
+        "name=Directional Light (1) enabled=True active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

@@ -23,6 +23,22 @@ namespace Game.Editor.MapVariants
             private struct Pose { public Vector3 position,scale;public Quaternion rotation;public string parent; }
             private readonly Dictionary<string,string> components=new Dictionary<string,string>();
             public readonly HashSet<string> RemovedIdentities=new HashSet<string>();
+            public readonly HashSet<Transform> NewPresentationRoots=new HashSet<Transform>();
+            public void TransferRenderOnlyIdentities(OperationMapEntityPresentationRootAuthoring root,int count)
+            {
+                string id=root.GetEntityId().ToString();string before=ComponentJson(root);
+                if(count<=0||!components.TryGetValue(id,out var original)||before!=original||root.ExpectedGeneratedIdentityCount<count||root.ExpectedRenderOnlyCount<count)
+                    throw new InvalidOperationException("Invalid readiness identity transfer");
+                int generated=root.ExpectedGeneratedIdentityCount,renderOnly=root.ExpectedRenderOnlyCount;
+                string expected=before.Replace("\"expectedGeneratedIdentityCount\":"+generated,"\"expectedGeneratedIdentityCount\":"+(generated-count))
+                    .Replace("\"expectedRenderOnlyCount\":"+renderOnly,"\"expectedRenderOnlyCount\":"+(renderOnly-count));
+                var serialized=new SerializedObject(root);
+                serialized.FindProperty("expectedGeneratedIdentityCount").intValue=generated-count;
+                serialized.FindProperty("expectedRenderOnlyCount").intValue=renderOnly-count;
+                serialized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(root);
+                if(ComponentJson(root)!=expected)throw new InvalidOperationException("Identity transfer changed unrelated readiness data");
+                components[id]=expected;
+            }
             public readonly Dictionary<string,string> AddedAttachments=new Dictionary<string,string>();
             public readonly HashSet<string> AttachmentObjects=new HashSet<string>();
             private readonly Dictionary<string,string> objects=new Dictionary<string,string>();
@@ -48,7 +64,13 @@ namespace Game.Editor.MapVariants
             }
             public string Validate(Scene scene)
             {
-                var ts=Transforms(scene);if(ts.Length!=poses.Count)throw new InvalidOperationException("Visual repair changed the transform count");
+                var all=Transforms(scene);
+                foreach(var root in NewPresentationRoots)
+                {
+                    if(root==null||root.parent==null||!poses.ContainsKey(root.parent.GetEntityId().ToString()))throw new InvalidOperationException("New presentation must belong to an existing scenery parent");
+                    if(root.GetComponentsInChildren<Component>(true).Any(c=>c==null||!(c is Transform||c is MeshFilter||c is MeshRenderer||c is LODGroup)))throw new InvalidOperationException("New presentation contains gameplay or collision components");
+                }
+                var ts=all.Where(t=>!NewPresentationRoots.Any(root=>t==root||t.IsChildOf(root))).ToArray();if(ts.Length!=poses.Count)throw new InvalidOperationException("Visual repair changed the transform count");
                 var canonical=new List<string>();int componentCount=0;
                 foreach(var t in ts)
                 {

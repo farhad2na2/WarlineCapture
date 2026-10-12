@@ -191,32 +191,32 @@ namespace Game.Runtime
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                     if(definition.RouteReopened.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.RouteReopened.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.RouteReopened.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if(definition.PowerRelay.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.PowerRelay.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.PowerRelay.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if(definition.MarketLifeline.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.MarketLifeline.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.MarketLifeline.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if(definition.Breach.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Breach.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Breach.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if(definition.Extraction.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Extraction.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Extraction.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if(definition.Defense.Enabled!=0 && openingCanAdvance)
                     {
-                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Defense.CameraTour,metadata);
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Defense.CameraTour,metadata,in runtime);
                         opening.ValueRW=current; break;
                     }
                     if (useEstablishBaseOpening)
@@ -267,13 +267,19 @@ namespace Game.Runtime
                     if (current.Stage == 4 && current.ElapsedMilliseconds >= HostileHoldMilliseconds &&
                         focus.Requested == 0)
                     {
+                        // The tutorial squad can settle into formation during the tour.
+                        // Frame its current positions when handing control back.
+                        if(runtime.MissionId.Equals(FirstContactMissionId))
+                            CampaignMissionSpawnSystem.FrameMissionCommandGroup(state.EntityManager,in runtime,ref metadata.Blob.Value,ref current);
                         state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
                         {
                             Requested = 1,
                             Smooth = 1,
-                            UseTacticalRevealZoom = 4,
+                            UseTacticalRevealZoom = current.CommandCameraPerspective.w>0 ? (byte)0 : (byte)4,
+                            UseExplicitPerspective = current.CommandCameraPerspective.w>0 ? (byte)1 : (byte)0,
+                            Perspective = current.CommandCameraPerspective,
                             SmoothTimeSeconds = CinematicGlideSmoothTimeSeconds,
-                            World = current.FriendlyFocus
+                            World = current.CommandCameraPerspective.w>0 ? current.CommandCameraFocus : current.FriendlyFocus
                         });
                         current.Stage = 5;
                     }

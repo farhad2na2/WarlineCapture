@@ -1,0 +1,9 @@
+destinationRoadClearance=Passed groups=7 relocated=0
+GRADED ROAD JOIN (320.20, 1.61, 505.03) to=(320.20, 0.64, 505.03) commonHeight=1.127179 road=Map_RefineryDistrict/Roads/RoadChunk_1_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+GRADED ROAD JOIN (330.20, 0.64, 505.03) to=(330.20, 0.14, 505.03) commonHeight=0.3907636 road=Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt
+roadGradeSeamValidation=Passed pairedEnds=4 maxAllowedHeightError=0.005m
+REMOVED FALSE TERMINAL Map_RefineryDistrict/Roads/RoadChunk_1_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(320.20, 1.37, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(320.20, 0.76, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(330.20, 0.76, 505.03) reason=connected authored road at different height
+REMOVED FALSE TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt at=(330.20, 0.27, 505.03) reason=connected authored road at different height
+gradedJoins=2 terminalSurfaces=0 removedFalseEnds=4 relocatedDestinations=0 protectedHash=192a970fa8e5205462aac523bfd1d91deb2a77e2569d541255893a7e88c5f88f

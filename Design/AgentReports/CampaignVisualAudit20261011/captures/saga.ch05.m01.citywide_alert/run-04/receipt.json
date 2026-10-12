@@ -1,0 +1,357 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "activeMissionId": "saga.ch05.m01.citywide_alert",
+    "activeMapId": "opmap.ch05.citywide_alert",
+    "run": "04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 3845,
+    "roles": [
+        {
+            "role": "role.friendly.radar",
+            "group": "group.ch05.m01.radar",
+            "position": {
+                "x": 1058.5,
+                "y": 0.45000016689300539,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.friendly.g2a",
+            "group": "group.ch05.m01.g2a",
+            "position": {
+                "x": 1100.5,
+                "y": 0.6023907661437988,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.utility",
+            "group": "group.ch05.m01.response.utility",
+            "position": {
+                "x": 1187.5,
+                "y": -0.05972980707883835,
+                "z": 414.5
+            }
+        },
+        {
+            "role": "role.friendly.engineer.clinic",
+            "group": "group.ch05.m01.engineer.clinic",
+            "position": {
+                "x": 970.5,
+                "y": 0.7300984263420105,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.engineer.utility",
+            "group": "group.ch05.m01.engineer.utility",
+            "position": {
+                "x": 1130.5,
+                "y": 0.52982097864151,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.utility",
+            "group": "group.ch05.m01.response.utility",
+            "position": {
+                "x": 1178.5,
+                "y": 0.5646904706954956,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.clinic",
+            "group": "group.ch05.m01.response.clinic",
+            "position": {
+                "x": 932.5,
+                "y": 0.54071044921875,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.utility",
+            "group": "group.ch05.m01.response.utility",
+            "position": {
+                "x": 1187.5,
+                "y": 0.522629976272583,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.clinic",
+            "group": "group.ch05.m01.response.clinic",
+            "position": {
+                "x": 923.5,
+                "y": 0.6852943897247315,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.utility",
+            "group": "group.ch05.m01.response.utility",
+            "position": {
+                "x": 1188.5,
+                "y": 0.42812827229499819,
+                "z": 418.5
+            }
+        },
+        {
+            "role": "role.friendly.response.clinic",
+            "group": "group.ch05.m01.response.clinic",
+            "position": {
+                "x": 923.5,
+                "y": 0.05714074894785881,
+                "z": 414.5
+            }
+        },
+        {
+            "role": "role.hostile.clinic",
+            "group": "group.ch05.m01.hostile.clinic",
+            "position": {
+                "x": 872.5,
+                "y": 0.20280218124389649,
+                "z": 424.5
+            }
+        },
+        {
+            "role": "role.hostile.utility",
+            "group": "group.ch05.m01.hostile.utility",
+            "position": {
+                "x": 1263.5,
+                "y": 0.5452619791030884,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.hostile.utility",
+            "group": "group.ch05.m01.hostile.utility",
+            "position": {
+                "x": 1277.5,
+                "y": 0.574365496635437,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.friendly.response.clinic",
+            "group": "group.ch05.m01.response.clinic",
+            "position": {
+                "x": 924.5,
+                "y": 0.4271007776260376,
+                "z": 418.5
+            }
+        },
+        {
+            "role": "role.hostile.clinic",
+            "group": "group.ch05.m01.hostile.clinic",
+            "position": {
+                "x": 877.5,
+                "y": 0.42812827229499819,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.hostile.clinic",
+            "group": "group.ch05.m01.hostile.clinic",
+            "position": {
+                "x": 876.5,
+                "y": 0.32961010932922366,
+                "z": 425.5
+            }
+        },
+        {
+            "role": "role.hostile.clinic",
+            "group": "group.ch05.m01.hostile.clinic",
+            "position": {
+                "x": 875.5,
+                "y": 0.4271087944507599,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.hostile.utility",
+            "group": "group.ch05.m01.hostile.utility",
+            "position": {
+                "x": 1275.5,
+                "y": 0.24960212409496308,
+                "z": 424.5
+            }
+        },
+        {
+            "role": "role.hostile.utility",
+            "group": "group.ch05.m01.hostile.utility",
+            "position": {
+                "x": 1276.5,
+                "y": 0.42710089683532717,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.hostile.clinic",
+            "group": "group.ch05.m01.hostile.clinic",
+            "position": {
+                "x": 873.5,
+                "y": 0.6634053587913513,
+                "z": 426.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m01.staff.clinic",
+            "position": {
+                "x": 914.5,
+                "y": -0.01771872490644455,
+                "z": 458.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m01.staff.clinic",
+            "position": {
+                "x": 910.5,
+                "y": -0.020289074629545213,
+                "z": 457.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m01.staff.utility",
+            "position": {
+                "x": 1210.5,
+                "y": -0.01771872490644455,
+                "z": 458.5
+            }
+        },
+        {
+            "role": "role.civilian.protected",
+            "group": "group.ch05.m01.staff.utility",
+            "position": {
+                "x": 1209.5,
+                "y": -0.02010265737771988,
+                "z": 462.5
+            }
+        },
+        {
+            "role": "role.hostile.air",
+            "group": "group.ch05.m01.hostile.air",
+            "position": {
+                "x": 1247.5,
+                "y": 0.009179776534438134,
+                "z": 499.5
+            }
+        },
+        {
+            "role": "role.hostile.air",
+            "group": "group.ch05.m01.hostile.air",
+            "position": {
+                "x": 1253.5,
+                "y": 0.009179776534438134,
+                "z": 499.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 1058.8310546875,
+                "y": 40.1722526550293,
+                "z": 400.1749572753906
+            },
+            "euler": {
+                "x": 60.0355110168457,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1058.8338623046875,
+                "y": -2.471770130796358e-7,
+                "z": 423.3382568359375
+            },
+            "fov": 50.02507781982422,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 1080.9666748046875,
+                "y": 134.53460693359376,
+                "z": 367.54986572265627
+            },
+            "euler": {
+                "x": 60.0355110168457,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1080.9666748046875,
+                "y": 0.2526610195636749,
+                "z": 444.9666748046875
+            },
+            "fov": 50.02507781982422,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 872.5,
+                "y": 65.17794036865235,
+                "z": 387.0402526855469
+            },
+            "euler": {
+                "x": 60.0355110168457,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 872.5,
+                "y": 0.20280218124389649,
+                "z": 424.5
+            },
+            "fov": 50.02507781982422,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 1080.0,
+                "y": 1054.466552734375,
+                "z": 78.80615234375
+            },
+            "euler": {
+                "x": 60.0355110168457,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 1080.0,
+                "y": 480.0,
+                "z": 410.0
+            },
+            "fov": 50.02507781982422,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 8.012937545776368,
+    "lightStates": [
+        "name=Directional Light enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light (1) enabled=True active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

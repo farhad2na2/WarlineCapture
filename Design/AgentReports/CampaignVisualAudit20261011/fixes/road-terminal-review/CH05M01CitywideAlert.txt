@@ -1,0 +1,25 @@
+RELOCATED DESTINATION FROM ROAD CampaignDestinationV2_20261011_20_clinic from=(911.36, 0.03, 462.93) to=(913.00, 0.03, 462.00)
+RELOCATED DESTINATION FROM ROAD CampaignDestinationV2_20261011_20_utility from=(1228.63, 0.03, 472.63) to=(1205.00, 0.03, 464.00)
+destinationRoadClearance=Passed groups=2 relocated=2
+roadGradeSeamValidation=Passed pairedEnds=0 maxAllowedHeightError=0.005m
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(891.03, 0.18, 527.80) ground=0.005087402
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(887.25, 0.33, 527.80) ground=0.01141007
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(887.25, 0.33, 527.80) ground=0.01141007
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(894.75, 0.33, 527.80) ground=0.005083354
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(894.75, 0.33, 527.80) ground=0.005083354
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(901.03, 0.18, 527.80) ground=0.005076512
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(897.25, 0.33, 527.80) ground=0.005080626
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(897.25, 0.33, 527.80) ground=0.005080626
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(904.75, 0.33, 527.80) ground=0.005072464
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(904.75, 0.33, 527.80) ground=0.005072464
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(1306.20, 0.18, 423.03) ground=0.004745897
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 419.25) ground=0.004747639
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 419.25) ground=0.004747639
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 426.75) ground=0.004744184
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 426.75) ground=0.004744184
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(1306.20, 0.18, 433.03) ground=0.004741288
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 429.25) ground=0.004743029
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 429.25) ground=0.004743029
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 436.75) ground=0.004739574
+FINISHED TERMINAL SURFACE Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1306.20, 0.33, 436.75) ground=0.004739574
+gradedJoins=0 terminalSurfaces=20 removedFalseEnds=0 relocatedDestinations=2 protectedHash=e95cd18daacc5989e5f855268501946b903df9dea19e5b9ac9fdcb8721a4d703

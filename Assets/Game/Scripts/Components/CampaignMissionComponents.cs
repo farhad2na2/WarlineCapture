@@ -168,6 +168,8 @@ namespace Game.Components
 
     public struct CampaignMissionOpeningPresentationComponent : IComponentData
     {
+        public float3 CommandCameraFocus;
+        public float4 CommandCameraPerspective;
         public FixedString64Bytes SessionToken;
         public float3 FriendlyFocus;
         public float3 HostileFocus;

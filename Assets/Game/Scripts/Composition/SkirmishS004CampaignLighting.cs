@@ -22,9 +22,19 @@ namespace Game.Composition
              map.SourceBinding.SourceOperationMapId == "opmap.skirmish.cityedgeairfield_prepared" ||
              map.OperationMapId == "opmap.skirmish.desert_base_01" ||
              map.SourceBinding.SourceOperationMapId == "opmap.skirmish.desert_base_01");
+        // Lighting ownership follows the loaded source, independently of the
+        // legacy map filter also used for Skirmish camera framing.
+        public static bool HasAuthoredDaylight(Scene scene)
+        {
+            if(!scene.IsValid() || !scene.isLoaded)return false;
+            foreach(var root in scene.GetRootGameObjects())
+                foreach(var light in root.GetComponentsInChildren<Light>(false))
+                    if(light.enabled && light.type==LightType.Directional && light.intensity>0)return true;
+            return false;
+        }
         public void Configure(Scene matchScene,Scene campaignScene)
         {
-            if(configured || !campaignScene.IsValid() || !campaignScene.isLoaded) return;
+            if(configured || !HasAuthoredDaylight(campaignScene)) return;
             previousActive=SceneManager.GetActiveScene();previous=EnvironmentState.Capture();
             EnvironmentState authored;
             try

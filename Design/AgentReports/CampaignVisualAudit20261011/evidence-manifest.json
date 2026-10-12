@@ -1,0 +1,1295 @@
+{
+  "files": [
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/targets.txt",
+      "bytes": 115,
+      "sha256": "16e5b8ee7ac4ffe15da1f99bc3c4bf5498f43574709ce0cfdc32d722ad5d16a6"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/DenseCity-source-runway-detail.png",
+      "bytes": 1783260,
+      "sha256": "fac0d71ab423ec183aaad1359e21daab59c8e2e2087ff8f0d1650f5a0712548e"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/DenseCity-source-runway-overview.png",
+      "bytes": 2059934,
+      "sha256": "08218d0d1f8fdcbd13b814491c34aa009e4acc63745756e9e884486558b56d4e"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/DenseCity-source-runway-runway-01-end-a.png",
+      "bytes": 1764898,
+      "sha256": "f740f5e099c5a676714d9b9ae76ce2c70af3387f2911e6d3cdc850c8f61b2949"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/DenseCity-source-runway-runway-01-end-b.png",
+      "bytes": 1883611,
+      "sha256": "53fa2ccde9aa596cd62831716e38f0b686f027fe0c85640d5be395b14f4fa6a4"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m01.first_contact/run-01/receipt.json",
+      "bytes": 809,
+      "sha256": "5e7bbc12685edfd6505977e195ea894eba120c0935b406d7790cf408170d237b"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/objective-detail.png",
+      "bytes": 2247919,
+      "sha256": "a26a4fd6721ed0a7173530a868534153ce053992c79e82978bbe6d45a8f82aaf"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/opening-hud.png",
+      "bytes": 1873223,
+      "sha256": "31d06de8eb921d95a440c2f5b3a497f2a836483cc4227b852fa5e3a7c9d31166"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/civic-hall-01-front.png",
+      "bytes": 2533169,
+      "sha256": "7b5b42a47e19d78cef3e7cedd3e6218a29790d0501f9ce12b6f167659f99169e"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/mission-overview.png",
+      "bytes": 2723641,
+      "sha256": "c3ab4cfda04ccd4495e276355e48130f50a1b072e3288e0846536b9815a9d355"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/objective-context.png",
+      "bytes": 2678552,
+      "sha256": "d754935df6a69aca4d1774a17d0e9f10f68f4725c064c32703311e3d09a70d02"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/civic-hall-02-front.png",
+      "bytes": 2578018,
+      "sha256": "85a447f21aa353723f2bb71aeef040df1690ba8ebb628aa034d42de1a1421ce7"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/opening.png",
+      "bytes": 2320889,
+      "sha256": "5fe319ea586da7aa44b0e35c9a4c82f847edbb7615866db2e101753b4e6c0724"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/civic-hall-01-context.png",
+      "bytes": 2567146,
+      "sha256": "0ad6c769eb85f3a540ef1ec4f566b797c2f2fe083f146365ec1bfb623c4ea5ff"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/environment.txt",
+      "bytes": 1199,
+      "sha256": "c3cb1aa61bd0c4457807a5fec07b425a40b9dca80bba314d4a2203ab6d5d16b3"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/story-civilian_safe_zone.png",
+      "bytes": 2323228,
+      "sha256": "00575ad0bd66efef6fd4545d3359d917c7b40e88c06d0cdd838ccedd787f84aa"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/civic-hall-02-context.png",
+      "bytes": 2608004,
+      "sha256": "4fe0d77d4851c4ccd4ac0d6adc4d0d95b101a59fa8770c9d961a393adad13bdc"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-02/receipt.json",
+      "bytes": 12058,
+      "sha256": "38f67cc050e9689b842c9a42c6a274e8f861249e2fbda6dc382c083ff320e1ce"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/objective-detail.png",
+      "bytes": 2253494,
+      "sha256": "5792535511a2041d934d82775bbd6db5927e54295364ffad31990255ca739396"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/opening-hud.png",
+      "bytes": 1836566,
+      "sha256": "9ea939a5aedd13703f65a8f04f26724d78372ce769490271d7af3d8e3bcadfd5"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/mission-overview.png",
+      "bytes": 2725850,
+      "sha256": "2aa0a344c93adbd4848c0bff32c88fb4949b548cf7ca39506ebe8fcc6542e221"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/objective-context.png",
+      "bytes": 2682893,
+      "sha256": "a780fe0487d60df13ea17221a2090f5f1d60d53a25bb8d3f92f7a8e2a6bb2af4"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/opening.png",
+      "bytes": 2242214,
+      "sha256": "5d84dd8ca6aeb747303ae0f555c91cecacea6a3155f0e474f49e1f82be404022"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/environment.txt",
+      "bytes": 1199,
+      "sha256": "aa5ab771e0f5bd2dcd7a1b0bc6d9e9437f05a39f8b6ada906f392e6aa9c2ca6a"
+    },
+    {
+      "path": "captures/saga.ch01.m01.first_contact/run-01/receipt.json",
+      "bytes": 4948,
+      "sha256": "ad4eb6233035821c620959ed7ee1d340d327d1395d18fafd72d311369e071682"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/objective-detail.png",
+      "bytes": 2361823,
+      "sha256": "396d55040cc08318678c5cae83f671acb3fa414e495f60a9f7ed14d12bd3462c"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/opening-hud.png",
+      "bytes": 1580854,
+      "sha256": "a0dd779f39eeb96bd15aee24dcbf9c45904299ea3befaf22519da19e5decf66f"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/mission-overview.png",
+      "bytes": 2594938,
+      "sha256": "0df77af4677931cda2778084fb548c60343aa0551e688f554547ac1390f07f4a"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/objective-context.png",
+      "bytes": 2650211,
+      "sha256": "e827b69a4c96149ee06ad67159747d18861a8f1810a928b957173afd9aec6f7c"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/opening.png",
+      "bytes": 1810629,
+      "sha256": "fbd179707d8299d3bfe5079c31c29e51c961bab76fa26ef70de5f67e3c9d5f97"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/environment.txt",
+      "bytes": 1199,
+      "sha256": "22240984fc63f878a1f2c17e01bf4aec28f78196964d1196e0459d77ad9179c1"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-02/receipt.json",
+      "bytes": 4912,
+      "sha256": "ae9345aca61fa494f74949dba38bbe2666f7974d8f1130f718a7f2cb3ef2bb29"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/objective-detail.png",
+      "bytes": 2379218,
+      "sha256": "5a79c06c04f1b1e07bac11735879749465e59214282576a1e30ee47a25737234"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/opening-hud.png",
+      "bytes": 1594642,
+      "sha256": "3e4b5f809d20e35a8c2c4f987fc7c1a4df303e11837798565c3fd8f942a67038"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/mission-overview.png",
+      "bytes": 2597761,
+      "sha256": "202376d2be81b2519aceb1818f3b6faeb56d65174496f767950e596cdcebe670"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/objective-context.png",
+      "bytes": 2648576,
+      "sha256": "188ac556b54ca74c45da596967d0cae006b2d8f3694a0e7ff0b854d0947b793c"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/opening.png",
+      "bytes": 1807269,
+      "sha256": "c3aba1910618bd0e24a4ebcf63c11b7558b80705d13aaab82a9252bd9b441112"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/environment.txt",
+      "bytes": 1198,
+      "sha256": "6c379b3b46bc9358aabe1bbea2ed7c94eaadd4799bad45c98dba432fdb4679f4"
+    },
+    {
+      "path": "captures/saga.ch01.m02.establish_base/run-01/receipt.json",
+      "bytes": 4220,
+      "sha256": "f9c3d3b9ff54ae18c24312109cf6f4778df8d283a669dea512594c1b7c08a939"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/objective-detail.png",
+      "bytes": 2471398,
+      "sha256": "4c84b330c9548a2954e449094bd58f4ad6eca3d6a4a169a4c465f1e2b1b82598"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/opening-hud.png",
+      "bytes": 1748145,
+      "sha256": "f6a7c6d7ba535560a92ed3ef4f8c51bf3ea8d616894a2840e1d6239ab97ccd57"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/mission-overview.png",
+      "bytes": 2605300,
+      "sha256": "2056bc4269b6eab3c237d9f44739b63edd5da4a53252b23deb92ec82abcd5e2e"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/objective-context.png",
+      "bytes": 2672941,
+      "sha256": "14ebb50dec9e8c2de50ea72a25f3dbc3b3d56840604caaafd0a45ae946a8be8e"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/opening.png",
+      "bytes": 2169773,
+      "sha256": "c122b9dfa4ea020f50246ef5b9a1c4e0b808c4a38e892435004d87f2b01ad7a3"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/environment.txt",
+      "bytes": 1194,
+      "sha256": "a5d96d57fab2766b577349f25ba5365d0461ee8bbcb341f4d0c965265678397f"
+    },
+    {
+      "path": "captures/saga.ch01.m03.radar_warning/run-01/receipt.json",
+      "bytes": 8358,
+      "sha256": "34251c232e8ba80025c07d5182a343b5e8b55d3e80d871556864cbc529b8481b"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-runway-01-end-a.png",
+      "bytes": 2021471,
+      "sha256": "a566fb8a55fd58e9cddfe9d474458634e35ef12c8f6c6e95ce68ceb0168bbb3c"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-runway-01-end-b.png",
+      "bytes": 1832402,
+      "sha256": "2f9dc4875bdf91e70583ff3a64619ae5b485d79bfa676f51ee2814d142cf8e46"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/targets.txt",
+      "bytes": 231,
+      "sha256": "ef4ffb7c57903415a1dae675eff331be991ab16b48ec2aecfc992d315e135e3a"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-detail.png",
+      "bytes": 1718520,
+      "sha256": "8b53e38f1244de4a4c25cc2d61b29e0ab593ab799d1518982e005d8f1336aff4"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-runway-02-end-a.png",
+      "bytes": 1831926,
+      "sha256": "c9295f81abe3a5a51146a5a4469ddde35d8e3cb6c2c0d111a48b7e44e274325a"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-runway-02-end-b.png",
+      "bytes": 1898551,
+      "sha256": "1e023cce0bbb6dc37178d094822b1e56339bec600c076d9baed8b8f60b417884"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/receipt.json",
+      "bytes": 907,
+      "sha256": "c33a02d38bfce7e79cb1418c738e3485de78904c6bbdab42fa5feb15aa2fc872"
+    },
+    {
+      "path": "source-runway-previews/saga.ch01.m04.airlift/run-01/CityEdgeAirfield-source-runway-overview.png",
+      "bytes": 1872861,
+      "sha256": "944711755ab734828dad4e148b5dfd5f3715efc80b3f055b3803267c0d289c4a"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/objective-detail.png",
+      "bytes": 2421695,
+      "sha256": "8cd7f9ecdff2bf3f2e16ae8b38e8b549a6aaac06cc1dce00d01132ea0ade9d22"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/opening-hud.png",
+      "bytes": 1580596,
+      "sha256": "4eaaa352c4b0851dee3828503da5175fef4eec261154420412334ad82c6ffb54"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/mission-overview.png",
+      "bytes": 1725923,
+      "sha256": "5da706259d502374d888167e96c320f0d8df4c617842ca5b816061a850f2fca1"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/objective-context.png",
+      "bytes": 2626354,
+      "sha256": "189e777a47855d4ce5810b6279cfbb5e97f5ce91da6fc63caeb2e54d74b8a6d7"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/story-specialists.png",
+      "bytes": 2289836,
+      "sha256": "d05b608b371f806147394590379343a7bf97653ed62055f1cc0707bdd9a06808"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/opening.png",
+      "bytes": 1849933,
+      "sha256": "ffbcd49fc44859fc00894c3f26a4722c7346152db2c72c492f6fe67059d21850"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/environment.txt",
+      "bytes": 1395,
+      "sha256": "3ce859753b72ffda96ca83e4cfafaf44e972c0e8ac16fe4a904a140e05402952"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/story-landing.png",
+      "bytes": 2393824,
+      "sha256": "918c4eacf97630198ca135c570169ce342e1fc88601ad86427285ecc1109bdd1"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-02/receipt.json",
+      "bytes": 10250,
+      "sha256": "01f0a4591281d7fd323a39d6eaecbaf2e1cf248fa4125b5bc6358cb0a33e625f"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/objective-detail.png",
+      "bytes": 2419619,
+      "sha256": "783621f4358bbe30ebf2a25158b4f6ba1c3a39f05b10c127a1ea1488b147478b"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/opening-hud.png",
+      "bytes": 1580412,
+      "sha256": "05cbec2844296b2637efc049f7903a9afea76c6a1142202f03b5e66945cdc7ec"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/mission-overview.png",
+      "bytes": 1728218,
+      "sha256": "c41b3a1d37f4dbf5862ffe4a7128690aae205c9030e102b3783cd86f0a389a46"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/objective-context.png",
+      "bytes": 2625181,
+      "sha256": "f83b7256940cbec5e3aacfaae3ea6043336339db87d1b6b3ab9063ceb2677e48"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/opening.png",
+      "bytes": 1849223,
+      "sha256": "5726ffca1988cb76c1f606c69de56d12c414a779c7f2770626c28c1360762bb9"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/environment.txt",
+      "bytes": 1396,
+      "sha256": "fa1f6cdab4ddcd50f4fbfe5ea3e7ee372cd80f3c4b7f4f5ddf628c97a4d0811b"
+    },
+    {
+      "path": "captures/saga.ch01.m04.airlift/run-01/receipt.json",
+      "bytes": 7591,
+      "sha256": "9323eb2ab65892d3107e676a41e5da5ee601c815f13d23bd51a5112d12d2f871"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/objective-detail.png",
+      "bytes": 2261444,
+      "sha256": "23476900ae0293bbfb1b41eb20de36c5c84304440218ceeef5999b3ed96f84d1"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/opening-hud.png",
+      "bytes": 1678952,
+      "sha256": "c58d9bb50aaff267429802109ed4261f134e9fb361e3cec474832ab3db0f8e08"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/mission-overview.png",
+      "bytes": 2609443,
+      "sha256": "0b4558c0ca9f357ee195cccfbf806ba683ddfcd17c184cea00fc53c329b508c0"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/objective-context.png",
+      "bytes": 2624380,
+      "sha256": "91b19a9453b30deb7a300dbfcb0ec76d9a401e61dd3ecf222a07d8562ac4a60b"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/opening.png",
+      "bytes": 1884603,
+      "sha256": "563ffb1e28088f96f23494081c648ab327dd0b328dca898a819aacab664353a3"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/environment.txt",
+      "bytes": 1195,
+      "sha256": "757be6ae8d6a922a20e30b33fdccebd6a75b85e40c806d412cc87d440b8d04be"
+    },
+    {
+      "path": "captures/saga.ch01.m05.breach_assault/run-01/receipt.json",
+      "bytes": 7409,
+      "sha256": "f33b6be93846ad5242960eaa61a4688d8e8efbb7ea26697fe4464d2a5981af74"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/objective-detail.png",
+      "bytes": 2491552,
+      "sha256": "de42b33eaf1304d578d8265bac1c9b928ce52d49c6dc324f3bb2e6be532f62b0"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/opening-hud.png",
+      "bytes": 1918704,
+      "sha256": "312d2f049db17c21390e88dbd3d416723001f5863370f00aa30a04719020d377"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/mission-overview.png",
+      "bytes": 2454714,
+      "sha256": "fdfbe3f7a8b63bef2195b59bc9eae180785e7abcf8e9bea24e714a92b35cd670"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/objective-context.png",
+      "bytes": 2639531,
+      "sha256": "1d8c8193218299a1b8cca1411c2dde6e27e6a55b2407ff58c95371e49bc3e61c"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/opening.png",
+      "bytes": 2368041,
+      "sha256": "ab354eb3c6f05f3d2bfe531a166965ff63312dcbf1cf63d011fae361437c6034"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/environment.txt",
+      "bytes": 1198,
+      "sha256": "484f1e848ba20b0baf23bf503c31c5bb27812b90f5714a9ade6f53d61e0a1e86"
+    },
+    {
+      "path": "captures/saga.ch02.m01.gridlock/run-01/receipt.json",
+      "bytes": 7686,
+      "sha256": "f940c2da9da1bfef9c30ed86d141f7613b3b8fddf9449b8c3ab00a8c11aef1e9"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/objective-detail.png",
+      "bytes": 2338557,
+      "sha256": "02cde9ef9d2cb0649c4f763694afe24fa201e6262f74b6087fe624ec17bc3a1c"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/opening-hud.png",
+      "bytes": 1830769,
+      "sha256": "f4bf0fc85c1301fdf71b5cc8bf326fe0d517b03592fcb9d272a9b64b1390fff2"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/mission-overview.png",
+      "bytes": 1142473,
+      "sha256": "2103ad15f413a57a511d794b5a238d4faf0b476642477de52971d952b12e0ef9"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/objective-context.png",
+      "bytes": 2513317,
+      "sha256": "2dde7ac3f191b85d253fb20374276955e6a2c020e3aa2407d345635a7a4911e6"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/opening.png",
+      "bytes": 2268467,
+      "sha256": "1af2369762d3d4eea46ef66fd8088f95796979718b5030d676b40881f479c893"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/environment.txt",
+      "bytes": 1400,
+      "sha256": "d187bd68cf6be732b1a67ad8b5efe425c56eee5f3c20463e8d09e9b60019f982"
+    },
+    {
+      "path": "captures/saga.ch02.m02.supply_line/run-01/receipt.json",
+      "bytes": 7135,
+      "sha256": "4db64b12eaa75854e753fab2bdda794f48cbe1a960f26d8fa3b0960e825f474f"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/objective-detail.png",
+      "bytes": 2490289,
+      "sha256": "e6f87653de2a2977e5644a089e11491ea9007f2a0c5c3da05fdd270fe1b3f6ff"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/opening-hud.png",
+      "bytes": 1928529,
+      "sha256": "fb75ee7190320c9be9955c1191f6bc23788a0c8d5450777282590042b082e48f"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/mission-overview.png",
+      "bytes": 2456420,
+      "sha256": "ed806daa0a4cf2005c9c4a4dc4326915e458ed69a2b33384946962f180f4497e"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/objective-context.png",
+      "bytes": 2646579,
+      "sha256": "f70f63a8b7d3a9c5c472d87084d1c59c9cf3d6c94df8966a0e710bea84f916ec"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/opening.png",
+      "bytes": 2430320,
+      "sha256": "b1bb5aa590f5b82d6ae81ffa45edaa1c281f04266155cda4387ddbeee1c7de32"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/environment.txt",
+      "bytes": 1198,
+      "sha256": "3b24c88cab384b82508b903eee64e9f92e91803f1df7d53106d72ed5640bf295"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-02/receipt.json",
+      "bytes": 7619,
+      "sha256": "c971d20988e19fc82dad252f58d07eb76539902d9fa9723261eb68107d3a9dde"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/objective-detail.png",
+      "bytes": 2560440,
+      "sha256": "9a0ca2b5de247eb537fae2d9f06b8d774eceb798ac076cec02ba2b9f0f14d8fa"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/opening-hud.png",
+      "bytes": 1549168,
+      "sha256": "0e269bc49a9b7bb0666b561860da1abc5e0d3ec7a278c3ecc5d6d6573e53bbd3"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/mission-overview.png",
+      "bytes": 2547501,
+      "sha256": "3d8cf38297baf8d2485cd31336590dc5b548173ca0683c9218960a7cab5c9f24"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/objective-context.png",
+      "bytes": 2633077,
+      "sha256": "2b1c6302ade7feb3002f62d6c7c88bb0556d225121b9091a64a93a6a38136368"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/opening.png",
+      "bytes": 1793261,
+      "sha256": "f6ff084a3779137b8148aa2a6e82d52fd820d3e3db5cf3f1562cd3b0746e4dcf"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/environment.txt",
+      "bytes": 1199,
+      "sha256": "8e469c565e2f42e2343a940a881e653cb3364638b917fa638f3be844bf1aa46a"
+    },
+    {
+      "path": "captures/saga.ch02.m03.market_lifeline/run-01/receipt.json",
+      "bytes": 6891,
+      "sha256": "356035021a10df2ca11242939bf1f91afd83e4a3f42c942f514a131f4454a059"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/objective-detail.png",
+      "bytes": 1965029,
+      "sha256": "ed75ce49e2a9c2f1fe6198c5e2c3fed5fc30011fd14580fd20637dcd4aecd26e"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/opening-hud.png",
+      "bytes": 1573073,
+      "sha256": "b169808a58e939e027db57a05fa430db832fc6abb88bfc4b734ec19441346aa7"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/mission-overview.png",
+      "bytes": 1707239,
+      "sha256": "30799a3e2e4f1966514276709f837eaf3c0b64bc8fd68cf626f32912741cb636"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/objective-context.png",
+      "bytes": 2322247,
+      "sha256": "5b5db90fecdca6c2c97f9fdfd3913fd0a0a3e54edd1c1d1f018b03c838d17c16"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/opening.png",
+      "bytes": 1801269,
+      "sha256": "d547eb054f7506528299768eeb5f5ffdaa19bf3375c8ebf27feed26481b3f497"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/environment.txt",
+      "bytes": 1400,
+      "sha256": "8f5d083dbdcf7c0ad07990363087ad4cb3f7ad2a3dfb2006152c023c5b7149a7"
+    },
+    {
+      "path": "captures/saga.ch02.m04.power_relay/run-01/receipt.json",
+      "bytes": 7373,
+      "sha256": "532f839fb1f550dd72b6a50e639034b38715d26e1c735e7c44f292ef58807168"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/objective-detail.png",
+      "bytes": 2282683,
+      "sha256": "b6c3151e5aa3d5961890964a56a8adf2bcc5e51480a9c4ec146a35ea23a00cd8"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/opening-hud.png",
+      "bytes": 1790883,
+      "sha256": "b2cfe2ae124c963c6da23e67237614b8801f4325a435028b725f02dcba00716a"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/mission-overview.png",
+      "bytes": 1087677,
+      "sha256": "4e0453d70d9a79cb75cc254298f61971ae78e7809786ed0e239c160c96cc442c"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/objective-context.png",
+      "bytes": 2448758,
+      "sha256": "75520f8f3848311976c506a00a2642058967bc713e78707abc0e721a6d9084bd"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/opening.png",
+      "bytes": 2122888,
+      "sha256": "d792b4183e43e7eca1072bdee3d7235b7b6b32dd4a096f229ec0c91f36ad4334"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/environment.txt",
+      "bytes": 1400,
+      "sha256": "9dbd00a8c13910795da94fe88d6241198be18013823d36e848891b0ded1f8c9c"
+    },
+    {
+      "path": "captures/saga.ch02.m05.route_reopened/run-01/receipt.json",
+      "bytes": 7649,
+      "sha256": "b8c3922fa6d781cd317df5b55e5ba5e73ef531c0205a915977d7c870f30fdf2d"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/objective-detail.png",
+      "bytes": 2511499,
+      "sha256": "656440cba3a63f3782d9fb833db8341edc3fe4d5d95147ec4044795ec0aea6a3"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/opening-hud.png",
+      "bytes": 1931893,
+      "sha256": "9ac9fc58a13e79b8cbdf47037090a832c50b44aa1bb65b319675a2f5d332f4e6"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/mission-overview.png",
+      "bytes": 2434296,
+      "sha256": "2eed428dd243402b9fb56a13bfc24bf03601f276b3e0c68a375d4b1397959302"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/objective-context.png",
+      "bytes": 2596794,
+      "sha256": "65d7e3e8cf240765dfda2b9833a04a0ba3dd9bea2f0a9b3a3e4251499b391d1e"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/opening.png",
+      "bytes": 2420788,
+      "sha256": "a5255cb2608ec8943e49f5f8029b2e4dcb0ff5484335b5952eff7ebe95a0292d"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/environment.txt",
+      "bytes": 1198,
+      "sha256": "5df7142f1f8147cc79a72757d64ec68c6a9ae77a169f5848af9cbc6113a3ff4d"
+    },
+    {
+      "path": "captures/saga.ch03.m01.signal_trace/run-01/receipt.json",
+      "bytes": 7431,
+      "sha256": "c9b77cec58d8f5592170747ac420d2d6a0ce06f2c74f39288a2de68fdf69bd77"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/objective-detail.png",
+      "bytes": 2482618,
+      "sha256": "a531b8f56f2f4cbb6026829ed7a1ec330f53bb38ddd0063ef763b4934acf311f"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/opening-hud.png",
+      "bytes": 1937225,
+      "sha256": "229d14d019ed0dfdc520791d3ad3d10910726250cc54d843d9355fc1644717c8"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/mission-overview.png",
+      "bytes": 2457009,
+      "sha256": "9e8fa816451bb8961839cddb2b0f3a59a0cd6c37d865f7c93a965d1b62875984"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/objective-context.png",
+      "bytes": 2629036,
+      "sha256": "0df78512934f485d90f3b0d8fa0a7e7cb4fa82c239e30db5aa646b58cd1496b6"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/opening.png",
+      "bytes": 2428529,
+      "sha256": "7b32546fa4922b4834512ac21903b6d77b516012602589880202695b7fe29869"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/environment.txt",
+      "bytes": 1197,
+      "sha256": "63ce01c1642a0065a882f9af8b31f48d99c917be1a293377dd03c1e12ad3f02f"
+    },
+    {
+      "path": "captures/saga.ch03.m02.safehouse_sweep/run-01/receipt.json",
+      "bytes": 7127,
+      "sha256": "12c37db2e575c228e37c2ad50b628449059b194c3c5ac53e3f2eba9410966da8"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/objective-detail.png",
+      "bytes": 2487610,
+      "sha256": "fc267db12f12c180f5d462bff156836211c449618cb2fa4172d52583d69c78f7"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/opening-hud.png",
+      "bytes": 1935131,
+      "sha256": "be9c52052eff9d6af0d01f6d21492cd7b280100a07a0542c5b97f917fdfe16c3"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/mission-overview.png",
+      "bytes": 2453943,
+      "sha256": "cabeaefbf700c8b0adbcc5bd68590b89e5dddae255fdb58caad1c5413d033b93"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/objective-context.png",
+      "bytes": 2621243,
+      "sha256": "9f4b574cb698900f965efd873cc2518d1ff98ef4667a0bb5137958dc0ecce2fc"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/opening.png",
+      "bytes": 2425503,
+      "sha256": "79cf5e4b86c73a2e9e5239459c601325f8a17f138453ac266bbc86a3dfb2e829"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/environment.txt",
+      "bytes": 1198,
+      "sha256": "04c9f0d696e1431572cc3dd462001f61773c9249b7d3518102b9e6b777c8c17b"
+    },
+    {
+      "path": "captures/saga.ch03.m03.false_front/run-01/receipt.json",
+      "bytes": 7670,
+      "sha256": "fc2578aac0e094b854755f10ef36bec9d4011b29b0d9c315a5d55b9088f8c16a"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/objective-detail.png",
+      "bytes": 2467304,
+      "sha256": "a6f0b2657866acf7ce6cb687edfd95cc24e472e6218608c7c8cc7fe8311ab231"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/opening-hud.png",
+      "bytes": 1701495,
+      "sha256": "42524fa6b1eb7043f944ecbde6a643344b837a47dd853e486278f40f2c401cd0"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/mission-overview.png",
+      "bytes": 2592811,
+      "sha256": "55c63a0223b448d8a6500f461da9990c4a6d506c42c3ffa4c2083947f3d92867"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/objective-context.png",
+      "bytes": 2753319,
+      "sha256": "69757b9d168d0bbc464686c8550f5c6aed5d0b88c6be9cafd3bb52dbaf4db46e"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/opening.png",
+      "bytes": 1982701,
+      "sha256": "61c1749a6692d6d151533e88d1e4031231e8a2ff200bfca21b03b3c61ccfa8f7"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/environment.txt",
+      "bytes": 1194,
+      "sha256": "d94fbdfb76aa5f5c5869807fa91ff436be0fdfe659ce0059cd7625834f265f9b"
+    },
+    {
+      "path": "captures/saga.ch03.m04.evidence_chain/run-01/receipt.json",
+      "bytes": 7091,
+      "sha256": "3d4477324051f0b49a3f4fa7b8745bd5562b012ca7c188e2dc36085f48f718d5"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/objective-detail.png",
+      "bytes": 2262141,
+      "sha256": "75131186f43bdebc986856a100b23aaa86a05a8688925dd166b73c59f4492c87"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/opening-hud.png",
+      "bytes": 1679631,
+      "sha256": "a091ed27ef219fbcbc4d0e89f7e8fe115b559324baf1b07fa3f59d24d1f6e660"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/mission-overview.png",
+      "bytes": 2610575,
+      "sha256": "12b7252647bb2759a1b5ede2bc980af7994aa7ebae6e15f958356b988301b2a3"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/objective-context.png",
+      "bytes": 2634046,
+      "sha256": "7d0c4f1169e1d9bd48eecc094fc047902731f8272bad7cdc47eecdbd81ef9894"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/opening.png",
+      "bytes": 1879832,
+      "sha256": "d4aa80b62830548a1a780cd51b4271f1b2c28d71a4ff506e3adc3288046e0cb1"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/environment.txt",
+      "bytes": 1195,
+      "sha256": "29b33d1a517e0bf8a420220c7cf281d41767007989ecee04fd5a11b43924b2fe"
+    },
+    {
+      "path": "captures/saga.ch03.m05.network_break/run-01/receipt.json",
+      "bytes": 7402,
+      "sha256": "755ee435c8f92d9b243c3faf23899c590e2cc1afaf63fbd52dd91d5c1930e4de"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/objective-detail.png",
+      "bytes": 2465067,
+      "sha256": "f2feb8caf29c8956574e8d16da9681fd35091abed0107b964e17a493a1dffab0"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/opening-hud.png",
+      "bytes": 1633839,
+      "sha256": "527d6e6411a08fa7b0e12c583b3c9074d1a50462cd18caf3b660d0aa3bc7d18e"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/mission-overview.png",
+      "bytes": 1608734,
+      "sha256": "9b8026e972b085b40c7a202f688b576a6097025be3a6e7f8d15356b5fb1d5690"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/objective-context.png",
+      "bytes": 2543216,
+      "sha256": "05b2790d3f0a6a572322b89eade68ee674febe2d5051c5dd6bad35f543c6da74"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/opening.png",
+      "bytes": 1911892,
+      "sha256": "8965284128b09ea10595f459392002c311dee2d6a78935579a83ccf04660851f"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/environment.txt",
+      "bytes": 1396,
+      "sha256": "e864d9645e444da8aea583ff4d3d20288f4f23417bda1cf2943d4adabf230385"
+    },
+    {
+      "path": "captures/saga.ch04.m01.air_corridor/run-01/receipt.json",
+      "bytes": 5659,
+      "sha256": "d0677cf8cc48c06701bc9f5bd9a77cef32bffb7eebbb6833d285f0e7cd83a7ed"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/objective-detail.png",
+      "bytes": 1954316,
+      "sha256": "c460f8d2d2bd55992abaa64eb6d1308f2e57c9df143579cb5f124851457ea8dc"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/opening-hud.png",
+      "bytes": 1200890,
+      "sha256": "ead8e699246fafbf069b5224b88b30e8ed5bdd9a9729d8974ebd3ccefbe80754"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/mission-overview.png",
+      "bytes": 1205485,
+      "sha256": "0764835ff0f51b32249e4e07ccb5a3ca7d76b59e4c815d793c89a9313c14db5a"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/objective-context.png",
+      "bytes": 2349939,
+      "sha256": "62401a50011c4143cae33cefeba5a4fb39005d6e5e62c00cc73931b48f1b5cf7"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/opening.png",
+      "bytes": 1788791,
+      "sha256": "14f9290aa9cd67f6031c2e7aea43b9fd53263379178181a6771e88fe5dcae166"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/environment.txt",
+      "bytes": 1394,
+      "sha256": "7f95c314d5c5242552f8d7a3df3ab84e55158a34594c6849056ea6f6663f490f"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-02/receipt.json",
+      "bytes": 6767,
+      "sha256": "2dc82fae8a3b578f0d47d42802c57096e506f9cb921c600fb45ccc22cd326895"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/objective-detail.png",
+      "bytes": 1953638,
+      "sha256": "10bf68ef7888275e1f205bf5b79b89e2c98abb9a37b0308e0ca78e8f0a198118"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/opening-hud.png",
+      "bytes": 1200890,
+      "sha256": "ead8e699246fafbf069b5224b88b30e8ed5bdd9a9729d8974ebd3ccefbe80754"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/mission-overview.png",
+      "bytes": 1204068,
+      "sha256": "e343214e8876ea6d5ab6e8cace574ec75bfb71a8462fa5891c69e8b369a1829f"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/objective-context.png",
+      "bytes": 2350233,
+      "sha256": "1068ac9bf7212ab38ebfed39dee72ccbe057138cf0994a3be36e7791ea76ae35"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/opening.png",
+      "bytes": 1788811,
+      "sha256": "89102e05064a7dbdde8ffd3f3c6965ccaf3e19dc482564c973d089e01c56d233"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/environment.txt",
+      "bytes": 1396,
+      "sha256": "84c07aac60ae6dc4bec4c0f29e75a2b0f9a655d4935b3517a1bdd6abece4a1a8"
+    },
+    {
+      "path": "captures/saga.ch04.m02.steel_push/run-01/receipt.json",
+      "bytes": 6196,
+      "sha256": "1b556364dd6d38227307bc69c0f12eb2abab5b3da964aa81878ff44f65491c8c"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/objective-detail.png",
+      "bytes": 1965218,
+      "sha256": "0d9a138f1c0751fd8cc0c5e408f139cc5d118e8db4462a1f3e548501bc59b0d6"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/opening-hud.png",
+      "bytes": 1585558,
+      "sha256": "58471045451d54bfda026352ca2b876a0c047acfd50386f3fff1ea0f3aace270"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/mission-overview.png",
+      "bytes": 1197042,
+      "sha256": "56d514d3ca2a0b47bdeeb0430cd49bb1ce1fbedc38843f807a260080252165d1"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/objective-context.png",
+      "bytes": 2366024,
+      "sha256": "bbfff7c5bf04e25341ec17853b87c4c5cedbee8ae3175a1ed7954d92df27088e"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/opening.png",
+      "bytes": 1794244,
+      "sha256": "9542f42c913d8332f6af6a039629066c237dccc0d774c5c8d19873a83d2b253c"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/environment.txt",
+      "bytes": 1395,
+      "sha256": "2c8417d0008b3daae652cc03c37a5a6cfd988046281dd1954c5749a1c6fb9bf6"
+    },
+    {
+      "path": "captures/saga.ch04.m03.split_front/run-01/receipt.json",
+      "bytes": 6969,
+      "sha256": "b0f003bbb544c6631943ef04c282d6849026c7631c1d14d369a672bf6d199e26"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-detail.png",
+      "bytes": 2069799,
+      "sha256": "15e783d28d71e0cb572553ecd6e515e6bc88a43340e6a3a7dde586dc26fbb5dd"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-runway-02-end-a.png",
+      "bytes": 1698847,
+      "sha256": "466bf24c85c43cb3d32eb81c276acd972f2fe950315e908a0b5110d6b8c8f02b"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-runway-02-end-b.png",
+      "bytes": 1737582,
+      "sha256": "30300e88789ac81c744dec2d098ed0e5abc2d4896ec8197592c24243cc0d80c9"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/targets.txt",
+      "bytes": 231,
+      "sha256": "ef4ffb7c57903415a1dae675eff331be991ab16b48ec2aecfc992d315e135e3a"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-overview.png",
+      "bytes": 2116027,
+      "sha256": "820dda0989cde61773fd04f0cf8d9bfa72e12c1b0c2551532fd49d34290bf26f"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-runway-01-end-a.png",
+      "bytes": 1791201,
+      "sha256": "8bee9144aed8c3c491c589fc127d334151664d830630a4583122d385f01a7468"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/CH04M04GroundedSignal-source-runway-runway-01-end-b.png",
+      "bytes": 1699043,
+      "sha256": "4c4e4b2739c80346944f92eabed9fd978aaf22e5472e03f59f871ad67830ed47"
+    },
+    {
+      "path": "source-runway-previews/saga.ch04.m04.grounded_signal/run-01/receipt.json",
+      "bytes": 941,
+      "sha256": "37b1b2ec341a49e76bbf95a1832fba77ed3abc13726c1707be6a7c6adfac88bb"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/story-relay.png",
+      "bytes": 2198522,
+      "sha256": "4d90556bbc9f45507d3399514aeed9b9173a3f000f31a66f17f40d966449f86f"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/story-plane.png",
+      "bytes": 1903124,
+      "sha256": "8e2f89d7ec1d621a1ef387e855a7df13307ca6fece56bbe6234061cf92850968"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/objective-detail.png",
+      "bytes": 1935727,
+      "sha256": "6e81c0076ac6627bdf21179080330ba71585fcbce26fee6eb191e85875ac1d14"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/opening-hud.png",
+      "bytes": 1585813,
+      "sha256": "91fb6ab2faa185d6e659d4d88b61e6bc1df35eb14a505da166fd30a60d31caa4"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/mission-overview.png",
+      "bytes": 1198600,
+      "sha256": "506d98f752f6914f3c04fee1b8e78a2d015d83e076bb02d2cb0959fd412fb119"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/objective-context.png",
+      "bytes": 2401310,
+      "sha256": "241a63e3692e5512781a54b311f4684a59555cb8267acd783f303ddc326fe7c0"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/story-civilian_terminal.png",
+      "bytes": 2225586,
+      "sha256": "50c3fc3de57fb912e10b89bc5cfa00a4a5dca8588145b3ab34ac45863a6bc72c"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/opening.png",
+      "bytes": 1756611,
+      "sha256": "0f16bec2180b0bbb0c2021f8e8771a5a343eb614526875a53d0e7530677c3fc1"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/environment.txt",
+      "bytes": 1410,
+      "sha256": "31d5810aabcabb9771ab07ce1163aa9d907ca9d808889d0b94d6964b5e9e9673"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-02/receipt.json",
+      "bytes": 9990,
+      "sha256": "40daf97481b05d24067cd44e0c5af53b6a0e6dfdc08aa0ba3d213e248b5a7905"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/objective-detail.png",
+      "bytes": 1936505,
+      "sha256": "97e1ef897be4ee1d3acb7f7fa0bd1a0f8322e332bd46a769fe5b4392bc66d5ae"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/opening-hud.png",
+      "bytes": 1585783,
+      "sha256": "761a5c678a9dfc5485308c8b9e1f8ace331133299033401c51a4e971297f5dbd"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/mission-overview.png",
+      "bytes": 1198697,
+      "sha256": "9fc6c7d9665c562118306fbd051d7f265322c3e80609b79f4cdd1993eafaaa1c"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/objective-context.png",
+      "bytes": 2401389,
+      "sha256": "4146af8bb7ee22b245ffcdf39d85a6bf4c24f47c5c81310da388f392f357b297"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/opening.png",
+      "bytes": 1757209,
+      "sha256": "ec1c1e6dbcbcd3e963626c8deeda419dc2fff54dc22a1a13b39b7be83957c707"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/environment.txt",
+      "bytes": 1407,
+      "sha256": "280c6bd6d563a9dd4a0990b7b1683f6a334f0d59d3e998a3670a412a05e8ed9d"
+    },
+    {
+      "path": "captures/saga.ch04.m04.grounded_signal/run-01/receipt.json",
+      "bytes": 6335,
+      "sha256": "1f0c0b45bbbdf75f2e08e08e7d0eabb84a75378441d11a55ab297aa2e3eb0a22"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/objective-detail.png",
+      "bytes": 1955197,
+      "sha256": "25e09552396c061b5a98bc25eb0ff7f1e41d4a7d7381239a62fafe4a60ab10a0"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/opening-hud.png",
+      "bytes": 1643920,
+      "sha256": "096411a1f86c1381086eaf1cf8acbceff5f960177914942068e041339fdf621e"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/mission-overview.png",
+      "bytes": 1089530,
+      "sha256": "9938ecdf570428301cae4f0873ad7b15c3562b4d0998fc296156a90dc24b1704"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/objective-context.png",
+      "bytes": 2389567,
+      "sha256": "8c2121a4ab036f43bda31003005ac5b433285e01c1576dfed6b468f8ea1ca263"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/opening.png",
+      "bytes": 1838964,
+      "sha256": "4b79b0edd33d2d8d392f0fb2449b62d4b72b7782ab8fc26d33bf63f4f1ad8586"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/environment.txt",
+      "bytes": 1411,
+      "sha256": "c94d71ec1f6b4f7e9265d298e020f10016516e53d02f260b52b2d3ef0f6e91ef"
+    },
+    {
+      "path": "captures/saga.ch04.m05.armor_break/run-01/receipt.json",
+      "bytes": 9604,
+      "sha256": "5ec743ca20f4a5d2dcdc95cc21828b44349aa6e6cc1f41bec868cb0d1c42551c"
+    },
+    {
+      "path": "captures/saga.ch05.m01.citywide_alert/run-02/receipt.json",
+      "bytes": 940,
+      "sha256": "5c9d98657d3df2d4ccc255c82eb15f7a23285a3175c7a2dc6ed7665046bf333a"
+    },
+    {
+      "path": "captures/saga.ch05.m01.citywide_alert/run-01/receipt.json",
+      "bytes": 694,
+      "sha256": "636134bc60e011b4160f15c0332db8a9741290df8aac8db82e5e3c7a752caaf2"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/CH05M01CitywideAlert-source-preview-story-reinforcement_perimeter.png",
+      "bytes": 1845924,
+      "sha256": "1cdfd8e3de840db863be323447f05925fe83bebfa260b491450c729ff2c3c6f3"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/CH05M01CitywideAlert-source-preview-story-clinic.png",
+      "bytes": 1819177,
+      "sha256": "f6d3ac202a0d7e0856249ee74cf1d6a0a70e37c7496437a4926b1dacda3cdfc4"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/CH05M01CitywideAlert-source-preview-overview.png",
+      "bytes": 1925778,
+      "sha256": "7db7dc9bbf3b3aa3ba1ec842a6e31292d16a24b43b95e9e3698e0ee085acf7ec"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/CH05M01CitywideAlert-source-preview-story-utility.png",
+      "bytes": 1960908,
+      "sha256": "54a74be8d55e7a1afb79e04a0d03f5b6d07445e20c15198bc5fb6712b1851037"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/CH05M01CitywideAlert-source-preview-detail.png",
+      "bytes": 1830185,
+      "sha256": "a3244d78bfbc83ddadfcfd4c041ac178f2eac49537bc5763f86445f276aff577"
+    },
+    {
+      "path": "source-previews/saga.ch05.m01.citywide_alert/run-01/receipt.json",
+      "bytes": 923,
+      "sha256": "2c4547faaf15402ff4fedba9d564a7a939b25062a2c86e1f8a0e60335ddcb71d"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/objective-detail.png",
+      "bytes": 2018339,
+      "sha256": "af952cc2cb85778b4fbd76012e2d01b3b446821dfde54174698b58d9222940c8"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/opening-hud.png",
+      "bytes": 1546174,
+      "sha256": "59edef916c37d0bd5fbecd0149fa4220591d9c453e7203e21ec60abee11c8d27"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/mission-overview.png",
+      "bytes": 841486,
+      "sha256": "a70782f86a784778752ed856bed870672c39467613a8c3b034c19027fcf488f6"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/objective-context.png",
+      "bytes": 2505664,
+      "sha256": "e0b3aba2d291d73683ecb0a2b6105618baf020f544cee7f3342eced4fc6f6710"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/opening.png",
+      "bytes": 1871712,
+      "sha256": "dc2a1946e0b9a64ef5f26b86a8c807ad6fa21c5e332c13b9a86b49a9e5fbe43a"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/environment.txt",
+      "bytes": 1409,
+      "sha256": "e4edaa6c04b7b1ece1b75b082d877bebcefb79d29d71807af156cb62267554d3"
+    },
+    {
+      "path": "captures/saga.ch05.m02.trust_under_fire/run-01/receipt.json",
+      "bytes": 10231,
+      "sha256": "ca3849e391f62c0c8eb5e2c0ab9ef45efa3592f71dcd53bfa3df5b1595f0ce61"
+    },
+    {
+      "path": "captures/saga.ch05.m03.network_collapse/run-02/receipt.json",
+      "bytes": 942,
+      "sha256": "2ea42e3e1f738240faf0982d6b734b1eadb22ffad5fe4a8b7ec9ec5a2e659697"
+    },
+    {
+      "path": "captures/saga.ch05.m03.network_collapse/run-01/receipt.json",
+      "bytes": 942,
+      "sha256": "a4945cea691403f7fbeb3552d3614794bb3f2c95b286967c4cc8d0f8b23a74f4"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-story-node_1.png",
+      "bytes": 1897791,
+      "sha256": "e84be530d0564926fa4602aa88927254fb273b14548aad51ede9cf2f726eda43"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-story-node_3.png",
+      "bytes": 1941764,
+      "sha256": "ead9e7c059a933a56d7282972e9ae1913a3e274993c05b3976fd47c0ca2414d8"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-story-node_2.png",
+      "bytes": 1867047,
+      "sha256": "a0bb057fb74faa16db4d623ba93b59277614aa36a067a510d4c869d30652648b"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-detail.png",
+      "bytes": 1830197,
+      "sha256": "7b1b252e0831251ea8319a443e9714a32826b379ac3d6d3af62527b78f835261"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-overview.png",
+      "bytes": 1909114,
+      "sha256": "1eb1801bd4903e4aab5451d6edffad1b542ab059a96fd0ee5b8c1b93489f4962"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-story-extraction.png",
+      "bytes": 1877605,
+      "sha256": "c7b56a032e2093ea9ef22d02d6278044a81fd68c512947aa8d0d1cb103625b88"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/CH05M03NetworkCollapse-source-preview-story-audit_gate.png",
+      "bytes": 1910536,
+      "sha256": "dc4f9edd99b96bc9dee144be36c40ea82670b507391bbce71a0acc61271b73b1"
+    },
+    {
+      "path": "source-previews/saga.ch05.m03.network_collapse/run-01/receipt.json",
+      "bytes": 1059,
+      "sha256": "9a765d0f5e01128a72721e754848cf399edbe5c5952c97f671ca36458a6c1f83"
+    },
+    {
+      "path": "captures/saga.ch05.m04.last_corridor/run-02/receipt.json",
+      "bytes": 939,
+      "sha256": "26359015a04d8615857486de25e428924e6ddd9ac7f8687a9c2604e3d69fd3aa"
+    },
+    {
+      "path": "captures/saga.ch05.m04.last_corridor/run-01/receipt.json",
+      "bytes": 939,
+      "sha256": "561a77824bc0ac7ed5b1cf23ffa98797655d0a7977efd33fa2ccfb8aeb496650"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/CH05M04LastCorridor-source-preview-story-repair.png",
+      "bytes": 1945597,
+      "sha256": "c3c82853a87b1275bee72912c586d1a0f8258c228c2f81a9d522057ae1670a43"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/CH05M04LastCorridor-source-preview-overview.png",
+      "bytes": 1908625,
+      "sha256": "c85c79e5f17d502dee51d4b287858a5520eb790813da164a93bde61c5477f849"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/CH05M04LastCorridor-source-preview-story-receiving_gate.png",
+      "bytes": 1872398,
+      "sha256": "1a0ddf17500cfcf9028bf63e0f8ec0989d07df44c9adc2d9b7445de541bd31ce"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/CH05M04LastCorridor-source-preview-detail.png",
+      "bytes": 1830185,
+      "sha256": "a3244d78bfbc83ddadfcfd4c041ac178f2eac49537bc5763f86445f276aff577"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/receipt.json",
+      "bytes": 909,
+      "sha256": "1e4aa61f159f03e0543bd259e25f08b7f1337862764ccecb9d41e29eb18db866"
+    },
+    {
+      "path": "source-previews/saga.ch05.m04.last_corridor/run-01/CH05M04LastCorridor-source-preview-story-receiving.png",
+      "bytes": 1872886,
+      "sha256": "5d97995831a383261d5ef4fa18cfbd9444b83ad190067f2b321f5f45823f7cb5"
+    },
+    {
+      "path": "captures/saga.ch05.m05.command_node/run-02/receipt.json",
+      "bytes": 938,
+      "sha256": "bdc3352cdf1b27fccd7be6b3b960d22e98ba3635a8a0ded55132420044513de3"
+    },
+    {
+      "path": "captures/saga.ch05.m05.command_node/run-01/receipt.json",
+      "bytes": 938,
+      "sha256": "e7834ff9bcbc13d5adf1ed9651d0344eb052c7c8d32ed75799cc50e1011f27f9"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-story-breach.png",
+      "bytes": 1917564,
+      "sha256": "a53ea12a8c2347686fb286cc780182c8d1e9a739a1f825451e10df9e6534648d"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-story-core_audit.png",
+      "bytes": 1959816,
+      "sha256": "399380fc8db20a2c3471a7dd36692568b6984cfb9298cdbb81b307773fbec0ed"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-story-clinic.png",
+      "bytes": 1826011,
+      "sha256": "4afa382b02f00a1554b5b10d87b525b9d1812dd3e5ddf630a3f10beef8f4ef7e"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-story-audit.png",
+      "bytes": 1889261,
+      "sha256": "641ca3a329d91d2d81234ef65915851ecc294dbf3b0ad4284a95475cb0f5c74c"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-overview.png",
+      "bytes": 1898278,
+      "sha256": "8aaeb09e65e1c987d07960ba8eb7658232fbaa2e898100e9f2010a44e4ad72f4"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-story-utility.png",
+      "bytes": 1885752,
+      "sha256": "729f1e43f2a7bb6dec72310dbf9ae963ff6cbcfa94604c1ccd0b619c0012a547"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/CH05M05CommandNode-source-preview-detail.png",
+      "bytes": 1695427,
+      "sha256": "9a405038bc1e191fb4e2006d6e84edabd98c5ff7616394ef1686b63d7a498869"
+    },
+    {
+      "path": "source-previews/saga.ch05.m05.command_node/run-01/receipt.json",
+      "bytes": 1019,
+      "sha256": "a411b3929220b05d63579ba97f7b036310e94cb305ad3205bec643165155a2e6"
+    }
+  ],
+  "missionCount": 25,
+  "runtimeEnvironmentMissions": 21,
+  "usableOpeningHudMissions": 20,
+  "sourcePreviewOnlyMissions": 4,
+  "normalInputPlaythroughs": 0,
+  "deviceAcceptance": "pending"
+}

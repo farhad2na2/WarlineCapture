@@ -1,0 +1,17 @@
+{
+    "missionId": "saga.ch01.m04.airlift",
+    "kind": "source-runway-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+    "sourceHashBefore": "74003bc083ffa78df42be00630046e9b85d5a26651e922894d35aba55ab851c9",
+    "sourceHashAfter": "74003bc083ffa78df42be00630046e9b85d5a26651e922894d35aba55ab851c9",
+    "graphics": "Metal",
+    "files": [
+        "CityEdgeAirfield-source-runway-detail.png",
+        "CityEdgeAirfield-source-runway-overview.png",
+        "CityEdgeAirfield-source-runway-runway-01-end-a.png",
+        "CityEdgeAirfield-source-runway-runway-01-end-b.png",
+        "CityEdgeAirfield-source-runway-runway-02-end-a.png",
+        "CityEdgeAirfield-source-runway-runway-02-end-b.png"
+    ],
+    "scope": "Authored runway-end inspection; no runtime actors/HUD; overview suppresses fog/post processing, detail uses authored lighting"
+}

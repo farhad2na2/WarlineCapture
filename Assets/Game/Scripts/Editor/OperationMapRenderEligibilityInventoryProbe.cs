@@ -58,13 +58,16 @@ namespace Game.Editor
         internal const int ExpectedExistingBeautifyRenderRowAddition = 48400 + 847 + 44;
         // PR60 split runway asphalt and markings into two existing-renderer material slots.
         internal const int ExpectedReviewedRunwayMaterialRowAddition = 1;
+        // CampaignVisualAudit20261011/fixes/render-reconciliation.txt explains every new row.
+        internal const int ExpectedCampaignVisualRenderRowAddition = 52 + 85;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
             ExpectedCorrectedLayoutRenderRowRemoval +
             ExpectedRetainedRooftopSupportRenderRowAddition +
             ExpectedExistingBeautifyRenderRowAddition +
-            ExpectedReviewedRunwayMaterialRowAddition;
+            ExpectedReviewedRunwayMaterialRowAddition +
+            ExpectedCampaignVisualRenderRowAddition;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -217,10 +220,10 @@ namespace Game.Editor
         {
             var expected = new Dictionary<string, int>(StringComparer.Ordinal)
             {
-                ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10843,
+                ["AuthoredOperationMapEntityPresentation/RenderOnly"] = 10843 + 85,
                 ["AuthoredOperationMapEntityPresentation/GameplayBuildings"] = 1584,
                 ["AuthoredOperationMapEntityPresentation/GameplayVehicles"] = 340,
-                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597,
+                ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly"] = 98597 + 52,
                 ["Generated_GiantDenseMiddleEasternCity_EntityPresentation/GameplayBuildings"] = 12781,
                 ["CityCrossroads_NorthCourtyard"] = 23
             };
@@ -240,13 +243,14 @@ namespace Game.Editor
         private static InventoryReport Build(Scene scene)
         {
             // Pin the reviewed visual revision; see MapVisualRefinement20261010/
-            // dense-render-cache-source-reconciliation.json and native phase receipts. A later
+            // dense-render-cache-source-reconciliation.json and native phase receipts.
+            // CampaignVisualAudit20261011/fixes/render-reconciliation.txt records this revision. A later
             // scene change requires its own reconciliation, even if row totals
             // happen to remain equal.
             using (var stream = File.OpenRead(scene.path))
             using (var hash = System.Security.Cryptography.SHA256.Create())
                 if (BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() !=
-                    "c76df867657c0ec2bd17685764db8a1e468d39ed34d828d245ab2d4c5dde523b")
+                    "bc250a60f2fb3050c691265273df13a7bea3fa2420fe4bef1a58debad75d2ace")
                     throw new InvalidOperationException("Dense source revision changed; reconcile it before rebuilding render packaging.");
             Renderer[] renderers = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
@@ -405,7 +409,8 @@ namespace Game.Editor
                     ExpectedCorrectedLayoutRenderRowRemoval -
                     ExpectedRetainedRooftopSupportRenderRowAddition -
                     ExpectedExistingBeautifyRenderRowAddition -
-                    ExpectedReviewedRunwayMaterialRowAddition)
+                    ExpectedReviewedRunwayMaterialRowAddition -
+                    ExpectedCampaignVisualRenderRowAddition)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +

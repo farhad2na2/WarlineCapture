@@ -1,0 +1,2 @@
+CampaignDestinationV2_20261011_20_clinic kind=aid anchor=(906.00, 0.01, 450.00) group=(911.36, 0.03, 462.93) owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Props/SM_Prop_Chair_01
+CampaignDestinationV2_20261011_20_utility kind=service anchor=(1206.00, 0.01, 450.00) group=(1228.63, 0.03, 472.63) owner=Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/SM_Prop_Powerpole_01

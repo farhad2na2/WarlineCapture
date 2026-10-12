@@ -1,0 +1,17 @@
+grid=440,220 origin=float3(860f, 0f, 300f) cell=1
+BuildingPlacementAuthoredRoadCache.mask cells=25232
+BuildingPlacementAuthoredRoadCache.sidewalkMask cells=0
+BuildingPlacementAuthoredBuildingCache.mask cells=18546
+GridRoad cells=0
+Building_Corridor_Civic preferred=373,144 footprint=14,12 world=1233,444
+Building_Corridor_Civic rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Corridor_Civic rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Corridor_Civic rejected BuildingPlacementAuthoredBuildingCache.mask=112
+Building_Corridor_Civic rejected GridRoad=0
+Building_Corridor_Civic nearestClearGrid=(373, 155);(372, 155);(374, 155);(371, 155);(375, 155);(370, 155);(369, 155);(373, 156);(385, 143);(372, 156);(374, 156);(368, 155)
+Building_Corridor_ReceivingDepot preferred=374,56 footprint=26,25 world=1234,356
+Building_Corridor_ReceivingDepot rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Corridor_ReceivingDepot rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Corridor_ReceivingDepot rejected BuildingPlacementAuthoredBuildingCache.mask=273
+Building_Corridor_ReceivingDepot rejected GridRoad=0
+Building_Corridor_ReceivingDepot nearestClearGrid=(353, 80);(352, 80);(353, 81);(351, 80);(352, 81);(353, 82);(350, 80);(351, 81);(352, 82);(353, 83);(349, 80);(350, 81)

@@ -1,0 +1,101 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ReviewCampaignRoadTerminals
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CityEdgeAirfield
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=RefineryDistrict
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=AshLinePort
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH04M04GroundedSignal
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH04M05ArmorBreak
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M01CitywideAlert
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M02TrustUnderFire
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M03NetworkCollapse
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M04LastCorridor
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadTerminalReview] retained=CH05M05CommandNode
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:26)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Exception: Destination has no clear authored-road frontage: DenseCity CampaignDestinationV2_20261011_10_manifest bounds=Center: (690.00, 0.75, 458.00), Extents: (1.26, 0.53, 0.70) anchor=(707.00, 1.46, 430.00) spaceRejected=3950 groundRejected=370
+Game.Editor.MapVariants.OtherMapSurfacePolish.RepairCampaignDestinationRoadClearance (System.String map, UnityEngine.MeshRenderer[] rs, Game.Configs.OperationMapDefinition def, Game.Editor.MapVariants.OtherMapSurfacePolish+RefinementProtection protection, System.Collections.Generic.List`1[T] journal, System.Collections.Generic.List`1[T] views) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationRoadClearance.cs:55)
+Game.Editor.MapVariants.OtherMapSurfacePolish.ReviewCampaignRoadTerminals () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadReview.cs:31)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ReviewCampaignRoadTerminals
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_68c89ac9/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

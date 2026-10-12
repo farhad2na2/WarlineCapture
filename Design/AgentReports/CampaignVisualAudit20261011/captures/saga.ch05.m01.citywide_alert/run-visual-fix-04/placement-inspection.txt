@@ -1,0 +1,5 @@
+grid=440,220 origin=float3(860f, 0f, 300f) cell=1
+BuildingPlacementAuthoredRoadCache.mask cells=25232
+BuildingPlacementAuthoredRoadCache.sidewalkMask cells=0
+BuildingPlacementAuthoredBuildingCache.mask cells=20108
+GridRoad cells=0

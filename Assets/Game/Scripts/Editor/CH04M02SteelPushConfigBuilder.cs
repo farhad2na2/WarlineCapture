@@ -58,7 +58,7 @@ namespace Game.Editor
             var runtime=data.FindProperty("missionRuntime");S(runtime.FindPropertyRelative("baseMissionRoleId"),"role.friendly.fuel_reserve");
             I(runtime.FindPropertyRelative("startingCredits"),0);
             I(runtime.FindPropertyRelative("startingMaterials"),200);
-            var buildZone=runtime.FindPropertyRelative("buildZone");I(buildZone.FindPropertyRelative("halfWidthCells"),65);I(buildZone.FindPropertyRelative("halfHeightCells"),25);
+            var buildZone=runtime.FindPropertyRelative("buildZone");I(buildZone.FindPropertyRelative("halfWidthCells"),105);I(buildZone.FindPropertyRelative("halfHeightCells"),40);
             // Scripted starting buildings pass the same mission catalogue policy
             // as player construction. The already-present reserve uses the one slot.
             var buildCatalog=runtime.FindPropertyRelative("buildCatalog");buildCatalog.arraySize=4;

@@ -1,0 +1,18 @@
+{
+    "missionId": "saga.ch05.m05.command_node",
+    "kind": "source-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity",
+    "sourceHashBefore": "7750a24fae14cd8b5bd169b9c132b801b5cf4830e4c2c769bbc1aec15d7323de",
+    "sourceHashAfter": "7750a24fae14cd8b5bd169b9c132b801b5cf4830e4c2c769bbc1aec15d7323de",
+    "graphics": "Metal",
+    "files": [
+        "CH05M05CommandNode-source-preview-detail.png",
+        "CH05M05CommandNode-source-preview-overview.png",
+        "CH05M05CommandNode-source-preview-story-audit.png",
+        "CH05M05CommandNode-source-preview-story-breach.png",
+        "CH05M05CommandNode-source-preview-story-clinic.png",
+        "CH05M05CommandNode-source-preview-story-core_audit.png",
+        "CH05M05CommandNode-source-preview-story-utility.png"
+    ],
+    "scope": "Authored source preview; runtime load failed; no deployed units or HUD; overview suppresses distance fog/post processing for inspection; detail views retain authored lighting"
+}

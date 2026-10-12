@@ -1,0 +1,32 @@
+{
+  "appliesTo": "capture-supplemental-results.json",
+  "originalRunnerLabel": "reimport:true",
+  "actualReimportSource": false,
+  "reason": "Supplemental request sets warmupSeconds and supplemental only; copied runner display label was not tied to request.reimportSource.",
+  "runs": [
+    {
+      "index": 0,
+      "run": "02"
+    },
+    {
+      "index": 3,
+      "run": "02"
+    },
+    {
+      "index": 18,
+      "run": "02"
+    },
+    {
+      "index": 1,
+      "run": "02"
+    },
+    {
+      "index": 7,
+      "run": "02"
+    },
+    {
+      "index": 16,
+      "run": "02"
+    }
+  ]
+}

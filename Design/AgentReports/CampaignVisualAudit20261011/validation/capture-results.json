@@ -1,0 +1,170 @@
+[
+  {
+    "index": 0,
+    "missionId": "saga.ch01.m01.first_contact",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch01.m01.first_contact/run-01/receipt.json"
+  },
+  {
+    "index": 1,
+    "missionId": "saga.ch01.m02.establish_base",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch01.m02.establish_base/run-01/receipt.json"
+  },
+  {
+    "index": 2,
+    "missionId": "saga.ch01.m03.radar_warning",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch01.m03.radar_warning/run-01/receipt.json"
+  },
+  {
+    "index": 3,
+    "missionId": "saga.ch01.m04.airlift",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch01.m04.airlift/run-01/receipt.json"
+  },
+  {
+    "index": 4,
+    "missionId": "saga.ch01.m05.breach_assault",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch01.m05.breach_assault/run-01/receipt.json"
+  },
+  {
+    "index": 5,
+    "missionId": "saga.ch02.m01.gridlock",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch02.m01.gridlock/run-01/receipt.json"
+  },
+  {
+    "index": 6,
+    "missionId": "saga.ch02.m02.supply_line",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch02.m02.supply_line/run-01/receipt.json"
+  },
+  {
+    "index": 7,
+    "missionId": "saga.ch02.m03.market_lifeline",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch02.m03.market_lifeline/run-01/receipt.json"
+  },
+  {
+    "index": 8,
+    "missionId": "saga.ch02.m04.power_relay",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch02.m04.power_relay/run-01/receipt.json"
+  },
+  {
+    "index": 9,
+    "missionId": "saga.ch02.m05.route_reopened",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch02.m05.route_reopened/run-01/receipt.json"
+  },
+  {
+    "index": 10,
+    "missionId": "saga.ch03.m01.signal_trace",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch03.m01.signal_trace/run-01/receipt.json"
+  },
+  {
+    "index": 11,
+    "missionId": "saga.ch03.m02.safehouse_sweep",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch03.m02.safehouse_sweep/run-01/receipt.json"
+  },
+  {
+    "index": 12,
+    "missionId": "saga.ch03.m03.false_front",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch03.m03.false_front/run-01/receipt.json"
+  },
+  {
+    "index": 13,
+    "missionId": "saga.ch03.m04.evidence_chain",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch03.m04.evidence_chain/run-01/receipt.json"
+  },
+  {
+    "index": 14,
+    "missionId": "saga.ch03.m05.network_break",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch03.m05.network_break/run-01/receipt.json"
+  },
+  {
+    "index": 15,
+    "missionId": "saga.ch04.m01.air_corridor",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch04.m01.air_corridor/run-01/receipt.json"
+  },
+  {
+    "index": 16,
+    "missionId": "saga.ch04.m02.steel_push",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch04.m02.steel_push/run-01/receipt.json"
+  },
+  {
+    "index": 17,
+    "missionId": "saga.ch04.m03.split_front",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch04.m03.split_front/run-01/receipt.json"
+  },
+  {
+    "index": 18,
+    "missionId": "saga.ch04.m04.grounded_signal",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch04.m04.grounded_signal/run-01/receipt.json"
+  },
+  {
+    "index": 19,
+    "missionId": "saga.ch04.m05.armor_break",
+    "run": "01",
+    "wrapperExit": 0,
+    "passed": true,
+    "receipt": "captures/saga.ch04.m05.armor_break/run-01/receipt.json"
+  },
+  {
+    "index": 20,
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "run": "01",
+    "wrapperExit": 1,
+    "passed": false,
+    "receipt": "captures/saga.ch05.m01.citywide_alert/run-01/receipt.json"
+  }
+]

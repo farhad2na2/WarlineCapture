@@ -1,0 +1,2 @@
+CampaignDestinationV2_20261011_18_relay kind=service anchor=(800.00, 0.05, 648.00) group=(794.34, 0.09, 642.34) owner=Map_CityEdgeAirfield/Props/SM_Prop_Crate_Stack_01
+CampaignDestinationV2_20261011_18_civilian_terminal kind=domestic anchor=(515.00, 0.03, 650.00) group=(523.00, 0.06, 650.00) owner=Map_CityEdgeAirfield/Props/SM_Prop_Missle_Crate_01

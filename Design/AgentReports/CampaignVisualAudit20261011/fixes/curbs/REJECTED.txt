@@ -1,0 +1,1 @@
+First curb pass rejected during visual review: false exposed-end classification at connected corners produced gaps. All owned modified meshes restored to their original model mesh via Unity. Evidence retained.

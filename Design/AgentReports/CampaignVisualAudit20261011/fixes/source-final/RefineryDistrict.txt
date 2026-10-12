@@ -1,0 +1,15 @@
+RESTORED INSTANCE BASELINE Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk oldMesh=Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CurbsV2/RefineryDistrict_3422736889679928218.asset
+RESTORED INSTANCE BASELINE Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk oldMesh=Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CurbsV2/RefineryDistrict_8424853267190750934.asset
+RESTORED INSTANCE BASELINE Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk oldMesh=Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CurbsV2/RefineryDistrict_2307020365131687743.asset
+RESTORED INSTANCE BASELINE Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk oldMesh=Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CurbsV2/RefineryDistrict_7594626586671217219.asset
+GROUP Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01 from=(710.78, -0.02, 434.19) to=(693.72, 0.06, 398.31) beside=Map_RefineryDistrict/Industrial/ENV_D2_warehouse/Visual
+GROUP Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01 from=(620.12, -0.02, 436.48) to=(598.04, 0.06, 399.47) beside=Map_RefineryDistrict/Industrial/ENV_D2_warehouse/Visual
+GROUP Map_RefineryDistrict/Props/SM_Prop_Crate_Stack_01 from=(889.70, -0.02, 404.16) to=(882.20, 0.03, 362.02) beside=PreparedEntityPresentation/GameplayBuildings/Buildings/DenseCityBuilding/IntactVisual/Model
+Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(701.25, 0.29, 629.97) roadHeight=0.1760945
+Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(708.75, 0.29, 629.97) roadHeight=0.172931
+Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(701.25, 0.29, 380.03) roadHeight=0.1760945
+Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(708.75, 0.29, 380.03) roadHeight=0.172931
+ROAD TERMINAL Map_RefineryDistrict/Roads/RoadChunk_1_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(320.20, 1.61, 505.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(320.20, 0.64, 505.03) direction=(-1.00, 0.00, 0.00)
+ROAD TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(330.20, 0.64, 505.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_RefineryDistrict/Roads/RoadChunk_2_3/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(330.20, 0.14, 505.03) direction=(-1.00, 0.00, 0.00)

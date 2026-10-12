@@ -1,0 +1,33 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildCampaignRunwayEnds
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_10d2ffcf/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:30)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:69)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:84)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_10d2ffcf/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRunwayEnds] result=Passed modules=5 outerEnds=6 internalJoins=2
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:94)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_10d2ffcf/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildCampaignRunwayEnds
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_10d2ffcf/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

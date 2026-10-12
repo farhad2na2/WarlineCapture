@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 4
   sourceIdentityHash: 7c2d619b4c8496ee14bd60ca4410abd879fd8b52630b5050efdd0d8b143daf81
-  contentHash: 0f5987b77d4dd100b09d0aec532112b0b9194ee22fb9ffea0838ff971aaea47a
-  generatedMetadataHash: 0f5987b77d4dd100b09d0aec532112b0b9194ee22fb9ffea0838ff971aaea47a
+  contentHash: 245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8
+  generatedMetadataHash: 245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8
   sourceBinding:
     sourceOperationMapId: 
     sourceIdentityHash: 
@@ -161,7 +161,7 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch05.m03.civic_2_origin
     kind: 4
-    position: {x: 1199, y: 0.009179777, z: 444}
+    position: {x: 1206, y: 0.009179777, z: 448}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 0

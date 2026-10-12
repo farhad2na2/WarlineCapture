@@ -1,0 +1,16 @@
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (108) end=(1042.54, -0.07, 488.34) roadHeight=-0.2662343
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1034.74, -0.04, 492.64) roadHeight=-0.2601807
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1034.74, -0.04, 487.58) roadHeight=-0.2662343
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(977.25, 0.33, 478.03) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(984.75, 0.33, 478.03) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1067.25, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1074.75, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1107.25, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1114.75, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1147.25, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1154.75, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(1227.25, 0.33, 367.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(1234.75, 0.33, 367.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1187.25, 0.33, 377.97) roadHeight=0.1838777
+Generated_GiantDenseMiddleEasternCity_EntityPresentation/RenderOnly/Infrastructure/Road_Asphalt_With_Sidewalk_Straight/Sidewalk end=(1194.75, 0.33, 377.97) roadHeight=0.1838777
+Lowered sidewalk ends=15. XZ footprints, colliders, logical owners and road geometry unchanged.

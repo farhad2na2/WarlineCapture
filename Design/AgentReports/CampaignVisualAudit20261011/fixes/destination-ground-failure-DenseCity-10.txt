@@ -1,0 +1,370 @@
+(707.00, 1.46, 440.00) flags=None movement=65535 slope=10.51215
+(706.00, 1.46, 440.00) flags=None movement=65535 slope=10.51215
+(708.00, 1.46, 440.00) flags=None movement=65535 slope=16.70772
+(705.00, 1.46, 440.00) flags=None movement=65535 slope=10.51215
+(709.00, 1.46, 440.00) flags=None movement=65535 slope=9.483382
+(704.00, 1.46, 440.00) flags=None movement=65535 slope=12.67713
+(710.00, 1.46, 440.00) flags=None movement=65535 slope=15.76339
+(703.00, 1.46, 440.00) flags=None movement=65535 slope=10.7667
+(711.00, 1.46, 440.00) flags=None movement=65535 slope=12.85704
+(707.00, 1.46, 441.00) flags=None movement=65535 slope=10.19163
+(706.00, 1.46, 441.00) flags=None movement=65535 slope=15.76339
+(708.00, 1.46, 441.00) flags=None movement=65535 slope=10.19163
+(702.00, 1.46, 440.00) flags=None movement=65535 slope=10.7667
+(712.00, 1.46, 440.00) flags=None movement=65535 slope=12.85704
+(705.00, 1.46, 441.00) flags=None movement=65535 slope=10.95105
+(709.00, 1.46, 441.00) flags=None movement=65535 slope=15.76339
+(704.00, 1.46, 441.00) flags=None movement=65535 slope=10.94192
+(710.00, 1.46, 441.00) flags=None movement=65535 slope=15.76339
+(701.00, 1.46, 440.00) flags=None movement=65535 slope=9.578957
+(713.00, 1.46, 440.00) flags=None movement=65535 slope=12.85704
+(703.00, 1.46, 441.00) flags=None movement=65535 slope=9.777486
+(711.00, 1.46, 441.00) flags=None movement=65535 slope=10.94192
+(707.00, 1.46, 442.00) flags=None movement=65535 slope=10.34836
+(706.00, 1.46, 442.00) flags=None movement=65535 slope=17.91427
+(708.00, 1.46, 442.00) flags=None movement=65535 slope=18.43493
+(702.00, 1.46, 441.00) flags=None movement=65535 slope=9.777486
+(712.00, 1.46, 441.00) flags=None movement=65535 slope=6.907454
+(705.00, 1.46, 442.00) flags=None movement=65535 slope=17.52531
+(709.00, 1.46, 442.00) flags=None movement=65535 slope=18.43493
+(700.00, 1.46, 440.00) flags=None movement=65535 slope=9.578957
+(714.00, 1.46, 440.00) flags=None movement=65535 slope=12.85704
+(704.00, 1.46, 442.00) flags=None movement=65535 slope=18.16414
+(710.00, 1.46, 442.00) flags=None movement=65535 slope=11.67909
+(701.00, 1.46, 441.00) flags=None movement=65535 slope=9.777486
+(713.00, 1.46, 441.00) flags=None movement=65535 slope=6.435686
+(703.00, 1.46, 442.00) flags=None movement=65535 slope=13.74354
+(711.00, 1.46, 442.00) flags=None movement=65535 slope=10.94192
+(699.00, 1.46, 440.00) flags=None movement=65535 slope=12.31658
+(715.00, 1.46, 440.00) uneven ground delta=0.3215656
+(702.00, 1.46, 442.00) flags=None movement=65535 slope=11.61842
+(712.00, 1.46, 442.00) flags=None movement=65535 slope=6.907454
+(707.00, 1.46, 443.00) flags=None movement=65535 slope=13.63343
+(700.00, 1.46, 441.00) flags=None movement=65535 slope=12.31658
+(714.00, 1.46, 441.00) flags=None movement=65535 slope=12.85704
+(706.00, 1.46, 443.00) flags=None movement=65535 slope=13.63343
+(708.00, 1.46, 443.00) flags=None movement=65535 slope=12.48631
+(705.00, 1.46, 443.00) flags=None movement=65535 slope=14.93248
+(709.00, 1.46, 443.00) flags=None movement=65535 slope=11.67909
+(704.00, 1.46, 443.00) flags=None movement=65535 slope=18.16414
+(710.00, 1.46, 443.00) flags=None movement=65535 slope=11.67909
+(701.00, 1.46, 442.00) flags=None movement=65535 slope=13.00349
+(713.00, 1.46, 442.00) flags=None movement=65535 slope=10.94192
+(698.00, 1.46, 440.00) flags=None movement=65535 slope=11.13208
+(716.00, 1.46, 440.00) flags=None movement=AllGroundUnits, AirGrounded, BuildingPlacement slope=84.57256
+(699.00, 1.46, 441.00) flags=None movement=65535 slope=12.31658
+(715.00, 1.46, 441.00) flags=None movement=65535 slope=6.435686
+(703.00, 1.46, 443.00) flags=None movement=65535 slope=18.92601
+(711.00, 1.46, 443.00) flags=None movement=65535 slope=11.67909
+(700.00, 1.46, 442.00) flags=None movement=65535 slope=13.1934
+(714.00, 1.46, 442.00) flags=None movement=65535 slope=6.907454
+(702.00, 1.46, 443.00) flags=None movement=65535 slope=13.77272
+(712.00, 1.46, 443.00) flags=None movement=65535 slope=11.67909
+(707.00, 1.46, 444.00) flags=None movement=65535 slope=12.2921
+(706.00, 1.46, 444.00) flags=None movement=65535 slope=13.63343
+(708.00, 1.46, 444.00) flags=None movement=65535 slope=12.2921
+(697.00, 1.46, 440.00) flags=None movement=65535 slope=15.50186
+(717.00, 1.46, 440.00) flags=None movement=AllGroundUnits, AirGrounded, BuildingPlacement slope=84.57256
+(705.00, 1.46, 444.00) flags=None movement=65535 slope=14.93248
+(709.00, 1.46, 444.00) flags=None movement=65535 slope=12.48631
+(698.00, 1.46, 441.00) flags=None movement=65535 slope=13.77272
+(716.00, 1.46, 441.00) flags=None movement=65535 slope=9.991901
+(704.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=29.21445
+(701.00, 1.46, 443.00) flags=None movement=65535 slope=13.77272
+(713.00, 1.46, 443.00) flags=None movement=65535 slope=10.94192
+(704.00, 1.46, 444.00) flags=None movement=65535 slope=13.8091
+(710.00, 1.46, 444.00) flags=None movement=65535 slope=12.48631
+(699.00, 1.46, 442.00) flags=None movement=65535 slope=12.28395
+(715.00, 1.46, 442.00) flags=None movement=65535 slope=6.435686
+(703.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(703.00, 1.46, 444.00) flags=None movement=65535 slope=13.23099
+(711.00, 1.46, 444.00) flags=None movement=65535 slope=9.354312
+(700.00, 1.46, 443.00) flags=None movement=65535 slope=12.51035
+(714.00, 1.46, 443.00) flags=None movement=65535 slope=6.907454
+(702.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(696.00, 1.46, 440.00) flags=None movement=65535 slope=10.43541
+(718.00, 1.46, 440.00) flags=None movement=AllGroundUnits, AirGrounded, BuildingPlacement slope=80.90629
+(697.00, 1.46, 441.00) flags=None movement=65535 slope=13.93917
+(717.00, 1.46, 441.00) flags=None movement=AllGroundUnits, AirGrounded, BuildingPlacement slope=54.39019
+(702.00, 1.46, 444.00) flags=None movement=65535 slope=17.25793
+(712.00, 1.46, 444.00) flags=None movement=65535 slope=11.67909
+(698.00, 1.46, 442.00) flags=None movement=65535 slope=12.75569
+(716.00, 1.46, 442.00) flags=None movement=65535 slope=9.951451
+(707.00, 1.46, 445.00) flags=None movement=65535 slope=12.2921
+(706.00, 1.46, 445.00) flags=None movement=65535 slope=12.2921
+(708.00, 1.46, 445.00) flags=None movement=65535 slope=12.2921
+(705.00, 1.46, 445.00) flags=None movement=65535 slope=13.97505
+(709.00, 1.46, 445.00) flags=None movement=65535 slope=12.2921
+(701.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(701.00, 1.46, 444.00) flags=None movement=65535 slope=13.96788
+(713.00, 1.46, 444.00) flags=None movement=65535 slope=7.152504
+(699.00, 1.46, 443.00) flags=None movement=65535 slope=12.51035
+(715.00, 1.46, 443.00) flags=None movement=65535 slope=9.951451
+(704.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=23.76942
+(704.00, 1.46, 445.00) flags=None movement=65535 slope=11.05102
+(710.00, 1.46, 445.00) flags=None movement=65535 slope=9.354312
+(703.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=23.76942
+(703.00, 1.46, 445.00) flags=None movement=65535 slope=13.23099
+(711.00, 1.46, 445.00) flags=None movement=65535 slope=7.457142
+(696.00, 1.46, 441.00) flags=None movement=65535 slope=15.50186
+(718.00, 1.46, 441.00) flags=None movement=65535 slope=11.47837
+(695.00, 1.46, 440.00) flags=None movement=65535 slope=11.60101
+(719.00, 1.46, 440.00) flags=None movement=65535 slope=10.14208
+(697.00, 1.46, 442.00) flags=None movement=65535 slope=13.93917
+(717.00, 1.46, 442.00) flags=None movement=65535 slope=9.991901
+(700.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(700.00, 1.46, 444.00) flags=None movement=65535 slope=13.96788
+(714.00, 1.46, 444.00) flags=None movement=65535 slope=9.951451
+(702.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(698.00, 1.46, 443.00) flags=None movement=65535 slope=10.35809
+(716.00, 1.46, 443.00) flags=None movement=65535 slope=9.951451
+(702.00, 1.46, 445.00) flags=None movement=65535 slope=15.6492
+(712.00, 1.46, 445.00) flags=None movement=65535 slope=7.152504
+(707.00, 1.46, 446.00) flags=None movement=65535 slope=11.75661
+(706.00, 1.46, 446.00) flags=None movement=65535 slope=11.75661
+(708.00, 1.46, 446.00) flags=None movement=65535 slope=11.75661
+(699.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=29.18909
+(699.00, 1.46, 444.00) flags=None movement=65535 slope=12.51035
+(715.00, 1.46, 444.00) flags=None movement=65535 slope=8.736555
+(705.00, 1.46, 446.00) flags=None movement=65535 slope=11.05102
+(709.00, 1.46, 446.00) flags=None movement=65535 slope=7.524596
+(701.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(701.00, 1.46, 445.00) flags=None movement=65535 slope=15.57895
+(704.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.46428
+(695.00, 1.46, 441.00) flags=None movement=65535 slope=11.60101
+(719.00, 1.46, 441.00) flags=None movement=65535 slope=11.47837
+(696.00, 1.46, 442.00) flags=None movement=65535 slope=15.50186
+(718.00, 1.46, 442.00) flags=None movement=65535 slope=9.746408
+(704.00, 1.46, 446.00) flags=None movement=65535 slope=13.07222
+(710.00, 1.46, 446.00) flags=None movement=65535 slope=7.524596
+(694.00, 1.46, 440.00) flags=None movement=65535 slope=10.57879
+(697.00, 1.46, 443.00) flags=None movement=65535 slope=10.35809
+(717.00, 1.46, 443.00) flags=None movement=65535 slope=9.951451
+(703.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.46428
+(703.00, 1.46, 446.00) flags=None movement=65535 slope=9.451283
+(711.00, 1.46, 446.00) flags=None movement=65535 slope=6.435686
+(700.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.59311
+(700.00, 1.46, 445.00) flags=None movement=65535 slope=11.19468
+(698.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=29.18909
+(698.00, 1.46, 444.00) flags=None movement=65535 slope=8.586912
+(716.00, 1.46, 444.00) flags=None movement=65535 slope=8.736555
+(702.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.46428
+(702.00, 1.46, 446.00) flags=None movement=65535 slope=9.451283
+(712.00, 1.46, 446.00) flags=None movement=65535 slope=7.697099
+(695.00, 1.46, 442.00) flags=None movement=65535 slope=17.52531
+(719.00, 1.46, 442.00) flags=None movement=65535 slope=11.47837
+(699.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(699.00, 1.46, 445.00) flags=None movement=65535 slope=9.631639
+(707.00, 1.46, 447.00) flags=None movement=65535 slope=12.57416
+(694.00, 1.46, 441.00) flags=None movement=65535 slope=11.60101
+(696.00, 1.46, 443.00) flags=None movement=65535 slope=13.5669
+(718.00, 1.46, 443.00) flags=None movement=65535 slope=9.746408
+(706.00, 1.46, 447.00) flags=None movement=65535 slope=12.57416
+(708.00, 1.46, 447.00) flags=None movement=65535 slope=7.524596
+(701.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.46428
+(701.00, 1.46, 446.00) flags=None movement=65535 slope=10.90528
+(705.00, 1.46, 447.00) flags=None movement=65535 slope=12.2921
+(709.00, 1.46, 447.00) flags=None movement=65535 slope=9.652598
+(697.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(693.00, 1.46, 440.00) flags=None movement=65535 slope=10.57879
+(697.00, 1.46, 444.00) flags=None movement=65535 slope=9.19022
+(717.00, 1.46, 444.00) flags=None movement=65535 slope=8.736555
+(704.00, 1.46, 447.00) flags=None movement=65535 slope=9.451283
+(710.00, 1.46, 447.00) flags=None movement=65535 slope=6.077864
+(700.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.46428
+(700.00, 1.46, 446.00) flags=None movement=65535 slope=10.90528
+(703.00, 1.46, 447.00) flags=None movement=65535 slope=10.7667
+(711.00, 1.46, 447.00) flags=None movement=65535 slope=6.435686
+(698.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(698.00, 1.46, 445.00) flags=None movement=65535 slope=11.85057
+(694.00, 1.46, 442.00) flags=None movement=65535 slope=15.59814
+(720.00, 1.46, 442.00) flags=None movement=65535 slope=11.47837
+(695.00, 1.46, 443.00) flags=None movement=65535 slope=17.52531
+(719.00, 1.46, 443.00) flags=None movement=65535 slope=8.080411
+(702.00, 1.46, 447.00) flags=None movement=65535 slope=10.7667
+(712.00, 1.46, 447.00) flags=None movement=65535 slope=7.697099
+(696.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(693.00, 1.46, 441.00) flags=None movement=65535 slope=10.57879
+(696.00, 1.46, 444.00) flags=None movement=65535 slope=9.19022
+(718.00, 1.46, 444.00) flags=None movement=65535 slope=8.32565
+(699.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(699.00, 1.46, 446.00) flags=None movement=65535 slope=10.90528
+(707.00, 1.46, 448.00) flags=None movement=65535 slope=10.61665
+(697.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(692.00, 1.46, 440.00) flags=None movement=65535 slope=9.02295
+(697.00, 1.46, 445.00) flags=None movement=65535 slope=11.91838
+(701.00, 1.46, 447.00) flags=None movement=65535 slope=10.90528
+(706.00, 1.46, 448.00) flags=None movement=65535 slope=12.57416
+(708.00, 1.46, 448.00) flags=None movement=65535 slope=9.365169
+(705.00, 1.46, 448.00) flags=None movement=65535 slope=12.2921
+(709.00, 1.46, 448.00) flags=None movement=65535 slope=12.57416
+(704.00, 1.46, 448.00) flags=None movement=65535 slope=13.69228
+(710.00, 1.46, 448.00) flags=None movement=65535 slope=7.524596
+(698.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(698.00, 1.46, 446.00) flags=None movement=65535 slope=10.90528
+(694.00, 1.46, 443.00) flags=None movement=65535 slope=15.59814
+(720.00, 1.46, 443.00) flags=None movement=65535 slope=8.130091
+(700.00, 1.46, 447.00) flags=None movement=65535 slope=10.90528
+(695.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(693.00, 1.46, 442.00) flags=None movement=65535 slope=12.57416
+(721.00, 1.46, 442.00) flags=None movement=65535 slope=8.130091
+(695.00, 1.46, 444.00) flags=None movement=65535 slope=7.723267
+(719.00, 1.46, 444.00) flags=None movement=65535 slope=8.080411
+(703.00, 1.46, 448.00) flags=None movement=65535 slope=13.74354
+(711.00, 1.46, 448.00) flags=None movement=65535 slope=7.081305
+(696.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(692.00, 1.46, 441.00) flags=None movement=65535 slope=10.57879
+(696.00, 1.46, 445.00) flags=None movement=65535 slope=17.28088
+(702.00, 1.46, 448.00) flags=None movement=65535 slope=10.90528
+(712.00, 1.46, 448.00) flags=None movement=65535 slope=7.697099
+(699.00, 1.46, 447.00) flags=None movement=65535 slope=10.02215
+(697.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(691.00, 1.46, 440.00) flags=None movement=65535 slope=9.02295
+(697.00, 1.46, 446.00) flags=None movement=65535 slope=15.50186
+(701.00, 1.46, 448.00) flags=None movement=65535 slope=10.02215
+(707.00, 1.46, 449.00) flags=None movement=65535 slope=9.365169
+(706.00, 1.46, 449.00) flags=None movement=65535 slope=10.61665
+(708.00, 1.46, 449.00) flags=None movement=65535 slope=12.57416
+(694.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(693.00, 1.46, 443.00) flags=None movement=65535 slope=15.59814
+(721.00, 1.46, 443.00) flags=None movement=65535 slope=8.130091
+(694.00, 1.46, 444.00) flags=None movement=65535 slope=17.28088
+(720.00, 1.46, 444.00) flags=None movement=65535 slope=8.130091
+(705.00, 1.46, 449.00) flags=None movement=65535 slope=13.69228
+(709.00, 1.46, 449.00) flags=None movement=65535 slope=10.61665
+(695.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(692.00, 1.46, 442.00) flags=None movement=65535 slope=11.23917
+(722.00, 1.46, 442.00) flags=None movement=65535 slope=8.179421
+(695.00, 1.46, 445.00) flags=None movement=65535 slope=7.723267
+(698.00, 1.46, 447.00) flags=None movement=65535 slope=11.85057
+(704.00, 1.46, 449.00) flags=None movement=65535 slope=13.74354
+(710.00, 1.46, 449.00) flags=None movement=65535 slope=6.29183
+(700.00, 1.46, 448.00) flags=None movement=65535 slope=11.85057
+(696.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(691.00, 1.46, 441.00) flags=None movement=65535 slope=10.26054
+(696.00, 1.46, 446.00) flags=None movement=65535 slope=15.50186
+(703.00, 1.46, 449.00) flags=None movement=65535 slope=12.92664
+(711.00, 1.46, 449.00) flags=None movement=65535 slope=7.081305
+(702.00, 1.46, 449.00) flags=None movement=65535 slope=12.92664
+(712.00, 1.46, 449.00) flags=None movement=65535 slope=7.081305
+(699.00, 1.46, 448.00) flags=None movement=65535 slope=11.85057
+(690.00, 1.46, 440.00) flags=None movement=65535 slope=9.02295
+(697.00, 1.46, 447.00) flags=None movement=65535 slope=11.95215
+(693.00, 1.46, 416.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(693.00, 1.46, 444.00) flags=None movement=65535 slope=15.59814
+(721.00, 1.46, 444.00) flags=None movement=65535 slope=8.130091
+(694.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=25.55996
+(692.00, 1.46, 443.00) flags=None movement=65535 slope=12.57416
+(722.00, 1.46, 443.00) flags=None movement=65535 slope=8.586912
+(694.00, 1.46, 445.00) flags=None movement=65535 slope=17.28088
+(701.00, 1.46, 449.00) flags=None movement=65535 slope=10.46428
+(695.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(691.00, 1.46, 442.00) flags=None movement=65535 slope=11.23917
+(723.00, 1.46, 442.00) flags=None movement=65535 slope=8.575217
+(695.00, 1.46, 446.00) flags=None movement=65535 slope=14.174
+(707.00, 1.46, 450.00) flags=None movement=65535 slope=13.69228
+(706.00, 1.46, 450.00) flags=None movement=65535 slope=9.365169
+(708.00, 1.46, 450.00) flags=None movement=65535 slope=10.61665
+(705.00, 1.46, 450.00) flags=None movement=65535 slope=8.481051
+(709.00, 1.46, 450.00) flags=None movement=65535 slope=9.365169
+(698.00, 1.46, 448.00) flags=None movement=65535 slope=11.85057
+(704.00, 1.46, 450.00) flags=None movement=65535 slope=12.92664
+(710.00, 1.46, 450.00) flags=None movement=65535 slope=6.29183
+(696.00, 1.46, 447.00) flags=None movement=65535 slope=15.04467
+(700.00, 1.46, 449.00) flags=None movement=65535 slope=9.536608
+(703.00, 1.46, 450.00) flags=None movement=65535 slope=12.92664
+(711.00, 1.46, 450.00) flags=None movement=65535 slope=7.081305
+(693.00, 1.46, 415.00) flags=Road movement=AllGroundUnits, AirGrounded slope=38.62492
+(692.00, 1.46, 444.00) flags=None movement=65535 slope=15.59814
+(722.00, 1.46, 444.00) flags=None movement=65535 slope=8.179421
+(693.00, 1.46, 445.00) flags=None movement=65535 slope=12.91891
+(689.00, 1.46, 440.00) flags=None movement=65535 slope=9.09025
+(697.00, 1.46, 448.00) flags=None movement=65535 slope=12.31658
+(694.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=10.43541
+(691.00, 1.46, 443.00) flags=None movement=65535 slope=11.23917
+(723.00, 1.46, 443.00) flags=None movement=65535 slope=9.10144
+(694.00, 1.46, 446.00) flags=None movement=65535 slope=14.174
+(699.00, 1.46, 449.00) flags=None movement=65535 slope=9.536608
+(702.00, 1.46, 450.00) flags=None movement=65535 slope=12.92664
+(712.00, 1.46, 450.00) flags=None movement=65535 slope=7.081305
+(724.00, 1.46, 442.00) flags=None movement=65535 slope=8.575217
+(695.00, 1.46, 447.00) flags=None movement=65535 slope=15.04467
+(701.00, 1.46, 450.00) flags=None movement=65535 slope=10.46428
+(707.00, 1.46, 451.00) flags=None movement=65535 slope=8.481051
+(698.00, 1.46, 449.00) flags=None movement=65535 slope=9.536608
+(706.00, 1.46, 451.00) flags=None movement=65535 slope=12.92664
+(708.00, 1.46, 451.00) flags=None movement=65535 slope=9.365169
+(696.00, 1.46, 448.00) flags=None movement=65535 slope=12.31658
+(705.00, 1.46, 451.00) flags=None movement=65535 slope=12.92664
+(709.00, 1.46, 451.00) flags=None movement=65535 slope=6.29183
+(700.00, 1.46, 450.00) flags=None movement=65535 slope=10.46428
+(692.00, 1.46, 445.00) flags=None movement=65535 slope=14.50772
+(704.00, 1.46, 451.00) flags=None movement=65535 slope=6.892729
+(710.00, 1.46, 451.00) flags=None movement=65535 slope=6.29183
+(693.00, 1.46, 414.00) flags=Road movement=AllGroundUnits, AirGrounded slope=11.39874
+(691.00, 1.46, 444.00) flags=None movement=65535 slope=15.95771
+(723.00, 1.46, 444.00) flags=None movement=65535 slope=8.586912
+(693.00, 1.46, 446.00) flags=None movement=65535 slope=12.91891
+(703.00, 1.46, 451.00) flags=None movement=65535 slope=6.892729
+(711.00, 1.46, 451.00) flags=None movement=65535 slope=6.29183
+(724.00, 1.46, 443.00) flags=None movement=65535 slope=8.575217
+(694.00, 1.46, 447.00) flags=None movement=65535 slope=13.73622
+(688.00, 1.46, 440.00) flags=None movement=65535 slope=9.09025
+(697.00, 1.46, 449.00) flags=None movement=65535 slope=9.267177
+(699.00, 1.46, 450.00) flags=None movement=65535 slope=10.46428
+(702.00, 1.46, 451.00) flags=None movement=65535 slope=9.201267
+(712.00, 1.46, 451.00) flags=None movement=65535 slope=6.482862
+(725.00, 1.46, 442.00) flags=None movement=65535 slope=8.005305
+(695.00, 1.46, 448.00) flags=None movement=65535 slope=12.31658
+(701.00, 1.46, 451.00) flags=None movement=65535 slope=12.92664
+(691.00, 1.46, 445.00) flags=None movement=65535 slope=14.88598
+(692.00, 1.46, 446.00) flags=None movement=65535 slope=14.75221
+(698.00, 1.46, 450.00) flags=None movement=65535 slope=9.536608
+(696.00, 1.46, 449.00) flags=None movement=65535 slope=12.31658
+(724.00, 1.46, 444.00) flags=None movement=65535 slope=9.10144
+(693.00, 1.46, 447.00) flags=None movement=65535 slope=13.82361
+(708.00, 1.46, 452.00) flags=None movement=65535 slope=6.29183
+(709.00, 1.46, 452.00) flags=None movement=65535 slope=6.29183
+(700.00, 1.46, 451.00) flags=None movement=65535 slope=10.46428
+(725.00, 1.46, 443.00) flags=None movement=65535 slope=8.575217
+(694.00, 1.46, 448.00) flags=None movement=65535 slope=16.16148
+(710.00, 1.46, 452.00) flags=None movement=65535 slope=6.29183
+(697.00, 1.46, 450.00) flags=None movement=65535 slope=9.267177
+(726.00, 1.46, 442.00) flags=None movement=65535 slope=8.005305
+(695.00, 1.46, 449.00) flags=None movement=65535 slope=12.31658
+(699.00, 1.46, 451.00) flags=None movement=65535 slope=10.46428
+(691.00, 1.46, 446.00) flags=None movement=65535 slope=11.64447
+(692.00, 1.46, 447.00) flags=None movement=65535 slope=14.75221
+(725.00, 1.46, 444.00) flags=None movement=65535 slope=8.575217
+(693.00, 1.46, 448.00) flags=None movement=65535 slope=16.16148
+(696.00, 1.46, 450.00) flags=None movement=65535 slope=9.578957
+(698.00, 1.46, 451.00) flags=None movement=65535 slope=10.46428
+(726.00, 1.46, 443.00) flags=None movement=65535 slope=8.005305
+(694.00, 1.46, 449.00) flags=None movement=65535 slope=12.41389
+(697.00, 1.46, 451.00) flags=None movement=65535 slope=9.267177
+(695.00, 1.46, 450.00) flags=None movement=65535 slope=9.578957
+(691.00, 1.46, 447.00) flags=None movement=65535 slope=15.01177
+(692.00, 1.46, 448.00) flags=None movement=65535 slope=13.88875
+(726.00, 1.46, 444.00) flags=None movement=65535 slope=8.005305
+(693.00, 1.46, 449.00) flags=None movement=65535 slope=11.53111
+(696.00, 1.46, 451.00) flags=None movement=65535 slope=9.267177
+(698.00, 1.46, 452.00) flags=None movement=65535 slope=7.736292
+(691.00, 1.46, 448.00) flags=None movement=65535 slope=13.88875
+(697.00, 1.46, 452.00) flags=None movement=65535 slope=8.240715
+(695.00, 1.46, 451.00) flags=None movement=65535 slope=10.66378
+(692.00, 1.46, 449.00) flags=None movement=65535 slope=11.44129
+(696.00, 1.46, 452.00) flags=None movement=65535 slope=9.483382
+(691.00, 1.46, 449.00) flags=None movement=65535 slope=12.7948
+(695.00, 1.46, 452.00) flags=None movement=65535 slope=9.483382
+(697.00, 1.46, 453.00) flags=None movement=65535 slope=9.483382
+(696.00, 1.46, 453.00) flags=None movement=65535 slope=8.240715
+(695.00, 1.46, 453.00) flags=None movement=65535 slope=9.483382
+(697.00, 1.46, 454.00) flags=None movement=65535 slope=7.457142
+(696.00, 1.46, 454.00) uneven ground delta=0.2202599
+(695.00, 1.46, 454.00) uneven ground delta=0.2171233
+(697.00, 1.46, 455.00) flags=None movement=65535 slope=6.340195
+(696.00, 1.46, 455.00) flags=None movement=65535 slope=6.340195
+(695.00, 1.46, 455.00) uneven ground delta=0.2081057
+(697.00, 1.46, 456.00) flags=None movement=65535 slope=6.340195
+(696.00, 1.46, 456.00) flags=None movement=65535 slope=6.340195
+(695.00, 1.46, 456.00) flags=None movement=65535 slope=6.340195

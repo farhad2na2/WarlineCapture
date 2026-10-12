@@ -1,0 +1,9 @@
+{
+  "checkout": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit",
+  "branch": "codex/campaign-visual-audit-20261011",
+  "baselineCommit": "c88c79c5453532a3dca9c9c2fd0c9d37603daed7",
+  "libraryCopySource": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Library",
+  "libraryCopyMethod": "Independent APFS copy-on-write copy (cp -cR), not shared mutable links",
+  "pipelinePort": 7803,
+  "scope": "Visual audit of 25 campaign missions, recommendations and documentation; no art/gameplay implementation authorized in this task."
+}

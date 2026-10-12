@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 4
   sourceIdentityHash: b046b0d010e64ebbc5fc0d0f8cd7d333bd79874aae8ab83dc240f1eb2a54fa2e
-  contentHash: f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a
-  generatedMetadataHash: f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a
+  contentHash: f9525cb40e3be67f4643c4480b82a85dca1c9d407a33c2307918f859d1074ce8
+  generatedMetadataHash: f9525cb40e3be67f4643c4480b82a85dca1c9d407a33c2307918f859d1074ce8
   sourceBinding:
     sourceOperationMapId: 
     sourceIdentityHash: 
@@ -91,14 +91,14 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch05.m05.initial_barracks
     kind: 4
-    position: {x: 1234, y: 0.009179777, z: 356}
+    position: {x: 1219, y: 0.009179777, z: 380}
     eulerAngles: {x: -0, y: 0, z: 0}
     radius: 1
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch05.m05.fuel_reserve
     kind: 4
-    position: {x: 1234, y: 0.009179777, z: 356}
+    position: {x: 1219, y: 0.009179777, z: 380}
     eulerAngles: {x: -0, y: 0, z: 0}
     radius: 1
     factionId: 1
@@ -112,14 +112,14 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch05.m05.utility_origin
     kind: 4
-    position: {x: 1233, y: 0.009179777, z: 444}
+    position: {x: 1233, y: 0.009179777, z: 455}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch05.m05.audit_origin
     kind: 4
-    position: {x: 1135, y: 0.009179777, z: 474}
+    position: {x: 1130, y: 0.29917976, z: 477}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 0
@@ -133,14 +133,14 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch05.m05.utility
     kind: 5
-    position: {x: 1240, y: 0.009179777, z: 450}
+    position: {x: 1240, y: 0.009179777, z: 461}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch05.m05.audit
     kind: 5
-    position: {x: 1142, y: 0.77917975, z: 480}
+    position: {x: 1137, y: 0.20917977, z: 483}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 0

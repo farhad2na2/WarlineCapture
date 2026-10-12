@@ -1,0 +1,18 @@
+{
+    "missionId": "saga.ch05.m03.network_collapse",
+    "kind": "source-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M03NetworkCollapse/PreparedEntities.unity",
+    "sourceHashBefore": "5080fb28eb94b6167e1ea8dfdd5fe5f91c3a288d2084aad708954bb0b4584c4a",
+    "sourceHashAfter": "5080fb28eb94b6167e1ea8dfdd5fe5f91c3a288d2084aad708954bb0b4584c4a",
+    "graphics": "Metal",
+    "files": [
+        "CH05M03NetworkCollapse-source-preview-detail.png",
+        "CH05M03NetworkCollapse-source-preview-overview.png",
+        "CH05M03NetworkCollapse-source-preview-story-audit_gate.png",
+        "CH05M03NetworkCollapse-source-preview-story-extraction.png",
+        "CH05M03NetworkCollapse-source-preview-story-node_1.png",
+        "CH05M03NetworkCollapse-source-preview-story-node_2.png",
+        "CH05M03NetworkCollapse-source-preview-story-node_3.png"
+    ],
+    "scope": "Authored source preview; runtime load failed; no deployed units or HUD; overview suppresses distance fog/post processing for inspection; detail views retain authored lighting"
+}

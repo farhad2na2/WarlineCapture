@@ -1,0 +1,62 @@
+[
+  {
+    "index": 0,
+    "missionId": "saga.ch01.m01.first_contact",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch01.m01.first_contact/run-02/receipt.json"
+  },
+  {
+    "index": 3,
+    "missionId": "saga.ch01.m04.airlift",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch01.m04.airlift/run-02/receipt.json"
+  },
+  {
+    "index": 18,
+    "missionId": "saga.ch04.m04.grounded_signal",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch04.m04.grounded_signal/run-02/receipt.json"
+  },
+  {
+    "index": 1,
+    "missionId": "saga.ch01.m02.establish_base",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch01.m02.establish_base/run-02/receipt.json"
+  },
+  {
+    "index": 7,
+    "missionId": "saga.ch02.m03.market_lifeline",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch02.m03.market_lifeline/run-02/receipt.json"
+  },
+  {
+    "index": 16,
+    "missionId": "saga.ch04.m02.steel_push",
+    "run": "02",
+    "wrapperExit": 0,
+    "passed": true,
+    "reimport": true,
+    "error": "",
+    "receipt": "captures/saga.ch04.m02.steel_push/run-02/receipt.json"
+  }
+]

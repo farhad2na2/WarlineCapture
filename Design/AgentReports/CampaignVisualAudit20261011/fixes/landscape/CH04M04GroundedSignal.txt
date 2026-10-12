@@ -1,0 +1,4 @@
+GROUP Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01 from=(537.28, -0.03, 634.54) to=(548.90, 0.04, 654.94) beside=Map_CityEdgeAirfield/Industrial/SM_Bld_Hangar_Open_01
+GROUP Map_CityEdgeAirfield/Props/SM_Prop_Barrel_Stack_01 from=(643.50, -0.03, 655.06) to=(622.25, 0.04, 654.96) beside=Map_CityEdgeAirfield/Industrial/SM_Bld_Hangar_Open_01
+GROUP Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_01 from=(455.27, 0.00, 663.40) to=(477.91, 0.18, 655.07) beside=Map_CityEdgeAirfield/Industrial/SM_Bld_Hangar_01
+restoredOccludedCurbs=0 grouped=3 roadEnds=0 canalEnds=0 protectedHash=ba7b461406e20f85574bc8bdb63292d3ac4cb7844463a7cc9d19ee536751b8bb

@@ -1,0 +1,21 @@
+{
+    "result": "Failed",
+    "missionId": "saga.ch05.m03.network_collapse",
+    "activeMissionId": "",
+    "activeMapId": "",
+    "run": "01",
+    "error": "System.Exception: [OperationMapSourceScene] code=MetadataBindFailed error=Packed EntityScene generated identity count differs from the readiness contract: 2935/2972.\n  at Game.Editor.CampaignVisualAudit20261011.Tick () [0x001af] in /Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets/Game/Scripts/Editor/CampaignVisualAudit20261011.cs:136 ",
+    "missionOutcome": "",
+    "missionPhase": "",
+    "gameplayStarted": false,
+    "quality": "",
+    "graphics": "",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 0,
+    "roles": [],
+    "views": [],
+    "cameraSettled": false,
+    "warmupSeconds": 0.0,
+    "lightStates": [],
+    "supplementalTargets": []
+}

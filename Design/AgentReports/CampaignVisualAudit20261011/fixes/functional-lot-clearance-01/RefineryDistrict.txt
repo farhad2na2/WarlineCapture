@@ -1,0 +1,4 @@
+RELOCATED DESTINATION FROM ROAD OR FUNCTIONAL LOT CampaignDestinationV2_20261011_6_oil from=(581.00, 0.06, 520.00) to=(565.00, 0.03, 520.00)
+RELOCATED DESTINATION FROM ROAD OR FUNCTIONAL LOT CampaignDestinationV2_20261011_6_refinery from=(746.66, 0.06, 477.66) to=(745.00, 0.03, 465.00)
+destinationRoadClearance=Passed groups=7 relocated=2
+protectedHash=680a608b6e0e74d49e6c6f8ce1d8b9d548bd302a6192367512fba747bc73685d

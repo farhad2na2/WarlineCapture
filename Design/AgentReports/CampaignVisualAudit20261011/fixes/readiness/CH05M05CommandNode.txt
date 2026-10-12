@@ -1,0 +1,8 @@
+source=Assets/Game/Scenes/OperationMaps/CH05M05CommandNode/PreparedEntities.unity
+before=7750a24fae14cd8b5bd169b9c132b801b5cf4830e4c2c769bbc1aec15d7323de
+after=6bc6b27e9d0e7c23b7c1c958890f0a5639f50e425d61aab96b477e8d794be7b7
+transferredIdentities=62
+expectedGenerated=2633
+expectedRenderOnly=2355
+expectedBuildings=278
+All removed identities verified against live intact building attachments. Runtime predicate unchanged.

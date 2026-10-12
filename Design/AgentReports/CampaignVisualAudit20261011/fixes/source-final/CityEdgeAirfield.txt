@@ -1,0 +1,2 @@
+ROAD TERMINAL Map_CityEdgeAirfield/Roads/RoadChunk_1_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(320.20, 1.12, 445.03) direction=(1.00, 0.00, 0.00)
+ROAD TERMINAL Map_CityEdgeAirfield/Roads/RoadChunk_2_2/Road_Asphalt_With_Sidewalk_Straight/Asphalt end=(320.20, 0.48, 445.03) direction=(-1.00, 0.00, 0.00)

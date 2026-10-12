@@ -285,7 +285,7 @@ namespace Game.Composition
             // Entity-presentation maps do not have the resident Map GameObject root.
             // Apply the campaign environment at the scene owner after source binding.
             if(skirmishCampaignLighting==null && activeOperationMapSceneView!=null &&
-                SkirmishS004CampaignLighting.Supports(activeOperationMapSceneView.Definition))
+                SkirmishS004CampaignLighting.HasAuthoredDaylight(OperationMapLightingScene))
             {
                 skirmishCampaignLighting=gameObject.AddComponent<SkirmishS004CampaignLighting>();
                 skirmishCampaignLighting.Configure(gameObject.scene,OperationMapLightingScene);

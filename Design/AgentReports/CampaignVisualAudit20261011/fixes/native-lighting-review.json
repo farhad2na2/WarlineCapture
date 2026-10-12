@@ -1,0 +1,127 @@
+[
+  {
+    "missionId": "saga.ch01.m01.first_contact",
+    "receipt": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch01.m02.establish_base",
+    "receipt": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch01.m03.radar_warning",
+    "receipt": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch01.m04.airlift",
+    "receipt": "captures/saga.ch01.m04.airlift/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch01.m05.breach_assault",
+    "receipt": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch02.m01.gridlock",
+    "receipt": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch02.m02.supply_line",
+    "receipt": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch02.m03.market_lifeline",
+    "receipt": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch02.m04.power_relay",
+    "receipt": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch02.m05.route_reopened",
+    "receipt": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch03.m01.signal_trace",
+    "receipt": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch03.m02.safehouse_sweep",
+    "receipt": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch03.m03.false_front",
+    "receipt": "captures/saga.ch03.m03.false_front/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch03.m04.evidence_chain",
+    "receipt": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch03.m05.network_break",
+    "receipt": "captures/saga.ch03.m05.network_break/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch04.m01.air_corridor",
+    "receipt": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch04.m02.steel_push",
+    "receipt": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch04.m03.split_front",
+    "receipt": "captures/saga.ch04.m03.split_front/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch04.m04.grounded_signal",
+    "receipt": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch04.m05.armor_break",
+    "receipt": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "receipt": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch05.m02.trust_under_fire",
+    "receipt": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch05.m03.network_collapse",
+    "receipt": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch05.m04.last_corridor",
+    "receipt": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  },
+  {
+    "missionId": "saga.ch05.m05.command_node",
+    "receipt": "captures/saga.ch05.m05.command_node/run-visual-fix-04/receipt.json",
+    "shadowKeyCount": 1
+  }
+]

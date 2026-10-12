@@ -51,7 +51,7 @@ namespace Game.Editor
         public const string SourceSurface="Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", SourceGrid="Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
         public const string SourceMinimap="Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png";
         public static string[] ProtectedSources=>new[]{SourceDefinition,SourceScene,SourceBinding,SourceSurface,SourceGrid,SourceMinimap};
-        public static readonly RectInt[] BuildingLots={new(1233,444,14,12),new(1076,378,26,25),new(1234,356,26,25)};
+        public static readonly RectInt[] BuildingLots={new(1233,455,14,12),new(1076,378,26,25),new(1213,380,26,25)};
         public static void Build()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Last Corridor generation requires edit mode.");ReportBuilderRevision();
@@ -402,9 +402,9 @@ namespace Game.Editor
                     ("inner_core",1006,426,OperationMapAnchorKind.Base,1,8),
                     ("initial_barracks",1076,378,OperationMapAnchorKind.Build,1,1),
                     ("fuel_source",1076,378,OperationMapAnchorKind.Build,1,1),
-                    ("fuel_receive",1234,356,OperationMapAnchorKind.Build,1,1),
-                    ("receiving_origin",1233,444,OperationMapAnchorKind.Build,0,1),
-                    ("receiving",1240,450,OperationMapAnchorKind.Objective,0,12),
+                    ("fuel_receive",1213,380,OperationMapAnchorKind.Build,1,1),
+                    ("receiving_origin",1233,455,OperationMapAnchorKind.Build,0,1),
+                    ("receiving",1240,461,OperationMapAnchorKind.Objective,0,12),
                     ("receiving_gate",1240,426,OperationMapAnchorKind.Objective,1,8),
                     ("engineer_start",1006,330,OperationMapAnchorKind.Deployment,1,1),
                     ("key_carrier_start",990,330,OperationMapAnchorKind.Deployment,1,1),

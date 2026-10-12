@@ -161,7 +161,8 @@ namespace Game.Editor
             Set(bounds, "worldMax", source.Bounds.WorldMax);
             Set(bounds, "playableMin", new Vector3(Window.xMin, source.Bounds.PlayableMin.y, Window.yMin));
             Set(bounds, "playableMax", new Vector3(Window.xMax, source.Bounds.PlayableMax.y, Window.yMax));
-            Set(bounds, "cameraMin", new Vector3(Window.xMin, 4f, Window.yMin));
+            // Leave camera-only room for the HUD below the squad near the south edge.
+            Set(bounds, "cameraMin", new Vector3(Window.xMin, 4f, Window.yMin - 24f));
             Set(bounds, "cameraMax", new Vector3(Window.xMax, source.Bounds.CameraMax.y, Window.yMax));
             Copy(target, source, "gridMetadata", "surfaceMetadata", "navigationMetadata", "cameras",
                 "planningCameraId", "battleCameraId", "minimap", "anchors", "presentationKind",

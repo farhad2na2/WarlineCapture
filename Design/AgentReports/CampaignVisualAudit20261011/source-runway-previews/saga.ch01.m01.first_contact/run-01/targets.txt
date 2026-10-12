@@ -1,0 +1,2 @@
+runway-01-end-a focus=(986.87, 0.79, 317.05) distance=115
+runway-01-end-b focus=(777.53, 0.79, 317.05) distance=115

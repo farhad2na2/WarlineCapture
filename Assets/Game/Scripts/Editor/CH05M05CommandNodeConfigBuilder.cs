@@ -49,7 +49,7 @@ namespace Game.Editor
         public const string SourceSurface="Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", SourceGrid="Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
         public const string SourceMinimap="Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png";
         public static string[] ProtectedSources=>new[]{SourceDefinition,SourceScene,SourceBinding,SourceSurface,SourceGrid,SourceMinimap};
-        public static readonly RectInt[] BuildingLots={new(899,444,14,12),new(1233,444,14,12),new(1135,474,14,12),new(1234,356,26,25)};
+        public static readonly RectInt[] BuildingLots={new(899,444,14,12),new(1233,455,14,12),new(1130,477,14,12),new(1219,380,26,25)};
         public static void Build()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Command Node generation requires edit mode.");ReportBuilderRevision();
@@ -490,14 +490,14 @@ namespace Game.Editor
                 (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
                     ("forward_post",1006,426,OperationMapAnchorKind.Base,1,8),
                     ("inner_core",1130,465,OperationMapAnchorKind.Base,1,8),
-                    ("initial_barracks",1234,356,OperationMapAnchorKind.Build,1,1),
-                    ("fuel_reserve",1234,356,OperationMapAnchorKind.Build,1,1),
+                    ("initial_barracks",1219,380,OperationMapAnchorKind.Build,1,1),
+                    ("fuel_reserve",1219,380,OperationMapAnchorKind.Build,1,1),
                     ("clinic_origin",899,444,OperationMapAnchorKind.Build,0,1),
-                    ("utility_origin",1233,444,OperationMapAnchorKind.Build,0,1),
-                    ("audit_origin",1135,474,OperationMapAnchorKind.Build,0,1),
+                    ("utility_origin",1233,455,OperationMapAnchorKind.Build,0,1),
+                    ("audit_origin",1130,477,OperationMapAnchorKind.Build,0,1),
                     ("clinic",906,450,OperationMapAnchorKind.Civilian,0,12),
-                    ("utility",1240,450,OperationMapAnchorKind.Civilian,0,12),
-                    ("audit",1142,480,OperationMapAnchorKind.Civilian,0,12),
+                    ("utility",1240,461,OperationMapAnchorKind.Civilian,0,12),
+                    ("audit",1137,483,OperationMapAnchorKind.Civilian,0,12),
                     ("isolate_clinic",906,438,OperationMapAnchorKind.Objective,1,6),
                     ("isolate_utility",1240,438,OperationMapAnchorKind.Objective,1,6),
                     ("perimeter_node",1066,426,OperationMapAnchorKind.Spawn,3,1),

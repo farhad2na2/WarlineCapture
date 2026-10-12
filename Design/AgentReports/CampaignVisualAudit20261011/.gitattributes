@@ -1,0 +1,2 @@
+*.png filter=lfs diff=lfs merge=lfs -text
+fixes/inspection/*.json filter=lfs diff=lfs merge=lfs -text

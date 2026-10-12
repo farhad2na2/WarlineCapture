@@ -1,0 +1,382 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ClearCampaignRoadSandIntrusions
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CityEdgeAirfield gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=RefineryDistrict gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=AshLinePort gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH04M04GroundedSignal gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH04M05ArmorBreak gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH05M01CitywideAlert gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH05M02TrustUnderFire gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH05M03NetworkCollapse gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:30)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'CH05M04LastCorridor_17bc351fa993ed6c7bf2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=CH05M04LastCorridor dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 (2) loweredVertices=4584 vertices=15921
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH05M04LastCorridor gradedDunes=1
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=CH05M05CommandNode gradedDunes=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_84f5bf4028df21aede1d'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (15) loweredVertices=2916 vertices=5376
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_985de76f51d6c5d9642c'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (12) loweredVertices=1900 vertices=3180
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_8924aaa7aa19ae24b0e0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (8) loweredVertices=2482 vertices=4845
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_8d7195bb814d50a89049'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (6) loweredVertices=375 vertices=1866
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_0a5149df4e1b53079ba8'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (16) loweredVertices=2308 vertices=4158
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_a05b30a86246c0dc310b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (1) loweredVertices=14651 vertices=19767
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_03' does not match filename 'DenseCity_4a3ca9cf3491aeb6acc2'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_03 (51) loweredVertices=115 vertices=2586
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_03' does not match filename 'DenseCity_7d74d80a45ec4787d70b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_03 (52) loweredVertices=1250 vertices=4221
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'DenseCity_909ca29456b7438e5129'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 (9) loweredVertices=3819 vertices=16482
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'DenseCity_1f50fdf7366b361040ef'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 (8) loweredVertices=5379 vertices=7152
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'DenseCity_37c5df1493942bc170ff'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 (2) loweredVertices=4584 vertices=15921
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'DenseCity_22e711cc24d170d8d31b'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 loweredVertices=1339 vertices=2895
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_01' does not match filename 'DenseCity_43799f3841e5e77ae005'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_01 (17) loweredVertices=4330 vertices=6234
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[],string,single,single) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:28)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] map=DenseCity gradedDunes=13
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRenderReconciliation] result=Passed rows=124305 marketStockRows=52 destinationRows=85
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignRenderReconciliation20261011:Inspect () (at Assets/Game/Scripts/Editor/CampaignRenderReconciliation20261011.cs:51)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:41)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRoadGround] result=Passed gradedDunes=14
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:ClearCampaignRoadSandIntrusions () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRoadGround.cs:42)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.ClearCampaignRoadSandIntrusions
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_8b0f611e/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

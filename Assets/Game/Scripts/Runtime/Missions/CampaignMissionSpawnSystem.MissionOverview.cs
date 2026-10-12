@@ -10,6 +10,16 @@ namespace Game.Runtime
             in CampaignMissionOpeningPresentationComponent opening, bool frameMissionSubjects, bool defenseCommandView = false,
             float commandViewSmoothTimeSeconds = 0f)
         {
+            if (opening.CommandCameraPerspective.w > 0f)
+            {
+                em.SetComponentData(camera, new RuntimeCameraFocusRequestComponent
+                {
+                    Requested=1,UseExplicitPerspective=1,World=opening.CommandCameraFocus,
+                    Perspective=opening.CommandCameraPerspective,
+                    Smooth=commandViewSmoothTimeSeconds>0?(byte)1:(byte)0,SmoothTimeSeconds=commandViewSmoothTimeSeconds
+                });
+                return;
+            }
             if (defenseCommandView)
             {
                 em.SetComponentData(camera, CreateDefenseCommandView(opening.FriendlyFocus, commandViewSmoothTimeSeconds));

@@ -47,6 +47,21 @@ Shader "Game/Environment/GroundMacroVariation"
         _GroundDetailNormalStrength("Detail Normal Strength", Range(0, 2)) = 0.8
         _GreenPatchThreshold("Green Patch Threshold", Range(0, 1)) = 0.5
 
+        [Header(Road Terminal Finish)]
+        _RoadTerminalA("First Road End and Outward Direction", Vector) = (0,0,0,0)
+        _RoadTerminalB("Second Road End and Outward Direction", Vector) = (0,0,0,0)
+        _RoadTerminalEarth("Road End Compacted Earth", Color) = (.65,.60,.49,1)
+        _RoadTerminalStrength("Road End Finish", Range(0,1)) = 0
+
+        [Header(Runway Surface Finish)]
+        _RunwayEdgeRect("Assembled Runway World Min Max", Vector) = (0,0,0,0)
+        _RunwayEdgeColor("Runway Shoulder Earth", Color) = (.67,.62,.53,1)
+        _RunwayEdgeStrength("Runway Edge Finish", Range(0,1)) = 0
+
+        [Header(Civic Forecourt)]
+        _CivicSurfaceRect("Civic World Min Max", Vector) = (0,0,0,0)
+        _CivicSurfaceStrength("Civic Forecourt Strength", Range(0,1)) = 0
+
         [Header(District Surfaces)]
         _ActivityMap("Authored Activity Wear", 2D) = "black" {}
         _ActivityRect("Activity World Rect", Vector) = (0,0,1,1)
@@ -146,6 +161,14 @@ Shader "Game/Environment/GroundMacroVariation"
                 half4 _DirtShoulderColorScale;
                 half _DirtShoulderTintStrength;
                 half _DirtShoulderWarmthThreshold;
+                float4 _RoadTerminalA, _RoadTerminalB;
+                half4 _RoadTerminalEarth;
+                half _RoadTerminalStrength;
+                float4 _RunwayEdgeRect;
+                half4 _RunwayEdgeColor;
+                half _RunwayEdgeStrength;
+                float4 _CivicSurfaceRect;
+                half _CivicSurfaceStrength;
                 float4 _ActivityRect;
                 half _ActivityStrength;
             CBUFFER_END
@@ -238,11 +261,13 @@ Shader "Game/Environment/GroundMacroVariation"
                 half greenMask = smoothstep(_GreenPatchThreshold, _GreenPatchThreshold + 0.25, tintSelect)
                                * smoothstep(0.2, 0.6, patchMask);
                 // Blend a rotated, offset sample across broad fields to break repeated stone motifs.
+                float repeatBlend = 0;
+                float2 alternateUv = float2(-duv.y, duv.x) * 1.17 + float2(.37, .61);
                 if (_DetailAntiRepeat > .001)
                 {
-                    float repeatBlend = smoothstep(.22, .78, ValueNoise(p * .065 + 23)) * _DetailAntiRepeat;
+                    repeatBlend = smoothstep(.22, .78, ValueNoise(p * .065 + 23)) * saturate(_DetailAntiRepeat);
                     half3 alternate = SAMPLE_TEXTURE2D(_DesertDetailMap, sampler_DesertDetailMap,
-                        float2(-duv.y, duv.x) * 1.17 + float2(.37, .61)).rgb;
+                        alternateUv).rgb;
                     desertDetail = lerp(desertDetail, alternate, repeatBlend);
                 }
                 half3 detailColor = lerp(desertDetail, greenDetail, greenMask);
@@ -257,6 +282,14 @@ Shader "Game/Environment/GroundMacroVariation"
                 half normalScale = _GroundDetailNormalStrength * detailFade * enabled * (1.0 - greenMask * 0.6);
                 half3 detailNormalTS = UnpackNormalScale(
                     SAMPLE_TEXTURE2D(_DesertDetailNormal, sampler_DesertDetailMap, duv), normalScale);
+                if (_DetailAntiRepeat > .001)
+                {
+                    half3 alternateNormal = UnpackNormalScale(
+                        SAMPLE_TEXTURE2D(_DesertDetailNormal, sampler_DesertDetailMap, alternateUv), normalScale);
+                    // Rotate the sampled tangent normal back into world XZ to match the albedo.
+                    half2 alternateWorld = half2(alternateNormal.y, -alternateNormal.x);
+                    detailNormalTS.xy = lerp(detailNormalTS.xy, alternateWorld, repeatBlend);
+                }
                 normalWS = normalize(half3(normalWS.x + detailNormalTS.x, normalWS.y, normalWS.z + detailNormalTS.y));
             }
 
@@ -335,6 +368,48 @@ Shader "Game/Environment/GroundMacroVariation"
                     albedo=lerp(albedo,half3(.61,.55,.44),activity.a*(.10+grain*.12));
                 }
 
+                if(_RoadTerminalStrength>.001)
+                {
+                    float edgeA=dot(input.positionWS.xz-_RoadTerminalA.xy,_RoadTerminalA.zw);
+                    float edgeB=dot(input.positionWS.xz-_RoadTerminalB.xy,_RoadTerminalB.zw);
+                    float noise=ValueNoise(input.positionWS.xz*2.8)*.35;
+                    float dustA=smoothstep(-2.8,-.1,edgeA+noise)*step(.5,dot(_RoadTerminalA.zw,_RoadTerminalA.zw));
+                    float dustB=smoothstep(-2.8,-.1,edgeB+noise)*step(.5,dot(_RoadTerminalB.zw,_RoadTerminalB.zw));
+                    float dust=max(dustA,dustB)*_RoadTerminalStrength;
+                    // Compacted shoulder ingress is restricted to verified outer ends, never module joins.
+                    albedo=lerp(albedo,_RoadTerminalEarth.rgb*(.94+ValueNoise(input.positionWS.xz*5)*.12),dust*.92);
+                }
+
+                // One assembled strip owns this mask, so modular joins cannot gain false end wear.
+                // The existing pavement mesh remains the complete aircraft envelope.
+                if(_RunwayEdgeStrength>.001)
+                {
+                    float2 p=input.positionWS.xz;
+                    float2 edge=min(p-_RunwayEdgeRect.xy,_RunwayEdgeRect.zw-p);
+                    float grain=ValueNoise(p*3.7);
+                    float shoulder=1-smoothstep(.12,1.55,min(edge.x,edge.y)+(grain-.5)*.3);
+                    half3 compacted=_RunwayEdgeColor.rgb*(.93+grain*.09);
+                    albedo=lerp(albedo,compacted,shoulder*_RunwayEdgeStrength);
+                    float across=abs(p.y-(_RunwayEdgeRect.y+_RunwayEdgeRect.w)*.5);
+                    float rubber=(1-smoothstep(.55,1.4,abs(across-2.7)))*smoothstep(22,29,edge.x)*(1-smoothstep(52,65,edge.x));
+                    albedo*=1-rubber*(.05+.06*ValueNoise(p*float2(.12,2.4)))*_RunwayEdgeStrength;
+                }
+
+                // A flush civic crossing connects the hall landing and bazaar.
+                // All opted-in ground meshes use the same world-space stone grid.
+                if(_CivicSurfaceStrength>.001)
+                {
+                    float2 p=input.positionWS.xz;
+                    float2 edge=min(p-_CivicSurfaceRect.xy,_CivicSurfaceRect.zw-p);
+                    float borderDistance=min(edge.x,edge.y);
+                    half weight=smoothstep(-.06,.06,borderDistance)*_CivicSurfaceStrength*smoothstep(.80,.96,normalWS.y);
+                    float2 slab=p/float2(1.5,.95);slab.x+=fmod(floor(slab.y),2)*.5;
+                    half3 stone=lerp(half3(.48,.44,.36),half3(.62,.58,.49),Hash21(floor(slab))*.65+ValueNoise(p*.15)*.35);
+                    stone*=1-.17*SurfaceJoint(slab,.014);
+                    float border=1-smoothstep(.6,.8,borderDistance);
+                    stone=lerp(stone,half3(.32,.34,.33),border*.75);
+                    albedo=lerp(albedo,stone,weight);
+                }
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;
                 inputData.normalWS = normalWS;

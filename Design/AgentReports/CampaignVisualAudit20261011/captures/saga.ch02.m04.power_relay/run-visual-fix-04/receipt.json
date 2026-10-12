@@ -1,0 +1,285 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch02.m04.power_relay",
+    "activeMissionId": "saga.ch02.m04.power_relay",
+    "activeMapId": "opmap.ch02.power_relay_refinery_review",
+    "run": "visual-fix-04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 4055,
+    "roles": [
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_a",
+            "position": {
+                "x": 808.5,
+                "y": -0.022891245782375337,
+                "z": 505.5
+            },
+            "openingViewport": {
+                "x": 4.935081958770752,
+                "y": 0.49054399132728579,
+                "z": 44.014259338378909
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_a",
+            "position": {
+                "x": 809.5,
+                "y": -0.021871764212846757,
+                "z": 507.5
+            },
+            "openingViewport": {
+                "x": 4.868851184844971,
+                "y": 0.5461774468421936,
+                "z": 44.858970642089847
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_a",
+            "position": {
+                "x": 812.5,
+                "y": -0.022899260744452478,
+                "z": 506.5
+            },
+            "openingViewport": {
+                "x": 4.962721824645996,
+                "y": 0.5184515118598938,
+                "z": 44.43455123901367
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_b",
+            "position": {
+                "x": 843.5,
+                "y": -0.022899260744452478,
+                "z": 504.5
+            },
+            "openingViewport": {
+                "x": 5.601481914520264,
+                "y": 0.4601670801639557,
+                "z": 43.565738677978519
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_b",
+            "position": {
+                "x": 845.5,
+                "y": -0.021871764212846757,
+                "z": 507.5
+            },
+            "openingViewport": {
+                "x": 5.491851329803467,
+                "y": 0.5444943904876709,
+                "z": 44.83290100097656
+            }
+        },
+        {
+            "role": "role.power.engineer",
+            "group": "group.ch02.m04.engineers",
+            "position": {
+                "x": 814.5,
+                "y": -0.029468845576047899,
+                "z": 506.5
+            },
+            "openingViewport": {
+                "x": 4.997042655944824,
+                "y": 0.518268346786499,
+                "z": 44.43905258178711
+            }
+        },
+        {
+            "role": "role.power.engineer",
+            "group": "group.ch02.m04.engineers",
+            "position": {
+                "x": 815.5,
+                "y": -0.029282428324222566,
+                "z": 503.5
+            },
+            "openingViewport": {
+                "x": 5.147199630737305,
+                "y": 0.43226388096809389,
+                "z": 43.16861343383789
+            }
+        },
+        {
+            "role": "role.power.family_convoy",
+            "group": "group.ch02.m04.families",
+            "position": {
+                "x": 555.5,
+                "y": 0.0,
+                "z": 505.5
+            },
+            "openingViewport": {
+                "x": 0.4935651421546936,
+                "y": 0.5030768513679504,
+                "z": 44.176727294921878
+            }
+        },
+        {
+            "role": "role.power.fuel_service",
+            "group": "group.ch02.m04.fuel",
+            "position": {
+                "x": 905.5,
+                "y": 0.0,
+                "z": 505.5
+            },
+            "openingViewport": {
+                "x": 6.650681972503662,
+                "y": 0.48612359166145327,
+                "z": 43.923274993896487
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_b",
+            "position": {
+                "x": 847.5,
+                "y": -0.022891245782375337,
+                "z": 505.5
+            },
+            "openingViewport": {
+                "x": 5.623034477233887,
+                "y": 0.4886493980884552,
+                "z": 43.98601531982422
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_a",
+            "position": {
+                "x": 809.5,
+                "y": -0.021871764212846757,
+                "z": 503.5
+            },
+            "openingViewport": {
+                "x": 5.040051460266113,
+                "y": 0.43265610933303835,
+                "z": 43.1662483215332
+            }
+        },
+        {
+            "role": "role.power.rifle",
+            "group": "group.ch02.m04.squad_b",
+            "position": {
+                "x": 846.5,
+                "y": -0.021871764212846757,
+                "z": 503.5
+            },
+            "openingViewport": {
+                "x": 5.705596446990967,
+                "y": 0.43078771233558657,
+                "z": 43.13945388793945
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 555.9000854492188,
+                "y": 39.98420333862305,
+                "z": 486.7162170410156
+            },
+            "euler": {
+                "x": 64.96437072753906,
+                "y": 359.9019470214844,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 555.8720092773438,
+                "y": 0.0000011169322533532978,
+                "z": 505.3890380859375
+            },
+            "fov": 40.001651763916019,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 809.6122436523438,
+                "y": 140.4171142578125,
+                "z": 439.8235778808594
+            },
+            "euler": {
+                "x": 64.96437072753906,
+                "y": 359.9019470214844,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 809.5,
+                "y": -0.019818278029561044,
+                "z": 505.4166564941406
+            },
+            "fov": 40.001651763916019,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 808.5543212890625,
+                "y": 67.93047332763672,
+                "z": 473.76141357421877
+            },
+            "euler": {
+                "x": 64.96437072753906,
+                "y": 359.9019470214844,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 808.5,
+                "y": -0.022891245782375337,
+                "z": 505.5
+            },
+            "fov": 40.001651763916019,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 730.4725341796875,
+                "y": 1071.21142578125,
+                "z": 171.36624145507813
+            },
+            "euler": {
+                "x": 64.96437072753906,
+                "y": 359.9019470214844,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 730.0,
+                "y": 480.0,
+                "z": 447.5
+            },
+            "fov": 40.001651763916019,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [],
+    "spawnRequests": [],
+    "cameraSettled": true,
+    "warmupSeconds": 18.225072860717775,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Sun enabled=True active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/RuntimeBinding.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

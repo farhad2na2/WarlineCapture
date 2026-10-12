@@ -1,0 +1,26 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit
+[UnityInvokeMac] Existing executeMethod: Game.Editor.CampaignVisualAudit20261011.CaptureMission; LogFile: /private/tmp/warline-campaign-audit-m16-01.log; TimeoutSeconds: 420
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run(\"Game.Editor.CampaignVisualAudit20261011.CaptureMission\",\"/private/tmp/warline-campaign-audit-m16-01.log\"); }; UnityEditor.EditorApplication.update += callback; return \"scheduled\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7803,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

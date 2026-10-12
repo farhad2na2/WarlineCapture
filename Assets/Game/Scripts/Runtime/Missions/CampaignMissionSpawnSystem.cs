@@ -106,6 +106,8 @@ namespace Game.Runtime
                 if(TryFindAnchor(ref metadata.Blob.Value,definition.Gridlock.HospitalAnchorId,out var hospital)) openingEndFocus=hospital.Position;
                 openingStartFocus=playerFocus;
             }
+            // Some missions deploy separate fronts or park a transport far from the
+            // first command group. Frame that group instead of the average of all allies.
             CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
@@ -118,6 +120,7 @@ namespace Game.Runtime
                 // preventing the normal match-intro zoom from overwriting the bazaar handoff.
                 Stage = 0
             };
+            FrameMissionCommandGroup(em, in rootRuntime, ref metadata.Blob.Value, ref opening);
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
                 QueueMissionOpeningOverview(

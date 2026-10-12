@@ -1,0 +1,1139 @@
+{
+  "result": "Passed",
+  "nativeCaptures": 25,
+  "manuallyReviewedOpenings": 25,
+  "requiredPlacementFailures": 0,
+  "packedParity": "Passed",
+  "determinism": "Passed",
+  "normalInputMissionCompletion": "pending",
+  "androidAcceptance": "pending",
+  "missions": [
+    {
+      "index": 0,
+      "missionId": "saga.ch01.m01.first_contact",
+      "receipt": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/receipt.json",
+      "phase": "FindSquad",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: all four squad members centered clearly above command tray after introduction settles; street/sidewalk context readable. Camera margin correction resolves prior low framing. FindSquad, Outcome=None.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/receipt.json",
+          "sha256": "91df0b35f1a7f423c5ebf422ffa21843fdda9236e5b4957f0e5196e227a11c70"
+        },
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/mission-overview.png",
+          "sha256": "1701579ebc10ee92a6c09282b4634da30aed6d95402472647c4283078c2c7f69"
+        },
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/objective-context.png",
+          "sha256": "ead5a3ab0b810ae27d47c897785ed41f40ed795130cb786df987911ca734358b"
+        },
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/objective-detail.png",
+          "sha256": "706be7ae2da57e3bb9786ae2f6bba855fa10d3160c1a91632125371e89e16164"
+        },
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/opening-hud.png",
+          "sha256": "fc2e63aa7493887a7706fa374d5f579a0aa412b75635e3865a5c0e1ddde2fc14"
+        },
+        {
+          "path": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/opening.png",
+          "sha256": "f8103136638087206a09005dd8cf4d76b408e3f345ec4dd862ec9d39929cfc96"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "missionId": "saga.ch01.m02.establish_base",
+      "receipt": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected on final sources: actual legal construction area in view, Build cue visible; runway outer threshold and shoulder finished. Existing full-lot viewport validation passed. This intentionally prioritizes the build action over the remote squad.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/receipt.json",
+          "sha256": "3935e35f88122fc7acd09e015532540f284b3048692895f3388400e8c415e357"
+        },
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/mission-overview.png",
+          "sha256": "61d77b0f32466a3c3b510f0796746aa08880aeaf01b73903d995de8301c8f32d"
+        },
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/objective-context.png",
+          "sha256": "bee6e56e779da871f7ad5b5d38123ff97244e66bba4c5a43a876bdef5c041974"
+        },
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/objective-detail.png",
+          "sha256": "649c3aeb0fc1cc0f34b27141ab8d423f473e1f282df4268663794068cc6ee5c3"
+        },
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/opening-hud.png",
+          "sha256": "25c71029372907e58574c6700506ebdbcbf2a5d250612dc0d7606b185e3a4292"
+        },
+        {
+          "path": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/opening.png",
+          "sha256": "af60c50c31e417ba9286384f6f0e991ab5ad81fecdc31bb1a4ffc98239bd36ac"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "missionId": "saga.ch01.m03.radar_warning",
+      "receipt": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: defender squads and road checkpoint visible above command tray; junction/median edges clean. Supplemental civic views show shared settlement context; they are not the primary First Contact hall frontage. Existing objective banner truncates long text; this map-art pass does not redesign that banner.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/receipt.json",
+          "sha256": "03249fdf646958d21264e009dc1c6ed630e25aacf113d45c867fb04db697ec30"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/civic-hall-01-context.png",
+          "sha256": "fd3bb84b0fe29a4daecd840a411f1e2aa871429eb9ab0facc2a92712167c1e0e"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/civic-hall-01-front.png",
+          "sha256": "2dbe2e00d4f9bd98ac97febd4c1a00c2c976c96dd9bc7b56aad397916381e8de"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/civic-hall-02-context.png",
+          "sha256": "179d6a883e59fb0c31ef5be53afd37f8b7d43c4b87f278b30ef24b8b681cce32"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/civic-hall-02-front.png",
+          "sha256": "97b1cbd968406a4e548f08552284320bbbbbba73968e36ff20c464268fa6e646"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/mission-overview.png",
+          "sha256": "dc525f5b913feb8f18a3f8dd6173eab8212656b4a1ca39d7b42bb4e893dc4f5e"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/objective-context.png",
+          "sha256": "e1364d4dacae8e67bab18ec7d1fa777144690725d04f984a6018f062bda84851"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/objective-detail.png",
+          "sha256": "159037b9dd65fe1719ba066b99ef00d2104d201112f16aef523bc459acda265f"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/opening-hud.png",
+          "sha256": "585877a6bc1ec2c40c2e2591830925c5544b9d2571a667bcd860f084ef19f893"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/opening.png",
+          "sha256": "b1cb477592d861e2c91f873dda3a0bb508a617a0fa9fa0750124cec887fbed93"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/runway-01-end-a.png",
+          "sha256": "993f5e7d21ba7e48afe79ac834989f3e1a98e181edbf963b3ceb214d60ab8cc2"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/runway-01-end-b.png",
+          "sha256": "e57e1923fb6b1ef1ab1b9f352878607eb205ac6a0c6f8c9dc6368768d068c240"
+        },
+        {
+          "path": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/story-ground_sensor.png",
+          "sha256": "2e9c860bfb2c22f06befa277d33f44597dbe84a44b8dbb7a9afd080c9a937027"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "missionId": "saga.ch01.m04.airlift",
+      "receipt": "captures/saga.ch01.m04.airlift/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: rescue squad and APC clear of command tray and objective panels; apron, curb and roadway cleanly separated with no raised sand intrusion in opening crop.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/receipt.json",
+          "sha256": "7dbac366c7ba3bffc41c35c39fffffe4c38ec7cd3f4e1a6a513edf20df096019"
+        },
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/mission-overview.png",
+          "sha256": "980cceb007c72b442b1d23ada02a98a6694959aaf464ec486f93bf46905428f0"
+        },
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/objective-context.png",
+          "sha256": "5b9f32511ff6d4de874e8c8962b9a909560d60dc47931735ce9051d3b812b544"
+        },
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/objective-detail.png",
+          "sha256": "6b9c3bd24a35fe76e1d567ba8d3110906e7089405399070e33cebf6d915cb353"
+        },
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/opening-hud.png",
+          "sha256": "82140226367439630d82f91baa998d605bf6a4f8369fca2854d36b4926d5c5a4"
+        },
+        {
+          "path": "captures/saga.ch01.m04.airlift/run-visual-fix-04/opening.png",
+          "sha256": "51d8f105f6d15e5ced772ec002a622756a56d82792960a92ca660a79110865f9"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "missionId": "saga.ch01.m05.breach_assault",
+      "receipt": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD and archive interaction view inspected. Assault infantry and required APC visible above controls; compound entrance, archive and radio remain identifiable. Road intersection and curb returns are clean; no sand protrusion crosses the visible lane.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/receipt.json",
+          "sha256": "968d8bfff9461b9b9f29f17ea5090bf9f354943b1a3f733b9af0db3a6b39d077"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/civic-hall-01-context.png",
+          "sha256": "19562bc10ed8c15bf23e526b14fb5dfc2fcb51901cd22ea3218bb92a965a34b9"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/civic-hall-01-front.png",
+          "sha256": "20ee1765a40223512b48cd6fbf7f86e789d6c8d135b4bab22753566de58a6319"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/civic-hall-02-context.png",
+          "sha256": "dbc3502bfb89663ff9de6f677b7b6512bcf25cfb25590e9fafc96ad92fa2aab4"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/civic-hall-02-front.png",
+          "sha256": "434ba4fbc773856e64cd87db362ebdfe6f28ab350e82bb8a2ff43f1b15ad4ff0"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/mission-overview.png",
+          "sha256": "41f5465ff813bb769b8dded1fc6153f80a7308f6a758dbbc321f0063dfc73e33"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/objective-context.png",
+          "sha256": "34b9b434f4e9573367b13fea53748b2761a9a9efdf2e354e18514888f500cc41"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/objective-detail.png",
+          "sha256": "5a0fb39b4411b1c445071caadb96dc7ccee6bdec6bd5edc1c5075e3ecee8722c"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/opening-hud.png",
+          "sha256": "28cbd5ae039b2d0241eb30f55f48c381cf7feb7af85874b3dbbbf317ae0e1615"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/opening.png",
+          "sha256": "d02d817733405219329d263fec11ac9aa2fab00d90bd1f5dee17a87ea83a19f5"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/runway-01-end-a.png",
+          "sha256": "36db496ac0419330e23f4cf1386bb2929d51053a0ce3c6f07a43daba3e8033d7"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/runway-01-end-b.png",
+          "sha256": "448bb14ce1ed1fb171ab26362182c6ef7f67740c4164e2af93e18ac45b641284"
+        },
+        {
+          "path": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/story-archive.png",
+          "sha256": "1ef1449d235fc9f0eefd1ea86d15a4a1e3a7fd6656408617713a4b05a28c2495"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "missionId": "saga.ch02.m01.gridlock",
+      "receipt": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, hospital and site A views inspected. Starting troops and APC visible; authored roadblocks and wrecks retained for mission identity. Road/curb surfaces remain continuous around the deliberate barriers; hospital approach readable.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/receipt.json",
+          "sha256": "22db4b0bfd0c55d6a9b0a33cb6cda8c71bb8b8e6767a3696b90c362b067cf53e"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/civic-hall-01-context.png",
+          "sha256": "f949b0da70f83f170c8974cbd75b674758da6c08ed925bd2a2e8cbf5314ca435"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/civic-hall-01-front.png",
+          "sha256": "4391fd33c0b2c2594325b95e4a0cb0e063b6759f5cb9a9fbade1f383498ebefd"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/civic-hall-02-context.png",
+          "sha256": "fc287175a158229924f6adc3c883ce4d6a013c8168f8ce1d6676fc2c21af086c"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/civic-hall-02-front.png",
+          "sha256": "4ab78a94a21671f1a7d0392e5f5ae7dacf2fbb45ac86e671574f295dc0e39d66"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/mission-overview.png",
+          "sha256": "77a50ef9a2ee495794267ade80dc7dc42753076c32dba161fbce0fa6b09850de"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/objective-context.png",
+          "sha256": "4ccb573cb9d3912c7119bd2f16901af28e1bf85bc8a5a65f2ae5b5f04beac6ce"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/objective-detail.png",
+          "sha256": "dff9dd5a601f1112f67f12b032d18683460ae3a3a61e1bbb8716a769be8ba373"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/opening-hud.png",
+          "sha256": "0ef61a86c0e0419ea3c92e6d547ea8e3f6443e882d51e3a6e1063b760b71b581"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/opening.png",
+          "sha256": "6aab3b14ea2c95c61aac5178ff1d70a9ecfa9cec9c9c766d29450bd0c07b8423"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/runway-01-end-a.png",
+          "sha256": "b4cd859bb9e8c576c20cb6b02a54f43d2d71d55239162f14646c03761bfd7c4a"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/runway-01-end-b.png",
+          "sha256": "0f9128f9b02abc3a9169a7b96932b8130967f91630234f472a883f602bf511a3"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/story-hospital.png",
+          "sha256": "0a6eeda7099358df35ef11875405be1c4dff5b70076d0d9f314d00770a7e43b9"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/story-site_a.png",
+          "sha256": "2e61b3054bd99a91f7476523137bd43ba577df92fe01cf648511407369778bbf"
+        },
+        {
+          "path": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/story-site_b.png",
+          "sha256": "73dcb27d27478eb9ad6dff65d8122e5d88c6e8d2a50364591dd74a6cfeb24a9f"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "missionId": "saga.ch02.m02.supply_line",
+      "receipt": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: rifle squad and oil pump visible above controls; roadside curb and refinery apron clear. Oil pump, refinery and reserve depot all placed at required preferred cells with status=1/result=0.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/receipt.json",
+          "sha256": "c894b73f6067a76804c851cc225543cb0afc4010dcd7d79a3d3c19ccfd58f08f"
+        },
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/mission-overview.png",
+          "sha256": "8ec97014338f89aaed84a64bfa6509d1230a7a5cf315f0ec50c916fe5e05c56f"
+        },
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/objective-context.png",
+          "sha256": "ca3ced3e60bd9dbd05d1bf41ae131ab22bc7f581c5b8f746e93cc551683eb4c6"
+        },
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/objective-detail.png",
+          "sha256": "4dd8e16fc202f268bccb2eb86d860a1a5dabe607db7bdcda5df740eba3efbce7"
+        },
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/opening-hud.png",
+          "sha256": "3e98fe8633b9e1b39c874c36be5956c6358c5806ccea194abfc5195915fe1b3b"
+        },
+        {
+          "path": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/opening.png",
+          "sha256": "4b6fbf5bf68677379ae78e6b35a91ad55ae9e62e903e3f8d9039aa4eedce9070"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "missionId": "saga.ch02.m03.market_lifeline",
+      "receipt": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD and objective detail inspected after final road-entry rebuild. Rifles visible above controls; asphalt lanes and sidewalk remain continuous where prior raised dirt meshes protruded. Authored wrecks retained. Off-road sand relief remains beyond the curb.",
+        "scope": "native opening and objective visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/receipt.json",
+          "sha256": "c1a757036c01f28c1dfc80d98826fe8f5064ee4e358ed526b036da64154168e5"
+        },
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/mission-overview.png",
+          "sha256": "51158f7b1ab22a751f6872a6ef51f31867aa066db0545e9513f7e5c7316a791b"
+        },
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/objective-context.png",
+          "sha256": "737c4e7113e503c9b82b0b27ad8c43a0570058335d9f595aca13c37241ce2662"
+        },
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/objective-detail.png",
+          "sha256": "b2c1979431b87268d5c3905775853a05721695c714cbf8e2c0174c11d86e00e7"
+        },
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/opening-hud.png",
+          "sha256": "fc2174dee222d2c71d2e5647b02e1a64dad3b2dc748bcc8505195d6e438ededd"
+        },
+        {
+          "path": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/opening.png",
+          "sha256": "d42d5c1755187dece0860e389bdc929313aa03c786729a0943d461f7af5a1378"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "missionId": "saga.ch02.m04.power_relay",
+      "receipt": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: family convoy is centered and unobscured. Code trace confirms guidance step 1 selects Kind=2 families for the safe-route waypoint; tutorial focus deliberately centers that actor. Earlier rifle/engineer framing concern was an incorrect assumption, superseded by this review.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/receipt.json",
+          "sha256": "7c33f81610893e954cfb4622b145feb57732b2a59be9da838e78529f7b7d23a3"
+        },
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/mission-overview.png",
+          "sha256": "796f40db2c21fd0306bfe220a425e760306e09833d9c8c5559dba7b8aaa39b66"
+        },
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/objective-context.png",
+          "sha256": "51a6751697252974de218a4ea21d03b8678eb0654fd8b9ea2fc48aa85284db7e"
+        },
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/objective-detail.png",
+          "sha256": "a66c1b238b89b5c384cc8feb11dece25dc3e66c4ac56eeeff51b06dc48149117"
+        },
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/opening-hud.png",
+          "sha256": "e47844b701750361f853e71cb9918928948cc8dd6e948b7d3acb82c448f790fb"
+        },
+        {
+          "path": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/opening.png",
+          "sha256": "0dd6e04f7ef97bcc41eb3a39b10c1d199f55a26bde9abb7308e068bc32e85fce"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "missionId": "saga.ch02.m05.route_reopened",
+      "receipt": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: rifle/engineer groups visible above the command tray with port and bridge context; bridge joins and roadway clear of raised sand. Opening uses a wider tactical view for the separated groups; close control remains a normal-input acceptance check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/receipt.json",
+          "sha256": "d5a3a5180ce36c4ec98a44124a79a31a76c1fbe13094ad1e96b0fa14de9f7c00"
+        },
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/mission-overview.png",
+          "sha256": "386eb699a3b45f26e55bff91f5f394908fa9c8ee23efdbd71c609c50f59f90d7"
+        },
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/objective-context.png",
+          "sha256": "a0f4e9fff5d80eb5366c40ecd2de009232ffd10b726c5be59b6918db67f6273c"
+        },
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/objective-detail.png",
+          "sha256": "6274aec64b928714881f763c567c5290840fd2cac0bef370103c743143b382b5"
+        },
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/opening-hud.png",
+          "sha256": "6eade6d0690adb31b062e01ced2075450218aa58526763775ddd66ce0e9c8bf8"
+        },
+        {
+          "path": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/opening.png",
+          "sha256": "468dcaccc616d62e9527964f7f8d7270be9904f83b296fe370de5a3079ae8e37"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "missionId": "saga.ch03.m01.signal_trace",
+      "receipt": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups above controls; shared DenseCity road and curb free of prior sand protrusions. Moving vehicle interaction is outside this opening visual check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/receipt.json",
+          "sha256": "3bf89711dd4627890cdda007e7d8ab934172d6d41a62fe758670aaa26e26ce0f"
+        },
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/mission-overview.png",
+          "sha256": "d90f3c9623cf176659e070ca38dc49c0db42faee73ede415e04648e13dedecf9"
+        },
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/objective-context.png",
+          "sha256": "05c8152b0fbbda7d355bb025d2c59675f987a7732535001117c60adffd43061f"
+        },
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/objective-detail.png",
+          "sha256": "768f2c6eafd86fdc943fd822e8735065fe1f2e824a9483ac5b7ac63ba8b90d5a"
+        },
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/opening-hud.png",
+          "sha256": "ebda3e6c9805146445b3e4e482ef208446becae3cf442b0fd4fbd6f187b19c10"
+        },
+        {
+          "path": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/opening.png",
+          "sha256": "0cdf18f9a2de83325cba509f16fcd72b0a62bd46a4ff4a75755b0e1d94930ddd"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "missionId": "saga.ch03.m02.safehouse_sweep",
+      "receipt": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups above controls; shared DenseCity road and curb free of prior sand protrusions. Moving vehicle interaction is outside this opening visual check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/receipt.json",
+          "sha256": "382e27b0ab1bdab416c5a35e64a9505d382d36948972a2719046bb0cea8648da"
+        },
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/mission-overview.png",
+          "sha256": "bcb40bf7d9e76e6bacf59a6fc5c1b764d70136fa8f99104f1ea25d6f482c017c"
+        },
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/objective-context.png",
+          "sha256": "490478e1241e338b89bc44a681d2014ab7080f9e35f3ac3d046d708bd5603347"
+        },
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/objective-detail.png",
+          "sha256": "970df764c26509aa634b3d9e020c12cd5e3829ff149287968a77590fc5381fdf"
+        },
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/opening-hud.png",
+          "sha256": "239edb919cdfb1b187789bc44d35f00aeb54b4055c81e6a5b9280e661fa1fe36"
+        },
+        {
+          "path": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/opening.png",
+          "sha256": "dcec2d6536e51e7d74cbd58029b2b766d11ef6a89cf628c621e934bbdbb8c869"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "missionId": "saga.ch03.m03.false_front",
+      "receipt": "captures/saga.ch03.m03.false_front/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups clear of controls and shared street/curbs free of prior raised sand; preserved wrecks and civilian vehicles retain authored mission setting.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/receipt.json",
+          "sha256": "bf52f82ba32d66d0cb22c13999f15b69e220cac1e9eadbc6890c3729cb61aa3a"
+        },
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/mission-overview.png",
+          "sha256": "24ffe52e310b271c7895829cb2ab037fdbfb0478c7f29beae5cfdeb29d7e1282"
+        },
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/objective-context.png",
+          "sha256": "0035adb625b91f2f067d5c771c1a5bb8ab4e2040424631f81d47c20668e2769c"
+        },
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/objective-detail.png",
+          "sha256": "b5dfc1dcd47a3bfba7c30d19a950a6948885980d3b2951d7e0d54a7afa5f9a98"
+        },
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/opening-hud.png",
+          "sha256": "d8717de7f50b79de96c46c7a075a38181a8714ec75ccd27497dbcb19b27b3b74"
+        },
+        {
+          "path": "captures/saga.ch03.m03.false_front/run-visual-fix-04/opening.png",
+          "sha256": "80e124472fb581e446b273df7966671e069e4c8ea30b561fa085835c87ccce67"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "missionId": "saga.ch03.m04.evidence_chain",
+      "receipt": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: escort and protected people above controls, APC visible beside the junction. Road/median edges continuous. Tutorial Continue cue temporarily overlays the lower APC silhouette; ordinary interaction after dismissing this introductory card remains a normal-input check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/receipt.json",
+          "sha256": "8349d82b0d6c0d05cc5bc29e75eef598743ab4467172201b7a3ed550ce082772"
+        },
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/mission-overview.png",
+          "sha256": "d58e0d1e387c81c225c644c9f488a8e93446c5df39bc422191a8c8fc6ca08743"
+        },
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/objective-context.png",
+          "sha256": "e8dc67fbff4a32d5f718c41ea181fd8246785d4506c67f51392f132eddf1398c"
+        },
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/objective-detail.png",
+          "sha256": "b7bfbe57b32af22e0f1bc9039ea1851b17480302ae8db835f7c8975ed2e675f2"
+        },
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/opening-hud.png",
+          "sha256": "7df03f7fae87d4b78f3a57287e694241c2b995d8ed71506aedb32452811e9cec"
+        },
+        {
+          "path": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/opening.png",
+          "sha256": "b99c36601d03770fe5023646c51239fb64bb0e41243bf0747957ec04f5a9eb7c"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "missionId": "saga.ch03.m05.network_break",
+      "receipt": "captures/saga.ch03.m05.network_break/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: squads, APC and compound gate clearly visible; road and median transitions continuous.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/receipt.json",
+          "sha256": "990881b0dd078139873627a6f25f0ab92982e42b7f4b79444577a722aa7de1db"
+        },
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/mission-overview.png",
+          "sha256": "b8abab8ff615d69dd0c81400f43c5fe0b451dee7e6a2ad4cfa06013b955c7d2b"
+        },
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/objective-context.png",
+          "sha256": "17a52a7bb06eefb8960f36eb863f8d02a7b2e2d3ec8e1a4cbd7b8df645fc01ee"
+        },
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/objective-detail.png",
+          "sha256": "206a470197f1e576786a5eed6359b4a2b8437a218423d027353a3cef51b29e84"
+        },
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/opening-hud.png",
+          "sha256": "f7e5942f43630558499ccdf6c5b7ee69dff00877cb08a284303faa8fc9f5e27e"
+        },
+        {
+          "path": "captures/saga.ch03.m05.network_break/run-visual-fix-04/opening.png",
+          "sha256": "3ba56d267618b8dbcb660bf16bf0641e8e94593ccedaf6a7b34b8797af1553bc"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "missionId": "saga.ch04.m01.air_corridor",
+      "receipt": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: launchers and sensor visible above controls. Both assembled runway outer endpoints inspected: 09/27 markings, clear shoulders and end markers visible; module join correctly has no false threshold. No failed spawn requests.",
+        "scope": "native opening and runway visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/receipt.json",
+          "sha256": "ca1ed728cbba8ee6522cfb010c60223bb77d4d2dcedaf13631c5c65e0d76be23"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/mission-overview.png",
+          "sha256": "0edff2d9e7575074ebe59c47b8706cbf20c34d10126a764eb3a1e58f5aecc086"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/objective-context.png",
+          "sha256": "824c2c53776ea888dc0caa0a5c0f91b40074406d9f4157e9ad695498311c7c1e"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/objective-detail.png",
+          "sha256": "77448b6d8412903cf4170f1e3e612421581b62e3bcfa478ba308a6486e2035cd"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/opening-hud.png",
+          "sha256": "d04b939b63726fd9b523be817994bdd2745d264dc0883b2cc670df3bd754a750"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/opening.png",
+          "sha256": "d0db9a9e2fb2472831a00dcfee2e4b131090b226dda22ecaf4089b4a46ddad7e"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/runway-01-end-a.png",
+          "sha256": "b7312602f6c902bf276282999cb2e6cd6828178c101c337d4a4e092a7fbfc443"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/runway-01-end-b.png",
+          "sha256": "96555f6967f8208babc17a1c0436d8473f5b92381c8b3463e05e3ae6de73d411"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/runway-02-end-a.png",
+          "sha256": "560fefb802d708fd68e827253ac3ba59f1b74f65e096b3c8b46fb29758dd65b3"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/runway-02-end-b.png",
+          "sha256": "074cac09fd183ea4c718e465cc934be6124809bbb924fe1ec37df76c11b64e15"
+        },
+        {
+          "path": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/story-ground_sensor.png",
+          "sha256": "b63c16d62cb87de4e3587901f03dd603df207cf4a2c41c5162bf2a47c027b814"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "missionId": "saga.ch04.m02.steel_push",
+      "receipt": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: first tank, infantry and reserve structures visible, with no immediate failure overlay. Large existing rock face occupies the left side; it does not hide the first-action tank. Required placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/receipt.json",
+          "sha256": "0dafaa9b5be36a6597677782dce33b7de70b3133f36b4a51a3ae0a85c0c9a130"
+        },
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/mission-overview.png",
+          "sha256": "237bbaafb1464c6465a8f0a466fb5974608954000b3577596e8bf91b7be78aab"
+        },
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/objective-context.png",
+          "sha256": "edb51bca1f0dfc720d01fdbdcd9fd71d69f8de2802cc08e16f8cd1cf7c383930"
+        },
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/objective-detail.png",
+          "sha256": "570ff248527e778e3c03fd143f3bc1529b8ecd003e8ee2d046841b0cd50fc5f3"
+        },
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/opening-hud.png",
+          "sha256": "e36fe98afca40625a46eacd559fb55684688e2979094337594e0d418e80a6d67"
+        },
+        {
+          "path": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/opening.png",
+          "sha256": "f90f00d02460ea51e83d963343257e8c2c1d6ad2b1f2a02f4f7a02a484a340ae"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "missionId": "saga.ch04.m03.split_front",
+      "receipt": "captures/saga.ch04.m03.split_front/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: launcher, tanks and infantry visible above controls; industrial slab and settlement paving distinct. No immediate result overlay; first instruction remains legible.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/receipt.json",
+          "sha256": "97519a72e67f15b708f1a5da56932f0cbc9827c6eec49abd0ebc36e57358051f"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/mission-overview.png",
+          "sha256": "cc13c9d5b3838325481366cba01d8df8b6b636529e41f25b9a33c3f204617257"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/objective-context.png",
+          "sha256": "24641f489b4b51c8885d9ef4b8f4674be8db2fdb5efddc16c58b56b7676205bb"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/objective-detail.png",
+          "sha256": "bad62f3fc5c127cff56f8f8d4e78b26a0d46542436d8fe1169c26358ce30e760"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/opening-hud.png",
+          "sha256": "fd5a71b7d8b1d84741005ea8d8c75a61dbc2cb4218a707c860caa1287570b786"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/opening.png",
+          "sha256": "056d79bd5440ebf686bb3cb46a775a1cbe8385b00a521416f058e0a8e0ebefa2"
+        },
+        {
+          "path": "captures/saga.ch04.m03.split_front/run-visual-fix-02/story-civilians.png",
+          "sha256": "ae24337dea13988069e1bd98352630b51c72dc9a4184ead68cb2a964d5c1b2a5"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "missionId": "saga.ch04.m04.grounded_signal",
+      "receipt": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, civilian terminal and aircraft interaction views inspected. Squad and rescue APC visible above controls; aircraft sits on clear runway pavement. Terminal support props remain beside the protected interaction; apron and road edges distinct.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/receipt.json",
+          "sha256": "7b22a12790017e731cfb372531ebd8c0cf4849fc449b9c546a93ddafac48a64e"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/mission-overview.png",
+          "sha256": "6cb1995252206e0e84409390ebca9e4249c62ea2b65263ad4e8e6b714be84eb3"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/objective-context.png",
+          "sha256": "163c5ba534aa70bdb640ed5ae5ce050ad8d734b03932ab502d3179fb879cab6e"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/objective-detail.png",
+          "sha256": "c3036efeda1a1d559062b56b4d2200df89ad765e51e27132983143526f2950d2"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/opening-hud.png",
+          "sha256": "ecdfc22b0454dca337e4dc6d89744c427d2f4a53ee5e47e7969f2a2e8b350850"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/opening.png",
+          "sha256": "90c4bcdf6396b2034664c48d92ddba2f1bf3779b656ed04a9976ffa3270b8593"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/runway-01-end-a.png",
+          "sha256": "cd1b8c14ebd2a1c3a082a03ab20ad0aaa7360e6d244aaf6512f33b34f4f96643"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/runway-01-end-b.png",
+          "sha256": "52dd625a3db2a37068fe0ac6581dfd9ef121e4453f39c2a8e71a07403e130e15"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/runway-02-end-a.png",
+          "sha256": "a8a0d91697ab0f2a2cb37aeaefdf92ae9bf5a8172b6dcab60a131cb91c117aa6"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/runway-02-end-b.png",
+          "sha256": "a50ddab67d5c07122b633f5de5020852bc942550a78a6f3ea5d24e240de30807"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/story-civilian_terminal.png",
+          "sha256": "02dce2360f576a86c1d9e0a2ed33d3aa1cfccc287e79c640c53a5fe7863970e7"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/story-plane.png",
+          "sha256": "1cf3ad7aab37b7438efd9829d6945d25d42f53be7a70f562c9642a7f8d9fb616"
+        },
+        {
+          "path": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/story-relay.png",
+          "sha256": "75ea2b2170a5e260a1552b29ae15e73bb59c4d86ca2ea7f87ab70ed29974cb4e"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "missionId": "saga.ch04.m05.armor_break",
+      "receipt": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, relief and radar views inspected: starting armor and infantry above controls; service pad separates radar interaction from road; relief shelter sits in an open apron. Curb junctions are continuous, with dirt side lanes retained.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/receipt.json",
+          "sha256": "765ea76986a93b0efe05f1cb81ec6130b1cd4e549bd10e2d86bb220ea322fd3a"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/mission-overview.png",
+          "sha256": "47aa7077e25d92a323e99112c9bbf4e4e4abdd936e460b86d651ce7b504ab680"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/objective-context.png",
+          "sha256": "c9e45c8035eb093b05c4b5e55f9d5fcf29422261f5d57aee152eae9a2038cfcd"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/objective-detail.png",
+          "sha256": "cf6e304940faabfcd9a7e175576c2850cdd195c3e29ddb2b702fdf9c8716b05a"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/opening-hud.png",
+          "sha256": "e8af8f7507f11b6de22dc4a9743fb0f34d14b1cd750de4482fcb60dcce07e19e"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/opening.png",
+          "sha256": "3db2eb780b054662fd0d0aba7017547581f793f50d232ac5864f6633927780be"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/story-radar.png",
+          "sha256": "ae60b5a6c3e80d84adfa810b05689b7cda13d152ddbb88e5021238d56bdfa6c3"
+        },
+        {
+          "path": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/story-relief.png",
+          "sha256": "0234e3d9ecf3df21e9599da5372e17f3d4ca03d141a6b582e8c599fe62776340"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "missionId": "saga.ch05.m01.citywide_alert",
+      "receipt": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: supplied barracks centered unobscured for recruitment; legal lot clear of moved landscape props. Runtime enters Engage with all required placements successful. First-action input guidance still requires normal-input acceptance.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/receipt.json",
+          "sha256": "ef89aafcbffa7a7737997d8fbed216b4d843f71399a44a83150038a756802f9e"
+        },
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/mission-overview.png",
+          "sha256": "ced5551c80d42b595a56944b22409fa922ff7ccb62df5467450ed8d803260096"
+        },
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/objective-context.png",
+          "sha256": "3672292d8c332b1ca93d829e926180a17e2c869065340b84a1e0b232cb143611"
+        },
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/objective-detail.png",
+          "sha256": "ad5c970fa24298301d9347d6b2eaf0e4a2816bbd1e318ecc1a08193c7360c376"
+        },
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/opening-hud.png",
+          "sha256": "bc0d7e46fa6ef7995f95d0bff2d283c05499c2431967ad101d409a3f8502e532"
+        },
+        {
+          "path": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/opening.png",
+          "sha256": "bc41aa71718a72957d589f2fd9fd37e76abbd4d0f4f2eb90769d76ef0c92edf1"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "missionId": "saga.ch05.m02.trust_under_fire",
+      "receipt": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: north route convoy and escort remain visible above controls, with container and vehicle-yard context. Road/curb junction clear of sand intrusions. Wider composition keeps separated starting actors visible; close selection is a normal-input acceptance check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/receipt.json",
+          "sha256": "06499fa5b39307d7ba54f18ce3667decb412dab7351896d655cc3a2c05373949"
+        },
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/mission-overview.png",
+          "sha256": "afe059a12fbea1395f876647556d230f0ef6ae6539c33eb273dfbec6b4e3ed08"
+        },
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/objective-context.png",
+          "sha256": "5489475d17900e4e8fc00f172766e55e981c3ab6a41e0d4ca5981b5d66942e58"
+        },
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/objective-detail.png",
+          "sha256": "90f54fbcc5fee9b03236e92be7f09e2686e4418011c78af59375ce157f02f1ba"
+        },
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/opening-hud.png",
+          "sha256": "0a4ca54ed819543192d1f2172ba0af6183f2ef5a3d75087cbd826344b02c68d7"
+        },
+        {
+          "path": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/opening.png",
+          "sha256": "e46cc1a62d78f23eb2b49e27a0c72f4e46889d3e35b7c2e79746aec13f36bf32"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "missionId": "saga.ch05.m03.network_collapse",
+      "receipt": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: opening escort squad visible between mission banner and command tray; sidewalk and asphalt continuous. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/receipt.json",
+          "sha256": "a09bd65c07dc12cdaf8bcc2ab003dfc27b1f5e86c52eaeaefcaf0581e5092da7"
+        },
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/mission-overview.png",
+          "sha256": "e4a4f6d2f61367ac94302a7fd0aa3aaa11682377fb01bc375eba9d62823c6c3a"
+        },
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/objective-context.png",
+          "sha256": "6ac6dd6c847e58abb9dbe5f17a1c1cc1183b4dec8001a1aa63d8e2312eb8e2d3"
+        },
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/objective-detail.png",
+          "sha256": "09925d80c6b364936c5de6f6e240864988b03b2cf24ee65a151f2d2395141b60"
+        },
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/opening-hud.png",
+          "sha256": "1b6c29fe2d391a53aecb3e844be4e2b7f2e8c2fb1b0752e12ecbfd4c13efc51a"
+        },
+        {
+          "path": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/opening.png",
+          "sha256": "6dd4893328d18a7e078ae4af87da93c6dc4222349413342db22810b6ab79ac59"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "missionId": "saga.ch05.m04.last_corridor",
+      "receipt": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: escort and medicine convoy visible above controls; road intersection continuous. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/receipt.json",
+          "sha256": "68c19f04b3700267ea5037815f263432e262b5197b1076736eb548107eff8ac3"
+        },
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/mission-overview.png",
+          "sha256": "dfc722b95d81e68e7906e1c7a08ff05ef653fd60b63b3bae7ab9939a9492f408"
+        },
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/objective-context.png",
+          "sha256": "3b8ed86e175753aaf85abb2cc92154e97abc14ad803e2ef9bb86b357ec6f82f0"
+        },
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/objective-detail.png",
+          "sha256": "c38be511b68afb318ce5a7119b1eb5affe4f81508730857db62abbed122100f8"
+        },
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/opening-hud.png",
+          "sha256": "bb174635a205eee966382df00d175b50b6cfae09fd6559c4510a567f016b074b"
+        },
+        {
+          "path": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/opening.png",
+          "sha256": "621334b55bf15e1094d6972d556ab5f3a0309e4fad9d155f5c8dfccb4e23592f"
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "missionId": "saga.ch05.m05.command_node",
+      "receipt": "captures/saga.ch05.m05.command_node/run-visual-fix-04/receipt.json",
+      "phase": "Engage",
+      "requiredPlacementFailures": 0,
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: engineer and specialists visible in central playable area above controls; hangar apron readable. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "shadowKeyCount": 1,
+      "evidence": [
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/receipt.json",
+          "sha256": "1a719d72d80b68d4e6fcd04ac5fb7d43cc457f6049fa4dbec5c3e94dad8ba714"
+        },
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/mission-overview.png",
+          "sha256": "be8e8f6083e0094c4dd1b38358d97240a57631dc5e9cbed243f15a42c1073e8d"
+        },
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/objective-context.png",
+          "sha256": "9cc4c635e2155bf9cd0b0813a57fd500c026560f00672ecbae4086496366f018"
+        },
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/objective-detail.png",
+          "sha256": "462c410e3b8d330606a3a74be5fc5f10238a47a3d2f9c29e25837702117d6620"
+        },
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/opening-hud.png",
+          "sha256": "768ec2652eef3422e34222074212423e70fd29a0cdf798a32709d239958bbf75"
+        },
+        {
+          "path": "captures/saga.ch05.m05.command_node/run-visual-fix-04/opening.png",
+          "sha256": "06c5006cd229e393a5e8e352ecfd3fb87bce412843141a0ec3d8f3b2c16c7e55"
+        }
+      ]
+    }
+  ]
+}

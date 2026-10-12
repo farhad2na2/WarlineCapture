@@ -75,7 +75,7 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch01.district_edge_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: 95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2
+      contentHash: 44f26f1ce5c5d744534104714d6ff09b54d00b6629de818c86df49a047026595
   - definition: {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.forward_post_01
@@ -123,7 +123,7 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch02.supply_line_refinery_review
       deliveryKind: 0
       contentVersion: 1
-      contentHash: 03bac33d1658075a087045a19a2dd7ce1458a90d6f5e3130ad2230d473b456b1
+      contentHash: d6f98651ecdf824ec03abf6858fe9d73245ed5cedaa3d921d9d4fb21546980d4
   - definition: {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.supply_yard_01
@@ -207,7 +207,7 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch04.steel_push_refinery_approach
       deliveryKind: 0
       contentVersion: 1
-      contentHash: 6a5fc500346082a96a449e2b161a2e4e7481f2d1be024c634237ed6dc60a3a08
+      contentHash: c35ccfd027ed18dfb4f284eac996b26115b9cf2c8af4eaf2fc0b10c7153f85f8
   - definition: {fileID: 11400000, guid: 78813262332a14b309f1e5bf59e95d9d, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch05.citywide_alert
@@ -219,19 +219,19 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch05.command_node
       deliveryKind: 0
       contentVersion: 4
-      contentHash: f2ff42c78787c4cc09861d4bdb64b6160acd47cc64f1f61903be7b4cc02aac5a
+      contentHash: f9525cb40e3be67f4643c4480b82a85dca1c9d407a33c2307918f859d1074ce8
   - definition: {fileID: 11400000, guid: 6e6fe19d7eeb54b78b553dcd140e0a3e, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch05.last_corridor
       deliveryKind: 0
       contentVersion: 4
-      contentHash: f2cb98c48c10370d47d65c0494dfd4051ef22f2738159ad62d2048c5adca536c
+      contentHash: e9b2c3383a770311fa27511a3ef719bd2916023de7839005ce11ddfbe62597cb
   - definition: {fileID: 11400000, guid: a39c7acde1803494d8620838d388cc8a, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch05.network_collapse
       deliveryKind: 0
       contentVersion: 4
-      contentHash: 0f5987b77d4dd100b09d0aec532112b0b9194ee22fb9ffea0838ff971aaea47a
+      contentHash: 245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8
   - definition: {fileID: 11400000, guid: e7d7d748fabed41ea8e690c35cf5fdc9, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch05.trust_under_fire

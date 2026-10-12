@@ -1,0 +1,241 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch02.m03.market_lifeline",
+    "activeMissionId": "saga.ch02.m03.market_lifeline",
+    "activeMapId": "opmap.ch02.old_market_01",
+    "run": "01",
+    "error": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 1184,
+    "roles": [
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch02.m03.convoy",
+            "position": {
+                "x": 683.5,
+                "y": 0.19062089920043946,
+                "z": 424.5
+            }
+        },
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch02.m03.convoy",
+            "position": {
+                "x": 687.5,
+                "y": 0.45000016689300539,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_b",
+            "position": {
+                "x": 717.5,
+                "y": 0.4296935498714447,
+                "z": 429.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_b",
+            "position": {
+                "x": 716.5,
+                "y": 0.4283140003681183,
+                "z": 431.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_b",
+            "position": {
+                "x": 715.5,
+                "y": 0.4432836174964905,
+                "z": 432.5
+            }
+        },
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch02.m03.convoy",
+            "position": {
+                "x": 682.5,
+                "y": 0.4500000476837158,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_a",
+            "position": {
+                "x": 701.5,
+                "y": 0.4281283915042877,
+                "z": 430.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_b",
+            "position": {
+                "x": 713.5,
+                "y": 0.42812827229499819,
+                "z": 430.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_a",
+            "position": {
+                "x": 699.5,
+                "y": 0.4296746850013733,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_a",
+            "position": {
+                "x": 698.5,
+                "y": 0.4296935498714447,
+                "z": 431.5
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch02.m03.squad_a",
+            "position": {
+                "x": 697.5,
+                "y": 0.4281283915042877,
+                "z": 429.5
+            }
+        },
+        {
+            "role": "role.market.corrupt_transfer",
+            "group": "group.ch02.m03.corrupt_convoy",
+            "position": {
+                "x": 739.6636962890625,
+                "y": -0.02527308464050293,
+                "z": 451.3086242675781
+            }
+        },
+        {
+            "role": "role.market.hostile",
+            "group": "group.ch02.m03.hostile_b",
+            "position": {
+                "x": 731.5,
+                "y": 5.3839874267578129,
+                "z": 479.5
+            }
+        },
+        {
+            "role": "role.market.hostile",
+            "group": "group.ch02.m03.hostile_b",
+            "position": {
+                "x": 733.5,
+                "y": 5.471047878265381,
+                "z": 482.5
+            }
+        },
+        {
+            "role": "role.market.hostile",
+            "group": "group.ch02.m03.hostile_b",
+            "position": {
+                "x": 730.5,
+                "y": 3.156656265258789,
+                "z": 483.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 720.1070556640625,
+                "y": 11.316760063171387,
+                "z": 445.8233337402344
+            },
+            "euler": {
+                "x": 24.3632869720459,
+                "y": 16.244550704956056,
+                "z": 2.3430905571331096e-7
+            },
+            "focus": {
+                "x": 727.0960083007813,
+                "y": -2.404108272457961e-7,
+                "z": 469.8166198730469
+            },
+            "fov": 34.046226501464847,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 669.97998046875,
+                "y": 64.3255386352539,
+                "z": 305.5228576660156
+            },
+            "euler": {
+                "x": 24.018840789794923,
+                "y": 16.38202667236328,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 709.9109497070313,
+                "y": 1.2348055839538575,
+                "z": 441.3539123535156
+            },
+            "fov": 34.00239562988281,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 664.1785888671875,
+                "y": 30.71839714050293,
+                "z": 358.7752990722656
+            },
+            "euler": {
+                "x": 24.018840789794923,
+                "y": 16.38202667236328,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 683.5,
+                "y": 0.19062089920043946,
+                "z": 424.5
+            },
+            "fov": 34.00239562988281,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 701.1285400390625,
+                "y": 123.26666259765625,
+                "z": 294.7607116699219
+            },
+            "euler": {
+                "x": 24.018840789794923,
+                "y": 16.38202667236328,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 747.5,
+                "y": 50.0,
+                "z": 452.5
+            },
+            "fov": 34.00239562988281,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ]
+}

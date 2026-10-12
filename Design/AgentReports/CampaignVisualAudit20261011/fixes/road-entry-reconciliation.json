@@ -1,0 +1,27 @@
+{
+  "previousSourceSha256": "2cf73f3a79e7cf6996d3e3c3ce75f2245833f21d5c3ca6fa9c5ff6c33eef5a18",
+  "sourceSha256": "bc250a60f2fb3050c691265273df13a7bea3fa2420fe4bef1a58debad75d2ace",
+  "sourceRows": 124305,
+  "renderRowsAdded": 0,
+  "renderRowsRemoved": 0,
+  "gradedMeshes": {
+    "DenseCity": 104,
+    "CH04M04GroundedSignal": 12,
+    "CH05M02TrustUnderFire": 216,
+    "CH05M05CommandNode": 39,
+    "CH05M03NetworkCollapse": 39,
+    "CH05M01CitywideAlert": 39,
+    "CH05M04LastCorridor": 39,
+    "CityEdgeAirfield": 121,
+    "RefineryDistrict": 114,
+    "CH04M05ArmorBreak": 279,
+    "AshLinePort": 220
+  },
+  "packedParity": "Passed",
+  "determinism": "Passed",
+  "packedContentHash": "746887b5f55cd8b642c61cecb5aa573aa40a0817caa254a7f2120823263b72de",
+  "sourceRowsRemoved": 0,
+  "sharedReferences": 977,
+  "uniqueRoadMeshPayloads": 245,
+  "originalMeshAssetsRetained": true
+}

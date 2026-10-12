@@ -1,0 +1,151 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m02.establish_base",
+    "activeMissionId": "saga.ch01.m02.establish_base",
+    "activeMapId": "opmap.ch01.forward_post_01",
+    "run": "02",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 297,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 918.5,
+                "y": 0.4271007776260376,
+                "z": 421.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 925.5,
+                "y": 0.4828355610370636,
+                "z": 422.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 926.5,
+                "y": 0.4271087944507599,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m02.command_squad",
+            "position": {
+                "x": 920.5,
+                "y": 0.42812827229499819,
+                "z": 431.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 1011.451904296875,
+                "y": 43.964900970458987,
+                "z": 272.9959411621094
+            },
+            "euler": {
+                "x": 39.994022369384769,
+                "y": 9.987899780273438,
+                "z": -2.7860622253683689e-7
+            },
+            "focus": {
+                "x": 1020.5550537109375,
+                "y": 0.0000010502189979888499,
+                "z": 324.6061706542969
+            },
+            "fov": 36.016944885253909,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 902.1544189453125,
+                "y": 100.06098937988281,
+                "z": 308.80242919921877
+            },
+            "euler": {
+                "x": 39.994022369384769,
+                "y": 9.987899780273438,
+                "z": -2.7860622253683689e-7
+            },
+            "focus": {
+                "x": 922.75,
+                "y": 0.441293329000473,
+                "z": 425.75
+            },
+            "fov": 36.016944885253909,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 908.534423828125,
+                "y": 48.63018035888672,
+                "z": 364.9124450683594
+            },
+            "euler": {
+                "x": 39.994022369384769,
+                "y": 9.987899780273438,
+                "z": -2.7860622253683689e-7
+            },
+            "focus": {
+                "x": 918.5,
+                "y": 0.4271007776260376,
+                "z": 421.5
+            },
+            "fov": 36.016944885253909,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 909.679443359375,
+                "y": 163.36959838867188,
+                "z": 197.8308868408203
+            },
+            "euler": {
+                "x": 39.994022369384769,
+                "y": 9.987899780273438,
+                "z": -2.7860622253683689e-7
+            },
+            "focus": {
+                "x": 940.0,
+                "y": 16.7104549407959,
+                "z": 370.0
+            },
+            "fov": 36.016944885253909,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "cameraSettled": true,
+    "warmupSeconds": 9.350454330444336,
+    "lightStates": [
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=BeautifyLighting enabled=True active=True intensity=1.15 shadows=Soft scene=Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity"
+    ],
+    "supplementalTargets": []
+}

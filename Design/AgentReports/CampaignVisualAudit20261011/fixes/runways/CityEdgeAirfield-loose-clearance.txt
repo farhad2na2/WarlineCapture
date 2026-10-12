@@ -1,0 +1,3 @@
+Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04 oldCenter=(624.70, 0.59, 541.91) newCenter=(624.70, 0.59, 539.02)
+Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03 oldCenter=(910.49, 0.49, 550.24) newCenter=(910.49, 0.49, 539.34)
+SharedLandscapeDressing20261004/Landscape_SM_Generic_Grass_Patch_02 oldCenter=(522.51, 0.64, 542.32) newCenter=(522.51, 0.64, 539.45)

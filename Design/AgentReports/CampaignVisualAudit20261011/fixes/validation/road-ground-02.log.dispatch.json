@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "double runAfter=UnityEditor.EditorApplication.timeSinceStartup+10; UnityEditor.EditorApplication.CallbackFunction callback=null; callback=() => { if(UnityEditor.EditorApplication.timeSinceStartup<runAfter)return; UnityEditor.EditorApplication.update -= callback; Game.Editor.ExistingEditorValidation.Run(\"Game.Editor.MapVariants.OtherMapSurfacePolish.ClearCampaignRoadSandIntrusions\",\"/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Design/AgentReports/CampaignVisualAudit20261011/fixes/validation/road-ground-02.log\"); }; UnityEditor.EditorApplication.update += callback; return \"scheduled\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7803,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

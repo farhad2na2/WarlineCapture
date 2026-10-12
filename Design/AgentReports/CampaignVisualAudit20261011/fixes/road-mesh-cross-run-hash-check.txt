@@ -1,0 +1,5 @@
+result=Failed
+check=Compared protection hash from separate road grading and mesh reuse scene loads
+firstMismatch=CityEdgeAirfield
+reason=This is not a valid persistent checksum: RefinementProtection keys components with GetEntityId and serializes Editor object references. Protection hashes establish unchanged data within each load, not stable identity across loads.
+acceptedEvidence=Each helper snapshots then validates the same loaded scene before and after save; source SHA and render-row reconciliation establish persisted source identity.

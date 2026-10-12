@@ -1,0 +1,17 @@
+{
+    "missionId": "saga.ch04.m04.grounded_signal",
+    "kind": "source-runway-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/CH04M04GroundedSignal/PreparedEntities.unity",
+    "sourceHashBefore": "adf48de82e3b74196f07fb8117135b97f4f3237cceee7090835ac6546c423db2",
+    "sourceHashAfter": "adf48de82e3b74196f07fb8117135b97f4f3237cceee7090835ac6546c423db2",
+    "graphics": "Metal",
+    "files": [
+        "CH04M04GroundedSignal-source-runway-detail.png",
+        "CH04M04GroundedSignal-source-runway-overview.png",
+        "CH04M04GroundedSignal-source-runway-runway-01-end-a.png",
+        "CH04M04GroundedSignal-source-runway-runway-01-end-b.png",
+        "CH04M04GroundedSignal-source-runway-runway-02-end-a.png",
+        "CH04M04GroundedSignal-source-runway-runway-02-end-b.png"
+    ],
+    "scope": "Authored runway-end inspection; no runtime actors/HUD; overview suppresses fog/post processing, detail uses authored lighting"
+}

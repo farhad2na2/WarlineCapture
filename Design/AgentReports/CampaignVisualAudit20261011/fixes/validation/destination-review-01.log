@@ -1,0 +1,532 @@
+[ExistingEditorValidation] project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit/Assets executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildCampaignDestinationReview
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CityEdgeAirfield restored=2
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=RefineryDistrict restored=4
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=AshLinePort restored=8
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH04M04GroundedSignal restored=2
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH04M05ArmorBreak restored=2
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH05M01CitywideAlert restored=26
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH05M02TrustUnderFire restored=4
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH05M03NetworkCollapse restored=26
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH05M04LastCorridor restored=26
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=CH05M05CommandNode restored=26
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] map=DenseCity restored=78
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:28)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignCurbRollback] result=Passed restored=204
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:RestoreRejectedCurbPass () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:31)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'CampaignRunway20261011_DenseCity_0' does not match filename 'DenseCity_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:33)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Campaign_RunwaySurface' does not match filename 'DenseCity_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetDatabase:Refresh ()
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:30)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:97)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_593062156'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:97)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (5) loweredVertices=56 vertices=1530
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:97)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'SM_Env_SandDunes_02' does not match filename 'DenseCity_403399609'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:62)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:97)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayGround] map=DenseCity dune=AuthoredOperationMapEntityPresentation/RenderOnly/Terrain/__SourceTransform__Map/__SourceTransform__Ground/SM_Env_SandDunes_02 (14) loweredVertices=753 vertices=2358
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:GradeRunwayDunes (string,UnityEngine.MeshRenderer[],UnityEngine.MeshRenderer[]) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunwayGround.cs:63)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:97)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'CampaignRunway20261011_CityEdgeAirfield_0' does not match filename 'CityEdgeAirfield_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:33)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Campaign_RunwaySurface' does not match filename 'CityEdgeAirfield_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'CampaignRunway20261011_CityEdgeAirfield_1' does not match filename 'CityEdgeAirfield_1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:33)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Campaign_RunwaySurface' does not match filename 'CityEdgeAirfield_1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'CampaignRunway20261011_CH04M04GroundedSignal_0' does not match filename 'CH04M04GroundedSignal_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:33)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Campaign_RunwaySurface' does not match filename 'CH04M04GroundedSignal_0'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'CampaignRunway20261011_CH04M04GroundedSignal_1' does not match filename 'CH04M04GroundedSignal_1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:SaveVisualMesh (string,UnityEngine.Mesh) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.RoadDetails.cs:33)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:76)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+Main Object Name 'Campaign_RunwaySurface' does not match filename 'CH04M04GroundedSignal_1'
+UnityEditor.AssetDatabase:SaveAssetIfDirty (UnityEngine.Object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:DetailedRunway (UnityEngine.MeshRenderer,bool,bool,string) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:77)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:92)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[CampaignRunwayEnds] result=Passed modules=5 outerEnds=6 internalJoins=2
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignRunwayEnds () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignRunways.cs:103)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CityEdgeAirfield pads=2 materials=3 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CityEdgeAirfield groups=2 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=RefineryDistrict pads=7 materials=4 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=RefineryDistrict groups=7 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=AshLinePort pads=3 materials=4 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=AshLinePort groups=3 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH04M04GroundedSignal pads=2 materials=3 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH04M04GroundedSignal groups=2 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH04M05ArmorBreak pads=1 materials=3 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH04M05ArmorBreak groups=1 unresolved=1
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH05M01CitywideAlert pads=2 materials=1 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH05M01CitywideAlert groups=2 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH05M02TrustUnderFire pads=3 materials=3 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH05M02TrustUnderFire groups=3 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH05M03NetworkCollapse pads=4 materials=1 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH05M03NetworkCollapse groups=4 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH05M04LastCorridor pads=3 materials=1 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH05M04LastCorridor groups=3 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=CH05M05CommandNode pads=4 materials=1 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=CH05M05CommandNode groups=4 unresolved=0
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationPads] map=DenseCity pads=3 materials=9 topology=unchanged
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildDestinationPads (string,UnityEngine.MeshRenderer[],Game.Configs.OperationMapDefinition,System.Collections.Generic.List`1<System.ValueTuple`2<UnityEngine.Bounds, string>>) (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinationPads.cs:61)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:121)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] map=DenseCity groups=3 unresolved=11
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:124)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationDressing] result=Passed groups=34 requiresPerSiteVisualReview=true
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationDressing () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignDestinations.cs:126)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignFixDetails] result=Passed maps=3
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:CaptureCampaignFixDetails () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCivic.cs:129)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignRenderReconciliation] result=Passed rows=124236 marketStockRows=52
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignRenderReconciliation20261011:Inspect () (at Assets/Game/Scripts/Editor/CampaignRenderReconciliation20261011.cs:35)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:38)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignDestinationReview] result=Passed
+UnityEngine.Debug:Log (object)
+Game.Editor.MapVariants.OtherMapSurfacePolish:BuildCampaignDestinationReview () (at Assets/Game/Scripts/Editor/MapPrototypes/Variants/OtherMapSurfacePolish.CampaignCurbRollback.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.MapVariants.OtherMapSurfacePolish.BuildCampaignDestinationReview
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_864ba36b/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

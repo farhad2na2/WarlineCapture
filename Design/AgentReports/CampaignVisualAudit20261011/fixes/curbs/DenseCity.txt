@@ -1,0 +1,8 @@
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (32) end=(559.74, 6.10, 338.08) roadHeight=5.876877
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (108) end=(1081.74, 0.36, 641.06) roadHeight=0.1555225
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (108) end=(1042.54, -0.07, 488.34) roadHeight=-0.2662343
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1034.74, -0.04, 492.64) roadHeight=-0.2601807
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1034.74, -0.04, 487.58) roadHeight=-0.2662343
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1073.94, 0.38, 636.76) roadHeight=0.161576
+AuthoredOperationMapEntityPresentation/RenderOnly/RoadsAndBridges/__SourceTransform__Map/__SourceTransform__Roads/SM_Env_Sidewalk_Straight_02 (110) end=(1073.94, 0.38, 641.82) roadHeight=0.1555225
+Lowered sidewalk ends=7. XZ footprints, colliders, logical owners and road geometry unchanged.

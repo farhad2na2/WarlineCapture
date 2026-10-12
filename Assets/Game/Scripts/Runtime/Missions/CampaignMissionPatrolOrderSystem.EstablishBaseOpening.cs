@@ -73,9 +73,11 @@ namespace Game.Runtime
             {
                 Requested = 1,
                 Smooth = 1,
-                UseTacticalRevealZoom = returnToRts ? (byte)4 : (byte)3,
+                UseTacticalRevealZoom = returnToRts ? (byte)0 : (byte)3,
+                UseExplicitPerspective = returnToRts ? (byte)1 : (byte)0,
+                Perspective = opening.CommandCameraPerspective.w>0 ? opening.CommandCameraPerspective : new Unity.Mathematics.float4(opening.HostileFocus.y + 62f, 62f, 0f, 55f),
                 SmoothTimeSeconds = EstablishBaseOpeningSmoothTimeSeconds,
-                World = returnToRts ? opening.HostileFocus : opening.EstablishingFocus
+                World = returnToRts ? (opening.CommandCameraPerspective.w>0 ? opening.CommandCameraFocus : opening.HostileFocus) : opening.EstablishingFocus
             };
         }
 

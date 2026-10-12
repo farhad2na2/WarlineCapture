@@ -1,0 +1,339 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch03.m02.safehouse_sweep",
+    "activeMissionId": "saga.ch03.m02.safehouse_sweep",
+    "activeMapId": "opmap.ch03.safehouse_sweep_01",
+    "run": "visual-fix-04",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 632,
+    "roles": [
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_b",
+            "position": {
+                "x": 715.5,
+                "y": 0.4281283915042877,
+                "z": 428.5
+            },
+            "openingViewport": {
+                "x": 0.4927370548248291,
+                "y": 0.539180338382721,
+                "z": 56.67827224731445
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_a",
+            "position": {
+                "x": 699.5,
+                "y": 0.6812177300453186,
+                "z": 432.5
+            },
+            "openingViewport": {
+                "x": 0.3278748691082001,
+                "y": 0.6037947535514832,
+                "z": 58.45293426513672
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_b",
+            "position": {
+                "x": 714.5,
+                "y": 0.4491669237613678,
+                "z": 432.5
+            },
+            "openingViewport": {
+                "x": 0.4826872944831848,
+                "y": 0.6013961434364319,
+                "z": 58.65648651123047
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_b",
+            "position": {
+                "x": 716.5,
+                "y": 0.4271007776260376,
+                "z": 431.5
+            },
+            "openingViewport": {
+                "x": 0.5032790899276733,
+                "y": 0.5860713720321655,
+                "z": 58.176780700683597
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_b",
+            "position": {
+                "x": 713.5,
+                "y": 0.4271087944507599,
+                "z": 430.5
+            },
+            "openingViewport": {
+                "x": 0.4719444513320923,
+                "y": 0.5706949830055237,
+                "z": 57.677127838134769
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_a",
+            "position": {
+                "x": 701.5,
+                "y": 0.42710891366004946,
+                "z": 430.5
+            },
+            "openingViewport": {
+                "x": 0.34647220373153689,
+                "y": 0.5706334114074707,
+                "z": 57.67514419555664
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_a",
+            "position": {
+                "x": 700.5,
+                "y": 0.4281283915042877,
+                "z": 428.5
+            },
+            "openingViewport": {
+                "x": 0.33313214778900149,
+                "y": 0.539100706577301,
+                "z": 56.6757926940918
+            }
+        },
+        {
+            "role": "role.market.rifle",
+            "group": "group.ch03.m02.squad_a",
+            "position": {
+                "x": 697.5,
+                "y": 0.42710089683532717,
+                "z": 429.5
+            },
+            "openingViewport": {
+                "x": 0.3029443621635437,
+                "y": 0.5549814701080322,
+                "z": 57.17533874511719
+            }
+        },
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch03.m02.convoy",
+            "position": {
+                "x": 686.5,
+                "y": 0.24749290943145753,
+                "z": 424.5
+            },
+            "openingViewport": {
+                "x": 0.17357057332992555,
+                "y": 0.4708055555820465,
+                "z": 54.83338928222656
+            }
+        },
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch03.m02.convoy",
+            "position": {
+                "x": 684.5,
+                "y": 0.45000016689300539,
+                "z": 429.5
+            },
+            "openingViewport": {
+                "x": 0.16570018231868745,
+                "y": 0.5551468133926392,
+                "z": 57.15334701538086
+            }
+        },
+        {
+            "role": "role.market.relief_convoy",
+            "group": "group.ch03.m02.convoy",
+            "position": {
+                "x": 682.5,
+                "y": 0.17166352272033692,
+                "z": 424.5
+            },
+            "openingViewport": {
+                "x": 0.13001802563667298,
+                "y": 0.47007858753204348,
+                "z": 54.898433685302737
+            }
+        },
+        {
+            "role": "role.market.corrupt_transfer",
+            "group": "group.ch03.m02.corrupt_convoy",
+            "position": {
+                "x": 742.4427490234375,
+                "y": 1.5710877180099488,
+                "z": 440.79949951171877
+            },
+            "openingViewport": {
+                "x": 0.7560762763023377,
+                "y": 0.7307325005531311,
+                "z": 61.83165740966797
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 716.1726684570313,
+                "y": 48.506736755371097,
+                "z": 398.413818359375
+            },
+            "euler": {
+                "x": 60.05605697631836,
+                "y": 0.01897386461496353,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 716.178955078125,
+                "y": 0.0000015936873296595878,
+                "z": 426.35894775390627
+            },
+            "fov": 50.00690460205078,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 704.5529174804688,
+                "y": 134.82098388671876,
+                "z": 352.90631103515627
+            },
+            "euler": {
+                "x": 60.05605697631836,
+                "y": 0.01897386461496353,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 704.5785522460938,
+                "y": 0.5112754702568054,
+                "z": 430.2749328613281
+            },
+            "fov": 50.00690460205078,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 715.4876098632813,
+                "y": 65.41669464111328,
+                "z": 391.0635681152344
+            },
+            "euler": {
+                "x": 60.05605697631836,
+                "y": 0.01897386461496353,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 715.5,
+                "y": 0.4281283915042877,
+                "z": 428.5
+            },
+            "fov": 50.00690460205078,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 747.4702758789063,
+                "y": 205.97256469726563,
+                "z": 362.652587890625
+            },
+            "euler": {
+                "x": 60.05605697631836,
+                "y": 0.01897386461496353,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 747.5,
+                "y": 50.0,
+                "z": 452.5
+            },
+            "fov": 50.00690460205078,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [
+        "faction=2 building=tent_regular count=1",
+        "faction=2 building=building_barrack count=1",
+        "faction=2 building=building_oilpump count=1",
+        "faction=2 building=building_fuel_bladder count=1",
+        "faction=2 building=building_ammunition_depot count=1",
+        "faction=2 building=tent_expert count=0",
+        "faction=2 building=tent_contractor count=0",
+        "faction=2 building=building_helipad count=0",
+        "faction=2 building=building_airport count=0",
+        "faction=2 building=building_satelite_dish count=0",
+        "faction=2 building=building_guardtower count=0",
+        "faction=2 building=building_guardtower_big count=0",
+        "faction=2 building=tent_refugee count=0",
+        "faction=2 building=portaloo count=0",
+        "faction=2 building=building_road_barrier count=0",
+        "faction=2 building=wall_dirt_straight count=0",
+        "faction=2 building=building_house count=0",
+        "faction=2 building=building_refinery count=0",
+        "faction=2 building=building_refinery_big count=0",
+        "faction=2 building=wall_fence_straight count=0",
+        "faction=2 building=gasstation count=0",
+        "faction=2 building=polygonmilitary_mat_03_a_combined count=0",
+        "faction=2 building=building_hall count=0",
+        "faction=2 building=building_shop count=0",
+        "faction=2 building=sm_bld_village_hatch_01 count=0",
+        "faction=2 building=sm_bld_village_house_stairs_01 count=0",
+        "faction=2 building=sm_bld_village_village_house_tower_01 count=0",
+        "faction=2 building=building_watertank count=0",
+        "faction=2 building=m05_breach_road_barrier count=0",
+        "faction=2 building=ch02m01_road_obstruction count=0",
+        "faction=2 building=supplyline_building_oilpump count=0",
+        "faction=2 building=supplyline_building_refinery count=0",
+        "faction=2 building=supplyline_reserve_depot count=0",
+        "faction=2 building=building_steelpush_reservedepot count=0",
+        "faction=2 building=building_splitfront_supportdepot count=0",
+        "faction=2 building=routereopened_recordsoffice count=0",
+        "faction=2 building=building_armorbreak_reservedepot count=0",
+        "faction=2 building=building_citywide_reservedepot count=0",
+        "faction=2 building=building_citywide_clinic count=0",
+        "faction=2 building=building_citywide_utility count=0",
+        "faction=2 building=building_trust_shelter count=0",
+        "faction=2 building=building_trust_broadcast count=0",
+        "faction=2 building=building_trust_reservedepot count=0",
+        "faction=2 building=building_network_civic count=0",
+        "faction=2 building=building_network_audit count=0",
+        "faction=2 building=building_network_reservedepot count=0",
+        "faction=2 building=building_corridor_civic count=0",
+        "faction=2 building=building_corridor_receivingdepot count=0",
+        "faction=2 building=building_corridor_reservedepot count=0",
+        "faction=2 building=building_command_clinic count=0",
+        "faction=2 building=building_command_utility count=0",
+        "faction=2 building=building_command_audit count=0",
+        "faction=2 building=building_command_reservedepot count=0"
+    ],
+    "spawnRequests": [],
+    "cameraSettled": true,
+    "warmupSeconds": 16.580402374267579,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=BeautifyLighting enabled=True active=True intensity=1.15 shadows=Soft scene=Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity"
+    ],
+    "supplementalTargets": []
+}

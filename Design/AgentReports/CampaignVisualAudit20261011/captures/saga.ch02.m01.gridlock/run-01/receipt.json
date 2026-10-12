@@ -1,0 +1,268 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch02.m01.gridlock",
+    "activeMissionId": "saga.ch02.m01.gridlock",
+    "activeMapId": "opmap.ch02.hospital_corridor_01",
+    "run": "01",
+    "error": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 801,
+    "roles": [
+        {
+            "role": "role.gridlock.relief",
+            "group": "group.ch02.m01.depot",
+            "position": {
+                "x": 679.5,
+                "y": 0.4500000476837158,
+                "z": 427.5
+            }
+        },
+        {
+            "role": "role.gridlock.worker",
+            "group": "group.ch02.m01.workers",
+            "position": {
+                "x": 687.5,
+                "y": -0.17370612919330598,
+                "z": 436.5
+            }
+        },
+        {
+            "role": "role.gridlock.worker",
+            "group": "group.ch02.m01.workers",
+            "position": {
+                "x": 684.5,
+                "y": -0.004469197243452072,
+                "z": 435.5
+            }
+        },
+        {
+            "role": "role.gridlock.fadi",
+            "group": "group.ch02.m01.fadi",
+            "position": {
+                "x": 680.5,
+                "y": -0.11771880835294724,
+                "z": 437.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_b",
+            "position": {
+                "x": 764.5,
+                "y": -0.24459998309612275,
+                "z": 436.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_b",
+            "position": {
+                "x": 767.5,
+                "y": -0.17263399064540864,
+                "z": 437.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_a",
+            "position": {
+                "x": 686.5,
+                "y": 0.5123780369758606,
+                "z": 425.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_b",
+            "position": {
+                "x": 700.5,
+                "y": 0.4296746850013733,
+                "z": 430.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_b",
+            "position": {
+                "x": 697.5,
+                "y": 0.42831411957740786,
+                "z": 429.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_b",
+            "position": {
+                "x": 695.5,
+                "y": 0.42969343066215517,
+                "z": 432.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_a",
+            "position": {
+                "x": 690.5,
+                "y": 0.4419580399990082,
+                "z": 425.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_a",
+            "position": {
+                "x": 689.5,
+                "y": 0.42831411957740786,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_a",
+            "position": {
+                "x": 687.5,
+                "y": 0.4296746850013733,
+                "z": 428.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_b",
+            "position": {
+                "x": 764.5,
+                "y": 0.05027925968170166,
+                "z": 440.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch02.m01.squad_b",
+            "position": {
+                "x": 700.5,
+                "y": 1.0302760601043702,
+                "z": 433.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_a",
+            "position": {
+                "x": 716.5,
+                "y": 0.6310481429100037,
+                "z": 438.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_a",
+            "position": {
+                "x": 718.5,
+                "y": -0.10032898187637329,
+                "z": 436.5
+            }
+        },
+        {
+            "role": "role.hostile.screen",
+            "group": "group.ch02.m01.screen_a",
+            "position": {
+                "x": 719.5,
+                "y": 0.4580197334289551,
+                "z": 440.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 691.2677612304688,
+                "y": 42.03419876098633,
+                "z": 388.35198974609377
+            },
+            "euler": {
+                "x": 39.44928741455078,
+                "y": 9.432748794555664,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 699.6442260742188,
+                "y": -0.0000010596813808660955,
+                "z": 438.74310302734377
+            },
+            "fov": 36.1527214050293,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 698.3117065429688,
+                "y": 98.9876708984375,
+                "z": 319.046875
+            },
+            "euler": {
+                "x": 39.65249252319336,
+                "y": 9.642011642456055,
+                "z": 5.54449627543363e-7
+            },
+            "focus": {
+                "x": 718.2999877929688,
+                "y": 0.0775890126824379,
+                "z": 436.70001220703127
+            },
+            "fov": 36.09638214111328,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 669.8282470703125,
+                "y": 48.309715270996097,
+                "z": 370.571044921875
+            },
+            "euler": {
+                "x": 39.65249252319336,
+                "y": 9.642011642456055,
+                "z": 5.54449627543363e-7
+            },
+            "focus": {
+                "x": 679.5,
+                "y": 0.4500000476837158,
+                "z": 427.5
+            },
+            "fov": 36.09638214111328,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 724.2877807617188,
+                "y": 164.86331176757813,
+                "z": 313.37054443359377
+            },
+            "euler": {
+                "x": 39.65249252319336,
+                "y": 9.642011642456055,
+                "z": 5.54449627543363e-7
+            },
+            "focus": {
+                "x": 747.5,
+                "y": 50.0,
+                "z": 450.0
+            },
+            "fov": 36.09638214111328,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ]
+}

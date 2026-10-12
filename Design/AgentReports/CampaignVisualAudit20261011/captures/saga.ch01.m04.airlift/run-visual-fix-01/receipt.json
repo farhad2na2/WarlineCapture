@@ -1,0 +1,574 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch01.m04.airlift",
+    "activeMissionId": "saga.ch01.m04.airlift",
+    "activeMapId": "opmap.ch01.airlift_airfield_review",
+    "run": "visual-fix-01",
+    "error": "",
+    "missionOutcome": "None",
+    "missionPhase": "Engage",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "frames": 4912,
+    "roles": [
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 832.5,
+                "y": -0.022899260744452478,
+                "z": 610.5
+            },
+            "openingViewport": {
+                "x": 0.30485591292381289,
+                "y": 0.5388727188110352,
+                "z": 56.6658935546875
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 834.5,
+                "y": -0.021871764212846757,
+                "z": 607.5
+            },
+            "openingViewport": {
+                "x": 0.3214028477668762,
+                "y": 0.4894563555717468,
+                "z": 55.167274475097659
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 837.5,
+                "y": -0.022891245782375337,
+                "z": 608.5
+            },
+            "openingViewport": {
+                "x": 0.35548514127731326,
+                "y": 0.5062178373336792,
+                "z": 55.66740417480469
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 844.5,
+                "y": -0.022891245782375337,
+                "z": 612.5
+            },
+            "openingViewport": {
+                "x": 0.43364760279655459,
+                "y": 0.5703967809677124,
+                "z": 57.66437530517578
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 846.5,
+                "y": -0.021871764212846757,
+                "z": 612.5
+            },
+            "openingViewport": {
+                "x": 0.454548716545105,
+                "y": 0.5704073905944824,
+                "z": 57.663490295410159
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 848.5,
+                "y": -0.022899260744452478,
+                "z": 609.5
+            },
+            "openingViewport": {
+                "x": 0.47479715943336489,
+                "y": 0.5226898789405823,
+                "z": 56.166648864746097
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_b",
+            "position": {
+                "x": 837.5,
+                "y": -0.021871764212846757,
+                "z": 612.5
+            },
+            "openingViewport": {
+                "x": 0.360487699508667,
+                "y": 0.5704073905944824,
+                "z": 57.663490295410159
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch01.m04.squad_a",
+            "position": {
+                "x": 843.5,
+                "y": -0.021871764212846757,
+                "z": 609.5
+            },
+            "openingViewport": {
+                "x": 0.42114710807800295,
+                "y": 0.5227000117301941,
+                "z": 56.16576385498047
+            }
+        },
+        {
+            "role": "role.friendly.rescue_apc",
+            "group": "group.ch01.m04.carrier",
+            "position": {
+                "x": 850.5,
+                "y": 0.0,
+                "z": 613.5
+            },
+            "openingViewport": {
+                "x": 0.4963836967945099,
+                "y": 0.5859926342964172,
+                "z": 58.14378356933594
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 913.5,
+                "y": 0.0007175710052251816,
+                "z": 655.5
+            },
+            "openingViewport": {
+                "x": 0.9772624969482422,
+                "y": 1.0560450553894044,
+                "z": 79.11135864257813
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 910.5,
+                "y": 0.0027406085282564165,
+                "z": 652.5
+            },
+            "openingViewport": {
+                "x": 0.9631883502006531,
+                "y": 1.030919075012207,
+                "z": 77.61187744140625
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 908.5,
+                "y": 0.003101503476500511,
+                "z": 657.5
+            },
+            "openingViewport": {
+                "x": 0.9337112903594971,
+                "y": 1.0723215341567994,
+                "z": 80.10778045654297
+            }
+        },
+        {
+            "role": "role.friendly.specialist",
+            "group": "group.ch01.m04.specialists",
+            "position": {
+                "x": 908.5,
+                "y": 0.0005311537533998489,
+                "z": 653.5
+            },
+            "openingViewport": {
+                "x": 0.9447868466377258,
+                "y": 1.0393825769424439,
+                "z": 78.113037109375
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 939.5,
+                "y": -0.0181871484965086,
+                "z": 483.5
+            },
+            "openingViewport": {
+                "x": -7.424317836761475,
+                "y": 17.65962791442871,
+                "z": -6.742023468017578
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 937.5,
+                "y": -0.0181871484965086,
+                "z": 479.5
+            },
+            "openingViewport": {
+                "x": -5.475589752197266,
+                "y": 14.163352012634278,
+                "z": -8.738994598388672
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 939.5,
+                "y": -0.024684594944119455,
+                "z": 477.5
+            },
+            "openingViewport": {
+                "x": -4.989803791046143,
+                "y": 12.960531234741211,
+                "z": -9.731849670410157
+            }
+        },
+        {
+            "role": "role.hostile.pursuit",
+            "group": "group.ch01.m04.hostiles",
+            "position": {
+                "x": 943.5,
+                "y": -0.02324947714805603,
+                "z": 478.5
+            },
+            "openingViewport": {
+                "x": -5.546930313110352,
+                "y": 13.531912803649903,
+                "z": -9.23385238647461
+            }
+        },
+        {
+            "role": "role.friendly.airlift",
+            "group": "group.ch01.m04.aircraft",
+            "position": {
+                "x": 763.5,
+                "y": 0.04999999701976776,
+                "z": 652.5
+            },
+            "openingViewport": {
+                "x": -0.1786191612482071,
+                "y": 1.0315251350402833,
+                "z": 77.5709228515625
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 850.8489379882813,
+                "y": 48.04951858520508,
+                "z": 580.4285278320313
+            },
+            "euler": {
+                "x": 60.05008316040039,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 850.8478393554688,
+                "y": -0.0000012854325177613646,
+                "z": 608.1162109375
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 940.0,
+                "y": 134.28054809570313,
+                "z": 402.36737060546877
+            },
+            "euler": {
+                "x": 60.05008316040039,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 940.0,
+                "y": -0.021077092736959459,
+                "z": 479.75
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 939.5,
+                "y": 64.96646881103516,
+                "z": 446.0567932128906
+            },
+            "euler": {
+                "x": 60.05008316040039,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 939.5,
+                "y": -0.0181871484965086,
+                "z": 483.5
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 825.0,
+                "y": 1027.94677734375,
+                "z": 264.28106689453127
+            },
+            "euler": {
+                "x": 60.05008316040039,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 825.0,
+                "y": 480.0,
+                "z": 580.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-01-end-a",
+            "file": "runway-01-end-a.png",
+            "position": {
+                "x": 490.6571044921875,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 490.6571044921875,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-01-end-b",
+            "file": "runway-01-end-b.png",
+            "position": {
+                "x": 700.0,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 700.0,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-02-end-a",
+            "file": "runway-02-end-a.png",
+            "position": {
+                "x": 699.9999389648438,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 699.9999389648438,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "runway-02-end-b",
+            "file": "runway-02-end-b.png",
+            "position": {
+                "x": 909.3428344726563,
+                "y": 94.55147552490235,
+                "z": 494.0386962890625
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 909.3428344726563,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-specialists",
+            "file": "story-specialists.png",
+            "position": {
+                "x": 910.0,
+                "y": 81.9452133178711,
+                "z": 597.642333984375
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 910.0,
+                "y": 0.029999999329447748,
+                "z": 655.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "story-landing",
+            "file": "story-landing.png",
+            "position": {
+                "x": 760.0,
+                "y": 81.96521759033203,
+                "z": 590.642333984375
+            },
+            "euler": {
+                "x": 55.00000762939453,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 760.0,
+                "y": 0.04999999701976776,
+                "z": 648.0
+            },
+            "fov": 50.035621643066409,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ],
+    "buildingStates": [],
+    "spawnRequests": [],
+    "cameraSettled": true,
+    "warmupSeconds": 8.00290584564209,
+    "lightStates": [
+        "name=Directional Light (1) enabled=False active=True intensity=0.12 shadows=None scene=Assets/Game/Scenes/Match.unity",
+        "name=Directional Light enabled=False active=True intensity=1.25 shadows=Soft scene=Assets/Game/Scenes/Match.unity",
+        "name=Sun enabled=True active=True intensity=1.2 shadows=Soft scene=Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity"
+    ],
+    "supplementalTargets": [
+        {
+            "name": "runway-01-end-a",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "d1646343db769da361a16d834b746f156c9566026afdfabfadb4a6c92d71c4b4",
+            "focus": {
+                "x": 490.6571044921875,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-01-end-b",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "d1646343db769da361a16d834b746f156c9566026afdfabfadb4a6c92d71c4b4",
+            "focus": {
+                "x": 700.0,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-02-end-a",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "d1646343db769da361a16d834b746f156c9566026afdfabfadb4a6c92d71c4b4",
+            "focus": {
+                "x": 699.9999389648438,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "runway-02-end-b",
+            "source": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+            "objectPath": "Map_CityEdgeAirfield/Industrial/SM_Env_Runway_01",
+            "sourceHash": "d1646343db769da361a16d834b746f156c9566026afdfabfadb4a6c92d71c4b4",
+            "focus": {
+                "x": 909.3428344726563,
+                "y": 0.34898436069488528,
+                "z": 560.0
+            },
+            "distance": 115.0
+        },
+        {
+            "name": "story-specialists",
+            "source": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset",
+            "objectPath": "anchor.ch01.m04.specialists",
+            "sourceHash": "",
+            "focus": {
+                "x": 910.0,
+                "y": 0.029999999329447748,
+                "z": 655.0
+            },
+            "distance": 100.0
+        },
+        {
+            "name": "story-landing",
+            "source": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset",
+            "objectPath": "anchor.ch01.m04.landing",
+            "sourceHash": "",
+            "focus": {
+                "x": 760.0,
+                "y": 0.04999999701976776,
+                "z": 648.0
+            },
+            "distance": 100.0
+        }
+    ]
+}

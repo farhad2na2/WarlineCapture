@@ -1,0 +1,482 @@
+{
+  "captureComplete": 25,
+  "total": 25,
+  "missions": [
+    {
+      "index": 0,
+      "missionId": "saga.ch01.m01.first_contact",
+      "title": "First Contact",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "FindSquad",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch01.m01.first_contact/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: all four squad members centered clearly above command tray after introduction settles; street/sidewalk context readable. Camera margin correction resolves prior low framing. FindSquad, Outcome=None.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 1,
+      "missionId": "saga.ch01.m02.establish_base",
+      "title": "Establish Base",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch01.m02.establish_base/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected on final sources: actual legal construction area in view, Build cue visible; runway outer threshold and shoulder finished. Existing full-lot viewport validation passed. This intentionally prioritizes the build action over the remote squad.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 2,
+      "missionId": "saga.ch01.m03.radar_warning",
+      "title": "Radar Warning",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch01.m03.radar_warning/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: defender squads and road checkpoint visible above command tray; junction/median edges clean. Supplemental civic views show shared settlement context; they are not the primary First Contact hall frontage. Existing objective banner truncates long text; this map-art pass does not redesign that banner.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 3,
+      "missionId": "saga.ch01.m04.airlift",
+      "title": "Airlift",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch01.m04.airlift/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: rescue squad and APC clear of command tray and objective panels; apron, curb and roadway cleanly separated with no raised sand intrusion in opening crop.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 4,
+      "missionId": "saga.ch01.m05.breach_assault",
+      "title": "Breach Assault",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch01.m05.breach_assault/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD and archive interaction view inspected. Assault infantry and required APC visible above controls; compound entrance, archive and radio remain identifiable. Road intersection and curb returns are clean; no sand protrusion crosses the visible lane.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 5,
+      "missionId": "saga.ch02.m01.gridlock",
+      "title": "Gridlock",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch02.m01.gridlock/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, hospital and site A views inspected. Starting troops and APC visible; authored roadblocks and wrecks retained for mission identity. Road/curb surfaces remain continuous around the deliberate barriers; hospital approach readable.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 6,
+      "missionId": "saga.ch02.m02.supply_line",
+      "title": "Supply Line",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch02.m02.supply_line/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: rifle squad and oil pump visible above controls; roadside curb and refinery apron clear. Oil pump, refinery and reserve depot all placed at required preferred cells with status=1/result=0.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 7,
+      "missionId": "saga.ch02.m03.market_lifeline",
+      "title": "Market Lifeline",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch02.m03.market_lifeline/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD and objective detail inspected after final road-entry rebuild. Rifles visible above controls; asphalt lanes and sidewalk remain continuous where prior raised dirt meshes protruded. Authored wrecks retained. Off-road sand relief remains beyond the curb.",
+        "scope": "native opening and objective visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 8,
+      "missionId": "saga.ch02.m04.power_relay",
+      "title": "Power Relay",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch02.m04.power_relay/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: family convoy is centered and unobscured. Code trace confirms guidance step 1 selects Kind=2 families for the safe-route waypoint; tutorial focus deliberately centers that actor. Earlier rifle/engineer framing concern was an incorrect assumption, superseded by this review.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 9,
+      "missionId": "saga.ch02.m05.route_reopened",
+      "title": "Route Reopened",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch02.m05.route_reopened/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: rifle/engineer groups visible above the command tray with port and bridge context; bridge joins and roadway clear of raised sand. Opening uses a wider tactical view for the separated groups; close control remains a normal-input acceptance check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 10,
+      "missionId": "saga.ch03.m01.signal_trace",
+      "title": "Signal Trace",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch03.m01.signal_trace/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups above controls; shared DenseCity road and curb free of prior sand protrusions. Moving vehicle interaction is outside this opening visual check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 11,
+      "missionId": "saga.ch03.m02.safehouse_sweep",
+      "title": "Safehouse Sweep",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch03.m02.safehouse_sweep/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups above controls; shared DenseCity road and curb free of prior sand protrusions. Moving vehicle interaction is outside this opening visual check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 12,
+      "missionId": "saga.ch03.m03.false_front",
+      "title": "False Front",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch03.m03.false_front/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: both rifle groups clear of controls and shared street/curbs free of prior raised sand; preserved wrecks and civilian vehicles retain authored mission setting.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 13,
+      "missionId": "saga.ch03.m04.evidence_chain",
+      "title": "Evidence Chain",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch03.m04.evidence_chain/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: escort and protected people above controls, APC visible beside the junction. Road/median edges continuous. Tutorial Continue cue temporarily overlays the lower APC silhouette; ordinary interaction after dismissing this introductory card remains a normal-input check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 14,
+      "missionId": "saga.ch03.m05.network_break",
+      "title": "Network Break",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch03.m05.network_break/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: squads, APC and compound gate clearly visible; road and median transitions continuous.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 15,
+      "missionId": "saga.ch04.m01.air_corridor",
+      "title": "Air Corridor",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch04.m01.air_corridor/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: launchers and sensor visible above controls. Both assembled runway outer endpoints inspected: 09/27 markings, clear shoulders and end markers visible; module join correctly has no false threshold. No failed spawn requests.",
+        "scope": "native opening and runway visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 16,
+      "missionId": "saga.ch04.m02.steel_push",
+      "title": "Steel Push",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch04.m02.steel_push/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: first tank, infantry and reserve structures visible, with no immediate failure overlay. Large existing rock face occupies the left side; it does not hide the first-action tank. Required placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 17,
+      "missionId": "saga.ch04.m03.split_front",
+      "title": "Split Front",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch04.m03.split_front/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: launcher, tanks and infantry visible above controls; industrial slab and settlement paving distinct. No immediate result overlay; first instruction remains legible.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 18,
+      "missionId": "saga.ch04.m04.grounded_signal",
+      "title": "Grounded Signal",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch04.m04.grounded_signal/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, civilian terminal and aircraft interaction views inspected. Squad and rescue APC visible above controls; aircraft sits on clear runway pavement. Terminal support props remain beside the protected interaction; apron and road edges distinct.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 19,
+      "missionId": "saga.ch04.m05.armor_break",
+      "title": "Armor Break",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch04.m05.armor_break/run-visual-fix-02/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD, relief and radar views inspected: starting armor and infantry above controls; service pad separates radar interaction from road; relief shelter sits in an open apron. Curb junctions are continuous, with dirt side lanes retained.",
+        "scope": "native opening and destination visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 20,
+      "missionId": "saga.ch05.m01.citywide_alert",
+      "title": "Citywide Alert",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch05.m01.citywide_alert/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: supplied barracks centered unobscured for recruitment; legal lot clear of moved landscape props. Runtime enters Engage with all required placements successful. First-action input guidance still requires normal-input acceptance.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 21,
+      "missionId": "saga.ch05.m02.trust_under_fire",
+      "title": "Trust Under Fire",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch05.m02.trust_under_fire/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Final-source full HUD inspected: north route convoy and escort remain visible above controls, with container and vehicle-yard context. Road/curb junction clear of sand intrusions. Wider composition keeps separated starting actors visible; close selection is a normal-input acceptance check.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 22,
+      "missionId": "saga.ch05.m03.network_collapse",
+      "title": "Network Collapse",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch05.m03.network_collapse/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: opening escort squad visible between mission banner and command tray; sidewalk and asphalt continuous. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 23,
+      "missionId": "saga.ch05.m04.last_corridor",
+      "title": "Last Corridor",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch05.m04.last_corridor/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: escort and medicine convoy visible above controls; road intersection continuous. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    },
+    {
+      "index": 24,
+      "missionId": "saga.ch05.m05.command_node",
+      "title": "Command Node",
+      "captureResult": "Passed",
+      "outcome": "None",
+      "phase": "Engage",
+      "cameraSettled": true,
+      "failedRequests": [],
+      "failedRequiredRequests": [],
+      "receipt": "captures/saga.ch05.m05.command_node/run-visual-fix-04/receipt.json",
+      "visualReview": {
+        "status": "reviewed",
+        "notes": "Full HUD inspected: engineer and specialists visible in central playable area above controls; hangar apron readable. Required building placements pass.",
+        "scope": "native opening visual/startup only; no normal-input completion/device acceptance"
+      },
+      "normalInputAcceptance": "pending",
+      "deviceAcceptance": "pending"
+    }
+  ],
+  "note": "Capture success is not a mission win, visual approval, normal-input playthrough or device acceptance."
+}

@@ -1,0 +1,9 @@
+# Local capture save profiles and implementation scratch copies.
+# Screenshots, receipts and validation logs remain versioned evidence.
+**/isolated-profile/
+*.staged
+fixes/staged-placement-repair/
+__pycache__/
+
+# Live Editor launch log; stable post-capture snapshot is versioned.
+fixes/validation/editor-native-final-01.log

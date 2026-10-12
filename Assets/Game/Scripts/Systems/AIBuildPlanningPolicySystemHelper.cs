@@ -14,7 +14,9 @@ namespace Game.Runtime
             DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests,
             AIBuildPlan plan,
             in FactionEconomy economy,
-            in FactionTacticalMaterialsComponent materials)
+            in FactionTacticalMaterialsComponent materials,
+            NativeArray<FixedString128Bytes> allowedCampaignBuildings = default,
+            bool restrictCampaignBuildings = false)
         {
             AIBuildPlannerSystem.BuildDecision decision = default;
             if (entries.Length == 0)
@@ -25,7 +27,8 @@ namespace Game.Runtime
             {
                 int candidateIndex = PositiveModulo(plan.NextBuildIndex + attempt, entries.Length);
                 FixedString128Bytes buildingId = NormalizeBuildId(entries[candidateIndex].BuildingId);
-                if (buildingId.Length == 0)
+                if (buildingId.Length == 0 ||
+                    (restrictCampaignBuildings && !CampaignAIBuildEligibility.Contains(allowedCampaignBuildings, buildingId)))
                     continue;
 
                 if (TryGetOwnedBuildingCount(ownedSummaries, buildingId, plan.FactionId, out int ownedCount) &&

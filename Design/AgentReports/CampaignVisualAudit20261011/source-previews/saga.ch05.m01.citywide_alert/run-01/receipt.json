@@ -1,0 +1,16 @@
+{
+    "missionId": "saga.ch05.m01.citywide_alert",
+    "kind": "source-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M01CitywideAlert/PreparedEntities.unity",
+    "sourceHashBefore": "a4bd236d9cae3a66334a88044c7d6c6875ca2746fe93686c4b73886df9ea241f",
+    "sourceHashAfter": "a4bd236d9cae3a66334a88044c7d6c6875ca2746fe93686c4b73886df9ea241f",
+    "graphics": "Metal",
+    "files": [
+        "CH05M01CitywideAlert-source-preview-detail.png",
+        "CH05M01CitywideAlert-source-preview-overview.png",
+        "CH05M01CitywideAlert-source-preview-story-clinic.png",
+        "CH05M01CitywideAlert-source-preview-story-reinforcement_perimeter.png",
+        "CH05M01CitywideAlert-source-preview-story-utility.png"
+    ],
+    "scope": "Authored source preview; runtime load failed; no deployed units or HUD; overview suppresses distance fog/post processing for inspection; detail views retain authored lighting"
+}

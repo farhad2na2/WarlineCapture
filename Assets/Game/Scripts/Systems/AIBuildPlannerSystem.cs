@@ -92,6 +92,8 @@ namespace Game.Runtime
             bool shouldLog = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
 
             EntityManager em = state.EntityManager;
+            using NativeList<FixedString128Bytes> campaignBuildings = new(Allocator.Temp);
+            bool restrictCampaignBuildings = CampaignAIBuildEligibility.ReadAllowed(em, campaignBuildings);
             _entityType.Update(ref state);
             _economyType.Update(ref state);
             _materialsType.Update(ref state);
@@ -178,14 +180,16 @@ namespace Game.Runtime
                             AIBuildPlanningPolicySystemHelper.ResolveDefaultBaseCenter(plan.FactionId, grid);
                     }
 
-                    BuildDecision decision = SelectBuildDecision(
+                    BuildDecision decision = AIBuildPlanningPolicySystemHelper.SelectBuildDecision(
                         entries,
                         em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true),
                         em.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(boundaryEntity, true),
                         em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity, true),
                         plan,
                         economy,
-                        materials);
+                        materials,
+                        campaignBuildings.AsArray(),
+                        restrictCampaignBuildings);
                     bool handledDecision = decision.Result != BuildDecisionResult.None;
                     switch (decision.Result)
                     {

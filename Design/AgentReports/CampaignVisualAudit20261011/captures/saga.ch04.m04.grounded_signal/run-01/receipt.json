@@ -1,0 +1,223 @@
+{
+    "result": "Passed",
+    "missionId": "saga.ch04.m04.grounded_signal",
+    "activeMissionId": "saga.ch04.m04.grounded_signal",
+    "activeMapId": "opmap.ch04.grounded_signal",
+    "run": "01",
+    "error": "",
+    "gameplayStarted": true,
+    "quality": "PC",
+    "graphics": "Metal",
+    "scope": "Native visual inspection; isolated unlocked profile; programmatic menu deployment; camera-only inspection views; no mission win claimed",
+    "hour": 0.0,
+    "frames": 5542,
+    "roles": [
+        {
+            "role": "role.friendly.rescue_apc",
+            "group": "group.ch04.m04.carrier",
+            "position": {
+                "x": 635.5,
+                "y": 0.0,
+                "z": 590.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m04.escort",
+            "position": {
+                "x": 621.5,
+                "y": -0.022891245782375337,
+                "z": 599.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m04.escort",
+            "position": {
+                "x": 620.5,
+                "y": -0.021871764212846757,
+                "z": 598.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m04.escort",
+            "position": {
+                "x": 618.5,
+                "y": -0.022899260744452478,
+                "z": 600.5
+            }
+        },
+        {
+            "role": "role.friendly.command_squad",
+            "group": "group.ch04.m04.escort",
+            "position": {
+                "x": 622.5,
+                "y": -0.021871764212846757,
+                "z": 601.5
+            }
+        },
+        {
+            "role": "role.hostile.relay",
+            "group": "group.ch04.m04.relay",
+            "position": {
+                "x": 800.5,
+                "y": 0.04999999701976776,
+                "z": 648.5
+            }
+        },
+        {
+            "role": "role.protected.terminal",
+            "group": "group.ch04.m04.civilian_terminal",
+            "position": {
+                "x": 513.5,
+                "y": 0.003101503476500511,
+                "z": 650.5
+            }
+        },
+        {
+            "role": "role.protected.terminal",
+            "group": "group.ch04.m04.civilian_terminal",
+            "position": {
+                "x": 516.5,
+                "y": 0.0007175710052251816,
+                "z": 652.5
+            }
+        },
+        {
+            "role": "role.protected.terminal",
+            "group": "group.ch04.m04.civilian_terminal",
+            "position": {
+                "x": 515.5,
+                "y": 0.0005311537533998489,
+                "z": 648.5
+            }
+        },
+        {
+            "role": "role.hostile.guards",
+            "group": "group.ch04.m04.guards",
+            "position": {
+                "x": 827.5,
+                "y": 0.011812850832939148,
+                "z": 643.5
+            }
+        },
+        {
+            "role": "role.hostile.guards",
+            "group": "group.ch04.m04.guards",
+            "position": {
+                "x": 827.5,
+                "y": 0.011812850832939148,
+                "z": 645.5
+            }
+        },
+        {
+            "role": "role.hostile.guards",
+            "group": "group.ch04.m04.guards",
+            "position": {
+                "x": 829.5,
+                "y": 0.006750522181391716,
+                "z": 644.5
+            }
+        },
+        {
+            "role": "role.friendly.airlift",
+            "group": "group.ch04.m04.plane",
+            "position": {
+                "x": 600.5,
+                "y": 0.07999999821186066,
+                "z": 560.5
+            }
+        }
+    ],
+    "views": [
+        {
+            "name": "opening",
+            "file": "opening.png",
+            "position": {
+                "x": 614.9985961914063,
+                "y": 40.04954147338867,
+                "z": 566.9003295898438
+            },
+            "euler": {
+                "x": 60.02358627319336,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 614.999267578125,
+                "y": -3.8448001760116315e-7,
+                "z": 589.9998779296875
+            },
+            "fov": 50.01656723022461,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-context",
+            "file": "objective-context.png",
+            "position": {
+                "x": 690.0714111328125,
+                "y": 134.27792358398438,
+                "z": 570.1981201171875
+            },
+            "euler": {
+                "x": 60.02358627319336,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 690.0714111328125,
+                "y": 0.01210377924144268,
+                "z": 647.6428833007813
+            },
+            "fov": 50.01656723022461,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "objective-detail",
+            "file": "objective-detail.png",
+            "position": {
+                "x": 800.5,
+                "y": 65.01734161376953,
+                "z": 611.0267333984375
+            },
+            "euler": {
+                "x": 60.02358627319336,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 800.5,
+                "y": 0.04999999701976776,
+                "z": 648.5
+            },
+            "fov": 50.01656723022461,
+            "orthoSize": 5.0,
+            "orthographic": false
+        },
+        {
+            "name": "mission-overview",
+            "file": "mission-overview.png",
+            "position": {
+                "x": 712.5,
+                "y": 1073.242431640625,
+                "z": 265.3167724609375
+            },
+            "euler": {
+                "x": 60.02358627319336,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "focus": {
+                "x": 712.5,
+                "y": 480.0,
+                "z": 607.5
+            },
+            "fov": 50.01656723022461,
+            "orthoSize": 5.0,
+            "orthographic": false
+        }
+    ]
+}

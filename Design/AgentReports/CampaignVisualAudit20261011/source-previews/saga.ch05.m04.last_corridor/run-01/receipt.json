@@ -1,0 +1,16 @@
+{
+    "missionId": "saga.ch05.m04.last_corridor",
+    "kind": "source-preview",
+    "source": "Assets/Game/Scenes/OperationMaps/CH05M04LastCorridor/PreparedEntities.unity",
+    "sourceHashBefore": "7900465a1e25f4e2256f38b11a124efdbe0a200d6d446aa600cfdb17d4fd8a78",
+    "sourceHashAfter": "7900465a1e25f4e2256f38b11a124efdbe0a200d6d446aa600cfdb17d4fd8a78",
+    "graphics": "Metal",
+    "files": [
+        "CH05M04LastCorridor-source-preview-detail.png",
+        "CH05M04LastCorridor-source-preview-overview.png",
+        "CH05M04LastCorridor-source-preview-story-receiving.png",
+        "CH05M04LastCorridor-source-preview-story-receiving_gate.png",
+        "CH05M04LastCorridor-source-preview-story-repair.png"
+    ],
+    "scope": "Authored source preview; runtime load failed; no deployed units or HUD; overview suppresses distance fog/post processing for inspection; detail views retain authored lighting"
+}

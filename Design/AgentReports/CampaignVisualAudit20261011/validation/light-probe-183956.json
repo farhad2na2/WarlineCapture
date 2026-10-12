@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "\nvar w=Unity.Entities.World.DefaultGameObjectInjectionWorld;\nstring missionId=\"\";\nif(w!=null&&w.IsCreated){using var q=w.EntityManager.CreateEntityQuery(typeof(Game.Components.ActiveOperationMapComponent));if(q.CalculateEntityCount()==1)missionId=q.GetSingleton<Game.Components.ActiveOperationMapComponent>().MissionId.ToString();}\nreturn Newtonsoft.Json.JsonConvert.SerializeObject(new {missionId,play=UnityEditor.EditorApplication.isPlaying,lights=UnityEngine.Object.FindObjectsByType<UnityEngine.Light>(UnityEngine.FindObjectsSortMode.None).Select(l=>new {l.name,l.enabled,active=l.gameObject.activeInHierarchy,scene=l.gameObject.scene.path,intensity=l.intensity,type=l.type.ToString(),shadows=l.shadows.ToString()}).ToArray()});\n"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "{\"missionId\":\"\",\"play\":false,\"lights\":[]}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7803,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

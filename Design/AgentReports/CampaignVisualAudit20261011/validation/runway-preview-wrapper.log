@@ -1,0 +1,15 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Volumes/T7/Projects/WarlineCapture-CampaignVisualAudit
+[UnityInvokeMac] Existing executeMethod: Game.Editor.CampaignSourceVisualAudit20261011.CaptureRunwayEnds; LogFile: /private/tmp/warline-campaign-runway-preview-20261011.log; TimeoutSeconds: 420
+{
+  "success": false,
+  "command": "unity command eval",
+  "data": null,
+  "errors": [
+    {
+      "code": "COMMAND_FAILED",
+      "message": "Pipeline server returned 400 Bad Request: Internal Server Error. Main thread operation timed out after 5000ms"
+    }
+  ],
+  "warnings": []
+}
+[UnityInvokeMac] ERROR: no matching validation ownership; existing Editor preserved.

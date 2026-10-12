@@ -1,0 +1,2 @@
+Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_04 oldCenter=(624.70, 0.59, 541.91) newCenter=(624.70, 0.59, 539.02)
+Map_CityEdgeAirfield/Vegetation/SM_Env_Grass_03 oldCenter=(910.49, 0.49, 550.24) newCenter=(910.49, 0.49, 539.34)

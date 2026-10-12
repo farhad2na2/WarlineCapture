@@ -51,7 +51,7 @@ namespace Game.Editor
                     ("oil",573,520,OperationMapAnchorKind.Objective,1,5),
                     // Keep the 25x15 refinery south of the prepared z=494 fence.
                     // The enclosed strip itself is an authored road, not a build pad.
-                    ("refinery",740,475,OperationMapAnchorKind.Objective,1,5),
+                    ("refinery",741,472,OperationMapAnchorKind.Objective,1,5),
                     ("storage",941,540,OperationMapAnchorKind.Objective,1,5),
                     ("squad_a",585,505,OperationMapAnchorKind.Deployment,1,3),
                     ("squad_b",905,540,OperationMapAnchorKind.Deployment,1,3),

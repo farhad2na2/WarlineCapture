@@ -16,15 +16,14 @@ namespace Game.Runtime
             rtsCameraStateQuery=state.GetEntityQuery(ComponentType.ReadOnly<RtsCameraStateComponent>());
         }
         private void AdvanceDefenseCamera(ref SystemState state,Entity focusEntity,in RuntimeCameraFocusRequestComponent focus,
-            ref CampaignMissionOpeningPresentationComponent opening,ref MissionCameraTourBlob tour,OperationMapMetadataComponent map)
+            ref CampaignMissionOpeningPresentationComponent opening,ref MissionCameraTourBlob tour,OperationMapMetadataComponent map,in CampaignMissionRuntimeComponent runtime)
         {
             if(defenseTourQuery.CalculateEntityCount()!=1 || rtsCameraStateQuery.CalculateEntityCount()!=1 ||
                 cameraSnapshotQuery.CalculateEntityCount()!=1) return;
             var owner=defenseTourQuery.GetSingletonEntity();
             var camera=defenseTourQuery.GetSingleton<CampaignMissionCameraTourState>();
             if(!camera.SessionToken.Equals(opening.SessionToken)) return;
-            bool routeReopened=state.EntityManager.HasComponent<CampaignMissionRuntimeComponent>(owner) &&
-                state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(RouteReopenedMissionId);
+            bool routeReopened=runtime.MissionId.Equals(RouteReopenedMissionId);
             var rts=rtsCameraStateQuery.GetSingleton<RtsCameraStateComponent>();
             bool settled=focus.Requested==0 && rts.HasSmoothFocusTarget==0 && rts.HasSmoothPerspectiveTarget==0 &&
                 rts.MatchIntroZoomSettlePending==0 && rts.IsZoomTransitionActive==0;
@@ -33,11 +32,15 @@ namespace Game.Runtime
                 var snapshot=cameraSnapshotQuery.GetSingleton<RuntimeCameraSnapshotComponent>();
                 if(!settled || !TryCaptureTourStart(snapshot,map.Blob.Value.Grid.Origin.y,out camera.StartFocus,out camera.StartPerspective))
                 {opening.ElapsedMilliseconds=0; return;}
-                if (state.EntityManager.HasComponent<CampaignMissionRuntimeComponent>(owner) &&
-                    state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning")))
+                // Runtime-authored missions may create their command units after
+                // the initial opening component. Resolve the live group before
+                // storing the pose used by both Skip and the tour return.
+                CampaignMissionSpawnSystem.FrameMissionCommandGroup(state.EntityManager,in runtime,ref map.Blob.Value,ref opening);
+                if (opening.CommandCameraPerspective.w>0 ||
+                    runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning")))
                 {
-                    camera.StartFocus=opening.FriendlyFocus;
-                    camera.StartPerspective=CampaignMissionSpawnSystem.CreateDefenseCommandView(opening.FriendlyFocus).Perspective;
+                    camera.StartFocus=opening.CommandCameraPerspective.w>0 ? opening.CommandCameraFocus : opening.FriendlyFocus;
+                    camera.StartPerspective=opening.CommandCameraPerspective.w>0 ? opening.CommandCameraPerspective : CampaignMissionSpawnSystem.CreateDefenseCommandView(opening.FriendlyFocus).Perspective;
                 }
                 camera.Captured=1; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds;
             }

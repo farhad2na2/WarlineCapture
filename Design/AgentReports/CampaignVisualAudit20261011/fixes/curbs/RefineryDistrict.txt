@@ -1,0 +1,5 @@
+Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(701.25, 0.29, 629.97) roadHeight=0.1760945
+Map_RefineryDistrict/Roads/RoadChunk_4_3/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(708.75, 0.29, 629.97) roadHeight=0.172931
+Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(701.25, 0.29, 380.03) roadHeight=0.1760945
+Map_RefineryDistrict/Roads/RoadChunk_4_2/Road_Dirt_With_Sidewalk_Straight/Sidewalk end=(708.75, 0.29, 380.03) roadHeight=0.172931
+Lowered sidewalk ends=4. XZ footprints, colliders, logical owners and road geometry unchanged.

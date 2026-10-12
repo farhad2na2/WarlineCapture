@@ -1,0 +1,23 @@
+grid=440,220 origin=float3(860f, 0f, 300f) cell=1
+BuildingPlacementAuthoredRoadCache.mask cells=25232
+BuildingPlacementAuthoredRoadCache.sidewalkMask cells=0
+BuildingPlacementAuthoredBuildingCache.mask cells=17456
+GridRoad cells=0
+Building_Command_Utility preferred=373,144 footprint=14,12 world=1233,444
+Building_Command_Utility rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Command_Utility rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Command_Utility rejected BuildingPlacementAuthoredBuildingCache.mask=112
+Building_Command_Utility rejected GridRoad=0
+Building_Command_Utility nearestClearGrid=(373, 155);(372, 155);(374, 155);(371, 155);(375, 155);(370, 155);(369, 155);(373, 156);(372, 156);(374, 156);(368, 155);(371, 156)
+Building_Command_Audit preferred=275,174 footprint=14,12 world=1135,474
+Building_Command_Audit rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Command_Audit rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Command_Audit rejected BuildingPlacementAuthoredBuildingCache.mask=77
+Building_Command_Audit rejected GridRoad=0
+Building_Command_Audit nearestClearGrid=(270, 177);(270, 178);(269, 177);(270, 179);(269, 178);(268, 177);(269, 179);(268, 178);(267, 177);(268, 179);(267, 178);(267, 179)
+Building_Command_ReserveDepot preferred=374,56 footprint=26,25 world=1234,356
+Building_Command_ReserveDepot rejected BuildingPlacementAuthoredRoadCache.mask=0
+Building_Command_ReserveDepot rejected BuildingPlacementAuthoredRoadCache.sidewalkMask=0
+Building_Command_ReserveDepot rejected BuildingPlacementAuthoredBuildingCache.mask=273
+Building_Command_ReserveDepot rejected GridRoad=0
+Building_Command_ReserveDepot nearestClearGrid=(359, 80);(358, 80);(359, 81);(357, 80);(358, 81);(356, 80);(359, 82);(357, 81);(358, 82);(355, 80);(356, 81);(359, 83)

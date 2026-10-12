@@ -1,0 +1,3 @@
+gradedDirtRoadEntries=279
+protectedHash=fc4a97ad3bb61d756012c23c814d256f98fe9e750c99632a0689c70ce58559f0
+collisionRoadFootprintsAndGameplayOwners=unchanged

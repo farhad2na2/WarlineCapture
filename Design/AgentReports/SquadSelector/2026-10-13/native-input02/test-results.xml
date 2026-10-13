@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.8698087">
+  <test-suite type="TestSuite" id="1157" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="118" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.869809" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1150" name="Game.Tests.PlayMode.dll" fullname="/Volumes/T7/Projects/WarlineCapture-SquadUi/Library/ScriptAssemblies/Game.Tests.PlayMode.dll" runstate="Runnable" testcasecount="114" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.817584" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68255" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1151" name="Game" fullname="Game" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.807721" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1152" name="Tests" fullname="Game.Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.805255" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1153" name="PlayMode" fullname="Game.Tests.PlayMode" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.802830" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1147" name="MatchHudSquadNativeScrollTests" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:11Z" duration="21.798798" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1148" name="EnglishRosterUsesPhysicalSwipesAndCardToggles" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests.EnglishRosterUsesPhysicalSwipesAndCardToggles" methodname="EnglishRosterUsesPhysicalSwipesAndCardToggles" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" seed="1395772817" result="Passed" start-time="2026-10-13 20:02:49Z" end-time="2026-10-13 20:03:00Z" duration="10.885479" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+[SquadScrollNativeInput] result=Passed locale=en swipes=11 pairedContacts=17 cardToggles=5 hiddenPaging=0 directScrollWrites=0 missionCertified=0
+]]></output>
+              </test-case>
+              <test-case id="1149" name="PersianRosterUsesPhysicalSwipesAndCardToggles" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests.PersianRosterUsesPhysicalSwipesAndCardToggles" methodname="PersianRosterUsesPhysicalSwipesAndCardToggles" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" seed="1031026700" result="Passed" start-time="2026-10-13 20:03:00Z" end-time="2026-10-13 20:03:11Z" duration="10.881589" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SquadScrollNativeInput] result=Passed locale=fa-IR swipes=11 pairedContacts=17 cardToggles=5 hiddenPaging=0 directScrollWrites=0 missionCertified=0
+Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/WarlineCapture/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

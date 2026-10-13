@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView, IMatchHudSquadTrayPortraitBinding, IMatchHudSquadTrayPaginationBinding
+    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView, IMatchHudSquadTrayPortraitBinding, IMatchHudSquadTrayPaginationBinding, IMatchHudSquadTrayRosterBinding
     {
         // UiAssistantHighlightModel deliberately carries the ECS target kind as a byte so
         // Game.UI.Runtime does not depend on the gameplay-components assembly.
@@ -75,7 +75,16 @@ namespace Game.UI.Runtime
         }
 
         internal MatchHudSquadTraySlot VisibleSelectedSlot => _selectedSlot;
-        public Button VisibleCardButton(int index) => TryGetCard(index, out var card) ? card.Button : null;
+        public Button VisibleCardButton(int index)
+        {
+            if (_rosterActive)
+            {
+                int absolute = _logicalPage * 5 + index;
+                return absolute >= 0 && absolute < _rosterModels.Count && IsCardPresented(_rosterCards[absolute].Button)
+                    ? _rosterCards[absolute].Button : null;
+            }
+            return TryGetCard(index, out var card) && IsCardPresented(card.Button) ? card.Button : null;
+        }
 
         internal bool IsAssistantGuidanceTargetSelected =>
             _selectedSlot == MatchHudSquadTraySlot.Soldiers;
@@ -86,6 +95,7 @@ namespace Game.UI.Runtime
             CacheBaseFrameColors();
             CreateCardLabels();
             CaptureCardLayouts();
+            EnsureScrollingLayout();
             CreateAssistantGuidanceCue();
             SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
         }
@@ -121,6 +131,9 @@ namespace Game.UI.Runtime
             BindPagination();
             _cardClicked = cardClicked;
             RefreshMissionRestrictions();
+            // Refresh can install stable-ID bindings for an already live expanded
+            // session. Do not overwrite those relays with category-slot listeners.
+            if (_rosterActive) return;
 
             for (int i = 0; i < cards.Length; i++)
             {
@@ -131,6 +144,7 @@ namespace Game.UI.Runtime
                 var press = card.Button.GetComponent<MatchHudSquadCardPressRelay>();
                 if (press == null) press = card.Button.gameObject.AddComponent<MatchHudSquadCardPressRelay>();
                 press.Bind(eventData => CapturePressedGroup(index, eventData));
+                press.ConfigureScroll(_squadScroll, () => _pressedGroupIds[index] = 0);
                 card.Button.onClick.AddListener(() => OnCardClicked(index));
             }
         }
@@ -144,6 +158,12 @@ namespace Game.UI.Runtime
 
         internal void RefreshMissionRestrictions()
         {
+            if (UiShellRuntimeGateway.TryReadSkirmish(out var rosterMission) && rosterMission.Expanded && _readRoster != null)
+            {
+                RefreshScrollingRoster(!rosterMission.Paused && !rosterMission.Finished && !rosterMission.StartupFailed);
+                return;
+            }
+            RestoreCategoryCards();
             if(UiShellRuntimeGateway.TryReadSkirmish(out var portraitMission) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var skirmishCards))
             {
                 ApplyExpandedCardLayout(portraitMission.Expanded);
@@ -263,6 +283,12 @@ namespace Game.UI.Runtime
                     }
                 }
             }
+            // Owner-approved sparse-roster design: unavailable categories consume no slot.
+            for (int i = 0; i < cards.Length; i++)
+                if (cards[i]?.Button != null)
+                    cards[i].Button.gameObject.SetActive(!_missionDisabled[i] &&
+                        (!UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var visibleTray) || visibleTray.GetCard(i).Visible));
+            RefreshScrollGeometry();
         }
 
         public void ApplyMissionRestrictionVisibility(
@@ -297,6 +323,7 @@ namespace Game.UI.Runtime
         public void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot)
         {
             _selectedSlot = selectedSlot;
+            if (_rosterActive) return; // Expanded borders come from stable group IDs, never category slots.
             for (int i = 0; i < cards.Length; i++)
             {
                 if (!TryGetCard(i, out Card card) || card.FrameImage == null)
@@ -355,12 +382,22 @@ namespace Game.UI.Runtime
                 return false;
 
             Camera eventCamera = ResolveEventCamera();
-            return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition, eventCamera);
+            if (!RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition, eventCamera)) return false;
+            if (_scrollContent != null && MaximumScroll <= 0)
+            {
+                foreach (var card in _rosterCards)
+                    if (card.Button != null && card.Button.gameObject.activeInHierarchy &&
+                        RectTransformUtility.RectangleContainsScreenPoint((RectTransform)card.Button.transform, screenPosition, eventCamera))
+                        return true;
+                return false; // Sparse rosters reveal usable battlefield, not an invisible input-blocking bar.
+            }
+            return true;
         }
 
         private Camera ResolveEventCamera()
         {
             Canvas canvas = ResolveCanvas();
+            if (canvas != null) canvas = canvas.rootCanvas;
             if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 return null;
 
@@ -420,6 +457,9 @@ namespace Game.UI.Runtime
 
         private void OnCardClicked(int index)
         {
+            if (_rosterActive) { TraceSquadInput("legacyClickIgnored index=" + index); return; }
+            if (TryGetCard(index, out var clicked) && clicked.Button != null &&
+                clicked.Button.GetComponent<MatchHudSquadCardPressRelay>()?.Dragged == true) return;
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
             if (UiShellRuntimeGateway.TryReadSkirmish(out var mission) && mission.Expanded)
             {

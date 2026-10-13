@@ -10,6 +10,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public float DefenseDeadline, DefenseReadyAt, RecruitUnavailableAt, NextRecruitAt, ObserveUntil, LastProgressAt, EnemyHealth, PlayerHealth, ForceHealth, RegroupAt, GroupReadyAt, OpeningUntil, MapNavigationReadyAt, MapOpenedAt;
         public byte AdvanceNavigation, TargetPending, RecruitDrawerSeen, AssaultStarted, ExpandedRetries;
         public byte PagedToAssault, AssaultSelecting, AssaultIssued, StructureOrdered;
+        public int SelectionResetPage;
         public int AssaultPageSeen;
         public int PagesOrdered;
         public uint SweepRosterRevision;

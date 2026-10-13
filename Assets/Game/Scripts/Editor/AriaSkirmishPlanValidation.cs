@@ -433,7 +433,9 @@ namespace Game.Editor
                 "new approach availability cannot silently restart blocked ARIA");
             view.AttackMode = false;
             view.Attack = new AriaTouchTarget { Available = true, Id = 14 };
-            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1 };
+            // This cohort is already assembled by the plan. Initial selection reset
+            // is tested separately through presented card toggles and swipes.
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultSelecting = 1 };
             touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             Step(); Check(plan.Intent == AriaSkirmishIntent.Attack && output.TargetId == 14 &&
                 output.Kind == AriaPlayObservationKind.Control && plan.AssaultIssued == 0,
@@ -446,7 +448,7 @@ namespace Game.Editor
                 ExpandedPageCount = 1, ExpandedTotalGroups = 5, ExpandedAssaultMask = 31,
                 ExpandedStructureMask = 4, ExpandedAttackOrderMask = 3, ExpandedSelectedMask = 28,
                 ExpandedSelectedGroups = 3, Attack = new AriaTouchTarget { Available = true, Id = 14 },
-                ClearSquadSelection = new AriaTouchTarget { Available = true, Id = 99 },
+                SelectedSquadToToggle = new AriaTouchTarget { Available = true, Id = 99 },
                 Squad0 = new AriaTouchTarget { Available = true, Id = 40 },
                 Squad1 = new AriaTouchTarget { Available = true, Id = 41 },
                 Squad2 = new AriaTouchTarget { Available = true, Id = 42 },

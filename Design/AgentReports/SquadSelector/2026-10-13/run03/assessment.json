@@ -1,0 +1,7 @@
+{
+  "result": "Failed",
+  "exitCode": 124,
+  "reason": "CS1503 in migrated fake harness: wrong list DTO passed to roster projection. Repaired to List<SkirmishArmyDrawerSlot>. GUI run remained at compilation until checked timeout.",
+  "requiredPassMarker": "[SquadScrollCombined] result=Passed",
+  "passMarkerPresent": false
+}

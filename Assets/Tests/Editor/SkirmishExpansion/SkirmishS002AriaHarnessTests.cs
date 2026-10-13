@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.Components;
 using Game.Composition;
@@ -977,6 +978,19 @@ namespace Game.Tests.Editor
                     ordered |= 1 << i;
             }
 
+            var publicRoster = new List<SkirmishArmyDrawerSlot>();
+            SkirmishArmyDrawerProjection.Project(em, session, publicRoster);
+            int selectedOrdinal = publicRoster.FindIndex(card => card.Selected != 0);
+            AriaTouchTarget selectedCard = default;
+            if (selectedOrdinal >= 0)
+            {
+                int targetPage = selectedOrdinal / 5;
+                selectedCard = targetPage == pageIndex
+                    ? new AriaTouchTarget { Id = 100 + selectedOrdinal % 5, Available = true }
+                    : new AriaTouchTarget { Id = targetPage > pageIndex ? 200 : 201,
+                        Available = true, Drag = true, ScrollTargetId = (int)publicRoster[selectedOrdinal].GroupId,
+                        ScrollDistanceViewports = Math.Abs(targetPage - pageIndex) };
+            }
             return new AriaSkirmishObservation
             {
                 Active = true,
@@ -993,7 +1007,7 @@ namespace Game.Tests.Editor
                 ExpandedCanNextPage = nextPage,
                 PreviousSquadPage = new AriaTouchTarget { Id = 201, Available = previousPage },
                 NextSquadPage = new AriaTouchTarget { Id = 200, Available = nextPage },
-                ClearSquadSelection = new AriaTouchTarget { Id = 202, Available = selectedGroups > 0 },
+                SelectedSquadToToggle = selectedCard,
                 ExpandedAssaultMask = assault,
                 ExpandedSelectedMask = selected,
                 ExpandedStructureMask = structure,
@@ -1020,10 +1034,15 @@ namespace Game.Tests.Editor
                 SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1);
             else if (output.TargetId == 201)
                 SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1);
-            else if (output.TargetId == 202)
-                SkirmishExpandedPresentedOrders.TryClearSelection(em, session);
-            else if (output.TargetId >= 100 && output.TargetId <= 104)
-                SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, output.TargetId - 100);
+            else if (output.TargetId >= 100 && output.TargetId <= 104 &&
+                SkirmishExpandedPresentedOrders.TryReadPage(em, session, out _, out _, out _,
+                    out _, out _, out _, out _, out _,
+                    out var a, out var b, out var c, out var d, out var e))
+            {
+                var visibleSlots = new[] { a, b, c, d, e };
+                SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(em, session,
+                    visibleSlots[output.TargetId - 100].GroupId);
+            }
             else if (output.TargetId == 42)
                 FixtureAttackEnemyBase(em, session);
         }

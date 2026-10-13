@@ -89,9 +89,9 @@ namespace Game.UI.Runtime
                 view.ExpandedSelectedGroups = page.SelectedGroups;
                 view.ExpandedSelectedOffPage = page.SelectedOffPage;
                 view.ExpandedRosterRevision = page.RosterRevision;
-                view.PreviousSquadPage = ObserveWatchButton(watchSquads?.PreviousPageButton);
-                view.NextSquadPage = ObserveWatchButton(watchSquads?.NextPageButton);
-                view.ClearSquadSelection = ObserveWatchButton(watchSquads?.ClearSelectionButton);
+                view.PreviousSquadPage = MatchHudSquadTouchNavigation.PageTarget(watchSquads, false);
+                view.NextSquadPage = MatchHudSquadTouchNavigation.PageTarget(watchSquads, true);
+                view.SelectedSquadToToggle = MatchHudSquadTouchNavigation.SelectedCardTarget(watchSquads);
             }
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var squads))
             {
@@ -127,11 +127,11 @@ namespace Game.UI.Runtime
             if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) { view.AttackMode = command.ActiveCommandMode == TacticalCommandMode.Attack; view.SelectionMode = command.ActiveCommandMode == TacticalCommandMode.Select; }
             view.Infantry = model.InfantryCount;
             view.PlayerHealth = model.PlayerHealth; view.EnemyHealth = model.EnemyHealth;
-            view.Squad0 = ObserveWatchButton(watchSquads?.VisibleCardButton(0));
-            view.Squad1 = ObserveWatchButton(watchSquads?.VisibleCardButton(1));
-            view.Squad2 = ObserveWatchButton(watchSquads?.VisibleCardButton(2));
-            view.Squad3 = ObserveWatchButton(watchSquads?.VisibleCardButton(3));
-            view.Squad4 = ObserveWatchButton(watchSquads?.VisibleCardButton(4));
+            view.Squad0 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 0);
+            view.Squad1 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 1);
+            view.Squad2 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 2);
+            view.Squad3 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 3);
+            view.Squad4 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 4);
             view.FocusPlayer = ObserveWatchButton(watchSkirmish?.PlayerFocusButton);
             view.Select = ObserveWatchButton(_commandControlsView?.SelectButton);
             view.FocusEnemy = ObserveWatchButton(watchSkirmish?.EnemyFocusButton);

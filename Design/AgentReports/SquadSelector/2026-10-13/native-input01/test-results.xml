@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.8533488">
+  <test-suite type="TestSuite" id="1157" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.853349" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1150" name="Game.Tests.PlayMode.dll" fullname="/Volumes/T7/Projects/WarlineCapture-SquadUi/Library/ScriptAssemblies/Game.Tests.PlayMode.dll" runstate="Runnable" testcasecount="114" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.789550" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="65624" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1151" name="Game" fullname="Game" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.773820" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1152" name="Tests" fullname="Game.Tests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.766687" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1153" name="PlayMode" fullname="Game.Tests.PlayMode" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.762087" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1147" name="MatchHudSquadNativeScrollTests" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:05Z" duration="7.753694" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1148" name="EnglishRosterUsesPhysicalSwipesAndCardToggles" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests.EnglishRosterUsesPhysicalSwipesAndCardToggles" methodname="EnglishRosterUsesPhysicalSwipesAndCardToggles" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" seed="809979481" result="Failed" start-time="2026-10-13 19:55:57Z" end-time="2026-10-13 19:56:01Z" duration="3.513814" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Only reachable presented geometry may be used.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Tests.PlayMode.MatchHudSquadNativeScrollTests+<Run>d__2.MoveNext () [0x00704] in /Volumes/T7/Projects/WarlineCapture-SquadUi/Assets/Tests/PlayMode/MatchHudSquadNativeScrollTests.cs:124
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1149" name="PersianRosterUsesPhysicalSwipesAndCardToggles" fullname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests.PersianRosterUsesPhysicalSwipesAndCardToggles" methodname="PersianRosterUsesPhysicalSwipesAndCardToggles" classname="Game.Tests.PlayMode.MatchHudSquadNativeScrollTests" runstate="Runnable" seed="804790156" result="Failed" start-time="2026-10-13 19:56:01Z" end-time="2026-10-13 19:56:05Z" duration="4.188680" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Only reachable presented geometry may be used.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Tests.PlayMode.MatchHudSquadNativeScrollTests+<Run>d__2.MoveNext () [0x00704] in /Volumes/T7/Projects/WarlineCapture-SquadUi/Assets/Tests/PlayMode/MatchHudSquadNativeScrollTests.cs:124
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/WarlineCapture/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

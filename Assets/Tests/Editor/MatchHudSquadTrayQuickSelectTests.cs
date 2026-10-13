@@ -19,36 +19,41 @@ public sealed class MatchHudSquadTrayQuickSelectTests
     [Test]
     public void RtlPaginationKeepsBothArrowHitAreasInsideTheNavigationRow()
     {
+        // Keep the runner entry name while validating its replacement: in-strip scroll edges.
+        string locale = Game.Configs.GameLocalization.CurrentLocaleCode;
         var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath));
         try
         {
+            Game.Configs.GameLocalization.SetLocale("fa-IR", false);
             var view = instance.GetComponentInChildren<MatchHudSquadTrayView>(true);
-            var serialized = new SerializedObject(view);
-            var pagination = (RectTransform)serialized.FindProperty("paginationRoot").objectReferenceValue;
-            pagination.gameObject.SetActive(true);
-            var row = (RectTransform)pagination.Find("NavigationRow");
-            view.PreviousPageButton.gameObject.SetActive(true);
-            view.NextPageButton.gameObject.SetActive(true);
-            view.ClearSelectionButton.gameObject.SetActive(false);
-            row.Find("FlexibleSpacer")?.gameObject.SetActive(false);
-            typeof(MatchHudSquadTrayView).GetMethod("ArrangePaginationRow",
+            view.ConfigureExpandedRoster(destination =>
+            {
+                destination.Clear();
+                for (int i = 0; i < 8; i++) destination.Add(new Game.UI.Contracts.UiMatchHudSquadTrayCardModel(
+                    true, "گروه " + (i + 1), "4", 1, (uint)(i + 1), 4, i + 1, false));
+            }, _ => AssetDatabase.LoadAssetAtPath<Sprite>(DedicatedSquadPortraitPaths[0]));
+            typeof(MatchHudSquadTrayView).GetMethod("RefreshScrollingRoster",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Invoke(view, new object[] { row, true });
-            LayoutRebuilder.ForceRebuildLayoutImmediate(pagination);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(row);
+                .Invoke(view, new object[] { true });
+            var scroll = view.GetComponent<ScrollRect>();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scroll.content);
+            Assert.IsNull(instance.transform.Find("V3Composition/FooterContent/SquadPagination"));
             foreach (var button in new[] { view.PreviousPageButton, view.NextPageButton })
             {
                 var corners = new Vector3[4];
                 ((RectTransform)button.transform).GetWorldCorners(corners);
                 foreach (var corner in corners)
                 {
-                    var local = row.InverseTransformPoint(corner);
-                    Assert.That(local.x, Is.InRange(row.rect.xMin - 1f, row.rect.xMax + 1f),
-                        button.name + " must remain touchable inside the navigation row in RTL.");
+                    var local = scroll.viewport.InverseTransformPoint(corner);
+                    Assert.That(local.x, Is.InRange(scroll.viewport.rect.xMin - 1f, scroll.viewport.rect.xMax + 1f));
                 }
+                Assert.AreEqual(Vector3.one, button.transform.localScale, "Mirror chevrons, never their hit rectangle.");
             }
+            Assert.IsTrue(view.TryGetExpandedCardTarget(8, out var visible, out var from, out var to));
+            Assert.IsNull(visible);
+            Assert.Less(from.x, to.x, "RTL rosters must swipe right to reach later squads.");
         }
-        finally { Object.DestroyImmediate(instance); }
+        finally { Object.DestroyImmediate(instance); Game.Configs.GameLocalization.SetLocale(locale, false); }
     }
 
     [Test]

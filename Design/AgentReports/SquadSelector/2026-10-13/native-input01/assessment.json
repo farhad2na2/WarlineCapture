@@ -1,0 +1,8 @@
+{
+  "result": "Failed",
+  "exitCode": 2,
+  "tests": 2,
+  "passed": 0,
+  "failed": 2,
+  "reason": "GroupTarget not reachable during long-roster physical-swipe loop; exact failures retained."
+}

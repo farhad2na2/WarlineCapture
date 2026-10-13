@@ -158,7 +158,7 @@ namespace Game.Editor
                 {
                     if (page.NextPage)
                     {
-                        if (ManualTap(tray.NextPageButton)) manualSlot = manualStep = 0;
+                        if (ManualSwipeSquadPage(tray, true)) manualSlot = manualStep = 0;
                     }
                     else
                     {
@@ -172,7 +172,7 @@ namespace Game.Editor
                 }
                 if (manualStep == 10)
                 {
-                    if (page.PreviousPage) { ManualTap(tray.PreviousPageButton); return; }
+                    if (page.PreviousPage) { ManualSwipeSquadPage(tray, false); return; }
                     manualStep = 0;
                 }
                 int bit = 1 << manualSlot;
@@ -196,8 +196,8 @@ namespace Game.Editor
                     manualOrderRetries = 0;
                     airProbeDefenseMapAttempts = 0;
                     if (page.SelectedGroups > 0)
-                    { ManualTap(tray.ClearSelectionButton); return; }
-                    if (ManualTap(tray.VisibleCardButton(manualSlot))) manualStep = 1;
+                    { ManualDeselectSquads(tray); return; }
+                    if (ManualTapSquadSlot(tray, manualSlot)) manualStep = 1;
                 }
                 else if (manualStep == 1)
                 {

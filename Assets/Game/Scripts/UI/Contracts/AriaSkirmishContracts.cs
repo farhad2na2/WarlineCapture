@@ -10,6 +10,8 @@ namespace Game.UI.Contracts
         public bool Available;
         public bool Drag;
         public Vector2 DragEnd;
+        public int ScrollTargetId;
+        public float ScrollDistanceViewports;
     }
     public enum AriaSkirmishIntent : byte
     {
@@ -40,7 +42,7 @@ namespace Game.UI.Contracts
         public bool AssaultDistanceVisible;
         public float NearestFriendlyObjectiveDistance;
         public AriaTouchTarget Squad0, Squad1, Squad2, Squad3, Squad4;
-        public AriaTouchTarget PreviousSquadPage, NextSquadPage, ClearSquadSelection;
+        public AriaTouchTarget PreviousSquadPage, NextSquadPage, SelectedSquadToToggle;
         public AriaTouchTarget Site0, Site1, Site2, Site3, Site4, Site5;
         public AriaTouchTarget PadSite0, PadSite1, PadSite2, PadSite3;
         public AriaTouchTarget PadSite(int index) => index switch

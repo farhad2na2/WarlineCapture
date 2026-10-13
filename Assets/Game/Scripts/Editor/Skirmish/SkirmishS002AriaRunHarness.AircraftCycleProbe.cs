@@ -95,7 +95,7 @@ namespace Game.Editor
                 if (!fixedWingCycleOnly || !page.NextPage) return true;
                 if (airProbeDefensePage >= 8)
                     throw new InvalidOperationException("Opening defense squad paging did not finish.");
-                if (TapHelipadButton(tray.NextPageButton, now))
+                if (SwipeHelipadSquadPage(tray, true, now))
                 { airProbeDefensePage++; airProbeDefenseSlot = airProbeDefenseStep = 0; }
                 return false;
             }
@@ -103,8 +103,8 @@ namespace Game.Editor
             if ((page.AssaultMask & bit) == 0) { airProbeDefenseSlot++; return false; }
             if (airProbeDefenseStep == 0)
             {
-                if (page.SelectedGroups > 0) { TapHelipadButton(tray.ClearSelectionButton, now); return false; }
-                if (TapHelipadButton(tray.VisibleCardButton(airProbeDefenseSlot), now)) airProbeDefenseStep = 1;
+                if (page.SelectedGroups > 0) { DeselectHelipadSquads(tray, now); return false; }
+                if (TapHelipadSquadSlot(tray, airProbeDefenseSlot, now)) airProbeDefenseStep = 1;
             }
             else if (airProbeDefenseStep == 1)
             {
@@ -190,7 +190,7 @@ namespace Game.Editor
                 airProbeDefenseStep = 3;
                 airProbeDefenseMapAttempts = 0;
             }
-            else if (TapHelipadButton(tray.ClearSelectionButton, now))
+            else if (DeselectHelipadSquads(tray, now))
             { airProbeDefenseSlot++; airProbeDefenseStep = 0; }
             return false;
         }
@@ -523,9 +523,9 @@ namespace Game.Editor
             if (tray == null) return false;
             for (int slot = 0; slot < 5; slot++)
                 if ((page.AirMask & page.AssaultMask & (1 << slot)) != 0)
-                { TapHelipadButton(tray.VisibleCardButton(slot), now); return false; }
+                { TapHelipadSquadSlot(tray, slot, now); return false; }
             if (page.NextPage && airProbePageTurns++ < 12)
-                TapHelipadButton(tray.NextPageButton, now);
+                SwipeHelipadSquadPage(tray, true, now);
             return false;
         }
 

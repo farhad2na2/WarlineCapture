@@ -216,7 +216,7 @@ namespace Game.Editor
             {
                 deferredFactoryCameraPageBefore = page.PageIndex;
                 var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
-                if (PlayerResumeTap(tray?.NextPageButton)) deferredFactoryCameraPageTapped = true;
+                if (PlayerResumeSwipeSquadPage(tray, true)) deferredFactoryCameraPageTapped = true;
                 return;
             }
             if (page.PageIndex == deferredFactoryCameraPageBefore) return;

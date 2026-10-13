@@ -175,6 +175,15 @@ namespace Game.Runtime
             return false;
         }
 
+        public static bool TryTogglePresentedGroup(EntityManager em, Entity session, uint groupId)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+                !SkirmishArmyGroupSystem.TryGet(em, session, groupId, out var record)) return false;
+            return record.Selected != 0
+                ? SkirmishArmySelectionService.TryDeselectGroup(em, session, groupId)
+                : TryPresentedGroup(em, session, groupId);
+        }
+
         public static bool TryHoldSelection(EntityManager em, Entity session)
         {
             if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||

@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "exitCode": 0,
+  "tests": 2,
+  "passed": 2,
+  "failed": 0,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "swipesPerLocale": 11,
+  "pairedContactsPerLocale": 17,
+  "cardTogglesPerLocale": 5,
+  "directScrollWrites": 0,
+  "hiddenPaging": 0,
+  "missionCertified": false,
+  "devicePlayerAcceptance": "Pending"
+}

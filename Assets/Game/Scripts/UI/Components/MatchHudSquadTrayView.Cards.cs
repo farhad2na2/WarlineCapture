@@ -19,7 +19,7 @@ namespace Game.UI.Runtime
                 if (cardRect == null)
                     continue;
 
-                Transform existingStrip = card.NameStrip;
+                Transform existingStrip = card.NameStrip != null ? card.NameStrip : card.Button.transform.Find("NameStrip");
                 GameObject stripObject = existingStrip != null ? existingStrip.gameObject : new GameObject("NameStrip");
                 if (existingStrip == null)
                     stripObject.transform.SetParent(cardRect, false);
@@ -36,7 +36,7 @@ namespace Game.UI.Runtime
                 stripImage.color = CardLabelStripColor;
                 stripImage.raycastTarget = false;
 
-                Transform existingLabel = card.NameLabel != null ? card.NameLabel.transform : null;
+                Transform existingLabel = card.NameLabel != null ? card.NameLabel.transform : existingStrip != null ? existingStrip.Find("Label") : null;
                 GameObject labelObject = existingLabel != null ? existingLabel.gameObject : new GameObject("Label");
                 if (existingLabel == null)
                     labelObject.transform.SetParent(stripRect, false);

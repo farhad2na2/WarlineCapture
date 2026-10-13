@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.UI.Contracts
@@ -12,6 +13,12 @@ namespace Game.UI.Contracts
     {
         void ConfigureExpandedPagination(Action<int> changePage, Action clearSelection);
         void ConfigureExpandedGroupSelection(Action<uint> selectGroup);
+    }
+
+    public interface IMatchHudSquadTrayRosterBinding
+    {
+        void ConfigureExpandedRoster(Action<List<UiMatchHudSquadTrayCardModel>> readRoster,
+            Func<uint, Sprite> resolvePortrait);
     }
 
     public interface IMatchHudSquadTrayView

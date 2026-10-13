@@ -41,6 +41,7 @@ namespace Game.UI.Shell.Ecs
             if (observation.GoalId != session.GoalId)
             {
                 session.GoalId = observation.GoalId; session.Attempts = 0;
+                session.ScrollTargetId = 0;
                 if (session.Phase != AriaPlayPhase.Touching) session.Phase = AriaPlayPhase.Observing;
                 session.LastProgressAt = now;
             }
@@ -75,10 +76,33 @@ namespace Game.UI.Shell.Ecs
             if (session.TargetId != observation.TargetId)
             {
                 session.TargetId = observation.TargetId; session.Attempts = 0;
+                session.ScrollTargetId = 0;
                 session.LastProgressAt = now;
                 // A replacement control can occupy the same pixels as the previous one.
                 // Show a fresh approach instead of immediately pressing its new action.
                 session.Phase = AriaPlayPhase.Observing;
+            }
+            if (observation.Kind == AriaPlayObservationKind.Control && observation.Drag != 0 &&
+                observation.ScrollTargetId != 0)
+            {
+                if (session.ScrollTargetId != observation.ScrollTargetId)
+                {
+                    // A different catalog item can share the same scroll actuator ID.
+                    session.ScrollTargetId = observation.ScrollTargetId;
+                    session.BestScrollDistanceViewports = observation.ScrollDistanceViewports;
+                    session.ScrollCreditedActions = session.Actions;
+                    session.Attempts = 0;
+                }
+                else if (session.Actions > session.ScrollCreditedActions &&
+                    session.BestScrollDistanceViewports - observation.ScrollDistanceViewports >= .05f)
+                {
+                    // Credit a completed drag only once and only when the actual
+                    // button moved at least 5% of a viewport toward visibility.
+                    session.BestScrollDistanceViewports = observation.ScrollDistanceViewports;
+                    session.ScrollCreditedActions = session.Actions;
+                    session.Attempts = 0;
+                    session.LastProgressAt = now;
+                }
             }
             if (session.Attempts >= 3) { session.Phase = AriaPlayPhase.Blocked; return; }
             if (session.Phase != AriaPlayPhase.Aiming)

@@ -34,7 +34,8 @@
         "sniveler-code.gpu-animation",
         "Game.Operations.Contracts",
         "Game.Operations.Strategic",
-        "Game.Skirmish.Contracts"
+        "Game.Skirmish.Contracts",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

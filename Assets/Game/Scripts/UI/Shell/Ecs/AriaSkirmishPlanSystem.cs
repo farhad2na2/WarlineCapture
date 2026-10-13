@@ -891,12 +891,20 @@ namespace Game.UI.Shell.Ecs
                 { Target(view.FocusPlayer, false, ref output); return true; }
                 if (view.ExpandedPageIndex > 0)
                 { Target(view.PreviousSquadPage, false, ref output); return true; }
+                plan.HomeDefensePage = 0;
                 plan.HomeDefenseStage = 2;
             }
             if (plan.HomeDefenseStage == 2)
             {
-                if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
-                { Target(view.ClearSquadSelection, false, ref output); return true; }
+                if (TryDeselectSquads(view, ref output)) return true;
+                // Deselecting an off-screen squad may have moved the roster.
+                // Restore this sweep's window, including later defense windows.
+                if (view.ExpandedPageIndex != plan.HomeDefensePage)
+                {
+                    Target(view.ExpandedPageIndex < plan.HomeDefensePage
+                        ? view.NextSquadPage : view.PreviousSquadPage, false, ref output);
+                    return true;
+                }
                 plan.HomeDefenseStage = 3;
             }
             if (plan.HomeDefenseStage == 3)
@@ -938,7 +946,11 @@ namespace Game.UI.Shell.Ecs
             {
                 if (view.ExpandedPageIndex == plan.HomeDefensePage)
                     Target(view.NextSquadPage, false, ref output);
-                else plan.HomeDefenseStage = 2;
+                else
+                {
+                    plan.HomeDefensePage = view.ExpandedPageIndex;
+                    plan.HomeDefenseStage = 2;
+                }
                 return true;
             }
             if (view.Time >= plan.HomeDefenseObserveUntil) plan.HomeDefenseStage = 0;
@@ -969,15 +981,15 @@ namespace Game.UI.Shell.Ecs
             {
                 plan.Intent = AriaSkirmishIntent.ReturnAircraft;
                 if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
-                if (view.SelectedAircraft) { plan.AirCycleStage = 2; }
+                if (view.SelectedAircraft && view.ExpandedSelectedGroups <= 1) { plan.AirCycleStage = 2; }
                 else
                 {
+                    if (TryDeselectSquads(view, ref output)) return true;
                     for (int slot = 0; slot < 5; slot++)
                         if ((view.ExpandedAirMask & (1 << slot)) != 0 && view.Squad(slot).Available)
                         { Target(view.Squad(slot), false, ref output); return true; }
-                    if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
-                        Target(view.ClearSquadSelection, false, ref output);
-                    else if (view.NextSquadPage.Available)
+                    if (TryDeselectSquads(view, ref output)) return true;
+                    if (view.NextSquadPage.Available)
                         Target(view.NextSquadPage, false, ref output);
                     else output.Kind = AriaPlayObservationKind.Waiting;
                     return true;
@@ -1076,16 +1088,22 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan,
             ref AriaPlayObservationComponent output)
         {
-            if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
+            if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0)
             {
+                plan.SelectionResetPage = view.ExpandedPageIndex;
                 plan.AssaultSelecting = 2;
-                Target(view.ClearSquadSelection, false, ref output);
-                return true;
             }
             if (plan.AssaultSelecting == 2)
             {
-                if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
-                { Target(view.ClearSquadSelection, false, ref output); return true; }
+                if (TryDeselectSquads(view, ref output)) return true;
+                // Resume the intended assault window after normal card/swipe input.
+                if (view.ExpandedPageIndex != plan.SelectionResetPage)
+                {
+                    plan.Intent = AriaSkirmishIntent.Inspect;
+                    Target(view.ExpandedPageIndex < plan.SelectionResetPage
+                        ? view.NextSquadPage : view.PreviousSquadPage, false, ref output);
+                    return true;
+                }
                 plan.AssaultSelecting = 0;
             }
             int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
@@ -1172,6 +1190,16 @@ namespace Game.UI.Shell.Ecs
             return false;
         }
 
+        private static bool TryDeselectSquads(in AriaSkirmishObservation view,
+            ref AriaPlayObservationComponent output)
+        {
+            if (view.ExpandedSelectedGroups <= 0) return false;
+            if (view.SelectedSquadToToggle.Available)
+                Target(view.SelectedSquadToToggle, false, ref output);
+            else output.Kind = AriaPlayObservationKind.Waiting;
+            return true;
+        }
+
         private static int LowestSetBit(int mask)
         {
             int bit = 0;
@@ -1192,6 +1220,8 @@ namespace Game.UI.Shell.Ecs
             output.TargetId = target.Id; output.Position = target.Position;
             output.Drag = target.Drag ? (byte)1 : (byte)0;
             output.DragEnd = target.DragEnd;
+            output.ScrollTargetId = target.ScrollTargetId;
+            output.ScrollDistanceViewports = target.ScrollDistanceViewports;
         }
     }
 }

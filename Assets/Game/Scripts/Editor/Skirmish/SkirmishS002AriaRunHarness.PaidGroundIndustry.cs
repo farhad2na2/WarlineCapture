@@ -110,8 +110,8 @@ namespace Game.Editor
             }
             if (selected.Length > 0 || page.SelectedGroups > 0)
             {
-                if (PlayerResumeTap(tray.ClearSelectionButton))
-                    Debug.Log("[S005SingleActorSelection] phase=Clear input=Touch previousNativeActors=" + selected.Length +
+                if (PlayerResumeDeselectSquads(tray))
+                    Debug.Log("[S005SingleActorSelection] phase=DeselectByCard input=Touch previousNativeActors=" + selected.Length +
                         " previousGroups=" + page.SelectedGroups + " selectionInjected=0");
                 return false;
             }
@@ -119,10 +119,10 @@ namespace Game.Editor
             if (!SkirmishLaunchProjection.TryGet(em, out var session, out _)) return false;
             for (int slot = 0; slot < 5; slot++)
                 if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == target)
-                { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+                { PlayerResumeTapSquadSlot(tray, slot); return false; }
             if (singleActorPagingForward && !page.NextPage) singleActorPagingForward = false;
             if (!singleActorPagingForward && !page.PreviousPage) singleActorPagingForward = true;
-            PlayerResumeTap(singleActorPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+            PlayerResumeSwipeSquadPage(tray, singleActorPagingForward);
             return false;
         }
 
@@ -179,8 +179,8 @@ namespace Game.Editor
                     var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
                     for (int slot = 0; slot < 5; slot++)
                         if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == unit)
-                        { PlayerResumeTap(tray?.VisibleCardButton(slot)); return; }
-                    PlayerResumeTap(page.NextPage ? tray?.NextPageButton : tray?.PreviousPageButton);
+                        { PlayerResumeTapSquadSlot(tray, slot); return; }
+                    PlayerResumeSwipeSquadPage(tray, page.NextPage);
                     return;
                 }
                 using var selected = em.CreateEntityQuery(typeof(SelectedUnitTag));
@@ -283,10 +283,10 @@ namespace Game.Editor
                 if (tray == null || !UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return;
                 for (int slot = 0; slot < 5; slot++)
                     if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == localFuelTanker)
-                    { PlayerResumeTap(tray.VisibleCardButton(slot)); return; }
+                    { PlayerResumeTapSquadSlot(tray, slot); return; }
                 if (localFuelPagingForward && !page.NextPage) localFuelPagingForward = false;
                 if (!localFuelPagingForward && !page.PreviousPage) localFuelPagingForward = true;
-                PlayerResumeTap(localFuelPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+                PlayerResumeSwipeSquadPage(tray, localFuelPagingForward);
                 return;
             }
             if (PlayerResumeWorldTap(em, localFuelStore, now)) { localFuelStep = 2; localFuelAckAt = now + 2; }
@@ -387,10 +387,10 @@ namespace Game.Editor
                     if (tray == null || !UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return false;
                     for (int slot = 0; slot < 5; slot++)
                         if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == localFuelTanker)
-                        { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+                        { PlayerResumeTapSquadSlot(tray, slot); return false; }
                     if (localFuelPagingForward && !page.NextPage) localFuelPagingForward = false;
                     if (!localFuelPagingForward && !page.PreviousPage) localFuelPagingForward = true;
-                    PlayerResumeTap(localFuelPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+                    PlayerResumeSwipeSquadPage(tray, localFuelPagingForward);
                     return false;
                 }
                 if (!PlayerResumeWorldTap(em, localFuelStore, now)) return false;
@@ -652,10 +652,10 @@ namespace Game.Editor
                     for (int slot = 0; slot < 5; slot++)
                         if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, selectionSession, slot, out var member) &&
                             member == materialsPriorityTruck)
-                        { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+                        { PlayerResumeTapSquadSlot(tray, slot); return false; }
                     if (materialsPriorityPagingForward && !page.NextPage) materialsPriorityPagingForward = false;
                     if (!materialsPriorityPagingForward && !page.PreviousPage) materialsPriorityPagingForward = true;
-                    PlayerResumeTap(materialsPriorityPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+                    PlayerResumeSwipeSquadPage(tray, materialsPriorityPagingForward);
                     return false;
                 }
                 materialsPriorityStep = 1;

@@ -1,0 +1,9 @@
+{
+  "result": "Passed",
+  "exitCode": 0,
+  "nativeVisualReview": "Passed squad strip only; rendered counts1,2,5,8 in EN/FA at1920 and overflow2400. Outer HUD prefab geometry unchanged.",
+  "ariaPlannerCases": 111,
+  "compatibilityChecks": 17,
+  "fullNormalInputMission": "Pending",
+  "realPlayerDeviceAcceptance": "Pending"
+}

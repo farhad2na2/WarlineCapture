@@ -1932,6 +1932,8 @@ namespace Game.Editor
             Texture2D capture = new(width, height, TextureFormat.RGBA32, false);
             try
             {
+                squadScrollCaptureSetup?.Invoke(instance);
+                Canvas.ForceUpdateCanvases();
                 if (validateMobileCapture) ValidateMobileGeometry(instance, camera, width, height);
                 camera.Render();
                 RenderTexture.active = target;

@@ -1,0 +1,7 @@
+{
+  "result": "Failed",
+  "exitCode": 124,
+  "reason": "Compiler CS0619 at two GetInstanceID calls; GUI run stalled until checked wrapper timeout. Both calls repaired to GetEntityId().GetHashCode().",
+  "requiredPassMarker": "[SquadScrollCombined] result=Passed",
+  "passMarkerPresent": false
+}

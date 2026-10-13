@@ -42,6 +42,17 @@ namespace Game.Runtime
             return decision.Accepted;
         }
 
+        public static bool TryDeselectGroup(EntityManager em, Entity session, uint groupId)
+        {
+            if (!SkirmishArmyGroupSystem.TryGet(em, session, groupId, out var record) ||
+                record.FactionId != 1 || record.Selected == 0) return false;
+            MarkGroup(em, session, groupId, 0);
+            ApplyTags(em, session, groupId, false);
+            Recount(em, session);
+            SkirmishArmyDrawerProjection.Project(em, session);
+            return true;
+        }
+
         public static bool TrySelectPageSlot(
             EntityManager em,
             Entity session,

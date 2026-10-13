@@ -1,4 +1,5 @@
 using Game.Components;
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using Game.Skirmish.Contracts;
@@ -8,8 +9,13 @@ namespace Game.Runtime
 {
     public static class SkirmishArmyDrawerProjection
     {
-        public static int Project(EntityManager em, Entity session)
+        public static int Project(EntityManager em, Entity session) => Project(em, session, null);
+
+        // Project the continuous player roster with the same health and stable ordering as
+        // the public five-slot ARIA model. The drawer buffer remains the logical page.
+        public static int Project(EntityManager em, Entity session, List<SkirmishArmyDrawerSlot> roster)
         {
+            roster?.Clear();
             if (!em.HasBuffer<SkirmishArmyDrawerSlot>(session))
                 em.AddBuffer<SkirmishArmyDrawerSlot>(session);
             DynamicBuffer<SkirmishArmyDrawerSlot> slots = em.GetBuffer<SkirmishArmyDrawerSlot>(session);
@@ -60,10 +66,8 @@ namespace Game.Runtime
                         continue;
                     int slotIndex = written;
                     written++;
-                    if (slotIndex / pageSize != page)
-                        continue;
                     var groupHealth = healthByGroup[i];
-                    slots.Add(new SkirmishArmyDrawerSlot
+                    var slot = new SkirmishArmyDrawerSlot
                     {
                         GroupId = groups[i].GroupId,
                         Health01 = groupHealth.y > 0 ? math.saturate((float)groupHealth.x / groupHealth.y) : 0f,
@@ -71,7 +75,9 @@ namespace Game.Runtime
                         AliveCount = groups[i].AliveCount,
                         Selected = groups[i].Selected,
                         LastOrder = groups[i].LastOrder
-                    });
+                    };
+                    roster?.Add(slot);
+                    if (slotIndex / pageSize == page) slots.Add(slot);
                 }
 
                 return slots.Length;

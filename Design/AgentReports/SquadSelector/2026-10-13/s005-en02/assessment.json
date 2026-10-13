@@ -1,0 +1,15 @@
+{
+  "nativeOutcome": "Victory",
+  "reason": "MainBaseDestroyed",
+  "seconds": 297.58,
+  "normalInput": true,
+  "normalSpeed": true,
+  "inputViolations": 0,
+  "interventions": 0,
+  "return": "ADJUST SETUP via real touch, frozen result check passed",
+  "wrapperExit": 128,
+  "wrapperFailure": "fork: Resource temporarily unavailable during Editor shutdown",
+  "fullAcceptance": "Failed wrapper exit; same checked wrapper rerun required",
+  "sourceChangedPaths": [],
+  "deviceAcceptance": "Pending"
+}

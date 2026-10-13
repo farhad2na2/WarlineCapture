@@ -148,13 +148,13 @@ namespace Game.Editor
             for (int slot = 0; slot < 5; slot++)
                 if ((page.AirMask & page.AssaultMask & (1 << slot)) != 0 &&
                     SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == actor)
-                { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+                { PlayerResumeTapSquadSlot(tray, slot); return false; }
             // A local Tanker delivery can leave the last page visible while
             // the aircraft is on an earlier page. Search both directions and
             // verify the paid actor, rather than accepting any aircraft card.
             if (fixedWingSelectionPagingForward && !page.NextPage) fixedWingSelectionPagingForward = false;
             if (!fixedWingSelectionPagingForward && !page.PreviousPage) fixedWingSelectionPagingForward = true;
-            if (PlayerResumeTap(fixedWingSelectionPagingForward ? tray.NextPageButton : tray.PreviousPageButton))
+            if (PlayerResumeSwipeSquadPage(tray, fixedWingSelectionPagingForward))
             {
                 fixedWingPages++;
                 Debug.Log("[S005FixedWingSelection] phase=Page input=Touch direction=" +
@@ -415,10 +415,10 @@ namespace Game.Editor
                     if (tray == null || !UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return false;
                     for (int slot = 0; slot < 5; slot++)
                         if (SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, slot, out var member) && member == fixedWingRetiredOilTruck)
-                        { PlayerResumeTap(tray.VisibleCardButton(slot)); return false; }
+                        { PlayerResumeTapSquadSlot(tray, slot); return false; }
                     if (fixedWingFleetPagingForward && !page.NextPage) fixedWingFleetPagingForward = false;
                     if (!fixedWingFleetPagingForward && !page.PreviousPage) fixedWingFleetPagingForward = true;
-                    PlayerResumeTap(fixedWingFleetPagingForward ? tray.NextPageButton : tray.PreviousPageButton);
+                    PlayerResumeSwipeSquadPage(tray, fixedWingFleetPagingForward);
                     return false;
                 }
                 var wheel = controls?.CommandWheelPanel;

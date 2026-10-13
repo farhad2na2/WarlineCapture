@@ -1,0 +1,7 @@
+{
+  "automation": "Passed",
+  "nativeVisualReview": "Failed: portrait inserted behind gradient layer; fixed before final candidate.",
+  "normalInputMission": "Not run in this fixture validation",
+  "playerDeviceAcceptance": "Pending",
+  "retainedForTraceability": true
+}

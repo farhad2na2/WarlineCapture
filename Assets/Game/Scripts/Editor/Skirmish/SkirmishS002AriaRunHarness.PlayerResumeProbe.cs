@@ -668,7 +668,7 @@ namespace Game.Editor
                 int rifle = Array.FindIndex(slots, slot => slot.Rifle && slot.Alive > 0);
                 if (rifle < 0)
                 {
-                    if (page.NextPage) { PlayerResumeTap(tray.NextPageButton); return; }
+                    if (page.NextPage) { PlayerResumeSwipeSquadPage(tray, true); return; }
                     foreach (var receipt in em.GetBuffer<SkirmishProductionReservation>(session))
                         if (receipt.FactionId == 1 && receipt.Role == SkirmishRoleKind.Rifle &&
                             receipt.Phase is SkirmishReservationPhase.Reserved or SkirmishReservationPhase.Producing) return;
@@ -679,8 +679,8 @@ namespace Game.Editor
                     return;
                 }
                 if (drawer != null && drawer.IsOpen) { PlayerResumeTap(drawer.CloseButton); return; }
-                if (page.SelectedGroups > 0) { PlayerResumeTap(tray.ClearSelectionButton); return; }
-                if (PlayerResumeTap(tray.VisibleCardButton(rifle))) playerResumeBoardStep = 1;
+                if (page.SelectedGroups > 0) { PlayerResumeDeselectSquads(tray); return; }
+                if (PlayerResumeTapSquadSlot(tray, rifle)) playerResumeBoardStep = 1;
             }
             else if (playerResumeBoardStep == 1)
             {

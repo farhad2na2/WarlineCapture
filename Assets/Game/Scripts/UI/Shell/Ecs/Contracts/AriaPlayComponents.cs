@@ -10,12 +10,16 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int TargetId, GoalId, Frame;
         public Vector2 Position, DragEnd;
         public byte Drag;
+        public int ScrollTargetId;
+        public float ScrollDistanceViewports;
         public float Time;
     }
     public struct AriaPlaySessionComponent : IComponentData
     {
         public AriaPlayPhase Phase;
         public int TargetId, GoalId, Attempts, Actions;
+        public int ScrollTargetId, ScrollCreditedActions;
+        public float BestScrollDistanceViewports;
         public Vector2 Target, Contact, DragEnd;
         public byte Drag;
         public float DueAt, LastProgressAt;

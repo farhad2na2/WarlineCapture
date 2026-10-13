@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "wrapperExit": 128,
+  "countedWin": false,
+  "abortReason": "candidateSourceChangedDuringRun",
+  "underlyingTrace": "ARIA blocked after3 first-group selection attempts; binding-order defect identified and repaired.",
+  "normalSpeed": true,
+  "pairedContacts": 25,
+  "acceptedCommands": 4,
+  "inputViolations": 0,
+  "humanInterventions": 0,
+  "sourceDriftCandidates": [
+    "Dynamic TMP fallback atlas cleared",
+    "EntitiesClientSettings.asset generated during first full startup"
+  ],
+  "guardPreserved": true
+}

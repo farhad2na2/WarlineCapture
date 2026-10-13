@@ -1,0 +1,8 @@
+{
+  "result": "Failed",
+  "exitCode": 2,
+  "uiAutomation": "Passed",
+  "nativeVisualReview": "Portraits correct; health underline refined in next candidate.",
+  "ariaCompatibility": "Failed existing Attack-before-world-touch assertion; repair pending.",
+  "fullNormalInputMission": "Not run yet"
+}

@@ -350,6 +350,40 @@ namespace Game.Runtime
                 if (view == null)
                     return;
 
+                if (view is IMatchHudSquadTrayRosterBinding rosterBinding)
+                {
+                    var roster = new List<SkirmishArmyDrawerSlot>();
+                    rosterBinding.ConfigureExpandedRoster(destination =>
+                    {
+                        destination.Clear();
+                        using var sessions = entityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                        if (sessions.CalculateEntityCount() != 1) return;
+                        var session = sessions.GetSingletonEntity();
+                        if (!SkirmishExpandedSessionControlService.IsExpanded(entityManager, session)) return;
+                        SkirmishArmyDrawerProjection.Project(entityManager, session, roster);
+                        foreach (var slot in roster)
+                            destination.Add(new UiMatchHudSquadTrayCardModel(true,
+                                SkirmishSetupBriefing.RoleLabel(slot.Role, GameLocalization.IsRightToLeft) + " (" + slot.AliveCount + ")",
+                                slot.AliveCount.ToString(), slot.Health01, slot.GroupId,
+                                slot.AliveCount, destination.Count + 1, slot.Selected != 0));
+                    }, groupId =>
+                    {
+                        using var sessions = entityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                        if (sessions.CalculateEntityCount() != 1) return null;
+                        var session = sessions.GetSingletonEntity();
+                        var id = entityManager.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+                        using var query = entityManager.CreateEntityQuery(typeof(SkirmishArmyGroupMembershipComponent),
+                            typeof(SkirmishAttemptOwnedComponent), typeof(UnitHealth));
+                        using var members = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+                        foreach (var member in members)
+                            if (entityManager.GetComponentData<SkirmishAttemptOwnedComponent>(member).SessionId.Equals(id) &&
+                                entityManager.GetComponentData<SkirmishArmyGroupMembershipComponent>(member).GroupId == groupId &&
+                                entityManager.GetComponentData<UnitHealth>(member).Current > 0)
+                                return resolveSelectionCardPortraitSprite?.Invoke(entityManager, member);
+                        return null;
+                    });
+                }
+
                 if (view is IMatchHudSquadTrayPortraitBinding portraits)
                     portraits.ConfigurePortraitResolver(index =>
                     {
@@ -393,8 +427,13 @@ namespace Game.Runtime
                     {
                         selectionUiCommand.CaptureUiClickSequence();
                         runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                        if (TryGetExpandedSession(out Entity session) &&
-                            SkirmishExpandedPresentedOrders.TryPresentedGroup(entityManager, session, groupId))
+                        bool haveSession = TryGetExpandedSession(out Entity session);
+                        bool toggled = haveSession && SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(entityManager, session, groupId);
+#if UNITY_EDITOR
+                        if (System.Environment.GetEnvironmentVariable("WARLINE_SQUAD_INPUT_DIAGNOSTIC") == "1")
+                            Debug.Log("[SquadCardInput] composition group=" + groupId + " session=" + haveSession + " toggled=" + toggled);
+#endif
+                        if (toggled)
                             matchHudSquadTraySelectionSystem.SynchronizeExpandedSelection(
                                 CreateSquadTraySelectionContext(), entityManager);
                     });

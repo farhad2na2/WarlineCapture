@@ -1,0 +1,24 @@
+{
+  "tool": "built-in image_gen",
+  "prompts": [
+    {
+      "key": "one",
+      "prompt": "Use case: precise-object-edit, game UI mockup.\nEdit this exact Warline Capture screenshot with ONE extremely localized change: lower-left squad roster. Deliver single full landscape screenshot with identical framing and HUD layout, no board title or outside captions.\nEvery UI element outside the squad strip is immutable. KEEP all SEVEN command buttons SELECT, MOVE, ATTACK, HOLD, SCAN, SUPPORT, BUILD in exact original single-row positions starting at 43% image width. Preserve their sizes and icons. Keep top resources, ARIA panel, minimap, scene and guidance unchanged. Never shift commands left to fill space.\nThe squad-card strip is confined to x=0.8%–42.5%, y=78%–98.5%. Cards MUST remain same small size as full cards in reference: approximately 7.4% screen width by20% screen height. NO enlargement or stretching with fewer squads. Left align at x0.8%, y78%. Card art fills card above a narrow name footer, health line. Original portrait style and cyan selected outline. The unused space to the right of remaining card(s), up to SELECT button, must simply reveal existing battlefield scenery. NO background bar, empty card slots, ghost cards, disabled cards, paging arrows, chevrons, scrollbar, headings, or count badge. No extra UI. All cards wholly visible because roster fits.\nThere is exactly ONE squad available. Show exactly ONE standard-size RIFLE SQUAD portrait card at far bottom-left, selected cyan border. Remove all other squad cards and BOTH scrolling arrows and restore battlefield in their old positions. The remaining card spans only approximately x0.8%–8.2% of screen, not the whole strip. End result has ONE small portrait card lower left, open battlefield gap, then original seven command buttons unchanged."
+    },
+    {
+      "key": "two",
+      "prompt": "Use case: precise-object-edit, game UI mockup.\nEdit this exact Warline Capture screenshot with ONE extremely localized change: lower-left squad roster. Deliver single full landscape screenshot with identical framing and HUD layout, no board title or outside captions.\nEvery UI element outside the squad strip is immutable. KEEP all SEVEN command buttons SELECT, MOVE, ATTACK, HOLD, SCAN, SUPPORT, BUILD in exact original single-row positions starting at 43% image width. Preserve their sizes and icons. Keep top resources, ARIA panel, minimap, scene and guidance unchanged. Never shift commands left to fill space.\nThe squad-card strip is confined to x=0.8%–42.5%, y=78%–98.5%. Cards MUST remain same small size as full cards in reference: approximately 7.4% screen width by20% screen height. NO enlargement or stretching with fewer squads. Left align at x0.8%, y78%. Card art fills card above a narrow name footer, health line. Original portrait style and cyan selected outline. The unused space to the right of remaining card(s), up to SELECT button, must simply reveal existing battlefield scenery. NO background bar, empty card slots, ghost cards, disabled cards, paging arrows, chevrons, scrollbar, headings, or count badge. No extra UI. All cards wholly visible because roster fits.\nThere are exactly TWO squads available. Show exactly TWO standard-size portrait cards at far bottom-left: RIFLE SQUAD selected cyan border, VEHICLES unselected green border in full color. Same width and height as reference's normal card, narrow original gutter, approximately x0.8%–8.2% and x8.6%–16%. Remove all other cards and BOTH scroll arrows; restore underlying battlefield in remainder of strip. No stretch. End result has TWO small portrait cards lower left, open battlefield gap, then original seven command buttons unchanged."
+    }
+  ],
+  "status": "Visual concepts only; no implementation.",
+  "files": [
+    [
+      "/Users/farhad/.codex/generated_images/01a13635-a881-7d90-92d3-37b03799b564/exec-3365515f-b31a-445a-9fbb-44151a15a7f7.png",
+      "E-one-squad.png"
+    ],
+    [
+      "/Users/farhad/.codex/generated_images/01a13635-a881-7d90-92d3-37b03799b564/exec-f1330a47-3ee1-4fb6-96cc-312716f2074c.png",
+      "E-two-squads.png"
+    ]
+  ]
+}

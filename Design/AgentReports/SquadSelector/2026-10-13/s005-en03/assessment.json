@@ -1,0 +1,18 @@
+{
+  "result": "Passed",
+  "wrapperExit": 0,
+  "nativeOutcome": "Victory",
+  "reason": "MainBaseDestroyed",
+  "seconds": 258.025,
+  "normalInput": true,
+  "normalSpeed": true,
+  "inputViolations": 0,
+  "interventions": 0,
+  "countedWin": 1,
+  "return": "ADJUST SETUP via normal touch; frozen result confirmed",
+  "sourceFilesChecked": 40730,
+  "sourceChangesDuringRun": 0,
+  "scope": "Isolated T7 selector candidate; does not certify combined dirty main source",
+  "integratedMainMissionAcceptance": "Pending fresh combined source run",
+  "realDeviceAcceptance": "Pending"
+}

@@ -112,6 +112,10 @@ namespace Game.Runtime
             if (_cameraRequestSystem == null || !TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
+            // A public pan owns the center even while a HUD zoom finishes.
+            // Keep the requested zoom height, but never restore its previous center.
+            _matchHudZoomFocusWorldPosition = focusWorldPosition;
+
             // A map tap or viewport drag is manual camera ownership. A pending
             // delivery focus must not pull it back after the gesture completes.
             _cameraRequestSystem.QueueClearSmoothFocusTarget(em);

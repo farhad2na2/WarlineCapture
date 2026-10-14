@@ -406,10 +406,8 @@ namespace Game.UI.Runtime
             EnsureStatTile(_statRow, "Army", 0f, fa ? "ارتش" : "ARMY");
             EnsureStatTile(_statRow, "Start", 0f, fa ? "آغاز" : "START");
 
-            string clock = briefing.ShowTime ? FormatClock(briefing.DeadlineSeconds) : string.Empty;
-            BindStatTile(_statRow.Find("Time"), fa ? "زمان" : "TIME", clock, true);
-            string sizeName = briefing.ShowSize ? LibraryText(briefing.SizeLocKey, fa) : string.Empty;
-            BindStatTile(_statRow.Find("Size"), fa ? "اندازه" : "SIZE", sizeName, false);
+            PresentFlaggedTile("Time", briefing.ShowTime, fa ? "زمان" : "TIME", FormatClock(briefing.DeadlineSeconds), true);
+            PresentFlaggedTile("Size", briefing.ShowSize, fa ? "اندازه" : "SIZE", LibraryText(briefing.SizeLocKey, fa), false);
 
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
@@ -433,6 +431,20 @@ namespace Game.UI.Runtime
             BindStatTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel, false);
             BindStatTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel, false);
             LayoutVisibleStatTiles();
+        }
+
+        private void PresentFlaggedTile(string name, bool show, string caption, string value, bool latinValue)
+        {
+            Transform tile = _statRow != null ? _statRow.Find(name) : null;
+            if (tile == null)
+                return;
+            tile.gameObject.SetActive(show);
+            if (!show)
+                return;
+            SetTile(tile, caption, value ?? string.Empty);
+            TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
+            if (valueText != null && latinValue)
+                valueText.isRightToLeftText = false;
         }
 
         private void BindStatTile(Transform tile, string caption, string value, bool latinValue)
@@ -485,10 +497,10 @@ namespace Game.UI.Runtime
 
         private static string FormatClock(int seconds)
         {
-            if (seconds <= 0)
-                return string.Empty;
             int minutes = seconds / 60;
             int remainder = seconds % 60;
+            if (remainder < 0)
+                remainder = -remainder;
             return minutes.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 + ":"
                 + remainder.ToString("00", System.Globalization.CultureInfo.InvariantCulture);

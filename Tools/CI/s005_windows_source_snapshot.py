@@ -46,7 +46,7 @@ def candidate_hash(manifest):
 def build_snapshot(project):
     folder = project / "Library/ScriptAssemblies"
     files = []
-    for path in sorted(folder.glob("*.dll")):
+    for path in sorted(folder.glob("*.dll"), key=lambda path:path.as_posix()):
         with path.open("rb") as stream:
             files.append(dict(path=path.relative_to(project).as_posix(),
                               sha256=hashlib.file_digest(stream, "sha256").hexdigest()))

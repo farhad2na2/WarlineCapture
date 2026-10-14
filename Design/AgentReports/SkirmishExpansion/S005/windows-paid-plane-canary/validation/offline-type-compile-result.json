@@ -1,0 +1,11 @@
+{
+  "result": "PassedOfflineTypeCompile",
+  "exit_code": 0,
+  "response_source": "D:\\Projects\\WarlineCapture\\Library\\Bee\\artifacts\\1300b0aEDbg.dag\\Game.Editor.rsp",
+  "output_directory": "D:\\Projects\\WarlineCapture\\Temp\\S005PaidPlaneOfflineCompile\\compile-j4cc4l3k",
+  "candidate_sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e",
+  "current_harness_sources_preserved": true,
+  "diagnostic_analyzers_omitted": 18,
+  "native_execution": false,
+  "native_qualification": "pending_generators_ILPP_loaded_domain_and_real_canary"
+}

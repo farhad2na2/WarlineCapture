@@ -1,0 +1,54 @@
+Unimported Convoy Escort reducer, 2026-10-14.
+
+Proposed files:
+Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyReducer.cs
+Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyReducerTests.cs
+Governing rules: OBJECTIVE_IMPLEMENTATION.md Common and CE; existing appended
+SkirmishOutcomeKind/SkirmishEndReasonKind values are consumed unchanged.
+
+Pure state records three distinct original objective truck IDs, destination identity,
+per-truck five-second uninterrupted living destination dwell, dead/delivered tombstones,
+clock/deadline, outcome/reason. Leaving resets; authoritative death precedes credit.
+Two delivered wins; delivered+live below two loses; otherwise deadline loses. Main
+base health does not participate. Exact delivery terminal tick precedes deadline.
+Pause/surrender/frozen terminal work consistently; invalid/overflow input cannot
+partially commit. Transition IDs are events for the native lifecycle owner, not
+actor/resource/capacity operations. TimeSpan ticks preserve fractional time without
+prescribing a new simulation rate; native clock needs persisted sub-tick accumulator.
+
+Executed: rtk proxy python Tools/CI/skirmish_convoy_reducer_offline_test.py
+[SkirmishConvoyOffline] result=Passed tests=14 passed=14
+[SkirmishConvoyEditorReferenceCompile] result=Passed editor=6000.5.2f1 executedInUnity=0
+Actual draft reducer + actual 14 NUnit methods + real repository contracts ran using
+installed NUnit. Execution-only JsonUtility shim delegates to installed Newtonsoft.
+Separate compilation used matching real Editor Core/JSONSerialize/NUnit references
+without that shim. Eight source/dependency hashes stayed unchanged. Evidence:
+Design/AgentReports/SkirmishExpansion/CE/offline-reducer-20261014/
+Unity method: Game.Tests.Editor.SkirmishConvoyReducerTests.RunFocusedValidation
+Marker: [SkirmishConvoyReducerTests] result=Passed tests=14
+
+Remaining integration gates:
+- Compile stable roles convoy.1/.2/.3 and native startup IDs for three original mode-
+  owned validated Cargo Trucks, separate +3 objective support allowance; preserve
+  combat/Supply totals and ordinary stock/logistics. No extra combat truck substitute.
+- Shared boundary restrictions: selectable/movable normally, no unsolicited departure,
+  weapons/logistics/Fuel/storage transfer/sale/passengers/replacement/recruitment or
+  capture eligibility. Pure reducer cannot certify those native action restrictions.
+- Damage then authoritative life/destination fact collector. Single outcome arbiter;
+  delivery consumes event once, removes active commands/combat, keeps tombstone,
+  records neither death nor resource reward.
+- Checkpoint DTO/version/clock accumulator, 4.9s actual Unity persistence, native
+  spawn recovery excludes dead/delivered tombstones. Offline JSON is value proof only.
+- Two truck-compatible routes/holding pockets and staggered parking on existing
+  Campaign maps; normal controls reroute around changed blockers without deleting
+  wrecks or teleporting; actual source fit remains unproven.
+- Proposed VehicleFieldRepairSystem still required separately: eligible stationary
+  friendly ground vehicle within12m service pad, no legally visible hostile within20m,
+  25% max-health fraction/20 Materials/20s prorated ceiling cost and at least one tick,
+  accepted fraction/cost/ticks checkpointed, cancel/refund/upgrade rules per contract.
+  Existing Repair spend enum does not implement this. This reducer adds no repair.
+- Public HUD selection through overlap, legal ARIA/enemy 40/40/20 convoy policy,
+  real normal-input/ARIA wins, result/return, EN/FA and player/device acceptance.
+
+No imported files, native execution, physical map, stock/budget, AI driver, publication
+or mission-readiness status changed.

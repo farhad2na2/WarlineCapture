@@ -216,13 +216,16 @@ namespace Game.Composition
                 if(s004Focus) openingDistance=campaignHeight;
             }
             float focusHeight = authoredOpening ? openingDistance : s004Focus ? campaignHeight : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55;
+            bool missionViewBound = SkirmishMissionViewProfileApplication.TryResolve(EntityManager, out var missionView);
+            if (missionViewBound) focusHeight = missionView.NormalHeight;
             focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focusHeight);
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // S002 frames the Barracks and its deployment pad on every focus,
                 // including ARIA's subsequent public base-focus action.
-                Perspective=new Unity.Mathematics.float4(focusHeight,s004Focus ? 50 : 58,s004Focus ? campaignYaw : 0,s004Focus ? 50 : 60),
+                Perspective=missionViewBound ? new Unity.Mathematics.float4(focusHeight,missionView.Pitch,missionView.Yaw,missionView.NormalFieldOfView) :
+                    new Unity.Mathematics.float4(focusHeight,s004Focus ? 50 : 58,s004Focus ? campaignYaw : 0,s004Focus ? 50 : 60),
                 World=focusPosition+
                     (s004Focus ? (enemy ? Unity.Mathematics.float3.zero : new Unity.Mathematics.float3(-12,0,-8)) :
                         authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :

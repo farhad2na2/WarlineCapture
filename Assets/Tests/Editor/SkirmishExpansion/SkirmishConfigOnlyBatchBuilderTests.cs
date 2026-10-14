@@ -55,10 +55,21 @@ namespace Game.Tests.Editor
             Assert.IsTrue(result.Success, string.Join("\n", result.Errors));
             Assert.AreEqual(3, result.Rows.Count);
             Assert.IsTrue(result.Rows.TrueForAll(row => row.CompilerPassed));
-            Assert.IsTrue(result.Rows.TrueForAll(row => !row.RuntimeLayoutBound), "Compiler does not bind new logical groups yet; retain this gate.");
+            Assert.IsTrue(result.Rows.TrueForAll(row => row.RuntimeLayoutBound), "Logical configuration is bound; native source fit remains pending.");
             Assert.AreEqual(existingCount + 1, catalog.Definitions.Count);
             Assert.IsTrue(catalog.TryGetDefinition("S026", out var definition));
             Assert.AreSame(source, definition.CampaignMap);
+            string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(project, out var matrix, out string matrixError), matrixError);
+            foreach (var row in result.Rows)
+            {
+                Assert.IsTrue(SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, row.Size, 0,
+                    new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds }, matrix,
+                    out var compiled, out var reasons), string.Join(";", reasons));
+                Assert.IsTrue(compiled.MeasuredLayoutBound);
+                Assert.AreEqual(64, compiled.LayoutBindingFingerprint.Length);
+                Assert.AreEqual(row.SetupHash, compiled.SetupHash);
+            }
             Assert.AreEqual("opmap.skirmish.city_crossroads", definition.OperationMapId);
             Assert.AreSame(profiles.DefinitionS002, catalog.ToAuthoredSet().DefinitionS002);
             string definitionPath = AssetDatabase.GetAssetPath(definition);

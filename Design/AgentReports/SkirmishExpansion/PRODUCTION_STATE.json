@@ -1,23 +1,23 @@
 {
   "schema_version": 1,
   "enabled": true,
-  "observed_at_utc": "2026-10-14T21:19:33.447961+00:00",
+  "observed_at_utc": "2026-10-14T22:18:18.375132+00:00",
   "goal": "Complete all 120 existing Skirmish missions with required acceptance evidence",
   "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
   "heartbeat": "complete-120-skirmish-missions",
-  "main_pushed_head": "affe78930",
+  "main_pushed_head": "9b6abbcc4",
   "visual_review": "Asynchronous; continue authorized implementation/technical validation, send native screenshots, do not infer approval",
   "native_lane": {
     "owner": "/root",
-    "kind": "Shared42objective rules plusS005north/paidplane load-only native canary",
-    "state": "Running; screenshot03 nativePassed but wrapperfailed actual exitcode unavailable; failurepreserved; wrapperfix assigned",
+    "kind": "Camera API7/profile5 plus broad generic compiler regression and native identity census",
+    "state": "Idle. Run05 checked wrapper exit0; full broad native regression passed. Logical S00544/46 camera calibration profile created, not yet gameplay certified.",
     "project": "D:/Projects/WarlineCapture",
     "editor_pid": null,
-    "wrapper_session": 44540,
-    "log": "Logs/SkirmishProduction/shared-objectives-s005-load-20261014-01.log",
+    "wrapper_session": null,
+    "log": "Logs/SkirmishProduction/generic-compiler-integration-20261015-05.log",
     "timeout_seconds": 900,
-    "source_frozen": true,
-    "required_pass_marker": "[SkirmishProductionContinuationValidation] result=Passed",
+    "source_frozen": false,
+    "required_pass_marker": "[SkirmishGenericCompilerIntegrationValidation] result=Passed",
     "ownership_rule": "Inspect matching actual process command line and wrapper completion before another run; never terminate it to make room"
   },
   "validated": [
@@ -32,85 +32,132 @@
     "Windows CNG native7 assertions and checked wrapper exit0; 16MiB14.6154ms vs managed1737.3758ms; full project equality pending",
     "15 actual BT reducer NUnit rules offline plus matching Unity reference compilation; unimported",
     "14 actual CE reducer NUnit rules offline plus matching Unity reference compilation; unimported",
-    "Full project CNG launch fingerprint equals independent Python binary-manifest hash883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8 over40982files"
+    "Full project CNG launch fingerprint equals independent Python binary-manifest hash883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8 over40982files",
+    "Native Unity42actualNUnit rules/JsonUtility + northload-only/paidplaneentry currentMVID;checkedwrapper0",
+    "Nativebinder8+areas15;durable4legacy/12setupbaselines,S005FA155926identity captured withwrapper0",
+    "Run03 native camera measurement7/profile5 passed; broad aggregate failed S004 stale coordinate fixture, no full native camera capture",
+    "Run04 native Ground16-8, ExpandedDefinition and CombinedArms passed; aggregate failed remaining ExpandedCheckpoint fixture",
+    "Run05 checked wrapper0: all generic/camera/legacy/checkpoint/visual/Campaign and42objective regressions passed; exact S005FA nativeSetupHash E3D3D033 retained"
   ],
   "workers": [
     {
       "task": "/root/qualification_pipeline",
-      "scope": "Windows native SHA256 optimization integration/test draft; generic job canary adapter draft",
+      "scope": "Audit remaining packaged compile fixtures; prepare normal-input camera zoom calibration adapter",
       "imported_changes_allowed": false
     },
     {
       "task": "/root/authoring_foundation",
-      "scope": "Generic layout binder draft; normal paid-plane independent review; shared Frontline Control reducer draft",
+      "scope": "Native FC/BT/CE original lifecycle collector, checkpoint recovery hooks and Ground pilot authoring",
       "imported_changes_allowed": false
     },
     {
       "task": "/root/s005_completion",
-      "scope": "Fix independent paid-plane canary review findings outside Assets",
+      "scope": "Normal paid Transport cruising flight and public Follow camera capture successor",
       "imported_changes_allowed": false
     }
   ],
   "next_actions": [
-    "Collect native capture wrapper result and image; retain failures and full logs",
-    "After lane free, integrate reviewed Windows CNG exact-hash branch + phase timings and focused tests; verify exact digests and measure in Unity",
-    "Compile/load north observer and native capture schema canary before full source/build-pinned north trial",
-    "Integrate generic measured binder and bounded Menu job adapter with native checks at source freeze boundaries",
-    "Complete normal paid-plane/air evidence and six ground BA pilot; expand certified shared capabilities by packets"
+    "Apply one audited correction for remaining synthetic compile fixtures; run broad native regressions to wrapper zero",
+    "Commit/push only technically validated source slices with preserved failures",
+    "Create logical S005 camera profile after native tests; capture actual normal default/min/max/Follow including paid cruising Transport",
+    "Refresh complete source/DLL/native identity pins before S005 north full normal-input trial",
+    "Materialize six source-fit-qualified BA/G pilots and integrate native FC/BT/CE lifecycle/checkpoint systems"
   ],
   "player_ready": false,
   "new_missions_qualified_this_session": 0,
   "latest_native_screenshot": "Design/AgentReports/SkirmishExpansion/S005/windows-native-review-20261014/s005-native-en-1920x1080-opening.png",
   "pending_imports": [
     {
-      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFrontlineReducer.cs",
-      "sha256": "644a49a4e68c6c5b8a0172f7ccf0b67434f9dbaf41e813b2fe69ecfc29e6a4a8",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs",
+      "sha256": "7c31e4d96043b3a65d0c74e8cca9a82873c3c4b41bcf4b4bbe7c537f67c9dca5",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBreakthroughReducer.cs",
-      "sha256": "dc415b10b81c6eed9533be73fc82cf2240d5d79dd9f4b48ec4fdade042f338c1",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "19964563881009b190fd98563ee69ea14d24d27df061bb21dfb87f235ee7f941",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyReducer.cs",
-      "sha256": "2c7dea0d1033bbbebd288e691d515ffde10a7faf7bf1ee89caca5be7f320c74c",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishLegacyLayoutBaselineContract.cs",
+      "sha256": "b02906542a2bdfd71209a0134456365b1200dcdfbb5867016c8f268f10963293",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFrontlineReducerTests.cs",
-      "sha256": "b701ff01c63fb4532b5fc67f44a8920ab1d355c9525b71d2881f6a5dbb75aeb3",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConfigOnlyBatchBuilderTests.cs",
+      "sha256": "e13b3a252a974bb6450e0e190111097e3ae81ff37c0d8acc59885ea5da152942",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishBreakthroughReducerTests.cs",
-      "sha256": "38208013574d14b143b71506b2f7ff3e11b4a274aea94f752a325ddea4a50203",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishLegacyLayoutBaselineRegressionTests.cs",
+      "sha256": "6d3fedf8b04fbb9b972ddf3a8b1b2e9b65eee0b7fe9966b0ea44a205b2054dd1",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyReducerTests.cs",
-      "sha256": "37d165a83204c651394938fac75b69520efd7bfc3e71197a2951e5a28fc808b9",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericCompilerIntegrationValidation.cs",
+      "sha256": "c7e4f623940d19072d2964faa0f243a113a7199f0b5b5aa6f3763110223e17df",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedObjectiveReducerValidation.cs",
-      "sha256": "cc939cc470984f09a3fa7fe3596b9e746fcb4926d538b0499f4375293151f706",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishCameraFramingMeasurementTests.cs",
+      "sha256": "195af3514aab8bc180630e67ecfa322a0e2770d61c610e5eff8bb9bc147c88ff",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
-      "sha256": "5f3401432592e7635989207ac7fb2d0f7a7d2026028d654f01cdb9cf37db3f86",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraFramingMeasurement.cs",
+      "sha256": "1f740a9194f3799cf40b5c1be42704541ba5fca6d8a08609e9f55ca16387780d",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
       "path": "Assets/Game/Scripts/Editor/Skirmish/S005NormalNorthFlank1632Observer.cs",
-      "sha256": "5dda43e1f4a9b6c2aad6d7b2d5b0e6659aeb5541851113da8153fea02ba90fd7",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "sha256": "2237d7d0a6310e13cdbe0bbf4e331563c42f0945bf4225aba2716ea8b83e6276",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     },
     {
-      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
-      "sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e",
-      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
+      "sha256": "2d1286f7085fc19d8cbafdb2e892a7acfc8d7a85b111c1b5cfb742ed7f584f2f",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+      "sha256": "6c35a0c59f71e6a40ae0ea226c9fcee7cc6af41e6ef19b2a37ecd9ed3a09f999",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionViewProfile.cs",
+      "sha256": "2897ac13ba70f77266aa3a7f61c6fc1c0e85a13256dcdb04716c03806055aeae",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionViewProfileApplication.cs",
+      "sha256": "aefb965d1a22df8c8e2bc2e4877e185b6a1861d4ea2f399c8455237bd688f7f4",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionViewProfileAuthoring.cs",
+      "sha256": "d5771a24e3deb12b41eb6931eaa28aa2308c84826df3f55cc02771a32e49f90a",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMissionViewProfileTests.cs",
+      "sha256": "ba78e86e4adc2d527ac0b3c832cad8b47cbab0095816f86e20208697f919120c",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "sha256": "9f39a6f373ed5574fa0513d297db947d014c3f502474ab3197bcf27d877748b2",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishGenericGroundRosterTests.cs",
+      "sha256": "377884a4e8e472e6171a6dd05db08c8d17c59602d53b423afefbdc5224db3e1f",
+      "state": "Run05 full native aggregate Passed, wrapper0; gameplay and camera visual qualification pending"
     }
-  ]
+  ],
+  "camera_acceptance": "Every mission requires readable infantry rather than dots/impostors and comfortable transport-plane framing. Check native opening/default zoom, zoom range, actual render kind and projected bounds. Review is asynchronous; continue authorized work without waiting. Use mission-specific view configuration and focus elevation; preserve shared Campaign sources and separate camera guidance from orders.",
+  "local_calibration_asset": {
+    "path": "Assets/Game/Resources/SkirmishMissionViewProfile_S005.asset",
+    "sha256": "262cec6d470c96e71985414f7e964647c75c4721b7fae7b675418449024df59c",
+    "committed": false,
+    "native_visual_accepted": false
+  }
 }

@@ -236,7 +236,7 @@ namespace Game.Runtime
             mode.ReturnHoldUntilTime = 0f;
             em.SetComponentData(modeEntity, mode);
             em.SetComponentData(EnsureTargetEntity(em), target);
-            em.SetComponentData(EnsurePoseEntity(em), BuildPose(target, TacticalFollowCameraPoseSource.BaseTarget));
+            em.SetComponentData(EnsurePoseEntity(em), BuildMissionAwareBasePose(em, target));
             PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context);
             return true;
         }
@@ -317,7 +317,7 @@ namespace Game.Runtime
             em.SetComponentData(modeEntity, mode);
             CaptureBaseTargetEntities(em, modeEntity, target);
             em.SetComponentData(EnsureTargetEntity(em), target);
-            em.SetComponentData(EnsurePoseEntity(em), BuildPose(target, TacticalFollowCameraPoseSource.BaseTarget));
+            em.SetComponentData(EnsurePoseEntity(em), BuildMissionAwareBasePose(em, target));
             PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context, TacticalFollowCameraFeedbackCode.EnteredFollowMode);
         }
 
@@ -1354,6 +1354,14 @@ namespace Game.Runtime
 
             return mode.BaseTargetKind == TacticalFollowCameraTargetKind.UnitGroup &&
                    em.HasComponent<SelectedUnitTag>(source);
+        }
+
+        private static TacticalFollowCameraPoseComponent BuildMissionAwareBasePose(EntityManager em, TacticalFollowCameraTargetComponent target)
+        {
+            var pose = BuildPose(target, TacticalFollowCameraPoseSource.BaseTarget);
+            // Existing public follow consent/result/restore owner remains in charge.
+            SkirmishMissionViewProfileApplication.TryApplyAircraftFollowPose(em, target.TargetEntity, Camera.main, ref pose);
+            return pose;
         }
 
         private static TacticalFollowCameraPoseComponent BuildPose(

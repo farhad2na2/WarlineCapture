@@ -305,21 +305,27 @@ namespace Game.Configs
                 setup.LastSeenExpireSeconds = 20;
             }
 
-            setup.Structures = BuildStructures(definition, vector);
+            SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint(setup.CatalogId, out string reviewedLegacyLayoutFingerprint);
+            bool preserveLegacyBinding = SkirmishMeasuredLayoutBinder.PreservesPackagedLegacyBinding(setup, definition, reviewedLegacyLayoutFingerprint);
+            setup.Structures = BuildStructures(definition, vector, preserveLegacyBinding);
             setup.TitleKey = definition.TitleKey ?? string.Empty;
             setup.BriefingKey = definition.BriefingKey ?? string.Empty;
             setup.ObjectiveKey = definition.ObjectiveKey ?? string.Empty;
             setup.ResultVictoryKey = definition.ResultVictoryKey ?? string.Empty;
             setup.ResultDefeatKey = definition.ResultDefeatKey ?? string.Empty;
-            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.CombinedArms
-                ? SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice()
-                : definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
-                ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
-                : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
-            SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
+            setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateForArmy(definition.ArmyProfileConfig, preserveLegacyBinding);
+            if (preserveLegacyBinding)
+            {
+                SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
+            }
+            else if (SkirmishMeasuredLayoutBinder.TryBind(setup, definition, reasons, out string bindingFingerprint))
+            {
+                setup.LayoutBindingFingerprint = bindingFingerprint;
+            }
+            // Failed generic binding adds reasons; outer TryCompile discards setup.
             if (SupportsGroundCommanderRollout(setup))
             {
                 var policyCatalog = SkirmishExpansionCatalogConfig.Load();
@@ -430,7 +436,8 @@ namespace Game.Configs
 
         private static SkirmishResolvedStructureEntry[] BuildStructures(
             SkirmishScenarioDefinitionConfig definition,
-            SkirmishSetupMatrixRow vector)
+            SkirmishSetupMatrixRow vector,
+            bool preserveLegacyBinding)
         {
             string playerAnchor = definition.MapLayout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig player)
                 ? player.AnchorId
@@ -455,7 +462,8 @@ namespace Game.Configs
             // Field backbone (7 per side): designated Barracks, Ground Staging, and the
             // supply yard (pump, refinery, bladder, fabrication depot) plus one watchtower.
             // Established adds the approach tower and Satellite Dish. A functional Helipad
-            // is only the offensive-air grant. A second refinery is the War/Large module.
+            // preserves its legacy grant; generic G also grants its allowed transport heli.
+            // A second refinery is the War/Large module.
             // Queue capacity stays on the starting Barracks; it is not a second building.
             AddMirrored(structures, definition, SkirmishStructureIds.OilPump, "economy.player", "economy.enemy", -12f, -8f);
             AddMirrored(structures, definition, SkirmishStructureIds.Refinery, "economy.player", "economy.enemy", 12f, -8f);
@@ -468,7 +476,7 @@ namespace Game.Configs
                 AddMirrored(structures, definition, SkirmishStructureIds.SatelliteDish, "service.player", "service.enemy", 0f, 14f);
             }
 
-            if (GrantsEstablishedHelipad(definition))
+            if (GrantsEstablishedHelipad(definition, preserveLegacyBinding))
             {
                 string playerAir = definition.MapLayout.TryGetAnchor("air.player", out SkirmishLayoutAnchorConfig playerPad)
                     ? playerPad.AnchorId
@@ -513,12 +521,14 @@ namespace Game.Configs
             structures.Add(Structure(2, structureId, enemyAnchor, string.Empty, false, -acrossMetres, forwardMetres));
         }
 
-        private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition)
+        private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition, bool preserveLegacyBinding)
         {
             return definition.StartPackageConfig != null &&
                    definition.StartPackageConfig.Kind == SkirmishStartPackageId.EstablishedBase &&
                    definition.ArmyProfileConfig != null &&
-                   definition.ArmyProfileConfig.AllowsOffensiveAir;
+                   (definition.ArmyProfileConfig.AllowsOffensiveAir ||
+                    (!preserveLegacyBinding && definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.GroundManeuver &&
+                     definition.ArmyProfileConfig.Allows(SkirmishRoleIds.TransportHeli)));
         }
 
         private static SkirmishResolvedStructureEntry Structure(
@@ -575,6 +585,23 @@ namespace Game.Configs
                 .Append(setup.PlayerTankCount()).Append('|')
                 .Append(setup.MaterialsEach).Append('|')
                 .Append(setup.DeadlineSeconds);
+            if (!string.IsNullOrEmpty(setup.LayoutBindingFingerprint))
+                builder.Append("|layout-binding-v1|").Append(setup.LayoutBindingFingerprint);
+            // Only new generic G bindings receive the complete roster semantics.
+            // Exact certified legacy bindings retain their historical hash text.
+            if (setup.ArmyProfileId == SkirmishArmyProfileId.GroundManeuver && !string.IsNullOrEmpty(setup.LayoutBindingFingerprint))
+            {
+                builder.Append("|ground-roster-v1|");
+                if (setup.RoleOverlays != null) foreach (var role in setup.RoleOverlays)
+                {
+                    builder.Append(role.RoleId).Append(':').Append((int)role.RoleKind).Append(':')
+                        .Append(role.MaxHealth).Append(':').Append(role.Damage).Append(':')
+                        .Append(role.RangeWorld.ToString("R", CultureInfo.InvariantCulture)).Append(':')
+                        .Append(role.SupplyCost).Append(':').Append(role.MaterialsCost).Append(':').Append(role.FuelCost).Append(':')
+                        .Append((int)role.Producer).Append(':').Append((int)role.TargetDomains).Append(':')
+                        .Append(role.SquadMembers).Append(';');
+                }
+            }
             if (includePolicy && setup.EnemyPolicy != null) builder.Append("|enemy-policy-v1|").Append(setup.EnemyPolicy.Fingerprint);
             unchecked
             {

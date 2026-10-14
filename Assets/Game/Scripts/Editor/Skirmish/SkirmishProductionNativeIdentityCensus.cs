@@ -52,7 +52,7 @@ namespace Game.Editor
             }
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string output = Environment.GetEnvironmentVariable("WARLINE_NATIVE_IDENTITY_OUTPUT");
-            if (string.IsNullOrWhiteSpace(output)) output = Path.Combine(root, "Temp", "SkirmishProductionNativeIdentity",
+            if (string.IsNullOrWhiteSpace(output)) output = Path.Combine(root, "Logs", "SkirmishProduction", "NativeIdentity",
                 "s005-regular-standard-155926-fa-" + Guid.NewGuid().ToString("N") + ".json");
             output = Path.GetFullPath(output);
             foreach (string tree in new[] { "Assets", "Packages", "ProjectSettings" })

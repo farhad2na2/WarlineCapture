@@ -44,6 +44,7 @@ public static class S005NormalNorthFlank1632Observer
         public string stage="", catalog="", definition="", size="", difficulty="", army="", start="", readiness="", objective="", attempt="", locale="", tracePath="";
         public string title="", body="", roster="", economy="", intel="", summary="", modelObjective="", clock="", playerBase="", enemyBase="", controlText="", controlPath="", role="", phase="", reason="";
         public int frame, seed, deadline, faction, producer, materialsPaid, expectedCost, members, deliveredMembers, readinessValue,remainingMembers,supplyCost,capacityReleased;
+        public uint nativeSetupHash; public int definitionVersion; public string nativeContentIdentity="";
         public uint reservation;
         public bool localizedObjectiveCopy, localizedPurposeCopy, localizedStopCopy, localizedVictoryCopy, sharedFog, developmentFullVision, renderedTitle, renderedBody, renderedObjective, renderedRoster, renderedEconomy, renderedIntel, renderedPlayerBase, renderedEnemyBase, renderedClock, presentedControl, ariaActive, finished, expanded, combinedArmsField, setupSeen, bindingSeen, purposeSeen, activeControlSeen, resultSeen, returnSeen, normalDriverFlags;
         public string expectedPlayerCaption="", expectedEnemyCaption="", actualPlayerCaption="", actualEnemyCaption="", actualClockText="", nativeClockSource="", modelClockNumber="", nativeClockNumber="";
@@ -486,7 +487,7 @@ S005ManualFogFallback1632.Start(()=>S005ManualHomeDefense1632.InitialDefenseRead
                 }
                 if(!bindingSeen)
                 {
-                    Append(new Row{stage="ActualResolvedBinding",catalog=setup.CatalogId,definition=setup.DefinitionId,size=setup.SizeId.ToString(),difficulty=setup.DifficultyId.ToString(),army=setup.ArmyProfileId.ToString(),start=setup.StartPackageId.ToString(),readiness=setup.Readiness.ToString(),readinessValue=(int)setup.Readiness,seed=setup.Seed,deadline=setup.DeadlineSeconds,objective=setup.ObjectiveKind.ToString(),sharedFog=setup.SharedFog,developmentFullVision=setup.DevelopmentFullVision,attempt=state.SessionId.ToString(),tracePath=(string)TracePath.Invoke(null,null)});
+                    Append(new Row{stage="ActualResolvedBinding",catalog=setup.CatalogId,definition=setup.DefinitionId,definitionVersion=setup.ContentVersion,nativeSetupHash=setup.SetupHash,nativeContentIdentity=setup.ContentHash,size=setup.SizeId.ToString(),difficulty=setup.DifficultyId.ToString(),army=setup.ArmyProfileId.ToString(),start=setup.StartPackageId.ToString(),readiness=setup.Readiness.ToString(),readinessValue=(int)setup.Readiness,seed=setup.Seed,deadline=setup.DeadlineSeconds,objective=setup.ObjectiveKind.ToString(),sharedFog=setup.SharedFog,developmentFullVision=setup.DevelopmentFullVision,attempt=state.SessionId.ToString(),tracePath=(string)TracePath.Invoke(null,null)});
                     bindingSeen=true;
                 }
                 if(em.HasBuffer<SkirmishProductionReservation>(session))foreach(var receipt in em.GetBuffer<SkirmishProductionReservation>(session,true))

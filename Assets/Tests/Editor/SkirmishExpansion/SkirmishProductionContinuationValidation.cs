@@ -14,7 +14,7 @@ namespace Game.Tests.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Load-only validation requires stopped Play.");
-            VerifySource("S005NormalNorthFlank1632Observer.cs", "5dda43e1f4a9b6c2aad6d7b2d5b0e6659aeb5541851113da8153fea02ba90fd7");
+            VerifySource("S005NormalNorthFlank1632Observer.cs", "2237d7d0a6310e13cdbe0bbf4e331563c42f0945bf4225aba2716ea8b83e6276");
             VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs", "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e");
             SkirmishSharedObjectiveReducerValidation.RunFocusedValidation();
             S005NormalNorthFlank1632Observer.Run();

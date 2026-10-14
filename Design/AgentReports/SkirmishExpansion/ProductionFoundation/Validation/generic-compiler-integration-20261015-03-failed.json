@@ -1,0 +1,15 @@
+{
+  "result": "Failed",
+  "wrapper_exit_code": 1,
+  "passed_prefix": {
+    "cameraMeasurement": 7,
+    "cameraProfile": 5,
+    "legacyConfigurations": 12,
+    "binder": 8,
+    "areas": 15,
+    "builder": 4
+  },
+  "failure": "S004RegularStandardCompilesFirstVisitSeeds stale expected helipad coordinate:438.08 vs native420.21051025390625",
+  "fullMissionCertified": false,
+  "nativeCameraCapture": false
+}

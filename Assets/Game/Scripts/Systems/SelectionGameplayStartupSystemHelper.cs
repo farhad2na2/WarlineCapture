@@ -92,6 +92,7 @@ namespace Game.Runtime
             SelectionRuntimeConfigStartupSystemHelper.State defaultRuntimeConfig = runtimeConfig;
             int authoredCameraGeneration = -1;
             bool hasAuthoredCameraProfile = false;
+            bool hasMissionCameraZoomLimits = false;
             float nextAuthoredCameraCheck = 0f;
             var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem(entityManager);
             var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper(entityManager);
@@ -1054,15 +1055,25 @@ namespace Game.Runtime
                     nextAuthoredCameraCheck = Time.unscaledTime + .25f;
                     var profile = defaultRuntimeConfig;
                     int generation = -1;
-                    bool found = TryGetEntityManager(out var cameraEm) &&
+                    bool hasCameraWorld = TryGetEntityManager(out var cameraEm);
+                    bool found = hasCameraWorld &&
                         SelectionRuntimeConfigStartupSystemHelper.TryApplySharedAirfieldCamera(cameraEm, ref profile, out generation);
-                    if (found && (!hasAuthoredCameraProfile || authoredCameraGeneration != generation))
+                    Game.Configs.SkirmishMissionViewProfile missionView = null;
+                    bool hasMissionView = hasCameraWorld && SkirmishMissionViewProfileApplication.TryResolve(cameraEm, out missionView);
+                    if (hasMissionView)
+                    {
+                        SkirmishMissionViewProfileApplication.Apply(missionView, ref profile);
+                        generation = unchecked(generation * 397 ^ missionView.ContentVersion);
+                        found = true;
+                    }
+                    if (found && (!hasAuthoredCameraProfile || authoredCameraGeneration != generation || hasMissionCameraZoomLimits != hasMissionView))
                     {
                         runtimeConfig = profile;
                         authoredCameraGeneration = generation;
                         hasAuthoredCameraProfile = true;
                         hasRuntimeCameraContext = false;
-                        selectionUiCamera.ApplyRuntimeCameraProfile(profile);
+                        selectionUiCamera.ApplyRuntimeCameraProfile(profile, hasMissionView || hasMissionCameraZoomLimits);
+                        hasMissionCameraZoomLimits = hasMissionView;
                     }
                     else if (!found && hasAuthoredCameraProfile)
                     {
@@ -1070,7 +1081,8 @@ namespace Game.Runtime
                         hasAuthoredCameraProfile = false;
                         authoredCameraGeneration = -1;
                         hasRuntimeCameraContext = false;
-                        selectionUiCamera.ApplyRuntimeCameraProfile(runtimeConfig);
+                        selectionUiCamera.ApplyRuntimeCameraProfile(runtimeConfig, hasMissionCameraZoomLimits);
+                        hasMissionCameraZoomLimits = false;
                     }
                 }
                 if (!hasRuntimeCameraContext)

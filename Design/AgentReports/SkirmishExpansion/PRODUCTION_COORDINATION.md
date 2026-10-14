@@ -1,3 +1,19 @@
+## Validated shared production step, 2026-10-15
+
+Run 05 completed through the checked Windows wrapper with exit 0 and the exact final pass marker. Native checks passed for camera measurement (7), mission view profile (5), immutable legacy setups (12), binder (8), objective areas (15), config builder (4), generic Ground roster (8), ExpandedDefinition, CombinedArms, checkpoint/codec/policy/visual regressions, starting grants, Campaign ownership/grid/current map tests, and the 42 objective reducer rules. North v2 and paid-plane predecessor loaded without starting gameplay. Full logs, exact native census and source SHA receipt are preserved under ProductionFoundation/Validation.
+
+The logical S005 view profile was created locally (default44/max46) for the next camera calibration. Its Resources asset is deliberately excluded from the stable code commit until normal gameplay framing has been measured. This technical pass does not certify camera readability or any new mission. Next: reviewed normal-input opening zoom, parked/cruising paid Transport and public Follow captures after scene-artifact warmup; refresh all source/DLL pins before launch.
+
+## Native validation checkpoint, 2026-10-15
+
+Run 04 completed with wrapper exit 1. Camera measurement (7), camera profile (5), immutable legacy configurations (12), binder (8), typed areas (15), builder (4), generic Ground roster (8), ExpandedDefinition and CombinedArms all passed natively. The aggregate stopped at ExpandedCheckpoint because its old synthetic S002 factory layout is not the certified packaged layout. Qualification is auditing every remaining selected compile fixture together before another run. Source guards remain strict. No active Editor owns the project; run 04 full failure logs are preserved. The logical camera profile authoring step was after the failed suite, so no profile asset was created.
+
+## Camera and regression checkpoint, 2026-10-15
+
+Run 02 failed on a synthetic S002 compile fixture; preserved full logs under ProductionFoundation/Validation. Reviewed compile fixtures now load the actual immutable packaged S002/S003 definitions, with an independent Resources S002 hash regression. No production source guard was weakened.
+
+Run 03 is active through the checked Windows wrapper (session 78419). It checks camera measurement (7), mission view profile (5), then the broad shared compiler and Campaign regressions. Actual S005 terrain metadata derives ground default height 44 and maximum 46; these are engineering candidates pending native visual capture. Aircraft Follow fits actual render bounds and altitude through existing public Follow ownership. Campaign zoom limits restore on mission exit. No camera profile asset has been created yet, and no new mission readiness is claimed.
+
 # Skirmish production coordination
 
 Updated: 2026-10-14, Europe/Berlin. Execution enabled by the owner in this chat.
@@ -9,6 +25,18 @@ Complete all 120 existing Skirmish catalog entries as quickly as their governing
 The owner explicitly authorizes the coordinator to delegate work, continue implementation and technical validation without waiting for visual review, send screenshots for asynchronous review, and commit/push stable completed steps to main. Visual acceptance, device acceptance and unfamiliar-player acceptance remain separate pending gates until evidenced. Do not treat absence of feedback as visual approval. The latest owner instruction to commit stable steps to main supersedes the handoff's proposed separate integration branch; workers still need disjoint ownership.
 
 Coordinator chat: 01a13bfb-c3de-7542-b082-b3e90bae7f5a. Heartbeat: complete-120-skirmish-missions, every 30 minutes. Respect explicit owner stop/pause; never use the heartbeat to undo it. A heartbeat is a wake-up opportunity, not proof that processes or agents survived an interruption.
+
+## Current operational checkpoint
+
+Stable work is pushed through `14284545e` on main. The shared FC/BT/CE reducers passed 42 actual Unity tests. Standalone map binding and objective areas passed another 23 native checks, and the four legacy layouts / twelve setup baselines and the S005 FA seed155926 identity are preserved under `ProductionFoundation/Validation`. None of these checks certifies a new mission win.
+
+The latest owner requirement is playable camera framing for every mission: infantry must remain readable rather than appearing as dots or impostors, while a transport plane must fit comfortably on screen. Validate actual render modes, projected bounds, native screenshots and the zoom range. Use mission-specific view configuration and focus elevation; preserve shared Campaign sources and keep camera guidance separate from troop orders. Visual review remains asynchronous.
+
+The current native owner is wrapper session80654, log `Logs/SkirmishProduction/generic-compiler-integration-20261014-02.log`. It is rerunning the broad compiler, Campaign, camera-API and S005 load checks after moving the QA camera collector into the Editor assembly and correcting the narrow S004 physical test fixtures. Do not change imported source or start another Editor while it runs. Inspect the actual process and wrapper completion before resuming.
+
+The previous wrapper11158 completed with timeout124 after its compile failure; full logs and the failed source are preserved. It stopped only its own Editor tree. The proposed camera profile and paid-plane observation successor remain outside Assets until the current boundary. A separately reviewed wrapper correction detects genuine single-line compiler errors promptly; all twelve real owned-process regressions passed without changing success-marker, exit or timeout rules.
+
+The next substantial mission proof should use the camera-stable candidate. Compile/load north observer identity-v2, collect fresh source/DLL pins and actual native setup identity, then dispatch the normal-input north trial. Continue the six BA/G pilot authoring and shared objective collectors without marking pending source-fit, recovery, ARIA, device or player gates complete.
 
 ## Resume procedure
 
@@ -110,3 +138,13 @@ OutsideAssets paid-plane review now closes concrete callback race/receipt semant
 Screenshot03 captured actual1920x1080 opening (shown to user) and native startup passed, with32initialunits/14sharedbuildings/supply/roster and identicalfullsourcehash before/after. Wrapper stillFAILED1 because genuineprocess exitcode unavailable and noexplicitquit marker; not accepted as passed. Fulloutput/logs and PNG preserved underS005/windows-native-review-20261014; checkpoints insidearchiveare diagnostic artifacts, notqualified recovery. Wrapper handle retention and generated launcher exitcode forwarding are under realPSchildprocess regression, without adding accepted successmarkers.
 
 Currentnative lane:44540, shared-objectives-s005-load-20261014-01.log. Root imported the exactreviewed42-rule reducers/tests plus north1632 and paidplane source; new continuation aggregate verifies sourceSHA, realUnityJson42 rules, northread-onlyRun bridge/load, paidplaneentrysignature and loadedEditorMVID, noPlay. Importfileidentities are inPRODUCTION_STATE.pending_imports. Native test/result/wrapper completion stillpending. The paidplane externaldraft/strictcontrols/offlineproof is pushedaffe78930; imported canaries are notyetcommitted. No newmission qualification isclaimed.
+
+Native44540 completed checkedwrapper exit0 and aggregate marker;42actualUnityNUnit rules/JsonUtility+northload-only+paidplaneentry checks passed; importedcode and fullpassedlogs pushed3d3647fae. Wrapperexit handle retention and8actualowned-child regressions pushed303ebf8b5; noacceptedmarker/timeout/fatalgateweakened.
+
+Nextnativepackage (notyetstarted): standalonegenericbinder8 andtypedlogicalareas15 + fourimmutablelegacylayoutsemanticbaselines and12actualRegular/size setup+policylesshashes before compilerintegration. Correctedbinder compilerpatchremainsoutsideAssets untilactualbaselinehashregistry pinned. Nativegeometry/sourcefit remains separate fromlogicalcompile. Qualificationworkerprepares read-onlyactualS005FA155926census/versionedSHA64identity toclosejobsetup/content join gap; S005workerprepares outsideAssets northv2observer withactualnativeuint32SetupHash/ContentHash/ContentVersion and strictqualifier. Existingv1importedcanaryremainsunchanged untilsourcefreezeboundary. Jobdispatch mustnotfakepadtheuint32hashorusecallerclaims; requireexactcapturedcanonicalidentity andfreshcomplete source/DLL pins.
+
+Owner camera requirement (2026-10-14): every mission must open at a playable distance, with clearly readable infantry rather than tiny dots/impostors and enough room for a transport plane without filling the screen. Validate native default framing and zoom range against actual infantry and aircraft render bounds/screenshots; camera/LOD measurements are a required separate gate, not inferred from configcompile. Prefer mission logical camera configuration, preserve sharedCampaign physicalsources/camera behavior, and keep camera guidance independent of trooporders. Qualificationworkerowns camera/LOD audit and shared gate proposal while importedsourcefrozen. ExistingS005 screenshot is reviewevidence, notcamera acceptance.
+
+Currentnative90723: standalonebinder8+areas15+fourlegacy/12setupbaselines+actualS005FA155926identitycensus. Compiler andadapter harnessseams unchanged. Requiredaggregate marker+wrapper0. Immutableimports listedPRODUCTION_STATE.
+
+90723 passedall23nativechecks and actualprocess exit0. Its baseline/census output paths were inTemp and UnitycleanupremovedthoseJSONfilesbeforecollection. Fullpassedlogs and exactentrysource retained asobjective-layout-foundation-20261014-01-passed-tests-missing-outputs.*; do notinferbaselineconstants orcreatejobpinsfrommissingdata. Rootcorrectedthebaselineoutputdefault/restrictiontopersistentignoredLogs/SkirmishProduction/Baselines andsetcensusexplicitpersistentoutputenv. Rerun94616 nowowns native lane (objective-layout-foundation-20261014-02.log), same23tests/compilerunchanged. Preserveallpending importedsourceuntilmarker/wrapper0andactualdurableartifactschecked.

@@ -370,7 +370,7 @@ namespace Game.UI.Runtime
 
         private void RandomizeSeed()
         {
-            _config.MapSeed = Random.Range(1, int.MaxValue);
+            _config.MapSeed = UnityEngine.Random.Range(1, int.MaxValue);
             if (seedInput != null)
                 seedInput.SetTextWithoutNotify(_config.MapSeed.ToString());
 

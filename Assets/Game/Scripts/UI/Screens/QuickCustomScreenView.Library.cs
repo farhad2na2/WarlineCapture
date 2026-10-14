@@ -332,20 +332,20 @@ namespace Game.UI.Runtime
                 ?.GetComponent<RawImage>();
             if (map == null)
                 return;
-            string key = SkirmishBattleLibraryArt.TheaterPlate;
-            if (battlefield)
+            if (!battlefield)
+            {
+                Texture2D collage = Resources.Load<Texture2D>(SkirmishBattleLibraryArt.TheaterPlate);
+                map.texture = collage != null ? collage : SkirmishLibraryPreviewAssets.Placeholder();
+                map.color = Color.white;
+            }
+            else
             {
                 string mapId = string.IsNullOrEmpty(field.MapId) ? LibraryMapId : field.MapId;
-                key = SkirmishBattleLibraryArt.Plate(mapId);
-                if (TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin) &&
-                    !string.IsNullOrEmpty(pin.PlatePreviewKey))
-                    key = LibraryArtKey(pin.PlatePreviewKey, mapId);
+                string key = TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin)
+                    ? pin.PlatePreviewKey
+                    : null;
+                ApplyBoundPreview(map, key);
             }
-
-            Texture2D texture = Resources.Load<Texture2D>(key);
-            if (texture != null)
-                map.texture = texture;
-            map.color = Color.white;
             AspectRatioFitter fitter = map.GetComponent<AspectRatioFitter>();
             if (fitter != null)
                 fitter.enabled = false;
@@ -516,7 +516,7 @@ namespace Game.UI.Runtime
                         break;
                     SkirmishBattleCardState card = field.GridCards[index];
                     RectTransform widget = IsEmptyCard(card)
-                        ? CreateEmptyGridCell(_libraryGrid, field.MapId, objective.ObjectiveId, armies[column / 2], starts[column % 2])
+                        ? CreateEmptyGridCell(_libraryGrid, objective.ObjectiveId, armies[column / 2], starts[column % 2], card.PreviewSpriteKey)
                         : CreateBattleCard(_libraryGrid, card, false, LibraryGridCardWidth, LibraryGridCardHeight);
                     PlaceTopLeft(widget, LibraryGridOriginX + column * LibraryGridStride, y, LibraryGridCardWidth, LibraryGridCardHeight);
                     AddSiblingShadow(widget);
@@ -579,9 +579,7 @@ namespace Game.UI.Runtime
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(button.transform, false);
             Stretch(preview.rectTransform, 3f, 3f, 3f, footer);
-            preview.texture = Resources.Load<Texture2D>(CardPreviewResource(card));
-            preview.color = preview.texture != null ? Color.white : new Color(0.12f, 0.16f, 0.18f, 1f);
-            preview.raycastTarget = false;
+            ApplyBoundPreview(preview, card.PreviewSpriteKey);
             var badge = new GameObject("ScenarioBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             badge.transform.SetParent(button.transform, false);
             PlaceTopLeft(badge.rectTransform, 4f, 4f, 58f, 22f);
@@ -648,7 +646,7 @@ namespace Game.UI.Runtime
             return rect;
         }
 
-        private RectTransform CreateEmptyGridCell(Transform parent, string mapId, string objectiveId, string army, string start)
+        private RectTransform CreateEmptyGridCell(Transform parent, string objectiveId, string army, string start, string previewKey)
         {
             var rect = new GameObject("EmptyCell", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
             rect.SetParent(parent, false);
@@ -658,9 +656,7 @@ namespace Game.UI.Runtime
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(rect, false);
             Stretch(preview.rectTransform, 3f, 3f, 3f, 22f);
-            preview.texture = Resources.Load<Texture2D>(SkirmishBattleLibraryArt.CellPreview(mapId, objectiveId, army, start));
-            preview.color = preview.texture != null ? new Color(0.45f, 0.45f, 0.45f, 1f) : new Color(0.1f, 0.12f, 0.13f, 1f);
-            preview.raycastTarget = false;
+            ApplyBoundPreview(preview, previewKey);
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
@@ -1786,24 +1782,45 @@ namespace Game.UI.Runtime
 
         private static bool IsEmptyCard(SkirmishBattleCardState card) => string.IsNullOrEmpty(card.ScenarioId);
 
-        private static string CardPreviewResource(SkirmishBattleCardState card)
+        private static void ApplyBoundPreview(RawImage image, string key)
         {
-            if (!string.IsNullOrEmpty(card.MapId) && !string.IsNullOrEmpty(card.ObjectiveId))
-                return SkirmishBattleLibraryArt.CellPreview(card.MapId, card.ObjectiveId, card.ArmyProfile, card.StartProfile);
-            return LibraryArtKey(card.PreviewSpriteKey, card.MapId);
+            if (image == null)
+                return;
+            image.texture = SkirmishLibraryPreviewAssets.LoadOrPlaceholder(key);
+            image.color = Color.white;
+            image.raycastTarget = false;
         }
 
-        private static string LibraryArtKey(string key, string mapId)
+        private string BriefingPreviewKey(SkirmishBriefingState briefing)
         {
-            if (string.IsNullOrEmpty(key))
-                return string.IsNullOrEmpty(mapId) ? SkirmishBattleLibraryArt.TheaterPlate : SkirmishBattleLibraryArt.Plate(mapId);
-            const string plate = "skirmish.plate.";
-            const string preview = "skirmish.preview.";
-            if (key.StartsWith(plate, StringComparison.OrdinalIgnoreCase))
-                return SkirmishBattleLibraryArt.Plate(key.Substring(plate.Length));
-            if (key.StartsWith(preview, StringComparison.OrdinalIgnoreCase))
-                return SkirmishBattleLibraryArt.PreviewKey(key.Substring(preview.Length), mapId);
-            return key;
+            string scenarioId = briefing.ScenarioId;
+            if (_libraryViewModel != null)
+            {
+                SkirmishBattlefieldState field = _libraryViewModel.Battlefield;
+                string fromCard = PreviewKeyOn(field.MapCards, scenarioId);
+                if (!string.IsNullOrEmpty(fromCard))
+                    return fromCard;
+                fromCard = PreviewKeyOn(field.GridCards, scenarioId);
+                if (!string.IsNullOrEmpty(fromCard))
+                    return fromCard;
+                if (!string.IsNullOrEmpty(scenarioId))
+                    return SkirmishLibraryPreviewAssets.ResolvePreviewKey(scenarioId, true, field.MapId);
+            }
+
+            return string.IsNullOrEmpty(scenarioId) ? null : "skirmish.preview." + scenarioId;
+        }
+
+        private static string PreviewKeyOn(SkirmishBattleCardState[] cards, string scenarioId)
+        {
+            if (cards == null || string.IsNullOrEmpty(scenarioId))
+                return null;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (string.Equals(cards[i].ScenarioId, scenarioId, StringComparison.Ordinal))
+                    return cards[i].PreviewSpriteKey;
+            }
+
+            return null;
         }
 
         private static bool TryRegion(string mapId, out Rect region, out Vector2 centre)

@@ -439,6 +439,17 @@ namespace Game.UI.Runtime
             if (facts == null)
                 return;
             facts.gameObject.SetActive(sourced);
+            float frameWidth = _statRow.rect.width > 40f ? _statRow.rect.width : _statRow.sizeDelta.x;
+            if (frameWidth < 40f)
+                frameWidth = 518f;
+            PlaceTopLeft(facts.rectTransform, 0f, 50f, frameWidth, 22f);
+            RectTransform frame = EnsureFactsFrame();
+            if (frame != null)
+            {
+                PlaceTopLeft(frame, 0f, 50f, frameWidth, 22f);
+                frame.gameObject.SetActive(!sourced);
+            }
+
             if (!sourced)
                 return;
             string size = briefing.RecommendedSize == SkirmishSizeId.LargeWar
@@ -472,6 +483,26 @@ namespace Game.UI.Runtime
             PlaceTopLeft(facts.rectTransform, 0f, 50f, 740f, 22f);
             facts.alignment = TextAlignmentOptions.MidlineLeft;
             return facts;
+        }
+
+        private RectTransform EnsureFactsFrame()
+        {
+            if (_statRow == null)
+                return null;
+            Transform existing = _statRow.Find("FactsFrame");
+            if (existing is RectTransform found)
+                return found;
+            var frame = new GameObject("FactsFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            frame.SetParent(_statRow, false);
+            Image border = frame.GetComponent<Image>();
+            border.color = new Color(0.77f, 0.64f, 0.36f, 1f);
+            border.raycastTarget = false;
+            var inner = new GameObject("Inner", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            inner.transform.SetParent(frame, false);
+            Stretch(inner.rectTransform, 2f, 2f, 2f, 2f);
+            inner.color = new Color(0.07f, 0.09f, 0.10f, 1f);
+            inner.raycastTarget = false;
+            return frame;
         }
 
         private static string FormatClock(int seconds)
@@ -509,23 +540,15 @@ namespace Game.UI.Runtime
             if (tile == null)
                 return;
             SetCopy(tile.Find("Caption")?.GetComponent<TMP_Text>(), caption, 13f, 16f);
-            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), string.IsNullOrEmpty(value) ? "0" : value, 15f, 20f);
+            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), string.IsNullOrEmpty(value) ? "—" : value, 15f, 20f);
         }
 
         private void PresentBriefingPreview(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool battlefield)
         {
             if (_briefingPreview == null)
                 return;
-            string key = battlefield ? briefing.ScenarioId : null;
-            string resource = !string.IsNullOrEmpty(key)
-                ? SkirmishBattleLibraryArt.PreviewKey(key, hasPin ? pin.MapId : LibraryMapId)
-                : hasPin && !string.IsNullOrEmpty(pin.PlatePreviewKey)
-                    ? LibraryArtKey(pin.PlatePreviewKey, pin.MapId)
-                    : SkirmishBattleLibraryArt.TheaterPlate;
-            Texture2D texture = Resources.Load<Texture2D>(resource);
-            _briefingPreview.texture = texture;
-            _briefingPreview.color = texture != null ? Color.white : new Color(0.08f, 0.12f, 0.14f, 1f);
-            _briefingPreview.raycastTarget = false;
+            string key = battlefield ? BriefingPreviewKey(briefing) : hasPin ? pin.PlatePreviewKey : null;
+            ApplyBoundPreview(_briefingPreview, key);
         }
 
         private void PresentTheaterDetail(bool fa)

@@ -4,7 +4,8 @@ using UnityEngine;
 namespace Game.UI.Runtime
 {
     /// <summary>
-    /// Resource keys and authored theatre regions. Plates are crops of Campaign captures.
+    /// Resource keys and authored theatre regions. Battlefield plates and scenario
+    /// previews are Programmer 1 sprites addressed by PlatePreviewKey and PreviewSpriteKey.
     /// No player text is baked into the art.
     /// </summary>
     public static class SkirmishBattleLibraryArt
@@ -39,11 +40,6 @@ namespace Game.UI.Runtime
         public static string TheaterPlate => ResourceRoot + "theater_collage";
         public static string Backdrop => ResourceRoot + "theater_backdrop";
         public static string ProgressRing => ResourceRoot + "progress_ring";
-
-        public static string Plate(string mapId)
-        {
-            return ResourceRoot + "plate_" + (mapId ?? string.Empty).ToLowerInvariant();
-        }
 
         public static string Medal(bool earned, Game.Skirmish.Contracts.SkirmishDifficultyId difficulty)
         {
@@ -83,29 +79,6 @@ namespace Game.UI.Runtime
         public static string NewBadge => ResourceRoot + "icon_new";
         public static string Crest => ResourceRoot + "icon_crest";
         public static string Corner => ResourceRoot + "icon_corner";
-
-        public static string CellPreview(string mapId, string objectiveId, string army, string start)
-        {
-            return ResourceRoot + "cell_"
-                + (mapId ?? string.Empty).ToLowerInvariant() + "_"
-                + (objectiveId ?? string.Empty).ToLowerInvariant() + "_"
-                + (army ?? string.Empty).ToLowerInvariant()
-                + (start ?? string.Empty).ToLowerInvariant();
-        }
-
-        public static string PreviewKey(string scenarioId, string mapId)
-        {
-            switch (scenarioId)
-            {
-                case "S001": return ResourceRoot + "preview_s001";
-                case "S002": return ResourceRoot + "preview_s002";
-                case "S003": return ResourceRoot + "preview_s003";
-                case "S004": return ResourceRoot + "preview_s004";
-                case "S025": return ResourceRoot + "preview_s025";
-                case "S073": return ResourceRoot + "preview_s073";
-                default: return Plate(mapId);
-            }
-        }
 
         public static void Copy(string mapId, bool fa, out string title, out string geography)
         {

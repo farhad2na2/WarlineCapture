@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "observed_at_utc": "2026-10-14T21:13:03.949014+00:00",
+  "goal": "Complete all 120 existing Skirmish missions with required acceptance evidence",
+  "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+  "heartbeat": "complete-120-skirmish-missions",
+  "main_pushed_head": "40d7c1529",
+  "visual_review": "Asynchronous; continue authorized implementation/technical validation, send native screenshots, do not infer approval",
+  "native_lane": {
+    "owner": "/root",
+    "kind": "S005 warmed native startup screenshot diagnostic with full before/after source manifest",
+    "state": "Unchanged candidate retry after176-second bake caused previous120-second startup timeout and exit crash; noC#changes",
+    "project": "D:/Projects/WarlineCapture",
+    "editor_pid": null,
+    "wrapper_session": 43290,
+    "log": "Logs/SkirmishProduction/s005-native-review-20261014-03.log",
+    "timeout_seconds": 1200,
+    "source_frozen": true,
+    "required_pass_marker": "[SkirmishS003Startup] result=Passed",
+    "ownership_rule": "Inspect matching actual process command line and wrapper completion before another run; never terminate it to make room",
+    "launch_script": "Logs/SkirmishProduction/capture-s005-20261014-03.ps1",
+    "review_directory": "Logs/SkirmishProduction/s005-native-review-20261014-03"
+  },
+  "validated": [
+    "19 queue tests",
+    "4 planning portability tests plus full120/360/75 generator check",
+    "4 S005 north offline controls and independent actual-writer review",
+    "4 real Windows PowerShell plan-only portability tests",
+    "Unity aggregate wrapper exit0: generic lookup,4 builder tests,2 selection tests; archived full logs",
+    "10 pure C# adapter parser/reservation tests; Unity partial remains unimported",
+    "3 Windows CNG offline/native oracle tests; Unity optimization remains unimported",
+    "13 actual FC reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "Windows CNG native7 assertions and checked wrapper exit0; 16MiB14.6154ms vs managed1737.3758ms; full project equality pending",
+    "15 actual BT reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "14 actual CE reducer NUnit rules offline plus matching Unity reference compilation; unimported",
+    "Full project CNG launch fingerprint equals independent Python binary-manifest hash883d8e1cf43fbf689086ba08d4b869e9649bbf4d9cd345509f9d822f794fdcc8 over40982files"
+  ],
+  "workers": [
+    {
+      "task": "/root/qualification_pipeline",
+      "scope": "Windows native SHA256 optimization integration/test draft; generic job canary adapter draft",
+      "imported_changes_allowed": false
+    },
+    {
+      "task": "/root/authoring_foundation",
+      "scope": "Generic layout binder draft; normal paid-plane independent review; shared Frontline Control reducer draft",
+      "imported_changes_allowed": false
+    },
+    {
+      "task": "/root/s005_completion",
+      "scope": "Fix independent paid-plane canary review findings outside Assets",
+      "imported_changes_allowed": false
+    }
+  ],
+  "next_actions": [
+    "Collect native capture wrapper result and image; retain failures and full logs",
+    "After lane free, integrate reviewed Windows CNG exact-hash branch + phase timings and focused tests; verify exact digests and measure in Unity",
+    "Compile/load north observer and native capture schema canary before full source/build-pinned north trial",
+    "Integrate generic measured binder and bounded Menu job adapter with native checks at source freeze boundaries",
+    "Complete normal paid-plane/air evidence and six ground BA pilot; expand certified shared capabilities by packets"
+  ],
+  "player_ready": false,
+  "new_missions_qualified_this_session": 0
+}

@@ -48,6 +48,7 @@ namespace Game.Editor
         private static bool nativeOpeningRenderViewAccepted;
         private static bool finishingEvidence;
         private static System.Threading.Tasks.Task<string> finishSourceHash;
+        private static System.Diagnostics.Stopwatch finishFingerprintTimer;
         private static bool finishAbort;
         private static string finishAbortReason;
 
@@ -524,8 +525,12 @@ namespace Game.Editor
                 : requestedCatalog;
             seed = requestedSeed;
             locale = requestedLocale;
-            SessionState.SetString(CandidateHashKey,
-                SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, ".."))));
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog");
+            var launchFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
+            string launchFingerprint = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
+            launchFingerprintTimer.Stop();
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=" + launchFingerprintTimer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + launchFingerprint);
+            SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
             finishingEvidence = false;
             terminalSnapshotValid = terminalProbeActive = false;
@@ -1239,6 +1244,8 @@ namespace Game.Editor
             // Hash every source byte, but keep the native Editor responsive while
             // reading the shared Campaign asset library. Unity APIs stay on the
             // Editor thread, and no receipt is written until this task completes.
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=" + abort + " reason=" + abortReason);
+            finishFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
             finishSourceHash = System.Threading.Tasks.Task.Run(() => SkirmishCandidateSourceHash.Compute(root));
             EditorApplication.update += PollFinishSourceHash;
         }
@@ -1249,6 +1256,9 @@ namespace Game.Editor
             EditorApplication.update -= PollFinishSourceHash;
             var completed = finishSourceHash;
             finishSourceHash = null;
+            finishFingerprintTimer?.Stop();
+            Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=" + (finishFingerprintTimer?.Elapsed.TotalMilliseconds ?? -1d).ToString("R", CultureInfo.InvariantCulture) + " taskStatus=" + completed.Status + (completed.Status == System.Threading.Tasks.TaskStatus.RanToCompletion ? " sha256=" + completed.Result : string.Empty));
+            finishFingerprintTimer = null;
             if (completed.IsFaulted || completed.IsCanceled)
             {
                 Debug.LogError("[SkirmishSourceFingerprint] result=Failed error=" + completed.Exception);

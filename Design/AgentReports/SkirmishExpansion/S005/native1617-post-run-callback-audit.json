@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-full-south-flank1617-source-0df6/callback-audit1617.cs",
+      "entry": "S005CallbackAudit1617.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 61,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_callback-audit1617_579e2c81d0ef4a818bef831a6ba7bfb1",
+      "success": true,
+      "result": "EditorApplication.update:|EditorApplication.delayCall:|Canvas.willRenderCanvases:|Application.s_LogCallbackHandler:|AriaCommandEvidence.Recorded:"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

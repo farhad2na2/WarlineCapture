@@ -1,0 +1,14 @@
+{
+  "newMaterialGuid": "77ccec5fdf9da4714a1135acab8e789e",
+  "sharedSourceScene": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity",
+  "newMaterialReferences": 7,
+  "oldMaterialReferencesInCityEdge": 0,
+  "unrelatedSharedMaterialConsumers": [
+    "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity",
+    "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity",
+    "Assets/Game/Scenes/OperationMaps/Variants/Frontier/PreparedEntities.unity"
+  ],
+  "scope": "Existing CityEdge physical source presentation, every mission consumer",
+  "physicalGeometryChanged": false,
+  "playerReady": false
+}

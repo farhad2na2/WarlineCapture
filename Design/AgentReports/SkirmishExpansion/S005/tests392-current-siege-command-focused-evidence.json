@@ -1,0 +1,38 @@
+{
+  "sourceHash": "e47d57d60735b7894822751ef0891574318e9f208a56f12b222239ad0aa1b876",
+  "countsForCurrentSource": false,
+  "result": "Passed",
+  "records": [
+    {
+      "log": "tests-390-paid-ground-shared.log",
+      "sha256": "ee47ad535b35ff0026dca3b89e25ca12e9f11ff87b16ccae18114e3f9e8a0d23",
+      "markers": [
+        "[SkirmishSharedMaterialsTests] result=Passed",
+        "[UnitMoveOrderFocusedValidation] result=Passed tests=22",
+        "[AriaTouchInputValidation] result=Passed cases=22"
+      ],
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "log": "tests-391-paid-ground-recovery.log",
+      "sha256": "ad7a29f5fa9368121e7474e8e014a915e5b5f1c8d2d43660aa748be86a0a5167",
+      "markers": [
+        "[SkirmishNativeRecoveryStagingValidation] result=Passed tests=51"
+      ],
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "log": "tests-392-paid-ground-combined.log",
+      "sha256": "4c417c003ee4fb0290c71d3342ed762d116943e51aebd4eb0d10ebb109e49b26",
+      "markers": [
+        "[SkirmishCombinedArmsTests] result=Passed matrixConfigurations=12"
+      ],
+      "wrapperExit": 0,
+      "receiptExit": 0
+    }
+  ],
+  "playerReady": false,
+  "supersededBySourceHash": "3110dc84d59a8e04f6fa9a5a79fc38b296ba2577a5c7f0c4ed25e5dd803528a9"
+}

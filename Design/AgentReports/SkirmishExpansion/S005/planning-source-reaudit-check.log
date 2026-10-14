@@ -1,0 +1,2 @@
+[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=75 mode=check
+Documentation generation/consistency only; no Unity, gameplay, ARIA or device acceptance was executed.

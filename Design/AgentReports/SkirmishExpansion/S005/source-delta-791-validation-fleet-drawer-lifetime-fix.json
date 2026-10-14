@@ -1,0 +1,10 @@
+{
+  "sourceHash": "398315782ea0ec0fc01d7f64e4b7cd48e0a1b38427e8a39cd8747e8ea47df659",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs"
+  ],
+  "shippingRuntimeEquivalentTo790": true,
+  "materialsIdentical": true,
+  "physicalMapConfigBudgetsRatesDeadlinesUnchanged": true,
+  "scope": "Editor driver preserves Build drawer while buying fourth paid Tanker; closes only before fabrication controls and after observed fleet completion. Native790 repeatedClose/Open failure retained; native791 outcome pending."
+}

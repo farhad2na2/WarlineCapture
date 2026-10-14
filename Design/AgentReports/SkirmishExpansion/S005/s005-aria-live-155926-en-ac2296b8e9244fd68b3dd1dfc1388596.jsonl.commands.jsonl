@@ -1,0 +1,17 @@
+{"frame":762,"operation":"AttackMove","receipt":10,"verified":true}
+{"frame":992,"operation":"AttackMove","receipt":18,"verified":true}
+{"frame":1260,"operation":"Production","receipt":27,"verified":true}
+{"frame":1556,"operation":"Production","receipt":31,"verified":true}
+{"frame":2038,"operation":"Production","receipt":38,"verified":true}
+{"frame":2325,"operation":"Production","receipt":45,"verified":true}
+{"frame":4728,"operation":"Production","receipt":56,"verified":true}
+{"frame":6742,"operation":"Placement","receipt":66,"verified":true}
+{"frame":9340,"operation":"Placement","receipt":72,"verified":true}
+{"frame":11435,"operation":"Placement","receipt":78,"verified":true}
+{"frame":12860,"operation":"Placement","receipt":84,"verified":true}
+{"frame":14457,"operation":"Research","receipt":86,"verified":true}
+{"frame":17705,"operation":"Research","receipt":87,"verified":true}
+{"frame":20197,"operation":"Placement","receipt":97,"verified":true}
+{"frame":24950,"operation":"Production","receipt":102,"verified":true}
+{"frame":25221,"operation":"AttackMove","receipt":111,"verified":true}
+{"frame":25221,"operation":"ArmyAttack","receipt":111,"verified":true}

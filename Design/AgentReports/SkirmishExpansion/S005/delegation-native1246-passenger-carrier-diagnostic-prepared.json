@@ -1,0 +1,22 @@
+{
+  "manifest": "/private/tmp/s005-normal-manual-recovery1246-diagnostic/manifest.json",
+  "manifestSha256": "33e9e28547fe7fc91302c1ccb5d986901ccc76bd8289550ba0445e05466a4fae",
+  "fixture": "/private/tmp/s005-normal-manual-recovery1246-diagnostic/S005NormalManualR2Recovery1246Observer.cs",
+  "fixtureSha256": "3718826194f2bf6c3bd77b6b96a75fa0035533443513af34488722149eaed9ae",
+  "runner": "/private/tmp/s005-normal-manual-recovery1246-diagnostic/s005-run-normal-manual-r2-recovery-1246.py",
+  "runnerSha256": "1eb07bba82e28babbcb2560cb50446b7e333f89c6950086286eed76f0029f3bd",
+  "sourceHash": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+  "sourceContracts": 123,
+  "nativeDryPending": true,
+  "nativeExecuted": false,
+  "original1245FailurePreserved": true,
+  "diagnosticPath": "native1246-passenger-carrier-identity.jsonl",
+  "scope": "Passive diagnostic only; exact ordinary normal manual/R2/APC/SaveContinue driver and inherited gates unchanged",
+  "offlineControls": 25,
+  "limitations": [
+    "Native callback sampling is not the exact capture instruction; paused same-attempt pre-save rows are required to attribute the failure.",
+    "Only current-attempt owned passengers are inspected, matching native owned actor census; no broad ambient world dump.",
+    "Native carrier death with orphan passengers is a static shared lifecycle gap; exact1245 offending pair is not currently known.",
+    "Current120/1080 budgets, prices, fog and normal public driver remain unchanged."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "Reviewed economy v3 native research timing and exclusive purchase admission; compiler/focused pending",
+  "manifestSha256": "53a2ca3b9d16fc591d0b367f816a1577c029d6f85ff82d002cfff2bdcd62eef0",
+  "idleProof": "native1238-camera-after-idle.json",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs",
+      "base_sha256": "9c94c0097af121ee2ccd3c8b070c2015f137aa101c3fcc07d4aa08da53d82d57",
+      "staged_sha256": "226af22fc8eb440be38257c1e76c8e5972a86a88910c0f6f51a826aa82b04743",
+      "staged_path": "/private/tmp/s005-step4-economy-v3/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs",
+      "base_path": "/private/tmp/s005-step4-economy-v3/base/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "base_sha256": "77f3248e04a35c40dbc0f7da5a74c8b43bdeaf9a36620a0727d6ad5bdbae05a5",
+      "staged_sha256": "b1c2b69ccd442c1fe58c0b8c9403ab3021fe6a930dfea5e562a3869a40913d7e",
+      "staged_path": "/private/tmp/s005-step4-economy-v3/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs",
+      "base_path": "/private/tmp/s005-step4-economy-v3/base/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomyTests.cs"
+    }
+  ]
+}

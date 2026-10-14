@@ -1,0 +1,9 @@
+{
+  "mission": "S005",
+  "result": "Passed",
+  "command": "python3 Design/Roadmap/Skirmish_Expansion/Tools/generate_handoff.py --check",
+  "exitCode": 0,
+  "marker": "[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=75 mode=check",
+  "scope": "X40 documentation consistency only; no native mission or device acceptance",
+  "playerReady": false
+}

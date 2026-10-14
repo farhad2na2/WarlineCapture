@@ -1,0 +1,12 @@
+{
+  "result": "PreparedNeverLoaded",
+  "predecessor1102": "native1102-isolated-paid-boarded-recovery-failure.json",
+  "change": "Explicit transfer of inherited startup Editor update ownership to external recovery fixture before native Pause. Startup watcher previously treated actual Pause as simulationNotAdvancing and disposed the shared input driver before SaveExit could be touched.",
+  "fixture": "/private/tmp/S005BoardedRecovery1126.cs",
+  "fixtureSha256": "ae6088efeaf9887a1ea76f383a10bd88c39c92eeea88d1c26696f4776570b439",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1126.py",
+  "runnerSha256": "459fc619a2cf740391c8e25fbc0e5917bc6d838949821439a26e80a5fbbcfbaa",
+  "productionSourceChanged": false,
+  "gameplayFlagsOrClockWrittenByRepair": false,
+  "saveContinueCertified": false
+}

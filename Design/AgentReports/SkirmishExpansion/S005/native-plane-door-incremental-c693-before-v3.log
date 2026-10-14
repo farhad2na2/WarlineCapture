@@ -1,0 +1,29 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=PlaneDoorIncrementalRegression.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-plane-door-incremental-c693-before-v3.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: Owned disposable scene could not become active
+PlaneDoorIncrementalRegression.RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v3/PlaneDoorIncrementalRegression.cs:130)
+UnityEngine.Debug:LogException(Exception)
+PlaneDoorIncrementalRegression:RunFocusedValidation() (at /private/tmp/shared-plane-door-incremental-regression-v3/PlaneDoorIncrementalRegression.cs:156)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+<>c__DisplayClass0_0:<Run>b__0() (at Design/AgentReports/SkirmishExpansion/S005/native-plane-door-incremental-c693-before-v3.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[PlaneDoorIncrementalRegression] result=Failed cases=0 scope=DisposableActualPrefabFreshVsSameWorldIncremental transformsOnly=1 forceHierarchyBake=0 assetEdits=0 reason=System.InvalidOperationException: Owned disposable scene could not become active
+  at PlaneDoorIncrementalRegression.RunFocusedValidation () [0x00063] in /private/tmp/shared-plane-door-incremental-regression-v3/PlaneDoorIncrementalRegression.cs:130 
+UnityEngine.Debug:Log (object)
+PlaneDoorIncrementalRegression:RunFocusedValidation () (at /private/tmp/shared-plane-door-incremental-regression-v3/PlaneDoorIncrementalRegression.cs:164)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-plane-door-incremental-c693-before-v3.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=PlaneDoorIncrementalRegression.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

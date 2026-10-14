@@ -1,0 +1,31 @@
+{
+  "scope": "Offline exact original tail continuation of already completed1196; no native gameplay replay or Unity command",
+  "reason": "Original anonymous-object after-close eval timed out after wrapper/native0; root separately archived successful primitive native flags/project",
+  "originalRunnerSha256": "54845237d716088e2c342b68094e441b2c621de5c5b4cee52d4f6ce6d71f71a6",
+  "continuationSha256": "877e343963feb5745d9d1bc68459f6ab4303d7e623c8a44b33e7483d4207fd52",
+  "originalTailSha256": "db7ad98c7753c1d1adf9514bfdd69de920a16f20646b5174a2ef8f02563349df",
+  "nativeIdleProof": {
+    "file": "native1196-after-close-primitive-idle.json",
+    "sha256": "22c7213039dd8cd941368d51bd4d0e11a93cb7f764ac2a9385b99e9ddf798d58",
+    "code": "return UnityEditor.EditorApplication.isPlaying.ToString()+\"|\"+UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode+\"|\"+UnityEditor.EditorApplication.isCompiling+\"|\"+UnityEditor.EditorApplication.isUpdating+\"|\"+Game.Editor.ExistingEditorValidation.IsRunning+\"|\"+UnityEngine.Application.dataPath;",
+    "nativeResult": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+  },
+  "nativeProjectProof": {
+    "file": "native1196-after-close-primitive-idle.json",
+    "sha256": "22c7213039dd8cd941368d51bd4d0e11a93cb7f764ac2a9385b99e9ddf798d58",
+    "code": "return UnityEditor.EditorApplication.isPlaying.ToString()+\"|\"+UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode+\"|\"+UnityEditor.EditorApplication.isCompiling+\"|\"+UnityEditor.EditorApplication.isUpdating+\"|\"+Game.Editor.ExistingEditorValidation.IsRunning+\"|\"+UnityEngine.Application.dataPath;",
+    "nativeResult": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+  },
+  "preservedFailure": {
+    "file": "native1196-unclosed-ownership.json",
+    "sha256": "a367e8a6e2f95c97753fb048db5ef746a960d7484b591d97b2c688d94b154f70"
+  },
+  "preservedTimedOutIdle": {
+    "file": "native1196-after-close-native-idle.json",
+    "sha256": "89571ad7914c30439ebbe51c2a2992c696056ff8cbf53c0305da7e8a47c91ad0"
+  },
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "normalNativeRunReplayed": false,
+  "gatesChanged": false
+}

@@ -1,0 +1,207 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1114-before-fix.log",
+      "sha256": "6acbaf3d47d1eab91217d1c193fb356b2cdbd15b233dd2c94f42241de61b81d9",
+      "source": "/private/tmp/delegation-t7-guidance1114-before-fix.log"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1114-before-fix.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "source": "/private/tmp/delegation-t7-guidance1114-before-fix.log.exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1114-before-fix.log.dispatch.json",
+      "sha256": "7f8f1113b47a07fb2bc2e440bc24f03780e41fa66922adfd109f70407522d840",
+      "source": "/private/tmp/delegation-t7-guidance1114-before-fix.log.dispatch.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1114-before-fix.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "source": "/private/tmp/delegation-t7-guidance1114-before-fix.log.wrapper-exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1115-focused2.log",
+      "sha256": "ac39149366423f87a7533975dcf6ab8eca513beefc22607bacf5ade98d94746b",
+      "source": "/private/tmp/delegation-t7-guidance1115-focused2.log"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1115-focused2.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "source": "/private/tmp/delegation-t7-guidance1115-focused2.log.exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1115-focused2.log.dispatch.json",
+      "sha256": "fc73dd7e68e84e18f5be4d48345e50e82da0a28415c9052af3489d84d2bb87ac",
+      "source": "/private/tmp/delegation-t7-guidance1115-focused2.log.dispatch.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1115-focused2.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "source": "/private/tmp/delegation-t7-guidance1115-focused2.log.wrapper-exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1116-small-native-play.log",
+      "sha256": "7fdc31ecc7979b8d0f10d57c51df40afa3519f88abb6a2f613322d6b64d2bc73",
+      "source": "/private/tmp/delegation-t7-guidance1116-small-native-play.log"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1116-small-native-play.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "source": "/private/tmp/delegation-t7-guidance1116-small-native-play.log.exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1116-small-native-play.log.dispatch.json",
+      "sha256": "8ce2df32ef0f777f3b8a481f0d8c990a2ab26a467acd9c27b56e9a442481c3ab",
+      "source": "/private/tmp/delegation-t7-guidance1116-small-native-play.log.dispatch.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/delegation-t7-guidance1116-small-native-play.log.wrapper-exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "source": "/private/tmp/delegation-t7-guidance1116-small-native-play.log.wrapper-exit"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/exact-before-fix-fixture.cs.txt",
+      "sha256": "f58e5c9e504fe9219cfda675cc180c04a85d03240b2746e57c134af253eb885d",
+      "source": "/private/tmp/S005GuidanceLifecycleRepro20261011.cs"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/exact-small-play-driver.cs.txt",
+      "sha256": "179165d4daa85ff745c1407955ebf676e04697f0c19237e08ac799a010f81a61",
+      "source": "/private/tmp/S005GuidancePlayLifecycle1116.cs"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/candidate2-manifest.json",
+      "sha256": "25725bfbab7867df56d725e316ff913396ec2b843b7ae416293bd3adf17b7682",
+      "source": "/private/tmp/guidance-lifecycle-fix/manifest.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/candidate2.patch",
+      "sha256": "e35f7e542335f8c1b1886e216d8591d1f1d02aa001c64fc5de0a0e5983ad2850",
+      "source": "/private/tmp/guidance-lifecycle-fix/lifecycle.patch"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/accepted-test-native.meta.txt",
+      "sha256": "1b01e1c64e4413b5e4a557dc0ec899089c73c0ed08a837f63fb35e9c0f5330e7",
+      "source": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs.meta"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1115-recompile-trigger.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "source": "/private/tmp/delegation-t7-guidance1115-preserve/recompile-trigger.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1115-recompile-status1.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "source": "/private/tmp/delegation-t7-guidance1115-preserve/recompile-status1.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1115-idle-compiled.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1115-preserve/idle-compiled.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1115-idle-post.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1115-preserve/idle-post.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1116-load.json",
+      "sha256": "5cc5cfa0a344f885f34f5bc937a17c494817fef80c236e67ba8847388ff51d2a",
+      "source": "/private/tmp/delegation-t7-guidance1116-preserve/load.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1116-idle-pre.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1116-preserve/idle-pre.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1116-idle-post.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1116-preserve/idle-post.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1116-native-setup-reflection-proof.json",
+      "sha256": "5d062ce52c35290ad0d9c20de1e6ad08a7de2b05cf128d367389d7705422c7bb",
+      "source": "/private/tmp/delegation-t7-guidance1116-preserve/native-setup-reflection-proof.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1114-load.json",
+      "sha256": "62f25009aeffcfd32221a94cb03d286998f42c867d462b9eefd5074d219f6591",
+      "source": "/private/tmp/delegation-t7-guidance1114-preserve/load.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1114-idle-pre.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1114-idle-pre.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1114-idle-post.json",
+      "sha256": "88fc0d8225aa075517559947913a751c245075824a27f6da87ec6fbb107d5be7",
+      "source": "/private/tmp/delegation-t7-guidance1114-idle-post.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/1116-partial-driver-jsonutility-census.json",
+      "sha256": "2b6200dcf5db9592f32ce3e543bc4a54f67b5cd6b65c183b8ab02745f3daae41",
+      "source": "/private/tmp/delegation-t7-guidance1116-native-scene-census.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/complete-source-6dc5b66f729c.json.gz",
+      "sha256": "24a89f53d06a3401902483442c58071b283c90050c8ecd7caa9e4722dc73ff51",
+      "uncompressedSha256": "6dc5b66f729cc436ed3024f220257a4b470a2c12ee5b9e0ff455819fc3f6e7ec",
+      "encoding": "gzip",
+      "source": "/private/tmp/delegation-t7-guidance1114-complete-pre.json"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-guidance-t7-artifacts/complete-source-dabff409522b.json.gz",
+      "sha256": "dd48ced2d56713a9af3392b9e7a199400b340de72492d02f14c4981c632b2a3e",
+      "uncompressedSha256": "dabff409522b6f91b0c2d6246982805307836eed359292e660508f174ca91929",
+      "encoding": "gzip",
+      "source": "/private/tmp/delegation-t7-guidance1115-complete-pre.json"
+    }
+  ],
+  "completeSourceManifestMappings": [
+    {
+      "run": 1114,
+      "phase": "pre",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1114-complete-pre.json",
+      "uncompressedSha256": "6dc5b66f729cc436ed3024f220257a4b470a2c12ee5b9e0ff455819fc3f6e7ec",
+      "canonicalArtifact": "complete-source-6dc5b66f729c.json.gz"
+    },
+    {
+      "run": 1114,
+      "phase": "post",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1114-complete-post.json",
+      "uncompressedSha256": "6dc5b66f729cc436ed3024f220257a4b470a2c12ee5b9e0ff455819fc3f6e7ec",
+      "canonicalArtifact": "complete-source-6dc5b66f729c.json.gz"
+    },
+    {
+      "run": 1115,
+      "phase": "pre",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1115-complete-pre.json",
+      "uncompressedSha256": "dabff409522b6f91b0c2d6246982805307836eed359292e660508f174ca91929",
+      "canonicalArtifact": "complete-source-dabff409522b.json.gz"
+    },
+    {
+      "run": 1115,
+      "phase": "post",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1115-complete-post.json",
+      "uncompressedSha256": "dabff409522b6f91b0c2d6246982805307836eed359292e660508f174ca91929",
+      "canonicalArtifact": "complete-source-dabff409522b.json.gz"
+    },
+    {
+      "run": 1116,
+      "phase": "pre",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1116-complete-pre.json",
+      "uncompressedSha256": "dabff409522b6f91b0c2d6246982805307836eed359292e660508f174ca91929",
+      "canonicalArtifact": "complete-source-dabff409522b.json.gz"
+    },
+    {
+      "run": 1116,
+      "phase": "post",
+      "originalEvidence": "/private/tmp/delegation-t7-guidance1116-complete-post.json",
+      "uncompressedSha256": "dabff409522b6f91b0c2d6246982805307836eed359292e660508f174ca91929",
+      "canonicalArtifact": "complete-source-dabff409522b.json.gz"
+    }
+  ]
+}

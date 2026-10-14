@@ -1,0 +1,9 @@
+{
+  "validation": "native550",
+  "passed": false,
+  "sourceHash": "3c3b6709f49127be8e260fe631b73732e58da2dc0bfa253e37fb3aa8fc59bb5d",
+  "prePostSourceHashMatched": true,
+  "loadedAssemblyQualification": false,
+  "reason": "Refinery rejected all 40401 positions in radius100; additional request counters were not yet imported in loaded assembly",
+  "playerReady": false
+}

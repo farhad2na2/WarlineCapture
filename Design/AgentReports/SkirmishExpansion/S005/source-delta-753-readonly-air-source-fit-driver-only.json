@@ -1,0 +1,10 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "allMaterialHashesUnchanged": true,
+  "countsForExactCurrentFullSource": false,
+  "preManifest": "final-753-clean-readonly-source-air-fit-pre-source-manifest.json"
+}

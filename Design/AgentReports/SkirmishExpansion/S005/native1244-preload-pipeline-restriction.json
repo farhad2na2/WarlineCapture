@@ -1,0 +1,13 @@
+{
+  "run": "native1244-normal-manual-r2-recovery",
+  "result": "FailedPreloadInfrastructure",
+  "missionLoaded": false,
+  "normalJourneyQualified": false,
+  "sourceHash": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+  "preflightSourceManifest": "final-1244-normal-manual-r2-recovery-preflight-source-manifest.json",
+  "failureEvidence": "native1244-before-load-native-idle.json",
+  "failureCode": "COMMAND_FAILED",
+  "failureMessage": "No Pipeline instance found for project: /Users/farhad/Projects/WarlineCapture. Make sure Unity Editor is running with the Pipeline package installed.",
+  "diagnosis": "The restricted shell could not reach the existing Editor Pipeline. A separate elevated Unity CLI status check immediately found the existing main Editor ready on port 7801; the Editor was not closed or restarted.",
+  "resolution": "Preserve the failed 1244 preflight and run a uniquely numbered external successor through the permitted Editor connection."
+}

@@ -1,0 +1,17 @@
+{
+  "status": "FailedNativeFixtureRequestCount",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "sourceUnchanged": true,
+  "sourceSha256": "d491a06049f2ec45b6ddcdfe2a0025f9ae00add57203e67ac71b1abff37ec17a",
+  "fileCount": 47533,
+  "idle": {
+    "Project": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx/Assets",
+    "IsPlaying": false,
+    "IsCompiling": false,
+    "IsUpdating": false,
+    "ValidationRunning": false,
+    "ActualAA": 0
+  },
+  "cause": "Ground impact producer emits explosion and smoke request even when smoke prefab null; fixture incorrectly required singleton1. Hidden point case already passed; no production visibility defect inferred."
+}

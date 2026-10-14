@@ -1,0 +1,42 @@
+{
+  "result": "Failed",
+  "sourceHash": "e35ea8533c2eca91a52f436419a4df39747afedf43575592f356ecbe9fb9a817",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-798-paid-strike-bidirectional-card-and-revalidated-air-sites-pre-source-manifest.json",
+  "postSourceManifest": "final-798-normal-paid-fixedwing-closed-post-source-manifest.json",
+  "wrapperExitCode": 2,
+  "wrapperExitArtifact": "native-798-current-manual-en-seed155926.log.exit",
+  "log": "native-798-current-manual-en-seed155926.log",
+  "actualSeed": 155926,
+  "locale": "en",
+  "trace": "s005-aria-live-155926-en-d65bf7b560874db18ddb3b61a3f65b4f.jsonl",
+  "inputAudit": "native798-touch-contact-audit.json",
+  "recordedContacts": 70,
+  "allRecordedContactsEnded": true,
+  "progress": [],
+  "localFuelRouteEvidence": [],
+  "failureMarkers": [
+    "[S005PlayerSaveResume] result=Failed step=0 reason=Ground Staging destroyed during paid aircraft setup; native production cannot continue."
+  ],
+  "normalInput": true,
+  "noOutcomeInjection": true,
+  "normalBudget": true,
+  "scope": "Paid Strike production/taxi, native fire, return/home touchdown, refuel and second airborne sortie. Second return/full mission/bilateral capacity/all roles are not certified.",
+  "completeMissionCertified": false,
+  "bilateralCapacityCertified": false,
+  "allRolesCertified": false,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false,
+  "technicallyReady": false,
+  "failureClassification": "Native enemy destruction of Ground Staging during aircraft qualification setup; no flight or driver-change confirmation.",
+  "failureElapsedLastDiagnostic": 97.86621856689453,
+  "scopedProgressSummary": {
+    "fourFactoriesPaid": true,
+    "fourOilTrucks": true,
+    "producerDefenseOrdersOnFirstPage": 5,
+    "airportRevalidationExercised": false,
+    "bidirectionalAirSelectionExercised": false,
+    "aircraftProduced": false
+  },
+  "nextStrategy": "Use own actual Ground Staging position for defense and page through all presented combat squads via normal input; no source map, roster, resources, costs or match clock changes."
+}

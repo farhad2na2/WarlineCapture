@@ -1,0 +1,74 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
+
+public static class S005LoadedAssembly1435
+{
+    [Serializable]
+    private sealed class Receipt
+    {
+        public string authoringAssembly;
+        public string authoringLocation;
+        public string authoringMvid;
+        public string authoringType;
+        public string bakerType;
+        public string bakingVersionAttribute;
+        public string bakingVersionProject;
+        public string bakingVersionNumber;
+        public string compositionAssembly;
+        public string compositionLocation;
+        public string compositionMvid;
+        public string matchSceneViewType;
+        public string uiAssembly;
+        public string uiLocation;
+        public string uiMvid;
+    }
+
+    public static string Run()
+    {
+        var loaded = AppDomain.CurrentDomain.GetAssemblies();
+        Assembly Unique(string name)
+        {
+            var matches = loaded.Where(a => a.GetName().Name == name).ToArray();
+            if (matches.Length != 1)
+                throw new InvalidOperationException(name + " loaded assembly count=" + matches.Length);
+            return matches[0];
+        }
+
+        var authoring = Unique("Game.Authoring");
+        var composition = Unique("Game.Composition");
+        var ui = Unique("Game.UI.Runtime");
+        var unit = authoring.GetType("Game.Authoring.UnitGridAuthoring", true);
+        var baker = unit.GetNestedType("UnitGridBaker", BindingFlags.NonPublic);
+        if (baker == null)
+            throw new InvalidOperationException("UnitGridBaker missing");
+        var versions = baker.GetCustomAttributesData()
+            .Where(a => a.AttributeType.Name == "BakingVersionAttribute").ToArray();
+        if (versions.Length != 1 || versions[0].ConstructorArguments.Count != 2)
+            throw new InvalidOperationException("UnitGridBaker BakingVersion shape differs");
+        var project = Convert.ToString(versions[0].ConstructorArguments[0].Value);
+        var version = Convert.ToString(versions[0].ConstructorArguments[1].Value);
+        if (project != "WarlineCapture" || version != "2")
+            throw new InvalidOperationException("Unexpected loaded BakingVersion " + project + "/" + version);
+        var view = composition.GetType("Game.Composition.MatchSceneView", true);
+        return JsonUtility.ToJson(new Receipt
+        {
+            authoringAssembly = authoring.GetName().Name,
+            authoringLocation = authoring.Location,
+            authoringMvid = authoring.ManifestModule.ModuleVersionId.ToString(),
+            authoringType = unit.FullName,
+            bakerType = baker.FullName,
+            bakingVersionAttribute = versions[0].AttributeType.FullName,
+            bakingVersionProject = project,
+            bakingVersionNumber = version,
+            compositionAssembly = composition.GetName().Name,
+            compositionLocation = composition.Location,
+            compositionMvid = composition.ManifestModule.ModuleVersionId.ToString(),
+            matchSceneViewType = view.FullName,
+            uiAssembly = ui.GetName().Name,
+            uiLocation = ui.Location,
+            uiMvid = ui.ManifestModule.ModuleVersionId.ToString()
+        });
+    }
+}

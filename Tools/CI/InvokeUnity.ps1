@@ -250,6 +250,12 @@ $process = Start-Process `
     -RedirectStandardError $stderrLogFile `
     -PassThru
 
+# Windows PowerShell 5.1 can return a detached Process wrapper from Start-Process.
+# Cache its native handle before Refresh/HasExited observe shutdown, so WaitForExit
+# and ExitCode still query the actual child rather than losing the exit status.
+# Failure to acquire the handle remains an error; no log marker substitutes here.
+$null = $process.Handle
+
 function Stop-UnityProcessTree {
     param(
         [Parameter(Mandatory = $true)]

@@ -105,11 +105,12 @@ try{
 $wrapperExit=1
 function Quote-S005Literal([string]$value){return "'"+$value.Replace("'","''")+"'"}
 $launchFile=Join-Path $RunDirectory "checked-wrapper-launch.ps1"
-$launchText="& "+(Quote-S005Literal (Join-Path $PSScriptRoot "InvokeUnity.ps1"))+
+$launchText="`$ErrorActionPreference='Stop'`n& "+(Quote-S005Literal (Join-Path $PSScriptRoot "InvokeUnity.ps1"))+
     " -UnityExe "+(Quote-S005Literal $UnityExe)+" -ProjectPath "+(Quote-S005Literal $projectRoot)+
     " -LogFile "+(Quote-S005Literal $log)+" -TimeoutSeconds "+$TimeoutSeconds+
     " -UnityArguments @('-executeMethod',"+(Quote-S005Literal $method)+")"
 if($GuiLicensing){$launchText+=" -GuiLicensing"}
+$launchText+="`nexit `$global:LASTEXITCODE"
 $launchText | Out-File -LiteralPath $launchFile -Encoding utf8
 try{
     # No -quit: the asynchronous native harness owns its normal validation exit.

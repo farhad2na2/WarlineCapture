@@ -1,0 +1,10 @@
+﻿[UnityInvoke] UnityExe: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\OwnedExitProbe.exe
+[UnityInvoke] ProjectPath: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937
+[UnityInvoke] LogFile: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\fast-zero.log
+[UnityInvoke] TimeoutSeconds: 10
+[UnityInvoke] Arguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937 -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\fast-zero.log --exit 0 --sleep 0 --fatal 0
+[UnityInvoke] LicensingMode: gui
+[UnityInvoke] ProcessArguments: -projectPath D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937 -logFile D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\fast-zero.log --exit 0 --sleep 0 --fatal 0
+[UnityInvoke] StdoutLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\fast-zero.stdout.log
+[UnityInvoke] StderrLog: D:\Projects\WarlineCapture\Temp\InvokeUnityProcessExitTests\canary-zso2t937\fast-zero.stderr.log
+[UnityInvoke] ExitCode: 0

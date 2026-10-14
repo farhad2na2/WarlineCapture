@@ -781,8 +781,22 @@ namespace Game.Editor
             {
                 foreach (MonoBehaviour behaviour in go.GetComponentsInChildren<MonoBehaviour>(true))
                 {
-                    if (behaviour == null || behaviour.GetType().Name != "SubScene")
+                    if (behaviour == null)
                         continue;
+                    if (behaviour.GetType().Name != "SubScene")
+                    {
+                        // Campaign runtime bindings reference their prepared presentation scene by GUID.
+                        SerializedProperty sourceGuid = new SerializedObject(behaviour).FindProperty("presentationSourceSceneGuid");
+                        string sourcePath = sourceGuid != null && sourceGuid.propertyType == SerializedPropertyType.String
+                            ? AssetDatabase.GUIDToAssetPath(sourceGuid.stringValue)
+                            : null;
+                        if (!string.IsNullOrEmpty(sourcePath) && sourcePath.EndsWith(".unity", StringComparison.Ordinal) &&
+                            seen.Add(sourcePath) &&
+                            EditorSceneManager.OpenScene(sourcePath, OpenSceneMode.Additive).IsValid())
+                            count++;
+                        continue;
+                    }
+
                     var serialized = new SerializedObject(behaviour);
                     SerializedProperty asset = serialized.FindProperty("_SceneAsset");
                     string path = asset != null && asset.objectReferenceValue != null

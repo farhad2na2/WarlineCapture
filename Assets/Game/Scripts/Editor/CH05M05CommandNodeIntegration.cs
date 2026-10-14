@@ -11,7 +11,7 @@ namespace Game.Editor
             CH05M05CommandNodeConfigBuilder.Build();
             FinishPrepared();
             CH05M05CommandNodeMapValidation.Run();
-            Debug.Log("[CommandNodeCore] result=Passed independentMap=Passed finale=Canonical audit=Guaranteed voices=ExcludedByRequest captions=2Locales");
+            Debug.Log("[CommandNodeCore] result=Passed independentMap=Passed finale=Canonical audit=Guaranteed voiceGate=Separate captions=2Locales");
         }
         public static void FinishPrepared()
         {
@@ -31,9 +31,9 @@ namespace Game.Editor
             CH05M05CommandNodeMapValidation.Run();
             CH05M05CommandNodeRulesValidation.Run();
             CH05M05CommandNodeObjectiveValidation.Run();
-            CH05M05CommandNodeNarrativeBuilder.ValidateCaptionedFinale();
+            CH05M05CommandNodeNarrativeBuilder.ValidateFinale();
             CH05M05CommandNodeRecoveryValidation.Run();
-            Debug.Log("[CommandNodeValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voices=ExcludedByRequest nativeJourney=SeparateGate");
+            Debug.Log("[CommandNodeValidation] result=Passed nativeMap=Passed rules=Passed objectives=Passed voiceGate=Separate nativeJourney=SeparateGate");
         }
     }
 }

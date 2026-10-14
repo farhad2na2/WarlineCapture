@@ -1,0 +1,38 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CampaignFinaleComicVoiceValidation.ValidatePreparedCopy
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-finale-voice-preparation-20261014-02.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignExistingComicVoiceAudit] result=Passed chapters=4,5 existingLines=64 existingClips=128 locales=2
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignFinaleComicVoiceValidation:ValidateExistingChapterVoices () (at Assets/Game/Scripts/Editor/CampaignFinaleComicVoiceValidation.cs:75)
+Game.Editor.CampaignFinaleComicVoiceValidation:ValidatePreparedCopy () (at Assets/Game/Scripts/Editor/CampaignFinaleComicVoiceValidation.cs:16)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-finale-voice-preparation-20261014-02.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CommandNodeFinale] result=Passed sequences=12 panels=41 selectedPanels=38 chapterClosePanels=8 canonicalPanels=9 voiceGate=Separate endingGates=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH05M05CommandNodeNarrativeBuilder:ValidateFinale () (at Assets/Game/Scripts/Editor/CH05M05CommandNodeNarrativeBuilder.cs:268)
+Game.Editor.CampaignFinaleComicVoiceValidation:ValidatePreparedCopy () (at Assets/Game/Scripts/Editor/CampaignFinaleComicVoiceValidation.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-finale-voice-preparation-20261014-02.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignFinaleVoicePreparation] result=Passed canonicalLines=55 expectedClips=126 locales=2 generatedVoices=Pending providerApproval=Pending
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignFinaleComicVoiceValidation:ValidatePreparedCopy () (at Assets/Game/Scripts/Editor/CampaignFinaleComicVoiceValidation.cs:38)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-finale-voice-preparation-20261014-02.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CampaignFinaleComicVoiceValidation.ValidatePreparedCopy
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at /private/tmp/warline-finale-voice-preparation-20261014-02.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -3305,3 +3305,223 @@ MonoBehaviour:
     voiceClip: {fileID: 8300000, guid: 4942b399fb4634e379d5dc402a7cebe5, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-brief-01
+    voiceClip: {fileID: 8300000, guid: 1d23ed54582e140f68a21c3d6f98a5bd, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-brief-02
+    voiceClip: {fileID: 8300000, guid: ae0f1ef06f11e4ed2af56b463e870b51, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-brief-03
+    voiceClip: {fileID: 8300000, guid: c6e3edd3b249e45b7bea11d6ba8f7b42, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-comms-01
+    voiceClip: {fileID: 8300000, guid: 151e7231bada9467fa35a64cea8791e7, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-debrief-01
+    voiceClip: {fileID: 8300000, guid: 8651c645f61ce4ec6b5621bc02fabd71, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-debrief-02
+    voiceClip: {fileID: 8300000, guid: 25f9109ec6d564003b42ebed6372fe65, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: network_collapse-debrief-03
+    voiceClip: {fileID: 8300000, guid: 1a00b6e5645594799b5f6b036189e318, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-brief-01
+    voiceClip: {fileID: 8300000, guid: cbd7431c40e8b4ced8ee8e155cb905fb, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-brief-02
+    voiceClip: {fileID: 8300000, guid: b3b5e0beef3884770822810b8f818570, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-brief-03
+    voiceClip: {fileID: 8300000, guid: c104c9588162f4cc5b24f7cdb4ad6cad, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-comms-01
+    voiceClip: {fileID: 8300000, guid: 8d8800fc91f0243f7a08c687982b7df9, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-debrief-01
+    voiceClip: {fileID: 8300000, guid: 6bab2f2e156b741bc835764f7beb7cd3, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-debrief-02
+    voiceClip: {fileID: 8300000, guid: 054af42f6de9b4034a0349e457f67fbf, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: last_corridor-debrief-03
+    voiceClip: {fileID: 8300000, guid: 90aa2964c40214169bad751ba4058e42, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-01
+    voiceClip: {fileID: 8300000, guid: 2800e7fd725f145c99a2e10ab7ba3c8c, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-02
+    voiceClip: {fileID: 8300000, guid: 909fd604680b3464c9b72b373b48fd2f, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-03
+    voiceClip: {fileID: 8300000, guid: 294cad432b1ab46879453481593b8f52, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-04
+    voiceClip: {fileID: 8300000, guid: 72791e31a9b714477b70aff8f6749747, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-05
+    voiceClip: {fileID: 8300000, guid: c6e1e5e3e8865441faaddf8d7371fafe, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-06
+    voiceClip: {fileID: 8300000, guid: 22767c370603649e7832d95ef0efe5bd, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-07
+    voiceClip: {fileID: 8300000, guid: d7604ab4bb70241679a8570ab23cc714, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-brief-08
+    voiceClip: {fileID: 8300000, guid: 9077553e98ffa473e9427be0d68c37bd, type: 3}
+    femaleVoiceClip: {fileID: 8300000, guid: 5ce2430946119467688ab970d88f101c, type: 3}
+    neutralVoiceClip: {fileID: 8300000, guid: abb85996f1d144703b32416b8fe22e4e, type: 3}
+  - lineId: command_node-comms-01
+    voiceClip: {fileID: 8300000, guid: 636a0e598ebe540aa89b8a9451272ca8, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-comms-02
+    voiceClip: {fileID: 8300000, guid: 45481d937618b4cf1a645ca8ca3a7ab7, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-comms-03
+    voiceClip: {fileID: 8300000, guid: 7b0b92ce25f4747b5b37c4b8ea05dfc7, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-debrief-01
+    voiceClip: {fileID: 8300000, guid: 04b590f15f8544da49b3ade5e2500b90, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-debrief-02
+    voiceClip: {fileID: 8300000, guid: c55fc543fbe89488781b402937c0d059, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-debrief-03
+    voiceClip: {fileID: 8300000, guid: 42588a33cd3324f0ea3c29b6e32b26f5, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-debrief-04
+    voiceClip: {fileID: 8300000, guid: 3f8783132cc6544fcad051f5812db7be, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-01
+    voiceClip: {fileID: 8300000, guid: 80a73c0b8a2ff423089a4f6dcf5bc5d5, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-02
+    voiceClip: {fileID: 8300000, guid: 4ef0b4c64d2a444df8c870b4b1eaf9ef, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-03
+    voiceClip: {fileID: 8300000, guid: 73de18b8037984536be80c4048ab0d57, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-04
+    voiceClip: {fileID: 8300000, guid: cc2610bb57bde4ae7b2945ebf0374299, type: 3}
+    femaleVoiceClip: {fileID: 8300000, guid: 5d1adc62c09624d7b806fddea2e77ee4, type: 3}
+    neutralVoiceClip: {fileID: 8300000, guid: 65c2858b8f3cd4ac38e3a44b7a618a65, type: 3}
+  - lineId: command_node-close-05
+    voiceClip: {fileID: 8300000, guid: 938f478d6176f4494b94e866a7bf755d, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-06
+    voiceClip: {fileID: 8300000, guid: 460c053ea899b452eb84b130c4c97603, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-07
+    voiceClip: {fileID: 8300000, guid: e9da5480760aa47bb9c518df5301730b, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-close-08
+    voiceClip: {fileID: 8300000, guid: 48c605e0f01164ea48330e25db67e3ba, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-01
+    voiceClip: {fileID: 8300000, guid: 5321ebf89aa40405aaf091c357aa4398, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-02
+    voiceClip: {fileID: 8300000, guid: a102fa43602724a51b1d975e463c08c2, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-03
+    voiceClip: {fileID: 8300000, guid: 1f50ae7886a7a494dac8f7430d123ef2, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-04
+    voiceClip: {fileID: 8300000, guid: 04854e0c9f168413dbb29bc5810960ab, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-05
+    voiceClip: {fileID: 8300000, guid: 9ce5fb1e52952489caec8ecc765a4b0d, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-06
+    voiceClip: {fileID: 8300000, guid: 33bdb58c8b24b4e98b90e3b210864687, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-07
+    voiceClip: {fileID: 8300000, guid: af74114ff315d4b7a8aa5e5689ece693, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-epilogue-08
+    voiceClip: {fileID: 8300000, guid: 9948a833127e34c7ca26fa0c8d842683, type: 3}
+    femaleVoiceClip: {fileID: 8300000, guid: 70ec9aa6d08f64de0af738bbf39b2298, type: 3}
+    neutralVoiceClip: {fileID: 8300000, guid: bfbd57c60751e4abe98475fe84b2718e, type: 3}
+  - lineId: command_node-epilogue-09
+    voiceClip: {fileID: 8300000, guid: 172210f7ef7f44413b7e054b84119c9e, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-trust_high-01
+    voiceClip: {fileID: 8300000, guid: 2fd7445c7aa7242068d7304f116acb1c, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-trust_low-01
+    voiceClip: {fileID: 8300000, guid: 538248502629d473bb228eb069d6181e, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-evidence_high-01
+    voiceClip: {fileID: 8300000, guid: b9825cf69ff77489d85c3a5e70776b38, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-evidence_low-01
+    voiceClip: {fileID: 8300000, guid: 4239db45938634059afe2fa6da77ee46, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-infrastructure_high-01
+    voiceClip: {fileID: 8300000, guid: 876f1fa4f57934f2a82b2f6edf9a2bfa, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-infrastructure_low-01
+    voiceClip: {fileID: 8300000, guid: 8b3378224fff34101882793078bc19e4, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-postscript-01
+    voiceClip: {fileID: 8300000, guid: 0324b44c160104cb09d550533ba6737b, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-postscript-02
+    voiceClip: {fileID: 8300000, guid: 5dfcbc50d42644896872c099aaf1aa1a, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: command_node-postscript-03
+    voiceClip: {fileID: 8300000, guid: a2bf54db4daf54190ab511214ac2c0cd, type: 3}
+    femaleVoiceClip: {fileID: 8300000, guid: 9969cd3e8006448ad886b79717d1e252, type: 3}
+    neutralVoiceClip: {fileID: 8300000, guid: 25f52ac68816a4775afb2786cd5a53c3, type: 3}

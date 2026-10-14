@@ -1,0 +1,1016 @@
+{
+  "status": "Passed",
+  "clips": 126,
+  "audibleListeningAcceptance": "Pending",
+  "normalInputMissionPlaythrough": "Pending",
+  "records": [
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-01.wav",
+      "sha256": "fa98b273dcfd901b57601373047aeaa6467ad4c0efbade10a5a53beb517925e6",
+      "durationSeconds": 18.0,
+      "peak": 0.72723388671875,
+      "rms": 0.1257888452643215,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-01.wav",
+      "sha256": "6d0e0023dcf07e974b074b4af42f0bbfa5fdafcd3b509f3301567e7809b9ac41",
+      "durationSeconds": 21.12,
+      "peak": 0.79437255859375,
+      "rms": 0.11584489893747266,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-02.wav",
+      "sha256": "ba7499d967720c394d24458b356abc331ff5ce63e371eaa8f8b850f276408e68",
+      "durationSeconds": 16.24,
+      "peak": 0.67156982421875,
+      "rms": 0.11895338439670596,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-02.wav",
+      "sha256": "582a3a65a59b7689bc3d29479864d2c23205e1f88b9d575f121185888ad8fddb",
+      "durationSeconds": 20.08,
+      "peak": 0.79449462890625,
+      "rms": 0.12587476077465456,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-03.wav",
+      "sha256": "498e4df5e81755c36fee75b05678ffe01929ac634c510765efa921e2e0f6efe7",
+      "durationSeconds": 17.84,
+      "peak": 0.702972412109375,
+      "rms": 0.11252556693078551,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-03.wav",
+      "sha256": "138ffe42a8b69b3436823b2f7b7dd2a07515a80a9bb1c0f91746b67f280cfa20",
+      "durationSeconds": 20.32,
+      "peak": 0.678314208984375,
+      "rms": 0.11357233865805476,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-comms-01.wav",
+      "sha256": "a728355abf6c0cd5e4aa1447cc1c7df69adfc7243d9972585e07d6176703a39f",
+      "durationSeconds": 20.56,
+      "peak": 0.7327880859375,
+      "rms": 0.11914416151017126,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-comms-01.wav",
+      "sha256": "167ef15725992101772a8571ecbde09d546dff20dd4af3227f74f29a8be27267",
+      "durationSeconds": 21.12,
+      "peak": 0.7501220703125,
+      "rms": 0.11777531265774119,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-01.wav",
+      "sha256": "89bbd595a2c1bb0bbbd6f3326344be495bb154b5be775ed25a93707c30778f39",
+      "durationSeconds": 16.08,
+      "peak": 0.793060302734375,
+      "rms": 0.12115005067964502,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-01.wav",
+      "sha256": "9a6605426778d31f2ca43f9886792a8866246d2646ce349c94b3a6867c8563e2",
+      "durationSeconds": 17.76,
+      "peak": 0.79443359375,
+      "rms": 0.11600949329819887,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-02.wav",
+      "sha256": "9606ec4daa401360aff613e0ecff98b72f2685de8e56ed999c2864aac17b9d9d",
+      "durationSeconds": 20.16,
+      "peak": 0.662841796875,
+      "rms": 0.1169712459898202,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-02.wav",
+      "sha256": "65081d06c181be9569f56b989e50cc9bff330702ea669f04dddc3563aa3afa69",
+      "durationSeconds": 21.76,
+      "peak": 0.700592041015625,
+      "rms": 0.12227713901114934,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-03.wav",
+      "sha256": "f1ee52ebfed993d53a9113bcd72937a8f90e858f914a533c1213bf23dbe1dd5f",
+      "durationSeconds": 14.8,
+      "peak": 0.686248779296875,
+      "rms": 0.12220941109662652,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-03.wav",
+      "sha256": "b3b72a31f61e102d75ef175477a32d6bcac92bd1228d2abeb1d89d038028e313",
+      "durationSeconds": 19.44,
+      "peak": 0.770050048828125,
+      "rms": 0.12155232495684795,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-01.wav",
+      "sha256": "15c4ff23d6aecbdd8122a01b9ce1dbd4e3aef5ca680e211881314b97482168d4",
+      "durationSeconds": 17.92,
+      "peak": 0.794342041015625,
+      "rms": 0.12184706351251785,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-01.wav",
+      "sha256": "3b863dee3d888709b8655660acddeebba1a27977b9865f0bfe379e74bc3c4284",
+      "durationSeconds": 19.6,
+      "peak": 0.79437255859375,
+      "rms": 0.11919078231837557,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-02.wav",
+      "sha256": "daa4e8e9f1dacc9759fd9d0bb35a4fe3bd3339bc1100d460a5fee9c853e9b27b",
+      "durationSeconds": 18.24,
+      "peak": 0.736968994140625,
+      "rms": 0.114366505395492,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-02.wav",
+      "sha256": "80c4fbac5b9fcf73e79484e4d5be6c4b134066c128288f2dddfd871476ca5b2b",
+      "durationSeconds": 23.36,
+      "peak": 0.75115966796875,
+      "rms": 0.1160073805308345,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-03.wav",
+      "sha256": "0b423f544cc34c2cea17219579e6d36dc7e1da939196aaa6d8843d22971ed43c",
+      "durationSeconds": 16.32,
+      "peak": 0.777069091796875,
+      "rms": 0.12618797757708772,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-03.wav",
+      "sha256": "42b5e17edd30aa278ea1e40171e24a96ce606e50f812687f8b8456d56bad4c93",
+      "durationSeconds": 20.8,
+      "peak": 0.746917724609375,
+      "rms": 0.11821508408344332,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-comms-01.wav",
+      "sha256": "a92a99699af176f98e215f002678855d68a0239d144a8512a7ea25354f87f74c",
+      "durationSeconds": 16.32,
+      "peak": 0.6768798828125,
+      "rms": 0.11863325883958066,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-comms-01.wav",
+      "sha256": "e3e1f6879a5601c862dbf828fe1f22046d0c066f88b518e8c7c388c00b7f0914",
+      "durationSeconds": 21.52,
+      "peak": 0.741302490234375,
+      "rms": 0.12430931734060033,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-01.wav",
+      "sha256": "e34f2f6843a3a1c24d70d71827e8515d4498746aa712bde2f8a36e5523407d5d",
+      "durationSeconds": 18.0,
+      "peak": 0.79437255859375,
+      "rms": 0.11953007855549255,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-01.wav",
+      "sha256": "a2e0ac23091a7dd200254a0fb08b0f950641a99d9718ccfac79ed481fd00f6d1",
+      "durationSeconds": 17.68,
+      "peak": 0.794464111328125,
+      "rms": 0.11682092722253247,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-02.wav",
+      "sha256": "35f940b0d464c70fe8727ff41dba8f284801928153af1ed6fcd09ce53b281fee",
+      "durationSeconds": 14.88,
+      "peak": 0.702392578125,
+      "rms": 0.12008780204364969,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-02.wav",
+      "sha256": "0fe6b9944cb1515e1aa67eca59cbdd3be9155c03013ff5d623f5d18728df5eca",
+      "durationSeconds": 19.6,
+      "peak": 0.73468017578125,
+      "rms": 0.12365552095403033,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-03.wav",
+      "sha256": "386784b396c123275bed762f7771f8cd1268e29863d628c1d340f5f954ed75f8",
+      "durationSeconds": 20.0,
+      "peak": 0.7418212890625,
+      "rms": 0.11695461241653152,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-03.wav",
+      "sha256": "c9f86d133138a4cf27866bb01172781fd18c1fd80e078e279835d2611cf8fee3",
+      "durationSeconds": 22.24,
+      "peak": 0.7694091796875,
+      "rms": 0.12094914660419132,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-01.wav",
+      "sha256": "bde1a169f2f1b1a21c918078ddbe260f4ccfc4878a59c670eeac0d2d0768c23d",
+      "durationSeconds": 12.32,
+      "peak": 0.7943115234375,
+      "rms": 0.11896577737067802,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-01.wav",
+      "sha256": "eb6f2d153c5bdd5e3461b2fef30af2ff9282b06fdee2deca96dbeadaad92afbf",
+      "durationSeconds": 14.8,
+      "peak": 0.72332763671875,
+      "rms": 0.11372918286641971,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-02.wav",
+      "sha256": "3751dfe393b7c9988cc9f270ce90b53f392131e8ff61f55f64a12a17900ecebe",
+      "durationSeconds": 9.04,
+      "peak": 0.674285888671875,
+      "rms": 0.11752469797768766,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-02.wav",
+      "sha256": "db9dd9d94d7b411f999c72738d8e0562fe4ed2438351842979f40533260ad54e",
+      "durationSeconds": 13.44,
+      "peak": 0.683197021484375,
+      "rms": 0.11564198464165035,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-03.wav",
+      "sha256": "aac218026ec07b8a7fb449220ff69ca735b06745b32ce08af60908f36a766c30",
+      "durationSeconds": 9.68,
+      "peak": 0.794189453125,
+      "rms": 0.12024063128590673,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-03.wav",
+      "sha256": "9fa9daf3f29e184c739557c20f46cff4e7ce6469860b6dbe8933fb03db438ddd",
+      "durationSeconds": 11.84,
+      "peak": 0.794281005859375,
+      "rms": 0.10817514408231202,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-04.wav",
+      "sha256": "e6015d51e919973b17cb693eecf29d8a5333142eee67208b545ab21d52f3ee9d",
+      "durationSeconds": 10.08,
+      "peak": 0.6978759765625,
+      "rms": 0.12086684516802142,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-04.wav",
+      "sha256": "a1e7a1aa95a2a6f134e17d11358a14750747b0064ad2318fce642fdac417ff6a",
+      "durationSeconds": 12.32,
+      "peak": 0.76043701171875,
+      "rms": 0.11837527484342135,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-05.wav",
+      "sha256": "8d38d8548d5953d63707cee6f6ed44d93e5ded605e9ba32c777abaee2f37a419",
+      "durationSeconds": 9.84,
+      "peak": 0.7943115234375,
+      "rms": 0.12690325094024577,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-05.wav",
+      "sha256": "a23ffa4e69d175cb8731fe274983cdfeac96fd8f7054592e1024c7c4dd11c859",
+      "durationSeconds": 12.0,
+      "peak": 0.79437255859375,
+      "rms": 0.1169649712885437,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-06.wav",
+      "sha256": "c3139f8ab44cdc11e3187c2177f25926b313145dd9bda2c0322e9f2633c24b26",
+      "durationSeconds": 12.0,
+      "peak": 0.64605712890625,
+      "rms": 0.12155405499631888,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-06.wav",
+      "sha256": "5c2300d79b553b68e7be0ed82ec026058cec8e557ddc3e9d5eb69a8bfd073e5d",
+      "durationSeconds": 12.72,
+      "peak": 0.74884033203125,
+      "rms": 0.1263053050353218,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-07.wav",
+      "sha256": "43445fffed4d702f20d51f15c4ccf15e9ea74f1abe5fab9b0223089da760dae2",
+      "durationSeconds": 9.6,
+      "peak": 0.640777587890625,
+      "rms": 0.12104057558435426,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-07.wav",
+      "sha256": "4a40ce1864fe8fe40727905c16b969d13610bb1422507134b34d071eb275536e",
+      "durationSeconds": 14.32,
+      "peak": 0.66400146484375,
+      "rms": 0.1156326009264879,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08.wav",
+      "sha256": "8e283ab841d62e3e9de8be65ba22d2d7d6eb3d2b9efd8bbc663e8872c11e8d26",
+      "durationSeconds": 9.44,
+      "peak": 0.794281005859375,
+      "rms": 0.12373748662928388,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08.wav",
+      "sha256": "c0aa251583f2c980be14ee7efcdef118d9ddc5669ccb396863eba1020ae6b833",
+      "durationSeconds": 11.04,
+      "peak": 0.794342041015625,
+      "rms": 0.1268923109450268,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08_female.wav",
+      "sha256": "409b3a6d6504dc23710edc32d6fab13fd5ba63bc34e48a62a8aba826592d4f56",
+      "durationSeconds": 11.76,
+      "peak": 0.79339599609375,
+      "rms": 0.12168062016680084,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08_female.wav",
+      "sha256": "91d34e9c6380b9f486bbbaed610a5d757f98462913d9f5d7727ec346708b03de",
+      "durationSeconds": 12.64,
+      "peak": 0.779022216796875,
+      "rms": 0.12234486695729348,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08_neutral.wav",
+      "sha256": "7bf1740e4a8612d5892a035a82b0c5afe0ea0685511304ee443795c90e70060e",
+      "durationSeconds": 11.44,
+      "peak": 0.664337158203125,
+      "rms": 0.12586975366457687,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08_neutral.wav",
+      "sha256": "09a1928959b24838e7a014234012cb933ef92dece59cbb24d5987fe977f16c72",
+      "durationSeconds": 13.52,
+      "peak": 0.688446044921875,
+      "rms": 0.12308906781994797,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-01.wav",
+      "sha256": "3e72ad84c04da5f5cfd267bc3645cf2ba9fbad39e35452555138e180ea917c95",
+      "durationSeconds": 8.32,
+      "peak": 0.794403076171875,
+      "rms": 0.12395788413938107,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-01.wav",
+      "sha256": "899dd82f910451e713eee8cc87f21d5c7cd1bbe27dea001870a5c355d2ebdf51",
+      "durationSeconds": 7.92,
+      "peak": 0.794281005859375,
+      "rms": 0.11514972229321647,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-02.wav",
+      "sha256": "32ca1572a176f934d816390ca2905427c0636578115d1acb142ad3205b5996c7",
+      "durationSeconds": 14.64,
+      "peak": 0.69476318359375,
+      "rms": 0.12184569734350062,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-02.wav",
+      "sha256": "1ce63f3fc6d67659e16b5b63e26cc5d8a6cd7c87ed24b94034eae5cbedc32067",
+      "durationSeconds": 18.0,
+      "peak": 0.6856689453125,
+      "rms": 0.12118108367361165,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-03.wav",
+      "sha256": "acf2534fbba179063f1bd877d0eb0b57ce1efbb86d00025415cf52da48812685",
+      "durationSeconds": 12.24,
+      "peak": 0.647125244140625,
+      "rms": 0.12114869750534066,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-03.wav",
+      "sha256": "8a05019367ae789b00f54a258e15f507038760ce81954756a40041dea5266cf8",
+      "durationSeconds": 14.88,
+      "peak": 0.68463134765625,
+      "rms": 0.11799209656996225,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-01.wav",
+      "sha256": "c1df902ccc502fd56caa0ca0f5ed3b3e9b774d5ae17e53e7975467f0c4ba8c10",
+      "durationSeconds": 12.0,
+      "peak": 0.794342041015625,
+      "rms": 0.12235868946888258,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-01.wav",
+      "sha256": "afeb37a2611ead488a2b7f3aaf3c40dd082b8d3fb11c5f1a2ca8694cc46a2d63",
+      "durationSeconds": 12.8,
+      "peak": 0.760528564453125,
+      "rms": 0.11486155619780468,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-02.wav",
+      "sha256": "2f33ae3f77a2fffed9323f82e8059cfaaa6e79350101f711c9580d07f167af28",
+      "durationSeconds": 10.56,
+      "peak": 0.752227783203125,
+      "rms": 0.1282658196604352,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-02.wav",
+      "sha256": "f347e30aab70d0419f8c3e3af20ece74307022d3a62ec8450212bed88cf6d5a1",
+      "durationSeconds": 12.72,
+      "peak": 0.658111572265625,
+      "rms": 0.12294521587744821,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-03.wav",
+      "sha256": "a3137c6d74b63553daf2cd5facee44c302ae370e55514942acdf524b70eebc3e",
+      "durationSeconds": 8.8,
+      "peak": 0.581146240234375,
+      "rms": 0.1180870988504943,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-03.wav",
+      "sha256": "e91d3b7b47b29d0edacb73630c22c67e8f4d1dbbda1107889fe6efc3cecaf6fd",
+      "durationSeconds": 10.72,
+      "peak": 0.685089111328125,
+      "rms": 0.1153019700907994,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-04.wav",
+      "sha256": "b67e070c99a23e7a673a8e88b7fa244a38f8b75b81beb500f0db77a5112d0a7b",
+      "durationSeconds": 9.36,
+      "peak": 0.67327880859375,
+      "rms": 0.12493448689549792,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-04.wav",
+      "sha256": "450535cf4b28e10228acdce406aa48b42331fc6428634455f9d428a9c58a4c78",
+      "durationSeconds": 11.52,
+      "peak": 0.614654541015625,
+      "rms": 0.11824981894931182,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-01.wav",
+      "sha256": "b5652541c8c723cdcfeac09da5a29de48b3a039576e28261a68a07341ed35fd4",
+      "durationSeconds": 10.0,
+      "peak": 0.6676025390625,
+      "rms": 0.12504227267439239,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-01.wav",
+      "sha256": "d4aa3e1bc7efc33167369f312f91d8b06e81b5333e422c758aebd700d8b2afb1",
+      "durationSeconds": 12.32,
+      "peak": 0.61016845703125,
+      "rms": 0.12452406657770176,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-02.wav",
+      "sha256": "df08d27846961e6e0b472225fc3e168045865a6f46127783bd29fc23c1cd9dec",
+      "durationSeconds": 12.48,
+      "peak": 0.740386962890625,
+      "rms": 0.11696228018483192,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-02.wav",
+      "sha256": "97a6670383fd735a4a29f661856e8ff5e8ab9010fd201bc875426cedc2067cef",
+      "durationSeconds": 13.92,
+      "peak": 0.788543701171875,
+      "rms": 0.11794320291708475,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-03.wav",
+      "sha256": "ebd69d325f565dcc6d464a716ba53a583041ca92b9a6d642a4804833efc70f35",
+      "durationSeconds": 9.2,
+      "peak": 0.70623779296875,
+      "rms": 0.11477408088143719,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-03.wav",
+      "sha256": "35ad366b2043c76470021059c0b4197423e6c652fb620c5c02244423eeaf7514",
+      "durationSeconds": 12.24,
+      "peak": 0.794281005859375,
+      "rms": 0.12126579222179319,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04.wav",
+      "sha256": "8b86439c19d0d28ad5c31ab29c3a6a3786132fa5c6e06fad48b9856c51fb662d",
+      "durationSeconds": 8.16,
+      "peak": 0.794342041015625,
+      "rms": 0.12084989945400017,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04.wav",
+      "sha256": "2ce504c8250e98ca045eb5ee9927b6bf1c645b512cbec0238e83062a59a0b118",
+      "durationSeconds": 9.52,
+      "peak": 0.6478271484375,
+      "rms": 0.11540399736876293,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04_female.wav",
+      "sha256": "df929cfbb63b9c1263c297144bf3481e9c40aba13da33aeaa1ec19524e62f3b5",
+      "durationSeconds": 10.08,
+      "peak": 0.737396240234375,
+      "rms": 0.11905230516967698,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04_female.wav",
+      "sha256": "81546e462f25b6dcb69045bbc3ec9286978a2a204a4f1f7ac4ecf763b9b7d20d",
+      "durationSeconds": 10.56,
+      "peak": 0.7933349609375,
+      "rms": 0.12117084923126205,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04_neutral.wav",
+      "sha256": "93edeffac93d99c89b79e7091f58e6c50f4a61b6010b3f65aa6e53b60be47e35",
+      "durationSeconds": 8.96,
+      "peak": 0.5333251953125,
+      "rms": 0.11596425156342573,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04_neutral.wav",
+      "sha256": "a2a4bee40955f889fbe9145167aba14a19731bf185910e49ccd1c98e3373525c",
+      "durationSeconds": 11.6,
+      "peak": 0.592681884765625,
+      "rms": 0.11629161263661421,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-05.wav",
+      "sha256": "5ce1265ffafd045f5119dfa9a2d119da72721611e07369b26f08ff5176e02cd5",
+      "durationSeconds": 11.28,
+      "peak": 0.792877197265625,
+      "rms": 0.11994746049421877,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-05.wav",
+      "sha256": "98cf4cff339ce9dd6df85893f5bb9e6ad36d23875f3660ff6ee0990aafb927a6",
+      "durationSeconds": 12.8,
+      "peak": 0.793609619140625,
+      "rms": 0.11987076521640207,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-06.wav",
+      "sha256": "3bb3a408dbbbe256182602308f00f12dbb45394f6969c9a6c6afd6de3af9fba5",
+      "durationSeconds": 10.0,
+      "peak": 0.659332275390625,
+      "rms": 0.11691015468093156,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-06.wav",
+      "sha256": "27f13fb8a19c4995aaf3fc270125807f58a8fbd595b3f3d43e696903525d46df",
+      "durationSeconds": 11.12,
+      "peak": 0.648681640625,
+      "rms": 0.11110618780504755,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-07.wav",
+      "sha256": "c850648e845b636794c01a3a070fa011ca369479584116736e7f605457a02bb2",
+      "durationSeconds": 10.64,
+      "peak": 0.757476806640625,
+      "rms": 0.1250794274095991,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-07.wav",
+      "sha256": "50b5ffbf14f800353706aee682edb4358172a21e62bdaae52f64f9e934300d26",
+      "durationSeconds": 11.2,
+      "peak": 0.70831298828125,
+      "rms": 0.11346594812873503,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-08.wav",
+      "sha256": "1920ee8ccf796c198dc93a1cf30b27895b09eb7e95249978433bf6a051ed8f28",
+      "durationSeconds": 10.08,
+      "peak": 0.7025146484375,
+      "rms": 0.12191739635303785,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-08.wav",
+      "sha256": "2067cd981537a19a8e2e2ec9fc6e31959ec38441827b322aebdfda2dab40d32f",
+      "durationSeconds": 11.84,
+      "peak": 0.722442626953125,
+      "rms": 0.12653019511506708,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-01.wav",
+      "sha256": "594ee2d09749654aa5bbd7c3b357cfee84a5c69fabf484f4e4e4ceb4ce3e6943",
+      "durationSeconds": 7.76,
+      "peak": 0.7943115234375,
+      "rms": 0.11912092062752666,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-01.wav",
+      "sha256": "8b7184eacedf22d64442077c8b870c20793d5e835e4e4b91d0a3b9a175d376fa",
+      "durationSeconds": 8.32,
+      "peak": 0.79437255859375,
+      "rms": 0.11416768353104122,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-02.wav",
+      "sha256": "bcf0f1decd3c6632ba32ed9f1195fd0dc3660cbd8113c3b651be3e9ca9dfd3ae",
+      "durationSeconds": 10.0,
+      "peak": 0.793060302734375,
+      "rms": 0.11831503105181364,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-02.wav",
+      "sha256": "7c8583c5e8195d34031d6f08697b0e604c7b2f4ba2b0c0f0b7bf7b08701a45e5",
+      "durationSeconds": 11.2,
+      "peak": 0.794342041015625,
+      "rms": 0.11457868657052431,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-03.wav",
+      "sha256": "9efb0792c189b2a6eb408974f16f0fd2b186cf659134823c77e15982ab67a8cb",
+      "durationSeconds": 10.8,
+      "peak": 0.65625,
+      "rms": 0.12548456413150452,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-03.wav",
+      "sha256": "0322952452c9472ab2508b4bc0bfaadac7952d4d67d05e6afa76866898b8ece0",
+      "durationSeconds": 10.96,
+      "peak": 0.660614013671875,
+      "rms": 0.11713556508727739,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-04.wav",
+      "sha256": "c4999f8971bc8afd32997c60dadd6b1b67367b931c0449ba6a61251f76c8a342",
+      "durationSeconds": 11.76,
+      "peak": 0.79425048828125,
+      "rms": 0.1201958099722288,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-04.wav",
+      "sha256": "4a150dcd05dc8db7b5b6d3ead1cd7a70f231b0065dace901ff1bcd01a0aade3a",
+      "durationSeconds": 13.2,
+      "peak": 0.79425048828125,
+      "rms": 0.11774038204062182,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-05.wav",
+      "sha256": "b6060d932183605d01888ac1f3bedcf5e2757d95fb54c828cb8f9e561f34698b",
+      "durationSeconds": 10.8,
+      "peak": 0.660491943359375,
+      "rms": 0.11948471206123573,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-05.wav",
+      "sha256": "28de21fbbf4dddaaf8ad3067b50b5d8bf95d9b8cf81928d79cc7fbd8d24759ab",
+      "durationSeconds": 12.4,
+      "peak": 0.594573974609375,
+      "rms": 0.10923413359097081,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-06.wav",
+      "sha256": "7f26acd5d4a6df12ac21d5151a3807a9c25277db12541c0585c3166d8d1b94c3",
+      "durationSeconds": 9.68,
+      "peak": 0.60223388671875,
+      "rms": 0.1271091338658583,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-06.wav",
+      "sha256": "af5cadaba728ce8205279f4ef1f0adc00519bd8020dad4210656f2be45cfed0e",
+      "durationSeconds": 13.76,
+      "peak": 0.793792724609375,
+      "rms": 0.12139321785718601,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-07.wav",
+      "sha256": "3eb35856bc0efffd5e291fc474cbfe8596931254ea3994dd2b2c8c0ff3ce5557",
+      "durationSeconds": 10.64,
+      "peak": 0.68743896484375,
+      "rms": 0.12549193838526917,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-07.wav",
+      "sha256": "5aca7c217cf6965b6f73a4ef20598d0156011d6c65a974334e60fa6d0a9e72b8",
+      "durationSeconds": 13.92,
+      "peak": 0.63555908203125,
+      "rms": 0.12282412046652648,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08.wav",
+      "sha256": "3fa20f8c27083d38956c2ceec62678d05fcee977211ffbda5bb1e2ee39e84760",
+      "durationSeconds": 9.6,
+      "peak": 0.783538818359375,
+      "rms": 0.11657941057624921,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08.wav",
+      "sha256": "26bfe5df24a2c05423acdef433c9de1a582ba86ec89a300f7f834b709e534f32",
+      "durationSeconds": 10.8,
+      "peak": 0.7943115234375,
+      "rms": 0.12079579288135993,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08_female.wav",
+      "sha256": "6b5e076bd1dca92695336f872672919d17748a3654b29be1ac4ad5e92a150301",
+      "durationSeconds": 11.04,
+      "peak": 0.680572509765625,
+      "rms": 0.11795810540132642,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08_female.wav",
+      "sha256": "30666dfe3802a7884f1d456c07c5771857c618dd90751330ac59b914e888e86b",
+      "durationSeconds": 10.96,
+      "peak": 0.76763916015625,
+      "rms": 0.11850765427577097,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08_neutral.wav",
+      "sha256": "d57f659bd65a5bb486fe4c989e5e74e4a43400a5f09f056dc6e69f918f6b9374",
+      "durationSeconds": 10.32,
+      "peak": 0.622650146484375,
+      "rms": 0.11784461017120003,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08_neutral.wav",
+      "sha256": "4a72f316ee3e5791448529cfd5d4751a43e5f24f7fe4b0862df5cfde80d98ae9",
+      "durationSeconds": 12.48,
+      "peak": 0.647857666015625,
+      "rms": 0.11576989227227168,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-09.wav",
+      "sha256": "c2bdab6a3e2d4836a1ec667efd7e385dc699e95e26f2ebb774def749dbc941ee",
+      "durationSeconds": 11.52,
+      "peak": 0.66448974609375,
+      "rms": 0.11365125097355214,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-09.wav",
+      "sha256": "c5df80a692a8f1fcd20e8d36660f90115682d67bf561191855175cc80099a600",
+      "durationSeconds": 13.28,
+      "peak": 0.646697998046875,
+      "rms": 0.11607567417830061,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-trust_high-01.wav",
+      "sha256": "feeec56b3f955b19f153533d433e8b4fafa366061d3b8eb7d39c272ab97a3381",
+      "durationSeconds": 10.32,
+      "peak": 0.736572265625,
+      "rms": 0.12128332725085432,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-trust_high-01.wav",
+      "sha256": "477b87b82c8a757626eefccba3a5e738cb9e6e6ac10f37a28a9f4131757eb494",
+      "durationSeconds": 12.64,
+      "peak": 0.633453369140625,
+      "rms": 0.11020433239974549,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-trust_low-01.wav",
+      "sha256": "748053a35f8abdb5fa23a7c620bdea24d3e25ee73f456a19b7f4d6ebc0352ede",
+      "durationSeconds": 9.6,
+      "peak": 0.696868896484375,
+      "rms": 0.11808850195920985,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-trust_low-01.wav",
+      "sha256": "ada8acb8ba8fa9ced7587b6a3a9bb05288d8861b175081781dc35a5b36f7298f",
+      "durationSeconds": 10.64,
+      "peak": 0.66815185546875,
+      "rms": 0.11453828508389205,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-evidence_high-01.wav",
+      "sha256": "d2ca8a935c27e4ba2bd056924af3863fe0f96e4402b7777b3afa2bad907be88e",
+      "durationSeconds": 12.72,
+      "peak": 0.705780029296875,
+      "rms": 0.12259803396074528,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-evidence_high-01.wav",
+      "sha256": "0160f41ed94398df17c4bc3ffe5b002d3b93e0a2f57ca5f2d5c77cb7ae1f2c23",
+      "durationSeconds": 14.24,
+      "peak": 0.68621826171875,
+      "rms": 0.12103221037651504,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-evidence_low-01.wav",
+      "sha256": "7b004ff32fa1c7b6ca10af260f0a4722e04f42f41fdb804b582e2da3b9bfdd9f",
+      "durationSeconds": 11.12,
+      "peak": 0.64166259765625,
+      "rms": 0.12626343046410696,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-evidence_low-01.wav",
+      "sha256": "23b9a9aa9a2d66570092fc887d794a2d68d2996abd22060edb77d063a5004c81",
+      "durationSeconds": 11.76,
+      "peak": 0.67193603515625,
+      "rms": 0.1210207466999336,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-infrastructure_high-01.wav",
+      "sha256": "447601014363a37f5306ae000386b230880376c0434610df478627f230460cf1",
+      "durationSeconds": 11.84,
+      "peak": 0.688201904296875,
+      "rms": 0.11510978281245131,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-infrastructure_high-01.wav",
+      "sha256": "21e717e09ff82bde04a719d62f7c8bac9565dfd599a707c07d4ee68723b9098d",
+      "durationSeconds": 14.88,
+      "peak": 0.6455078125,
+      "rms": 0.11621535888598668,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-infrastructure_low-01.wav",
+      "sha256": "39c631f83866294784985da3f532df98f94413bd54f25ffced64c2b2079aa4ba",
+      "durationSeconds": 9.68,
+      "peak": 0.77960205078125,
+      "rms": 0.12304852241823294,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-infrastructure_low-01.wav",
+      "sha256": "d4e71d063b79d2cc81b7897a99b4e8ab1a5528625d1eae1bbdb1930076472934",
+      "durationSeconds": 12.8,
+      "peak": 0.7938232421875,
+      "rms": 0.11905629496175012,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-01.wav",
+      "sha256": "be5381ac7ef72293cf82731bdda61d2c7e7a5c3625b8f2a4d63bbf6f21758767",
+      "durationSeconds": 9.6,
+      "peak": 0.70361328125,
+      "rms": 0.11982282987609345,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-01.wav",
+      "sha256": "f747a6835a75c1a364ae93384e6736b7454eaa27f08c83b971fb4bc2c79f8633",
+      "durationSeconds": 9.6,
+      "peak": 0.708282470703125,
+      "rms": 0.12128738101540495,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-02.wav",
+      "sha256": "b24c329e1c7b0140af08973f42277d51df1f48b5b95c3bd19ed66071fae2b0ea",
+      "durationSeconds": 10.08,
+      "peak": 0.658355712890625,
+      "rms": 0.12205895682932834,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-02.wav",
+      "sha256": "0d085ae004de6035803b1066748c815ba2dcdfb608134d246e8eb7ac8318b2ab",
+      "durationSeconds": 9.68,
+      "peak": 0.668304443359375,
+      "rms": 0.11973163647087949,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03.wav",
+      "sha256": "a99e9ef2d372f6244d7e7006046f3b4f901245aa8cb95428904a5a37c70cb26c",
+      "durationSeconds": 8.56,
+      "peak": 0.726715087890625,
+      "rms": 0.11062851891394662,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03.wav",
+      "sha256": "aa34627bf5edb91d50b33ad3f61a039351ff528e909a008e85c9e9a19dd4fa61",
+      "durationSeconds": 9.92,
+      "peak": 0.76300048828125,
+      "rms": 0.12246279768915014,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03_female.wav",
+      "sha256": "e2ea3367e42db7b27260de8af86c061763d4227a994fa402b55ef15f91434ba6",
+      "durationSeconds": 10.48,
+      "peak": 0.79443359375,
+      "rms": 0.11029348017803366,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03_female.wav",
+      "sha256": "277d5f7da9c23beab5f2d82ae93f2b526c24e0350aa13ad69ef8df8d04546584",
+      "durationSeconds": 10.88,
+      "peak": 0.770751953125,
+      "rms": 0.11587196907739954,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03_neutral.wav",
+      "sha256": "b30c7dc570130388a66e0909950e7f193fd96ce04303cebe445a1d74bb1c0542",
+      "durationSeconds": 8.96,
+      "peak": 0.738250732421875,
+      "rms": 0.12312392304473077,
+      "status": "Passed"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03_neutral.wav",
+      "sha256": "f8029bcaceb82a43aa425991cea32f9621dc4ef3c741e27a68412645b56eef05",
+      "durationSeconds": 11.04,
+      "peak": 0.632354736328125,
+      "rms": 0.11531030409106845,
+      "status": "Passed"
+    }
+  ]
+}

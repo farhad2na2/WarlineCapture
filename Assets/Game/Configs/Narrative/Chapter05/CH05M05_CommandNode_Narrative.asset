@@ -39,16 +39,16 @@ MonoBehaviour:
         staff. Their participation has a safer starting point; oversight must still
         earn trust by listening and explaining.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 29415593c91694742bb968c279234a6b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.571428
+      deadlineSeconds: 13.14
       essentialCaption: 1
     continueStateId: CommandNode-trust_high-complete
     skipStateId: CommandNode-trust_high-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.571428
+    durationSeconds: 13.14
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -135,16 +135,16 @@ MonoBehaviour:
         the Civic Relay is separated from his command. Our teams will secure the
         complex without shutting down its essential services."
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: df217b56a56994f11a56947d93c5dcbb, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.785714
+      deadlineSeconds: 13.3
       essentialCaption: 1
     continueStateId: CommandNode-debrief-1
     skipStateId: CommandNode-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.785714
+    durationSeconds: 13.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -181,16 +181,16 @@ MonoBehaviour:
         military commands and independent civic archives. No single office can bury
         the record again.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3a11a30740259470499ad6c2ae6c0afc, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.428572
+      deadlineSeconds: 13.22
       essentialCaption: 1
     continueStateId: CommandNode-debrief-2
     skipStateId: CommandNode-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.428572
+    durationSeconds: 13.22
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -227,16 +227,16 @@ MonoBehaviour:
         The two keys protected this emergency action; they do not appoint a permanent
         ruler.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 24d3dc8f1ba494cfdabb9dba117f11ca, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.357142
+      deadlineSeconds: 11.22
       essentialCaption: 1
     continueStateId: CommandNode-debrief-3
     skipStateId: CommandNode-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.357142
+    durationSeconds: 11.22
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -273,16 +273,16 @@ MonoBehaviour:
         auditable and open to challenge. I can support that work, but I cannot choose
         its governors.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: aaf2831e57c074b55b6244f2426692a6, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.785714
+      deadlineSeconds: 12.02
       essentialCaption: 1
     continueStateId: CommandNode-debrief-complete
     skipStateId: CommandNode-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.785714
+    durationSeconds: 12.02
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -369,16 +369,16 @@ MonoBehaviour:
         losing their teams. Roads, power, Fuel, clinics, shelters and trade can resume
         with a stronger base for repairs.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: af347d58e9ea74eb8b626ae79a0fc152, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.357142
+      deadlineSeconds: 15.38
       essentialCaption: 1
     continueStateId: CommandNode-infrastructure_high-complete
     skipStateId: CommandNode-infrastructure_high-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.357142
+    durationSeconds: 15.38
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -465,16 +465,16 @@ MonoBehaviour:
         the transition. Recovery begins under shared authority while the damaged
         systems are restored.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 527cecc582e494e2c8865e626aa11174, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.285714
+      deadlineSeconds: 13.3
       essentialCaption: 1
     continueStateId: CommandNode-infrastructure_low-complete
     skipStateId: CommandNode-infrastructure_low-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.285714
+    durationSeconds: 13.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -561,7 +561,7 @@ MonoBehaviour:
         Fragments, the complete audit and the recovery emphasis. The Campaign is
         complete.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: adf5c961598754cf89b0ae86214abd91, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -606,16 +606,16 @@ MonoBehaviour:
       englishFallback: External Vanguard links remain under review. No immediate
         threat is confirmed. These are future investigations, not an unfinished ending.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 5d8528cb4f1b848048b7d6b5cb70b0cf, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.785714
+      deadlineSeconds: 10.58
       essentialCaption: 1
     continueStateId: CommandNode-postscript-2
     skipStateId: CommandNode-postscript-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.785714
+    durationSeconds: 10.58
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -651,16 +651,16 @@ MonoBehaviour:
       englishFallback: Then we do not invent a threat. Open the restored operations
         map for replay. This city has work ahead, and room to live.
       speaker: 4
-      voiceClip: {fileID: 0}
-      femaleVoiceClip: {fileID: 0}
-      neutralVoiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e2e66668ae8d94816889ff2acf72e661, type: 3}
+      femaleVoiceClip: {fileID: 8300000, guid: df3900102449c49afbc7a805c135c266, type: 3}
+      neutralVoiceClip: {fileID: 8300000, guid: c0e912f361a534cfaa89090573bedae3, type: 3}
       startSeconds: 0
-      deadlineSeconds: 8.857142
+      deadlineSeconds: 11.54
       essentialCaption: 1
     continueStateId: CommandNode-postscript-complete
     skipStateId: CommandNode-postscript-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.857142
+    durationSeconds: 11.54
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -747,16 +747,16 @@ MonoBehaviour:
         Isolate its outer military controls before entering the core. The city must
         survive the assault.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f0aa91ae3b5384005972c96393d08e75, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.714286
+      deadlineSeconds: 15.3
       essentialCaption: 1
     continueStateId: CommandNode-brief-1
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.714286
+    durationSeconds: 15.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -793,16 +793,16 @@ MonoBehaviour:
         protected service sites and their staff intact; losing them defeats the purpose
         of this operation.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e780c671685c54c95ae33a1aeb04efe8, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.285714
+      deadlineSeconds: 13.94
       essentialCaption: 1
     continueStateId: CommandNode-brief-2
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.285714
+    durationSeconds: 13.94
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -839,7 +839,7 @@ MonoBehaviour:
         engineer to each marked isolation point after its guards are defeated, and
         let the full verification finish.
       speaker: 11
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 68c8b4f9ecae04a2b9b57d5e4c5c8c3b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -885,16 +885,16 @@ MonoBehaviour:
         The approach here remains with your ground teams; do not sacrifice the services
         to shorten the fight.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 373a8aeff51944a8d8031442564ceb93, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.642858
+      deadlineSeconds: 12.82
       essentialCaption: 1
     continueStateId: CommandNode-brief-4
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.642858
+    durationSeconds: 12.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -931,16 +931,16 @@ MonoBehaviour:
         is that you still pretend you will give the power back. I am beginning the
         override.
       speaker: 9
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 6fab9c00ec4634641ab2fb7e0e27fccd, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.785714
+      deadlineSeconds: 12.5
       essentialCaption: 1
     continueStateId: CommandNode-brief-5
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.785714
+    durationSeconds: 12.5
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -977,16 +977,16 @@ MonoBehaviour:
         credential. Together they can stop his override without granting permanent
         rule. I will wait for explicit authority.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 23ae0724526bf43e787786033205c9d7, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.714286
+      deadlineSeconds: 13.22
       essentialCaption: 1
     continueStateId: CommandNode-brief-6
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.714286
+    durationSeconds: 13.22
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1023,16 +1023,16 @@ MonoBehaviour:
         Neither mandate replaces the other. Keep the specialists alive through the
         final release.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e7a64f475a6f844c8bf6649d0dcdf7fa, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.357142
+      deadlineSeconds: 14.82
       essentialCaption: 1
     continueStateId: CommandNode-brief-7
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.357142
+    durationSeconds: 14.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1069,16 +1069,16 @@ MonoBehaviour:
         Use emergency authority only to stop the override. We are not taking Qassem\u2019s
         place."
       speaker: 4
-      voiceClip: {fileID: 0}
-      femaleVoiceClip: {fileID: 0}
-      neutralVoiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1292bcf76a85f45028bb449891eb27ac, type: 3}
+      femaleVoiceClip: {fileID: 8300000, guid: 1c79c94129cdf4744af8ed4ac92f1a6d, type: 3}
+      neutralVoiceClip: {fileID: 8300000, guid: 14a4242b5ccbe45e986fbe950358e8b7, type: 3}
       startSeconds: 0
-      deadlineSeconds: 10.5
+      deadlineSeconds: 14.02
       essentialCaption: 1
     continueStateId: CommandNode-brief-complete
     skipStateId: CommandNode-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.5
+    durationSeconds: 14.02
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1165,16 +1165,16 @@ MonoBehaviour:
         Shared civilian oversight remains, with a longer work of listening and repairing
         legitimacy.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 787525cd9795b4e59aedeef302116051, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.071428
+      deadlineSeconds: 11.14
       essentialCaption: 1
     continueStateId: CommandNode-trust_low-complete
     skipStateId: CommandNode-trust_low-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.071428
+    durationSeconds: 11.14
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1261,16 +1261,16 @@ MonoBehaviour:
         override, his attempted erasure and my self-partition now align in one surviving
         audit."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3ba96913eddd948a78ef8076ffd49137, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.071428
+      deadlineSeconds: 12.82
       essentialCaption: 1
     continueStateId: CommandNode-close-1
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.071428
+    durationSeconds: 12.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1307,16 +1307,16 @@ MonoBehaviour:
         and Vanguard hardware follow the same operation record. These attacks were
         built to manufacture necessity.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 6c8e5f3de05f745f38c3b6c236345db7, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.857142
+      deadlineSeconds: 14.42
       essentialCaption: 1
     continueStateId: CommandNode-close-2
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.857142
+    durationSeconds: 14.42
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1353,16 +1353,16 @@ MonoBehaviour:
         into this crisis. The public record breaks his claim that terror made him
         necessary.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: cea7e2d4e328d47809704c3027c6eaca, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.571428
+      deadlineSeconds: 12.74
       essentialCaption: 1
     continueStateId: CommandNode-close-3
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.571428
+    durationSeconds: 12.74
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1398,16 +1398,16 @@ MonoBehaviour:
       englishFallback: No permanent unilateral control. Return emergency authority
         to a shared structure that can explain its decisions and be stopped.
       speaker: 4
-      voiceClip: {fileID: 0}
-      femaleVoiceClip: {fileID: 0}
-      neutralVoiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: bd1ab021e0ae74709850450ee644ecf6, type: 3}
+      femaleVoiceClip: {fileID: 8300000, guid: 2b6641dd833a64e42a86bfa033bdd3b9, type: 3}
+      neutralVoiceClip: {fileID: 8300000, guid: c55b8e249a1724e8fb148a24321c0388, type: 3}
       startSeconds: 0
-      deadlineSeconds: 9.142858
+      deadlineSeconds: 12.1
       essentialCaption: 1
     continueStateId: CommandNode-close-4
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.142858
+    durationSeconds: 12.1
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1444,16 +1444,16 @@ MonoBehaviour:
         dangerous controls and stand down under accountable authority. It is not
         a claim to govern everyone.'
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 2963ec3a83dfc4c83a51ae6d3d907c1e, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.285714
+      deadlineSeconds: 13.3
       essentialCaption: 1
     continueStateId: CommandNode-close-5
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.285714
+    durationSeconds: 13.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1490,16 +1490,16 @@ MonoBehaviour:
         civilian oversight. Disagreement stays part of command instead of becoming
         its enemy.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: aabd5e5cf81064bd891a8ea7f61d3b5d, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.571428
+      deadlineSeconds: 11.62
       essentialCaption: 1
     continueStateId: CommandNode-close-6
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.571428
+    durationSeconds: 11.62
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1536,16 +1536,16 @@ MonoBehaviour:
         and an audit trail. My recommendations can be challenged; my actions can
         be overridden.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: fd6796374636142cdaa3d27de9259655, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.428572
+      deadlineSeconds: 11.7
       essentialCaption: 1
     continueStateId: CommandNode-close-7
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.428572
+    durationSeconds: 11.7
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1582,16 +1582,16 @@ MonoBehaviour:
         override. Fragment Five, the complete audit and the governance resolution
         belong in the public archive."
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a80e8884c052c429985547dc64e63d28, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.428572
+      deadlineSeconds: 12.34
       essentialCaption: 1
     continueStateId: CommandNode-close-complete
     skipStateId: CommandNode-close-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.428572
+    durationSeconds: 12.34
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1677,16 +1677,16 @@ MonoBehaviour:
       englishFallback: Activate the Relay without limits. I can end the argument,
         the uncertainty and the disorder. One command is enough.
       speaker: 9
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: eeb98d916308548299127bd007238157, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.214286
+      deadlineSeconds: 8.82
       essentialCaption: 1
     continueStateId: CommandNode-comms-1
     skipStateId: CommandNode-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.214286
+    durationSeconds: 8.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1724,16 +1724,16 @@ MonoBehaviour:
         and sends that record beyond any single office. It does not authorize later
         actions.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: df60c132826f043ebbdebcfd0b38bce4, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 15.357142
+      deadlineSeconds: 18.5
       essentialCaption: 1
     continueStateId: CommandNode-comms-2
     skipStateId: CommandNode-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 15.357142
+    durationSeconds: 18.5
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1770,16 +1770,16 @@ MonoBehaviour:
         marked release point and complete the six-second hold to authorize this release.
         Your orders remain the decision; this message issues none.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a1d45ab46ee7543d3b5efb12062bcab4, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 14.214286
+      deadlineSeconds: 15.38
       essentialCaption: 1
     continueStateId: CommandNode-comms-complete
     skipStateId: CommandNode-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.214286
+    durationSeconds: 15.38
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1866,16 +1866,16 @@ MonoBehaviour:
         Parts of the wider support network remain disputed or hidden; that uncertainty
         does not undo the ending."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1de15f071bbc2420883dd7cbeb468cfc, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.428572
+      deadlineSeconds: 12.26
       essentialCaption: 1
     continueStateId: CommandNode-evidence_low-complete
     skipStateId: CommandNode-evidence_low-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.428572
+    durationSeconds: 12.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -1962,16 +1962,16 @@ MonoBehaviour:
         and preserves the verified links gathered in this operation. External financiers
         and Vanguard connections remain subject to investigation."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d49a30a76e9934fe8a17c1606fd2d10d, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.714286
+      deadlineSeconds: 14.74
       essentialCaption: 1
     continueStateId: CommandNode-evidence_high-complete
     skipStateId: CommandNode-evidence_high-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.714286
+    durationSeconds: 14.74
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2057,7 +2057,7 @@ MonoBehaviour:
       englishFallback: "The Civic Relay is secured and disconnected from Qassem\u2019s
         override. Essential services remain connected to the people they serve."
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 2584072977e844bdd9f526e5b6074f0a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -2102,16 +2102,16 @@ MonoBehaviour:
       englishFallback: Ash Line command has collapsed. The remaining Vanguard forces
         withdraw or surrender; protection continues while the weapons fall silent.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 5d4625ee2996c4d108923d823c34c5e6, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.714286
+      deadlineSeconds: 11.7
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-2
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.714286
+    durationSeconds: 11.7
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2148,16 +2148,16 @@ MonoBehaviour:
         command evidence, and Qassem\u2019s responsibility does not depend on a reward
         or a perfect operation."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 73bd9e067c99048f0b036f9eeff670cd, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.142858
+      deadlineSeconds: 11.46
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-3
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.142858
+    durationSeconds: 11.46
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2194,16 +2194,16 @@ MonoBehaviour:
         remains for clinics, roads and recovery teams; emergency force is not becoming
         permanent authority.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1eaae6e198b504e4ebe8e067777c1425, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.428572
+      deadlineSeconds: 13.7
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-4
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.428572
+    durationSeconds: 13.7
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2240,16 +2240,16 @@ MonoBehaviour:
         and transport together. Fadi\u2019s crews reopen the hospital corridor, and
         Yasin organizes market deliveries."
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 65367684fa1774a7884b16a725950842, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.071428
+      deadlineSeconds: 12.9
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-5
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.071428
+    durationSeconds: 12.9
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2286,16 +2286,16 @@ MonoBehaviour:
         aircraft to relief duty, and Dr. Lina receives medicine while clinics and
         markets resume work.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 024733f586650472a8849e4596b35472, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.357142
+      deadlineSeconds: 14.26
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-6
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.357142
+    durationSeconds: 14.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2332,16 +2332,16 @@ MonoBehaviour:
         know, what I infer and what I cannot see. The Commander can override me,
         and the city can audit us both.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 22a39e0a9b47b4479a998ac8580f02af, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.142858
+      deadlineSeconds: 14.42
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-7
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.142858
+    durationSeconds: 14.42
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2378,16 +2378,16 @@ MonoBehaviour:
         No one person receives the master control Qassem wanted. Emergency powers
         carry an end date.
       speaker: 4
-      voiceClip: {fileID: 0}
-      femaleVoiceClip: {fileID: 0}
-      neutralVoiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 269e74b05aff645f38bfb44c7a599b29, type: 3}
+      femaleVoiceClip: {fileID: 8300000, guid: 1edca4d3593454ed1ab7f34014053350, type: 3}
+      neutralVoiceClip: {fileID: 8300000, guid: 2bbe0419fd4df42648449c0435279a37, type: 3}
       startSeconds: 0
-      deadlineSeconds: 10.785714
+      deadlineSeconds: 12.98
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-8
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.785714
+    durationSeconds: 12.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -2424,16 +2424,16 @@ MonoBehaviour:
         clinics, workers and vendors. Survival begins the repair; it does not erase
         what the city endured.'
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 27fc2368d87b24dbab6b008507642f3a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.357142
+      deadlineSeconds: 13.78
       essentialCaption: 1
     continueStateId: CommandNode-epilogue-complete
     skipStateId: CommandNode-epilogue-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.357142
+    durationSeconds: 13.78
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

@@ -40,16 +40,16 @@ MonoBehaviour:
         Keep medicine on the safer lane and choose the confirmed route for Fuel and
         the keys. This guidance does not move the convoy for you.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: aa0890bb9af134871a96734a07725cfb, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.928572
+      deadlineSeconds: 22.02
       essentialCaption: 1
     continueStateId: LastCorridor-comms-complete
     skipStateId: LastCorridor-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.928572
+    durationSeconds: 22.02
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -137,16 +137,16 @@ MonoBehaviour:
         the relief vehicles and the military escort together. Clear the blockade
         before moving the column.'
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 604404f63b8364b8188dd87690d7bc38, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 17
+      deadlineSeconds: 20.1
       essentialCaption: 1
     continueStateId: LastCorridor-brief-1
     skipStateId: LastCorridor-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17
+    durationSeconds: 20.1
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -184,16 +184,16 @@ MonoBehaviour:
         repaired main lane or the alternate. Follow each route\u2019s marked entry,
         midpoint and exit, then hold at receiving for six seconds."
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1b9c1517717ff4788b90cb6954587014, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.142857
+      deadlineSeconds: 23.86
       essentialCaption: 1
     continueStateId: LastCorridor-brief-2
     skipStateId: LastCorridor-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.142857
+    durationSeconds: 23.86
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -231,16 +231,16 @@ MonoBehaviour:
         load on the marked ground routes. Preserve the original trucks and key APC;
         a replacement cannot carry their custody record.
       speaker: 5
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: ccba6049a62c74ba99f407da9a1508ea, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 18.714285
+      deadlineSeconds: 21.3
       essentialCaption: 1
     continueStateId: LastCorridor-brief-complete
     skipStateId: LastCorridor-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 18.714285
+    durationSeconds: 21.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -328,7 +328,7 @@ MonoBehaviour:
         original APC. All five delivery categories are accounted for, and the column
         reached the city center before the corridor closed.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7bfe7087bc5ce4d0daa9c4d6c06c4749, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -375,16 +375,16 @@ MonoBehaviour:
         engineers, pilots and soldiers can now take their final roles without leaving
         Sahrin\u2019s recovery behind."
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e0c1224b5f6e34d07a6bcb150a9acb2b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 16.928572
+      deadlineSeconds: 20.1
       essentialCaption: 1
     continueStateId: LastCorridor-debrief-2
     skipStateId: LastCorridor-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 16.928572
+    durationSeconds: 20.1
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -422,16 +422,16 @@ MonoBehaviour:
         clinics, shelters, transport and communications. Those city systems must
         survive the final approach. I will keep your decisions explicit.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 8e9324e3d409e4e6b82d1e1d1f80b3b0, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.857143
+      deadlineSeconds: 22.74
       essentialCaption: 1
     continueStateId: LastCorridor-debrief-complete
     skipStateId: LastCorridor-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.857143
+    durationSeconds: 22.74
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

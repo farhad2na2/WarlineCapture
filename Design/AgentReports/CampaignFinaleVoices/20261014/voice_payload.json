@@ -1,0 +1,2279 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "clipCount": 126,
+  "canonicalLines": 55,
+  "commanderVariantClips": 16,
+  "runtimeNetworkTts": false,
+  "captionCharacters": 21204,
+  "clips": [
+    {
+      "id": "network_collapse-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Three command nodes sit among homes and civic services. A blind long-range strike would destroy the audit with them. We take the ground route: clear each node’s guards, verify its external access, then disable only the confirmed node.",
+      "request": {
+        "text": "Three command nodes sit among homes and civic services. A blind long-range strike would destroy the audit with them. We take the ground route: clear each node’s guards, verify its external access, then disable only the confirmed node.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16000,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-01.wav"
+    },
+    {
+      "id": "network_collapse-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "سه گرهٔ فرماندهی بین خانه‌ها و خدمات شهری قرار دارن. یک حملهٔ دوربرد کور، گزارش بازرسی رو هم با اون‌ها نابود می‌کنه. از مسیر زمینی می‌ریم؛ نگهبان‌های هر گره رو پاک‌سازی کنین، دسترسی بیرونیش رو تأیید کنین، بعد فقط گرهٔ تأییدشده رو از کار بندازین.",
+      "request": {
+        "text": "[conversational tone] سه گرهٔ فرماندهی بین خانه‌ها و خدمات شهری قرار دارن. یک حملهٔ دوربرد کور، گزارش بازرسی رو هم با اون‌ها نابود می‌کنه. از مسیر زمینی می‌ریم؛ نگهبان‌های هر گره رو پاک‌سازی کنین، دسترسی بیرونیش رو تأیید کنین، بعد فقط گرهٔ تأییدشده رو از کار بندازین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16001,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-01.wav"
+    },
+    {
+      "id": "network_collapse-brief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Work through the three nodes in order. After clearing each guard group, hold the original engineer at its recon marker for six seconds. That confirms the node for Attack. After the third node, bring the engineer to the audit custody marker and hold for six seconds.",
+      "request": {
+        "text": "Work through the three nodes in order. After clearing each guard group, hold the original engineer at its recon marker for six seconds. That confirms the node for Attack. After the third node, bring the engineer to the audit custody marker and hold for six seconds.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16002,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-02.wav"
+    },
+    {
+      "id": "network_collapse-brief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "سه گره رو به ترتیب پیش ببرین. بعد از پاک‌سازی نگهبان‌های هر گره، مهندس اصلی رو شش ثانیه روی نشان شناسایی همون گره نگه دارین. با این کار گره برای حمله تأیید می‌شه. بعد از گرهٔ سوم، مهندس رو به نشان نگهداری گزارش برسونین و شش ثانیه نگه دارین.",
+      "request": {
+        "text": "[conversational tone] سه گره رو به ترتیب پیش ببرین. بعد از پاک‌سازی نگهبان‌های هر گره، مهندس اصلی رو شش ثانیه روی نشان شناسایی همون گره نگه دارین. با این کار گره برای حمله تأیید می‌شه. بعد از گرهٔ سوم، مهندس رو به نشان نگهداری گزارش برسونین و شش ثانیه نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16003,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-02.wav"
+    },
+    {
+      "id": "network_collapse-brief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Protect both civic buildings, their staff, the original engineer and the APC. Once the audit is secured, board the engineer into the APC and move to the marked extraction point. Hold there for six seconds. Preserving the people and the proof is part of the same mission.",
+      "request": {
+        "text": "Protect both civic buildings, their staff, the original engineer and the APC. Once the audit is secured, board the engineer into the APC and move to the marked extraction point. Hold there for six seconds. Preserving the people and the proof is part of the same mission.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16004,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-03.wav"
+    },
+    {
+      "id": "network_collapse-brief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "از هر دو ساختمان خدمات، کارکنانشون، مهندس اصلی و نفربر محافظت کنین. وقتی گزارش امن شد، مهندس رو سوار نفربر کنین و به محل مشخص‌شدهٔ خروج حرکت بدین. شش ثانیه اونجا بمونین. حفظ مردم و مدرک، هر دو بخشی از همین مأموریتن.",
+      "request": {
+        "text": "[conversational tone] از هر دو ساختمان خدمات، کارکنانشون، مهندس اصلی و نفربر محافظت کنین. وقتی گزارش امن شد، مهندس رو سوار نفربر کنین و به محل مشخص‌شدهٔ خروج حرکت بدین. شش ثانیه اونجا بمونین. حفظ مردم و مدرک، هر دو بخشی از همین مأموریتن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16005,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-03.wav"
+    },
+    {
+      "id": "network_collapse-comms-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The first verified node is isolated. The opening records connect Qassem’s authorization to the original shutdown and the current attacks. The remaining audit still needs its physical chain. Continue in order; keep the engineer, protected services and custody equipment intact.",
+      "request": {
+        "text": "The first verified node is isolated. The opening records connect Qassem’s authorization to the original shutdown and the current attacks. The remaining audit still needs its physical chain. Continue in order; keep the engineer, protected services and custody equipment intact.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16006,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-comms-01.wav"
+    },
+    {
+      "id": "network_collapse-comms-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "اولین گرهٔ تأییدشده جدا شد. سندهای اولیه، مجوز قاسم رو به خاموشی اصلی و حمله‌های فعلی وصل می‌کنن. بخش باقی‌موندهٔ گزارش هنوز به زنجیرهٔ فیزیکیش نیاز داره. به ترتیب ادامه بدین؛ مهندس، خدمات محافظت‌شده و تجهیزات نگهداری مدرک رو سالم نگه دارین.",
+      "request": {
+        "text": "[conversational tone] اولین گرهٔ تأییدشده جدا شد. سندهای اولیه، مجوز قاسم رو به خاموشی اصلی و حمله‌های فعلی وصل می‌کنن. بخش باقی‌موندهٔ گزارش هنوز به زنجیرهٔ فیزیکیش نیاز داره. به ترتیب ادامه بدین؛ مهندس، خدمات محافظت‌شده و تجهیزات نگهداری مدرک رو سالم نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16007,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-comms-01.wav"
+    },
+    {
+      "id": "network_collapse-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The verified network is down, and the engineer brought the complete audit out safely. The protected buildings and staff survived. We chose the slower route because destroying the evidence would only leave Qassem another chance to claim we lied.",
+      "request": {
+        "text": "The verified network is down, and the engineer brought the complete audit out safely. The protected buildings and staff survived. We chose the slower route because destroying the evidence would only leave Qassem another chance to claim we lied.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16008,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-01.wav"
+    },
+    {
+      "id": "network_collapse-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "شبکهٔ تأییدشده از کار افتاد و مهندس، گزارش کامل رو سالم بیرون آورد. ساختمان‌ها و کارکنان محافظت‌شده سالم موندن. مسیر کندتر رو انتخاب کردیم، چون نابود کردن مدرک فقط یک فرصت دیگه به قاسم می‌داد تا بگه دروغ گفتیم.",
+      "request": {
+        "text": "[conversational tone] شبکهٔ تأییدشده از کار افتاد و مهندس، گزارش کامل رو سالم بیرون آورد. ساختمان‌ها و کارکنان محافظت‌شده سالم موندن. مسیر کندتر رو انتخاب کردیم، چون نابود کردن مدرک فقط یک فرصت دیگه به قاسم می‌داد تا بگه دروغ گفتیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16009,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-01.wav"
+    },
+    {
+      "id": "network_collapse-debrief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The complete audit ties Qassem to the original override, the attempted erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware. Civilian and military authorities have copies. He manufactured the crisis to make permanent emergency rule appear necessary.",
+      "request": {
+        "text": "The complete audit ties Qassem to the original override, the attempted erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware. Civilian and military authorities have copies. He manufactured the crisis to make permanent emergency rule appear necessary.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16010,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-02.wav"
+    },
+    {
+      "id": "network_collapse-debrief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش کامل، قاسم رو به فرمان اصلی، تلاش برای پاک کردن مدارک، بمب‌گذاری‌های خط خاکستر، گزارش‌های دروغ، سوخت منحرف‌شده و تجهیزات ونگارد وصل می‌کنه. مقام‌های غیرنظامی و نظامی نسخه‌هاش رو دارن. اون بحران رو ساخت تا حکومت اضطراری دائمی رو ضروری جلوه بده.",
+      "request": {
+        "text": "[conversational tone] گزارش کامل، قاسم رو به فرمان اصلی، تلاش برای پاک کردن مدارک، بمب‌گذاری‌های خط خاکستر، گزارش‌های دروغ، سوخت منحرف‌شده و تجهیزات ونگارد وصل می‌کنه. مقام‌های غیرنظامی و نظامی نسخه‌هاش رو دارن. اون بحران رو ساخت تا حکومت اضطراری دائمی رو ضروری جلوه بده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16011,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-02.wav"
+    },
+    {
+      "id": "network_collapse-debrief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The Relay complex is still sealed. The physical access keys, engineers, medical supplies, Fuel and reinforcements must reach the city center. The next corridor carries what Sahrin needs to recover; keep those priorities connected.",
+      "request": {
+        "text": "The Relay complex is still sealed. The physical access keys, engineers, medical supplies, Fuel and reinforcements must reach the city center. The next corridor carries what Sahrin needs to recover; keep those priorities connected.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16012,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-03.wav"
+    },
+    {
+      "id": "network_collapse-debrief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مجموعهٔ رله هنوز بسته‌ست. کلیدهای فیزیکی دسترسی، مهندس‌ها، تجهیزات پزشکی، سوخت و نیروهای کمکی باید به مرکز شهر برسن. مسیر بعدی، چیزهایی رو حمل می‌کنه که سهرین برای بازیابی نیاز داره؛ این اولویت‌ها رو به هم پیوسته نگه دارین.",
+      "request": {
+        "text": "[conversational tone] مجموعهٔ رله هنوز بسته‌ست. کلیدهای فیزیکی دسترسی، مهندس‌ها، تجهیزات پزشکی، سوخت و نیروهای کمکی باید به مرکز شهر برسن. مسیر بعدی، چیزهایی رو حمل می‌کنه که سهرین برای بازیابی نیاز داره؛ این اولویت‌ها رو به هم پیوسته نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16013,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-03.wav"
+    },
+    {
+      "id": "last_corridor-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Fuel, medicine, the engineer, reinforcements and the physical authority keys must reach the city center. Samira and I set one plan: protect the relief vehicles and the military escort together. Clear the blockade before moving the column.",
+      "request": {
+        "text": "Fuel, medicine, the engineer, reinforcements and the physical authority keys must reach the city center. Samira and I set one plan: protect the relief vehicles and the military escort together. Clear the blockade before moving the column.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16014,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-01.wav"
+    },
+    {
+      "id": "last_corridor-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "سوخت، دارو، مهندس، نیروهای کمکی و کلیدهای فیزیکی اختیار باید به مرکز شهر برسن. سمیرا و من یک برنامهٔ مشترک داریم؛ خودروهای امداد و اسکورت نظامی رو با هم حفظ کنین. پیش از حرکت ستون، راه‌بندان دشمن رو پاک‌سازی کنین.",
+      "request": {
+        "text": "[conversational tone] سوخت، دارو، مهندس، نیروهای کمکی و کلیدهای فیزیکی اختیار باید به مرکز شهر برسن. سمیرا و من یک برنامهٔ مشترک داریم؛ خودروهای امداد و اسکورت نظامی رو با هم حفظ کنین. پیش از حرکت ستون، راه‌بندان دشمن رو پاک‌سازی کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16015,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-01.wav"
+    },
+    {
+      "id": "last_corridor-brief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Hold the original engineer at the repair marker for six seconds. Medicine takes the safer alternate lane. Fuel and the key APC may use the repaired main lane or the alternate. Follow each route’s marked entry, midpoint and exit, then hold at receiving for six seconds.",
+      "request": {
+        "text": "Hold the original engineer at the repair marker for six seconds. Medicine takes the safer alternate lane. Fuel and the key APC may use the repaired main lane or the alternate. Follow each route’s marked entry, midpoint and exit, then hold at receiving for six seconds.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16016,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-02.wav"
+    },
+    {
+      "id": "last_corridor-brief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مهندس اصلی رو شش ثانیه روی نشان تعمیر نگه دارین. دارو از مسیر جایگزین امن‌تر می‌ره. سوخت و نفربر کلیدها می‌تونن از مسیر اصلی تعمیرشده یا مسیر جایگزین برن. ورودی، نقطهٔ میانی و خروجی مشخص‌شدهٔ هر مسیر رو دنبال کنین، بعد شش ثانیه در محل دریافت بمونین.",
+      "request": {
+        "text": "[conversational tone] مهندس اصلی رو شش ثانیه روی نشان تعمیر نگه دارین. دارو از مسیر جایگزین امن‌تر می‌ره. سوخت و نفربر کلیدها می‌تونن از مسیر اصلی تعمیرشده یا مسیر جایگزین برن. ورودی، نقطهٔ میانی و خروجی مشخص‌شدهٔ هر مسیر رو دنبال کنین، بعد شش ثانیه در محل دریافت بمونین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16017,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-02.wav"
+    },
+    {
+      "id": "last_corridor-brief-03",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "caption": "Karim and I are tracking the air approaches, but we cannot certify an air delivery through this threat picture. Keep every required load on the marked ground routes. Preserve the original trucks and key APC; a replacement cannot carry their custody record.",
+      "request": {
+        "text": "Karim and I are tracking the air approaches, but we cannot certify an air delivery through this threat picture. Keep every required load on the marked ground routes. Preserve the original trucks and key APC; a replacement cannot carry their custody record.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16018,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-brief-03.wav"
+    },
+    {
+      "id": "last_corridor-brief-03",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "caption": "کریم و من مسیرهای هوایی رو زیر نظر داریم، ولی با این وضعیت تهدید نمی‌تونیم انتقال هوایی رو تأیید کنیم. همهٔ محموله‌های ضروری رو در مسیرهای زمینی مشخص‌شده نگه دارین. کامیون‌های اصلی و نفربر کلیدها رو حفظ کنین؛ خودروی جایگزین، سابقهٔ نگهداری اون‌ها رو حمل نمی‌کنه.",
+      "request": {
+        "text": "[conversational tone] کریم و من مسیرهای هوایی رو زیر نظر داریم، ولی با این وضعیت تهدید نمی‌تونیم انتقال هوایی رو تأیید کنیم. همهٔ محموله‌های ضروری رو در مسیرهای زمینی مشخص‌شده نگه دارین. کامیون‌های اصلی و نفربر کلیدها رو حفظ کنین؛ خودروی جایگزین، سابقهٔ نگهداری اون‌ها رو حمل نمی‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16019,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-brief-03.wav"
+    },
+    {
+      "id": "last_corridor-comms-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The main lane is obstructed. The original engineer can restore its marked link with a six-second hold; the protected alternate remains connected. Keep medicine on the safer lane and choose the confirmed route for Fuel and the keys. This guidance does not move the convoy for you.",
+      "request": {
+        "text": "The main lane is obstructed. The original engineer can restore its marked link with a six-second hold; the protected alternate remains connected. Keep medicine on the safer lane and choose the confirmed route for Fuel and the keys. This guidance does not move the convoy for you.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16020,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-comms-01.wav"
+    },
+    {
+      "id": "last_corridor-comms-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مسیر اصلی مسدوده. مهندس اصلی می‌تونه با شش ثانیه توقف، بخش مشخص‌شده رو تعمیر کنه؛ مسیر جایگزین محافظت‌شده همچنان وصله. دارو رو در مسیر امن‌تر نگه دارین و برای سوخت و کلیدها، مسیر تأییدشده رو انتخاب کنین. این راهنمایی، کاروان رو به جای شما حرکت نمی‌ده.",
+      "request": {
+        "text": "[conversational tone] مسیر اصلی مسدوده. مهندس اصلی می‌تونه با شش ثانیه توقف، بخش مشخص‌شده رو تعمیر کنه؛ مسیر جایگزین محافظت‌شده همچنان وصله. دارو رو در مسیر امن‌تر نگه دارین و برای سوخت و کلیدها، مسیر تأییدشده رو انتخاب کنین. این راهنمایی، کاروان رو به جای شما حرکت نمی‌ده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16021,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-comms-01.wav"
+    },
+    {
+      "id": "last_corridor-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Medicine, Fuel and the original reinforcements reached the receiving points. The engineer and physical authority keys arrived in the original APC. All five delivery categories are accounted for, and the column reached the city center before the corridor closed.",
+      "request": {
+        "text": "Medicine, Fuel and the original reinforcements reached the receiving points. The engineer and physical authority keys arrived in the original APC. All five delivery categories are accounted for, and the column reached the city center before the corridor closed.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16022,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-01.wav"
+    },
+    {
+      "id": "last_corridor-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "دارو، سوخت و نیروهای کمکی اصلی به محل‌های دریافت رسیدن. مهندس و کلیدهای فیزیکی اختیار با نفربر اصلی رسیدن. هر پنج دستهٔ تحویل ثبت شدن و ستون، پیش از بسته شدن مسیر به مرکز شهر رسید.",
+      "request": {
+        "text": "[conversational tone] دارو، سوخت و نیروهای کمکی اصلی به محل‌های دریافت رسیدن. مهندس و کلیدهای فیزیکی اختیار با نفربر اصلی رسیدن. هر پنج دستهٔ تحویل ثبت شدن و ستون، پیش از بسته شدن مسیر به مرکز شهر رسید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16023,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-01.wav"
+    },
+    {
+      "id": "last_corridor-debrief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The repaired link and the protected alternate served the same city. Military and relief needs stayed in one plan. The medical teams, engineers, pilots and soldiers can now take their final roles without leaving Sahrin’s recovery behind.",
+      "request": {
+        "text": "The repaired link and the protected alternate served the same city. Military and relief needs stayed in one plan. The medical teams, engineers, pilots and soldiers can now take their final roles without leaving Sahrin’s recovery behind.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16024,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-02.wav"
+    },
+    {
+      "id": "last_corridor-debrief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "بخش تعمیرشده و مسیر جایگزین محافظت‌شده، هر دو به یک شهر خدمت کردن. نیازهای نظامی و امدادی در یک برنامه موندن. تیم‌های پزشکی، مهندس‌ها، خلبان‌ها و سربازها حالا می‌تونن مسئولیت‌های نهاییشون رو بگیرن، بدون اینکه بازیابی سهرین رو کنار بذارن.",
+      "request": {
+        "text": "[conversational tone] بخش تعمیرشده و مسیر جایگزین محافظت‌شده، هر دو به یک شهر خدمت کردن. نیازهای نظامی و امدادی در یک برنامه موندن. تیم‌های پزشکی، مهندس‌ها، خلبان‌ها و سربازها حالا می‌تونن مسئولیت‌های نهاییشون رو بگیرن، بدون اینکه بازیابی سهرین رو کنار بذارن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16025,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-02.wav"
+    },
+    {
+      "id": "last_corridor-debrief-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The delivered keys preserve bounded access; they do not grant permanent unilateral authority. The Relay complex is still connected to power, clinics, shelters, transport and communications. Those city systems must survive the final approach. I will keep your decisions explicit.",
+      "request": {
+        "text": "The delivered keys preserve bounded access; they do not grant permanent unilateral authority. The Relay complex is still connected to power, clinics, shelters, transport and communications. Those city systems must survive the final approach. I will keep your decisions explicit.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16026,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/en/last_corridor-debrief-03.wav"
+    },
+    {
+      "id": "last_corridor-debrief-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "کلیدهای تحویل‌شده، دسترسی محدود رو حفظ می‌کنن؛ اختیار دائمی یک‌طرفه نمی‌دن. مجموعهٔ رله هنوز به برق، درمانگاه‌ها، پناهگاه‌ها، حمل‌ونقل و ارتباطات وصله. این سامانه‌های شهری باید از نزدیک شدن نهایی سالم عبور کنن. تصمیم‌های شما رو صریح نگه می‌دارم.",
+      "request": {
+        "text": "[conversational tone] کلیدهای تحویل‌شده، دسترسی محدود رو حفظ می‌کنن؛ اختیار دائمی یک‌طرفه نمی‌دن. مجموعهٔ رله هنوز به برق، درمانگاه‌ها، پناهگاه‌ها، حمل‌ونقل و ارتباطات وصله. این سامانه‌های شهری باید از نزدیک شدن نهایی سالم عبور کنن. تصمیم‌های شما رو صریح نگه می‌دارم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16027,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice/fa/last_corridor-debrief-03.wav"
+    },
+    {
+      "id": "command_node-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The Civic Relay joins power, communications, clinics and transport. Isolate its outer military controls before entering the core. The city must survive the assault.",
+      "request": {
+        "text": "The Civic Relay joins power, communications, clinics and transport. Isolate its outer military controls before entering the core. The city must survive the assault.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16028,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-01.wav"
+    },
+    {
+      "id": "command_node-brief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "رلهٔ شهری، برق، ارتباطات، درمانگاه‌ها و حمل‌ونقل رو به هم وصل می‌کنه. پیش از ورود به مرکز، کنترل‌های نظامی بیرونی رو جدا کنین. شهر باید از این حمله سالم عبور کنه.",
+      "request": {
+        "text": "[conversational tone] رلهٔ شهری، برق، ارتباطات، درمانگاه‌ها و حمل‌ونقل رو به هم وصل می‌کنه. پیش از ورود به مرکز، کنترل‌های نظامی بیرونی رو جدا کنین. شهر باید از این حمله سالم عبور کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16029,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-01.wav"
+    },
+    {
+      "id": "command_node-brief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "My engineers will preserve the civic connections. Keep the protected service sites and their staff intact; losing them defeats the purpose of this operation.",
+      "request": {
+        "text": "My engineers will preserve the civic connections. Keep the protected service sites and their staff intact; losing them defeats the purpose of this operation.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16030,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-02.wav"
+    },
+    {
+      "id": "command_node-brief-02",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مهندس‌های من اتصال‌های خدمات شهری رو حفظ می‌کنن. مرکزهای خدماتی محافظت‌شده و کارکنانشون رو سالم نگه دارین؛ از دست رفتن اون‌ها هدف این عملیات رو از بین می‌بره.",
+      "request": {
+        "text": "[conversational tone] مهندس‌های من اتصال‌های خدمات شهری رو حفظ می‌کنن. مرکزهای خدماتی محافظت‌شده و کارکنانشون رو سالم نگه دارین؛ از دست رفتن اون‌ها هدف این عملیات رو از بین می‌بره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16031,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-02.wav"
+    },
+    {
+      "id": "command_node-brief-03",
+      "variant": "",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "caption": "I will supervise the hazardous-control checks. Bring the original engineer to each marked isolation point after its guards are defeated, and let the full verification finish.",
+      "request": {
+        "text": "I will supervise the hazardous-control checks. Bring the original engineer to each marked isolation point after its guards are defeated, and let the full verification finish.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16032,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-03.wav"
+    },
+    {
+      "id": "command_node-brief-03",
+      "variant": "",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "caption": "بررسی کنترل‌های خطرناک با منه. بعد از شکست نگهبان‌ها، مهندس اصلی رو به هر نقطهٔ مشخص‌شدهٔ جداسازی برسونین و اجازه بدین بررسی کامل بشه.",
+      "request": {
+        "text": "[conversational tone] بررسی کنترل‌های خطرناک با منه. بعد از شکست نگهبان‌ها، مهندس اصلی رو به هر نقطهٔ مشخص‌شدهٔ جداسازی برسونین و اجازه بدین بررسی کامل بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16033,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-03.wav"
+    },
+    {
+      "id": "command_node-brief-04",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "caption": "Karim and I will coordinate relief access beyond the complex. The approach here remains with your ground teams; do not sacrifice the services to shorten the fight.",
+      "request": {
+        "text": "Karim and I will coordinate relief access beyond the complex. The approach here remains with your ground teams; do not sacrifice the services to shorten the fight.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16034,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-04.wav"
+    },
+    {
+      "id": "command_node-brief-04",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "caption": "کریم و من دسترسی امداد بیرون مجموعه رو هماهنگ می‌کنیم. نزدیک شدن در اینجا با تیم‌های زمینی شماست؛ برای کوتاه کردن نبرد، خدمات رو قربانی نکنین.",
+      "request": {
+        "text": "[conversational tone] کریم و من دسترسی امداد بیرون مجموعه رو هماهنگ می‌کنیم. نزدیک شدن در اینجا با تیم‌های زمینی شماست؛ برای کوتاه کردن نبرد، خدمات رو قربانی نکنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16035,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-04.wav"
+    },
+    {
+      "id": "command_node-brief-05",
+      "variant": "",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "caption": "You centralized force and made this city obey. The only difference is that you still pretend you will give the power back. I am beginning the override.",
+      "request": {
+        "text": "You centralized force and made this city obey. The only difference is that you still pretend you will give the power back. I am beginning the override.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16036,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-05.wav"
+    },
+    {
+      "id": "command_node-brief-05",
+      "variant": "",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "caption": "نیرو رو متمرکز کردی و شهر رو به اطاعت واداشتی. تنها فرق اینه که هنوز وانمود می‌کنی قدرت رو پس می‌دی. دارم فرمان تصاحب رو آغاز می‌کنم.",
+      "request": {
+        "text": "[conversational tone] نیرو رو متمرکز کردی و شهر رو به اطاعت واداشتی. تنها فرق اینه که هنوز وانمود می‌کنی قدرت رو پس می‌دی. دارم فرمان تصاحب رو آغاز می‌کنم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16037,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-05.wav"
+    },
+    {
+      "id": "command_node-brief-06",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The two keys are my preserved archive and your live emergency credential. Together they can stop his override without granting permanent rule. I will wait for explicit authority.",
+      "request": {
+        "text": "The two keys are my preserved archive and your live emergency credential. Together they can stop his override without granting permanent rule. I will wait for explicit authority.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16038,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-06.wav"
+    },
+    {
+      "id": "command_node-brief-06",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "دو کلید، آرشیو حفظ‌شدهٔ من و مجوز زندهٔ اضطراری شما هستن. با هم می‌تونن تصاحب او رو متوقف کنن، بدون اینکه اختیار دائمی بدن. منتظر اجازهٔ صریح می‌مونم.",
+      "request": {
+        "text": "[conversational tone] دو کلید، آرشیو حفظ‌شدهٔ من و مجوز زندهٔ اضطراری شما هستن. با هم می‌تونن تصاحب او رو متوقف کنن، بدون اینکه اختیار دائمی بدن. منتظر اجازهٔ صریح می‌مونم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16039,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-06.wav"
+    },
+    {
+      "id": "command_node-brief-07",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Dalia controls the military breach; I coordinate civic continuity. Neither mandate replaces the other. Keep the specialists alive through the final release.",
+      "request": {
+        "text": "Dalia controls the military breach; I coordinate civic continuity. Neither mandate replaces the other. Keep the specialists alive through the final release.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16040,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-07.wav"
+    },
+    {
+      "id": "command_node-brief-07",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "دالیا رخنهٔ نظامی رو فرماندهی می‌کنه و من تداوم خدمات شهری رو هماهنگ می‌کنم. هیچ‌کدوم جای اختیار دیگری رو نمی‌گیره. متخصص‌ها رو تا انتشار نهایی زنده نگه دارین.",
+      "request": {
+        "text": "[conversational tone] دالیا رخنهٔ نظامی رو فرماندهی می‌کنه و من تداوم خدمات شهری رو هماهنگ می‌کنم. هیچ‌کدوم جای اختیار دیگری رو نمی‌گیره. متخصص‌ها رو تا انتشار نهایی زنده نگه دارین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16041,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-07.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "en-US",
+      "caption": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+      "request": {
+        "text": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16042,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "fa-IR",
+      "caption": "سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+      "request": {
+        "text": "[conversational tone] سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16043,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "en-US",
+      "caption": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+      "request": {
+        "text": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16044,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08_female.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "fa-IR",
+      "caption": "سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+      "request": {
+        "text": "[conversational tone] سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16045,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08_female.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "en-US",
+      "caption": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+      "request": {
+        "text": "Isolate the weapons, preserve the services, release the audit. Use emergency authority only to stop the override. We are not taking Qassem’s place.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16046,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-brief-08_neutral.wav"
+    },
+    {
+      "id": "command_node-brief-08",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "fa-IR",
+      "caption": "سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+      "request": {
+        "text": "[conversational tone] سلاح‌ها رو جدا کنین، خدمات رو حفظ کنین، گزارش حسابرسی رو منتشر کنین. اختیار اضطراری فقط برای توقف تصاحب استفاده بشه. ما جای قاسم رو نمی‌گیریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16047,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-brief-08_neutral.wav"
+    },
+    {
+      "id": "command_node-comms-01",
+      "variant": "",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "caption": "Activate the Relay without limits. I can end the argument, the uncertainty and the disorder. One command is enough.",
+      "request": {
+        "text": "Activate the Relay without limits. I can end the argument, the uncertainty and the disorder. One command is enough.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16048,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-01.wav"
+    },
+    {
+      "id": "command_node-comms-01",
+      "variant": "",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "caption": "رله رو بدون محدودیت فعال کن. می‌تونم بحث، تردید و بی‌نظمی رو تموم کنم. یک فرمان کافیه.",
+      "request": {
+        "text": "[conversational tone] رله رو بدون محدودیت فعال کن. می‌تونم بحث، تردید و بی‌نظمی رو تموم کنم. یک فرمان کافیه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16049,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-01.wav"
+    },
+    {
+      "id": "command_node-comms-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The audit identifies his original shutdown, the attempted erasure and my self-partition. The bounded path preserves civic services and sends that record beyond any single office. It does not authorize later actions.",
+      "request": {
+        "text": "The audit identifies his original shutdown, the attempted erasure and my self-partition. The bounded path preserves civic services and sends that record beyond any single office. It does not authorize later actions.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16050,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-02.wav"
+    },
+    {
+      "id": "command_node-comms-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش، خاموشی اولیهٔ او، تلاش برای پاک کردن مدرک و بخش‌بندی خودم رو مشخص می‌کنه. مسیر محدود، خدمات شهری رو حفظ می‌کنه و گزارش رو از اختیار هر ادارهٔ تنها بیرون می‌بره. این اجازه‌ای برای کارهای بعدی نیست.",
+      "request": {
+        "text": "[conversational tone] گزارش، خاموشی اولیهٔ او، تلاش برای پاک کردن مدرک و بخش‌بندی خودم رو مشخص می‌کنه. مسیر محدود، خدمات شهری رو حفظ می‌کنه و گزارش رو از اختیار هر ادارهٔ تنها بیرون می‌بره. این اجازه‌ای برای کارهای بعدی نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16051,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-02.wav"
+    },
+    {
+      "id": "command_node-comms-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "I am awaiting authority. Bring the original engineer to the marked release point and complete the six-second hold to authorize this release. Your orders remain the decision; this message issues none.",
+      "request": {
+        "text": "I am awaiting authority. Bring the original engineer to the marked release point and complete the six-second hold to authorize this release. Your orders remain the decision; this message issues none.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16052,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-comms-03.wav"
+    },
+    {
+      "id": "command_node-comms-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "منتظر اجازه‌ام. مهندس اصلی رو به نقطهٔ انتشار برسونین و شش ثانیه توقف رو کامل کنین تا همین انتشار مجاز بشه. تصمیم با فرمان‌های شماست؛ این پیام هیچ فرمانی صادر نمی‌کنه.",
+      "request": {
+        "text": "[conversational tone] منتظر اجازه‌ام. مهندس اصلی رو به نقطهٔ انتشار برسونین و شش ثانیه توقف رو کامل کنین تا همین انتشار مجاز بشه. تصمیم با فرمان‌های شماست؛ این پیام هیچ فرمانی صادر نمی‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16053,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-comms-03.wav"
+    },
+    {
+      "id": "command_node-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The override failed. Qassem’s force is defeated, and the Civic Relay is separated from his command. Our teams will secure the complex without shutting down its essential services.",
+      "request": {
+        "text": "The override failed. Qassem’s force is defeated, and the Civic Relay is separated from his command. Our teams will secure the complex without shutting down its essential services.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16054,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-01.wav"
+    },
+    {
+      "id": "command_node-debrief-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "تصاحب شکست خورد. نیروهای قاسم شکست خوردن و رلهٔ شهری از فرمان او جدا شده. تیم‌های ما مجموعه رو امن می‌کنن، بدون اینکه خدمات ضروری رو خاموش کنن.",
+      "request": {
+        "text": "[conversational tone] تصاحب شکست خورد. نیروهای قاسم شکست خوردن و رلهٔ شهری از فرمان او جدا شده. تیم‌های ما مجموعه رو امن می‌کنن، بدون اینکه خدمات ضروری رو خاموش کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16055,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-01.wav"
+    },
+    {
+      "id": "command_node-debrief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The complete audit has reached district councils, clinic networks, military commands and independent civic archives. No single office can bury the record again.",
+      "request": {
+        "text": "The complete audit has reached district councils, clinic networks, military commands and independent civic archives. No single office can bury the record again.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16056,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-02.wav"
+    },
+    {
+      "id": "command_node-debrief-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش کامل به شوراهای محله، شبکهٔ درمانگاه‌ها، فرماندهی‌های نظامی و آرشیوهای مستقل شهری رسیده. هیچ اداره‌ای نمی‌تونه دوباره به‌تنهایی پنهانش کنه.",
+      "request": {
+        "text": "[conversational tone] گزارش کامل به شوراهای محله، شبکهٔ درمانگاه‌ها، فرماندهی‌های نظامی و آرشیوهای مستقل شهری رسیده. هیچ اداره‌ای نمی‌تونه دوباره به‌تنهایی پنهانش کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16057,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-02.wav"
+    },
+    {
+      "id": "command_node-debrief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Dalia and I secure military and civilian authority together. The two keys protected this emergency action; they do not appoint a permanent ruler.",
+      "request": {
+        "text": "Dalia and I secure military and civilian authority together. The two keys protected this emergency action; they do not appoint a permanent ruler.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16058,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-03.wav"
+    },
+    {
+      "id": "command_node-debrief-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "دالیا و من اختیار نظامی و غیرنظامی رو با هم امن نگه می‌داریم. دو کلید از این اقدام اضطراری محافظت کردن؛ حاکم دائمی تعیین نمی‌کنن.",
+      "request": {
+        "text": "[conversational tone] دالیا و من اختیار نظامی و غیرنظامی رو با هم امن نگه می‌داریم. دو کلید از این اقدام اضطراری محافظت کردن؛ حاکم دائمی تعیین نمی‌کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16059,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-03.wav"
+    },
+    {
+      "id": "command_node-debrief-04",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Emergency command is ending. What follows must be visible, auditable and open to challenge. I can support that work, but I cannot choose its governors.",
+      "request": {
+        "text": "Emergency command is ending. What follows must be visible, auditable and open to challenge. I can support that work, but I cannot choose its governors.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16060,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-debrief-04.wav"
+    },
+    {
+      "id": "command_node-debrief-04",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "فرماندهی اضطراری داره پایان می‌گیره. چیزی که جاش میاد باید قابل دیدن، حسابرسی و اعتراض باشه. می‌تونم کمک کنم، ولی نمی‌تونم حاکمانش رو انتخاب کنم.",
+      "request": {
+        "text": "[conversational tone] فرماندهی اضطراری داره پایان می‌گیره. چیزی که جاش میاد باید قابل دیدن، حسابرسی و اعتراض باشه. می‌تونم کمک کنم، ولی نمی‌تونم حاکمانش رو انتخاب کنم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16061,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-debrief-04.wav"
+    },
+    {
+      "id": "command_node-close-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Protocol Fragment Five is complete. Qassem’s original override, his attempted erasure and my self-partition now align in one surviving audit.",
+      "request": {
+        "text": "Protocol Fragment Five is complete. Qassem’s original override, his attempted erasure and my self-partition now align in one surviving audit.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16062,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-01.wav"
+    },
+    {
+      "id": "command_node-close-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "قطعهٔ پنجم پروتکل کامل شد. تصاحب اولیهٔ قاسم، تلاشش برای پاک کردن مدرک و بخش‌بندی من حالا در یک گزارش باقی‌مونده کنار هم قرار گرفتن.",
+      "request": {
+        "text": "[conversational tone] قطعهٔ پنجم پروتکل کامل شد. تصاحب اولیهٔ قاسم، تلاشش برای پاک کردن مدرک و بخش‌بندی من حالا در یک گزارش باقی‌مونده کنار هم قرار گرفتن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16063,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-01.wav"
+    },
+    {
+      "id": "command_node-close-02",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Bombings, false reports, Fuel diversions, Relay activations and Vanguard hardware follow the same operation record. These attacks were built to manufacture necessity.",
+      "request": {
+        "text": "Bombings, false reports, Fuel diversions, Relay activations and Vanguard hardware follow the same operation record. These attacks were built to manufacture necessity.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16064,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-02.wav"
+    },
+    {
+      "id": "command_node-close-02",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "بمب‌گذاری‌ها، گزارش‌های دروغ، انحراف سوخت، فعال شدن رله و تجهیزات ونگارد در یک سابقهٔ عملیاتی جمع شدن. این حمله‌ها برای ساختن حس ضرورت طراحی شدن.",
+      "request": {
+        "text": "[conversational tone] بمب‌گذاری‌ها، گزارش‌های دروغ، انحراف سوخت، فعال شدن رله و تجهیزات ونگارد در یک سابقهٔ عملیاتی جمع شدن. این حمله‌ها برای ساختن حس ضرورت طراحی شدن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16065,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-02.wav"
+    },
+    {
+      "id": "command_node-close-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Qassem caused the shutdown, built Ash Line and invited Vanguard into this crisis. The public record breaks his claim that terror made him necessary.",
+      "request": {
+        "text": "Qassem caused the shutdown, built Ash Line and invited Vanguard into this crisis. The public record breaks his claim that terror made him necessary.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16066,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-03.wav"
+    },
+    {
+      "id": "command_node-close-03",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "قاسم خاموشی رو ایجاد کرد، خط خاکستر رو ساخت و ونگارد رو وارد این بحران کرد. گزارش عمومی، ادعای او رو که وحشت وجودش رو ضروری کرده بود می‌شکنه.",
+      "request": {
+        "text": "[conversational tone] قاسم خاموشی رو ایجاد کرد، خط خاکستر رو ساخت و ونگارد رو وارد این بحران کرد. گزارش عمومی، ادعای او رو که وحشت وجودش رو ضروری کرده بود می‌شکنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16067,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-03.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "en-US",
+      "caption": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+      "request": {
+        "text": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16068,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "fa-IR",
+      "caption": "هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+      "request": {
+        "text": "[conversational tone] هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16069,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "en-US",
+      "caption": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+      "request": {
+        "text": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16070,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04_female.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "fa-IR",
+      "caption": "هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+      "request": {
+        "text": "[conversational tone] هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16071,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04_female.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "en-US",
+      "caption": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+      "request": {
+        "text": "No permanent unilateral control. Return emergency authority to a shared structure that can explain its decisions and be stopped.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16072,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-04_neutral.wav"
+    },
+    {
+      "id": "command_node-close-04",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "fa-IR",
+      "caption": "هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+      "request": {
+        "text": "[conversational tone] هیچ اختیار دائمی یک‌طرفه‌ای در کار نیست. اختیار اضطراری به ساختاری مشترک برگرده که تصمیم‌هاش رو توضیح بده و بشه متوقفش کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16073,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-04_neutral.wav"
+    },
+    {
+      "id": "command_node-close-05",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The military mandate is bounded: protect the city, secure dangerous controls and stand down under accountable authority. It is not a claim to govern everyone.",
+      "request": {
+        "text": "The military mandate is bounded: protect the city, secure dangerous controls and stand down under accountable authority. It is not a claim to govern everyone.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16074,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-05.wav"
+    },
+    {
+      "id": "command_node-close-05",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "اختیار نظامی محدوده؛ حفظ شهر، امن کردن کنترل‌های خطرناک و پایان دادن به آماده‌باش زیر نظر مسئولانه. این ادعای حکومت بر همه نیست.",
+      "request": {
+        "text": "[conversational tone] اختیار نظامی محدوده؛ حفظ شهر، امن کردن کنترل‌های خطرناک و پایان دادن به آماده‌باش زیر نظر مسئولانه. این ادعای حکومت بر همه نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16075,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-05.wav"
+    },
+    {
+      "id": "command_node-close-06",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "District representatives, workers, utilities and clinics share civilian oversight. Disagreement stays part of command instead of becoming its enemy.",
+      "request": {
+        "text": "District representatives, workers, utilities and clinics share civilian oversight. Disagreement stays part of command instead of becoming its enemy.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16076,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-06.wav"
+    },
+    {
+      "id": "command_node-close-06",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "نماینده‌های محله، کارگرها، خدمات و درمانگاه‌ها در نظارت غیرنظامی شریک می‌شن. اختلاف نظر بخشی از فرماندهی می‌مونه، نه دشمن اون.",
+      "request": {
+        "text": "[conversational tone] نماینده‌های محله، کارگرها، خدمات و درمانگاه‌ها در نظارت غیرنظامی شریک می‌شن. اختلاف نظر بخشی از فرماندهی می‌مونه، نه دشمن اون.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16077,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-06.wav"
+    },
+    {
+      "id": "command_node-close-07",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "I remain active with visible permissions, explicit consent and an audit trail. My recommendations can be challenged; my actions can be overridden.",
+      "request": {
+        "text": "I remain active with visible permissions, explicit consent and an audit trail. My recommendations can be challenged; my actions can be overridden.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16078,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-07.wav"
+    },
+    {
+      "id": "command_node-close-07",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "با اجازه‌های قابل دیدن، رضایت صریح و سابقهٔ حسابرسی فعال می‌مونم. می‌شه توصیه‌هام رو زیر سؤال برد و اقدام‌هام رو متوقف کرد.",
+      "request": {
+        "text": "[conversational tone] با اجازه‌های قابل دیدن، رضایت صریح و سابقهٔ حسابرسی فعال می‌مونم. می‌شه توصیه‌هام رو زیر سؤال برد و اقدام‌هام رو متوقف کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16079,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-07.wav"
+    },
+    {
+      "id": "command_node-close-08",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Sahrin’s map now coordinates recovery instead of hostile override. Fragment Five, the complete audit and the governance resolution belong in the public archive.",
+      "request": {
+        "text": "Sahrin’s map now coordinates recovery instead of hostile override. Fragment Five, the complete audit and the governance resolution belong in the public archive.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16080,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-close-08.wav"
+    },
+    {
+      "id": "command_node-close-08",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "نقشهٔ سهرین حالا به جای تصاحب دشمن، بازسازی رو هماهنگ می‌کنه. قطعهٔ پنجم، گزارش کامل و تصمیم دربارهٔ ادارهٔ شهر در آرشیو عمومی ثبت می‌شن.",
+      "request": {
+        "text": "[conversational tone] نقشهٔ سهرین حالا به جای تصاحب دشمن، بازسازی رو هماهنگ می‌کنه. قطعهٔ پنجم، گزارش کامل و تصمیم دربارهٔ ادارهٔ شهر در آرشیو عمومی ثبت می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16081,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-close-08.wav"
+    },
+    {
+      "id": "command_node-epilogue-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The Civic Relay is secured and disconnected from Qassem’s override. Essential services remain connected to the people they serve.",
+      "request": {
+        "text": "The Civic Relay is secured and disconnected from Qassem’s override. Essential services remain connected to the people they serve.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16082,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-01.wav"
+    },
+    {
+      "id": "command_node-epilogue-01",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "رلهٔ شهری امن شده و از تصاحب قاسم جداست. خدمات ضروری همچنان به مردمی که بهشون نیاز دارن وصله.",
+      "request": {
+        "text": "[conversational tone] رلهٔ شهری امن شده و از تصاحب قاسم جداست. خدمات ضروری همچنان به مردمی که بهشون نیاز دارن وصله.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16083,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-01.wav"
+    },
+    {
+      "id": "command_node-epilogue-02",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Ash Line command has collapsed. The remaining Vanguard forces withdraw or surrender; protection continues while the weapons fall silent.",
+      "request": {
+        "text": "Ash Line command has collapsed. The remaining Vanguard forces withdraw or surrender; protection continues while the weapons fall silent.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16084,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-02.wav"
+    },
+    {
+      "id": "command_node-epilogue-02",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "فرماندهی خط خاکستر فروپاشیده. نیروهای باقی‌موندهٔ ونگارد عقب می‌کشن یا تسلیم می‌شن؛ با خاموش شدن سلاح‌ها، حفاظت ادامه داره.",
+      "request": {
+        "text": "[conversational tone] فرماندهی خط خاکستر فروپاشیده. نیروهای باقی‌موندهٔ ونگارد عقب می‌کشن یا تسلیم می‌شن؛ با خاموش شدن سلاح‌ها، حفاظت ادامه داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16085,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-02.wav"
+    },
+    {
+      "id": "command_node-epilogue-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The complete audit is public. It is not retained as secret command evidence, and Qassem’s responsibility does not depend on a reward or a perfect operation.",
+      "request": {
+        "text": "The complete audit is public. It is not retained as secret command evidence, and Qassem’s responsibility does not depend on a reward or a perfect operation.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16086,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-03.wav"
+    },
+    {
+      "id": "command_node-epilogue-03",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش کامل عمومیه. به‌عنوان مدرک محرمانهٔ فرماندهی نگه داشته نمی‌شه و مسئولیت قاسم به پاداش یا عملیاتی بی‌نقص بستگی نداره.",
+      "request": {
+        "text": "[conversational tone] گزارش کامل عمومیه. به‌عنوان مدرک محرمانهٔ فرماندهی نگه داشته نمی‌شه و مسئولیت قاسم به پاداش یا عملیاتی بی‌نقص بستگی نداره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16087,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-03.wav"
+    },
+    {
+      "id": "command_node-epilogue-04",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "I am supervising a disciplined stand-down. Enough protection remains for clinics, roads and recovery teams; emergency force is not becoming permanent authority.",
+      "request": {
+        "text": "I am supervising a disciplined stand-down. Enough protection remains for clinics, roads and recovery teams; emergency force is not becoming permanent authority.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16088,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-04.wav"
+    },
+    {
+      "id": "command_node-epilogue-04",
+      "variant": "",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "پایان منظم آماده‌باش رو زیر نظر دارم. حفاظت کافی برای درمانگاه‌ها، راه‌ها و تیم‌های بازسازی باقی می‌مونه؛ نیروی اضطراری به اختیار دائمی تبدیل نمی‌شه.",
+      "request": {
+        "text": "[conversational tone] پایان منظم آماده‌باش رو زیر نظر دارم. حفاظت کافی برای درمانگاه‌ها، راه‌ها و تیم‌های بازسازی باقی می‌مونه؛ نیروی اضطراری به اختیار دائمی تبدیل نمی‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16089,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-04.wav"
+    },
+    {
+      "id": "command_node-epilogue-05",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Civil representatives and workers restore power, communications and transport together. Fadi’s crews reopen the hospital corridor, and Yasin organizes market deliveries.",
+      "request": {
+        "text": "Civil representatives and workers restore power, communications and transport together. Fadi’s crews reopen the hospital corridor, and Yasin organizes market deliveries.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16090,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-05.wav"
+    },
+    {
+      "id": "command_node-epilogue-05",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "نماینده‌های غیرنظامی و کارگرها با هم برق، ارتباطات و حمل‌ونقل رو برمی‌گردونن. تیم‌های فادی مسیر بیمارستان رو باز می‌کنن و یاسین تحویل‌های بازار رو سامان می‌ده.",
+      "request": {
+        "text": "[conversational tone] نماینده‌های غیرنظامی و کارگرها با هم برق، ارتباطات و حمل‌ونقل رو برمی‌گردونن. تیم‌های فادی مسیر بیمارستان رو باز می‌کنن و یاسین تحویل‌های بازار رو سامان می‌ده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16091,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-05.wav"
+    },
+    {
+      "id": "command_node-epilogue-06",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "caption": "The relief air corridor is reopening. Karim returns transport aircraft to relief duty, and Dr. Lina receives medicine while clinics and markets resume work.",
+      "request": {
+        "text": "The relief air corridor is reopening. Karim returns transport aircraft to relief duty, and Dr. Lina receives medicine while clinics and markets resume work.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16092,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-06.wav"
+    },
+    {
+      "id": "command_node-epilogue-06",
+      "variant": "",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "caption": "مسیر هوایی امداد دوباره باز می‌شه. کریم هواپیماهای ترابری رو به کار امداد برمی‌گردونه و دکتر لینا دارو دریافت می‌کنه، در حالی که درمانگاه‌ها و بازار کارشون رو از سر می‌گیرن.",
+      "request": {
+        "text": "[conversational tone] مسیر هوایی امداد دوباره باز می‌شه. کریم هواپیماهای ترابری رو به کار امداد برمی‌گردونه و دکتر لینا دارو دریافت می‌کنه، در حالی که درمانگاه‌ها و بازار کارشون رو از سر می‌گیرن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16093,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-06.wav"
+    },
+    {
+      "id": "command_node-epilogue-07",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "My permissions and audit trail are visible. I mark what I know, what I infer and what I cannot see. The Commander can override me, and the city can audit us both.",
+      "request": {
+        "text": "My permissions and audit trail are visible. I mark what I know, what I infer and what I cannot see. The Commander can override me, and the city can audit us both.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16094,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-07.wav"
+    },
+    {
+      "id": "command_node-epilogue-07",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "اجازه‌ها و سابقهٔ حسابرسی من قابل دیدنه. دانسته‌ها، برداشت‌ها و چیزهایی که نمی‌بینم رو مشخص می‌کنم. فرمانده می‌تونه من رو متوقف کنه و شهر می‌تونه هر دومون رو حسابرسی کنه.",
+      "request": {
+        "text": "[conversational tone] اجازه‌ها و سابقهٔ حسابرسی من قابل دیدنه. دانسته‌ها، برداشت‌ها و چیزهایی که نمی‌بینم رو مشخص می‌کنم. فرمانده می‌تونه من رو متوقف کنه و شهر می‌تونه هر دومون رو حسابرسی کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16095,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-07.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "en-US",
+      "caption": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+      "request": {
+        "text": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16096,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "fa-IR",
+      "caption": "آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+      "request": {
+        "text": "[conversational tone] آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16097,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "en-US",
+      "caption": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+      "request": {
+        "text": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16098,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08_female.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "fa-IR",
+      "caption": "آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+      "request": {
+        "text": "[conversational tone] آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16099,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08_female.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "en-US",
+      "caption": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+      "request": {
+        "text": "Return the last emergency authority to the shared council. No one person receives the master control Qassem wanted. Emergency powers carry an end date.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16100,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-08_neutral.wav"
+    },
+    {
+      "id": "command_node-epilogue-08",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "fa-IR",
+      "caption": "آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+      "request": {
+        "text": "[conversational tone] آخرین اختیار اضطراری به شورای مشترک برگرده. هیچ‌کس کنترل اصلی‌ای رو که قاسم می‌خواست به‌تنهایی نمی‌گیره. قدرت اضطراری تاریخ پایان داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16101,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-08_neutral.wav"
+    },
+    {
+      "id": "command_node-epilogue-09",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Sahrin is alive again: damaged roads, waiting families, busy clinics, workers and vendors. Survival begins the repair; it does not erase what the city endured.",
+      "request": {
+        "text": "Sahrin is alive again: damaged roads, waiting families, busy clinics, workers and vendors. Survival begins the repair; it does not erase what the city endured.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16102,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-epilogue-09.wav"
+    },
+    {
+      "id": "command_node-epilogue-09",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "سهرین دوباره زنده‌ست؛ راه‌های آسیب‌دیده، خانواده‌های منتظر، درمانگاه‌های شلوغ، کارگرها و فروشنده‌ها. زنده موندن آغاز تعمیره؛ رنج شهر رو پاک نمی‌کنه.",
+      "request": {
+        "text": "[conversational tone] سهرین دوباره زنده‌ست؛ راه‌های آسیب‌دیده، خانواده‌های منتظر، درمانگاه‌های شلوغ، کارگرها و فروشنده‌ها. زنده موندن آغاز تعمیره؛ رنج شهر رو پاک نمی‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16103,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-epilogue-09.wav"
+    },
+    {
+      "id": "command_node-trust_high-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The recorded relief operations protected civilians and civic staff. Their participation has a safer starting point; oversight must still earn trust by listening and explaining.",
+      "request": {
+        "text": "The recorded relief operations protected civilians and civic staff. Their participation has a safer starting point; oversight must still earn trust by listening and explaining.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16104,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-trust_high-01.wav"
+    },
+    {
+      "id": "command_node-trust_high-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "عملیات‌های امدادی ثبت‌شده، مردم و کارکنان خدمات رو حفظ کردن. مشارکتشون شروع امن‌تری داره؛ نظارت هنوز باید با شنیدن و توضیح دادن، اعتماد به دست بیاره.",
+      "request": {
+        "text": "[conversational tone] عملیات‌های امدادی ثبت‌شده، مردم و کارکنان خدمات رو حفظ کردن. مشارکتشون شروع امن‌تری داره؛ نظارت هنوز باید با شنیدن و توضیح دادن، اعتماد به دست بیاره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16105,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-trust_high-01.wav"
+    },
+    {
+      "id": "command_node-trust_low-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "People enter recovery with questions and justified skepticism. Shared civilian oversight remains, with a longer work of listening and repairing legitimacy.",
+      "request": {
+        "text": "People enter recovery with questions and justified skepticism. Shared civilian oversight remains, with a longer work of listening and repairing legitimacy.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16106,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-trust_low-01.wav"
+    },
+    {
+      "id": "command_node-trust_low-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مردم با سؤال و تردید موجه وارد بازسازی می‌شن. نظارت مشترک غیرنظامی باقی می‌مونه، با کار طولانی‌تر برای شنیدن و بازسازی اعتبار.",
+      "request": {
+        "text": "[conversational tone] مردم با سؤال و تردید موجه وارد بازسازی می‌شن. نظارت مشترک غیرنظامی باقی می‌مونه، با کار طولانی‌تر برای شنیدن و بازسازی اعتبار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16107,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-trust_low-01.wav"
+    },
+    {
+      "id": "command_node-evidence_high-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The released critical-path audit proves Qassem’s role and preserves the verified links gathered in this operation. External financiers and Vanguard connections remain subject to investigation.",
+      "request": {
+        "text": "The released critical-path audit proves Qassem’s role and preserves the verified links gathered in this operation. External financiers and Vanguard connections remain subject to investigation.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16108,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-evidence_high-01.wav"
+    },
+    {
+      "id": "command_node-evidence_high-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش ضروری منتشرشده، نقش قاسم رو ثابت می‌کنه و ارتباط‌های تأییدشدهٔ این عملیات رو حفظ می‌کنه. سرمایه‌گذارهای بیرونی و ارتباط‌های ونگارد همچنان نیاز به بررسی دارن.",
+      "request": {
+        "text": "[conversational tone] گزارش ضروری منتشرشده، نقش قاسم رو ثابت می‌کنه و ارتباط‌های تأییدشدهٔ این عملیات رو حفظ می‌کنه. سرمایه‌گذارهای بیرونی و ارتباط‌های ونگارد همچنان نیاز به بررسی دارن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16109,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-evidence_high-01.wav"
+    },
+    {
+      "id": "command_node-evidence_low-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The complete critical-path audit proves Qassem’s guilt. Parts of the wider support network remain disputed or hidden; that uncertainty does not undo the ending.",
+      "request": {
+        "text": "The complete critical-path audit proves Qassem’s guilt. Parts of the wider support network remain disputed or hidden; that uncertainty does not undo the ending.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16110,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-evidence_low-01.wav"
+    },
+    {
+      "id": "command_node-evidence_low-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "گزارش کامل و ضروری، گناه قاسم رو ثابت می‌کنه. بخش‌هایی از شبکهٔ پشتیبانی بزرگ‌تر پنهان یا مورد اختلافه؛ این ابهام پایان رو از بین نمی‌بره.",
+      "request": {
+        "text": "[conversational tone] گزارش کامل و ضروری، گناه قاسم رو ثابت می‌کنه. بخش‌هایی از شبکهٔ پشتیبانی بزرگ‌تر پنهان یا مورد اختلافه؛ این ابهام پایان رو از بین نمی‌بره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16111,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-evidence_low-01.wav"
+    },
+    {
+      "id": "command_node-infrastructure_high-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The recorded operations preserved essential services without losing their teams. Roads, power, Fuel, clinics, shelters and trade can resume with a stronger base for repairs.",
+      "request": {
+        "text": "The recorded operations preserved essential services without losing their teams. Roads, power, Fuel, clinics, shelters and trade can resume with a stronger base for repairs.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16112,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-infrastructure_high-01.wav"
+    },
+    {
+      "id": "command_node-infrastructure_high-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "عملیات‌های ثبت‌شده خدمات ضروری و تیم‌هاشون رو حفظ کردن. راه‌ها، برق، سوخت، درمانگاه‌ها، پناهگاه‌ها و تجارت با پایهٔ سالم‌تری برای تعمیرها دوباره راه می‌افتن.",
+      "request": {
+        "text": "[conversational tone] عملیات‌های ثبت‌شده خدمات ضروری و تیم‌هاشون رو حفظ کردن. راه‌ها، برق، سوخت، درمانگاه‌ها، پناهگاه‌ها و تجارت با پایهٔ سالم‌تری برای تعمیرها دوباره راه می‌افتن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16113,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-infrastructure_high-01.wav"
+    },
+    {
+      "id": "command_node-infrastructure_low-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Sahrin survived, but shortages, displacement and repairs extend the transition. Recovery begins under shared authority while the damaged systems are restored.",
+      "request": {
+        "text": "Sahrin survived, but shortages, displacement and repairs extend the transition. Recovery begins under shared authority while the damaged systems are restored.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16114,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-infrastructure_low-01.wav"
+    },
+    {
+      "id": "command_node-infrastructure_low-01",
+      "variant": "",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "سهرین زنده موند، ولی کمبودها، آوارگی و تعمیرها دورهٔ گذار رو طولانی می‌کنن. بازسازی زیر اختیار مشترک آغاز می‌شه و سامانه‌های آسیب‌دیده ترمیم می‌شن.",
+      "request": {
+        "text": "[conversational tone] سهرین زنده موند، ولی کمبودها، آوارگی و تعمیرها دورهٔ گذار رو طولانی می‌کنن. بازسازی زیر اختیار مشترک آغاز می‌شه و سامانه‌های آسیب‌دیده ترمیم می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16115,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-infrastructure_low-01.wav"
+    },
+    {
+      "id": "command_node-postscript-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The Story Archive now holds all five reconstructed Protocol Fragments, the complete audit and the recovery emphasis. The Campaign is complete.",
+      "request": {
+        "text": "The Story Archive now holds all five reconstructed Protocol Fragments, the complete audit and the recovery emphasis. The Campaign is complete.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16116,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-01.wav"
+    },
+    {
+      "id": "command_node-postscript-01",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "آرشیو داستان حالا هر پنج قطعهٔ بازسازی‌شدهٔ پروتکل، گزارش کامل و تأکید بازسازی رو نگه می‌داره. کارزار کامل شده.",
+      "request": {
+        "text": "[conversational tone] آرشیو داستان حالا هر پنج قطعهٔ بازسازی‌شدهٔ پروتکل، گزارش کامل و تأکید بازسازی رو نگه می‌داره. کارزار کامل شده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16117,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-01.wav"
+    },
+    {
+      "id": "command_node-postscript-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "External Vanguard links remain under review. No immediate threat is confirmed. These are future investigations, not an unfinished ending.",
+      "request": {
+        "text": "External Vanguard links remain under review. No immediate threat is confirmed. These are future investigations, not an unfinished ending.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16118,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-02.wav"
+    },
+    {
+      "id": "command_node-postscript-02",
+      "variant": "",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "ارتباط‌های بیرونی ونگارد همچنان در دست بررسیه. تهدید فوری تأیید نشده. این‌ها بررسی‌های آینده‌ان، نه پایانی ناتمام.",
+      "request": {
+        "text": "[conversational tone] ارتباط‌های بیرونی ونگارد همچنان در دست بررسیه. تهدید فوری تأیید نشده. این‌ها بررسی‌های آینده‌ان، نه پایانی ناتمام.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16119,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-02.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "en-US",
+      "caption": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+      "request": {
+        "text": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16120,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "",
+      "speaker": "COMMANDER",
+      "locale": "fa-IR",
+      "caption": "پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+      "request": {
+        "text": "[conversational tone] پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16121,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/N2yn1e9QeLHJNAg4zbMW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "en-US",
+      "caption": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+      "request": {
+        "text": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16122,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03_female.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "_female",
+      "speaker": "COMMANDER_FEMALE",
+      "locale": "fa-IR",
+      "caption": "پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+      "request": {
+        "text": "[conversational tone] پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16123,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/CeoZEQcJ58ClpEHgRyKe",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03_female.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "en-US",
+      "caption": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+      "request": {
+        "text": "Then we do not invent a threat. Open the restored operations map for replay. This city has work ahead, and room to live.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 16124,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/en/command_node-postscript-03_neutral.wav"
+    },
+    {
+      "id": "command_node-postscript-03",
+      "variant": "_neutral",
+      "speaker": "COMMANDER_NEUTRAL",
+      "locale": "fa-IR",
+      "caption": "پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+      "request": {
+        "text": "[conversational tone] پس تهدیدی اختراع نمی‌کنیم. نقشهٔ عملیات بازیابی‌شده رو برای مرور دوباره باز کنین. این شهر کار پیش رو داره و جایی برای زندگی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 16125,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/RaldHBrhNdVemVVS3wAW",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M05CommandNode/Voice/fa/command_node-postscript-03_neutral.wav"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "status": "Passed_AutomatedVoiceValidation",
+  "provider": "ElevenLabs",
+  "destination": "https://api.elevenlabs.io/v1/text-to-speech/{establishedVoiceId}",
+  "scope": "Generate missing local English/Farsi recordings and install in existing comics",
+  "missingCanonicalLines": 55,
+  "expectedNewClips": 126,
+  "commanderVariantClips": 16,
+  "captionCharacters": 21204,
+  "missions": {
+    "saga.ch05.m03.network_collapse": {
+      "lines": 7,
+      "clips": 14
+    },
+    "saga.ch05.m04.last_corridor": {
+      "lines": 7,
+      "clips": 14
+    },
+    "saga.ch05.m05.command_node": {
+      "lines": 41,
+      "clips": 98
+    }
+  },
+  "existingChapter04": {
+    "lines": 43,
+    "englishBindings": "Present",
+    "farsiBindings": "Present"
+  },
+  "existingChapter05M01M02": {
+    "lines": 21,
+    "englishBindings": "Present",
+    "farsiBindings": "Present"
+  },
+  "generation": "Passed: 126 recordings generated",
+  "unityPreparationValidation": "Passed",
+  "waveformQA": "Passed: 126 clips; exact captions, established cast, audio SHA-256, PCM format, non-silent signal, no sample clipping, duration",
+  "audibleListeningAcceptance": "Pending",
+  "normalInputMissionJourney": "Pending",
+  "realPlayerDeviceAcceptance": "Pending",
+  "commitPush": "Authorized; delivery confirmed in chat after push",
+  "failedEvidence": [
+    "unity-preparation-01-failed.log",
+    "unity-playback-probe-compile-failure.json",
+    "unity-native-playback-01-failed.log",
+    "unity-native-playback-02-failed.log"
+  ],
+  "note": "All 126 recordings generated and installed. Automated waveform, canonical-copy, cast, unique binding, voice window, and native playback checks passed. Previous failed probe evidence is retained. Human listening, normal-input mission journeys and real player/device acceptance remain separate pending gates.",
+  "unityCompilation": "Passed",
+  "passedEvidence": [
+    "unity-preparation-02-passed.log",
+    "voice-generation.log",
+    "waveform-qa.log",
+    "unity-voice-install-passed.log",
+    "unity-native-playback-03-passed.log",
+    "native-playback-qa.json",
+    "asset-preservation-qa.json"
+  ],
+  "providerApproval": "Explicit user approval received 2026-10-14 for the prepared 126-clip payload and existing paid account",
+  "approvedPayloadSha256": "c4c626a381353df9d84185feea845a244c54c94bcabb22686aaeb8abf95aa28d",
+  "approvedPayloadMatchesCurrentCanonicalCopy": true,
+  "sharedEditor": "All owned validation complete; original scenes restored; no Unity or Hub process terminated",
+  "unityBindingsAndVoiceWindows": "Passed: 126 recordings; exact captions, unique Farsi bindings, all Commander portrait variants, full voice windows",
+  "nativePlaybackRepair": "Reuse the existing AudioListener; enforce exactly one active listener. Detect full native sample progression and source completion despite an Editor-frame timing mismatch. Probe neutral Commander through the production anonymous default; V3 has six named portraits, so selecting picker index 6 clamps to the last female portrait.",
+  "duplicateListenerWarningsAfterFix": 0,
+  "unityNativePlayback": "Passed: all 126 starts; six full-length samples; two locales; three Commander voices",
+  "duplicateListenerWarningsInPassedRun": 0
+}

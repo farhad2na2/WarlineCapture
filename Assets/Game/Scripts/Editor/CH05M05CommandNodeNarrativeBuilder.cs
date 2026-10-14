@@ -40,13 +40,26 @@ namespace Game.Editor
             "evidence_low"=>CH05M05CommandNodeNarrativeCopy.EvidenceLow, "infrastructure_high"=>CH05M05CommandNodeNarrativeCopy.InfrastructureHigh,
             "infrastructure_low"=>CH05M05CommandNodeNarrativeCopy.InfrastructureLow, _=>CH05M05CommandNodeNarrativeCopy.Postscript };
 
-        [MenuItem("Game/Campaign/Command Node/Build Captioned Narrative")]
-        public static void BuildAndInstall() => BuildWithoutVoices();
+        [MenuItem("Game/Campaign/Command Node/Install Comic Voices")]
+        public static void InstallComicVoices() => CampaignFinaleComicVoiceInstaller.Install(
+            Path, VoiceRoot, "command_node_voice_manifest.json", CampaignFinaleComicVoiceInstaller.CommandNodeCopy());
+
+        [MenuItem("Game/Campaign/Command Node/Build Narrative")]
+        public static void BuildAndInstall()
+        {
+            if (!CampaignFinaleComicVoiceInstaller.HasCompleteRecordings(VoiceRoot, CampaignFinaleComicVoiceInstaller.CommandNodeCopy()))
+                throw new InvalidOperationException("Complete bilingual Command Node voices are required");
+            BuildNarrativeCore();
+            InstallComicVoices();
+        }
 
         public static void BuildWithoutVoices()
         {
             BuildNarrativeCore();
-            Debug.Log("[CommandNodeNarrativeVoices] result=Pending expectedClips=0 installedClips=0 externalRequests=0 mode=caption-only nativePlayback=Pending voices=NotRequested");
+            if (CampaignFinaleComicVoiceInstaller.HasCompleteRecordings(VoiceRoot, CampaignFinaleComicVoiceInstaller.CommandNodeCopy()))
+                InstallComicVoices();
+            else
+                Debug.Log("[CommandNodeNarrativeVoices] result=Pending expectedClips=98 mode=caption-only nativePlayback=Pending");
         }
 
         private static void BuildNarrativeCore()
@@ -59,7 +72,7 @@ namespace Game.Editor
                 ConfigureSequence(stage, Copy(stage), Art(stage), basis.Single(x => x.SequenceId.EndsWith("." + (stage=="brief"||stage=="comms"?stage:"debrief"), StringComparison.Ordinal)));
             AddPersian(); AssetDatabase.SaveAssets();
             CampaignMissionComicCoverageValidation.ValidateMissionDistinct(Path, "seq.ch05.m05.");
-            ValidateCaptionedFinale();
+            ValidateFinale();
             Scene scene = EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath, OpenSceneMode.Single);
             var bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include)
                 ?? throw new InvalidOperationException("Menu bootstrap missing");
@@ -97,7 +110,7 @@ namespace Game.Editor
                 foreach (string stage in Stages.Where(stage=>Art(stage)==panel)) foreach (int index in Enumerable.Range(0,Copy(stage).Length)) foreach (bool wide in new[] {false,true})
                     if (Panel(stage, wide, index) == null) throw new InvalidOperationException("Comic crop missing: " + panel);
             }
-            Debug.Log("[CommandNodeMedia] result=Passed comics=5 dialogueCrops=41 installedVoices=0 mode=caption-only");
+            Debug.Log("[CommandNodeMedia] result=Passed comics=5 dialogueCrops=41 voiceGate=Separate");
         }
 
         private static void ConfigureSequence(string stage, CommandNodeNarrativeLine[] lines, string panel, NarrativeSequenceConfig basis)
@@ -146,9 +159,11 @@ namespace Game.Editor
                 var entry = authored.GetArrayElementAtIndex(0); var line = lines[i];
                 S(entry, "lineId", line.Id); S(entry, "textKey", line.Key); S(entry, "englishFallback", line.English);
                 entry.FindPropertyRelative("speaker").intValue = (int)line.Speaker;
-                entry.FindPropertyRelative("voiceClip").objectReferenceValue = null;
-                entry.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = null;
-                entry.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = null;
+                entry.FindPropertyRelative("voiceClip").objectReferenceValue = CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false);
+                entry.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = line.Speaker == NarrativeSpeakerId.Commander
+                    ? CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false, "_female") : null;
+                entry.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = line.Speaker == NarrativeSpeakerId.Commander
+                    ? CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false, "_neutral") : null;
                 entry.FindPropertyRelative("startSeconds").floatValue = 0;
                 entry.FindPropertyRelative("deadlineSeconds").floatValue = Duration(line);
                 entry.FindPropertyRelative("essentialCaption").boolValue = true;
@@ -219,7 +234,7 @@ namespace Game.Editor
             .OfType<Sprite>().FirstOrDefault(x => x.name == PanelName(panel, wide, index));
         private static string PanelName(string panel, bool wide, int index) => "CH05M05_CommandNode-" + panel + "-" + (char)('a'+index) + (wide ? "-20x9" : "-16x9");
         private static float Duration(in CommandNodeNarrativeLine line) =>
-            Mathf.Max(8f, Mathf.Max(line.English.Length, line.Persian.Length) / 14f);
+            CampaignFinaleComicVoiceInstaller.Duration(VoiceRoot, line.Id, line.Speaker, line.English, line.Persian);
         private static SpriteRect MakeRect(string name, Rect rect, SpriteRect[] previous) => new()
         {
             name = name, rect = rect, alignment = SpriteAlignment.Center, pivot = new Vector2(.5f, .5f),
@@ -233,17 +248,24 @@ namespace Game.Editor
             float t=count<2?.5f:(float)index/(count-1);
             return new Rect((width-w)*t,(height-h)*(1-t),w,h);
         }
-        public static void ValidateCaptionedFinale()
+        public static void ValidateFinale()
         {
             var configs=AssetDatabase.LoadAllAssetsAtPath(Path).OfType<NarrativeSequenceConfig>().ToArray();
             foreach(string stage in Stages)
             {
                 var config=configs.Single(x=>x.SequenceId==SequenceId(stage));
                 if(config.States.Count!=Copy(stage).Length+1)throw new InvalidOperationException("Wrong finale panel count: "+stage);
-                foreach(var state in config.States)foreach(var line in state.Lines)
-                    if(line.VoiceClip!=null||line.FemaleVoiceClip!=null||line.NeutralVoiceClip!=null)throw new InvalidOperationException("Caption-only finale contains a voice");
+                var expected = Copy(stage);
+                var lines = config.States.SelectMany(state => state.Lines).ToArray();
+                if (lines.Length != expected.Length) throw new InvalidOperationException("Wrong finale line count: " + stage);
+                foreach (var copy in expected)
+                {
+                    var line = lines.Single(l => l.LineId == copy.Id);
+                    if (line.TextKey != copy.Key || line.EnglishFallback != copy.English || line.Speaker != copy.Speaker)
+                        throw new InvalidOperationException("Finale canonical caption mismatch: " + copy.Id);
+                }
             }
-            Debug.Log("[CommandNodeCaptionedFinale] result=Passed sequences=12 panels=41 selectedPanels=38 chapterClosePanels=8 canonicalPanels=9 voices=0 endingGates=0");
+            Debug.Log("[CommandNodeFinale] result=Passed sequences=12 panels=41 selectedPanels=38 chapterClosePanels=8 canonicalPanels=9 voiceGate=Separate endingGates=0");
         }
         private static void S(SerializedProperty property, string field, string value) => property.FindPropertyRelative(field).stringValue = value;
     }

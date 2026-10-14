@@ -1,0 +1,259 @@
+{
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "network_collapse-brief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Three command nodes sit among homes and civic services. A blind long-range strike would destroy the audit with them. We take the ground route: clear each node’s guards, verify its external access, then disable only the confirmed node.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-01.wav",
+      "durationSeconds": 18.0,
+      "sha256": "fa98b273dcfd901b57601373047aeaa6467ad4c0efbade10a5a53beb517925e6",
+      "variant": "",
+      "captionSha256": "9d03ce1b8d33123dca37c2bfd588b46d07602488d8f9199de1711f9b74177098"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-brief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "سه گرهٔ فرماندهی بین خانه‌ها و خدمات شهری قرار دارن. یک حملهٔ دوربرد کور، گزارش بازرسی رو هم با اون‌ها نابود می‌کنه. از مسیر زمینی می‌ریم؛ نگهبان‌های هر گره رو پاک‌سازی کنین، دسترسی بیرونیش رو تأیید کنین، بعد فقط گرهٔ تأییدشده رو از کار بندازین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-01.wav",
+      "durationSeconds": 21.12,
+      "sha256": "6d0e0023dcf07e974b074b4af42f0bbfa5fdafcd3b509f3301567e7809b9ac41",
+      "variant": "",
+      "captionSha256": "94a9ce59e554da36e468a683310acd84a89b758aeb63544758fa63c3785a238e"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-brief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Work through the three nodes in order. After clearing each guard group, hold the original engineer at its recon marker for six seconds. That confirms the node for Attack. After the third node, bring the engineer to the audit custody marker and hold for six seconds.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-02.wav",
+      "durationSeconds": 16.24,
+      "sha256": "ba7499d967720c394d24458b356abc331ff5ce63e371eaa8f8b850f276408e68",
+      "variant": "",
+      "captionSha256": "0992b176273476fd0e7ff97f88fcd34bcdb9981ee3172fe062b9fe704276e824"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-brief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سه گره رو به ترتیب پیش ببرین. بعد از پاک‌سازی نگهبان‌های هر گره، مهندس اصلی رو شش ثانیه روی نشان شناسایی همون گره نگه دارین. با این کار گره برای حمله تأیید می‌شه. بعد از گرهٔ سوم، مهندس رو به نشان نگهداری گزارش برسونین و شش ثانیه نگه دارین.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-02.wav",
+      "durationSeconds": 20.08,
+      "sha256": "582a3a65a59b7689bc3d29479864d2c23205e1f88b9d575f121185888ad8fddb",
+      "variant": "",
+      "captionSha256": "9f74f6a4dd5b7d96bce5fb1bf00a8d5757056076cf6c5573e4d32e6908e6a18d"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Protect both civic buildings, their staff, the original engineer and the APC. Once the audit is secured, board the engineer into the APC and move to the marked extraction point. Hold there for six seconds. Preserving the people and the proof is part of the same mission.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-brief-03.wav",
+      "durationSeconds": 17.84,
+      "sha256": "498e4df5e81755c36fee75b05678ffe01929ac634c510765efa921e2e0f6efe7",
+      "variant": "",
+      "captionSha256": "cd6aae4b810771c17b10b1c823b4bd28b322fa3df4cbc053bc4aef5a7f510c83"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "از هر دو ساختمان خدمات، کارکنانشون، مهندس اصلی و نفربر محافظت کنین. وقتی گزارش امن شد، مهندس رو سوار نفربر کنین و به محل مشخص‌شدهٔ خروج حرکت بدین. شش ثانیه اونجا بمونین. حفظ مردم و مدرک، هر دو بخشی از همین مأموریتن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-brief-03.wav",
+      "durationSeconds": 20.32,
+      "sha256": "138ffe42a8b69b3436823b2f7b7dd2a07515a80a9bb1c0f91746b67f280cfa20",
+      "variant": "",
+      "captionSha256": "9a005d3df59e2f2251411254c115c3aaf25dd67142a475843786236a3a18e962"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The first verified node is isolated. The opening records connect Qassem’s authorization to the original shutdown and the current attacks. The remaining audit still needs its physical chain. Continue in order; keep the engineer, protected services and custody equipment intact.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-comms-01.wav",
+      "durationSeconds": 20.56,
+      "sha256": "a728355abf6c0cd5e4aa1447cc1c7df69adfc7243d9972585e07d6176703a39f",
+      "variant": "",
+      "captionSha256": "da13ee6d0e40d1d238abb468fe8ddc99250df40009bc4a411fa7de6a0396aee8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "اولین گرهٔ تأییدشده جدا شد. سندهای اولیه، مجوز قاسم رو به خاموشی اصلی و حمله‌های فعلی وصل می‌کنن. بخش باقی‌موندهٔ گزارش هنوز به زنجیرهٔ فیزیکیش نیاز داره. به ترتیب ادامه بدین؛ مهندس، خدمات محافظت‌شده و تجهیزات نگهداری مدرک رو سالم نگه دارین.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-comms-01.wav",
+      "durationSeconds": 21.12,
+      "sha256": "167ef15725992101772a8571ecbde09d546dff20dd4af3227f74f29a8be27267",
+      "variant": "",
+      "captionSha256": "8583443e21c02e45f3dd9e2fa7a6b0867cd1958e2f6dc9d38f3242f5e77b2e87"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The verified network is down, and the engineer brought the complete audit out safely. The protected buildings and staff survived. We chose the slower route because destroying the evidence would only leave Qassem another chance to claim we lied.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-01.wav",
+      "durationSeconds": 16.08,
+      "sha256": "89bbd595a2c1bb0bbbd6f3326344be495bb154b5be775ed25a93707c30778f39",
+      "variant": "",
+      "captionSha256": "da6ba6206279e6867d4a55a81756905d2e5bf8daee757bbd8c7a45e2cf9c1b08"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "شبکهٔ تأییدشده از کار افتاد و مهندس، گزارش کامل رو سالم بیرون آورد. ساختمان‌ها و کارکنان محافظت‌شده سالم موندن. مسیر کندتر رو انتخاب کردیم، چون نابود کردن مدرک فقط یک فرصت دیگه به قاسم می‌داد تا بگه دروغ گفتیم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-01.wav",
+      "durationSeconds": 17.76,
+      "sha256": "9a6605426778d31f2ca43f9886792a8866246d2646ce349c94b3a6867c8563e2",
+      "variant": "",
+      "captionSha256": "b95ddaed2ddc0fe59f41099fbf2afadd249afad2f85e5d849f77236715015dd8"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The complete audit ties Qassem to the original override, the attempted erasure, Ash Line bombings, false reports, diverted Fuel and Vanguard hardware. Civilian and military authorities have copies. He manufactured the crisis to make permanent emergency rule appear necessary.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-02.wav",
+      "durationSeconds": 20.16,
+      "sha256": "9606ec4daa401360aff613e0ecff98b72f2685de8e56ed999c2864aac17b9d9d",
+      "variant": "",
+      "captionSha256": "fda01f9215b0947deb9f2bdcd7ed0bc750c723e0402650507cc17f1bfcd51bf9"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "گزارش کامل، قاسم رو به فرمان اصلی، تلاش برای پاک کردن مدارک، بمب‌گذاری‌های خط خاکستر، گزارش‌های دروغ، سوخت منحرف‌شده و تجهیزات ونگارد وصل می‌کنه. مقام‌های غیرنظامی و نظامی نسخه‌هاش رو دارن. اون بحران رو ساخت تا حکومت اضطراری دائمی رو ضروری جلوه بده.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-02.wav",
+      "durationSeconds": 21.76,
+      "sha256": "65081d06c181be9569f56b989e50cc9bff330702ea669f04dddc3563aa3afa69",
+      "variant": "",
+      "captionSha256": "dbd794f305c6422dac42839d828489956b813eb8f6f60ed6fa51033b2e177d99"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_collapse-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The Relay complex is still sealed. The physical access keys, engineers, medical supplies, Fuel and reinforcements must reach the city center. The next corridor carries what Sahrin needs to recover; keep those priorities connected.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/en/network_collapse-debrief-03.wav",
+      "durationSeconds": 14.8,
+      "sha256": "f1ee52ebfed993d53a9113bcd72937a8f90e858f914a533c1213bf23dbe1dd5f",
+      "variant": "",
+      "captionSha256": "68c71e4e0f8e75daa24634ff880f80a49d6325f24e5ffb73862044d8a6a96217"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_collapse-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "مجموعهٔ رله هنوز بسته‌ست. کلیدهای فیزیکی دسترسی، مهندس‌ها، تجهیزات پزشکی، سوخت و نیروهای کمکی باید به مرکز شهر برسن. مسیر بعدی، چیزهایی رو حمل می‌کنه که سهرین برای بازیابی نیاز داره؛ این اولویت‌ها رو به هم پیوسته نگه دارین.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH05M03NetworkCollapse/Voice/fa/network_collapse-debrief-03.wav",
+      "durationSeconds": 19.44,
+      "sha256": "b3b72a31f61e102d75ef175477a32d6bcac92bd1228d2abeb1d89d038028e313",
+      "variant": "",
+      "captionSha256": "83f6e9b4d19647dd006153a5b98b2e373ef51f4a5a4c5843333d26cfee0ca0a8"
+    }
+  ],
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "missionId": "saga.ch05.m03.network_collapse",
+  "generatedAtUtc": "2026-10-14T06:33:13.600330+00:00",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  }
+}

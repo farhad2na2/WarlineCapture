@@ -40,16 +40,16 @@ MonoBehaviour:
         chose the slower route because destroying the evidence would only leave Qassem
         another chance to claim we lied.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 38a073412c8a44389a861ab0e1e218cc, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 17.428572
+      deadlineSeconds: 18.26
       essentialCaption: 1
     continueStateId: NetworkCollapse-debrief-1
     skipStateId: NetworkCollapse-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.428572
+    durationSeconds: 18.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -87,16 +87,16 @@ MonoBehaviour:
         hardware. Civilian and military authorities have copies. He manufactured
         the crisis to make permanent emergency rule appear necessary.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 90fed40080aba421692a2ef584e6d749, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.642857
+      deadlineSeconds: 22.26
       essentialCaption: 1
     continueStateId: NetworkCollapse-debrief-2
     skipStateId: NetworkCollapse-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.642857
+    durationSeconds: 22.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -134,16 +134,16 @@ MonoBehaviour:
         center. The next corridor carries what Sahrin needs to recover; keep those
         priorities connected.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 50e05d49931b7491487a6c38c51b17e6, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 16.428572
+      deadlineSeconds: 19.94
       essentialCaption: 1
     continueStateId: NetworkCollapse-debrief-complete
     skipStateId: NetworkCollapse-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 16.428572
+    durationSeconds: 19.94
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -231,16 +231,16 @@ MonoBehaviour:
         route: clear each node\u2019s guards, verify its external access, then disable
         only the confirmed node."
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 95efabd8747c742e3902f2d1876d1f38, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 17.5
+      deadlineSeconds: 21.62
       essentialCaption: 1
     continueStateId: NetworkCollapse-brief-1
     skipStateId: NetworkCollapse-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.5
+    durationSeconds: 21.62
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -278,16 +278,16 @@ MonoBehaviour:
         That confirms the node for Attack. After the third node, bring the engineer
         to the audit custody marker and hold for six seconds.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 25d74688c52bf4a69ac21bc5ee90d2df, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 18.928572
+      deadlineSeconds: 20.58
       essentialCaption: 1
     continueStateId: NetworkCollapse-brief-2
     skipStateId: NetworkCollapse-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 18.928572
+    durationSeconds: 20.58
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -325,16 +325,16 @@ MonoBehaviour:
         move to the marked extraction point. Hold there for six seconds. Preserving
         the people and the proof is part of the same mission.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 2e41127ce5d7e48a689b5142136a06ae, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.285715
+      deadlineSeconds: 20.82
       essentialCaption: 1
     continueStateId: NetworkCollapse-brief-complete
     skipStateId: NetworkCollapse-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.285715
+    durationSeconds: 20.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -422,16 +422,16 @@ MonoBehaviour:
         attacks. The remaining audit still needs its physical chain. Continue in
         order; keep the engineer, protected services and custody equipment intact."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 362612d4ed8b5433ca0775e16880da37, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 19.714285
+      deadlineSeconds: 21.62
       essentialCaption: 1
     continueStateId: NetworkCollapse-comms-complete
     skipStateId: NetworkCollapse-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 19.714285
+    durationSeconds: 21.62
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

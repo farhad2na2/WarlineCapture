@@ -1,0 +1,17 @@
+{
+  "status": "Passed",
+  "narrativeAssets": 3,
+  "onlyNarrativeFieldsChanged": [
+    "voiceClip",
+    "femaleVoiceClip",
+    "neutralVoiceClip",
+    "deadlineSeconds",
+    "durationSeconds"
+  ],
+  "captionsPanelsAndRoutes": "Unchanged",
+  "newPersianVoiceEntries": 55,
+  "previousPersianLocaleEntries": "Unchanged",
+  "newRecordingCount": 126,
+  "unityMetaCoverage": "Complete",
+  "evidence": "Exact comparison with HEAD excluding only voice/timing fields; locale comparison after removing exactly the 55 new voice entries"
+}

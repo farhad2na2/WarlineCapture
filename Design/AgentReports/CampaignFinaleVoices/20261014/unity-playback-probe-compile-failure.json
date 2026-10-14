@@ -1,0 +1,7 @@
+{
+  "status": "Failed",
+  "error": "Assets/Game/Scripts/Editor/CampaignFinaleComicVoicePlaybackProbe.cs(150,33): error CS0104: 'SettingsService' is an ambiguous reference between 'Game.UI.Runtime.SettingsService' and 'UnityEditor.SettingsService'",
+  "repair": "Qualified Game.UI.Runtime.SettingsService.Defaults",
+  "source": "Unity Pipeline get_console_logs",
+  "timestampUtc": "2026-10-14T06:42:13.9411490Z"
+}

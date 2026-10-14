@@ -23,13 +23,26 @@ namespace Game.Editor
         public const string VoiceRoot = "Assets/Game/Audio/Narrative/CH05M04LastCorridor/Voice";
         private static readonly string[] PanelNames = {"CH05M04_LastCorridor", "CH05M04_LastCorridor_Comms", "CH05M04_LastCorridor_Debrief"};
 
-        [MenuItem("Game/Campaign/Last Corridor/Build Captioned Narrative")]
-        public static void BuildAndInstall() => BuildWithoutVoices();
+        [MenuItem("Game/Campaign/Last Corridor/Install Comic Voices")]
+        public static void InstallComicVoices() => CampaignFinaleComicVoiceInstaller.Install(
+            Path, VoiceRoot, "last_corridor_voice_manifest.json", CampaignFinaleComicVoiceInstaller.LastCorridorCopy());
+
+        [MenuItem("Game/Campaign/Last Corridor/Build Narrative")]
+        public static void BuildAndInstall()
+        {
+            if (!CampaignFinaleComicVoiceInstaller.HasCompleteRecordings(VoiceRoot, CampaignFinaleComicVoiceInstaller.LastCorridorCopy()))
+                throw new InvalidOperationException("Complete bilingual Last Corridor voices are required");
+            BuildNarrativeCore();
+            InstallComicVoices();
+        }
 
         public static void BuildWithoutVoices()
         {
             BuildNarrativeCore();
-            Debug.Log("[LastCorridorNarrativeVoices] result=Pending expectedClips=14 installedClips=0 externalRequests=0 mode=caption-only nativePlayback=Pending");
+            if (CampaignFinaleComicVoiceInstaller.HasCompleteRecordings(VoiceRoot, CampaignFinaleComicVoiceInstaller.LastCorridorCopy()))
+                InstallComicVoices();
+            else
+                Debug.Log("[LastCorridorNarrativeVoices] result=Pending expectedClips=14 mode=caption-only nativePlayback=Pending");
         }
 
         private static void BuildNarrativeCore()
@@ -82,7 +95,7 @@ namespace Game.Editor
                 foreach (int index in Enumerable.Range(0, 3)) foreach (bool wide in new[] {false, true})
                     if (Panel(panel, wide, index) == null) throw new InvalidOperationException("Comic crop missing: " + panel);
             }
-            Debug.Log("[LastCorridorMedia] result=Passed comics=3 dialogueCrops=7 installedVoices=0 mode=caption-only");
+            Debug.Log("[LastCorridorMedia] result=Passed comics=3 dialogueCrops=7 voiceGate=Separate");
         }
 
         private static void ConfigureSequence(string stage, LastCorridorNarrativeLine[] lines, string panel, NarrativeSequenceConfig basis)
@@ -131,9 +144,11 @@ namespace Game.Editor
                 var entry = authored.GetArrayElementAtIndex(0); var line = lines[i];
                 S(entry, "lineId", line.Id); S(entry, "textKey", line.Key); S(entry, "englishFallback", line.English);
                 entry.FindPropertyRelative("speaker").intValue = (int)line.Speaker;
-                entry.FindPropertyRelative("voiceClip").objectReferenceValue = null;
-                entry.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = null;
-                entry.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = null;
+                entry.FindPropertyRelative("voiceClip").objectReferenceValue = CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false);
+                entry.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = line.Speaker == NarrativeSpeakerId.Commander
+                    ? CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false, "_female") : null;
+                entry.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = line.Speaker == NarrativeSpeakerId.Commander
+                    ? CampaignFinaleComicVoiceInstaller.Voice(VoiceRoot, line.Id, false, "_neutral") : null;
                 entry.FindPropertyRelative("startSeconds").floatValue = 0;
                 entry.FindPropertyRelative("deadlineSeconds").floatValue = Duration(line);
                 entry.FindPropertyRelative("essentialCaption").boolValue = true;
@@ -205,7 +220,7 @@ namespace Game.Editor
             .OfType<Sprite>().FirstOrDefault(x => x.name == PanelName(panel, wide, index));
         private static string PanelName(string panel, bool wide, int index) => System.IO.Path.GetFileName(panel) + "-" + (char)('a'+index) + (wide ? "-20x9" : "-16x9");
         private static float Duration(in LastCorridorNarrativeLine line) =>
-            Mathf.Max(8f, Mathf.Max(line.English.Length, line.Persian.Length) / 14f);
+            CampaignFinaleComicVoiceInstaller.Duration(VoiceRoot, line.Id, line.Speaker, line.English, line.Persian);
         private static SpriteRect MakeRect(string name, Rect rect, SpriteRect[] previous) => new()
         {
             name = name, rect = rect, alignment = SpriteAlignment.Center, pivot = new Vector2(.5f, .5f),

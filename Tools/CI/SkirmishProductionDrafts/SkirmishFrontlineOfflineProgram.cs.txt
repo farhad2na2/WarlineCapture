@@ -1,0 +1,51 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using Newtonsoft.Json;
+using NUnit.Framework;
+
+// Offline execution adapters only. No reducer/gameplay behavior is stubbed.
+// This serializer proves value-state round trips through real Newtonsoft; it does
+// not claim Unity JsonUtility/native checkpoint compatibility.
+namespace UnityEngine
+{
+    public static class JsonUtility
+    {
+        public static string ToJson(object value) => JsonConvert.SerializeObject(value, Formatting.None);
+        public static T FromJson<T>(string value) => JsonConvert.DeserializeObject<T>(value);
+    }
+    public static class Debug
+    {
+        public static void Log(object value) => Console.WriteLine(value);
+        public static void LogError(object value) => Console.Error.WriteLine(value);
+    }
+}
+
+internal static class SkirmishFrontlineOfflineProgram
+{
+    public static int Main()
+    {
+        var suite = new Game.Tests.Editor.SkirmishFrontlineReducerTests();
+        var tests = suite.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(method => method.GetCustomAttributes(typeof(TestAttribute), false).Length != 0)
+            .OrderBy(method => method.Name, StringComparer.Ordinal).ToArray();
+        if (tests.Length != 13) { Console.Error.WriteLine("Expected exactly 13 actual NUnit methods; got " + tests.Length); return 2; }
+        int passed = 0;
+        foreach (var test in tests)
+        {
+            try
+            {
+                test.Invoke(suite, null);
+                passed++;
+                Console.WriteLine("[FrontlineOfflineRule] result=Passed test=" + test.Name);
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine("[FrontlineOfflineRule] result=Failed test=" + test.Name + "\n" + (error.InnerException ?? error));
+            }
+        }
+        Console.WriteLine("[SkirmishFrontlineOffline] result=" + (passed == tests.Length ? "Passed" : "Failed") +
+            " tests=" + tests.Length + " passed=" + passed + " reducer=ActualDraft assertions=ActualNUnit json=Newtonsoft executedInUnity=0");
+        return passed == tests.Length ? 0 : 1;
+    }
+}

@@ -13,14 +13,27 @@ namespace Game.UI.Runtime
         public static readonly string[] MapIds = { "DB", "CC", "MP", "IB", "AP" };
         public static readonly string[] ObjectiveIds = { "BA", "FC", "BT", "CE" };
 
-        /// <summary>Top-left normalised rectangles measured on theater_collage.png.</summary>
+        /// <summary>
+        /// Hit zones for the one painted collage. They follow the organic territories
+        /// and must stay borderless so the plate is the only outline.
+        /// </summary>
         public static readonly Rect[] TheaterRegions =
         {
-            new Rect(0.016f, 0.064f, 0.315f, 0.411f),
-            new Rect(0.345f, 0.064f, 0.307f, 0.410f),
-            new Rect(0.665f, 0.064f, 0.318f, 0.408f),
-            new Rect(0.151f, 0.504f, 0.340f, 0.424f),
-            new Rect(0.511f, 0.504f, 0.335f, 0.424f)
+            new Rect(0.00f, 0.00f, 0.43f, 0.54f),
+            new Rect(0.38f, 0.00f, 0.34f, 0.50f),
+            new Rect(0.66f, 0.00f, 0.34f, 0.48f),
+            new Rect(0.00f, 0.46f, 0.48f, 0.54f),
+            new Rect(0.42f, 0.44f, 0.58f, 0.56f)
+        };
+
+        /// <summary>Label centres on theater_collage.png, top-left normalised, clear of the shared edges.</summary>
+        public static readonly Vector2[] TheaterLabelCentres =
+        {
+            new Vector2(0.18f, 0.26f),
+            new Vector2(0.54f, 0.20f),
+            new Vector2(0.84f, 0.22f),
+            new Vector2(0.20f, 0.74f),
+            new Vector2(0.70f, 0.74f)
         };
 
         public static string TheaterPlate => ResourceRoot + "theater_collage";
@@ -67,6 +80,16 @@ namespace Game.UI.Runtime
 
         public static string NewBadge => ResourceRoot + "icon_new";
         public static string Crest => ResourceRoot + "icon_crest";
+        public static string Corner => ResourceRoot + "icon_corner";
+
+        public static string CellPreview(string mapId, string objectiveId, string army, string start)
+        {
+            return ResourceRoot + "cell_"
+                + (mapId ?? string.Empty).ToLowerInvariant() + "_"
+                + (objectiveId ?? string.Empty).ToLowerInvariant() + "_"
+                + (army ?? string.Empty).ToLowerInvariant()
+                + (start ?? string.Empty).ToLowerInvariant();
+        }
 
         public static string PreviewKey(string scenarioId, string mapId)
         {
@@ -89,33 +112,45 @@ namespace Game.UI.Runtime
                 case "CC":
                     title = fa ? "چهارراه شهر" : "CITY CROSSROADS";
                     geography = fa
-                        ? "خیابان‌های باز، مسیر خدماتی و کوچه‌های پوشیده."
+                        ? "خیابان های باز، مسیر خدماتی و کوچه های پوشیده."
                         : "Open streets, a service lane and covered blocks.";
                     return;
                 case "MP":
-                    title = fa ? "رویکرد شکست زره" : "ARMOR BREAK APPROACH";
+                    title = fa ? "گذرگاه کوهستان" : "MOUNTAIN PASS";
                     geography = fa
-                        ? "یک جاده پهن و یک مسیر کناری. اینجا گردنه کوهستانی نیست."
-                        : "A broad road and a side route. This ground is not a mountain pass.";
+                        ? "رویکرد شکست زره و یک مسیر کناری، روی زمین کمپین موجود."
+                        : "The Armor Break approach and a side route, on the existing Campaign ground.";
                     return;
                 case "IB":
                     title = fa ? "حوضه صنعتی" : "INDUSTRIAL BASIN";
                     geography = fa
-                        ? "حیاط‌های صنعتی، مسیر باربری و پالایشگاه."
+                        ? "حیاط های صنعتی، مسیر باربری و پالایشگاه."
                         : "Industrial yards, a freight route and the refinery.";
                     return;
                 case "AP":
                     title = fa ? "دشت فرودگاه" : "AIRFIELD PLAINS";
                     geography = fa
-                        ? "یک باند، پیشخان و جاده‌های دور فرودگاه."
+                        ? "یک باند، پیشخان و جاده های دور فرودگاه."
                         : "One runway, the apron and the perimeter roads.";
                     return;
                 default:
                     title = fa ? "پایگاه کویر" : "DESERT BASE";
                     geography = fa
-                        ? "جاده‌های باز کویر و لبه شهر."
+                        ? "جاده های باز کویر و لبه شهر."
                         : "Open desert roads and the edge of the city.";
                     return;
+            }
+        }
+
+        public static void ShortTitle(string mapId, bool fa, out string label)
+        {
+            switch (mapId)
+            {
+                case "CC": label = fa ? "شهر" : "CITY"; return;
+                case "MP": label = fa ? "کوهستان" : "PASS"; return;
+                case "IB": label = fa ? "حوضه" : "BASIN"; return;
+                case "AP": label = fa ? "فرودگاه" : "AIRFIELD"; return;
+                default: label = fa ? "کویر" : "DESERT"; return;
             }
         }
 
@@ -213,7 +248,7 @@ namespace Game.UI.Runtime
                         ? "این نبرد در بسته اصلی است. برای شروع، آن را از فروشگاه بگیر."
                         : "This battle is in the core package. Open the store to add it.";
                 case "locked.unavailable":
-                    return fa ? "این نبرد الان شروع نمی‌شود." : "This battle cannot be started.";
+                    return fa ? "این نبرد الان شروع نمی شود." : "This battle cannot be started.";
                 case "locked.planned":
                     return fa ? "این نبرد هنوز در حال ساخت است." : "This battle is still in development.";
                 default:

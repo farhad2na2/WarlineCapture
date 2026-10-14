@@ -14,31 +14,15 @@ namespace Game.UI.Runtime
         private static readonly string[] Armies = { "G", "A", "C" };
         private static readonly string[] Starts = { "F", "E" };
 
+        /// <summary>Stable 3×2. Nudges used to stack the six cards on top of each other.</summary>
         private static readonly Vector2[] Arc =
         {
-            new Vector2(0.22f, 0.30f),
-            new Vector2(0.40f, 0.22f),
-            new Vector2(0.60f, 0.28f),
-            new Vector2(0.30f, 0.58f),
-            new Vector2(0.50f, 0.66f),
-            new Vector2(0.72f, 0.50f)
-        };
-
-        private static readonly Vector2[] MapNudge =
-        {
-            new Vector2(0.00f, 0.00f),
-            new Vector2(0.04f, 0.03f),
-            new Vector2(-0.03f, 0.04f),
-            new Vector2(0.03f, -0.03f),
-            new Vector2(-0.02f, 0.02f)
-        };
-
-        private static readonly Vector2[] ObjectiveNudge =
-        {
-            new Vector2(0.00f, 0.00f),
-            new Vector2(0.05f, 0.04f),
-            new Vector2(-0.04f, 0.05f),
-            new Vector2(0.03f, -0.04f)
+            new Vector2(0.20f, 0.30f),
+            new Vector2(0.50f, 0.30f),
+            new Vector2(0.80f, 0.30f),
+            new Vector2(0.20f, 0.70f),
+            new Vector2(0.50f, 0.70f),
+            new Vector2(0.80f, 0.70f)
         };
 
         public static bool TryGet(string pinId, out Vector2 centreFromTopLeft)
@@ -58,10 +42,7 @@ namespace Game.UI.Runtime
             int objectiveIndex = Index(Objectives, objective);
             if (mapIndex < 0 || objectiveIndex < 0)
                 return false;
-            Vector2 point = Arc[slot] + MapNudge[mapIndex] + ObjectiveNudge[objectiveIndex];
-            point.x = Mathf.Clamp(point.x, 0.22f, 0.78f);
-            point.y = Mathf.Clamp(point.y, 0.28f, 0.70f);
-            centreFromTopLeft = point;
+            centreFromTopLeft = Arc[slot];
             return true;
         }
 
@@ -77,10 +58,7 @@ namespace Game.UI.Runtime
                 return false;
             }
 
-            Vector2 point = Arc[armyIndex * 2 + startIndex] + MapNudge[map] + ObjectiveNudge[objective];
-            point.x = Mathf.Clamp(point.x, 0.22f, 0.78f);
-            point.y = Mathf.Clamp(point.y, 0.28f, 0.70f);
-            centreFromTopLeft = point;
+            centreFromTopLeft = Arc[armyIndex * 2 + startIndex];
             return true;
         }
 

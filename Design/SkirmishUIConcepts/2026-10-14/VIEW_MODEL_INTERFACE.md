@@ -86,8 +86,8 @@ Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/warline-skirmish
 
 Marker: `[SkirmishBattleLibraryCapture] result=Passed`.
 
-PNGs: `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/{theater|map|grid}-{16x9|20x9|4x3}-{en|fa-IR}.png` (18 files).
+PNGs: `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/{theater|map|grid}-{16x9|20x9|4x3}-{en|fa-IR}.png` (18 files) plus `{theater|map|grid}-16x9-{en|fa-IR}-notch.png` (6 files, 24 total). The notch set simulates a top cutout so the safe-area inset is visible.
 
 These captures are Editor renders. They are not visual sign-off, a normal-input playthrough, or device acceptance.
 
-The capture calls `QuickCustomScreenView.ApplyLibraryCaptureDemo()` so the PNGs show wins, medals and a recommendation. That fill stays off the runtime stub. A blank or uniform PNG fails the marker. A flat grey frame, including the `-nographics` clear colour, is a failed capture.
+The capture calls `QuickCustomScreenView.ApplyLibraryCaptureDemo()` so the PNGs show wins, medals, a recommendation, and the demo briefing (20:00, 12 v 12, Standard, 1,500 credits). It selects S001 and does not present the planned-lock line. That fill stays off the runtime stub. A blank or uniform PNG fails the marker. A flat grey frame, including the `-nographics` clear colour, is a failed capture. The third battlefield on the theatre plate is Mountain Pass.

@@ -257,7 +257,8 @@ namespace Game.UI.Runtime
                 {
                     UiLocalizedText.Set(scenarioDescription, briefing.Brief);
                 }
-                else if (!selected.IsPlayable)
+                else if (!selected.IsPlayable
+                    && !(_libraryViewModel is SkirmishLibraryStubViewModel captureDemo && captureDemo.IsCaptureDemo))
                 {
                     UiLocalizedText.Set(
                         scenarioDescription,

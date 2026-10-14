@@ -71,7 +71,7 @@ namespace Game.Editor
                             string path = Path.Combine(
                                 folder,
                                 States[stateIndex] + "-" + Sizes[sizeIndex].Name + "-" + Locales[localeIndex] + ".png");
-                            Render(prefab, Sizes[sizeIndex], States[stateIndex], path, created);
+                            Render(prefab, Sizes[sizeIndex], States[stateIndex], path, created, false);
                             var info = new FileInfo(path);
                             if (!info.Exists || info.Length < 2048)
                                 throw new InvalidOperationException("Capture was empty: " + path);
@@ -81,8 +81,26 @@ namespace Game.Editor
                     }
                 }
 
-                if (written != 18)
-                    throw new InvalidOperationException("Expected 18 captures, wrote " + written + ".");
+                var notchSize = new CaptureSize("16x9", 1920, 1080);
+                for (int localeIndex = 0; localeIndex < Locales.Length; localeIndex++)
+                {
+                    GameLocalization.SetLocale(Locales[localeIndex], false);
+                    for (int stateIndex = 0; stateIndex < States.Length; stateIndex++)
+                    {
+                        string path = Path.Combine(
+                            folder,
+                            States[stateIndex] + "-16x9-" + Locales[localeIndex] + "-notch.png");
+                        Render(prefab, notchSize, States[stateIndex], path, created, true);
+                        var info = new FileInfo(path);
+                        if (!info.Exists || info.Length < 2048)
+                            throw new InvalidOperationException("Capture was empty: " + path);
+                        RejectFlatCapture(path);
+                        written++;
+                    }
+                }
+
+                if (written != 24)
+                    throw new InvalidOperationException("Expected 24 captures, wrote " + written + ".");
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
                 if (quit)
                     EditorApplication.Exit(0);
@@ -108,7 +126,7 @@ namespace Game.Editor
             }
         }
 
-        private static void Render(GameObject prefab, CaptureSize size, string state, string path, System.Collections.Generic.List<UnityEngine.Object> created)
+        private static void Render(GameObject prefab, CaptureSize size, string state, string path, System.Collections.Generic.List<UnityEngine.Object> created, bool notch)
         {
             var cameraObject = new GameObject("SkirmishLibraryCaptureCamera");
             created.Add(cameraObject);
@@ -149,6 +167,11 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
             view.Bind(default);
             view.ApplyLibraryCaptureDemo();
+            var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
+            if (notch && safeFrame != null)
+                safeFrame.SetSimulatedInsets(size.Width, size.Height, 36f, 72f, 36f, 28f);
+            else
+                safeFrame?.ClearSimulatedInsets();
             instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             view.PresentLibraryCapture(state);
             Canvas.ForceUpdateCanvases();

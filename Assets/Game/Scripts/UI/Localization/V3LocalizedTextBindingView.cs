@@ -129,6 +129,8 @@ namespace Game.UI.Runtime
                 localized = UiShellRuntimeGateway.Localization.Get(localizationKey, source);
             }
 
+            localized = StripMissingFormatGlyphs(localized);
+
             bool rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             // A translated label owns its arrow direction (including Previous). Only
             // English fallbacks and runtime text need automatic forward-arrow mirroring.
@@ -251,7 +253,7 @@ namespace Game.UI.Runtime
             {
                 float fittedMax = Mathf.Max(14f, height / 1.65f);
                 authoredMax = Mathf.Min(authoredMax, fittedMax);
-                authoredMin = Mathf.Min(authoredMin, Mathf.Max(12f, authoredMax * 0.62f));
+                authoredMin = Mathf.Min(authoredMin, Mathf.Max(height >= 32f ? 15f : 12f, authoredMax * 0.62f));
                 target.overflowMode = TextOverflowModes.Overflow;
             }
 
@@ -275,6 +277,7 @@ namespace Game.UI.Runtime
         /// </summary>
         public static string ShapeForRendering(string value)
         {
+            value = StripMissingFormatGlyphs(value);
             if (string.IsNullOrEmpty(value) || !ContainsArabicScript(value))
                 return value ?? string.Empty;
 
@@ -287,6 +290,64 @@ namespace Game.UI.Runtime
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum); ApplyLocalization();}
         public void ConfigureFontBounds(float minimum,float maximum)
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum);}
+        /// <summary>
+        /// ZWNJ, ZWJ and a few Arabic punctuation marks are absent from the Farsi TMP
+        /// atlas and draw as a missing-glyph box, often at the end of a description line.
+        /// LTR isolates (U+2066/U+2069) stay so mixed Latin ids keep their order.
+        /// </summary>
+        private static string StripMissingFormatGlyphs(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value ?? string.Empty;
+            bool dirty = false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (IsMissingFormatGlyph(value[i]))
+                {
+                    dirty = true;
+                    break;
+                }
+            }
+
+            if (!dirty)
+                return value;
+            var builder = new StringBuilder(value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (c == '\u200C' || c == '\u200D' || c == '\u200B' || c == '\uFEFF' || c == '\u2060' || c == '\u061C')
+                    continue;
+                if (c == '\u060C')
+                {
+                    builder.Append(',');
+                    continue;
+                }
+
+                if (c == '\u061B')
+                {
+                    builder.Append(';');
+                    continue;
+                }
+
+                if (c == '\u061F' || c == '\u06D4')
+                {
+                    builder.Append(c == '\u061F' ? '?' : '.');
+                    continue;
+                }
+
+                builder.Append(c);
+            }
+
+            return builder.ToString();
+        }
+
+        private static bool IsMissingFormatGlyph(char value)
+        {
+            return value == '\u200C' || value == '\u200D' || value == '\u200B' || value == '\uFEFF'
+                || value == '\u2060' || value == '\u061C' || value == '\u060C' || value == '\u061B'
+                || value == '\u061F' || value == '\u06D4';
+        }
+
         private static string IsolateLatinRuns(string value)
         {
             if (string.IsNullOrEmpty(value) || value.IndexOf('\u2066') >= 0)

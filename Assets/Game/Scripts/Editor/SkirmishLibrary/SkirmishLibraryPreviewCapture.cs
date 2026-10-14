@@ -271,6 +271,9 @@ namespace Game.Editor
             Scene opened = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             if (!opened.IsValid())
                 throw new InvalidOperationException("Could not open " + scenePath + ".");
+            int subScenes = OpenSubScenesForPreview(opened);
+            Debug.Log("[SkirmishLibraryPreviewCapture] scene=" + scenePath + " subscenes=" + subScenes +
+                      " renderers=" + UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None).Length);
 
             Canvas[] canvases = UnityEngine.Object.FindObjectsByType<Canvas>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -294,8 +297,11 @@ namespace Game.Editor
 
             try
             {
+                // Warm shaders and lighting first; the first editor render of a freshly opened scene is unreliable.
+                for (int warm = 0; warm < 3; warm++)
+                    RenderShot(camera, shots[0], write: false);
                 for (int i = 0; i < shots.Count; i++)
-                    RenderShot(camera, shots[i]);
+                    RenderShot(camera, shots[i], write: true);
             }
             finally
             {
@@ -308,7 +314,33 @@ namespace Game.Editor
             }
         }
 
-        private static void RenderShot(Camera camera, Shot shot)
+        private static int OpenSubScenesForPreview(Scene root)
+        {
+            int count = 0;
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (GameObject go in root.GetRootGameObjects())
+            {
+                foreach (MonoBehaviour behaviour in go.GetComponentsInChildren<MonoBehaviour>(true))
+                {
+                    if (behaviour == null || behaviour.GetType().Name != "SubScene")
+                        continue;
+                    var serialized = new SerializedObject(behaviour);
+                    SerializedProperty asset = serialized.FindProperty("_SceneAsset");
+                    string path = asset != null && asset.objectReferenceValue != null
+                        ? AssetDatabase.GetAssetPath(asset.objectReferenceValue)
+                        : null;
+                    if (string.IsNullOrEmpty(path) || !seen.Add(path))
+                        continue;
+                    Scene sub = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                    if (sub.IsValid())
+                        count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static void RenderShot(Camera camera, Shot shot, bool write)
         {
             OperationMapCameraConfig pose = shot.Camera;
             camera.orthographic = pose.Orthographic;
@@ -340,6 +372,8 @@ namespace Game.Editor
                     0,
                     0);
                 image.Apply();
+                if (!write)
+                    return;
                 string absolute = ProjectPath(shot.OutputAssetPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(absolute) ?? absolute);
                 File.WriteAllBytes(absolute, image.EncodeToPNG());

@@ -396,13 +396,21 @@ namespace Game.UI.Runtime
         {
             if (_statRow == null)
                 return;
-            HideLegacyStat(_statRow, "Time");
             HideLegacyStat(_statRow, "Forces");
-            HideLegacyStat(_statRow, "Size");
             HideLegacyStat(_statRow, "Credits");
+            HideLegacyStat(_statRow, "SourcedFacts");
+            HideLegacyStat(_statRow, "FactsFrame");
+            EnsureStatTile(_statRow, "Time", 0f, fa ? "زمان" : "TIME");
+            EnsureStatTile(_statRow, "Size", 0f, fa ? "اندازه" : "SIZE");
             EnsureStatTile(_statRow, "Objective", 0f, fa ? "هدف" : "OBJECTIVE");
             EnsureStatTile(_statRow, "Army", 0f, fa ? "ارتش" : "ARMY");
             EnsureStatTile(_statRow, "Start", 0f, fa ? "آغاز" : "START");
+
+            string clock = briefing.ShowTime ? FormatClock(briefing.DeadlineSeconds) : string.Empty;
+            BindStatTile(_statRow.Find("Time"), fa ? "زمان" : "TIME", clock, true);
+            string sizeName = briefing.ShowSize ? LibraryText(briefing.SizeLocKey, fa) : string.Empty;
+            BindStatTile(_statRow.Find("Size"), fa ? "اندازه" : "SIZE", sizeName, false);
+
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
             string objectiveId = hasCard ? card.ObjectiveId : string.Empty;
@@ -416,93 +424,63 @@ namespace Game.UI.Runtime
                     objectiveId = entry.ObjectiveId;
             }
 
-            SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out string objective, out _);
+            string objective = string.Empty;
+            if (!string.IsNullOrEmpty(objectiveId))
+                SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out objective, out _);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
             SkirmishBattleLibraryArt.ProfileCopy(start, fa, out string startLabel);
-            float width = _statRow.rect.width > 200f ? _statRow.rect.width : _statRow.sizeDelta.x;
-            if (width < 200f)
-                width = 760f;
-            float tileWidth = (width - 16f) / 3f;
-            PlaceTruthfulTile(_statRow.Find("Objective"), 0f, tileWidth);
-            PlaceTruthfulTile(_statRow.Find("Army"), tileWidth + 8f, tileWidth);
-            PlaceTruthfulTile(_statRow.Find("Start"), (tileWidth + 8f) * 2f, tileWidth);
-            SetTile(_statRow.Find("Objective"), fa ? "هدف" : "OBJECTIVE", objective);
-            SetTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel);
-            SetTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel);
-            PresentSourcedFacts(briefing);
+            BindStatTile(_statRow.Find("Objective"), fa ? "هدف" : "OBJECTIVE", objective, false);
+            BindStatTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel, false);
+            BindStatTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel, false);
+            LayoutVisibleStatTiles();
         }
 
-        private void PresentSourcedFacts(SkirmishBriefingState briefing)
+        private void BindStatTile(Transform tile, string caption, string value, bool latinValue)
         {
-            bool sourced = briefing.RecommendedSize != SkirmishSizeId.None;
-            TMP_Text facts = EnsureSourcedFactsLabel();
-            if (facts == null)
+            if (tile == null)
                 return;
-            facts.gameObject.SetActive(sourced);
-            float frameWidth = _statRow.rect.width > 40f ? _statRow.rect.width : _statRow.sizeDelta.x;
-            if (frameWidth < 40f)
-                frameWidth = 518f;
-            PlaceTopLeft(facts.rectTransform, 0f, 50f, frameWidth, 22f);
-            RectTransform frame = EnsureFactsFrame();
-            if (frame != null)
+            if (string.IsNullOrEmpty(value))
             {
-                PlaceTopLeft(frame, 0f, 50f, frameWidth, 22f);
-                frame.gameObject.SetActive(!sourced);
+                tile.gameObject.SetActive(false);
+                return;
             }
 
-            if (!sourced)
+            tile.gameObject.SetActive(true);
+            SetTile(tile, caption, value);
+            TMP_Text valueText = tile.Find("Value")?.GetComponent<TMP_Text>();
+            if (valueText != null && latinValue)
+                valueText.isRightToLeftText = false;
+        }
+
+        private void LayoutVisibleStatTiles()
+        {
+            if (_statRow == null)
                 return;
-            string size = briefing.RecommendedSize == SkirmishSizeId.LargeWar
-                ? "Large war"
-                : briefing.RecommendedSize.ToString();
-            string clock = FormatClock(briefing.DeadlineSeconds);
-            string extent = briefing.MapWidthMetres > 0f && briefing.MapDepthMetres > 0f
-                ? Mathf.RoundToInt(briefing.MapWidthMetres).ToString(System.Globalization.CultureInfo.InvariantCulture)
-                    + " × "
-                    + Mathf.RoundToInt(briefing.MapDepthMetres).ToString(System.Globalization.CultureInfo.InvariantCulture)
-                    + " m"
-                : string.Empty;
-            string line = clock;
-            if (!string.IsNullOrEmpty(size))
-                line = string.IsNullOrEmpty(line) ? size : line + " · " + size;
-            if (!string.IsNullOrEmpty(extent))
-                line = string.IsNullOrEmpty(line) ? extent : line + " · " + extent;
-            SetCopy(facts, line, 15f, 20f);
-            facts.isRightToLeftText = false;
-            facts.textWrappingMode = TextWrappingModes.NoWrap;
-        }
+            string[] order = { "Time", "Size", "Objective", "Army", "Start" };
+            int count = 0;
+            for (int i = 0; i < order.Length; i++)
+            {
+                Transform tile = _statRow.Find(order[i]);
+                if (tile != null && tile.gameObject.activeSelf)
+                    count++;
+            }
 
-        private TMP_Text EnsureSourcedFactsLabel()
-        {
-            if (_statRow == null)
-                return null;
-            Transform existing = _statRow.Find("SourcedFacts");
-            if (existing != null)
-                return existing.GetComponent<TMP_Text>();
-            TMP_Text facts = CreateLabel(_statRow, "SourcedFacts", 16f);
-            PlaceTopLeft(facts.rectTransform, 0f, 50f, 740f, 22f);
-            facts.alignment = TextAlignmentOptions.MidlineLeft;
-            return facts;
-        }
-
-        private RectTransform EnsureFactsFrame()
-        {
-            if (_statRow == null)
-                return null;
-            Transform existing = _statRow.Find("FactsFrame");
-            if (existing is RectTransform found)
-                return found;
-            var frame = new GameObject("FactsFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
-            frame.SetParent(_statRow, false);
-            Image border = frame.GetComponent<Image>();
-            border.color = new Color(0.77f, 0.64f, 0.36f, 1f);
-            border.raycastTarget = false;
-            var inner = new GameObject("Inner", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            inner.transform.SetParent(frame, false);
-            Stretch(inner.rectTransform, 2f, 2f, 2f, 2f);
-            inner.color = new Color(0.07f, 0.09f, 0.10f, 1f);
-            inner.raycastTarget = false;
-            return frame;
+            if (count == 0)
+                return;
+            float width = _statRow.rect.width > 200f ? _statRow.rect.width : _statRow.sizeDelta.x;
+            if (width < 200f)
+                width = 518f;
+            const float gap = 8f;
+            float tileWidth = (width - gap * (count - 1)) / count;
+            float x = 0f;
+            for (int i = 0; i < order.Length; i++)
+            {
+                Transform tile = _statRow.Find(order[i]);
+                if (tile == null || !tile.gameObject.activeSelf)
+                    continue;
+                PlaceTruthfulTile(tile, x, tileWidth);
+                x += tileWidth + gap;
+            }
         }
 
         private static string FormatClock(int seconds)
@@ -540,7 +518,7 @@ namespace Game.UI.Runtime
             if (tile == null)
                 return;
             SetCopy(tile.Find("Caption")?.GetComponent<TMP_Text>(), caption, 13f, 16f);
-            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), string.IsNullOrEmpty(value) ? "—" : value, 15f, 20f);
+            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), value, 15f, 20f);
         }
 
         private void PresentBriefingPreview(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool battlefield)
@@ -548,7 +526,16 @@ namespace Game.UI.Runtime
             if (_briefingPreview == null)
                 return;
             string key = battlefield ? BriefingPreviewKey(briefing) : hasPin ? pin.PlatePreviewKey : null;
-            ApplyBoundPreview(_briefingPreview, key);
+            RectTransform previewRect = _briefingPreview.rectTransform;
+            float frameWidth = previewRect.rect.width;
+            float frameHeight = previewRect.rect.height;
+            if (frameWidth < 2f || frameHeight < 2f)
+            {
+                frameWidth = previewRect.sizeDelta.x;
+                frameHeight = previewRect.sizeDelta.y;
+            }
+
+            ApplyBoundPreview(_briefingPreview, key, frameWidth, frameHeight);
         }
 
         private void PresentTheaterDetail(bool fa)

@@ -344,8 +344,17 @@ namespace Game.UI.Runtime
                 string key = TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin)
                     ? pin.PlatePreviewKey
                     : null;
-                ApplyBoundPreview(map, key);
+                RectTransform clip = map.rectTransform.parent as RectTransform;
+                if (!TryFrameSize(clip, out float plateWidth, out float plateHeight))
+                {
+                    plateWidth = 1064f;
+                    plateHeight = 559f;
+                }
+
+                ApplyBoundPreview(map, key, plateWidth, plateHeight);
             }
+            if (!battlefield)
+                map.uvRect = new Rect(0f, 0f, 1f, 1f);
             AspectRatioFitter fitter = map.GetComponent<AspectRatioFitter>();
             if (fitter != null)
                 fitter.enabled = false;
@@ -579,7 +588,7 @@ namespace Game.UI.Runtime
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(button.transform, false);
             Stretch(preview.rectTransform, 3f, 3f, 3f, footer);
-            ApplyBoundPreview(preview, card.PreviewSpriteKey);
+            ApplyBoundPreview(preview, card.PreviewSpriteKey, width - 6f, height - 3f - footer);
             var badge = new GameObject("ScenarioBadge", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             badge.transform.SetParent(button.transform, false);
             PlaceTopLeft(badge.rectTransform, 4f, 4f, 58f, 22f);
@@ -656,7 +665,7 @@ namespace Game.UI.Runtime
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(rect, false);
             Stretch(preview.rectTransform, 3f, 3f, 3f, 22f);
-            ApplyBoundPreview(preview, previewKey);
+            ApplyBoundPreview(preview, previewKey, LibraryGridCardWidth - 6f, LibraryGridCardHeight - 3f - 22f);
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishBattleLibraryArt.ObjectiveCopy(objectiveId, fa, out _, out string objectiveLabel);
             SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string armyLabel);
@@ -1782,13 +1791,47 @@ namespace Game.UI.Runtime
 
         private static bool IsEmptyCard(SkirmishBattleCardState card) => string.IsNullOrEmpty(card.ScenarioId);
 
-        private static void ApplyBoundPreview(RawImage image, string key)
+        private static void ApplyBoundPreview(RawImage image, string key, float frameWidth, float frameHeight)
         {
             if (image == null)
                 return;
             image.texture = SkirmishLibraryPreviewAssets.LoadOrPlaceholder(key);
             image.color = Color.white;
             image.raycastTarget = false;
+            CoverCrop(image, frameWidth, frameHeight);
+        }
+
+        private static void CoverCrop(RawImage image, float frameWidth, float frameHeight)
+        {
+            float sourceAspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+            if (frameWidth < 2f || frameHeight < 2f)
+            {
+                image.uvRect = new Rect(0f, 0f, 1f, 1f);
+                return;
+            }
+
+            float frameAspect = frameWidth / frameHeight;
+            if (frameAspect >= sourceAspect)
+            {
+                float visibleHeight = sourceAspect / frameAspect;
+                image.uvRect = new Rect(0f, (1f - visibleHeight) * 0.5f, 1f, visibleHeight);
+            }
+            else
+            {
+                float visibleWidth = frameAspect / sourceAspect;
+                image.uvRect = new Rect((1f - visibleWidth) * 0.5f, 0f, visibleWidth, 1f);
+            }
+        }
+
+        private static bool TryFrameSize(RectTransform rect, out float width, out float height)
+        {
+            width = rect != null ? rect.rect.width : 0f;
+            height = rect != null ? rect.rect.height : 0f;
+            if (width > 2f && height > 2f)
+                return true;
+            width = rect != null ? rect.sizeDelta.x : 0f;
+            height = rect != null ? rect.sizeDelta.y : 0f;
+            return width > 2f && height > 2f;
         }
 
         private string BriefingPreviewKey(SkirmishBriefingState briefing)

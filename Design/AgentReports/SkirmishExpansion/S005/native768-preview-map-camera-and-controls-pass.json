@@ -1,0 +1,21 @@
+{
+  "result": "Passed",
+  "sourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+  "actualWrapperExit": 0,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-767-placement-map-controls-post-source-manifest.json",
+  "postManifest": "final-768-native-preview-map-camera-pass-post-source-manifest.json",
+  "log": "native-768-current-manual-en-seed104734.log",
+  "trace": "s005-aria-live-104734-en-0888ed7dcc944639b82e06866c2e1e91.jsonl",
+  "inputAudit": "native768-touch-contact-audit.json",
+  "normalMenuInput": true,
+  "normalMapTouch": true,
+  "firstHit": "Map",
+  "southernTargetVisible": true,
+  "pendingPreviewPreserved": true,
+  "placementControlsRestored": true,
+  "troopCommandsAdded": 0,
+  "constructionCertified": false,
+  "completeMatchCertified": false,
+  "playerReady": false
+}

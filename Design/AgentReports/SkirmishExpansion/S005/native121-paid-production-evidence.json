@@ -1,0 +1,31 @@
+{
+  "mission": "S005",
+  "sourceHash": "6b4fad8b9f39d423a9d8b0010763f1fc7268d6f9ae694fdbc7385a1005e97125",
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "check": "Native pending ground production checkpoint",
+  "input": "Touch",
+  "acceptedSamples": 6,
+  "materialsPaid": 220,
+  "balanceAfterPayment": 230,
+  "deliveredUnits": 1,
+  "receiptId": 1001,
+  "capturedActors": 42,
+  "capturedSourceBuildings": 344,
+  "capturedBanks": 2,
+  "pendingQuantity": 1,
+  "queueLocalRefund": 0,
+  "paymentAuthority": "Skirmish session reservation receipt",
+  "freshRecovery": false,
+  "normalInputRecovery": false,
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "native-121-paid-production-checkpoint.log",
+  "save": "native121-paid-production-checkpoint-wire.json",
+  "limitations": [
+    "Pending ground queue only; no active carrier/drop",
+    "No player-facing Save/Resume journey",
+    "No current-source complete-match acceptance"
+  ],
+  "historicalReason": "Destroyed Campaign scenery recovery fixtures added after this run; runtime code unchanged by that addition."
+}

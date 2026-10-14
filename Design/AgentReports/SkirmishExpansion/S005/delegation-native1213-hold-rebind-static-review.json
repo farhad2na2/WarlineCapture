@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "status": "ReadOnlyStaticReview_NoProvenCausalProductionDefect",
+  "evidence": "native1213 actual cycle1 selected4 living Rifle, actual Hold Touch completed2025, phase3 noHold90s timeout; rawHoldinspection supports state, not reason",
+  "findings": [
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs",
+      "lines": [
+        41,
+        53
+      ],
+      "fact": "Each successful runtime bind calls bootstrap Awake; source unload calls OnDestroy and clears matchRuntimeBound."
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+      "lines": [
+        166,
+        284,
+        293,
+        757,
+        824
+      ],
+      "fact": "Awake rebinds intro query; destruction resets it and nulls selection command/readmodel; managed startup creates and publishes fresh helper identities."
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+      "lines": [
+        690,
+        706,
+        715
+      ],
+      "fact": "Runtime rebind shortcut requires exact match view, command/readmodel/MainMenu identity and content version. Changed selection helpers should invalidate cache."
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs",
+      "lines": [
+        29,
+        146,
+        280
+      ],
+      "fact": "Each Bind unbinds then clears runtime listeners and adds Hold handler; handler captures immutable command/readmodel and capability-checks before Queue."
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs",
+      "lines": [
+        59,
+        218,
+        235
+      ],
+      "fact": "Selected and focused reads resolve actual current DefaultWorld; selected query recreated when World changes. It does not retain previous squad entity."
+    }
+  ],
+  "boundedRisksNotProven": [
+    "Actual Binding may hold old helper despite expected rebind; need runtime identity comparison, not inferred source fix.",
+    "Hold can reject via focused stale capability or gameplay intro lock despite living selected tags/button interactive. Actual fields required.",
+    "RtsSelectionInputStateCompositionSystemHelper retains EntityManager and cached state entity; expected new helper replaces it. Need actual world/state entity identity and queue/results to distinguish wrong owner vs lost processing.",
+    "ClearRegion does not explicitly remove helper dictionary entries for destroyed footer views; potential retained binding count, but inactive/destroyed listeners alone do not establish current Hold failure."
+  ],
+  "recommendedReadOnly1215Fields": [
+    "Actual Hold UnityEvent runtime target method and private Binding command/readmodel identities versus current MatchBootstrap fields",
+    "Binding readmodel HasAnySelected,HasFocusedUnit,FocusedUnitCanHold,HoldDisabledReason,CommandStateVersion; underlying focused entity/component",
+    "Selection command input state owner World sequence and cached state Entity index/version/current components; request/result rows before/after actual Touch",
+    "Actual captured intro query World, transition boundary count/InputLocked/finale stage and current actual shell state",
+    "SelectionRuntimeUpdate/command flush liveness with queued immediate Hold kind, matching request id and actual accepted/issued result"
+  ],
+  "limits": "No Unity calls, source edits, actor/UI mutation or QA launch. No suggested production patch until passive evidence identifies causal guard."
+}

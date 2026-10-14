@@ -1,0 +1,18 @@
+{
+  "run": 168,
+  "log": "native-168-schema5-paid-capture.log",
+  "result": "Passed",
+  "sourceHash": "603b0263a4e3b0801c78f483cca9a4be384ddd1520e14cc5134cd759328064cc",
+  "schema": 5,
+  "actors": 42,
+  "sourceBuildings": 344,
+  "banks": 2,
+  "missileVisuals": 0,
+  "missileStates": 0,
+  "dropVisuals": 0,
+  "activeTransientNativeCoverage": false,
+  "normalInputPlayerResume": false,
+  "countsForCurrentSource": false,
+  "playerReady": false,
+  "historicalReason": "Player Save/Exit/Continue integration follows this internal diagnostic."
+}

@@ -1,0 +1,26 @@
+diff --git a/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab b/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
+index ab128a474..95181f54f 100644
+--- a/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
++++ b/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
+@@ -22883,7 +22883,7 @@ MonoBehaviour:
+     m_PressedTrigger: Pressed
+     m_SelectedTrigger: Selected
+     m_DisabledTrigger: Disabled
+-  m_Interactable: 1
++  m_Interactable: 0
+   m_TargetGraphic: {fileID: 7437314175761415324}
+   m_OnClick:
+     m_PersistentCalls:
+diff --git a/ProjectSettings/QualitySettings.asset b/ProjectSettings/QualitySettings.asset
+index e46d25900..b768356a6 100644
+--- a/ProjectSettings/QualitySettings.asset
++++ b/ProjectSettings/QualitySettings.asset
+@@ -76,7 +76,7 @@ QualitySettings:
+     globalTextureMipmapLimit: 1
+     textureMipmapLimitSettings: []
+     anisotropicTextures: 1
+-    antiAliasing: 0
++    antiAliasing: 4
+     softParticles: 0
+     softVegetation: 1
+     realtimeReflectionProbes: 0

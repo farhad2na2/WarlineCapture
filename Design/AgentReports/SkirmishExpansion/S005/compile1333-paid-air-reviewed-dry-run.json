@@ -1,0 +1,122 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-paid-air-effects1333-v2/S005PaidEnemyAirEffects1333.cs",
+      "entry": "S005PaidEnemyAirEffects1333.Run",
+      "dry_run": "true",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "error",
+          "message": "The type 'Game.UI.Runtime.MainMenuPlayUI' cannot be used as type parameter 'T' in the generic type or method 'Object.FindAnyObjectByType<T>()'. There is no implicit reference conversion from 'Game.UI.Runtime.MainMenuPlayUI' to 'UnityEngine.Object'.",
+          "line": 925,
+          "column": 42,
+          "id": "CS0311"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.DamageRow.airFlagsInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 517,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 133,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.CameraFramingRow.hiddenEnemyPoseRead' is never assigned to, and will always have its default value false",
+          "line": 1016,
+          "column": 85,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.DamageRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 534,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.DamageRow.damageInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 502,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.DamageRow.visibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 547,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.fighterPrepareZoomTaps' is never assigned to, and will always have its default value 0",
+          "line": 846,
+          "column": 64,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.PatrolRow.poseAirborneInjected' is never assigned to, and will always have its default value false",
+          "line": 820,
+          "column": 313,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1333.QueueRow.synthesized' is never assigned to, and will always have its default value false",
+          "line": 538,
+          "column": 196,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'S005PaidEnemyAirEffects1333.shooterAirborneObserved' is assigned but its value is never used",
+          "line": 535,
+          "column": 86,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 554,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005PaidEnemyAirEffects1333_004fa5d444044ba69f609c600dcce68e",
+      "success": false,
+      "error": "Compilation Failed",
+      "errorDetails": "The script failed to compile. See diagnostics for line/column details."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

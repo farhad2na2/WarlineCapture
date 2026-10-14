@@ -1,0 +1,8 @@
+{
+  "source": "Existing Campaign CityEdgeAirfield",
+  "normalInput": "ARIA Victory/frozen result/Adjust Setup passed",
+  "currentCandidateAcceptance": false,
+  "visual": "Scenery and angled framing passed; opening camera still includes logistics trucks and centers refinery",
+  "correction": "Exclude LogisticsSupport from combat deployment opening bounds; no orders changed",
+  "next": "Persian normal-input manual journey"
+}

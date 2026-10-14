@@ -1,0 +1,13 @@
+{
+  "result": "Passed",
+  "tests": 3,
+  "wrapperExit": 0,
+  "marker": "[SkirmishProducerMessageTests] result=Passed tests=3",
+  "sourceHash": "6faf5d61251773fea3707abb5f1148951ace0d95e00bd0d2aaaedb85e5b97a5e",
+  "changedSourceFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "allMaterialsUnchanged": true,
+  "scope": "Compile/yielding driver integration and producer message regressions; native search and flight remain unverified"
+}

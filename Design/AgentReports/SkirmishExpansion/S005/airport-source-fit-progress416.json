@@ -1,0 +1,34 @@
+{
+  "sourceHash": "1c8b301b2d268fb97ba1a1b5ab61c25f2aaae8cd040143f4e5cbbd28c509316a",
+  "samples": [
+    {
+      "raw": "readonly415-existing-source-airport-sectors.json",
+      "tested": 384,
+      "clear": 384,
+      "valid": 2,
+      "sites": [
+        "origin=(400, 636) rotated=False effective=(x:400, y:636, width:210, height:55)",
+        "origin=(448, 636) rotated=False effective=(x:448, y:636, width:210, height:55)"
+      ],
+      "scope": "Read-only full native placement validator, coarse48m sample of existing source beyond current logical playable sector; current occupants, no logical/physical mutation or global impossibility claim",
+      "previewMutated": false,
+      "physicalSourceModified": false
+    },
+    {
+      "raw": "readonly416-whole-source-airport-sectors.json",
+      "tested": 880,
+      "clear": 880,
+      "valid": 1,
+      "sites": [
+        "origin=(448, 640) rotated=False effective=(x:448, y:640, width:210, height:55)"
+      ],
+      "scope": "Read-only full native placement validator, coarse64m whole-source sample of existing source beyond current logical playable sector; current occupants, no logical/physical mutation or global impossibility claim",
+      "previewMutated": false,
+      "physicalSourceModified": false
+    }
+  ],
+  "bilateralAirportCapacityCertified": false,
+  "physicalSourceModified": false,
+  "playerReady": false,
+  "interpretation": "Coarse current-world samples found only overlapping northern Airport sites; not an exhaustive impossibility proof. Native414 flight cycle remains active."
+}

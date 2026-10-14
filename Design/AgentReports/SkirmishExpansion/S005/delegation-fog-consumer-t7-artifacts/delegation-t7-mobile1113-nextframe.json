@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var a=UnityEditor.AssetDatabase.LoadAllAssetsAtPath(\"ProjectSettings/QualitySettings.asset\");var so=new UnityEditor.SerializedObject(a[0]);var tiers=so.FindProperty(\"m_QualitySettings\");var rows=new System.Collections.Generic.List<object>();for(int i=0;i<tiers.arraySize;i++){var t=tiers.GetArrayElementAtIndex(i);var rp=t.FindPropertyRelative(\"customRenderPipeline\").objectReferenceValue;rows.Add(new {Name=t.FindPropertyRelative(\"name\").stringValue,AA=t.FindPropertyRelative(\"antiAliasing\").intValue,Pipeline=rp==null?null:UnityEditor.AssetDatabase.GetAssetPath(rp)});}var accepted=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(\"Assets/Settings/Mobile_RPAsset.asset\");return new { IsPlaying=UnityEditor.EditorApplication.isPlaying, IsCompiling=UnityEditor.EditorApplication.isCompiling, IsUpdating=UnityEditor.EditorApplication.isUpdating, ValidationRunning=Game.Editor.ExistingEditorValidation.IsRunning, CurrentTier=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()], ActualAA=UnityEngine.QualitySettings.antiAliasing, ActualPipeline=UnityEditor.AssetDatabase.GetAssetPath(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline), TierPipeline=UnityEngine.QualitySettings.renderPipeline==null?null:UnityEditor.AssetDatabase.GetAssetPath(UnityEngine.QualitySettings.renderPipeline), AcceptedGuid=UnityEditor.AssetDatabase.AssetPathToGUID(\"Assets/Settings/Mobile_RPAsset.asset\"), AcceptedMsaa=new UnityEditor.SerializedObject(accepted).FindProperty(\"m_MSAA\").intValue, SerializedTiers=rows };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "IsPlaying": false,
+        "IsCompiling": false,
+        "IsUpdating": false,
+        "ValidationRunning": false,
+        "CurrentTier": "Mobile",
+        "ActualAA": 0,
+        "ActualPipeline": "Assets/Settings/Mobile_RPAsset.asset",
+        "TierPipeline": "Assets/Settings/Mobile_RPAsset.asset",
+        "AcceptedGuid": "5e6cbd92db86f4b18aec3ed561671858",
+        "AcceptedMsaa": 1,
+        "SerializedTiers": [
+          {
+            "Name": "Low",
+            "AA": 0,
+            "Pipeline": "Assets/Settings/Mobile_RPAsset.asset"
+          },
+          {
+            "Name": "Mobile",
+            "AA": 0,
+            "Pipeline": "Assets/Settings/Mobile_RPAsset.asset"
+          },
+          {
+            "Name": "PC",
+            "AA": 4,
+            "Pipeline": "Assets/Settings/PC_RPAsset.asset"
+          },
+          {
+            "Name": "Ultra",
+            "AA": 8,
+            "Pipeline": "Assets/Settings/PC_RPAsset.asset"
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

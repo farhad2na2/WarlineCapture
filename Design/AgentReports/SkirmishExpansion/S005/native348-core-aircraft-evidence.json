@@ -1,0 +1,22 @@
+{
+  "mission": "S005",
+  "sourceHash": "3e0e00d5a8280d22c4efe1dac96125f8c8096a1c4708a830bc79891cef7b9db6",
+  "result": "Passed",
+  "scope": "Paid light attack helicopter and helipad lifecycle only; not all aircraft or bilateral capacity",
+  "controlMethod": "NativeTouchDriver",
+  "samples": 271,
+  "paidDelivery": true,
+  "firstSortie": true,
+  "returnAndTouchdown": true,
+  "tankerRefuelAdded": 6,
+  "roundTripReserve": 259,
+  "secondSortie": true,
+  "realHumanDeviceAcceptance": false,
+  "playerReady": false,
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "log": "native-348-core-aircraft-cycle.log",
+  "logSha256": "c352ac0438420403fd237ef0bc8204527976bdf610d820d37ad23e3d1f1c4cce",
+  "countsForCurrentSource": false,
+  "historicalReason": "Publication-validator evidence gate changed after this run; original log and result preserved."
+}

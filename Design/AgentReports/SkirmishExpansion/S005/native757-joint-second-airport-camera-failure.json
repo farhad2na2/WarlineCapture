@@ -1,0 +1,30 @@
+{
+  "result": "Failed",
+  "sourceHash": "6fd682057d8683a3088e2c1f79daefeb3a6edde902a1464e790ede7abc259eac",
+  "wrapperExit": 2,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-757-joint-normal-airport-placement-audit-order-pre-source-manifest.json",
+  "postManifest": "final-757-joint-second-airport-camera-failure-post-source-manifest.json",
+  "firstPaidNativeAirportCommitted": true,
+  "secondPaidNativeAirportCommitted": false,
+  "secondPreviewNativeCandidates": [
+    [
+      1399,
+      177.5
+    ],
+    [
+      1415,
+      177.5
+    ],
+    [
+      1687,
+      177.5
+    ]
+  ],
+  "reason": "Normal full-map tap did not bring southern candidates into visible camera; three real input attempts per site failed visibility",
+  "countsForBilateralCapacity": false,
+  "playerReady": false,
+  "log": "native-757-current-manual-en-seed155926.log",
+  "trace": "s005-aria-live-155926-en-451905fe705e4af1996c4318dbfe7b23.jsonl",
+  "inputAudit": "native757-touch-contact-audit.json"
+}

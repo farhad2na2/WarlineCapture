@@ -1,0 +1,8 @@
+{
+  "result": "Failed",
+  "reason": "Native probe refused stale assemblies after missing Game.Runtime namespace in HelipadProbe; corrected before retry160.",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "log": "native-159-camera-touch-fixed.log",
+  "playerReady": false
+}

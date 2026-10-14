@@ -1,0 +1,11 @@
+{
+  "kind": "ObservedStructuredCliResultMetadataNotRawStdout",
+  "tool": "unity command eval",
+  "outerSuccess": true,
+  "nativeResultSuccess": true,
+  "playing": false,
+  "changingPlay": false,
+  "compiling": false,
+  "AriaGuidanceOverlayObjects": [],
+  "scope": "Actual readonly object census after1101 wrapper completed; teardown warning preserved, no persistent Editor object leak established."
+}

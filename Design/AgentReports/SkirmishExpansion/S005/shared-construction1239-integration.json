@@ -1,0 +1,52 @@
+{
+  "manifestSha256": "debbd2820dbbcf93fd12f9d84fb1c98b8b775ef69c7a66055814fa5be4caa85d",
+  "scope": "Construction v3 plus stateless coordinator; commander hook awaits capability composition; native compile/test pending",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+      "staged": "/private/tmp/s005-construction-step4-v3/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+      "baseSha256": "76ea754acf8695a4cf8b8159e78baed5207a2bc4ce6779ae254a9e8d22bbd613",
+      "stagedSha256": "d72d658183dee172e627f1c670e44b64f18a9cdfa57678aef82255326d01bd0d",
+      "originalBaseSha256": null,
+      "bytes": 34451,
+      "newNativeMetaRequired": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionCheckpoint.cs",
+      "staged": "/private/tmp/s005-construction-step4-v3/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionCheckpoint.cs",
+      "baseSha256": "4d97805c531af0aab9090db444380e015c0be53d5692793ccc6c335c5718a3c6",
+      "stagedSha256": "bc13a35629c7b63459b5aab4bdae79be76e82e87eae0f348a298fcafbe269b55",
+      "originalBaseSha256": null,
+      "bytes": 5378,
+      "newNativeMetaRequired": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomicCoordinator.cs",
+      "staged": "/private/tmp/s005-construction-step4-v3/staged/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomicCoordinator.cs",
+      "baseSha256": null,
+      "stagedSha256": "62f6fc516bdd61b6e67d1f60f68214e6337e0479db01f32a1b5846ccfc857813",
+      "originalBaseSha256": null,
+      "bytes": 13543,
+      "newNativeMetaRequired": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyConstructionAdapterTests.cs",
+      "staged": "/private/tmp/s005-construction-step4-v3/staged/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyConstructionAdapterTests.cs",
+      "baseSha256": "cfc81a471220853569e89bcd41c5f503a88e93e1676140fbf6e6a142e82eb6d1",
+      "stagedSha256": "2d4a1ccd2334fdf037c5ea1a45ef537f7674724194014dfa8e0c8105a4626994",
+      "originalBaseSha256": null,
+      "bytes": 28548,
+      "newNativeMetaRequired": false
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomicCoordinatorTests.cs",
+      "staged": "/private/tmp/s005-construction-step4-v3/staged/Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyEconomicCoordinatorTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "eec712855104f93eba8605ea0919abe3203e69ef0e7660557f869ee2149af3ab",
+      "originalBaseSha256": null,
+      "bytes": 18673,
+      "newNativeMetaRequired": true
+    }
+  ],
+  "idleProof": "native1238-camera-after-idle.json"
+}

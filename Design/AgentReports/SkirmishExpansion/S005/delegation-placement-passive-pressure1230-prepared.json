@@ -1,0 +1,18 @@
+{
+  "runId": 1230,
+  "result": "ExternalPreparedFrozen_CurrentCandidate_NativeDryCompileExecutionPending",
+  "manifest": "/private/tmp/s005-passive-pressure1230/manifest.json",
+  "manifestSha256": "37618e94f9329675d397ecaf90a6e946611b0700baae313ce1d99629f888bb70",
+  "sourceHash": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "fixture": "/private/tmp/s005-passive-pressure1230/S005PassivePressure1230.cs",
+  "fixtureSha256": "b117211dae4b4ce745a59b9e2673a0e01034c86854b6adc1be2c054f71207ae3",
+  "runner": "/private/tmp/s005-passive-pressure1230/s005-run-passive-pressure1230.py",
+  "runnerSha256": "6014b7cf68626afdf5b1d73a0ac3f6ad5b5a2632d850ddf2eaccdf101f86e658",
+  "escortQualifier": "/private/tmp/s005-passive-pressure1230/qualify-escort-trajectory1230.py",
+  "escortQualifierSha256": "af98e7e7dc6ab6e336b2797178b9fe2898b313a2dc1a949495f69a86c624bf2d",
+  "offlineParserControls": 8,
+  "actual1219NegativeControl": "Old displacement-only Car timer reset rejected, preserved scoped native pressure PASS untouched",
+  "noUnityOrSourceEdits": true,
+  "playerReady": false,
+  "preservedPreparationRevision1": "/private/tmp/s005-passive-pressure1230/preserved-before-final-body-presence"
+}

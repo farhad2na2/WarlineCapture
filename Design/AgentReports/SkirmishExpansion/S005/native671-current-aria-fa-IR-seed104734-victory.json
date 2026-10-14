@@ -1,0 +1,69 @@
+{
+  "result": "Passed",
+  "playerReady": false,
+  "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "wrapperExit": 0,
+  "seed": 104734,
+  "locale": "fa-IR",
+  "size": "Standard",
+  "difficulty": "Regular",
+  "mode": "ARIA",
+  "outcome": {
+    "elapsed": 231.321,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 231.321,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": -1,
+    "playerUnits": 20,
+    "pathRequests": 9,
+    "pathFollowing": 0,
+    "leadX": 908.493,
+    "leadZ": 602.37
+  },
+  "normalInput": true,
+  "normalSpeed": true,
+  "forcedVictory": false,
+  "frozenResult": true,
+  "returnTarget": "ADJUST SETUP",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-670-current-aria-en-seed104734-post-source-manifest.json",
+  "postManifest": "final-671-current-aria-fa-seed104734-post-source-manifest.json",
+  "inputAudit": {
+    "recordedContacts": 64,
+    "completedContacts": 63,
+    "phases": {
+      "Menu": 6,
+      "Runtime": 57,
+      "Terminal": 1
+    },
+    "terminalCancellations": [
+      {
+        "contact": [
+          6,
+          2,
+          57
+        ],
+        "frame": 2692,
+        "acceptedCommands": 48,
+        "reason": "Native Finished disposal; no command accepted during contact"
+      }
+    ],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-fa-58e300b4453649e79af2287f565a05f1.jsonl.touch.jsonl",
+    "sha256": "8ca57adb6a8b7bfb1c851e6bf9d02792f58d1791da6850b648e88014c285dcc0"
+  },
+  "nativeFinishedCancellationAccepted": true,
+  "trace": "s005-aria-live-104734-fa-58e300b4453649e79af2287f565a05f1.jsonl",
+  "log": "native-671-current-aria-fa-seed104734.log",
+  "realPlayerDeviceAcceptance": false
+}

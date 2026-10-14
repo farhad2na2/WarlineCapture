@@ -1,0 +1,14 @@
+{
+  "result": "NeedsIndependentNativeQualification",
+  "lane": "fa_r2",
+  "runId": 1624,
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "log": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1624-normal-fa_r2-seed155926.log",
+  "logSha256": "839ff72b45886c2b847f7b2687e7fa149c7b7fb6f903c7138fe8343cb073e0b3",
+  "missingMarkers": [],
+  "scope": "Native execution/marker gate only; raw Touch, gameplay receipts, paid conservation, same-attempt recovery, rendered result and return require independent strict qualification.",
+  "playerReady": false,
+  "humanDeviceAcceptance": false
+}

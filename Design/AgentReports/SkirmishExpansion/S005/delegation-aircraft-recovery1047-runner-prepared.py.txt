@@ -1,0 +1,47 @@
+"""PREPARED ONLY. Parent owns Editor scheduling; never invoke while another run is active."""
+import hashlib,json,pathlib,shutil,subprocess,sys
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture'); p=root/'Design/AgentReports/SkirmishExpansion/S005'
+if len(sys.argv)!=2: raise SystemExit('Usage: rtk proxy python3 /private/tmp/s005-run-retained-flight-1047.py <current-pre-source-manifest.json>')
+pre=sys.argv[1]
+assert pathlib.Path(pre).name==pre and (p/pre).is_file()
+status=p/'TECHNICAL_READINESS_CURRENT.json'; current=json.loads(status.read_text()); assert current['activeRun'] is None
+original=p/'native1018-failed-comparison-original-checkpoint.json'
+original_hash='fcc3d8abe89aa6b0c47f82914e9717190037586683579195fda18c9c0215c95e'
+sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
+assert sha(original)==original_hash and original.stat().st_size==10343680
+script=pathlib.Path('/private/tmp/S005RetainedFlightPauseSaveContinue1047.cs')
+fixture=p/'native1047-retained-flight-recovery-fixture.cs.txt'; assert not fixture.exists(); shutil.copy2(script,fixture)
+load=subprocess.run(['rtk','proxy','unity','command','run_script','--file',str(script),'--entry','S005RetainedFlightPauseSaveContinue1047.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+(p/'load1047-retained-flight-fixture.json').write_text(load.stdout)
+decoded=json.loads(load.stdout)
+assert load.returncode==0 and decoded['success'] and decoded['data']['result']['success'], 'Fixture native compilation failed; do not start wrapper'
+print('Unique retained flight recovery fixture compiled and loaded',flush=True)
+log=p/'native-1047-retained-flight-pause-save-continue.log'; assert not log.exists()
+current.update(activeRun='native1047',activeLog=log.name,activeScope='S005RetainedFlightPauseSaveContinue1047.RunValidation',activePreManifest=pre); status.write_text(json.dumps(current,indent=2)+'\n')
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','360','--log',str(log),'--','-executeMethod','S005RetainedFlightPauseSaveContinue1047.RunValidation'],cwd=root).returncode
+pathlib.Path(str(log)+'.wrapper-exit').write_text(str(wrapper)+'\n')
+receipt=pathlib.Path(str(log)+'.exit'); bridge=int(receipt.read_text()) if receipt.exists() else None
+if bridge is None:
+ print('No native completion; preserve active run and inspect actual Editor',flush=True); raise SystemExit(4)
+post='final-1047-retained-flight-post'
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True)
+post+='-source-manifest.json'
+same=json.loads((p/pre).read_text())==json.loads((p/post).read_text())
+source=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+text=log.read_text(errors='replace'); errors=[]
+if wrapper!=0 or bridge!=0: errors.append('Wrapper/native bridge failure')
+if not same: errors.append('Source changed during recovery case')
+if sha(original)!=original_hash: errors.append('Original retained native save changed')
+for marker in ['[S005RetainedFlightRecovery] phase=PreflightPassed','[S005RetainedFlightRecovery] phase=OriginalNativeContinueObserved','[S005RetainedFlightRecovery] phase=OriginalPositiveFlight','[S005RetainedFlightRecovery] phase=PauseConserved exactQuaternionAndAirParts=1','[S005RetainedFlightRecovery] phase=NewNativeSaveVerified actualPausedPartsExact=1 savedQuaternionExact=1','[S005RetainedFlightRecovery] result=Passed','[S005RetainedFlightRecoveryCleanup] result=Passed','[S005NativeRecoveryCase] result=Passed']:
+ if marker not in text: errors.append('Missing '+marker)
+fresh=p/'native1047-captured-native-checkpoint.json'
+if not fresh.exists(): errors.append('Fresh genuine native Save checkpoint missing')
+proof=dict(result='Failed' if errors else 'PassedScopedNormalInputRetainedFlightRecovery',scope='Byte-identical actual native1018 paid Strike flight checkpoint; native Menu Continue, Pause, Save & Exit, Continue; exact NEW paused flight conservation and actual Save quaternion; two positive-time flight observations; no fresh uninterrupted match or win certificate',sourceHash=source,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log.name,logSha256=sha(log),fixture=fixture.name,fixtureSha256=sha(fixture),originalNativeCheckpoint=original.name,originalSha256=original_hash,originalFailedCapturePreserved=True,freshNativeCheckpoint=fresh.name if fresh.exists() else None,freshSha256=sha(fresh) if fresh.exists() else None,fundingInjected=False,readinessInjected=False,actorPositionsSelectionOrdersOutcomesInjected=False,checkpointPayloadEdited=False,qaTimingHeldForPausedSampling=True,profileIsolation=True,normalInputRecoveryScope=True,freshUninterruptedMatch=False,completeMatchCertified=False,countedWin=False,technicallyReady=False,playerReady=False,errors=errors,nativeMarkers=[line for line in text.splitlines() if line.startswith(('[S005RetainedFlightRecovery]','[S005RetainedFlightRecoveryCleanup]'))])
+name='native1047-retained-flight-pause-save-continue-'+('failure' if errors else 'pass')+'.json'
+(p/name).write_text(json.dumps(proof,indent=2)+'\n')
+current=json.loads(status.read_text()); assert current['activeRun']=='native1047'
+current.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,currentRetainedFlightRecovery=name);status.write_text(json.dumps(current,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as out:
+ out.write('\nNative1047: '+proof['result']+'. Scoped normal-input recovery of the byte-identical original1018 actual saved flight; NEW Pause/Save quaternion conservation and subsequent flight, no fresh full-match certification. Proof `'+name+'`.\n')
+print(json.dumps(dict(proof=name,result=proof['result'],errors=errors)),flush=True)
+raise SystemExit(3 if errors else 0)

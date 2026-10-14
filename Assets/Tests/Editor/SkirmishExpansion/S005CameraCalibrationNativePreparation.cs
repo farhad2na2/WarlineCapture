@@ -12,6 +12,7 @@ namespace Game.Tests.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Stopped Play is required for native preparation.");
+            SkirmishS002AriaRunHarness.RunNativeRenderingDiagnosticSerializationValidation();
             SkirmishCameraFramingMeasurementTests.RunFocusedValidation();
             SkirmishMissionViewProfileTests.RunFocusedValidation();
             SkirmishProductionContinuationValidation.RunFocusedValidation();

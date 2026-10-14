@@ -1,0 +1,22 @@
+{
+  "result": "Failed",
+  "actual_checked_wrapper_exit": -1073741819,
+  "reason": "Packed render bucket overflow136, followed by Editor shutdown access violation",
+  "candidate_sha256": "5d707ce145d73bb51d0eb9d97e94946d16c92dcd1abde77f44ecf273a23ddc1c",
+  "source_files": 41052,
+  "complete_source_and_build_unchanged": true,
+  "native_launch_and_finish_hash_match": true,
+  "native_selector_diagnostic_captured": true,
+  "selection_failure": "None",
+  "assignment_failure": "None",
+  "opaque_shadow_required": 4725,
+  "opaque_shadow_capacity": 4589,
+  "overflow": 136,
+  "rebuilds": 1,
+  "published_command_version": 1,
+  "current_camera_publication": 258,
+  "stale_initial_guard_reuse_cause": "Under investigation; must prove current recomputed envelope before engine correction",
+  "cameraAccepted": false,
+  "fullMissionCertified": false,
+  "playerReady": false
+}

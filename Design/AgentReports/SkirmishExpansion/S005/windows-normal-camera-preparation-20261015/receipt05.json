@@ -1,0 +1,10 @@
+{
+  "result": "Passed",
+  "actual_checked_wrapper_exit": 0,
+  "scope": "Explicit diagnostic DTO roundtrip plus camera7/profile5/objective42/source pins/native identity/Editor cache warmup",
+  "editor_mvid": "4984466d-31ff-40bf-b0c0-7eb2b12af987",
+  "gameplayStarted": false,
+  "actualNativeSelectorReflectionExercised": false,
+  "cameraAccepted": false,
+  "playerReady": false
+}

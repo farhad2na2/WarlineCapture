@@ -784,6 +784,15 @@ namespace Game.Editor
                     if (!NativeShadersAreReady(now)) return;
                     if (!NativeRenderingStartupGateAllows(em, ref nativeOpeningRenderViewAccepted))
                     {
+                        try { Debug.Log("[SkirmishNativeRenderingDiagnostic] " + CaptureNativeRenderingFailureDiagnostic(em)); }
+                        catch (Exception diagnosticError) { Debug.LogWarning("[SkirmishNativeRenderingDiagnostic] captured=0 error=" + diagnosticError); }
+                        try
+                        {
+                            string failedView = LiveTracePath() + ".packed-render-failed-unqualified.png";
+                            ScreenCapture.CaptureScreenshot(failedView);
+                            Debug.Log("[SkirmishNativeRenderingFailureView] captureRequested=1 qualified=0 path=" + failedView);
+                        }
+                        catch (Exception screenshotError) { Debug.LogWarning("[SkirmishNativeRenderingFailureView] captureRequested=0 qualified=0 error=" + screenshotError); }
                         Debug.LogError("[SkirmishNativeRendering] result=Failed reason=incompletePackedRenderInitialization");
                         Finish(true, "incompletePackedRenderInitialization");
                         return;

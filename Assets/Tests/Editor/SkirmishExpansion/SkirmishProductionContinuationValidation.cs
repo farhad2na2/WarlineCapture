@@ -20,6 +20,8 @@ namespace Game.Tests.Editor
             VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneFollowTouchSeam.cs", "e97c1036069fb8f87c0d99309f6c7500de61f7a3a6c447d21c9b00f3aaf61fa0");
             VerifySource("SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs", "d3b2ee192d63a1ef500b31137774fb9b7447bdee61ec07a3466d50b23fb9f8b5");
             VerifySource("S005SceneArtifactWarmup.cs", "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb");
+            VerifySource("SkirmishS002AriaRunHarness.cs", "e0f96b44d4faebb2099a045c62d5d214b99944456819d6d62ad27120b5348376");
+            VerifySource("SkirmishS002AriaRunHarness.NativeRenderingDiagnostic.cs", "cde4219387b9505236a6994e346cd40f1a18e0fe32fa3269d134f4d7febb809c");
             SkirmishSharedObjectiveReducerValidation.RunFocusedValidation();
             S005NormalNorthFlank1632Observer.Run();
             MethodInfo paidPlane = typeof(SkirmishS002AriaRunHarness).GetMethod(

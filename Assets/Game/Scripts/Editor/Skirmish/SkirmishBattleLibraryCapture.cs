@@ -1,7 +1,9 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.Configs;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -166,7 +168,7 @@ namespace Game.Editor
             serialized.FindProperty("baseAssaultPreset").boolValue = true;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             view.Bind(default);
-            view.ApplyLibraryCaptureDemo();
+            view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
             var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
             if (notch && safeFrame != null)
                 safeFrame.SetSimulatedInsets(size.Width, size.Height, 36f, 72f, 36f, 28f);
@@ -177,6 +179,7 @@ namespace Game.Editor
             Canvas.ForceUpdateCanvases();
             foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                 text.ForceMeshUpdate();
+            RejectMissingGlyphs(instance);
 
             var target = new RenderTexture(size.Width, size.Height, 24, RenderTextureFormat.ARGB32);
             created.Add(target);
@@ -190,6 +193,35 @@ namespace Game.Editor
             RenderTexture.active = previous;
             File.WriteAllBytes(path, image.EncodeToPNG());
             UnityEngine.Object.DestroyImmediate(image);
+        }
+
+        internal static void RejectMissingGlyphs(GameObject root)
+        {
+            if (root == null || !GameLocalization.IsRightToLeft)
+                return;
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            var missing = new List<char>();
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TMP_Text text = texts[i];
+                if (text == null || !text.gameObject.activeInHierarchy)
+                    continue;
+                string value = text.text;
+                if (string.IsNullOrWhiteSpace(value))
+                    continue;
+                TMP_FontAsset font = text.font;
+                if (font == null)
+                    throw new InvalidOperationException("FA text has no TMP font on " + text.name + ".");
+                missing.Clear();
+                bool present = font.HasCharacters(value, out missing, true, false);
+                if (!present || (missing != null && missing.Count > 0))
+                {
+                    string shown = value.Length > 48 ? value.Substring(0, 48) : value;
+                    int code = missing != null && missing.Count > 0 ? missing[0] : 0;
+                    throw new InvalidOperationException(
+                        "FA text is missing a glyph on " + text.name + " U+" + code.ToString("X4") + " text=" + shown);
+                }
+            }
         }
 
         internal static void RejectFlatCapture(string path)

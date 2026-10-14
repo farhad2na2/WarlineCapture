@@ -291,9 +291,8 @@ namespace Game.UI.Runtime
         public void ConfigureFontBounds(float minimum,float maximum)
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum);}
         /// <summary>
-        /// ZWNJ, ZWJ and a few Arabic punctuation marks are absent from the Farsi TMP
-        /// atlas and draw as a missing-glyph box, often at the end of a description line.
-        /// LTR isolates (U+2066/U+2069) stay so mixed Latin ids keep their order.
+        /// ZWNJ, ZWJ, bidi isolates and a few Arabic punctuation marks are absent from
+        /// the Farsi TMP atlas and draw as a missing-glyph box.
         /// </summary>
         private static string StripMissingFormatGlyphs(string value)
         {
@@ -315,8 +314,15 @@ namespace Game.UI.Runtime
             for (int i = 0; i < value.Length; i++)
             {
                 char c = value[i];
-                if (c == '\u200C' || c == '\u200D' || c == '\u200B' || c == '\uFEFF' || c == '\u2060' || c == '\u061C')
+                if (c == '\u200C' || c == '\u200D' || c == '\u200B' || c == '\uFEFF' || c == '\u2060' || c == '\u061C'
+                    || c == '\u200E' || c == '\u200F' || c == '\u202A' || c == '\u202B' || c == '\u202C'
+                    || c == '\u202D' || c == '\u202E' || c == '\u2066' || c == '\u2067' || c == '\u2068' || c == '\u2069')
                     continue;
+                if (c == '\u2026')
+                {
+                    builder.Append("...");
+                    continue;
+                }
                 if (c == '\u060C')
                 {
                     builder.Append(',');
@@ -344,42 +350,18 @@ namespace Game.UI.Runtime
         private static bool IsMissingFormatGlyph(char value)
         {
             return value == '\u200C' || value == '\u200D' || value == '\u200B' || value == '\uFEFF'
-                || value == '\u2060' || value == '\u061C' || value == '\u060C' || value == '\u061B'
+                || value == '\u200E' || value == '\u200F' || value == '\u2060' || value == '\u061C'
+                || value == '\u202A' || value == '\u202B' || value == '\u202C' || value == '\u202D' || value == '\u202E'
+                || value == '\u2066' || value == '\u2067' || value == '\u2068' || value == '\u2069'
+                || value == '\u2026' || value == '\u060C' || value == '\u061B'
                 || value == '\u061F' || value == '\u06D4';
         }
 
         private static string IsolateLatinRuns(string value)
         {
-            if (string.IsNullOrEmpty(value) || value.IndexOf('\u2066') >= 0)
-                return value ?? string.Empty;
-            var builder = new StringBuilder(value.Length + 8);
-            int index = 0;
-            while (index < value.Length)
-            {
-                bool latin = IsIsolatedLatin(value[index]);
-                int end = index + 1;
-                while (end < value.Length && IsIsolatedLatin(value[end]) == latin)
-                    end++;
-                if (latin)
-                {
-                    builder.Append('\u2066');
-                    builder.Append(value, index, end - index);
-                    builder.Append('\u2069');
-                }
-                else
-                    builder.Append(value, index, end - index);
-                index = end;
-            }
-
-            return builder.ToString();
-        }
-
-        private static bool IsIsolatedLatin(char value)
-        {
-            return (value >= 'A' && value <= 'Z')
-                || (value >= 'a' && value <= 'z')
-                || (value >= '0' && value <= '9')
-                || value == '/' || value == '-' || value == '+' || value == '.' || value == '#';
+            // U+2066/U+2069 are missing from the Farsi TMP atlas, so isolation stays in the
+            // source string and Latin ids are left for the RTL shaper.
+            return value ?? string.Empty;
         }
 
         private static bool ContainsArabicScript(string value)

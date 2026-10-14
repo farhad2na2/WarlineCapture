@@ -37,6 +37,8 @@ namespace Game.UI.Runtime
         };
 
         public static string TheaterPlate => ResourceRoot + "theater_collage";
+        public static string Backdrop => ResourceRoot + "theater_backdrop";
+        public static string ProgressRing => ResourceRoot + "progress_ring";
 
         public static string Plate(string mapId)
         {

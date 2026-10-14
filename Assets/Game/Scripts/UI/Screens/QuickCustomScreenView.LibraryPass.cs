@@ -1,8 +1,8 @@
 using System;
-using System.Text;
+using System.Collections.Generic;
+using System.Globalization;
 using Game.Configs;
 using Game.Missions.Contracts;
-using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Skirmish;
 using TMPro;
@@ -25,42 +25,74 @@ namespace Game.UI.Runtime
         private bool _libraryLayoutHooked;
         private bool _suppressSavedMatch;
 
-        public void ApplyLibraryCaptureDemo()
+        public void ApplyLibraryCaptureDemo(Action<SkirmishDifficultyId> setLaunchDifficulty = null)
         {
             _suppressSavedMatch = true;
             EnsureLibraryCards();
-            var ledger = new SkirmishMedalLedger(CaptureMedalRows(), _catalogEntries);
+            var medals = new CaptureMedalReader(_catalogEntries);
+            medals.Grant("S001", SkirmishDifficultyId.Recruit);
+            medals.Grant("S001", SkirmishDifficultyId.Regular);
+            medals.Grant("S002", SkirmishDifficultyId.Recruit);
+            medals.Grant("S025", SkirmishDifficultyId.Regular);
+            medals.Grant("S073", SkirmishDifficultyId.Recruit);
             var model = new SkirmishLibraryViewModel(
                 _catalogEntries,
-                ledger,
+                medals,
                 _ => ContentAccessState.Allowed,
                 showPlanned: true,
-                prefs: new CaptureLibraryPrefs());
+                prefs: new CaptureLibraryPrefs(),
+                setLaunchDifficulty: setLaunchDifficulty);
             UseLibraryViewModel(model);
         }
 
-        private static SkirmishMedalSaveData[] CaptureMedalRows()
+        private sealed class CaptureMedalReader : ISkirmishMedalReader
         {
-            return new[]
-            {
-                CaptureMedal("S001", SkirmishDifficultyId.Recruit),
-                CaptureMedal("S001", SkirmishDifficultyId.Regular),
-                CaptureMedal("S002", SkirmishDifficultyId.Recruit),
-                CaptureMedal("S025", SkirmishDifficultyId.Regular),
-                CaptureMedal("S073", SkirmishDifficultyId.Recruit)
-            };
-        }
+            private readonly IReadOnlyList<SkirmishBattleCatalogEntry> _catalog;
+            private readonly HashSet<string> _earned = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        private static SkirmishMedalSaveData CaptureMedal(string catalogId, SkirmishDifficultyId difficulty)
-        {
-            return new SkirmishMedalSaveData
+            public CaptureMedalReader(IReadOnlyList<SkirmishBattleCatalogEntry> catalog) =>
+                _catalog = catalog ?? Array.Empty<SkirmishBattleCatalogEntry>();
+
+            public void Grant(string catalogId, SkirmishDifficultyId difficulty) =>
+                _earned.Add(Key(catalogId, difficulty));
+
+            public bool Has(string catalogId, SkirmishDifficultyId difficulty) =>
+                _earned.Contains(Key(catalogId, difficulty));
+
+            public int CountFor(string mapId) => CountFor(mapId, null);
+
+            public int CountFor(string mapId, string objectiveId)
             {
-                catalogId = catalogId,
-                difficulty = (byte)difficulty,
-                contentVersion = 1,
-                firstEarnedUtc = "2026-10-14T00:00:00Z",
-                sessionId = "capture"
-            };
+                if (string.IsNullOrEmpty(mapId) || _catalog == null)
+                    return 0;
+                int count = 0;
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                for (int i = 0; i < _catalog.Count; i++)
+                {
+                    SkirmishBattleCatalogEntry entry = _catalog[i];
+                    if (!string.Equals(entry.MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    if (!string.IsNullOrEmpty(objectiveId) &&
+                        !string.Equals(entry.ObjectiveId, objectiveId, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    if (!seen.Add(entry.ScenarioId))
+                        continue;
+                    if (Has(entry.ScenarioId, SkirmishDifficultyId.Recruit) ||
+                        Has(entry.ScenarioId, SkirmishDifficultyId.Regular) ||
+                        Has(entry.ScenarioId, SkirmishDifficultyId.Veteran) ||
+                        Has(entry.ScenarioId, SkirmishDifficultyId.Commander))
+                        count++;
+                }
+
+                return count;
+            }
+
+            public void Refresh()
+            {
+            }
+
+            private static string Key(string catalogId, SkirmishDifficultyId difficulty) =>
+                (catalogId ?? string.Empty) + "|" + (byte)difficulty;
         }
 
         private sealed class CaptureLibraryPrefs : ISkirmishLibraryPrefs
@@ -80,6 +112,7 @@ namespace Game.UI.Runtime
 
         private void EnsureLibraryPass(Transform composition, Transform preview, Transform rules)
         {
+            EnsureLibraryBackdrop();
             if (composition != null && !_libraryLayoutHooked)
             {
                 MainMenuV3SectionLayoutView layout = composition.GetComponent<MainMenuV3SectionLayoutView>();
@@ -219,7 +252,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < field.Tabs.Length; i++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[i];
-                var button = CreateChromeButton(_objectiveColumn, "ObjectiveTab_" + objective.ObjectiveId);
+                var button = CreateChromeButton(_objectiveColumn, SkirmishLibraryControlNames.ObjectiveTab(objective.ObjectiveId));
                 PlaceTopLeft(button.GetComponent<RectTransform>(), 0f, i * 100f, 84f, 92f);
                 bool selected = string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase);
                 TintButton(button, selected, true);
@@ -229,12 +262,19 @@ namespace Game.UI.Runtime
                 icon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId));
                 icon.preserveAspect = true;
                 icon.raycastTarget = false;
-                var label = CreateLabel(button.transform, "Label", 15f);
-                PlaceTopLeft(label.rectTransform, 4f, 48f, 76f, 40f);
+                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
+                var label = CreateLabel(button.transform, "Label", 16f);
+                PlaceTopLeft(label.rectTransform, 2f, 46f, 80f, 24f);
                 label.alignment = TextAlignmentOptions.Center;
-                label.textWrappingMode = TextWrappingModes.Normal;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.overflowMode = TextOverflowModes.Overflow;
-                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + objective.WonCount + "/" + objective.PublishedCount, 12f, 16f);
+                SetCopy(label, shortLabel, 15f, 20f);
+                var count = CreateLabel(button.transform, "Count", 14f);
+                PlaceTopLeft(count.rectTransform, 2f, 68f, 80f, 20f);
+                count.alignment = TextAlignmentOptions.Center;
+                count.isRightToLeftText = false;
+                count.textWrappingMode = TextWrappingModes.NoWrap;
+                SetCopy(count, objective.WonCount + "/" + objective.PublishedCount, 13f, 16f);
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
             }
@@ -358,17 +398,50 @@ namespace Game.UI.Runtime
         {
             if (_statRow == null)
                 return;
-            string forces = LibraryText(briefing.ArmyLocKey, fa);
-            string start = LibraryText(hasCard ? card.StartLocKey : briefing.StartLocKey, fa);
-            if (string.IsNullOrEmpty(forces) && TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry entry))
-                SkirmishBattleLibraryArt.ProfileCopy(entry.ArmyProfile, fa, out forces);
-            if (string.IsNullOrEmpty(start) && TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry startEntry))
-                SkirmishBattleLibraryArt.ProfileCopy(startEntry.StartProfile, fa, out start);
-            int medals = CountMedals(briefing.Medals);
-            SetTile(_statRow.Find("Time"), fa ? "مدال" : "MEDALS", medals + "/4");
-            SetTile(_statRow.Find("Forces"), fa ? "نیرو" : "FORCES", string.IsNullOrEmpty(forces) ? "0" : forces);
-            SetTile(_statRow.Find("Size"), fa ? "شروع" : "START", string.IsNullOrEmpty(start) ? "0" : start);
-            SetTile(_statRow.Find("Credits"), fa ? "اعتبار" : "CREDITS", ReadProfileCredits());
+            Transform credits = _statRow.Find("Credits");
+            if (credits != null)
+                credits.gameObject.SetActive(false);
+            string army = hasCard ? card.ArmyProfile : string.Empty;
+            string start = hasCard ? card.StartProfile : string.Empty;
+            if (TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry entry))
+            {
+                if (string.IsNullOrEmpty(army))
+                    army = entry.ArmyProfile;
+                if (string.IsNullOrEmpty(start))
+                    start = entry.StartProfile;
+            }
+            SkirmishBattleLibraryArt.ProfileCopy(army, fa, out string forces);
+            if (string.IsNullOrEmpty(forces))
+                forces = string.IsNullOrEmpty(army) ? (fa ? "زمینی" : "GROUND") : army;
+            int seconds = Mathf.Max(0, Mathf.RoundToInt(SkirmishPresetConfig.MatchDurationSeconds));
+            string time = (seconds / 60).ToString("00", CultureInfo.InvariantCulture) + ":"
+                + (seconds % 60).ToString("00", CultureInfo.InvariantCulture);
+            SetTile(_statRow.Find("Time"), fa ? "زمان" : "TIME", time);
+            SetTile(_statRow.Find("Forces"), fa ? "نیرو" : "FORCES", forces);
+            SetTile(_statRow.Find("Size"), fa ? "اندازه" : "SIZE", StartStructureCount(start).ToString(CultureInfo.InvariantCulture));
+            TMP_Text timeValue = _statRow.Find("Time/Value")?.GetComponent<TMP_Text>();
+            if (timeValue != null)
+                timeValue.isRightToLeftText = false;
+        }
+
+        private static int StartStructureCount(string start)
+        {
+            var package = ScriptableObject.CreateInstance<SkirmishStartPackageConfig>();
+            try
+            {
+                if (string.Equals(start, "E", StringComparison.OrdinalIgnoreCase))
+                    package.ConfigureEstablished();
+                else
+                    package.ConfigureField();
+                return Mathf.Max(1, package.StandardStructureCount);
+            }
+            finally
+            {
+                if (Application.isPlaying)
+                    UnityEngine.Object.Destroy(package);
+                else
+                    UnityEngine.Object.DestroyImmediate(package);
+            }
         }
 
         private static int CountMedals(SkirmishMedalMask mask)
@@ -521,36 +594,21 @@ namespace Game.UI.Runtime
 
         private static string MixedText(string value, bool fa)
         {
-            if (!fa || string.IsNullOrEmpty(value))
-                return value ?? string.Empty;
-            var builder = new StringBuilder(value.Length + 8);
-            int index = 0;
-            while (index < value.Length)
-            {
-                bool latin = IsLatinRun(value[index]);
-                int end = index + 1;
-                while (end < value.Length && IsLatinRun(value[end]) == latin)
-                    end++;
-                if (latin)
-                {
-                    builder.Append('\u2066');
-                    builder.Append(value, index, end - index);
-                    builder.Append('\u2069');
-                }
-                else
-                    builder.Append(value, index, end - index);
-                index = end;
-            }
-
-            return builder.ToString();
+            // Bidi isolates are missing from the Farsi TMP font, so mixed lines stay unmarked.
+            return fa ? value ?? string.Empty : value ?? string.Empty;
         }
 
-        private static bool IsLatinRun(char value)
+        private void EnsureLibraryBackdrop()
         {
-            return (value >= 'A' && value <= 'Z')
-                || (value >= 'a' && value <= 'z')
-                || (value >= '0' && value <= '9')
-                || value == '/' || value == '-' || value == '+' || value == '.' || value == '#';
+            if (transform.Find("LibraryBackdrop") != null)
+                return;
+            var image = new GameObject("LibraryBackdrop", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+            image.transform.SetParent(transform, false);
+            image.transform.SetAsFirstSibling();
+            Stretch(image.rectTransform);
+            image.texture = Resources.Load<Texture2D>(SkirmishBattleLibraryArt.Backdrop);
+            image.color = image.texture != null ? Color.white : new Color(0.07f, 0.09f, 0.08f, 1f);
+            image.raycastTarget = false;
         }
     }
 }

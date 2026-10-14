@@ -2,7 +2,7 @@
 
 Programmer 1 owns `SkirmishLibraryViewModel` on `feature/skirmish-library-p1` (PR #65). This branch is stacked on that branch. The screen follows `Assets/Game/Scripts/UI/Screens/SkirmishLibrary/ADAPTER_SWAP.md`.
 
-`QuickCustomScreenView` owns one `SkirmishLibraryViewModel`. `Library` returns it. `UseLibraryViewModel` replaces it. The screen subscribes to `Changed` and rebuilds the theatre, battlefield, and briefing. It subscribes to `Interaction` and plays `UIAudioEventGateway.Raise(interaction.Sound)`. The view model does not call the gateway.
+`QuickCustomScreenView` owns one `SkirmishLibraryViewModel`. `Library` returns it. `UseLibraryViewModel` replaces it. Composition injects the instance through `SkirmishLibraryFactory`; until that bind, the screen uses `CreateUnbound`. Medals are read through `ISkirmishMedalReader`. The screen subscribes to `Changed` and rebuilds the theatre, battlefield, and briefing. It subscribes to `Interaction` and plays `UIAudioEventGateway.Raise(interaction.Sound)`. The view model does not call the gateway. `Game.UI.Runtime` does not reference `Game.Runtime`.
 
 View methods `SelectScenarioId` and `SelectMapCollection` stay `void` and forward. The interface methods with the same names return `bool`.
 
@@ -13,7 +13,7 @@ View methods `SelectScenarioId` and `SelectMapCollection` stay `void` and forwar
 - Medal icons: `SkirmishMedalMask` on the card and briefing, and `SkirmishMedalTotals` on the theatre pin.
 - Recommended Next: `RecommendedScenarioId`, `IsRecommended`, and the briefing `TitleLocKey` for that scenario.
 - Access and lock: `SkirmishCardAccess` and `LockedReasonLocKey`. Empty planned cells stay blank.
-- Titles and descriptions: `TitleLocKey`, `SubtitleLocKey`, `DescriptionLocKey`, and the army and start loc keys, through `GameLocalization`. The view model does not bake English or Farsi strings.
+- Titles and descriptions: `TitleLocKey`, `SubtitleLocKey`, `DescriptionLocKey`, and the army and start loc keys, through `GameLocalization`. The view model does not bake English or Farsi strings. Theatre region labels, the screen heading, and the battlefield tabs use `SkirmishBattleLibraryArt.Copy` (Mountain Pass, Airfield Plains, Desert Base, City Crossroads, Industrial Basin), so they do not show the loc strings "ARMOR APPROACH" or "CITY AIRFIELD".
 
 `Launch()` stores `SkirmishLibraryLaunchContext.Difficulty` and returns `briefing.CanLaunch`. When it returns true, `LaunchMatch` continues into `flowSystem.LaunchMatch`. The screen does not call `SkirmishExpandedLaunchResolver`.
 
@@ -23,18 +23,18 @@ Quick Battle keeps the view model's one outer click. The screen copies the selec
 
 Pass these to Programmer 1 if the briefing tiles or the mockup ratios must be live:
 
-- No match duration or time limit on `SkirmishBriefingState`. The TIME tile shows the briefing medal count as `n/4`.
-- No force count. The FORCES tile shows `ArmyLocKey`.
-- No certified size. The START tile shows `StartLocKey`.
-- No credits. The screen reads `PlayerProfileSaveData.credits` and shows `0` when the profile cannot be loaded.
+- No per-scenario match duration on `SkirmishBriefingState` or `SkirmishBattleCatalogEntry`. The TIME tile shows `SkirmishPresetConfig.MatchDurationSeconds` (900 seconds, `15:00`) for every battle.
+- No force headcount. The FORCES tile shows the catalog `ArmyProfile` (Ground, Air, Combined). It does not show `0`.
+- No certified size such as LARGE. The SIZE tile shows `SkirmishStartPackageConfig.StandardStructureCount` for the catalog `StartProfile` (Field 7, Established 10).
+- No credits on the view model. The briefing no longer has a credits tile. `Game.UI.Runtime` does not reference `Game.Runtime`, so the library does not load `PlayerProfileSaveData`. The account header keeps its own reader.
 - No fixed `/24` or `/6` denominator. A header that must read `won/24`, or a tab that must read `won/6`, needs a field. The current contract says not to use the 24 grid slots or the 6 map cards as that denominator.
-- `ui.skirmish.theater.mp.title` is "ARMOR APPROACH" / "گذر زرهی". The screen shows that loc string. "Mountain Pass" is not a view-model field.
+- `ui.skirmish.theater.mp.title` is still "ARMOR APPROACH" / "گذر زرهی", and `ui.skirmish.theater.ap.title` is "CITY AIRFIELD". The theatre labels do not use those strings. They use the art copy names above.
 
 `StoreRouteProductId` is on the briefing. The shell route `UIRoute.CommandExchange` has no product argument, so the store button cannot pass it.
 
 ## Flow capture
 
-The click-through entry point is `Game.Editor.SkirmishBattleLibraryFlowCapture.RunFocusedValidation`. It writes 14 PNGs under `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/flow/` and logs `[SkirmishBattleLibraryFlow] result=Passed` only when every step's state assertion holds, including the launch request. The demo seeds medals through `SkirmishLibraryViewModel` and an in-memory prefs store. Unity has not been run for this stack on this machine, so those PNGs are not in this commit.
+The click-through entry point is `Game.Editor.SkirmishBattleLibraryFlowCapture.RunFocusedValidation`. It writes 14 PNGs under `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/flow/` and logs `[SkirmishBattleLibraryFlow] result=Passed` only when every step's state assertion holds, including the launch request. Before the theatre shot it calls `FocusTheaterOnMap("DB")`, so Zoom In opens Desert Base and `BattleCard_S001` exists. The demo seeds medals through `SkirmishLibraryViewModel` and an in-memory prefs store. Farsi captures call `TMP_FontAsset.HasCharacters` on every active text and fail when a glyph is missing. Unity has not been run for this stack on this machine, so those PNGs are not in this commit.
 
 Windows, through the checked wrapper. The wrapper adds `-batchmode`. Do not pass `-nographics`.
 

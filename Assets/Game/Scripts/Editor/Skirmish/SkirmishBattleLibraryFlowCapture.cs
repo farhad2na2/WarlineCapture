@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -130,8 +131,9 @@ namespace Game.Editor
             var serialized = new SerializedObject(view);
             serialized.FindProperty("baseAssaultPreset").boolValue = true;
             serialized.ApplyModifiedPropertiesWithoutUndo();
-            view.ApplyLibraryCaptureDemo();
+            view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
             view.Bind(default);
+            view.FocusTheaterOnMap("DB");
             instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
             instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             view.PresentLibraryCapture("theater");
@@ -143,6 +145,7 @@ namespace Game.Editor
             string suffix = locale == "fa-IR" ? "fa-IR" : "en";
             Shot(view, camera, target, width, height, Path.Combine(folder, "01-theater-" + suffix + ".png"));
             AssertStep(view.Library.Level == SkirmishLibraryLevel.Theater, "Theatre did not stay on the theatre.");
+            AssertStep(view.Library.Theater.SelectedMapId == "DB", "Theatre did not focus Desert Base.");
             AssertOverallProgress(instance, view);
 
             Click(Require(instance, SkirmishLibraryControlNames.ZoomIn));
@@ -151,6 +154,7 @@ namespace Game.Editor
             Transform hiddenStrip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
             AssertStep(hiddenStrip == null || !hiddenStrip.gameObject.activeInHierarchy, "Overall progress strip stayed on the battlefield.");
             AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "Zoom In did not open the map.");
+            AssertStep(view.Library.Battlefield.MapId == "DB", "Zoom In did not open Desert Base.");
 
             Click(Require(instance, SkirmishLibraryControlNames.ObjectiveTab("BA")));
             Shot(view, camera, target, width, height, Path.Combine(folder, "03-objective-" + suffix + ".png"));
@@ -242,6 +246,7 @@ namespace Game.Editor
             TMP_Text[] texts = view.GetComponentsInChildren<TMP_Text>(true);
             for (int i = 0; i < texts.Length; i++)
                 texts[i].ForceMeshUpdate();
+            SkirmishBattleLibraryCapture.RejectMissingGlyphs(view.gameObject);
             camera.Render();
             RenderTexture previous = RenderTexture.active;
             RenderTexture.active = target;

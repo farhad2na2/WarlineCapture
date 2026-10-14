@@ -1,0 +1,78 @@
+{
+  "scope": "Editor diagnostic samples; no physical-device or thermal/performance acceptance",
+  "runs": [
+    {
+      "run": 220,
+      "firstAllocatedMb": 4685,
+      "lastAllocatedMb": 6465,
+      "peakAllocatedMb": 6921,
+      "samples": 99,
+      "log": "native-220-frozen-aria-en-seed104734.log"
+    },
+    {
+      "run": 221,
+      "firstAllocatedMb": 5750,
+      "lastAllocatedMb": 6161,
+      "peakAllocatedMb": 6833,
+      "samples": 107,
+      "log": "native-221-frozen-aria-fa-seed104734.log"
+    },
+    {
+      "run": 222,
+      "firstAllocatedMb": 5396,
+      "lastAllocatedMb": 5755,
+      "peakAllocatedMb": 6422,
+      "samples": 112,
+      "log": "native-222-frozen-aria-en-seed130368.log"
+    },
+    {
+      "run": 223,
+      "firstAllocatedMb": 5116,
+      "lastAllocatedMb": 5532,
+      "peakAllocatedMb": 6156,
+      "samples": 105,
+      "log": "native-223-frozen-aria-fa-seed130368.log"
+    },
+    {
+      "run": 224,
+      "firstAllocatedMb": 4758,
+      "lastAllocatedMb": 5203,
+      "peakAllocatedMb": 5796,
+      "samples": 102,
+      "log": "native-224-frozen-aria-en-seed155926.log"
+    },
+    {
+      "run": 225,
+      "firstAllocatedMb": 4639,
+      "lastAllocatedMb": 5280,
+      "peakAllocatedMb": 5709,
+      "samples": 105,
+      "log": "native-225-frozen-aria-fa-seed155926.log"
+    },
+    {
+      "run": 226,
+      "firstAllocatedMb": 4759,
+      "lastAllocatedMb": 5369,
+      "peakAllocatedMb": 5960,
+      "samples": 100,
+      "log": "native-226-strict-manual-audit-fa.log"
+    },
+    {
+      "run": 227,
+      "firstAllocatedMb": 5757,
+      "lastAllocatedMb": 5425,
+      "peakAllocatedMb": 6259,
+      "samples": 88,
+      "log": "native-227-escort-strict-manual-fa.log"
+    },
+    {
+      "run": 228,
+      "firstAllocatedMb": 4818,
+      "lastAllocatedMb": 5937,
+      "peakAllocatedMb": 5937,
+      "samples": 26,
+      "log": "native-228-strict-boarded-escort-save-resume-en.log"
+    }
+  ],
+  "playerReady": false
+}

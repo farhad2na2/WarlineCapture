@@ -1,0 +1,14 @@
+{
+  "explicitHeavyLaneOwner": "main1365",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "preManifest": "final-1363-fixedwing-player-after-source-manifest.json",
+  "preflightManifest": "final-1365-normal-stop-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1365-normal-stop-pre-dispatch-source-manifest.json",
+  "method": "S005NormalStopManual1365Observer.RunValidation",
+  "fixtureSha256": "150876d7e60a0ab3fd6f19a828db73673bc63034fb8d727e4a25ef0e9bb474b6",
+  "runnerSha256": "c6423bc5853d8c94261d436a67a9649b90cb57d7c3a97c1e41a779fb473c0777",
+  "normalInput": true,
+  "plannedStop": true,
+  "unattendedAriaSeedWin": false,
+  "gameplayStateInjected": false
+}

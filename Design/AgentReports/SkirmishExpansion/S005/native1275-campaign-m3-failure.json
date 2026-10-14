@@ -1,0 +1,49 @@
+{
+  "result": "Failed",
+  "scope": "fa-IR",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "preManifest": "final-1270-paid-air-post-source-manifest.json",
+  "postManifest": "final-1275-campaign-m3-post-source-manifest.json",
+  "log": "native-1275-campaign-m3-current.log",
+  "logSha256": "d0f0598fb92e6f690bc0b9e12010069eed0be507147572b2edf775c5b12d2b42",
+  "fixtureSha256": "b52455b840784b610ab400ebc4b029ed1733939feabcb292155dbcb1b0348244",
+  "runnerSha256": "9661403efdcefb93c1076fdb15a679e58502a71f81759db86e0e437a659df02e",
+  "rawEvidence": [
+    {
+      "file": "native1275-defense-7.jsonl",
+      "sha256": "eca3388791b95b856ffb89e3127cdf57967047ccdc48eed8e00d19dc80ec0460"
+    },
+    {
+      "file": "native1275-input-route.jsonl",
+      "sha256": "31b70d95a231ca41e0d096b24c6aad09ffac38d208292b970233763b7892d6af"
+    },
+    {
+      "file": "native1275-journey.jsonl",
+      "sha256": "91dfda22f9d652b451bc7021c94bf0c406dbfa2baff7ebdbc9d23b2ec55555d1"
+    },
+    {
+      "file": "native1275-threat-7.jsonl",
+      "sha256": "2825837b8a67bf470afd3439254938bb21a1310eeab8292c9e369ef65d9c407d"
+    }
+  ],
+  "errors": [
+    "Missing complete native M3 witness marker",
+    "Missing paired native companion input gate",
+    "Generic M3 native journey did not pass",
+    "Native Campaign journey failure",
+    "Native witness explicitly failed",
+    "Missing actual InitialDragDispatched entry=7",
+    "Missing actual InitialDragAccepted entry=7",
+    "Missing actual NativeHoldFourAccepted entry=7",
+    "Missing actual NativeVictoryRendered entry=7",
+    "Missing actual CampaignReturnRendered entry=7",
+    "Actual native read-only witness failed",
+    "Actual wrapper/native exits not both0"
+  ],
+  "fullJourneyStrictTouchAudit": false,
+  "disclosedQA": "Existing isolated available Campaign profile, GuidanceOff and hybrid real UI/screen-position journey; real native Touch initial required4 drag/reserve-card/camera, no actor/health/order/outcome injection. Bilingual only when explicitly selected; FA-only does not close EN.",
+  "playerReady": false
+}

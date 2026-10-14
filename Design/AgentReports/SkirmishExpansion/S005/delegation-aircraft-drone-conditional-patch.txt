@@ -1,0 +1,43 @@
+PREPARED ONLY. Not applied, compiled or validated. Apply only after native Drone-at-IntelStation/no-Airport failure reproduces the inherited runway dependency, and after active source-locked QA closes. Must prove legal native spawn/Scan/return with and without Airport, old Campaign Drone runway and existing Fighter/Strike/TransportPlane regressions. Ground-exit recipe requires actual legal producer placement/exit and is not permission to add map geometry.
+
+--- a/Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs
++++ b/Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs
+@@ -63,7 +63,11 @@
+                     recipes.Add(new BuildingProductionRecipe {
+                         ProducerPrefab = producer, UnitPrefab = unit, Quantity = Math.Max(1, overlay.SquadMembers),
+                         MaterialsCost = overlay.MaterialsCost, CreditsCost = 0,
+-                        UseProducerGroundExit = overlay.Producer == SkirmishProducerKind.GroundStaging
++                        // Expanded recon belongs to its IntelStation launch pad.
++                        // Keep the shared Campaign Drone arrival recipe unchanged.
++                        UseProducerGroundExit = overlay.Producer == SkirmishProducerKind.GroundStaging ||
++                            (overlay.Producer == SkirmishProducerKind.IntelStation &&
++                             overlay.RoleKind == SkirmishRoleKind.Drone)
+                     });
+                 }
+                 result.Config = BuildingPlacementSystemConfig.CreateRuntimeCatalogOverlay(
+--- a/Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs
++++ b/Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs
+@@ -32,11 +32,20 @@
+             if (runways.Length == 0)
+                 return;
+ 
+-            foreach (var (airState, transform, grid, faction, sourceKey) in SystemAPI
++            foreach (var (airState, transform, grid, faction, sourceKey, entity) in SystemAPI
+                          .Query<RefRW<UnitAirComponent>, RefRO<LocalTransform>, RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitSourcePrefabKey>>()
+                          .WithAll<UnitAirMovement, UnitMove>()
+-                         .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>())
+-            {
++                         .WithNone<UnitDeathAnimationComponent, Disabled, UnitSpawnTransitTag>()
++                         .WithEntityAccess())
++            {
++                // Only expanded recon uses an IntelStation pad. Legacy/Campaign
++                // Drone and every other fixed-wing home retain the shared rule.
++                if (state.EntityManager.HasComponent<SkirmishSharedActorTag>(entity) &&
++                    state.EntityManager.HasComponent<SkirmishUnitRoleComponent>(entity) &&
++                    state.EntityManager.GetComponentData<SkirmishUnitRoleComponent>(entity).Role ==
++                        Game.Skirmish.Contracts.SkirmishRoleKind.Drone)
++                    continue;
++
+                 if (!ShouldInitializeRunwayHome(airState.ValueRO, sourceKey.ValueRO.Value))
+                     continue;
+ 

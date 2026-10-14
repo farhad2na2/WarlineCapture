@@ -1,0 +1,988 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// Isolated native pipeline fixture. Never counted as normal-input mission acceptance.
+// Funding/readiness/death stimuli affect only this disposable Play session.
+public static class S005PaidTransportPlane1318
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session,boundary,paidCarrier;
+    static readonly List<Entity> passengers=new();
+    static readonly List<Entity> selectionMembers=new();
+    static SkirmishCapacityComponent combinedCapacity;
+    static float3 loadedOrigin;static Vector3 loadedDestination;
+    static readonly Dictionary<Entity,List<UnitTransportHiddenVisualScale>> hiddenSnapshots=new();static bool loadedMoveAcknowledged;
+    static string CarrierRole => "TransportPlane";
+    static readonly List<Entity> riflePassengers=new(),vehiclePassengers=new();
+    static readonly HashSet<int> accessCapturedGroups=new();
+    static int boardGroup;static bool sawTakeoff,sawAirborne,returnAcknowledged;static uint returnReceipt;
+    static UnityEngine.UI.Button returnStableButton;static Vector2 returnStablePoint;static double returnStableSince;static int returnAttempts;
+    static bool rotatedPlacement;static readonly List<Vector3> sourceSites=new();static readonly Dictionary<Vector3,bool> sourceRotations=new();
+    
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, index, requestId, buildSite; static bool siteTapped; static double catalogSeenAt; static bool catalogLogged; static bool buildDispatched; static double buildDispatchedAt; static UnityEngine.UI.Button clickedBuild;
+    static int constructionSpentBefore;static uint receiptId, precedingReceipt;static int builtAirportRuntimeId;
+    static SkirmishRoleOverlay[] roles;
+    static readonly List<Entity> members = new List<Entity>();
+    static readonly List<string> results = new List<string>();
+    static bool failed;
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-paid-transport.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public float positionX,positionY;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1, commandBaseline;static bool nativeMoveAcknowledged;
+    static Vector3 destination;
+    [Serializable] sealed class PlacementCandidate { public Vector3 world; public string source; public bool rotated; } static readonly List<PlacementCandidate> placementCandidates=new(); static int actualPlacementTouches,actualBlockedPlacements; static double candidateSince; static bool candidatesPrepared; static bool anchorsCached; static Vector3 playerBaseAnchor,enemyBaseAnchor; static double surfaceBlockedSince; static int viewRepairs; static bool viewRepairQueued;
+    static readonly Dictionary<Entity,float3> origins=new();
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static BuildDrawerCatalogRuntimeView ResolveLiveCatalog(out BuildDrawerView drawer)
+    {
+        BuildDrawerCatalogRuntimeView found=null;drawer=null;
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            var ownView=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            if(ownView==null || !ownView.IsOpen)continue; // Match native ResolveCatalogTarget assigned-view gate exactly.
+            if(found!=null){DumpNativeBuildInventory("MultipleAssignedOpenCatalogs",clickedBuild);throw new InvalidOperationException("Multiple catalogs assigned to open native drawer views; ambiguous fixture ownership.");}
+            found=candidate;drawer=ownView;
+        }
+        return found;
+    }
+    static string Hierarchy(Transform transform)
+    {
+        if(transform==null)return "none";var names=new List<string>();
+        for(int depth=0;transform!=null&&depth<10;depth++,transform=transform.parent)names.Add(transform.name);
+        names.Reverse();return string.Join("/",names);
+    }
+    static string ButtonState(UnityEngine.UI.Button button)
+    {
+        if(button==null)return "button=none";
+        return "button="+button.name+" id="+button.GetEntityId()+" active="+button.IsActive()+" interactable="+button.IsInteractable()+" hierarchy="+Hierarchy(button.transform);
+    }
+    static void DumpNativeBuildInventory(string reason,UnityEngine.UI.Button buildButton)
+    {
+        int catalogs=0,drawers=0;
+        Debug.Log("[S005TransportAirportNativeBuildInventory] reason="+reason+" "+ButtonState(buildButton)+" touchBusy="+(touch!=null&&touch.IsBusy));
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            if(catalogs++>=12)break;
+            var assigned=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            Debug.Log("[S005TransportAirportNativeCatalogOwner] reason="+reason+" catalog="+candidate.GetEntityId()+" active="+candidate.isActiveAndEnabled+" hierarchy="+Hierarchy(candidate.transform)+" assignedView="+(assigned!=null?assigned.GetEntityId().ToString():"none")+" assignedActive="+(assigned!=null&&assigned.isActiveAndEnabled)+" assignedOpen="+(assigned!=null&&assigned.IsOpen)+" assignedHierarchy="+Hierarchy(assigned!=null?assigned.transform:null));
+        }
+        foreach(var drawer in UnityEngine.Object.FindObjectsByType<BuildDrawerView>(FindObjectsInactive.Include))
+        {
+            if(drawers++>=12)break;
+            Debug.Log("[S005TransportAirportNativeDrawerOwner] reason="+reason+" drawer="+drawer.GetEntityId()+" active="+drawer.isActiveAndEnabled+" open="+drawer.IsOpen+" hierarchy="+Hierarchy(drawer.transform));
+        }
+        foreach(var controls in UnityEngine.Object.FindObjectsByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Include))
+            Debug.Log("[S005TransportAirportNativeBuildControls] reason="+reason+" controls="+controls.GetEntityId()+" active="+controls.isActiveAndEnabled+" "+ButtonState(controls.BuildButton));
+    }
+
+    static bool LogLiveCatalog(BuildDrawerCatalogRuntimeView catalog, BuildDrawerView drawer)
+    {
+        var keys=new List<string>();
+        var field=typeof(BuildDrawerCatalogRuntimeView).GetField("_items",BindingFlags.Instance|BindingFlags.NonPublic);
+        foreach(var item in (IEnumerable<BuildDrawerCatalogItem>)field.GetValue(catalog))
+            if(item.Prefab!=null && keys.Count<64)keys.Add(item.Prefab.name);
+        var source=typeof(BuildDrawerCatalogRuntimeView).GetField("buildingPlacementConfig",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog) as ScriptableObject;
+        var category=typeof(BuildDrawerCatalogRuntimeView).GetField("_activeCategory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        var restriction=typeof(BuildDrawerCatalogRuntimeView).GetField("_cat",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        bool missionRestricted=(bool)restriction.GetType().GetField("_restricted",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        var missionAllowed=(List<string>)restriction.GetType().GetField("_allowedBuildingConfigIds",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        Debug.Log("[S005TransportAirportLiveCatalogRestriction] missionRestricted="+missionRestricted+" allowed="+string.Join(",",missionAllowed));
+        Debug.Log("[S005TransportAirportLiveCatalog] catalog="+catalog.GetEntityId()+" drawer="+drawer.GetEntityId()+" assignedViewOpen="+drawer.IsOpen+" active="+catalog.isActiveAndEnabled+" category="+category+" source="+(source!=null?source.name:"none")+" keys="+string.Join(",",keys));
+        return keys.Contains("Building_Airport");
+    }
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists(touchPath)||File.Exists("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-airport-roles1318.placement.jsonl"))throw new InvalidOperationException("Preserve existing native Touch evidence");File.WriteAllText(touchPath,"");
+        completion=new TaskCompletionSource<int>(); phase=index=requestId=0;failed=changedEnemy=false;results.Clear();world=null;riflePassengers.Clear();vehiclePassengers.Clear();boardGroup=0;sawTakeoff=sawAirborne=returnAcknowledged=false;returnReceipt=0;returnAttempts=0;returnStableButton=null;rotatedPlacement=false;sourceSites.Clear();sourceRotations.Clear();
+        deadline=EditorApplication.timeSinceStartup+1200;next=0; paidCarrier=Entity.Null;passengers.Clear();selectionMembers.Clear();loadedMoveAcknowledged=false;builtAirportRuntimeId=0;buildSite=0;siteTapped=false;catalogSeenAt=0;catalogLogged=false;buildDispatched=false;buildDispatchedAt=0;clickedBuild=null;anchorsCached=false;playerBaseAnchor=enemyBaseAnchor=Vector3.zero;surfaceBlockedSince=0;viewRepairs=0;viewRepairQueued=false;placementCandidates.Clear();actualPlacementTouches=actualBlockedPlacements=0;candidateSince=0;candidatesPrepared=false;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=ObserveCarrierFrame; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch;AriaCommandEvidence.Recorded+=ObserveMoveReceipt; touch=null; inputFrame=-1;
+        Debug.Log("[S005TransportSupport] scope=IsolatedPaidMixedTransportPlaneFlightEffects normalMission=0 fundingInjected=1 readinessGranted=FullArsenal deathStimulus=HealthZero openingActorsRetired=1 nativeQueueApi=1 nativeBoardLoadedTakeoffReturnExitTouch=1 actorPositionsInjected=0 shotsDamageResultsInjected=0 pricesCapsRatesMapsUnchanged=1");
+        return completion.Task;
+    }
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null || !world.IsCreated;
+                if(!cleanup) { using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)); cleanup=q.IsEmptyIgnoreFilter; }
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned Play session cleanup.");
+                Debug.Log("[S005TransportSupportCleanup] result=Passed attemptsRemoved=1");
+                EditorApplication.update-=Tick; Canvas.willRenderCanvases-=ObserveCarrierFrame; Canvas.willRenderCanvases-=InputFrame;
+                completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Paid transport fixture exceeded1200seconds.");
+            if(now<next)return;next=now+.25;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null)
+            {
+                world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated){world=null;return;}
+            }
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));
+                if(q.CalculateEntityCount()!=1)return;session=q.GetSingletonEntity();var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(state.SpawnComplete==0 || state.Phase!=SkirmishSessionPhase.Playing)return;
+                var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                var army=SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);
+                var selected=new List<SkirmishRoleOverlay>();
+                foreach(var wanted in new[]{SkirmishRoleKind.Rifle,SkirmishRoleKind.ApcFast,SkirmishRoleKind.TransportPlane})
+                    foreach(var r in setup.RoleOverlays)if(army.Allows(r.RoleId) && r.RoleKind==wanted)selected.Add(r);
+                roles=selected.ToArray();if(roles.Length!=3)throw new InvalidOperationException("Expected one enabled Rifle/ApcFast/TransportPlane trio, found "+roles.Length);
+                if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.GroundStaging,1))throw new InvalidOperationException("Functional legal GroundStaging baseline missing; actual paid ground-producer placement is a separate unresolved prerequisite, no ApcFast queue attempted.");
+                if(SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1))throw new InvalidOperationException("Airport preexists; this unique prerequisite must prove actual native paid construction.");
+                attempt=state.SessionId;
+                LogGroundProducer(em);
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();
+                if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var units=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                using(var actors=units.ToEntityArray(Allocator.Temp))foreach(var actor in actors)Kill(em,actor);
+                var readiness=em.GetComponentData<SkirmishResearchStateComponent>(session);readiness.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,readiness);
+                using(var requests=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingFactionUnitProductionRequest)))boundary=requests.GetSingletonEntity();
+                caseDeadline=now+10;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Production fixture did not remain at native speed.");
+            if(phase==1)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(cap.InfantryLive+cap.GroundLive+cap.AirLive+cap.SupplyLive!=0){if(now>caseDeadline)throw new InvalidOperationException("Opening death stimulus did not release capacity.");return;}
+                phase=2;
+            }
+            if(phase==2)
+            {
+                // Native API queue requests are explicitly disclosed isolated QA, outside the Touch order audit.
+                AriaCommandEvidence.End();
+                if(index==roles.Length){Finish(false,"onePaidMixedTransportPlaneNativeFlightReturnExitCase");return;}
+                var role=roles[index];
+                
+                // Build the actual native paid Airport BEFORE passenger/card selection, keeping the tested native catalog pipeline intact.
+                if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1))
+                {
+                    SkirmishMaterialsService.Write(em,session,1,1800);constructionSpentBefore=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1)).LifetimeConstructionSpent;
+                    if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                    phase=70;caseDeadline=now+360;Debug.Log("[S005TransportAirportProducer] phase=NativeLegalAirportBuild airportPresent=0 readiness=FullArsenal fundingInjected=1");return;
+                }
+                if(!SkirmishProductionService.HasLivingProducer(em,session,role.Producer,1))throw new InvalidOperationException("Functional native producer missing: "+role.RoleKind);
+                SkirmishMaterialsService.Write(em,session,1,1800);
+                using(var storage=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))
+                using(var stores=storage.ToEntityArray(Allocator.Temp))foreach(var store in stores){var s=em.GetComponentData<BuildingResourceStorageComponent>(store);if(s.OwnerFactionId!=1)continue;s.StoredFuelBarrels=s.FuelStorageCapacity;s.StoredOilBarrels=s.OilStorageCapacity;em.SetComponentData(store,s);}
+                precedingReceipt=em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId;
+                requestId++;
+                em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=9000+requestId,RequestOwner=session,RequestAttempt=attempt,FactionId=1,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(role.RoleKind))),Status=BuildingFactionUnitProductionRequest.Pending});
+                caseDeadline=now+75;phase=3;return;
+            }
+            if(phase is 70 or 71 or 72 or 73)
+            {
+                if(now>caseDeadline)throw new TimeoutException("Native paid Airport placement/construction exceeded bounded prerequisite timeout.");
+                if(phase==73&&SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1)&&em.HasBuffer<BuildingFactionRunwayReadModel>(boundary)&&em.GetBuffer<BuildingFactionRunwayReadModel>(boundary).Length>0)
+                {ObserveFunctionalAirport(em);Debug.Log("[S005TransportAirportProducer] phase=NativeFunctionalAirport airportPresent=1 nativeLegalPlacement=1 actualConfirmTouch=1 ownershipInjected=0");phase=2;}
+                return;
+            }
+            if(now>caseDeadline)throw new TimeoutException("Role "+roles[index].RoleKind+" phase "+phase+" exceeded native queue/death timeout.");
+            if(phase==3)
+            {
+                var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;
+                for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=9000+requestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native queue rejected "+roles[index].RoleKind+" reason="+r.ResultCode);requests.RemoveAt(i);break;}
+                if(!found)throw new InvalidOperationException("Native request disappeared without a completion.");
+                receiptId=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==1 && r.Role==roles[index].RoleKind && r.ReservationId>precedingReceipt)receiptId=r.ReservationId;
+                if(receiptId==0)throw new InvalidOperationException("Paid native reservation missing.");Debug.Log("[S005TransportNativeQueueAccepted] role="+roles[index].RoleKind+" requestId="+(9000+requestId)+" receipt="+receiptId+" nativeQueue=1");phase=4;
+            }
+            if(phase==4)
+            {
+                SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId && r.FactionId==1)receipt=r;
+                if(receipt.Phase!=SkirmishReservationPhase.Live || receipt.DeliveredMembers!=receipt.MemberCount)return;
+                if(receipt.ProducerRuntimeId<=0 || receipt.MaterialsPaid!=roles[index].MaterialsCost)throw new InvalidOperationException("Producer binding/paid cost mismatch for "+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" expected="+roles[index].MaterialsCost);
+                if(roles[index].RoleKind==SkirmishRoleKind.TransportPlane && receipt.ProducerRuntimeId!=builtAirportRuntimeId)throw new InvalidOperationException("Paid TransportPlane receipt is not bound to actual native Touch-built Airport.");
+                members.Clear();using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var actors=q.ToEntityArray(Allocator.Temp))foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);if(owner.FactionId==1 && owner.ReservationId==receiptId && owner.SessionId.Equals(attempt)){if(owner.CapacityReleased!=0 || em.GetComponentData<UnitHealth>(actor).Current<=0 || !em.HasComponent<SkirmishSharedActorTag>(actor) || !em.HasComponent<SkirmishRoleOverlayComponent>(actor) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor))throw new InvalidOperationException("Delivered actor lacks native lifecycle/group ownership.");var overlay=em.GetComponentData<SkirmishRoleOverlayComponent>(actor);if(overlay.Role!=roles[index].RoleKind || overlay.TargetDomains!=roles[index].TargetDomains)throw new InvalidOperationException("Native role/target-domain mismatch.");members.Add(actor);}}
+                if(members.Count!=receipt.MemberCount)throw new InvalidOperationException("Delivered native member count mismatch.");
+                Debug.Log("[S005TransportPaidQueueCase] role="+roles[index].RoleKind+" paid="+receipt.MaterialsPaid+" producer="+receipt.ProducerRuntimeId+" delivered="+members.Count+" targets="+roles[index].TargetDomains+" nativeQueue=1 syntheticSpawn=0");
+                foreach(var member in members)if(em.HasComponent<UnitSpawnTransitTag>(member))return;
+                selectionMembers.Clear();selectionMembers.AddRange(members);origins.Clear(); float3 center=float3.zero;nativeMoveAcknowledged=false;
+                foreach(var member in members){var pos=em.GetComponentData<LocalTransform>(member).Position;origins.Add(member,pos);center+=pos;}
+                center/=members.Count; destination=(Vector3)(center+new float3(16,0,0));
+                if(touch==null){touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);}
+                AriaCommandEvidence.Begin(); commandBaseline=AriaCommandEvidence.AcceptedCommands;
+                if(roleIsPlane())
+                {
+                    if(members.Count!=1||roles[index].MaterialsCost!=440)throw new InvalidOperationException("Expected exact paid TransportPlane440 one-member delivery");
+                    paidCarrier=members[0];var cargo=em.GetComponentData<UnitTransportCargoCapacity>(paidCarrier);
+                    var air=em.GetComponentData<UnitAirComponent>(paidCarrier);
+                    if(cargo.SoldierCapacity!=24||cargo.VehicleCapacity!=2||air.UsesRunway==0||air.Airborne!=0||air.TakeoffRolling!=0||air.LandingRolling!=0)throw new InvalidOperationException("Actual paid plane schema24soldiers2vehicles/grounded native runway gate failed");
+                    if(riflePassengers.Count!=4||vehiclePassengers.Count!=1)throw new InvalidOperationException("Exact paid Rifle4/ApcFast1 cohort missing");
+                    passengers.Clear();passengers.AddRange(riflePassengers);passengers.AddRange(vehiclePassengers);hiddenSnapshots.Clear();combinedCapacity=em.GetComponentData<SkirmishCapacityComponent>(session);LogCapacity("BeforeBoard",combinedCapacity);
+                    selectionMembers.Clear();selectionMembers.AddRange(riflePassengers);boardGroup=0;phase=20;caseDeadline=now+150;LogFlight(em,"BeforeBoard");return;
+                }
+                phase=10;caseDeadline=now+65;return;
+            }
+            if(phase==12)
+            {
+                if(touch.IsBusy||!nativeMoveAcknowledged)return;
+                bool moved=true;float minimum=float.MaxValue;
+                foreach(var member in members){if(!em.Exists(member)||em.GetComponentData<UnitHealth>(member).Current<=0)throw new InvalidOperationException("Role died before movement observation");float distance=math.distance(origins[member],em.GetComponentData<LocalTransform>(member).Position);minimum=math.min(minimum,distance);moved &= distance>=5;}
+                if(!moved)return;
+                if(AriaCommandEvidence.AcceptedCommands<=commandBaseline||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("Native Move receipt missing or input violation");
+                Debug.Log("[S005TransportNativeMovement] result=Passed role="+roles[index].RoleKind+" members="+members.Count+" minimumDisplacement="+minimum+" input=Touch actorPositionsSelectionOrdersInjected=0");
+                if(index==0){riflePassengers.Clear();riflePassengers.AddRange(members);if(riflePassengers.Count!=4)throw new InvalidOperationException("Actual whole paid Rifle4 required");}
+                else if(index==1){vehiclePassengers.Clear();vehiclePassengers.AddRange(members);if(vehiclePassengers.Count!=1)throw new InvalidOperationException("Actual one paid ApcFast required");}
+                else throw new InvalidOperationException("Unloaded plane movement is forbidden by cargo protocol");
+                index++;phase=2;return;
+            }
+            if((phase is 20 or 21 or 22) && now>=boardDiagnosticDue){boardDiagnosticDue=now+1;ObserveBoardDiagnostic("Census");S005BoardPathCensus1318.Capture(em,session,paidCarrier,receiptId,builtAirportRuntimeId,selectionMembers,boardGroup);}
+            if(phase==22)
+            {
+                if(!em.HasBuffer<UnitTransportPassengerElement>(paidCarrier))throw new InvalidOperationException("Actual carrier has no native passenger buffer.");
+                var boarded=em.GetBuffer<UnitTransportPassengerElement>(paidCarrier);
+                if(boarded.Length!=(boardGroup==0?4:5))return;
+                foreach(var entry in boarded)if(!passengers.Contains(entry.Passenger))throw new InvalidOperationException("Carrier boarded unrelated passenger.");
+                foreach(var entry in boarded){var passenger=entry.Passenger;VerifyBoarded(em,passenger);if(!hiddenSnapshots.ContainsKey(passenger)){hiddenSnapshots.Add(passenger,new List<UnitTransportHiddenVisualScale>());foreach(var hidden in em.GetBuffer<UnitTransportHiddenVisualScale>(passenger))hiddenSnapshots[passenger].Add(hidden);}}
+                if(boardGroup==0){boardGroup=1;selectionMembers.Clear();selectionMembers.AddRange(vehiclePassengers);phase=20;caseDeadline=now+150;return;}
+                VerifyCargoKinds(em);
+                RequireSameCapacity(em,"AfterBoard");
+                Debug.Log("[S005TransportNativeBoard] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" links=1 hidden=1 input=Touch passengerLinksInjected=0");
+                Debug.Log("[S005TransportCheckpointHandoff] role="+CarrierRole+" paidCarrier="+paidCarrier+" paidPassengers="+passengers.Count+" nativeLinksHiddenVerified=1 checkpointPerformed=0");
+                selectionMembers.Clear();selectionMembers.Add(paidCarrier);phase=23;caseDeadline=now+180;return;
+            }
+            if(phase==25)
+            {
+                if(touch.IsBusy||!loadedMoveAcknowledged)return;
+                if(!em.Exists(paidCarrier)||em.GetComponentData<UnitHealth>(paidCarrier).Current<=0)throw new InvalidOperationException("Paid carrier died before payload transport.");
+                float moved=math.distance(loadedOrigin.xz,em.GetComponentData<LocalTransform>(paidCarrier).Position.xz);
+                var flight=em.GetComponentData<UnitAirComponent>(paidCarrier);if(flight.TakeoffRolling!=0&&!sawTakeoff){sawTakeoff=true;LogFlight(em,"LoadedNativeTakeoffRolling");}if(flight.Airborne!=0&&!sawAirborne){sawAirborne=true;LogFlight(em,"LoadedNativeAirborneFirstObserved");}
+                if(!sawTakeoff||!sawAirborne||flight.TakeoffRolling!=0||moved<40)return;
+                if(em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=passengers.Count)throw new InvalidOperationException("Paid cohort lost during native carrier Move.");
+                foreach(var passenger in passengers)VerifyBoarded(em,passenger);
+                RequireSameCapacity(em,"AfterLoadedMove");
+                Debug.Log("[S005TransportNativeLoadedMove] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" horizontalDisplacement="+moved+" verifiedReceipt=1 input=Touch linksHiddenPreserved=1");
+                LogFlight(em,"LoadedAirborne");phase=30;caseDeadline=now+180;return;
+            }
+            if(phase==31)
+            {
+                if(!returnAcknowledged)return;
+                var air=em.GetComponentData<UnitAirComponent>(paidCarrier);
+                foreach(var passenger in passengers)VerifyBoarded(em,passenger);
+                if(air.Airborne!=0||air.TakeoffRolling!=0||air.LandingRolling!=0||air.ReturningHome!=0||math.distance(em.GetComponentData<LocalTransform>(paidCarrier).Position,air.HomePosition)>1.5f)return;
+                RequireSameCapacity(em,"AfterTouchdown");VerifyCargoKinds(em);LogFlight(em,"NativeTouchdownHome");
+                Debug.Log("[S005TransportPlaneTouchdown] result=Passed receipt="+returnReceipt+" input=Touch nativeLanding=1 atHome=1 passengers=5");
+                phase=26;caseDeadline=now+100;return;
+            }
+            if(phase==29)
+            {
+                if(touch.IsBusy)return;
+                if(em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length!=0)return;
+                foreach(var passenger in passengers)
+                {
+                    if(!em.Exists(passenger)||em.GetComponentData<UnitHealth>(passenger).Current<=0||em.HasComponent<Disabled>(passenger)||em.HasComponent<UnitTransportPassenger>(passenger)||em.HasComponent<UnitTransportCargoPassenger>(passenger)||em.HasBuffer<UnitTransportHiddenVisualScale>(passenger)&&em.GetBuffer<UnitTransportHiddenVisualScale>(passenger).Length!=0)throw new InvalidOperationException("Native unloaded passenger remains dead/hidden/linked.");
+                    foreach(var hidden in hiddenSnapshots[passenger])VerifyUnloadedVisual(em,passenger,hidden);
+                }
+                RequireSameCapacity(em,"AfterUnload");
+                Debug.Log("[S005TransportNativeUnload] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" input=Touch linksCleared=1 visualRestored=1 capacityPreserved=1");
+                foreach(var passenger in passengers)Kill(em,passenger);Kill(em,paidCarrier);phase=5;caseDeadline=now+15;return;
+            }
+            if(phase==5)
+            {
+                var cap=em.GetComponentData<SkirmishCapacityComponent>(session);
+                if(!CountersZero(cap))return;
+                foreach(var actor in passengers)VerifyReleased(em,actor);VerifyReleased(em,paidCarrier);
+                LogCapacity("AfterPairDeath",cap);
+                Debug.Log("[S005TransportNativeDeathCapacity] result=Passed role="+CarrierRole+" passengers="+passengers.Count+" allLiveReservedCounters=0 idempotent=1 stimulus=HealthZero");
+                results.Add(CarrierRole);index++;phase=2;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static void ObserveFunctionalAirport(EntityManager em)
+    {
+        using var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishStructureIdentityComponent),typeof(RuntimeBuildingCombatInfo),typeof(UnitHealth));
+        using var entities=q.ToEntityArray(Allocator.Temp);
+        int count=0;
+        foreach(var actor in entities)
+        {
+            var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);var identity=em.GetComponentData<SkirmishStructureIdentityComponent>(actor);
+            if(owner.FactionId!=1||!owner.SessionId.Equals(attempt)||identity.Producer!=SkirmishProducerKind.Airport)continue;
+            var info=em.GetComponentData<RuntimeBuildingCombatInfo>(actor);
+            if(owner.CapacityReleased!=0||em.GetComponentData<UnitHealth>(actor).Current<=0||info.OwnerFactionId!=1||info.RuntimeBuildingId<=0)throw new InvalidOperationException("Actual native Airport owner/runtime/liveness mismatch.");
+            count++;builtAirportRuntimeId=info.RuntimeBuildingId;
+            Debug.Log("[S005TransportAirportRuntimeReceipt] runtimeId="+info.RuntimeBuildingId+" faction="+info.OwnerFactionId+" entityIndex="+actor.Index+" entityVersion="+actor.Version+" originX="+info.OriginCell.x+" originZ="+info.OriginCell.y+" footprintX="+info.FootprintCells.x+" footprintZ="+info.FootprintCells.y+" actualTouchConstruction=1 producerNative=1");
+        }
+        if(count!=1)throw new InvalidOperationException("Exactly one actual native paid Airport required, found "+count);
+        var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1));if(bank.LifetimeConstructionSpent<=constructionSpentBefore)throw new InvalidOperationException("Actual Touch-built Airport has no native construction materials expenditure");Debug.Log("[S005TransportAirportNativePayment] beforeSpent="+constructionSpentBefore+" afterSpent="+bank.LifetimeConstructionSpent+" paidDelta="+(bank.LifetimeConstructionSpent-constructionSpentBefore)+" fundingInjected=1 nativePayment=1");
+        int runwayCount=0;foreach(var row in em.GetBuffer<BuildingFactionRunwayReadModel>(boundary))if(row.BuildingRuntimeId==builtAirportRuntimeId){if(row.FactionId!=1)throw new InvalidOperationException("Actual paid runway faction mismatch");runwayCount++;Debug.Log("[S005TransportPlaneNativeRunway] runtimeId="+row.BuildingRuntimeId+" faction="+row.FactionId+" takeoffX="+row.TakeoffCell.x+" takeoffZ="+row.TakeoffCell.y+" landingX="+row.LandingCell.x+" landingZ="+row.LandingCell.y);}
+        if(runwayCount!=1)throw new InvalidOperationException("Exactly one native faction1 runway binding required");
+    }
+    static bool CountersZero(SkirmishCapacityComponent a)=>a.InfantryLive==0&&a.GroundLive==0&&a.AirLive==0&&a.SupplyLive==0&&a.InfantryReserved==0&&a.GroundReserved==0&&a.AirReserved==0&&a.SupplyReserved==0;
+    static void RequireSameCapacity(EntityManager em,string stage)
+    {
+        var c=em.GetComponentData<SkirmishCapacityComponent>(session);var b=combinedCapacity;
+        if(c.FactionId!=b.FactionId||c.InfantryCap!=b.InfantryCap||c.GroundCap!=b.GroundCap||c.AirCap!=b.AirCap||c.SupplyCap!=b.SupplyCap||c.InfantryLive!=b.InfantryLive||c.GroundLive!=b.GroundLive||c.AirLive!=b.AirLive||c.SupplyLive!=b.SupplyLive||c.InfantryReserved!=b.InfantryReserved||c.GroundReserved!=b.GroundReserved||c.AirReserved!=b.AirReserved||c.SupplyReserved!=b.SupplyReserved||c.NextReservationId!=b.NextReservationId)throw new InvalidOperationException("Board/Move/Unload changed actual paid pair capacity ledger.");
+        LogCapacity(stage,c);
+    }
+    static void LogCapacity(string stage,SkirmishCapacityComponent c)=>Debug.Log("[S005TransportCapacity] role="+CarrierRole+" stage="+stage+" infantryLive="+c.InfantryLive+" groundLive="+c.GroundLive+" airLive="+c.AirLive+" supplyLive="+c.SupplyLive+" infantryReserved="+c.InfantryReserved+" groundReserved="+c.GroundReserved+" airReserved="+c.AirReserved+" supplyReserved="+c.SupplyReserved+" nextReservationId="+c.NextReservationId);
+    static void VerifyReleased(EntityManager em,Entity actor){if(!em.Exists(actor))return;if(em.HasComponent<SkirmishAttemptOwnedComponent>(actor)&&em.GetComponentData<SkirmishAttemptOwnedComponent>(actor).CapacityReleased==0)throw new InvalidOperationException("Paid actor native capacity release flag missing.");if(SkirmishProductionService.TryReleaseDeath(em,session,actor))throw new InvalidOperationException("Native death released capacity twice.");}
+    [Serializable] struct VisualRestoreRow
+    {
+        public string role,check;public int passengerIndex,passengerVersion,visualIndex,visualVersion,markerIndex,markerVersion,typedChildIndex,typedChildVersion;
+        public float snapshotScale,currentScale,expectedScale;public bool visualExists,hasTransform,passengerSelected,nativeVisible,typedReferenceMatched,postMatrixMatches,passed;
+    }
+    static void VerifyUnloadedVisual(EntityManager em,Entity passenger,UnitTransportHiddenVisualScale hidden)
+    {
+        bool ve=em.Exists(hidden.Visual),ht=ve&&em.HasComponent<LocalTransform>(hidden.Visual);
+        var row=new VisualRestoreRow{role=CarrierRole,check="ExactSnapshotNonSelectionVisual",passengerIndex=passenger.Index,passengerVersion=passenger.Version,visualIndex=hidden.Visual.Index,visualVersion=hidden.Visual.Version,snapshotScale=hidden.PreviousScale,currentScale=ht?em.GetComponentData<LocalTransform>(hidden.Visual).Scale:0f,expectedScale=hidden.PreviousScale,visualExists=ve,hasTransform=ht,passengerSelected=em.HasComponent<SelectedUnitTag>(passenger),postMatrixMatches=true};
+        Entity marker=ve&&em.HasComponent<Parent>(hidden.Visual)?em.GetComponentData<Parent>(hidden.Visual).Value:Entity.Null;
+        if(marker!=Entity.Null&&em.Exists(marker)&&em.HasComponent<SelectionMarkerTag>(marker)&&em.HasComponent<SelectionMarkerVisualChild>(marker))
+        {
+            var reference=em.GetComponentData<SelectionMarkerVisualChild>(marker);
+            // Exact native render child identity only; no descendant or generic marker subtree exemptions.
+            if(reference.Value==hidden.Visual)
+            {
+                if(!em.HasComponent<Parent>(marker)||em.GetComponentData<Parent>(marker).Value!=passenger)throw new InvalidOperationException("Native selection marker has unexpected passenger owner.");
+                row.check="ExactTypedNativeCurrentSelectionSurface";row.markerIndex=marker.Index;row.markerVersion=marker.Version;row.typedChildIndex=reference.Value.Index;row.typedChildVersion=reference.Value.Version;row.typedReferenceMatched=true;
+                row.nativeVisible=row.passengerSelected&&em.HasComponent<UnitHealth>(passenger)&&em.GetComponentData<UnitHealth>(passenger).Current>0&&!em.HasComponent<UnitTransportPassenger>(passenger)&&!em.HasComponent<UnitAirMovement>(passenger);
+                float x=reference.VisibleScaleX>0f?reference.VisibleScaleX:reference.VisibleScale;float z=reference.VisibleScaleZ>0f?reference.VisibleScaleZ:reference.VisibleScale;
+                if(em.HasComponent<PostTransformMatrix>(hidden.Visual))
+                {
+                    row.expectedScale=row.nativeVisible?1f:0f;
+                    var actual=em.GetComponentData<PostTransformMatrix>(hidden.Visual).Value;var expected=float4x4.Scale(new float3(row.nativeVisible?math.max(0f,x):0f,1f,row.nativeVisible?math.max(0f,z):0f));
+                    row.postMatrixMatches=math.csum(math.abs(actual.c0-expected.c0))+math.csum(math.abs(actual.c1-expected.c1))+math.csum(math.abs(actual.c2-expected.c2))+math.csum(math.abs(actual.c3-expected.c3))<=.001f;
+                }
+                else row.expectedScale=row.nativeVisible?math.max(x,z):0f;
+            }
+        }
+        row.passed=ve&&(!ht||Mathf.Abs(row.currentScale-row.expectedScale)<=.001f)&&row.postMatrixMatches;
+        Debug.Log("[S005TransportVisualRestore] "+JsonUtility.ToJson(row));
+        if(!row.passed)throw new InvalidOperationException("Native unload visual restoration failed: "+JsonUtility.ToJson(row));
+    }
+    static void VerifyBoarded(EntityManager em,Entity passenger)
+    {
+        if(!em.Exists(passenger)||em.GetComponentData<UnitHealth>(passenger).Current<=0||!em.HasComponent<Disabled>(passenger)||!em.HasComponent<UnitTransportPassenger>(passenger)||em.GetComponentData<UnitTransportPassenger>(passenger).Transport!=paidCarrier||!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))throw new InvalidOperationException("Native paid passenger link/health/hidden buffer missing.");
+        foreach(var hidden in em.GetBuffer<UnitTransportHiddenVisualScale>(passenger))if(!em.Exists(hidden.Visual)||em.HasComponent<LocalTransform>(hidden.Visual)&&em.GetComponentData<LocalTransform>(hidden.Visual).Scale!=0)throw new InvalidOperationException("Native boarded passenger visual not hidden.");
+    }
+    // Passive records only. No native result/selection/transport state is written.
+    [Serializable] sealed class BoardDiagnosticRow
+    {
+        public string rowKind,stage,message,firstUiHit;
+        public int frame,phase,boardGroup,inputBoundaryCount,runtimeBoundaryCount,introBoundaryCount,selectedCount,expectedCount,activeMode,boardDirection,activeTransportIndex,activeTransportVersion,ignoreUntil,ignoreUiRelease,ignoreNextRelease,skipRelease,pressedOverUi,requiresWorldTarget,suppressWorldClick,introLocked,introState,fullscreenMap,simulationActive,carrierIndex,carrierVersion,carrierHp,carrierGridX,carrierGridZ,carrierSizeX,carrierSizeZ,passengerCount,airborne,takeoffRolling,landingRolling;
+        public double editorTime,worldTime;public float worldDelta,screenX,screenY,screenZ,carrierX,carrierY,carrierZ,renderX,renderY,renderZ;
+        public bool inputPresent,runtimePresent,selectedExact,targetPresented,renderTransformPresent,carrierExists,carrierDisabled,carrierTransit,commandBufferPresent,resultBufferPresent;
+        public int actorIndex,actorVersion,actorHp,actorGridX,actorGridZ,boardingTransportIndex,boardingTransportVersion,boardingGoalX,boardingGoalZ,passengerTransportIndex,passengerTransportVersion,pathIndex,pathLength,requestId,requestFrame,requestKind,accepted,reasonCode,targetIndex,targetVersion,sourceIndex,sourceVersion,hasTarget,hasSource,hasResult,issued;
+        public bool wheelOpen;public string boardActionPath="";
+        public bool actorExists,actorSelected,actorDisabled,hasBoardingTarget,hasPassengerLink,hasPathFollow,hasPathRange;
+    }
+    static readonly string boardDiagnosticPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-board-diagnostic.jsonl";
+    static double boardDiagnosticDue; static int boardReadyFrame=-1;static Vector2 boardReadyPoint;
+    static void WriteBoardRow(BoardDiagnosticRow row)
+    {
+        row.frame=Time.frameCount;row.phase=phase;row.boardGroup=boardGroup;row.editorTime=EditorApplication.timeSinceStartup;
+        row.worldTime=world.Time.ElapsedTime;row.worldDelta=world.Time.DeltaTime;
+        File.AppendAllText(boardDiagnosticPath,JsonUtility.ToJson(row)+"\n");
+    }
+    static bool BoardPointPresented(Vector3 point,out Vector3 screen,out string firstHit)
+    {
+        screen=Camera.main!=null?Camera.main.WorldToScreenPoint(point):Vector3.zero;firstHit="none";
+        var popup=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        var events=UnityEngine.EventSystems.EventSystem.current;var hits=new List<UnityEngine.EventSystems.RaycastResult>();
+        if(events!=null)events.RaycastAll(new UnityEngine.EventSystems.PointerEventData(events){position=screen},hits);
+        if(hits.Count>0)firstHit=hits[0].gameObject.name;
+        return Camera.main!=null&&events!=null&&(popup==null||!popup.IsOpen)&&screen.z>0&&Screen.safeArea.Contains(screen)&&hits.Count==0;
+    }
+    static bool BoardInputReady(EntityManager em)
+    {
+        using var q=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent));if(q.CalculateEntityCount()!=1)return false;
+        var input=em.GetComponentData<RtsSelectionInputStateComponent>(q.GetSingletonEntity());
+        using var r=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));if(r.CalculateEntityCount()!=1)return false;
+        var runtime=em.GetComponentData<RuntimeGameplayStateComponent>(r.GetSingletonEntity());
+        using var intro=em.CreateEntityQuery(typeof(MatchIntroTransitionComponent));int count=intro.CalculateEntityCount();if(count>1||count==1&&em.GetComponentData<MatchIntroTransitionComponent>(intro.GetSingletonEntity()).InputLocked!=0)return false;
+        return input.ActiveCommandMode==(int)TacticalCommandMode.Board&&input.ActiveBoardCommandDirection==(byte)BoardCommandModeDirection.PassengerToTransport&&input.ActiveBoardTransport==Entity.Null&&input.IgnoreUiClickUntilRelease==0&&input.IgnoreNextLeftMouseRelease==0&&input.SkipNextWorldReleaseAfterSelection==0&&Time.frameCount>input.IgnoreWorldCommandsUntilFrame&&runtime.SuppressNextWorldClick==0;
+    }
+    static void ObserveBoardDiagnostic(string stage)
+    {
+        if(world==null||!world.IsCreated||paidCarrier==Entity.Null||phase is not (20 or 21 or 22))return;
+        var em=world.EntityManager;var wheel=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Include)?.CommandWheelPanel;var row=new BoardDiagnosticRow{wheelOpen=wheel!=null&&wheel.IsOpen,boardActionPath=wheel?.NextBoardButton!=null?Hierarchy(wheel.NextBoardButton.transform):"",rowKind="State",stage=stage,carrierIndex=paidCarrier.Index,carrierVersion=paidCarrier.Version,expectedCount=selectionMembers.Count,carrierExists=em.Exists(paidCarrier)};
+        using(var q=em.CreateEntityQuery(typeof(SelectedUnitTag))){using var aa=q.ToEntityArray(Allocator.Temp);row.selectedCount=aa.Length;row.selectedExact=aa.Length==selectionMembers.Count;foreach(var a in aa)row.selectedExact&=selectionMembers.Contains(a);}
+        using(var q=em.CreateEntityQuery(typeof(MatchIntroTransitionComponent))){row.introBoundaryCount=q.CalculateEntityCount();if(row.introBoundaryCount==1){var x=em.GetComponentData<MatchIntroTransitionComponent>(q.GetSingletonEntity());row.introLocked=x.InputLocked;row.introState=(int)x.State;}}
+        using(var q=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent))){row.runtimeBoundaryCount=q.CalculateEntityCount();row.runtimePresent=row.runtimeBoundaryCount==1;if(row.runtimePresent){var x=em.GetComponentData<RuntimeGameplayStateComponent>(q.GetSingletonEntity());row.suppressWorldClick=x.SuppressNextWorldClick;row.fullscreenMap=x.FullscreenMapOpen;row.simulationActive=x.SimulationActive;}}
+        using(var q=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent))){row.inputBoundaryCount=q.CalculateEntityCount();row.inputPresent=row.inputBoundaryCount==1;if(row.inputPresent){var a=q.GetSingletonEntity();var x=em.GetComponentData<RtsSelectionInputStateComponent>(a);row.activeMode=x.ActiveCommandMode;row.boardDirection=x.ActiveBoardCommandDirection;row.activeTransportIndex=x.ActiveBoardTransport.Index;row.activeTransportVersion=x.ActiveBoardTransport.Version;row.ignoreUntil=x.IgnoreWorldCommandsUntilFrame;row.ignoreUiRelease=x.IgnoreUiClickUntilRelease;row.ignoreNextRelease=x.IgnoreNextLeftMouseRelease;row.skipRelease=x.SkipNextWorldReleaseAfterSelection;row.pressedOverUi=x.PointerPressedOverUi;row.requiresWorldTarget=x.ActiveCommandModeRequiresWorldTarget;
+            row.commandBufferPresent=em.HasBuffer<RtsSelectionCommandIntentRequestElement>(a);if(row.commandBufferPresent)foreach(var c in em.GetBuffer<RtsSelectionCommandIntentRequestElement>(a))WriteBoardRow(new BoardDiagnosticRow{rowKind="CommandIntent",stage=stage,requestId=c.RequestId,requestFrame=c.Frame,requestKind=(int)c.Kind,targetIndex=c.TargetEntity.Index,targetVersion=c.TargetEntity.Version,sourceIndex=c.SourceEntity.Index,sourceVersion=c.SourceEntity.Version,hasTarget=c.HasTargetEntity,hasSource=c.HasSourceEntity});
+            row.resultBufferPresent=em.HasBuffer<RtsSelectionCommandResultElement>(a);if(row.resultBufferPresent)foreach(var c in em.GetBuffer<RtsSelectionCommandResultElement>(a))WriteBoardRow(new BoardDiagnosticRow{rowKind="CommandResult",stage=stage,requestId=c.RequestId,requestFrame=c.Frame,requestKind=(int)c.Kind,targetIndex=c.TargetEntity.Index,targetVersion=c.TargetEntity.Version,sourceIndex=c.SourceEntity.Index,sourceVersion=c.SourceEntity.Version,hasTarget=c.HasTargetEntity,hasSource=c.HasSourceEntity,hasResult=c.HasCommandResult,accepted=c.Accepted,reasonCode=c.ReasonCode,message=c.Message.ToString()});
+        }}
+        if(row.carrierExists){row.carrierHp=em.HasComponent<UnitHealth>(paidCarrier)?em.GetComponentData<UnitHealth>(paidCarrier).Current:-1;row.carrierDisabled=em.HasComponent<Disabled>(paidCarrier);row.carrierTransit=em.HasComponent<UnitSpawnTransitTag>(paidCarrier);var p=em.GetComponentData<LocalTransform>(paidCarrier).Position;row.carrierX=p.x;row.carrierY=p.y;row.carrierZ=p.z;row.targetPresented=BoardPointPresented((Vector3)p+Vector3.up,out var screen,out var first);row.screenX=screen.x;row.screenY=screen.y;row.screenZ=screen.z;row.firstUiHit=first;
+            row.renderTransformPresent=em.HasComponent<LocalToWorld>(paidCarrier);if(row.renderTransformPresent){var render=em.GetComponentData<LocalToWorld>(paidCarrier).Position;row.renderX=render.x;row.renderY=render.y;row.renderZ=render.z;}var g=em.GetComponentData<UnitGrid>(paidCarrier).Cell;row.carrierGridX=g.x;row.carrierGridZ=g.y;var size=em.GetComponentData<UnitFootprint>(paidCarrier).Size;row.carrierSizeX=size.x;row.carrierSizeZ=size.y;var air=em.GetComponentData<UnitAirComponent>(paidCarrier);row.airborne=air.Airborne;row.takeoffRolling=air.TakeoffRolling;row.landingRolling=air.LandingRolling;row.passengerCount=em.HasBuffer<UnitTransportPassengerElement>(paidCarrier)?em.GetBuffer<UnitTransportPassengerElement>(paidCarrier).Length:-1;}
+        WriteBoardRow(row);
+        foreach(var view in UnityEngine.Object.FindObjectsByType<BattleHudRuntimeFeedbackView>(FindObjectsSortMode.None))
+        {
+            var feedback=view.RuntimeFeedbackState;
+            WriteBoardRow(new BoardDiagnosticRow{rowKind="PublicFeedbackSnapshot",stage=stage,activeMode=(int)feedback.CurrentCommandMode,hasResult=feedback.HasLastCommandResult?1:0,accepted=feedback.LastCommandResult.Accepted?1:0,reasonCode=(int)feedback.LastCommandResult.ReasonCode,message=feedback.LastCommandResult.Message});
+        }
+        foreach(var a in selectionMembers){var p=new BoardDiagnosticRow{rowKind="Passenger",stage=stage,actorIndex=a.Index,actorVersion=a.Version,actorExists=em.Exists(a)};if(p.actorExists){p.actorSelected=em.HasComponent<SelectedUnitTag>(a);p.actorDisabled=em.HasComponent<Disabled>(a);p.actorHp=em.HasComponent<UnitHealth>(a)?em.GetComponentData<UnitHealth>(a).Current:-1;var grid=em.GetComponentData<UnitGrid>(a).Cell;p.actorGridX=grid.x;p.actorGridZ=grid.y;p.hasBoardingTarget=em.HasComponent<UnitTransportBoardingTarget>(a);if(p.hasBoardingTarget){var t=em.GetComponentData<UnitTransportBoardingTarget>(a);p.boardingTransportIndex=t.Transport.Index;p.boardingTransportVersion=t.Transport.Version;p.boardingGoalX=t.Goal.x;p.boardingGoalZ=t.Goal.y;}p.hasPassengerLink=em.HasComponent<UnitTransportPassenger>(a);if(p.hasPassengerLink){var t=em.GetComponentData<UnitTransportPassenger>(a);p.passengerTransportIndex=t.Transport.Index;p.passengerTransportVersion=t.Transport.Version;}p.hasPathFollow=em.HasComponent<UnitPathFollow>(a);if(p.hasPathFollow)p.pathIndex=em.GetComponentData<UnitPathFollow>(a).PathIndex;p.hasPathRange=em.HasComponent<UnitPathRange>(a);if(p.hasPathRange)p.pathLength=em.GetComponentData<UnitPathRange>(a).Length;}WriteBoardRow(p);}
+        using(var q=em.CreateEntityQuery(typeof(UnitMoveOrderResultElement))){using var aa=q.ToEntityArray(Allocator.Temp);foreach(var a in aa)foreach(var c in em.GetBuffer<UnitMoveOrderResultElement>(a))if(selectionMembers.Contains(c.Entity))WriteBoardRow(new BoardDiagnosticRow{rowKind="MoveResult",stage=stage,requestId=c.RequestId,requestKind=(int)c.Kind,actorIndex=c.Entity.Index,actorVersion=c.Entity.Version,issued=c.Issued,reasonCode=c.RejectionReasonCode,boardingGoalX=c.Goal.x,boardingGoalZ=c.Goal.y});}
+    }
+    static bool SelectExact(EntityManager em,MatchHudSquadTrayView tray,MatchOverlayCommandControlsView controls)
+    {
+        if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return false;
+        using var q=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=q.ToEntityArray(Allocator.Temp);bool exact=selected.Length==selectionMembers.Count;foreach(var actor in selected)exact &= selectionMembers.Contains(actor);if(exact)return true;
+        if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return false;}
+        if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return false;}
+        for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&selectionMembers.Contains(member)){Tap(tray.VisibleCardButton(slot));return false;}
+        if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);return false;
+    }
+    static void ObserveMoveReceipt(string operation,uint receipt,bool verified)
+    {
+        if((phase==30||phase==31)&&operation=="ReturnToBase"&&verified&&receipt!=0){returnAcknowledged=true;returnReceipt=receipt;phase=31;Debug.Log("[S005TransportPlaneReturnReceipt] receipt="+receipt+" verified=1");return;}
+        if(phase==25&&operation=="Move"&&verified&&receipt!=0&&world!=null&&world.IsCreated){loadedMoveAcknowledged=true;loadedOrigin=world.EntityManager.GetComponentData<LocalTransform>(paidCarrier).Position;Debug.Log("[S005TransportLoadedMoveReceipt] role="+CarrierRole+" receipt="+receipt+" verified=1");return;}
+        if(phase!=12||nativeMoveAcknowledged||operation!="Move"||!verified||receipt==0||world==null||!world.IsCreated)return;
+        var em=world.EntityManager;origins.Clear();
+        foreach(var member in members){if(!em.Exists(member)||!em.HasComponent<SelectedUnitTag>(member))return;origins.Add(member,em.GetComponentData<LocalTransform>(member).Position);}
+        nativeMoveAcknowledged=true;
+        Debug.Log("[S005TransportNativeMoveReceipt] role="+roles[index].RoleKind+" receipt="+receipt+" verified=1 displacementOrigin=AfterAcceptedMove");
+    }
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        if(kind=="Began"||kind=="Ended")ObserveBoardDiagnostic("Touch:"+kind);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,positionX=point.x,positionY=point.y,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static bool PreparePlacementCandidates()
+    {
+        if(candidatesPrepared)return true;
+        // This existing helper scans only the active native preview/current Campaign
+        // geometry and returns candidates plus required rotation. Native Touch and
+        // Confirm still decide actual legal placement; no ForceValid/pose mutation.
+        bool ready=(bool)harness.GetMethod("FindPlacementSourceCandidates",privateStatic).Invoke(null,new object[]{sourceSites,16,true,"Airport",sourceRotations});
+        if(!ready)return false;
+        if(sourceSites.Count==0)throw new InvalidOperationException("No bounded current Airport candidate; not exhaustive source-fit proof.");
+        foreach(var site in sourceSites)
+            placementCandidates.Add(new PlacementCandidate{world=site,source="ExistingNativeAirportFullValidator:currentLegalityStillRequiresTouchCommit",rotated=sourceRotations[site]});
+        // Nearby candidates first saves normal map navigation without moving camera directly.
+        placementCandidates.Sort((a,b)=>(a.world-playerBaseAnchor).sqrMagnitude.CompareTo((b.world-playerBaseAnchor).sqrMagnitude));
+        candidatesPrepared=true;
+        Debug.Log("[S005TransportAirportPlacementSearch] candidates="+placementCandidates.Count+" actualFullNativeValidator=1 forceValid=0 physicalGeometryChanged=0 inputCommitRequired=1 sourceFitExhaustive=0");
+        return true;
+    }
+    [Serializable] sealed class PlacementObservation
+    {
+        public string phase,source,rawNativeStatus,shownStatus,title,footprint,materialsCost,oilCost,fuelCost,readiness,validityPanelStatus;
+        public int candidate,actualTouches,actualBlocked,ownMaterials,currentDollars,activeMaterialsCost,activeCreditsCost;
+        public float worldX,worldY,worldZ,cameraX,cameraY,cameraZ;
+        public bool hasPending,canConfirmNative,confirmActive,confirmInteractable,fullMapOpen;
+    }
+    static void ObservePlacement(BuildPlacementConfirmationBarView placement,string phaseName)
+    {
+        var command=(IBuildingUiCommand)typeof(BuildPlacementConfirmationBarView).GetField("_commandSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(placement);
+        UiShellRuntimeGateway.TryReadSkirmish(out var model);UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness);
+        var candidate=placementCandidates[buildSite];var map=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        var row=new PlacementObservation {phase=phaseName,candidate=buildSite,actualTouches=actualPlacementTouches,actualBlocked=actualBlockedPlacements,worldX=candidate.world.x,worldY=candidate.world.y,worldZ=candidate.world.z,source=candidate.source,rawNativeStatus=command?.PlacementStatusText,shownStatus=placement.StatusText?.text,title=placement.TitleText?.text,footprint=placement.FootprintText?.text,materialsCost=placement.MaterialsCostText?.text,oilCost=placement.OilCostText?.text,fuelCost=placement.FuelCostText?.text,ownMaterials=model.OwnMaterials,currentDollars=command?.CurrentDollars??-1,activeMaterialsCost=command?.ActivePlacementCost??-1,activeCreditsCost=command?.ActivePlacementCreditsCost??-1,readiness="stage="+readiness.Stage+" visible="+readiness.Visible+" upgradeEligible="+readiness.CanUpgrade+" pending="+readiness.InProgress+" reason="+readiness.Reason,validityPanelStatus=placement.ValidityPanel!=null?placement.ValidityPanel.StatusText?.text:null,hasPending=placement.HasPendingPlacement,canConfirmNative=command!=null&&command.CanConfirmBuildingPlacement,confirmActive=placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive(),confirmInteractable=placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable(),fullMapOpen=map!=null&&map.IsOpen,cameraX=Camera.main!=null?Camera.main.transform.position.x:0,cameraY=Camera.main!=null?Camera.main.transform.position.y:0,cameraZ=Camera.main!=null?Camera.main.transform.position.z:0};
+        string json=JsonUtility.ToJson(row);Debug.Log("[S005TransportAirportNativePlacementObservation] "+json);
+        File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-aircraft-airport-roles1318.placement.jsonl",json+"\n");
+        if(actualPlacementTouches<=6||row.canConfirmNative)ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-airport-placement-"+buildSite+"-"+phaseName+".png");
+    }
+
+    static Canvas RootCanvas(Component component)
+    {
+        var canvas=component!=null?component.GetComponentInParent<Canvas>()?.rootCanvas:null;
+        return canvas!=null&&canvas.isActiveAndEnabled&&canvas.gameObject.activeInHierarchy?canvas:null;
+    }
+    static Canvas ResolvePresentedInputCanvas()
+    {
+        var fullMap=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        if(fullMap!=null&&fullMap.IsOpen)
+        {var fullCanvas=RootCanvas(fullMap.CloseAction)??RootCanvas(fullMap.Minimap);if(fullCanvas!=null)return fullCanvas;}
+        var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+        if(placement!=null&&placement.HasPendingPlacement&&placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive())
+        {var canvas=RootCanvas(placement.ConfirmButton);if(canvas!=null)return canvas;}
+        var catalog=ResolveLiveCatalog(out var drawer);
+        if(drawer!=null&&drawer.IsOpen)
+        {
+            var canvas=RootCanvas(drawer.DrawerRoot!=null?drawer.DrawerRoot.transform:drawer.transform);
+            if(canvas==null)canvas=RootCanvas(drawer.CloseButton);
+            if(canvas!=null)return canvas;
+        }
+        var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+        return RootCanvas(tray)??RootCanvas(hud);
+    }
+    static void SurfaceBlocked(Canvas canvas,double now)
+    {
+        if(surfaceBlockedSince==0)
+        {
+            surfaceBlockedSince=now;
+            Debug.Log("[S005TransportAirportNativeInputSurface] phase="+phase+" presentedCanvas="+(canvas!=null?Hierarchy(canvas.transform):"none")+" canvasPixels="+(canvas!=null?canvas.pixelRect.ToString():"none")+" renderScreen="+Screen.width+"x"+Screen.height+" guard=ExactPresentedCanvasWidth");
+            if(phase>=70)DumpNativeBuildInventory("InputSurfaceBlocked",clickedBuild);
+        }
+        if(now-surfaceBlockedSince>=1&&!viewRepairQueued&&viewRepairs<2&&!touch.IsBusy)
+        {
+            viewRepairQueued=true;
+            EditorApplication.delayCall+=()=>
+            {
+                viewRepairQueued=false;if(!EditorApplication.isPlaying||phase==9)return;
+                // Existing harness fixed Game View strategy. Only Editor presentation changes.
+                try
+                {
+                    typeof(Game.Editor.MainMenuV3PrefabBuilder).GetMethod("SetGameViewResolution",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{1920,1080});
+                    viewRepairs++;surfaceBlockedSince=EditorApplication.timeSinceStartup;
+                    Debug.Log("[S005TransportAirportNativeInputSurface] action=ExistingFixedGameViewStrategy width=1920 height=1080 retry="+viewRepairs+" simulationUntouched=1");
+                }
+                catch(Exception error){Finish(true,"Existing native Game View correction failed: "+error);}
+
+            };
+        }
+        if(now-surfaceBlockedSince>6&&touch.IsBusy)
+            throw new InvalidOperationException("Native gesture pending while no matching presented Canvas exists; bounded fixture/input-surface failure, no AirportRoles queue attempted.");
+        if(now-surfaceBlockedSince>3&&viewRepairs>=2)
+            throw new InvalidOperationException("Native input surface did not match presented Canvas after bounded existing Game View correction; fixture/presentation failure, no producer or queue defect proven.");
+    }
+
+    static void ObserveCarrierFrame()
+    {
+        if(!EditorApplication.isPlaying||world==null||!world.IsCreated||!(phase==4||(phase>=20&&phase<=28)||phase==30||phase==31))return;
+        try
+        {
+            Entity actor=paidCarrier;
+            if(actor==Entity.Null&&!TryResolveDeliveredPlaneForObservation(world.EntityManager,out actor))return;
+            if(actor==Entity.Null)return;
+            S005CarrierFlightObserver1318.Capture(world.EntityManager,session,actor,receiptId,builtAirportRuntimeId,phase,boardGroup);
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    // Read-only: members may still contain the previously delivered APC while the Plane is producing.
+    // Observe only the current exact paid Plane receipt after native delivery; pending is not a positive observation.
+    static bool TryResolveDeliveredPlaneForObservation(EntityManager em,out Entity actor)
+    {
+        actor=Entity.Null;
+        if(roles==null||index>=roles.Length||roles[index].RoleKind!=SkirmishRoleKind.TransportPlane||session==Entity.Null||!em.Exists(session)||!em.HasBuffer<SkirmishProductionReservation>(session))return false;
+        var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+        int receipts=0;SkirmishProductionReservation receipt=default;
+        foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId&&r.FactionId==1){receipt=r;receipts++;}
+        if(receipts==0)return false;
+        if(receipts!=1||receipt.Role!=SkirmishRoleKind.TransportPlane)throw new InvalidOperationException("Passive Plane observer paid receipt role/uniqueness mismatch");
+        if(receipt.Phase!=SkirmishReservationPhase.Live||receipt.DeliveredMembers!=receipt.MemberCount)return false;
+        if(receipt.MemberCount!=1)throw new InvalidOperationException("Passive Plane observer requires exact one-member delivered receipt");
+        using var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<SkirmishUnitRoleComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities});
+        using var actors=q.ToEntityArray(Allocator.Temp);int matches=0;
+        foreach(var candidate in actors)
+        {
+            var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate);
+            if(owner.FactionId!=1||owner.ReservationId!=receiptId||!owner.SessionId.Equals(state.SessionId))continue;
+            if(em.GetComponentData<SkirmishUnitRoleComponent>(candidate).Role!=SkirmishRoleKind.TransportPlane)throw new InvalidOperationException("Passive Plane observer exact paid actor has wrong role");
+            if(owner.CapacityReleased!=0)throw new InvalidOperationException("Passive Plane observer delivered actor capacity was released");
+            actor=candidate;matches++;
+        }
+        if(matches!=1)throw new InvalidOperationException("Passive Plane observer exact paid delivery actor missing or duplicated, count="+matches);
+        return true;
+    }
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        try
+        {
+            var canvas=ResolvePresentedInputCanvas();
+            if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1){SurfaceBlocked(canvas,EditorApplication.timeSinceStartup);return;}
+            surfaceBlockedSince=0;inputFrame=Time.frameCount;
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (10 or 11 or 20 or 21 or 23 or 24 or 26 or 27 or 28 or 30 or 70 or 71 or 72 or 73))return;
+            var em=world.EntityManager;
+            if(phase>=70)
+            {
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                var catalog=ResolveLiveCatalog(out var drawer);
+                var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+                var buildControls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                if(phase==70)
+                {
+                    if(hud==null)return;
+                    playerBaseAnchor=hud.PlayerBaseObjectivePosition;enemyBaseAnchor=hud.EnemyBaseObjectivePosition;
+                    if((enemyBaseAnchor-playerBaseAnchor).sqrMagnitude<1)throw new InvalidOperationException("Public HUD base anchors not ready before Build.");
+                    anchorsCached=true;
+                    if(Tap(hud.PlayerFocusButton))
+                    {phase=71;Debug.Log("[S005TransportAirportPublicAnchorCache] source=VisibleHUD beforeBuild=1 player="+playerBaseAnchor+" enemy="+enemyBaseAnchor+" actorStateReadForPlacement=0");}
+                    return;
+                }
+                if(!anchorsCached)throw new InvalidOperationException("No legitimate public HUD base anchor cache for placement.");
+                if(phase==71)
+                {
+                    if(placement!=null&&placement.HasPendingPlacement){phase=72;return;}
+                    if(catalog!=null && !catalogLogged){catalogLogged=true;catalogSeenAt=now;LogLiveCatalog(catalog,drawer);}
+                    if(catalog==null)
+                    {
+                        if(!buildDispatched)
+                        {
+                            DumpNativeBuildInventory("BeforeBuildContact",buildControls?.BuildButton);
+                            if(Tap(buildControls?.BuildButton))
+                            {
+                                clickedBuild=buildControls.BuildButton;buildDispatched=true;buildDispatchedAt=now;
+                                Debug.Log("[S005TransportAirportNativeBuildContact] dispatched=1 "+ButtonState(clickedBuild));
+                            }
+                            return;
+                        }
+                        if(now-buildDispatchedAt>=3)
+                        {
+                            DumpNativeBuildInventory("NoAssignedOpenCatalogAfterBuild",clickedBuild);
+                            throw new InvalidOperationException("No native catalog with assigned open view appeared within 3 seconds after actual Build Touch. Fixture/UI ownership unresolved; no AirportRoles producer or queue defect proven.");
+                        }
+                        return;
+                    }
+                    var build=catalog.ResolveCatalogTarget(BuildDrawerCategory.Buildings,"Building_Airport");
+                    if(build==null && now-catalogSeenAt>3)
+                    {
+                        bool included=LogLiveCatalog(catalog,drawer);
+                        DumpNativeBuildInventory("AssignedOpenCatalogMissingAirportControl",clickedBuild);
+                        throw new InvalidOperationException("Actual native catalog assigned to open view has no Airport control; keyIncluded="+included+". Producer UI prerequisite unresolved; no AirportRoles queue attempted.");
+                    }
+                    if(!Tap(build)&&build!=null)harness.GetMethod("PlayerResumeScrollTo",privateStatic).Invoke(null,new object[]{build});return;
+                }
+                if(phase==73)return;
+                if(placement==null||!placement.HasPendingPlacement)throw new InvalidOperationException("Native placement closed before Airport commit.");
+                if(!PreparePlacementCandidates())return;
+                if(siteTapped)
+                {
+                    ObservePlacement(placement,"AfterCompletedGroundTouch");
+                    if(placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable())
+                    {if(Tap(placement.ConfirmButton)){phase=73;Debug.Log("[S005TransportAirportProducer] phase=NativeAirportConfirmed forceValid=0 relocationInjected=0 actualPlacementTouches="+actualPlacementTouches+" candidate="+buildSite);}return;}
+                    actualBlockedPlacements++;siteTapped=false;buildSite++;candidateSince=0;
+                }
+                if(buildSite>=placementCandidates.Count)throw new InvalidOperationException("Bounded current native Airport candidates exhausted after actual Touch observations="+actualPlacementTouches+" blocked="+actualBlockedPlacements+". This sample is not exhaustive source-fit/impossibility proof.");
+                var candidate=placementCandidates[buildSite];
+                if(rotatedPlacement!=candidate.rotated){if(Tap(placement.RotateButton)){rotatedPlacement=candidate.rotated;candidateSince=0;}return;}
+                if(candidateSince==0){candidateSince=now;ObservePlacement(placement,"BeforeCandidateTouchOrNativeNavigation");}
+                if(now-candidateSince>20)
+                {
+                    ObservePlacement(placement,"UnobservedCandidateNavigationTimeout");
+                    throw new InvalidOperationException("Candidate could not be exposed/touched through normal full-map input within20secs; not counted invalid; source-fit remains unqualified. candidate="+buildSite);
+                }
+                // False means navigation/input not yet complete, never 'bad lot'.
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{candidate.world,now}))
+                {siteTapped=true;actualPlacementTouches++;Debug.Log("[S005TransportAirportProducer] phase=NativePlacementTouch candidate="+candidate.world+" candidateIndex="+buildSite+" actualTouches="+actualPlacementTouches+" source="+candidate.source+" input=Touch offscreenCandidateConsumed=0");}
+                return;
+            }
+            if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;
+            var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if(tray==null||controls==null)return;
+            if(phase==10||phase==20||phase==23||phase==26)
+            {
+                if(phase==26&&command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                if(!SelectExact(em,tray,controls))return;
+                if(phase==10){Debug.Log("[S005TransportNativeSelection] result=Passed role="+roles[index].RoleKind+" members="+selectionMembers.Count+" input=Touch selectionInjected=0");phase=11;}
+                else if(phase==20)phase=21;else if(phase==23)phase=24;else phase=27;
+            }
+            if(phase==11)
+            {
+                if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{destination,now})){phase=12;Debug.Log("[S005TransportNativeMovement] phase=Order role="+roles[index].RoleKind+" input=Touch");}return;
+            }
+            if(phase==21)
+            {
+                var point=(Vector3)em.GetComponentData<LocalTransform>(paidCarrier).Position+Vector3.up;
+                var wheel=controls.CommandWheelPanel;
+                // The public Board action has two real taps: open wheel, then its Board action.
+                // Its own scrim blocks world targets normally; finish that action before camera navigation.
+                if(wheel!=null&&wheel.IsOpen)
+                {
+                    boardReadyFrame=-1;
+                    if(!SelectExact(em,tray,controls))return;
+                    var button=wheel.NextBoardButton;
+                    if(button==null||button==wheel.OpenButton)throw new InvalidOperationException("Open public selection wheel has no bound Board action; no private action invoked");
+                    ObserveBoardDiagnostic("BeforeBoardWheelAction");Tap(button);return;
+                }
+                if(!BoardPointPresented(point,out var screen,out _))
+                {
+                    boardReadyFrame=-1;ObserveBoardDiagnostic("BeforeCameraNavigation");
+                    if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{point,now}))throw new InvalidOperationException("Unexpected world gesture during camera-only Board navigation");
+                    return;
+                }
+                if(!SelectExact(em,tray,controls)){boardReadyFrame=-1;return;}
+                if(!UiShellRuntimeGateway.TryReadMatchHudCommandState(out command))return;
+                if(command.ActiveCommandMode!=TacticalCommandMode.Board){boardReadyFrame=-1;ObserveBoardDiagnostic("BeforeBoardWheelOpen");Tap(wheel?.NextBoardButton);return;}
+                if(!BoardInputReady(em)){boardReadyFrame=-1;return;}
+                Vector2 ready=screen;
+                if(boardReadyFrame<0||Vector2.Distance(ready,boardReadyPoint)>1f){boardReadyFrame=Time.frameCount;boardReadyPoint=ready;return;}
+                if(Time.frameCount<=boardReadyFrame)return;
+                ObserveBoardDiagnostic("BeforeBoardDispatch");
+                if(accessCapturedGroups.Add(boardGroup))S005BoardAccessCensus1318.Capture(em,paidCarrier,selectionMembers,boardGroup);
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{point,now})){ObserveBoardDiagnostic("BoardGestureDispatched");phase=22;boardReadyFrame=-1;Debug.Log("[S005TransportBoardOrder] role="+CarrierRole+" input=Touch completePaidPassengerSquad=1");}return;
+            }
+            if(phase==24)
+            {
+                if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();if(hud==null)return;
+                var forward=hud.EnemyBaseObjectivePosition-hud.PlayerBaseObjectivePosition;forward.y=0;if(forward.sqrMagnitude<1)throw new InvalidOperationException("Public base frontage direction unavailable.");forward.Normalize();
+                var site=hud.PlayerBaseObjectivePosition+forward*(75+12*(index/2))-Vector3.Cross(Vector3.up,forward)*30;
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{site,now})){loadedMoveAcknowledged=false;loadedDestination=site;phase=25;Debug.Log("[S005TransportLoadedMoveOrder] role="+CarrierRole+" input=Touch publicFrontage=1 destination="+site);}return;
+            }
+            if(phase==30)
+            {
+                if(!SelectExact(em,tray,controls))return;
+                if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}
+                var wheel=controls.CommandWheelPanel;if(wheel==null)return;
+                if(!wheel.IsOpen){returnStableButton=null;Tap(wheel.OpenButton);return;}
+                var button=wheel.NextReturnButton;
+                object[] args={button,Vector2.zero};
+                if(!(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,args))return;
+                var point=(Vector2)args[1];
+                if(returnStableButton!=button||Vector2.Distance(point,returnStablePoint)>1f){returnStableButton=button;returnStablePoint=point;returnStableSince=now;return;}
+                if(now-returnStableSince<.5)return;
+                if(returnAttempts>=4)throw new InvalidOperationException("Four real stable Return taps failed native receipt");
+                if(Tap(button)){returnAttempts++;returnStableButton=null;Debug.Log("[S005TransportPlaneReturnTouch] attempt="+returnAttempts+" input=Touch stablePresentedButton=1");}
+                return;
+            }
+            string targetButton=phase==27?"PassengerChip":"ExitAllButton";
+            foreach(var button in UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))if(button.name==targetButton&&Tap(button)){phase++;Debug.Log("[S005TransportUnloadControl] role="+CarrierRole+" button="+targetButton+" input=Touch");return;}
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static void LogGroundProducer(EntityManager em)
+    {
+        int found=0;using var query=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishStructureIdentityComponent),typeof(RuntimeBuildingCombatInfo),typeof(UnitHealth));using var actors=query.ToEntityArray(Allocator.Temp);
+        foreach(var actor in actors){var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);var identity=em.GetComponentData<SkirmishStructureIdentityComponent>(actor);if(owner.FactionId!=1||!owner.SessionId.Equals(attempt)||identity.Producer!=SkirmishProducerKind.GroundStaging||owner.CapacityReleased!=0||em.GetComponentData<UnitHealth>(actor).Current<=0)continue;var info=em.GetComponentData<RuntimeBuildingCombatInfo>(actor);if(info.RuntimeBuildingId<=0||info.OwnerFactionId!=1)throw new InvalidOperationException("Existing GroundStaging native owner/runtime identity invalid");found++;Debug.Log("[S005TransportPlaneGroundProducerBaseline] runtimeId="+info.RuntimeBuildingId+" faction="+info.OwnerFactionId+" entityIndex="+actor.Index+" entityVersion="+actor.Version+" originX="+info.OriginCell.x+" originZ="+info.OriginCell.y+" footprintX="+info.FootprintCells.x+" footprintZ="+info.FootprintCells.y+" functional=1 ownershipInjected=0 existingPhysicalSource=1");}
+        if(found<1)throw new InvalidOperationException("Functional actual GroundStaging baseline unresolved, no vehicle receipt claimed");
+    }
+    static bool roleIsPlane()=>roles[index].RoleKind==SkirmishRoleKind.TransportPlane;
+    [Serializable] struct FlightRow {public string stage;public int frame,entityIndex,entityVersion;public uint receipt;public byte airborne,takeoffRolling,landingRolling,returningHome,usesRunway;public float x,y,z,homeX,homeY,homeZ;public bool sawTakeoff,sawAirborne;}
+    static void LogFlight(EntityManager em,string stage)
+    {
+        var a=em.GetComponentData<UnitAirComponent>(paidCarrier);var p=em.GetComponentData<LocalTransform>(paidCarrier).Position;
+        Debug.Log("[S005TransportPlaneFlight] "+JsonUtility.ToJson(new FlightRow{stage=stage,frame=Time.frameCount,entityIndex=paidCarrier.Index,entityVersion=paidCarrier.Version,receipt=returnReceipt,airborne=a.Airborne,takeoffRolling=a.TakeoffRolling,landingRolling=a.LandingRolling,returningHome=a.ReturningHome,usesRunway=a.UsesRunway,x=p.x,y=p.y,z=p.z,homeX=a.HomePosition.x,homeY=a.HomePosition.y,homeZ=a.HomePosition.z,sawTakeoff=sawTakeoff,sawAirborne=sawAirborne}));
+    }
+    static void VerifyCargoKinds(EntityManager em)
+    {
+        int soldiers=0,vehicles=0;
+        foreach(var p in passengers)
+        {
+            // Native passenger-state writer uses absent CargoPassenger as Soldier; only Vehicle has this optional component.
+            bool hasCargo=em.HasComponent<UnitTransportCargoPassenger>(p);
+            if(riflePassengers.Contains(p)){if(hasCargo)throw new InvalidOperationException("Paid native Rifle wrongly retains cargo vehicle component");soldiers++;}
+            else{if(!hasCargo||!vehiclePassengers.Contains(p))throw new InvalidOperationException("Paid ApcFast cargo vehicle link absent/unrelated");var c=em.GetComponentData<UnitTransportCargoPassenger>(p);if(c.Transport!=paidCarrier||c.PassengerKind!=UnitTransportPassengerKind.Vehicle)throw new InvalidOperationException("Actual ApcFast vehicle cargo kind/parent mismatch");vehicles++;}
+        }
+        if(soldiers!=4||vehicles!=1)throw new InvalidOperationException("Exact native mixed 4soldier1vehicle cargo required");
+        Debug.Log("[S005TransportPlaneCargoKinds] soldiers="+soldiers+" vehicles="+vehicles+" actualNativeLinks=1 injected=0");
+    }
+    static string Normalize(string key) {
+        foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            var type=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);
+            if(type!=null)return (string)type.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});
+        }
+        throw new MissingMemberException("Shared spawnable key normalizer not loaded.");
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        Canvas.willRenderCanvases-=ObserveCarrierFrame; Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;AriaCommandEvidence.Recorded-=ObserveMoveReceipt;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005TransportSupportInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005TransportSupport] result="+(abort?"Failed":"Passed")+" cases="+results.Count+" normalInput=0 fullLifecycle=Pending nativeTouchBoardFlightReturnExit=Measured checkpoint=NotPerformed reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedPaidTransport:"+reason});
+    }
+}
+
+// Read-only diagnostic: native approach admission, not a pathfinding/boarding acceptance certificate.
+public static class S005BoardAccessCensus1318
+{
+    static readonly string Output="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-board-access-census.jsonl";
+    [Serializable] sealed class Row
+    {
+        public string kind,stage,coordinateBasis,observationScope="ReadOnlyActualApproachNotConnectivity",prefabPath;
+        public int frame,group,carrierIndex,carrierVersion,actorIndex,actorVersion,airportRuntimeId,entityIndex,entityVersion,cellX,cellZ,sizeX,sizeZ,width,height,faction,doorIndex,doorVersion,rampX,rampZ,goalX,goalZ,directCells,maxRadius,availableSoldiers,availableVehicles,blockedCount,coveringBlockers,friendlyPassFaction,walkable,occupied,blockerMinX,blockerMinZ,blockerMaxX,blockerMaxZ;
+        public float time,positionX,positionY,positionZ,rotationX,rotationY,rotationZ,rotationW,scale,localX,localY,localZ,worldX,worldY,worldZ;
+        public bool inBounds,blocked,airportFootprintContains,goalFound,passable,metadataPresent,prefabDoorPresent,transportOverlap,goalConnectivityMeasured=false,ecsStateWritten=false;
+    }
+    static void Write(Row r,int group,Entity carrier,string stage)
+    {
+        r.frame=Time.frameCount;r.time=Time.unscaledTime;r.group=group;r.carrierIndex=carrier.Index;r.carrierVersion=carrier.Version;r.stage=stage;
+        File.AppendAllText(Output,JsonUtility.ToJson(r)+"\n");
+    }
+    static MethodInfo Native(string name,int count)
+    {
+        var m=typeof(TransportBoardingCommandSystem).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static);
+        if(m==null||m.GetParameters().Length!=count)throw new InvalidOperationException("Exact pure native method contract missing: "+name);
+        return m;
+    }
+    static Transform Door(Transform root)
+    {
+        foreach(var t in root.GetComponentsInChildren<Transform>(true))if(t.name.StartsWith("Door_",StringComparison.Ordinal))return t;
+        return null;
+    }
+    public static void Capture(EntityManager em,Entity carrier,List<Entity> selected,int group)
+    {
+        const string stage="ImmediatelyBeforeActualBoardTouch";
+        using var gridQuery=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),typeof(DynamicBlockerComponent),typeof(DynamicOccupancyComponent));
+        if(gridQuery.CalculateEntityCount()!=1)throw new InvalidOperationException("Unique native Board grid required for diagnostic");
+        var ge=gridQuery.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(ge);var walk=em.GetBuffer<GridWalkable>(ge).AsNativeArray();var blockers=em.GetComponentData<DynamicBlockerComponent>(ge);var occupied=em.GetComponentData<DynamicOccupancyComponent>(ge).Occupied;
+        var tr=em.GetComponentData<LocalTransform>(carrier);var tc=em.GetComponentData<UnitGrid>(carrier).Cell;var ts=em.GetComponentData<UnitFootprint>(carrier).Size;var faction=em.GetComponentData<Faction>(carrier).Id;
+        var metadata=em.GetComponentData<UnitTransportPlaneDoorReference>(carrier);
+        var nativeApproach=tr.Position+math.mul(tr.Rotation,metadata.ApproachLocalPosition*tr.Scale);var nativeRamp=GridUtils.WorldToCell(grid,nativeApproach);
+        string prefabPath="Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);var door=prefab!=null?Door(prefab.transform):null;
+        if(door==null)throw new InvalidOperationException("Actual prefab Door_ descendant required; diagnostic must not invent geometry");
+        Vector3 actualDoor=prefab.transform.InverseTransformPoint(door.position);actualDoor.x=0;
+        float3 proposedApproach=(float3)actualDoor+new float3(0,0,-6);var proposedWorld=tr.Position+math.mul(tr.Rotation,proposedApproach*tr.Scale);var proposedRamp=GridUtils.WorldToCell(grid,proposedWorld);
+        Write(new Row{kind="PlaneTransform",positionX=tr.Position.x,positionY=tr.Position.y,positionZ=tr.Position.z,rotationX=tr.Rotation.value.x,rotationY=tr.Rotation.value.y,rotationZ=tr.Rotation.value.z,rotationW=tr.Rotation.value.w,scale=tr.Scale,cellX=tc.x,cellZ=tc.y,sizeX=ts.x,sizeZ=ts.y,faction=faction,width=grid.Width,height=grid.Height,metadataPresent=true,doorIndex=metadata.DoorEntity.Index,doorVersion=metadata.DoorEntity.Version},group,carrier,stage);
+        Write(new Row{kind="DoorCoordinate",coordinateBasis="ActualBakedRootInterpreted",localX=metadata.DoorLocalPosition.x,localY=metadata.DoorLocalPosition.y,localZ=metadata.DoorLocalPosition.z},group,carrier,stage);
+        Write(new Row{kind="DoorCoordinate",coordinateBasis="ActualPrefabRootRelativeReadOnly",localX=actualDoor.x,localY=actualDoor.y,localZ=actualDoor.z,prefabDoorPresent=true,prefabPath=prefabPath},group,carrier,stage);
+        var localPositions=new[]{metadata.ApproachLocalPosition,proposedApproach};var centers=new[]{nativeRamp,proposedRamp};var worlds=new[]{nativeApproach,proposedWorld};var bases=new[]{"ActualBakedApproach","CounterfactualRootCoordinateOnlyNoMutation"};
+        for(int k=0;k<2;k++)Write(new Row{kind="RampCoordinate",coordinateBasis=bases[k],localX=localPositions[k].x,localY=localPositions[k].y,localZ=localPositions[k].z,worldX=worlds[k].x,worldY=worlds[k].y,worldZ=worlds[k].z,rampX=centers[k].x,rampZ=centers[k].y},group,carrier,stage);
+        using var liveQ=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<UnitGrid>(),ComponentType.ReadOnly<UnitFootprint>()},None=new[]{ComponentType.ReadOnly<StaticGridBlocker>(),ComponentType.ReadOnly<RuntimeBuildingCombatTag>()}});
+        using var liveE=liveQ.ToEntityArray(Allocator.Temp);using var liveG=liveQ.ToComponentDataArray<UnitGrid>(Allocator.Temp);using var liveF=liveQ.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
+        using var staticQ=em.CreateEntityQuery(typeof(StaticGridBlocker),typeof(UnitGrid),typeof(GridBlockerSize));using var staticE=staticQ.ToEntityArray(Allocator.Temp);
+        using var airportQ=em.CreateEntityQuery(typeof(RuntimeBuildingCombatInfo),typeof(UnitHealth));using var airportE=airportQ.ToEntityArray(Allocator.Temp);
+        var airportMin=new int2(-1);var airportSize=int2.zero;int airportId=0;
+        foreach(var a in airportE){var info=em.GetComponentData<RuntimeBuildingCombatInfo>(a);if(info.OwnerFactionId!=faction||!em.HasComponent<SkirmishStructureIdentityComponent>(a)||em.GetComponentData<SkirmishStructureIdentityComponent>(a).Producer!=Game.Skirmish.Contracts.SkirmishProducerKind.Airport)continue;if(tc.x<info.OriginCell.x||tc.y<info.OriginCell.y||tc.x>=info.OriginCell.x+info.FootprintCells.x||tc.y>=info.OriginCell.y+info.FootprintCells.y)continue;if(airportId!=0)throw new InvalidOperationException("Multiple own Airport footprints containing plane; diagnostic ambiguous");airportId=info.RuntimeBuildingId;airportMin=info.OriginCell;airportSize=info.FootprintCells;Write(new Row{kind="AirportFootprint",entityIndex=a.Index,entityVersion=a.Version,airportRuntimeId=airportId,blockerMinX=airportMin.x,blockerMinZ=airportMin.y,blockerMaxX=airportMin.x+airportSize.x,blockerMaxZ=airportMin.y+airportSize.y},group,carrier,stage);}
+        var staticBounds=new List<(int2 min,int2 size)>();foreach(var b in staticE)staticBounds.Add((em.GetComponentData<UnitGrid>(b).Cell,em.GetComponentData<GridBlockerSize>(b).Size));
+        foreach(var a in staticE){var min=em.GetComponentData<UnitGrid>(a).Cell;var size=em.GetComponentData<GridBlockerSize>(a).Size;bool relevant=false;foreach(var center in centers)relevant|=center.x+12>=min.x&&center.y+12>=min.y&&center.x-12<min.x+size.x&&center.y-12<min.y+size.y;if(!relevant)continue;Write(new Row{kind="StaticBlockerBounds",entityIndex=a.Index,entityVersion=a.Version,blockerMinX=min.x,blockerMinZ=min.y,blockerMaxX=min.x+size.x,blockerMaxZ=min.y+size.y,friendlyPassFaction=em.HasComponent<FriendlyPassGridBlocker>(a)?em.GetComponentData<FriendlyPassGridBlocker>(a).AllowedFactionId:0},group,carrier,stage);}
+        var capType=typeof(TransportBoardingCommandSystem).Assembly.GetType("Game.Runtime.TransportBoardingCapacitySystemHelper",true);var capMethod=capType.GetMethod("ResolveTransportSlotAvailability",BindingFlags.Public|BindingFlags.Static);var slots=capMethod.Invoke(null,new object[]{em,carrier});int soldiers=(int)slots.GetType().GetField("AvailableSoldierSeats").GetValue(slots),vehicles=(int)slots.GetType().GetField("AvailableVehicleSlots").GetValue(slots);
+        var ignored=new HashSet<Entity>();var ignoredCells=new HashSet<int>();Native("BuildSelectedBoardingPassengerIgnoreSets",8).Invoke(null,new object[]{em,grid,carrier,selected,soldiers,vehicles,ignored,ignoredCells});
+        int direct=(int)Native("GetTransportBoardingDirectCells",2).Invoke(null,new object[]{em,carrier});var reserved=new HashSet<int>();var goalMethod=Native("TryFindTransportBoardingGoal",23);
+        var passType=typeof(TransportBoardingCommandSystem).Assembly.GetType("Game.Runtime.TransportBoardingApproachSystemHelper",true);var pass=passType.GetMethod("IsTransportApproachPassable",BindingFlags.Public|BindingFlags.Static);if(pass==null||pass.GetParameters().Length!=21)throw new InvalidOperationException("Exact native passability contract missing");
+        foreach(var actor in selected)
+        {
+            var pc=em.GetComponentData<UnitGrid>(actor).Cell;var pf=em.GetComponentData<UnitFootprint>(actor).Size;byte af=em.GetComponentData<Faction>(actor).Id;
+            var args=new object[]{em,grid,walk,blockers.Blocked,blockers.FriendlyPassFactionIds,occupied,tc,new int2(1,1),pc,pf,actor,liveE,liveG,liveF,carrier,tc,ts,reserved,direct,af,ignored,ignoredCells,int2.zero};bool found=(bool)goalMethod.Invoke(null,args);var goal=(int2)args[22];
+            Write(new Row{kind="NativePureGoal",actorIndex=actor.Index,actorVersion=actor.Version,cellX=pc.x,cellZ=pc.y,sizeX=pf.x,sizeZ=pf.y,goalFound=found,goalX=goal.x,goalZ=goal.y,directCells=direct,availableSoldiers=soldiers,availableVehicles=vehicles},group,carrier,stage);
+            if(found)Native("ReserveFootprintCells",4).Invoke(null,new object[]{grid,goal,pf,reserved});
+            int radius=math.max(8,math.max(pf.x,pf.y)+4);
+            // Each center's ring is evaluated independently with empty hypothetical reservations; it is not an alternate admitted order.
+            for(int k=0;k<2;k++)for(int z=centers[k].y-radius;z<=centers[k].y+radius;z++)for(int x=centers[k].x-radius;x<=centers[k].x+radius;x++)
+            {
+                var cell=new int2(x,z);bool inside=GridUtils.InBounds(cell,grid.Width,grid.Height);int ix=inside?z*grid.Width+x:-1;int covers=0;foreach(var b in staticBounds){var min=b.min;var size=b.size;if(x>=min.x&&z>=min.y&&x<min.x+size.x&&z<min.y+size.y)covers++;}
+                bool overlaps=UnitFootprintUtility.Overlaps(cell,pf,tc,ts);bool legal=inside&&!overlaps&&(bool)pass.Invoke(null,new object[]{grid,walk,blockers.Blocked,blockers.FriendlyPassFactionIds,occupied,cell,pf,pc,actor,liveE,liveG,liveF,carrier,tc,ts,new HashSet<int>(),pc,af,cell.Equals(pc),ignored,ignoredCells});
+                Write(new Row{kind="CandidateCell",coordinateBasis=bases[k],actorIndex=actor.Index,actorVersion=actor.Version,cellX=x,cellZ=z,maxRadius=radius,inBounds=inside,walkable=inside&&ix<walk.Length?walk[ix].Value:-1,blocked=inside&&blockers.Blocked.IsCreated&&blockers.Blocked.IsSet(ix),blockedCount=inside&&blockers.Counts.IsCreated?blockers.Counts[ix]:-1,friendlyPassFaction=inside&&blockers.FriendlyPassFactionIds.IsCreated?blockers.FriendlyPassFactionIds[ix]:-1,occupied=inside&&occupied.IsCreated&&occupied.IsSet(ix)?1:0,coveringBlockers=covers,airportRuntimeId=airportId,airportFootprintContains=airportId!=0&&x>=airportMin.x&&z>=airportMin.y&&x<airportMin.x+airportSize.x&&z<airportMin.y+airportSize.y,transportOverlap=overlaps,passable=legal},group,carrier,stage);
+            }
+        }
+        Write(new Row{kind="CaptureComplete",goalConnectivityMeasured=false,ecsStateWritten=false},group,carrier,stage);
+    }
+}
+
+// Passive actual scheduler output, never a planning/order input.
+public static class S005BoardPathCensus1318
+{
+    static readonly string Output="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-board-path-census.jsonl";
+    static readonly HashSet<Entity> recorded = new();
+    [Serializable] public sealed class Row
+    {
+        public string kind="ActualNativeBoardPath",scope="PassiveActualNativePathNotInjectedConnectivity";
+        public int frame,group,carrierIndex,carrierVersion,actorIndex,actorVersion,airportRuntimeId,pathStart,pathLength,pathCellCount,outsideAirportCells,insideAirportCells,blockedAirportCells,invalidTraversalCells,goalX,goalZ,pathEndX,pathEndZ,faction;
+        public bool nativeBoardTargetMatched,pathGoalMatched,ecsStateWritten=false;
+    }
+    public static void Capture(EntityManager em,Entity session,Entity carrier,uint receiptId,int expectedProducer,List<Entity> actors,int group)
+    {
+        if(!em.Exists(carrier))return;
+        using var grids=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),typeof(DynamicBlockerComponent),typeof(PathPoolComponent));
+        if(grids.CalculateEntityCount()!=1)throw new InvalidOperationException("Unique actual Board path grid required");
+        var ge=grids.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(ge);var walk=em.GetBuffer<GridWalkable>(ge).AsNativeArray();var blocker=em.GetComponentData<DynamicBlockerComponent>(ge);var cells=em.GetComponentData<PathPoolComponent>(ge).Cells;
+        // No scheduled Board path exists during card selection/camera navigation.
+        bool hasPath=false;foreach(var actor in actors)if(em.Exists(actor)&&em.HasComponent<UnitTransportBoardingTarget>(actor)&&em.HasComponent<UnitPathRange>(actor)&&em.GetComponentData<UnitTransportBoardingTarget>(actor).Transport==carrier&&em.GetComponentData<UnitPathRange>(actor).Length>0)hasPath=true;
+        if(!hasPath)return;
+        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(carrier);
+        var airport=S005PaidAirportIdentity1318.Resolve(em,session,carrier,receiptId,expectedProducer);
+        var info=em.GetComponentData<RuntimeBuildingCombatInfo>(airport);int runtimeId=info.RuntimeBuildingId;int2 min=info.OriginCell,max=min+info.FootprintCells;
+        foreach(var actor in actors)
+        {
+            if(recorded.Contains(actor)||!em.Exists(actor)||!em.HasComponent<UnitTransportBoardingTarget>(actor)||!em.HasComponent<UnitPathRange>(actor)||!em.HasComponent<UnitPathFollow>(actor))continue;
+            var board=em.GetComponentData<UnitTransportBoardingTarget>(actor);if(board.Transport!=carrier)throw new InvalidOperationException("Native Board path belongs to another carrier");
+            var range=em.GetComponentData<UnitPathRange>(actor);if(range.Length<=0)continue;
+            if(range.Start<0||range.Start+range.Length>cells.Length)throw new InvalidOperationException("Native Board path range invalid");
+            var fp=em.GetComponentData<UnitFootprint>(actor).Size;var r=new Row{frame=Time.frameCount,group=group,carrierIndex=carrier.Index,carrierVersion=carrier.Version,actorIndex=actor.Index,actorVersion=actor.Version,airportRuntimeId=runtimeId,pathStart=range.Start,pathLength=range.Length,goalX=board.Goal.x,goalZ=board.Goal.y,faction=owner.FactionId,nativeBoardTargetMatched=true};
+            for(int i=0;i<range.Length;i++)for(int z=0;z<math.max(1,fp.y);z++)for(int x=0;x<math.max(1,fp.x);x++)
+            {var cell=cells[range.Start+i]+new int2(x,z);bool inside=cell.x>=min.x&&cell.y>=min.y&&cell.x<max.x&&cell.y<max.y;bool bounds=cell.x>=0&&cell.y>=0&&cell.x<grid.Width&&cell.y<grid.Height;r.pathCellCount++;if(inside)r.insideAirportCells++;else r.outsideAirportCells++;if(!bounds){r.invalidTraversalCells++;continue;}int ix=cell.y*grid.Width+cell.x;bool blocked=blocker.Blocked.IsSet(ix);if(inside&&blocked)r.blockedAirportCells++;bool pass=blocker.FriendlyPassFactionIds.IsCreated&&blocker.FriendlyPassFactionIds[ix]==owner.FactionId;if(walk[ix].Value==0||blocked&&!pass)r.invalidTraversalCells++;}
+            var end=cells[range.Start+range.Length-1];r.pathEndX=end.x;r.pathEndZ=end.y;r.pathGoalMatched=end.Equals(board.Goal);File.AppendAllText(Output,JsonUtility.ToJson(r)+"\n");recorded.Add(actor);
+        }
+    }
+}
+
+// Pure ownership resolution: a moving plane's cell is never the producer identity.
+public static class S005PaidAirportIdentity1318
+{
+    public static Entity Resolve(EntityManager em,Entity session,Entity carrier,uint receiptId,int expectedProducer)
+    {
+        if(!em.Exists(session)||!em.Exists(carrier)||!em.HasBuffer<SkirmishProductionReservation>(session)||!em.HasComponent<SkirmishAttemptOwnedComponent>(carrier))throw new InvalidOperationException("Actual paid carrier/session receipt boundary absent");
+        var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(carrier);var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+        if(!owner.SessionId.Equals(state.SessionId)||owner.ReservationId!=receiptId||owner.CapacityReleased!=0)throw new InvalidOperationException("Actual paid carrier attempt/reservation/liveness ownership mismatch");
+        int found=0;SkirmishProductionReservation receipt=default;
+        foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId==receiptId&&r.FactionId==owner.FactionId){receipt=r;found++;}
+        if(found!=1||receipt.Role!=SkirmishRoleKind.TransportPlane||receipt.Phase!=SkirmishReservationPhase.Live||receipt.DeliveredMembers!=1||receipt.MemberCount!=1||receipt.ProducerRuntimeId<=0||receipt.ProducerRuntimeId!=expectedProducer)throw new InvalidOperationException("Exact paid Plane producer receipt mismatch");
+        using var q=em.CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),ComponentType.ReadOnly<SkirmishStructureIdentityComponent>(),ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>(),ComponentType.ReadOnly<UnitHealth>()},Options=EntityQueryOptions.IncludeDisabledEntities});
+        using var buildings=q.ToEntityArray(Allocator.Temp);Entity result=Entity.Null;found=0;
+        foreach(var b in buildings)
+        {
+            var info=em.GetComponentData<RuntimeBuildingCombatInfo>(b);if(info.RuntimeBuildingId!=receipt.ProducerRuntimeId)continue;
+            var identity=em.GetComponentData<SkirmishStructureIdentityComponent>(b);var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(b);
+            if(!own.SessionId.Equals(owner.SessionId)||own.FactionId!=owner.FactionId||info.OwnerFactionId!=owner.FactionId||identity.Producer!=SkirmishProducerKind.Airport||own.CapacityReleased!=0||em.GetComponentData<UnitHealth>(b).Current<=0||em.HasComponent<Disabled>(b)||math.any(info.FootprintCells<=0))throw new InvalidOperationException("Exact paid Airport native attempt/faction/live footprint invalid");
+            result=b;found++;
+        }
+        if(found!=1)throw new InvalidOperationException("Exact paid Airport native runtime owner missing or duplicated, count="+found);
+        return result;
+    }
+}
+
+// All mandatory rows are flat primitive/string fields for Unity JsonUtility.
+public static class S005CarrierFlightObserver1318
+{
+    static readonly string Output="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1318-plane-flight-intent.jsonl";
+    static int lastFrame=-1;
+    [Serializable] public sealed class Row
+    {
+        public string kind="PassivePaidCarrierFlightIntent",sampleRoute="CanvasWillRenderActualNativeState",attempt="";
+        public int frame,phase,group,carrierIndex,carrierVersion,producerRuntimeId,airportIndex,airportVersion,airportMinX,airportMinZ,airportSizeX,airportSizeZ,faction,targetX,targetZ,pathGoalX,pathGoalZ,homeX,homeZ,engageIndex,engageVersion,activeCommandMode;
+        public uint reservation;
+        public float health,x,y,z,homeWorldX,homeWorldY,homeWorldZ,takeoffX,takeoffY,takeoffZ,landingX,landingY,landingZ;
+        public byte airborne,takeoffRolling,landingRolling,returningHome;
+        public bool transit,manualMove,hold,hasTarget,hasPathRequest,hasEngage,disabled,commandRead,airportAlive,insideAirport,ecsStateWritten=false;
+    }
+    public static void Capture(EntityManager em,Entity session,Entity carrier,uint receiptId,int producer,int phase,int group)
+    {
+        if(Time.frameCount==lastFrame)return;lastFrame=Time.frameCount;
+        if(!em.Exists(carrier)||!em.HasComponent<LocalTransform>(carrier)||!em.HasComponent<UnitAirComponent>(carrier)||!em.HasComponent<UnitHealth>(carrier))throw new InvalidOperationException("Tracked native paid Plane flight observation absent");
+        var airport=S005PaidAirportIdentity1318.Resolve(em,session,carrier,receiptId,producer);var info=em.GetComponentData<RuntimeBuildingCombatInfo>(airport);var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(carrier);var air=em.GetComponentData<UnitAirComponent>(carrier);var position=em.GetComponentData<LocalTransform>(carrier).Position;var cell=em.GetComponentData<UnitGrid>(carrier).Cell;
+        var row=new Row{frame=Time.frameCount,phase=phase,group=group,carrierIndex=carrier.Index,carrierVersion=carrier.Version,producerRuntimeId=info.RuntimeBuildingId,airportIndex=airport.Index,airportVersion=airport.Version,airportMinX=info.OriginCell.x,airportMinZ=info.OriginCell.y,airportSizeX=info.FootprintCells.x,airportSizeZ=info.FootprintCells.y,faction=owner.FactionId,reservation=receiptId,attempt=owner.SessionId.ToString(),health=em.GetComponentData<UnitHealth>(carrier).Current,x=position.x,y=position.y,z=position.z,homeX=air.HomeCell.x,homeZ=air.HomeCell.y,homeWorldX=air.HomePosition.x,homeWorldY=air.HomePosition.y,homeWorldZ=air.HomePosition.z,takeoffX=air.RunwayTakeoffPosition.x,takeoffY=air.RunwayTakeoffPosition.y,takeoffZ=air.RunwayTakeoffPosition.z,landingX=air.RunwayLandingPosition.x,landingY=air.RunwayLandingPosition.y,landingZ=air.RunwayLandingPosition.z,airborne=air.Airborne,takeoffRolling=air.TakeoffRolling,landingRolling=air.LandingRolling,returningHome=air.ReturningHome,transit=em.HasComponent<UnitSpawnTransitTag>(carrier),manualMove=em.HasComponent<ManualMoveOrderTag>(carrier),hold=em.HasComponent<HoldPositionOrderTag>(carrier),hasTarget=em.HasComponent<UnitTarget>(carrier),hasPathRequest=em.HasComponent<UnitPathRequest>(carrier),hasEngage=em.HasComponent<EngageTarget>(carrier),disabled=em.HasComponent<Disabled>(carrier),airportAlive=true,insideAirport=cell.x>=info.OriginCell.x&&cell.y>=info.OriginCell.y&&cell.x<info.OriginCell.x+info.FootprintCells.x&&cell.y<info.OriginCell.y+info.FootprintCells.y};
+        if(row.hasTarget){var t=em.GetComponentData<UnitTarget>(carrier);row.targetX=t.Cell.x;row.targetZ=t.Cell.y;}
+        if(row.hasPathRequest){var t=em.GetComponentData<UnitPathRequest>(carrier);row.pathGoalX=t.Goal.x;row.pathGoalZ=t.Goal.y;}
+        if(row.hasEngage){var t=em.GetComponentData<EngageTarget>(carrier);row.engageIndex=t.Target.Index;row.engageVersion=t.Target.Version;}
+        row.commandRead=UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command);if(row.commandRead)row.activeCommandMode=(int)command.ActiveCommandMode;
+        File.AppendAllText(Output,JsonUtility.ToJson(row)+"\n");
+        if((phase is 20 or 21 or 22) && (row.airborne!=0||row.takeoffRolling!=0||row.landingRolling!=0))throw new InvalidOperationException("Actual paid Plane entered flight before complete Board; passive intent row preserved, native boarding prerequisite not qualified");
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "mission": "S005",
+  "result": "Failed",
+  "sourceHash": "65937778fdf21f6334b14be9883c6bb2b31c67688eeebc67b39f37286cca5f75",
+  "scope": "Native combat Save & Exit",
+  "failure": "NativeCaptureIncomplete:Checkpoint reference has no stable identity: SkirmishMoveIntentComponent",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "log": "native-352-core-combat-save.log",
+  "logSha256": "090d84f392a34bf7ee03a0e47f805433ca4940804eb64fa85f4c60e141bc831a",
+  "playerReady": false
+}

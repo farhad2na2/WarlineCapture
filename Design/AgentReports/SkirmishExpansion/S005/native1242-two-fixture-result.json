@@ -1,0 +1,37 @@
+{
+  "result": "PassedScopedFocused",
+  "sourceHash": "746a4680c6445adf8c350cffb139c3cbb25362501507f6ed00be2b449a08650d",
+  "fullSourceUnchanged": true,
+  "preManifest": "native1242-two-fixture-pre-source-manifest.json",
+  "postManifest": "native1242-two-fixture-post-source-manifest.json",
+  "results": [
+    {
+      "suite": "economy",
+      "method": "Game.Tests.Editor.SkirmishEnemyEconomyTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyEconomyTests] result=Passed tests=11",
+      "markerCount": 1,
+      "log": "native1242-two-fixture-economy.log",
+      "logSha256": "437cf5b0b6956201fb874dbd021ae55e214409316b2547070c39d6bf520d493a",
+      "wrapperOutput": "native1242-two-fixture-economy.wrapper-output.txt",
+      "passed": true
+    },
+    {
+      "suite": "commander",
+      "method": "Game.Tests.Editor.SkirmishEnemyCommanderTests.RunFocusedValidation",
+      "wrapperExit": 0,
+      "nativeExit": 0,
+      "marker": "[SkirmishEnemyCommanderTests] result=Passed cases=8 configSeedPairs=4 scope=isolated-shared-orders",
+      "markerCount": 1,
+      "log": "native1242-two-fixture-commander.log",
+      "logSha256": "833eb2372b1a071d2e4ed668b1ebdce8071f64b7387309056bcd9e7ecd9432c3",
+      "wrapperOutput": "native1242-two-fixture-commander.wrapper-output.txt",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "normalMissionWins": 0,
+  "playerReady": false,
+  "postIdleProof": "native1242-after-idle-raw.json"
+}

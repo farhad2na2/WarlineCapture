@@ -1,0 +1,70 @@
+import hashlib,json,pathlib,shutil,subprocess,sys
+
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+reports=root/'Design/AgentReports/SkirmishExpansion/S005'
+assert len(sys.argv)==3, 'Usage: rtk proxy python3 /private/tmp/s005-run-fixedwing-pair-20261011.py <current-pre-source-manifest.json> <unused-native-run-number>'
+pre=sys.argv[1]
+assert pathlib.Path(pre).name==pre and (reports/pre).is_file()
+number=sys.argv[2]
+assert number.isdigit() and int(number)>0
+run='native'+number
+state_path=reports/'TECHNICAL_READINESS_CURRENT.json'
+state=json.loads(state_path.read_text())
+assert state['activeRun'] is None, 'Parent must own the idle main lane before starting; preserve active run.'
+fixture=pathlib.Path('/private/tmp/S005FixedWingPairSmoke20261011.cs')
+expected='6f1ff47b1570b24bfa982779fdeff402d0446a674c0048cf80a98def108699d6'
+assert hashlib.sha256(fixture.read_bytes()).hexdigest()==expected, 'Prepared fixture changed; review and archive a fresh SHA before loading.'
+archive=reports/(run+'-fixedwing-pair-fixture.cs.txt')
+load=reports/('load'+number+'-fixedwing-pair-fixture.json')
+log=reports/('native-'+number+'-fixedwing-pair-standard-air2.log')
+assert not any(p.exists() for p in [archive,load,log,reports/'delegation-aircraft-fixedwing-pair20261011.touch.jsonl',reports/'delegation-aircraft-fixedwing-pair20261011.placement.jsonl']), 'Unique class/evidence already used; preserve it and prepare a new class before another run.'
+shutil.copy2(fixture,archive)
+loaded=subprocess.run(['rtk','proxy','unity','command','run_script','--file',str(fixture),'--entry','S005FixedWingPairSmoke20261011.Run','--timeout_ms','30000','--project-path',str(root),'--format','json'],cwd=root,capture_output=True,text=True)
+load.write_text(loaded.stdout)
+decoded=json.loads(loaded.stdout)
+assert loaded.returncode==0 and decoded['success'] and decoded['data']['result']['success'], 'Nested native fixture compilation/load failed; no validation run started.'
+print('Grouped fixed-wing native fixture loaded; normal mission and full lifecycle are not claimed.',flush=True)
+state.update(activeRun=run,activeLog=log.name,activeScope='S005FixedWingPairSmoke20261011.RunValidation',activePreManifest=pre)
+state_path.write_text(json.dumps(state,indent=2)+'\n')
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','1140','--log',str(log),'--','-executeMethod','S005FixedWingPairSmoke20261011.RunValidation'],cwd=root).returncode
+pathlib.Path(str(log)+'.wrapper-exit').write_text(str(wrapper)+'\n')
+bridge_path=pathlib.Path(str(log)+'.exit')
+bridge=int(bridge_path.read_text()) if bridge_path.exists() else None
+if bridge is None:
+    print('Native completion is missing; preserve active owned run and investigate without killing an Editor.',flush=True)
+    sys.exit(4)
+post='final-'+number+'-fixedwing-pair-post'
+subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True)
+post+='-source-manifest.json'
+same=json.loads((reports/pre).read_text())==json.loads((reports/post).read_text())
+source_hash=json.loads((reports/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+text=log.read_text(errors='replace')
+errors=[]
+if wrapper!=0 or bridge!=0: errors.append('Wrapper/native completion failed')
+if not same: errors.append('Complete source changed across actual validation')
+required=[
+    '[S005FixedWingPairProducer] phase=NativeQueuePrerequisites airportPresent=1 readiness=FullArsenal',
+    '[S005FixedWingPairAir2Rejection] result=Passed cap=2 live=2 reserved=0 noPayment=1 noReservation=1 nativeApi=1',
+    '[S005FixedWingPairDeathReplacement] phase=SlotReleased result=Passed stimulus=HealthZero live=1 cap=2 idempotent=1 planeSurvives=1',
+    '[S005FixedWingPairPlaneComponents] result=Observed soldierSeats=24 vehicleSlots=2 boardingFlightUnload=Pending',
+    '[S005FixedWingPairPaidQueueDeath] result=Passed',
+    '[S005FixedWingPairMovement] result=Passed cases=3',
+    '[S005FixedWingPairMovementCleanup] result=Passed attemptsRemoved=1'
+]
+for marker in required:
+    if marker not in text: errors.append('Missing '+marker)
+for role,count in [('Fighter',2),('TransportPlane',1)]:
+    for kind in ['PaidQueueCase','NativeSelection','NativeMovement']:
+        marker='[S005FixedWingPair'+kind+'] '+('role='+role if kind=='PaidQueueCase' else 'result=Passed role='+role)
+        if text.count(marker)<count: errors.append('Missing '+str(count)+' actual '+role+' '+kind+' observations')
+proof=dict(result='Failed' if errors else 'PassedScopedIsolatedFixedWingPairStandardAir2',scope='Funded FullArsenal isolated native paid Airport/Fighter/TransportPlane; actual Touch selection/Move/takeoff, Standard Air2 rejection/no spending, disclosed death/idempotent cap release and paid Fighter replacement; not normal whole mission or full aircraft behavior',sourceHash=source_hash,fullSourceUnchanged=same,preManifest=pre,postManifest=post,wrapperExit=wrapper,nativeBridgeExit=bridge,log=log.name,logSha256=hashlib.sha256(log.read_bytes()).hexdigest(),fixture=archive.name,fixtureSha256=expected,touchEvidence='delegation-aircraft-fixedwing-pair20261011.touch.jsonl',placementEvidence='delegation-aircraft-fixedwing-pair20261011.placement.jsonl',fundingInjected=True,readinessGranted='FullArsenal',openingActorsRetired=True,enemyStrategyDisabled=True,existingOwnFuelOilStorageFilled=True,deathStimulus='HealthZero',queueInput='NativePaidRequestApi',selectionMoveInput='NativeTouch',positionsSelectionOrdersInjected=False,normalMissionCertified=False,fullLifecycleCertified=False,technicallyReady=False,playerReady=False,pending=['Fighter air combat/domain negative cases','Plane boarding/cargo flight/unload/airdrop/loaded native checkpoint','Return/refuel','bilateral capacity','production cancellation/producer loss','whole mission/ARIA/device'],errors=errors,nativeMarkers=[line for line in text.splitlines() if line.startswith(('[S005FixedWingPairProducer]','[S005FixedWingPairMovement]','[S005FixedWingPairMovementCleanup]','[S005FixedWingPairAir2Rejection]','[S005FixedWingPairDeathReplacement]','[S005FixedWingPairPaidQueueDeath]','[S005FixedWingPairPlaneComponents]'))])
+name=run+'-fixedwing-pair-standard-air2-'+('failure' if errors else 'pass')+'.json'
+(reports/name).write_text(json.dumps(proof,indent=2)+'\n')
+state=json.loads(state_path.read_text())
+assert state['activeRun']==run
+state.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,currentFixedWingPairStandardAir2Smoke=name)
+state_path.write_text(json.dumps(state,indent=2)+'\n')
+with(reports/'CURRENT_ACCEPTANCE.md').open('a') as f:
+    f.write('\n'+run+': isolated paid Fighter/Plane Standard Air2 smoke '+proof['result']+'. Funding/readiness/death setup disclosed; combat/transport/full mission remain pending. Proof `'+name+'`.\n')
+print(json.dumps(dict(proof=name,result=proof['result'],errors=errors)),flush=True)
+sys.exit(3 if errors else 0)

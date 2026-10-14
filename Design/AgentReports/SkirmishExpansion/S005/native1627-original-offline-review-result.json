@@ -1,0 +1,16 @@
+{
+  "result": "PassedOfflinePendingConnectedCompile",
+  "runId": 1627,
+  "sourceHash": "0df6c067ebd88aadb78df8d0a4599144dfc978ba77c81dac76357006c4951fbc",
+  "sourceFiles": 43462,
+  "fixtureSha256": "ebaf8610ab8c95ff45c3363c7c6478a9c43b04f715c34df873ecf0b2a191980c",
+  "fixtureDeltaSha256": "1131ea418115b13234b39bd934c919a75f24e616a97622844188e9859ddd9f37",
+  "packageSealSha256": "44d7c8c632112bf8b1a56914e6d8eb1a11d5c39a2c786024d12619dafa83c01d",
+  "freshSourceManifest": "review1627-8ce7e543ae2d4e25b453285e93498581-source-manifest.json",
+  "freshFingerprint": "review1627-8ce7e543ae2d4e25b453285e93498581-independent-fingerprint.json",
+  "negativeControls": "PassedFailClosedResetWitnessControls",
+  "nativeDispatchPermitted": false,
+  "unityExecuted": false,
+  "nativeMissionExecuted": false,
+  "playerReady": false
+}

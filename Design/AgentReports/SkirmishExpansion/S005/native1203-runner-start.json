@@ -1,0 +1,11 @@
+{
+  "explicitHeavyLaneOwner": "main1203",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1202-shared-modal-production-pre-source-manifest.json",
+  "preflightManifest": "final-1203-lifecycle-preflight-source-manifest.json",
+  "fixtureSha256": "cf3e5e95201e521ab3b6ac88b261fd178e5765ee1bd73f74e6632a13c2c99b02",
+  "executedRunnerSha256": "6eb46efefcd3b286ab4535cf42d97d47a37b30fd3bc85211b2477076ef9664aa",
+  "method": "S005Lifecycle1203.RunValidation",
+  "normalInput": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

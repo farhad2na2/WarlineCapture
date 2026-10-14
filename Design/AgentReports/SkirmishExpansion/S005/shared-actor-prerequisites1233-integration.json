@@ -1,0 +1,94 @@
+{
+  "scope": "Shared actor command prerequisites only; no orchestration/schema/map/budget changes",
+  "baseFullSource": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "baseSha256": "03c5299df33735f65d96bcd01bc0c37d80dcbb3eed52019423c403e4dcd53480",
+      "stagedSha256": "ce38f4932ad29f01a42292889879b77ab9d42235023fab482d80a9a6ca70ff0f",
+      "bytes": 16053
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SkirmishActorCommandAuthority.cs",
+      "baseSha256": null,
+      "stagedSha256": "9d7aa7ece5ee0534fd0b0fb718ab41cb3b3e1a2388407d72743c9357f4e752f9",
+      "bytes": 2970
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SkirmishActorCommandAuthority.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "77cd98d48132c87faf2f430fb4e34557f6d82953a9f297a63a10ef1a4f149fe9",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs",
+      "baseSha256": "55e6ad04496be49218b8d151d087980a57d46f4e08ef7cb78d5bb7d69885ee2b",
+      "stagedSha256": "6b0ff9f0097da4d969017292c6b9563a82c03806dc8adf276ee2a2a73310626c",
+      "bytes": 14720
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandBoardPassenger.cs",
+      "baseSha256": "29beb58c52dda630ecb090ad2bdd0558a84edae86b5a96f1be5d732539830843",
+      "stagedSha256": "390208b77385f90d4de6d20e5bd6269b12adc1588dc4074b55bab199803b032c",
+      "bytes": 13984
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandOwned.cs",
+      "baseSha256": null,
+      "stagedSha256": "b12f721d62543cb567fec33ead8deb81540bc001ae1b140d5b1df488c033b070",
+      "bytes": 1882
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandOwned.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "867e9b0576c6a40a0acbf57b8e96db4f4e8fbbc391c41464ab4a1e7df6a2f456",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandPlanning.cs",
+      "baseSha256": "b87567ea373fbafa6363089ea3ce50a7e6a04e99c6cc303b0228756c56ea9c9a",
+      "stagedSha256": "7015ac619c8dd359d8c8ce36548cd9079ade986204ea431e9aa97b2834a960b6",
+      "bytes": 17033
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitReturnToBaseCommandService.cs",
+      "baseSha256": null,
+      "stagedSha256": "c6c773f403587df0b5c041453d1e93bc27ae878f6a2d0cba3a92d9aa38dcf2ad",
+      "bytes": 10720
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitReturnToBaseCommandService.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "2d7dc69aba32fa50060840c7d2204e98a49b84002c7d785acb0ce0a257025d06",
+      "bytes": 243
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTransportAirPickupSystem.cs",
+      "baseSha256": "1dde8c1d8a1450f35fb5d40edde296505c371a7da2566224362322a2aa59df1d",
+      "stagedSha256": "6967ed39c903cd1fd15119652538d928c145a9f9091d721787abe04a7946510e",
+      "bytes": 6001
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActorCommandPrerequisiteTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "b07cae28f4bf9f40737d849e5b16a9f9df6ddd88ad52e29e46f39718764a2645",
+      "bytes": 18490
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishActorCommandPrerequisiteTests.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "31fc4a934012cc42cf421fb2ac542032689f08d140e820c8d5c50c553d3c607c",
+      "bytes": 243
+    }
+  ],
+  "testEntry": "Game.Tests.Editor.SkirmishActorCommandPrerequisiteTests.RunFocusedValidation",
+  "expectedPassMarker": "[SkirmishActorCommandPrerequisiteTests] result=Passed cases=24 isolatedNativeWorlds=24",
+  "nativeStatus": "Integrated pending compile/focused/native",
+  "patchSha256": "113176cb3308e1000538c517ad0a06210580908e1c444a0c3eafc006b1c69168",
+  "checkpointTestCorrection": {
+    "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishNativeCheckpointPartsTests.cs",
+    "beforeSha256": "4adf677c31e43008502b9214698f014f01a5f7b57abe1b68590b4de57a65338f",
+    "afterSha256": "3e68168b1cb6208063210c55a247c717a43a5aa23e2dbc9c0e48e0dfa6f29d45",
+    "reason": "Reacquire DynamicBuffer after adding capacity changes entity archetype; failed native1231 retained."
+  }
+}

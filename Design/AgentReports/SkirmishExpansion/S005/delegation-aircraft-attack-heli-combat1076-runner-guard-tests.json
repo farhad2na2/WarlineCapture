@@ -1,0 +1,86 @@
+{
+  "scope": "Offline runner guard only; scratch mock JSONL never native evidence or Unity execution",
+  "runnerSha256": "250e2ae64aff920556f9e7de61eca37c96af77119a4a26f75b26355687905b75",
+  "result": "Passed",
+  "cases": [
+    {
+      "case": "twoRolesZero",
+      "result": "Passed",
+      "expectedAcceptance": true,
+      "observedAcceptance": true,
+      "errors": []
+    },
+    {
+      "case": "earlyRoleViolationLaterReset",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Native receipt violation or missing counter at Touch row 1"
+      ]
+    },
+    {
+      "case": "missingCounter",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Native receipt violation or missing counter at Touch row 1"
+      ]
+    },
+    {
+      "case": "empty",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Complete native Touch JSONL empty"
+      ]
+    },
+    {
+      "case": "malformedRow",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Native receipt violation or missing counter at Touch row 1"
+      ]
+    },
+    {
+      "case": "boolCounter",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Native receipt violation or missing counter at Touch row 1"
+      ]
+    },
+    {
+      "case": "unexpectedSample",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Unexpected sample/intervention at Touch row 1"
+      ]
+    },
+    {
+      "case": "physicalIntervention",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Unexpected sample/intervention at Touch row 1"
+      ]
+    },
+    {
+      "case": "missingEvidence",
+      "result": "Passed",
+      "expectedAcceptance": false,
+      "observedAcceptance": false,
+      "errors": [
+        "Full-run Touch audit: Complete native Touch JSONL missing"
+      ]
+    }
+  ]
+}

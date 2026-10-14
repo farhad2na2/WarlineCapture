@@ -1,0 +1,77 @@
+{
+  "status": "Running native781; no cycle pass claim",
+  "priorRun": 780,
+  "currentRun": 781,
+  "normalInputOnly": true,
+  "shippingRuntimeConfigsPhysicalMapsUnchanged": true,
+  "measurements": [
+    {
+      "comparisonAtSeconds": 120,
+      "native780": {
+        "elapsed": 114.25994110107422,
+        "materials": 50,
+        "fabricated": 200,
+        "constructionSpent": 260,
+        "fuel": 317.5108947753906
+      },
+      "native781": {
+        "elapsed": 114.5041732788086,
+        "materials": 160,
+        "fabricated": 250,
+        "constructionSpent": 200,
+        "fuel": 321.1080017089844
+      }
+    },
+    {
+      "comparisonAtSeconds": 240,
+      "native780": {
+        "elapsed": 234.35763549804688,
+        "materials": 70,
+        "fabricated": 400,
+        "constructionSpent": 300,
+        "fuel": 374.47418212890625
+      },
+      "native781": {
+        "elapsed": 235.1644287109375,
+        "materials": 220,
+        "fabricated": 650,
+        "constructionSpent": 400,
+        "fuel": 352.91619873046875
+      }
+    },
+    {
+      "comparisonAtSeconds": 360,
+      "native780": {
+        "elapsed": 354.5509338378906,
+        "materials": 180,
+        "fabricated": 750,
+        "constructionSpent": 300,
+        "fuel": 499.6882629394531
+      },
+      "native781": {
+        "elapsed": 355.71588134765625,
+        "materials": 330,
+        "fabricated": 1000,
+        "constructionSpent": 400,
+        "fuel": 426.671630859375
+      }
+    },
+    {
+      "comparisonAtSeconds": 480,
+      "native780": {
+        "elapsed": 474.1439208984375,
+        "materials": 430,
+        "fabricated": 1000,
+        "constructionSpent": 300,
+        "fuel": 625.90625
+      },
+      "native781": {
+        "elapsed": 473.6615295410156,
+        "materials": 250,
+        "fabricated": 1400,
+        "constructionSpent": 400,
+        "fuel": 558.6295166015625
+      }
+    }
+  ]
+}

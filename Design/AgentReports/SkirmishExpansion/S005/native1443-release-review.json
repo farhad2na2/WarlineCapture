@@ -1,0 +1,9 @@
+{
+  "result": "Released1443AfterFreshCurrentEditorReview",
+  "preparedBeforeSha256": "ca21abe07c5ce1f10c4f2c3f936c3fd61ac40d473bed463e96db9f6d104534f7",
+  "preparedAfterSha256": "e695536bd18af7531d7a181331ffe8ce653a2f4ab39864040b3187f052217ce3",
+  "sourceHash": "4ceea61c6767a3a98d08bc96478242a26a83f43b45354bc2f426b5ca8caac170",
+  "freshnessProposal": "/private/tmp/s005-normal-south-flank1443-prepared/freshness-proposal1443.json",
+  "dry": "compile1443-normal-south-flank-reviewed-dry-run.json",
+  "scope": "Original south route/base damage plus nonvacuous fresh reinforcement route and full Victory/result/MainMenu"
+}

@@ -1,0 +1,21 @@
+{
+  "result": "PreparedHeldNotCompiledNotLoadedNotRun",
+  "fixture": "/private/tmp/S005BoardedRecovery1102.cs",
+  "fixtureSha256": "9d22c17116a2a8ade186e0b1f9fa1a6f5ed2d4a310dd004a4ad7ba470a18fd00",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1102.py",
+  "runnerSha256": "dcca64e892898462ad7d82aa98e373b554d34504216c009090cdcfe6a2808bc7",
+  "scope": "Single actual paid FastAPC + Rifle4 genuine native Pause/SaveExit/presentedContinue/oldworld removal/owned exact stableIDs hidden links/receipts/capacity conservation/loadedMove/unload/body/currenttypedselection/death. Existing1078 failure retained; no production change.",
+  "changes": [
+    "Only accepted actual Tap stops PauseButton iteration. Disabled NarrativeLayer duplicate is skipped, genuine active interactable runtimeShell header can be contacted.",
+    "Unique1102 class/artifacts/isolated WARLINE_VALIDATION_SAVE_ROOT and frozen source pre/post guards.",
+    "Fixture/runner scope restrictedFastAPC only; absentHelipad VTOL recovery not silently attempted.",
+    "1078 and1097 loaded bytes preserved. All rawTouch zero audit counters across resets/primitive visual rows retained."
+  ],
+  "hold": "Parent requested hold until fog core + optional ledger integrated; source must be freshly fingerprinted. This fixture currently does not independently assert new fog ledger contacts/schema, so do not label fog-specific recovery proof without a focused actual-native assertion extension beforeload.",
+  "originalFailure": "native1078-isolated-paid-boarded-recovery-failure.json",
+  "readonlyCause": "native1078-readonly-pause-candidate-diagnostic.json",
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005BoardedRecovery1102.cs --entry S005BoardedRecovery1102.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-boarded-recovery-1102.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --case fast --heavy-lane-owner main1102",
+  "noUnityCallsByAgent": true,
+  "noProductionEdits": true
+}

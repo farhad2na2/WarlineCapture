@@ -1,0 +1,47 @@
+{
+  "mission": "S005",
+  "sourceHash": "4e620debdff668450cdd5f7e53c2c64999974f6836273e7ae7a66ff898eb80a7",
+  "status": "Passed 6/6 before faction research repair",
+  "active": null,
+  "runs": [
+    {
+      "run": 358,
+      "locale": "en",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEn"
+    },
+    {
+      "run": 359,
+      "locale": "en",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2"
+    },
+    {
+      "run": 360,
+      "locale": "en",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3"
+    },
+    {
+      "run": 361,
+      "locale": "fa-IR",
+      "seed": 104734,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFa"
+    },
+    {
+      "run": 362,
+      "locale": "fa-IR",
+      "seed": 130368,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed2"
+    },
+    {
+      "run": 363,
+      "locale": "fa-IR",
+      "seed": 155926,
+      "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaFaSeed3"
+    }
+  ],
+  "playerReady": false,
+  "postSourceFingerprint": "final-365-core-post-source-independent-fingerprint.json",
+  "currentSourceWillChange": true
+}

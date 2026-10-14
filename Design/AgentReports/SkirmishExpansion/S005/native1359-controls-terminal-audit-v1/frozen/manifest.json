@@ -1,0 +1,65 @@
+{
+  "result": "FrozenScopedOfflineNative1359Audit",
+  "sourceHash": "2df3b52828c15c0c82d6f31e79aac04a246ff4aef7805c9be0e40cfbb55ac474",
+  "files": {
+    "controls.py": {
+      "sha256": "3c64aaf34d99a26064ab32060ab02e4dbd973a69145d145d264c8f36afa96b1d",
+      "bytes": 4364
+    },
+    "executed-runner.py": {
+      "sha256": "9786be5b51c72c752d706f30aa2ad42750588c98c2e5b78684712a5b26a267ad",
+      "bytes": 13122
+    },
+    "executed-S005NormalStopManual1359Observer.cs": {
+      "sha256": "02a69b982954e49a1b6231e10dffeac5e6da445ec71a5e0345d3b50319869901",
+      "bytes": 119315
+    },
+    "audit.py": {
+      "sha256": "df245a70e0387b53652d92506f84691e77cbc714d985f3ce6c201af286964c7d",
+      "bytes": 10793
+    },
+    "executed-S005NormalStopIdle1359.cs": {
+      "sha256": "d86678e585b0c14862faddc31ccc595b5a792887fd9207d32e2aadcc1e3d8458",
+      "bytes": 376
+    },
+    "executed-qualifier.py": {
+      "sha256": "96dab260764f8ac96847848ab1fe6e0b31aa166b898cdc3d8695d5c78abfd874",
+      "bytes": 12982
+    },
+    "README.md": {
+      "sha256": "57957758735c9589e09cacebb39dcd438de72b34f96fb7ccbb101a81f1638b37",
+      "bytes": 2489
+    },
+    "offline-controls.json": {
+      "sha256": "f5b67cfdfe7b6a60f53730d7ebbcb7f73d57d7479fcf8cc5492a84316338f2a2",
+      "bytes": 3349
+    },
+    "executed-fog-qualifier.py": {
+      "sha256": "a7f1acecdda9a930e40d8485cdadd77dd76005a636c0502136822c453d398705",
+      "bytes": 9421
+    },
+    "executed-handoff_qualifier.py": {
+      "sha256": "37b3c9ca391a649c0e5ae1c1bed2aca4c7a8275199faa28bae2d6ec8ddcfb20a",
+      "bytes": 2469
+    },
+    "evidence-pins.json": {
+      "sha256": "6fdbe17657e1399602a2a7b59696ec535e594b70765881160a4eaff9370ebc74",
+      "bytes": 9535
+    },
+    "executed-home-defense-qualifier.py": {
+      "sha256": "8f61b8629cf75ca7a301fa0b0416c4fdb8b2ef4c97f132740997c89090621fb3",
+      "bytes": 8247
+    },
+    "qualified-scoped-native1359-proof.json": {
+      "sha256": "8892dd0e07352f503afdbe3f53d0d38997b9ea708dddf6ed2162e7ff0e2dd49a",
+      "bytes": 12221
+    }
+  },
+  "negativeControlsPassed": 43,
+  "peerReview": "PendingIndependentReadOnlyReview",
+  "originalFailedRunPreserved": true,
+  "fogFallbackQualified": false,
+  "completeOriginalFixtureQualified": false,
+  "playerReady": false,
+  "unityCalled": false
+}

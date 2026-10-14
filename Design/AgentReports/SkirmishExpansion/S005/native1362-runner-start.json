@@ -1,0 +1,12 @@
+{
+  "explicitHeavyLaneOwner": "main1362",
+  "coordination": "Root supplied token only after explicit T7 release; no implicit ownership takeover",
+  "preManifest": "final-1363-fixedwing-player-after-source-manifest.json",
+  "preflightManifest": "final-1362-lifecycle-preflight-source-manifest.json",
+  "fixtureSha256": "a153f13ce41c0df69433d9e990737a138bf243ada73b098fe88953f0be068df2",
+  "executedRunnerSha256": "287cbbbd19b88f4564aad5a9ba98ecec912b173a086a50a981c1c34dd8bc1971",
+  "method": "S005Lifecycle1362.RunValidation",
+  "normalInput": true,
+  "qaOneWinWatcherAndManualAutoCombatCoordinated": true,
+  "matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter": false
+}

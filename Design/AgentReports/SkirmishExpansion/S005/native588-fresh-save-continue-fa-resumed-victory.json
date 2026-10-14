@@ -1,0 +1,50 @@
+{
+  "playerReady": false,
+  "sourceHash": "956db3d5e328f281a0d25dc50d317dd926b3b2f1c2c906b8e1aa8f4b86ab2224",
+  "sourceUnchanged": true,
+  "locale": "fa-IR",
+  "seed": 104734,
+  "wrapperExit": 0,
+  "logExit": 0,
+  "saveResume": "Passed schema7, same attempt, paid Anti-Air receipt, cleanup 4977 and normal speed",
+  "resumedMatch": {
+    "elapsed": 210.684,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 210.684,
+    "clockPaused": 0,
+    "playerBaseHp": 800,
+    "enemyBaseHp": -1,
+    "playerUnits": 11,
+    "pathRequests": 4,
+    "pathFollowing": 0,
+    "leadX": 979.5,
+    "leadZ": 654.5
+  },
+  "terminal": "Localized frozen result and Adjust Setup passed",
+  "contacts": {
+    "recordedContacts": 58,
+    "completedContacts": 58,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 6,
+      "Runtime": 45,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-104734-fa-5812eda04c5f4e9991ddccff9bbb8a10.jsonl.touch.jsonl",
+    "sha256": "7032e92f69c297d220084ce4436bba3e772e132068f59ac55bbf7e4a1dec7f5e"
+  },
+  "runtimeExceptions": 0,
+  "log": "native-588-streamed-sidewalk-orthographic-save-continue-fa.log",
+  "trace": "s005-aria-live-104734-fa-5812eda04c5f4e9991ddccff9bbb8a10.jsonl"
+}

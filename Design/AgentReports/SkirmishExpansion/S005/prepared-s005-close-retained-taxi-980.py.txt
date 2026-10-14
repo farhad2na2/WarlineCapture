@@ -1,0 +1,35 @@
+import hashlib,json,pathlib,re,subprocess,sys
+p=pathlib.Path('/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005')
+base=json.loads((p/'native980-focused-current-proof.json').read_text())
+original=json.loads((p/'native945-normal-paid-strike-returntaxi-save-continue-failure.json').read_text())
+log=p/'native-980-retained-strike-taxi-continue.log';t=log.read_text(errors='replace')
+errors=[]
+actual=int(pathlib.Path(str(log)+'.wrapper-exit').read_text());bridge=int(pathlib.Path(str(log)+'.exit').read_text())
+if base['result']!='Passed' or actual!=0 or bridge!=0:errors.append('Current native wrapper/closure failed')
+if not base['sourceUnchanged'] or not original['fullSourceUnchanged'] or base['sourceHash']!=original['sourceHash']:errors.append('Capture/continue full source mismatch')
+for marker in ['[S005RetainedTaxiContinue] phase=PreflightPassed','[S005RetainedTaxiContinue] phase=NativeRecoveryObserved','[S005RetainedTaxiContinue] phase=NativeTaxiVerified','[S005RetainedTaxiContinue] result=Passed','[S005RetainedTaxiContinueCleanup] result=Passed','[S005NativeRecoveryCase] result=Passed','[S004MenuJourney] result=Passed','[SkirmishPlayerResume] result=Passed session=expanded-s005-155926-faca69f12fe34dbabadfc792269c53e6']:
+    if marker not in t:errors.append('Missing '+marker)
+if '[S005RetainedTaxiContinue] result=Failed' in t or '[S005NativeRecoveryCase] result=Failed' in t:errors.append('Native dedicated continuation failed')
+originalLog=(p/original['log']).read_text(errors='replace')
+for marker in ['[SkirmishPlayerSave] result=Passed session=expanded-s005-155926-faca69f12fe34dbabadfc792269c53e6 schema=7','[S005AircraftRecovery] phase=PausedSnapshot','[S005AircraftRecoveryCleanup] result=Passed','[S005FixedWingCycle] phase=ReturnAccepted input=Touch']:
+    if marker not in originalLog:errors.append('Missing original native capture evidence '+marker)
+captureAudit=original['inputAudit']
+if not captureAudit['strictRecordedContacts'] or not captureAudit['strictAllContactsEnded'] or captureAudit['errors']:errors.append('Original capture contact audit failed')
+traces=[f for f in p.glob('s005-aria-live-*-en-*.jsonl') if re.fullmatch(r's005-aria-live-\d+-en-[0-9a-f]{32}\.jsonl',f.name) and f.stat().st_mtime>=log.stat().st_birthtime-1]
+audit=None;trace=None
+if len(traces)!=1:errors.append('Missing unique current continuation trace')
+else:
+    trace=traces[0]
+    a=subprocess.run(['rtk','proxy','python3','Tools/CI/audit_skirmish_native_contacts.py',str(trace)+'.touch.jsonl'],capture_output=True,text=True)
+    audit=json.loads(a.stdout)
+    if not audit['strictRecordedContacts'] or not audit['strictAllContactsEnded'] or not audit['nativeMenuContactsRecorded'] or audit['errors']:errors.append('Current continuation native contact audit failed')
+checkpoint=p/'native945-captured-native-checkpoint.json'
+if hashlib.sha256(checkpoint.read_bytes()).hexdigest()!='34fecf964ef7738143f9be108a4fe01843719695f2ac3e2270ef23b3bfd07117':errors.append('Retained checkpoint differs from original capture')
+fixture=pathlib.Path('/private/tmp/S005SavedTaxiContinue980.cs');copy=p/'native980-retained-native-taxi-continue-fixture.cs.txt';copy.write_bytes(fixture.read_bytes())
+proof=dict(result='PassedScopedNormalSplitSessionTaxiRecovery' if not errors else 'Failed',scope='Native945 normal Pause/Save and byte-identical retained checkpoint, followed by native980 real-menu Continue in a new owned Play session. Separate strict input audits; no new troop order is required to Continue.',sourceHash=base['sourceHash'],originalCaptureProof='native945-normal-paid-strike-returntaxi-save-continue-failure.json',originalFailureRetained=True,validationAssumptionCorrected='UnitMove is immutable prefab configuration, absent from mutable checkpoint parts. Taxi Air/Movement/Transform saved exactly; restored prefab Speed=36 verified.',originalNativeSaveSucceeded=True,originalSourceUnchanged=original['fullSourceUnchanged'],continuationProof='native980-focused-current-proof.json',continuationSourceUnchanged=base['sourceUnchanged'],actualWrapperExit=actual,nativeBridgeExit=bridge,originalCaptureInputAudit=captureAudit,continuationInputAudit=audit,trace=trace.name if trace else None,log=log.name,logSha256=hashlib.sha256(log.read_bytes()).hexdigest(),capturedCheckpoint=checkpoint.name,capturedCheckpointSha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),isolatedProfileCopyByteIdentical=True,manufacturedCheckpointActorsResourcesOrders=False,actualRestoredTaxiMotionVerified=not errors,paidReceiptPreserved=not errors,sameAttempt=not errors,originalWorldDisposed=True,fixture=copy.name,fixtureSha256=hashlib.sha256(copy.read_bytes()).hexdigest(),normalGameplayInputScope='Original paid construction/logistics/Strike sortie/Return/Pause/Save contacts and new real native Continue menu contacts, without actor/resource/order injection',countedWin=False,fullLifecycleCertified=False,technicallyReady=False,playerReady=False,realHumanDeviceAcceptance=False,errors=errors)
+name='native945-980-normal-paid-strike-taxi-save-continue-'+('pass' if not errors else 'failure')+'.json'
+(p/name).write_text(json.dumps(proof,indent=2)+'\n')
+f=p/'TECHNICAL_READINESS_CURRENT.json';state=json.loads(f.read_text());state.setdefault('currentAircraftRecoveryProofs',[]).append(name);state['currentTaxiRecoveryStatus']=proof['result'];state['currentTaxiRecoveryProof']=name;f.write_text(json.dumps(state,indent=2)+'\n')
+with (p/'CURRENT_ACCEPTANCE.md').open('a') as f:f.write(f'\nNative945/980 retained native taxi recovery {proof["result"]}: original normal paid Strike/Pause/Save and new native menu Continue, exact saved mutable parts/receipt/runway geometry, restored native taxi motion, separate strict contact audits and full source closure. The original945 and follow-up976/977 fixture failures, plus native979 legacy QA-completion marker inconsistency, remain retained. No full mission win/lifecycle/capacity certification. Proof `{name}`.\n')
+print(json.dumps(dict(proof=name,result=proof['result'],errors=errors)),flush=True)
+raise SystemExit(3 if errors else 0)

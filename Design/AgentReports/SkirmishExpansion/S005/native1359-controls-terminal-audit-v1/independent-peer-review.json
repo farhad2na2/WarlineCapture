@@ -1,0 +1,22 @@
+{
+  "result": "PassedIndependentReadOnlyScopedPeerReview",
+  "bundleManifest": "/private/tmp/s005-native1359-controls-terminal-audit-v1/manifest.json",
+  "manifestSha256": "cfe842fa763fdfab767cfcf5a31d197c020b8a7192a331ffbcc52166e5ede8a2",
+  "proofSha256": "8892dd0e07352f503afdbe3f53d0d38997b9ea708dddf6ed2162e7ff0e2dd49a",
+  "implementationObjectsVerified": 13,
+  "immutableEvidenceReferencesVerified": 37,
+  "independentAuditExactJsonEquality": true,
+  "independentNegativeControls": 43,
+  "independentControlsExactJsonEquality": true,
+  "scope": "Deliberate ARIAStop/manualMoveHoldPauseResumeReplacementMove controls and later sameattempt native Victory359.814/rendered MainMenu witness only",
+  "originalOverallFailedPreserved": true,
+  "fogFallbackQualified": false,
+  "completeOriginalFixtureQualified": false,
+  "homeDefenseEffectQualified": false,
+  "ariaSeedBaselineQualified": false,
+  "physicalTakeoverQualified": false,
+  "playerReady": false,
+  "unityCalled": false,
+  "sourceWritten": false,
+  "evidenceWritten": false
+}

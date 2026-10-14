@@ -1,0 +1,224 @@
+{
+  "archive": "native1226-lifecycle-evidence.zip",
+  "sha256": "b0cb950fc5fa69ada620606db52358532fc4638cb5abbb9d15a3b54d66b22670",
+  "bytes": 13258195,
+  "losslessVerified": true,
+  "originalsRemoved": false,
+  "files": [
+    {
+      "file": "compile1226-lifecycle-pause-comparison-dry-run.json",
+      "bytes": 5841,
+      "sha256": "c41921363e6c6feb62f49184d33bb61a56e8833ecb8d1b5da1a44a514c4cd7e1"
+    },
+    {
+      "file": "final-1226-lifecycle-post-independent-fingerprint.json",
+      "bytes": 376,
+      "sha256": "80349cc3d9d20c4ae927c8e9dc092f05d12b3ae3a8d46ab502f43afeb45e6cfa"
+    },
+    {
+      "file": "final-1226-lifecycle-post-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "file": "final-1226-lifecycle-pre-dispatch-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "0aa8ca43b85cb56b851523a5acc34282c00dcf6d2d9a077033b5e7b27caa23e9"
+    },
+    {
+      "file": "final-1226-lifecycle-pre-dispatch-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "file": "final-1226-lifecycle-preflight-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "977d982b630ef561d95233156d742ebc7f2578ba72836644676f036e2112c322"
+    },
+    {
+      "file": "final-1226-lifecycle-preflight-source-manifest.json",
+      "bytes": 6931708,
+      "sha256": "9d7ee4f95bbe3ae82b61d3178f2beefd323fc13f3aaf36d9fca83fb8945a44e7"
+    },
+    {
+      "file": "load1226-lifecycle-observer.json",
+      "bytes": 5829,
+      "sha256": "ff6e21ac41288383a922a0c901438d3ca69bd8eb6f1d5f04be1cede016275f6d"
+    },
+    {
+      "file": "native-1226-lifecycle-fa-seed104734.log",
+      "bytes": 707732,
+      "sha256": "819b0e1057e026418d85634347870eb0c8d3170c50674410d2287a35760f5239"
+    },
+    {
+      "file": "native-1226-lifecycle-fa-seed104734.log.dispatch.cs",
+      "bytes": 625,
+      "sha256": "cad6ef1ca84d35abe3b45b6e2ccc1e82972a27aa193bfdcff35cefcc17e3a7c8"
+    },
+    {
+      "file": "native-1226-lifecycle-fa-seed104734.log.dispatch.json",
+      "bytes": 819,
+      "sha256": "352304e8137181839abd2f9a8055f2ca64af087a2bb34dbcbf444a2c0e9c310c"
+    },
+    {
+      "file": "native-1226-lifecycle-fa-seed104734.log.exit",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "file": "native-1226-lifecycle-fa-seed104734.log.wrapper-exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "file": "native1226-after-close-native-idle.json",
+      "bytes": 736,
+      "sha256": "549110e6e1030e7a60b4318c87f9510ffa1761bd5a93afe37541bd6f5ca4adb7"
+    },
+    {
+      "file": "native1226-before-dispatch-native-idle.json",
+      "bytes": 736,
+      "sha256": "5d3a52046036dba3ae6438fc57f9823608bd29886940697f2e8ee5ef5efeb7b1"
+    },
+    {
+      "file": "native1226-before-load-native-idle.json",
+      "bytes": 736,
+      "sha256": "d3788e1aecf8f1bae6507c49f2810092aa81b2f7cc7d7ce312da3ea754ec35ab"
+    },
+    {
+      "file": "native1226-confirmation-parser.py.txt",
+      "bytes": 6217,
+      "sha256": "14e1c4992a5459b94d5b2ccf987ca4f12329ab7ef60b606ff5c84c7b8a81acd7"
+    },
+    {
+      "file": "native1226-confirmation-ui-diagnostic.jsonl",
+      "bytes": 434719,
+      "sha256": "48b22681acb14223ed50a55c1607cb5ae6cb03ed32e44041a3cfcb70a2cec4d2"
+    },
+    {
+      "file": "native1226-confirmation-ui-qualification.json",
+      "bytes": 60487,
+      "sha256": "55c556fedbb192d8c7e57eab6d723da6dfcff22c0c741450d46efb5d3c4563ac"
+    },
+    {
+      "file": "native1226-externalLifecycle-contact-audit.json",
+      "bytes": 507,
+      "sha256": "4f32602934489d09175c0c7d658ff89374e382ca5b66509b65454e6f4c56f653"
+    },
+    {
+      "file": "native1226-fresh-resource-diagnostic.json",
+      "bytes": 2615357,
+      "sha256": "e0908db92f656c6a9d859a18364eae16ef0af21f21bcc241c1dff17af50f20f9"
+    },
+    {
+      "file": "native1226-hold-replay-diagnostic.json",
+      "bytes": 1413436,
+      "sha256": "ea49edbe6a12d9e232c832a7b4a83228ae83d79a48912c6312180368cbebffce"
+    },
+    {
+      "file": "native1226-inheritedPublicNormal-contact-audit.json",
+      "bytes": 518,
+      "sha256": "cf68c89754a239a046b28515546d9d4c22d1dd7835dea93b1ea378234161091b"
+    },
+    {
+      "file": "native1226-lifecycle-failure.json",
+      "bytes": 3165,
+      "sha256": "01a34cda0bff5679a8e19433f7e476500862b983a003b321f154d065dfde723d"
+    },
+    {
+      "file": "native1226-lifecycle-observation.jsonl",
+      "bytes": 7567693,
+      "sha256": "24cd2a7ebae5cf6d3b0c6104054366d11999172d97a290862dfda38855b809cb"
+    },
+    {
+      "file": "native1226-lifecycle-observer.cs.txt",
+      "bytes": 77412,
+      "sha256": "e2b9c5fc71dd4518aacf5acb6b49b1f386d81f8458b6c53c0a0d98c41f002173"
+    },
+    {
+      "file": "native1226-lifecycle-offline-render-qualification.json",
+      "bytes": 76651,
+      "sha256": "3759915988a1e1af66d4aaa11c1ae6d908ee1995072ec53ad77f40d9cde69dee"
+    },
+    {
+      "file": "native1226-lifecycle-touch.jsonl",
+      "bytes": 58905,
+      "sha256": "1d829aab42bb7dde94777bc2d2775cdc9cf3b99ec340a7d0830011804398fd13"
+    },
+    {
+      "file": "native1226-memory-growth-review.json",
+      "bytes": 2916,
+      "sha256": "5973e89a9792b17eaafef6824e2d171112906b7785efdcbbafa8f236d26cba15"
+    },
+    {
+      "file": "native1226-pause-conservation-diagnostic.json",
+      "bytes": 386090,
+      "sha256": "4371cfcbbb585d226a81be4c186417d14c430bd91ca26730c62e877752f4c5f8"
+    },
+    {
+      "file": "native1226-runner-start.json",
+      "bytes": 620,
+      "sha256": "180794e7c578a3bc761c15cde0fc153b0b10de564ffb30c36aea3e11b0a25131"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl",
+      "bytes": 27701,
+      "sha256": "4ff9825b492ef9f7863db5eaca51ec45347eaa53fa3090e0a26407feb2b96ebb"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.actors.jsonl",
+      "bytes": 1320235,
+      "sha256": "e02a622b6306d6f34d4b18565ff9bff83a058978ffc129454656f13d0c092353"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.commands.jsonl",
+      "bytes": 3034,
+      "sha256": "404b8d54b144c7cbcdee8fec7838ad34726081927ab66e8d347405df9f4398f6"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.input.jsonl",
+      "bytes": 69778,
+      "sha256": "e68f44b90d92ddcec430fbdb5b9a9c5b2426df357dc9c713a4ffeffd108c562d"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.opening.png",
+      "bytes": 3594673,
+      "sha256": "58a519da1cf9c1c2a6477864441c0351d48bd7233f79c4613200312c66220240"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.setup.png",
+      "bytes": 1114460,
+      "sha256": "a2e726f25133dd5085540c9a57d57d288c0deb4231d04c14c7ad6374ca9e9bad"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.terminal-destination.png",
+      "bytes": 1090650,
+      "sha256": "8bb95a4f0716f398f9b7c94c14aa591acf7d61e990a9f1045222ad7c7dbeec2f"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.terminal-result.png",
+      "bytes": 1373002,
+      "sha256": "b475a38e2d55bc96dbf98bf931af12044b465321963052f1b093a83ff70818d3"
+    },
+    {
+      "file": "s005-aria-live-104734-fa-2e1482b0a3be40ccaa42e510b2b31226.jsonl.touch.jsonl",
+      "bytes": 101168,
+      "sha256": "9904410062959eedc894043ee2758bf6e8b93d7cf2042d76c3f3f158e207f243"
+    },
+    {
+      "file": "shared-wrapper-dispatch-fix1226.json",
+      "bytes": 794,
+      "sha256": "3070700111fcbe2ac1dbe077dab1a8f1bbe65ca8dabcb639288597a320f54755"
+    },
+    {
+      "file": "wrapper1226-stub-tests-final.log",
+      "bytes": 967,
+      "sha256": "ae519ca05956fc3473df3f2dc716a0d7a36dcb77583b50ef6c6f199704658f39"
+    },
+    {
+      "file": "wrapper1226-test-followup.json",
+      "bytes": 498,
+      "sha256": "4e36137fb5ca3287f7155e8ec86bd4b71de7fde2d8f203134af22f4342a785c8"
+    }
+  ]
+}

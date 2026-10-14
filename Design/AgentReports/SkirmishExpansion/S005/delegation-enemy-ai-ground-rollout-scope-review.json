@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "status": "ReadOnlyRecommendation_NotApplied_NotNativeQualified",
+  "sourceBaseline": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "sourceProof": [
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "sha256": "36b413332363399c6b99035109af97f6e231f1288d1ae2d6b844c542f2207e05",
+      "bytes": 9979
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+      "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf",
+      "bytes": 5981
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "bytes": 90201
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv",
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "bytes": 90201
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+      "bytes": 31863
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/ENEMY_AI_IMPROVEMENT_PLAN_20261011.md",
+      "sha256": "2be0b2105821dab8be018c95a74f1fc9857444c4ab52d4dedd89c7344d9a2c8c",
+      "bytes": 39374
+    },
+    {
+      "path": "/private/tmp/s005-enemy-policy-step1/Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "3bfa56c432519f66cd67757e93238b98bb4b741e27a8763aa9d1d7c56ed4b911",
+      "bytes": 33304
+    },
+    {
+      "path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyStrategySystem.cs",
+      "sha256": "a51a2162938940732a42e3c5297067340b42ef20244b3100326bf9e03c720127",
+      "bytes": 19884
+    },
+    {
+      "path": "/private/tmp/s005-enemy-commander-v2/SkirmishEnemyPerceptionBuilder.cs",
+      "sha256": "791eb690e000b340b1b67fde925b4dca0afbf76acc543702450981b4a2daea73",
+      "bytes": 9579
+    },
+    {
+      "path": "/private/tmp/s005-enemy-policy-step1/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "sha256": "11272239b452bc3e0b30ffe6de7579429be548276ed9e2f304146f3d5dfc4396",
+      "bytes": 4106
+    },
+    {
+      "path": "/private/tmp/s005-enemy-policy-step1/Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "sha256": "2b98cbcfc04e9205b74b984ca3563f46df9b29895ce0aa9664f29d7eb19ae42d",
+      "bytes": 6769
+    }
+  ],
+  "currentMatrix": [
+    {
+      "catalog_id": "S001",
+      "size_id": "Standard",
+      "army_profile": "G",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S001",
+      "size_id": "War",
+      "army_profile": "G",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S001",
+      "size_id": "LargeWar",
+      "army_profile": "G",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S002",
+      "size_id": "Standard",
+      "army_profile": "G",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S002",
+      "size_id": "War",
+      "army_profile": "G",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S002",
+      "size_id": "LargeWar",
+      "army_profile": "G",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S003",
+      "size_id": "Standard",
+      "army_profile": "A",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S003",
+      "size_id": "War",
+      "army_profile": "A",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S003",
+      "size_id": "LargeWar",
+      "army_profile": "A",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S004",
+      "size_id": "Standard",
+      "army_profile": "A",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "1",
+      "enemy_air": "1",
+      "player_transport_heli": "1",
+      "enemy_transport_heli": "1"
+    },
+    {
+      "catalog_id": "S004",
+      "size_id": "War",
+      "army_profile": "A",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "2",
+      "enemy_air": "2",
+      "player_transport_heli": "2",
+      "enemy_transport_heli": "2"
+    },
+    {
+      "catalog_id": "S004",
+      "size_id": "LargeWar",
+      "army_profile": "A",
+      "start_profile": "E",
+      "readiness": "2",
+      "player_air": "2",
+      "enemy_air": "2",
+      "player_transport_heli": "2",
+      "enemy_transport_heli": "2"
+    },
+    {
+      "catalog_id": "S005",
+      "size_id": "Standard",
+      "army_profile": "C",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S005",
+      "size_id": "War",
+      "army_profile": "C",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    },
+    {
+      "catalog_id": "S005",
+      "size_id": "LargeWar",
+      "army_profile": "C",
+      "start_profile": "F",
+      "readiness": "1",
+      "player_air": "0",
+      "enemy_air": "0",
+      "player_transport_heli": "0",
+      "enemy_transport_heli": "0"
+    }
+  ],
+  "concreteRisk": "The staged SetupCompiler attaches policy to every BaseAssault, changes ContentHash/SetupHash, then the strategy exclusively calls the ground commander. Own Air groups are explicitly omitted. S003 AirMobile Field starts no air, so initial-air-only gating misses it; S004 AirMobile Established starts 1/2/2 transport helicopters per faction across sizes. The new ground strategy does not orchestrate those air capabilities. Existing legacy is preserved behavior, not certified complete air AI.",
+  "recommendedInitialRollout": {
+    "name": "Typed CombinedArms FieldBase ground-start pilot, not catalog/seed switch",
+    "predicate": "setup.ObjectiveKind == BaseAssault && setup.ArmyProfileId == CombinedArms && setup.StartPackageId == FieldBase && setup.Readiness == Field && setup.PlayerAir == 0 && setup.EnemyAir == 0",
+    "scope": "Current S005 all authored sizes/difficulties; other future matching authored BA configurations use the same reusable policy. Sizes/difficulties remain acceptance-gated, not silently certified by this predicate.",
+    "location": "SetupCompiler after force tally/map binding, before TryCompile policy, EnemyPolicy assignment, ContentHash suffix and final ComputeHash. Unsupported is a supported policyless fallback, not a compile error.",
+    "why": "It implements approved ground-first S005 pilot without simultaneously changing current GroundManeuver Established and both AirMobile profiles. The shared policy/compiler/commander remain reusable; widening rollout is typed capability work with targeted regressions."
+  },
+  "smallestBroaderGroundAlternative": {
+    "predicate": "BA && (GroundManeuver || CombinedArms) && PlayerAir == 0 && EnemyAir == 0",
+    "tradeoff": "Excludes both AirMobile profiles, but deliberately also changes S002 GroundManeuver Established and future other ground-start BA profiles. Require S002 paid/caps/readiness/native pressure/checkpoint/normal result-return regression before advertising that wider rollout. S001 actual expanded-vs-legacy entry must be checked separately; do not infer runtime entry solely from its matrix row."
+  },
+  "guardsToAvoid": [
+    "Only EnemyAir==0: accidentally routes S003 AirMobile Field through incomplete ground strategy.",
+    "Only !army.AllowsOffensiveAir: excludes S005 CombinedArms pilot as well as AirMobile.",
+    "Only runtime commander fallback while compiling policy for all: still invalidates unsupported old saves and initializes unused new schema.",
+    "Removing unsupported roles or changing initial forces/budgets/caps to satisfy rollout: not authorized."
+  ],
+  "saveIdentityContract": [
+    "Excluded setups must keep EnemyPolicy null, exact original ContentHash and original setup hash; ComputeHash only appends fingerprint for nonnull policy.",
+    "EnsureSession returns before adding any new planner/intent/assignment when policy null; existing strategy Evaluate takes unchanged old branch.",
+    "Policyless checkpoint validation permits absence of new AI Parts and rejects their unexpected presence. Valid old excluded BA saves should continue normally, rather than enter incompatible-policy friendly error.",
+    "Enabled policy BA uses approved new versioned state and intentionally rejects intact pre-policy save through existing friendly Continue/NewMatch flow while preserving file.",
+    "No mid-session mode switch when research advances to R2: rollout is based on immutable initial setup. New ground policy does not imply advanced air/economy orchestration certification."
+  ],
+  "boundedRequiredTests": [
+    "Compile packaged S003 Field and S004 Established every authored size: policy null, exact previous ContentHash/SetupHash/forces/stocks/caps; AirMobile initial-zero case explicit.",
+    "Compile packaged S002: exact previous identity for pilot-only guard; broadened alternative instead requires affected current source regressions.",
+    "Compile matching CombinedArms Field ground-start with different catalog identity/seed: policy attached without S-ID/seed switch; AirMobile and non-BA negative controls; unexpected initial-air forces rejected from rollout.",
+    "Policyless native old save accepts intact bytes and no new AI Parts; enabled policy old save rejected intact; current new state retains timers/intent/assignment. Legacy unchanged.",
+    "Current policy native pressure, paid replacement, save/teardown and refreshed normal journeys remain pending until integration/actual runs. No isolated source suite proves whole candidate readiness."
+  ],
+  "limits": "Read-only rollout recommendation. No production edits, no Unity or Git. No claim that fallback legacy fully orchestrates air; no claim that enabled ground pilot closes approved Step4, all22 role AI behavior, visuals or real-device acceptance."
+}

@@ -1,0 +1,135 @@
+{
+  "archive": "native1223-recovery-failure-evidence.zip",
+  "sha256": "aa0e0a660d3d1a1068ca43ed913b2b3ad8a2480699bd7c7c9fb12995f0c6bed2",
+  "bytes": 6957758,
+  "files": [
+    {
+      "path": "compile1223-manual-successor-dry-run.json",
+      "bytes": 6643,
+      "sha256": "cd5df3206a16ab67640e29d6041e6dbe34460925dcedb924ec1ca20125676211"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-post-independent-fingerprint.json",
+      "bytes": 370,
+      "sha256": "9521ec717ad436124f9398a4838df4855ca3348831eefb64d7627f70b1bd5b77"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-post-source-manifest.json",
+      "bytes": 6931967,
+      "sha256": "8bc14a12091d13e2ebb932e162ac64b1664250704656dbcaa8a1880a6f400f59"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-pre-dispatch-independent-fingerprint.json",
+      "bytes": 376,
+      "sha256": "a8e1a33cb0c2e63f6fc081f9e760f484c56b88917d4bc9382ecb1d35d65088c6"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-pre-dispatch-source-manifest.json",
+      "bytes": 6931967,
+      "sha256": "8bc14a12091d13e2ebb932e162ac64b1664250704656dbcaa8a1880a6f400f59"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-preflight-independent-fingerprint.json",
+      "bytes": 376,
+      "sha256": "c9edc659d16b337d891569e0cb9f06be518f598caedfd11425c441997ec3548d"
+    },
+    {
+      "path": "final-1223-normal-manual-r2-recovery-preflight-source-manifest.json",
+      "bytes": 6931967,
+      "sha256": "8bc14a12091d13e2ebb932e162ac64b1664250704656dbcaa8a1880a6f400f59"
+    },
+    {
+      "path": "load1223-normal-manual-r2-recovery-observer.json",
+      "bytes": 6620,
+      "sha256": "b653f8323bec37a9187c97235ab78323b56852516fb2f3236bf2fd17e7ce2a04"
+    },
+    {
+      "path": "native-1223-normal-manual-r2-recovery-en-seed155926.log",
+      "bytes": 537562,
+      "sha256": "8e24f7597bffc25c5a58e95e229c834f5fd2bd20bf2c28d137a563e1112eacf7"
+    },
+    {
+      "path": "native-1223-normal-manual-r2-recovery-en-seed155926.log.dispatch.cs",
+      "bytes": 662,
+      "sha256": "c527b8a37d4335911f65d307baf280b31d9e91f0bf13b4bd0ab2c8e8817c8b83"
+    },
+    {
+      "path": "native-1223-normal-manual-r2-recovery-en-seed155926.log.dispatch.json",
+      "bytes": 851,
+      "sha256": "65bcd57a7234b27c425b81b5a00d2fabd53ff0ad98f853fb5ade92f741a8666d"
+    },
+    {
+      "path": "native-1223-normal-manual-r2-recovery-en-seed155926.log.exit",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "native-1223-normal-manual-r2-recovery-en-seed155926.log.wrapper-exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "native1223-after-close-native-idle.json",
+      "bytes": 735,
+      "sha256": "cff526e9c3c85d5a60b7fad8cd366eeb85e58abc5996e49bc39d183993ac1de2"
+    },
+    {
+      "path": "native1223-before-dispatch-native-idle.json",
+      "bytes": 735,
+      "sha256": "90c076c232510c01f34411f7c6d2abbc33cda2fa24cd52ff452488e5153a0d8e"
+    },
+    {
+      "path": "native1223-before-load-native-idle.json",
+      "bytes": 736,
+      "sha256": "d06ddaf61413551a7152293bf40ea27769474e883026428987c92d54ecb06ddd"
+    },
+    {
+      "path": "native1223-manual-fog-fallback-parser.py.txt",
+      "bytes": 6405,
+      "sha256": "6c4736beacee012fb53e73612c38ae014955250851cb6a984d15564fa3f9329f"
+    },
+    {
+      "path": "native1223-manual-fog-fallback.jsonl",
+      "bytes": 540025,
+      "sha256": "e4cb207cada704a62b9b452d325bdfdca19ccab9df1c714f4f07f6c35a73b3ba"
+    },
+    {
+      "path": "native1223-normal-manual-r2-native-checkpoint.json",
+      "bytes": 10403900,
+      "sha256": "185fd7aaf2ed9a1b401b5a4007c44a1a4461606e7d5dd75600eda19ddb176916"
+    },
+    {
+      "path": "native1223-normal-manual-r2-recovery-failure.json",
+      "bytes": 11910,
+      "sha256": "d24198676ca1d0d28c3050f73abcbaf65b3fc8cd89c7f323c7b3ec7566759ce4"
+    },
+    {
+      "path": "native1223-normal-manual-r2-recovery-observation.jsonl",
+      "bytes": 24852708,
+      "sha256": "cafa9bf5cc97a91891c9ace0e3bc7f75be5baa34565d78402c69bd65954ade63"
+    },
+    {
+      "path": "native1223-normal-manual-r2-recovery-observer.cs.txt",
+      "bytes": 58873,
+      "sha256": "c41bfccdf793b804b602ffba0b65f98f03e421692dabc84fbdd375415678846f"
+    },
+    {
+      "path": "native1223-owned-failed-recovery-closure.json",
+      "bytes": 784,
+      "sha256": "d34c335bbf9e19fcb3539c0829add7777925e8b522ebedfa1944dc1b9f724955"
+    },
+    {
+      "path": "native1223-runner-start.json",
+      "bytes": 660,
+      "sha256": "4f65b7cce552e98a7f00794bf7cf66969aff50f3f7ae6675bcdda83aa055292b"
+    }
+  ],
+  "originalsPreserved": true,
+  "result": "Failed",
+  "normalWins": 0,
+  "sourceHash": "5e94ef34185750a5ef87068726815bda22899d0bb08c8685b292fc3bfbda8932",
+  "fullSourceUnchanged": true,
+  "actualWrapperExit": 1,
+  "nativeBridgeExit": 1,
+  "cause": "NativeRecoveryPreflight:Native runtime building was not reconstructed: 3"
+}

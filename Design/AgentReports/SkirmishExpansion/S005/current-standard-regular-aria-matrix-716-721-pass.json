@@ -1,0 +1,82 @@
+{
+  "result": "Passed",
+  "sourceHash": "ba35c99af680bae25aa9df70c9a55c8b55ebdcd771647f49150301b5a88b2566",
+  "scenario": "S005",
+  "size": "Standard",
+  "difficulty": "Regular",
+  "seeds": [
+    104734,
+    130368,
+    155926
+  ],
+  "cases": [
+    {
+      "seed": 104734,
+      "locale": "fa-IR",
+      "proof": "native716-current-aria-fa-IR-seed104734-victory.json",
+      "seconds": 238.565,
+      "playerBaseHp": 800,
+      "contacts": 65
+    },
+    {
+      "seed": 130368,
+      "locale": "fa-IR",
+      "proof": "native717-current-aria-fa-IR-seed130368-victory.json",
+      "seconds": 244.304,
+      "playerBaseHp": 800,
+      "contacts": 73
+    },
+    {
+      "seed": 155926,
+      "locale": "fa-IR",
+      "proof": "native718-current-aria-fa-IR-seed155926-victory.json",
+      "seconds": 242.141,
+      "playerBaseHp": 800,
+      "contacts": 68
+    },
+    {
+      "seed": 104734,
+      "locale": "en",
+      "proof": "native719-current-aria-en-seed104734-victory.json",
+      "seconds": 253.246,
+      "playerBaseHp": 800,
+      "contacts": 70
+    },
+    {
+      "seed": 130368,
+      "locale": "en",
+      "proof": "native720-current-aria-en-seed130368-victory.json",
+      "seconds": 245.313,
+      "playerBaseHp": 800,
+      "contacts": 74
+    },
+    {
+      "seed": 155926,
+      "locale": "en",
+      "proof": "native721-current-aria-en-seed155926-victory.json",
+      "seconds": 238.772,
+      "playerBaseHp": 800,
+      "contacts": 69
+    }
+  ],
+  "winsByLocale": {
+    "en": 3,
+    "fa-IR": 3
+  },
+  "normalInput": true,
+  "normalSpeed": true,
+  "frozenResultAndAdjustSetupReturn": true,
+  "allTouchAuditsPassed": true,
+  "sourceAndAll562MaterialHashesUnchanged": true,
+  "retainedPriorSourceLosses": [
+    "native711-current-aria-fa-IR-seed104734-defeat.json",
+    "native713-current-aria-fa-IR-seed130368-defeat.json"
+  ],
+  "twentySeedStressAcceptance": "Pending",
+  "fullRoleLifecycleAcceptance": "Pending",
+  "nativeRecoveryAcceptance": "Pending",
+  "deviceAndRealPlayerAcceptance": "Pending",
+  "ownerVisualReview": "Deferred",
+  "technicallyReady": false,
+  "playerReady": false
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "preSha256": "edad552b09065841351d5bf4a28dccd061da7aadba301487bb2b39f86ac32b42",
+    "gitHeadSha256": "edad552b09065841351d5bf4a28dccd061da7aadba301487bb2b39f86ac32b42",
+    "preEqualsGitHead": true,
+    "postSha256": "f6c962bc523c8b4ba00380d37e1340426266c196d98b2471b4c4e18f7cb53881"
+  },
+  {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "preSha256": "67bdaed4f7210652978b969e44487e407e94f8ba0edac284762d32ba1b2f8449",
+    "gitHeadSha256": "67bdaed4f7210652978b969e44487e407e94f8ba0edac284762d32ba1b2f8449",
+    "preEqualsGitHead": true,
+    "postSha256": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e"
+  }
+]

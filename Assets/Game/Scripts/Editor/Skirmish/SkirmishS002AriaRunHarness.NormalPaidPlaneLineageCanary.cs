@@ -21,6 +21,95 @@ namespace Game.Editor
     // No isolated fixture controller, funding/readiness/AI override or ECS writes.
     public static partial class SkirmishS002AriaRunHarness
     {
+
+        static bool planeCameraOpeningQueued,planeCameraOpeningDone,planeCameraDeliveryQueued,planeCameraDeliveryDone;
+        [Serializable] sealed class PlaneCameraEvidenceRow
+        {
+            public string phase,attempt,png,pngSha256,scope="RawCameraMeasurementOnly",failure="";
+            public int frame,infantryCount;
+            public uint paidReservation;
+            public string aircraftState="NotAircraft";
+            public string actorTransformSource="";
+            public byte airborne,takeoffRolling,landingRolling,returningHome,cruiseYInitialized;
+            public float nativeCruiseY,actorY,cameraY,verticalCameraSeparation;
+            public bool cameraAccepted=false,fullMissionCertified=false;
+            public SkirmishCameraActorMeasurement measurement;
+        }
+        // End-of-frame observation only: no selection, camera pose, commands or ARIA inputs.
+        static System.Collections.IEnumerator CaptureNormalPlaneCamera(string phase,Entity expectedPlane,uint reservation)
+        {
+            yield return new WaitForEndOfFrame();
+            if(!planeCanaryActive)yield break;
+            try{
+                var world=World.DefaultGameObjectInjectionWorld;
+                if(world==null||!world.IsCreated)throw new InvalidOperationException("Camera sample native world missing");
+                var em=world.EntityManager;
+                if(!SkirmishLaunchProjection.TryGet(em,out var session,out _))throw new InvalidOperationException("Camera sample session missing");
+                var sessionId=em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+                if(sessionId.ToString()!=planeCanaryAttempt)throw new InvalidOperationException("Camera sample attempt changed");
+                var camera=Camera.main;
+                if(camera==null)throw new InvalidOperationException("Actual native main camera missing");
+                int frame=Time.frameCount;
+                string png=planeCanaryOutput+".camera-"+phase+"-frame"+frame+".png";
+                if(File.Exists(png))throw new InvalidOperationException("Fresh camera PNG required");
+                var rows=new System.Collections.Generic.List<PlaneCameraEvidenceRow>();
+                if(expectedPlane!=Entity.Null){
+                    if(!em.Exists(expectedPlane)||!em.HasComponent<SkirmishAttemptOwnedComponent>(expectedPlane)||
+                       !em.HasComponent<UnitHealth>(expectedPlane)||em.GetComponentData<UnitHealth>(expectedPlane).Current<=0)
+                        throw new InvalidOperationException("Delivered Plane no longer healthy at camera sample");
+                    var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(expectedPlane);
+                    if(own.FactionId!=1||own.CapacityReleased!=0||!own.SessionId.Equals(sessionId)||own.ReservationId!=reservation||
+                       em.GetComponentData<SkirmishUnitRoleComponent>(expectedPlane).Role!=SkirmishRoleKind.TransportPlane)
+                        throw new InvalidOperationException("Camera Plane paid lineage changed");
+                    if(em.HasComponent<Parent>(expectedPlane))throw new InvalidOperationException("World-space camera telemetry requires an unparented native Plane root");
+                    rows.Add(new PlaneCameraEvidenceRow{phase=phase,attempt=planeCanaryAttempt,png=png,frame=frame,paidReservation=reservation,
+                        measurement=SkirmishCameraFramingMeasurement.Capture(em,expectedPlane,camera)});
+
+                    var air=em.GetComponentData<UnitAirComponent>(expectedPlane);var sample=rows[rows.Count-1];
+                    sample.airborne=air.Airborne;sample.takeoffRolling=air.TakeoffRolling;sample.landingRolling=air.LandingRolling;
+                    sample.returningHome=air.ReturningHome;sample.cruiseYInitialized=air.FixedWingCruiseYInitialized;sample.nativeCruiseY=air.FixedWingCruiseY;
+                    sample.actorTransformSource="UnparentedLocalTransform";
+                    sample.actorY=em.GetComponentData<LocalTransform>(expectedPlane).Position.y;sample.cameraY=camera.transform.position.y;
+                    sample.verticalCameraSeparation=sample.cameraY-sample.actorY;
+                    if(phase=="cruising-transport"&&(air.Airborne==0||air.TakeoffRolling!=0||air.LandingRolling!=0||air.ReturningHome!=0||air.FixedWingCruiseYInitialized==0||Mathf.Abs(sample.actorY-air.FixedWingCruiseY)>1))throw new InvalidOperationException("Native cruise ended before exact camera frame");
+                    sample.aircraftState=air.TakeoffRolling!=0?"TakeoffRolling":air.LandingRolling!=0?"LandingRolling":air.ReturningHome!=0?"ReturningHome":
+                        air.Airborne!=0?"Airborne":"Grounded";
+
+                }else{
+                    using(var query=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))
+                    using(var actors=query.ToEntityArray(Allocator.Temp))foreach(var actor in actors){
+                        var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                        if(own.FactionId!=1||own.CapacityReleased!=0||!own.SessionId.Equals(sessionId)||em.GetComponentData<UnitHealth>(actor).Current<=0||
+                           em.GetComponentData<SkirmishUnitRoleComponent>(actor).Category.ToString()!="Infantry")continue;
+                        rows.Add(new PlaneCameraEvidenceRow{phase=phase,attempt=planeCanaryAttempt,png=png,frame=frame,
+                            measurement=SkirmishCameraFramingMeasurement.Capture(em,actor,camera)});
+                    }
+                    if(rows.Count==0)rows.Add(new PlaneCameraEvidenceRow{phase=phase,attempt=planeCanaryAttempt,png=png,frame=frame,failure="NoLivingOwnedOpeningInfantry"});
+                    int count=rows[0].measurement==null?0:rows.Count;
+                    foreach(var row in rows)row.infantryCount=count;
+                }
+                // Read rendered pixels in this exact end-of-frame, encode synchronously and
+                // create a new file before recording proof. No queued screenshot/exit race.
+                var texture=ScreenCapture.CaptureScreenshotAsTexture();
+                if(texture==null)throw new InvalidOperationException("Native rendered screenshot unavailable");
+                byte[] bytes;
+                try{bytes=texture.EncodeToPNG();}finally{UnityEngine.Object.Destroy(texture);}
+                if(bytes==null||bytes.Length<32)throw new InvalidOperationException("Native rendered PNG empty");
+                using(var file=new FileStream(png,FileMode.CreateNew,FileAccess.Write,FileShare.Read))file.Write(bytes,0,bytes.Length);
+                using(var sha=System.Security.Cryptography.SHA256.Create()){
+                    string digest=BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
+                    foreach(var row in rows){row.pngSha256=digest;File.AppendAllText(planeCanaryOutput+".camera.jsonl",JsonUtility.ToJson(row)+"\n");}}
+                ObserveS005OpeningCameraCaptureComplete(phase);
+                if(phase=="parked-follow-transport")transportParkedFollowPngDone=true;else if(phase=="cruising-transport")transportCruisePngDone=true;else if(expectedPlane==Entity.Null)planeCameraOpeningDone=true;else planeCameraDeliveryDone=true;
+            }catch(Exception error){EndNormalPaidPlaneCanary(true,"CameraEvidence: "+error);}
+        }
+        static void QueueNormalPlaneCamera(string phase,Entity plane,uint reservation)
+        {
+            var owners=UnityEngine.Object.FindObjectsByType<SkirmishS005PlayerResumeFrame>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
+            if(owners.Length!=1)throw new InvalidOperationException("Unique existing QA coroutine owner required");
+            owners[0].StartCoroutine(CaptureNormalPlaneCamera(phase,plane,reservation));
+        }
+
         static string planeCanaryOutput;
         static bool planeCanaryActive,planeCanaryLeased,planeCanaryBaseline,planeCanaryTicking;
         static int planeCanaryConstructionBefore,planeCanaryAirportCost,planeCanaryLastFrame;
@@ -48,23 +137,28 @@ namespace Game.Editor
             row.violations=AriaCommandEvidence.Violations;
             File.AppendAllText(planeCanaryOutput,JsonUtility.ToJson(row)+"\n");
         }
+        public static void RunS005NormalPaidPlaneCruiseCameraCanary()=>RunS005NormalPaidPlaneLineageCanary();
         public static void RunS005NormalPaidPlaneLineageCanary()
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode||planeCanaryActive)throw new InvalidOperationException("Idle owned Editor required");
             planeCanaryOutput=Environment.GetEnvironmentVariable("WARLINE_S005_PLANE_CANARY_OUTPUT");
             if(string.IsNullOrEmpty(planeCanaryOutput)||!Path.IsPathRooted(planeCanaryOutput)||File.Exists(planeCanaryOutput))
                 throw new InvalidOperationException("Fresh absolute canary evidence path required");
+            if(File.Exists(planeCanaryOutput+".camera.jsonl"))throw new InvalidOperationException("Fresh camera raw evidence path required");
+            planeCameraOpeningQueued=planeCameraOpeningDone=planeCameraDeliveryQueued=planeCameraDeliveryDone=false;
             Directory.CreateDirectory(Path.GetDirectoryName(planeCanaryOutput));
             using(File.Open(planeCanaryOutput,FileMode.CreateNew,FileAccess.Write,FileShare.Read)){}
             planeCanaryActive=true;planeCanaryLeased=planeCanaryBaseline=planeCanaryTicking=false;planeCanaryAttempt="";planeCanaryLastFrame=-1;
             planeCanaryConstructionBefore=planeCanaryAirportCost=0;planeCanaryDeadline=EditorApplication.timeSinceStartup+1500;
             // Existing public normal setup; this does not fund, promote, spawn or disable enemies.
+            ResetNormalTransportCruise();
             RunS005EditorStrikeCycleProbe();
             Canvas.willRenderCanvases+=TickNormalPaidPlaneCanary;
             PlaneCanaryWrite(new NormalPlaneLineageRow{stage="Started",reason="NormalMenuAndPaidAirportSetup;NoNormalMissionClaim"});
         }
         static void EndNormalPaidPlaneCanary(bool failed,string reason)
         {
+            AriaCommandEvidence.Recorded-=ObserveNormalTransportCruiseReceipt;
             Canvas.willRenderCanvases-=TickNormalPaidPlaneCanary;planeCanaryActive=false;
             PlaneCanaryWrite(new NormalPlaneLineageRow{stage=failed?"Failure":"ScopedComplete",reason=reason});
             playerResumeProbeActive=false;
@@ -150,6 +244,7 @@ namespace Game.Editor
                 if(playerResumeTouch==null)return;
                 if(planeCanaryLeased)playerResumeTouch.Tick(Time.unscaledTime);
                 if(playerResumeTouch.UnexpectedSamples!=0||playerResumeTouch.PhysicalInterventions!=0||AriaCommandEvidence.Violations!=0)throw new InvalidOperationException("Normal Touch audit failed");
+                if(!planeCameraOpeningQueued&&OpeningFramingViewsComplete){planeCameraOpeningQueued=true;QueueNormalPlaneCamera("opening-infantry",Entity.Null,0);}
                 var row=ObserveNormalPlaneLineage(em,session);
                 if(row.stockStrikeReservations!=0)throw new InvalidOperationException("Unexpected paid stock Strike reservation before/at Plane takeover");
                 if(!planeCanaryBaseline&&airportPlacementStage==1){
@@ -176,12 +271,15 @@ namespace Game.Editor
                     planeCanaryLeased=true;row.stage="PaidAirportHandoff";row.normalMenu=true;PlaneCanaryWrite(row);return;
                 }
                 PlaneCanaryWrite(row);
+                if(transportCruiseParked){TickNormalTransportCruise(em,session,row);return;}
                 if(row.reservation==0){if(row.materials>=440)DriveNormalPlanePurchase(EditorApplication.timeSinceStartup,row);return;}
                 // RemainingMembers tracks surviving live/reserved members, not undelivered count.
                 if(row.phase!="Live"||row.delivered!=1||row.remaining!=1||row.actorIndex<=0||row.actorHp<=0||!row.actorNativeShared||!row.homeInitialized||!row.usesRunway||row.transit!=0||row.homeDistance>1.5f||playerResumeTouch.IsBusy||playerResumeTouch.CompletedGestures!=playerResumeTouch.DispatchedGestures)return;
+                if(!planeCameraDeliveryQueued){planeCameraDeliveryQueued=true;QueueNormalPlaneCamera("paid-transport",new Entity{Index=row.actorIndex,Version=row.actorVersion},row.reservation);return;}
+                if(!planeCameraOpeningDone||!planeCameraDeliveryDone)return;
                 row.stage="PaidPlaneDeliveredAtHome";PlaneCanaryWrite(row);
                 Debug.Log("[S005NormalPaidPlaneLineage] result=Passed scope=NormalAirportPlaneDeliveryOnly fullMissionCertified=0 playerReady=0");
-                EndNormalPaidPlaneCanary(false,"normalPaidPlaneLineageOnly");
+                transportCruiseParked=true;BeginNormalTransportCruise(em,row);TickNormalTransportCruise(em,session,row);
             }catch(Exception error){EndNormalPaidPlaneCanary(true,error.ToString());}
             finally{planeCanaryTicking=false;}
         }

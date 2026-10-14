@@ -15,7 +15,11 @@ namespace Game.Tests.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Load-only validation requires stopped Play.");
             VerifySource("S005NormalNorthFlank1632Observer.cs", "2237d7d0a6310e13cdbe0bbf4e331563c42f0945bf4225aba2716ea8b83e6276");
-            VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs", "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e");
+            VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs", "144be19d8474eb5c8e3264cb5d86b1638a01c04fec84703158cbbd765e46cf41");
+            VerifySource("SkirmishS002AriaRunHarness.NormalPaidTransportCruiseExtension.cs", "a248fab5f6385b4f02df073e4da3d2ddcd6b24cc7cc2343d2f53fb99ca0dc656");
+            VerifySource("SkirmishS002AriaRunHarness.NormalPaidPlaneFollowTouchSeam.cs", "e97c1036069fb8f87c0d99309f6c7500de61f7a3a6c447d21c9b00f3aaf61fa0");
+            VerifySource("SkirmishS002AriaRunHarness.OpeningCameraCalibration.cs", "d3b2ee192d63a1ef500b31137774fb9b7447bdee61ec07a3466d50b23fb9f8b5");
+            VerifySource("S005SceneArtifactWarmup.cs", "89b2e7c67026cec9f8e0df821b2345ff1dde19c38ca720cd1b1421d04825d6fb");
             SkirmishSharedObjectiveReducerValidation.RunFocusedValidation();
             S005NormalNorthFlank1632Observer.Run();
             MethodInfo paidPlane = typeof(SkirmishS002AriaRunHarness).GetMethod(

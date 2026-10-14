@@ -51,6 +51,7 @@ namespace Game.UI.Runtime
 
         private void WireScenarioChoices()
         {
+            LoadLibraryMemory();
             if (string.IsNullOrEmpty(_selectedScenarioId))
                 _selectedScenarioId = PlayerPrefs.GetString(LastScenarioIdPrefsKey, string.Empty);
             WireLibrarySearch();
@@ -82,6 +83,7 @@ namespace Game.UI.Runtime
                 return;
 
             _selectedScenarioId = entry.ScenarioId;
+            RememberLibrarySelection(entry);
             if (entry.IsPlayable)
             {
                 _config.ScenarioIndex = entry.PlayableScenarioIndex;
@@ -98,6 +100,10 @@ namespace Game.UI.Runtime
         public void SelectMapCollection(string mapId)
         {
             _mapFilter = mapId ?? string.Empty;
+            if (string.IsNullOrEmpty(_mapFilter))
+                _libraryLevel = SkirmishLibraryLevel.Theater;
+            else if (IsLibraryMap(_mapFilter))
+                _libraryMap = _mapFilter.ToUpperInvariant();
             EnsureLibraryCards();
             PresentScenarioChoices();
             TouchLibrary(library => library.SelectMapCollection(_mapFilter));
@@ -291,6 +297,7 @@ namespace Game.UI.Runtime
             }
             if (_savedMatchAvailable)
                 UiLocalizedText.Set(scenarioDescription, fa ? "یک نبرد ذخیره‌شده داری. ادامه بده، یا «نبرد جدید» را بزن تا از ابتدا شروع کنی." : "You have a saved match. Continue it, or choose New Match to start again.");
+            PresentBattleLibrary();
         }
 
         private static string AuthoredButtonDefault(TMP_Text label, string fallback)
@@ -350,6 +357,7 @@ namespace Game.UI.Runtime
 
         private void OnLibrarySearchChanged(string value)
         {
+            _librarySearchApplied = false;
             _searchFilter = value ?? string.Empty;
             EnsureLibraryViewModel();
             SkirmishLibraryFilter filter = _libraryViewModel.Filter;

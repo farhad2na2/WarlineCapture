@@ -118,6 +118,19 @@ namespace Game.Editor
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             MenuAccountHeaderAuthoring.Apply(root);
             MenuUiApprovedAuthoring.Apply(root, "skirmish");
+            screen.EnsureBattleLibraryChrome();
+            if (root.transform.Find("SkirmishSetupComposition/OperationPreview/MapPreviewClip/LibraryRegions") == null ||
+                root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/MedalRow") == null ||
+                root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/MedalDifficultySelector") == null)
+                throw new InvalidOperationException("SCN-13 battle library plate was not authored.");
+            Debug.Log("[SkirmishBattleLibraryPlate] result=Passed");
+            layout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                rightTargets.ToArray(),
+                true,
+                null,
+                widthTargets.ToArray());
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)

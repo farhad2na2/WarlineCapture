@@ -288,7 +288,7 @@ namespace Game.Editor
             RecaptureSectionLayoutBases(root);
         }
 
-        private static void RecaptureSectionLayoutBases(GameObject root)
+        internal static void RecaptureSectionLayoutBases(GameObject root)
         {
             var layout = root.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null)

@@ -1,0 +1,152 @@
+using UnityEngine;
+
+namespace Game.UI.Runtime
+{
+    /// <summary>
+    /// Resource keys and authored theatre regions. Plates are crops of Campaign captures.
+    /// No player text is baked into the art.
+    /// </summary>
+    public static class SkirmishBattleLibraryArt
+    {
+        public const string ResourceRoot = "SkirmishBattleLibrary/";
+        public static readonly string[] MapIds = { "DB", "CC", "MP", "IB", "AP" };
+        public static readonly string[] ObjectiveIds = { "BA", "FC", "BT", "CE" };
+
+        /// <summary>Top-left normalised rectangles measured on theater_collage.png.</summary>
+        public static readonly Rect[] TheaterRegions =
+        {
+            new Rect(0.016f, 0.064f, 0.315f, 0.411f),
+            new Rect(0.345f, 0.064f, 0.307f, 0.410f),
+            new Rect(0.665f, 0.064f, 0.318f, 0.408f),
+            new Rect(0.151f, 0.504f, 0.340f, 0.424f),
+            new Rect(0.511f, 0.504f, 0.335f, 0.424f)
+        };
+
+        public static string TheaterPlate => ResourceRoot + "theater_collage";
+
+        public static string Plate(string mapId)
+        {
+            return ResourceRoot + "plate_" + (mapId ?? string.Empty).ToLowerInvariant();
+        }
+
+        public static string Medal(bool earned, Game.Skirmish.Contracts.SkirmishDifficultyId difficulty)
+        {
+            if (!earned)
+                return ResourceRoot + "medal_empty";
+            switch (difficulty)
+            {
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Recruit: return ResourceRoot + "medal_recruit";
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Regular: return ResourceRoot + "medal_regular";
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Veteran: return ResourceRoot + "medal_veteran";
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Commander: return ResourceRoot + "medal_commander";
+                default: return ResourceRoot + "medal_empty";
+            }
+        }
+
+        public static string PreviewKey(string scenarioId, string mapId)
+        {
+            switch (scenarioId)
+            {
+                case "S001": return ResourceRoot + "preview_s001";
+                case "S002": return ResourceRoot + "preview_s002";
+                case "S003": return ResourceRoot + "preview_s003";
+                case "S004": return ResourceRoot + "preview_s004";
+                case "S025": return ResourceRoot + "preview_s025";
+                case "S073": return ResourceRoot + "preview_s073";
+                default: return Plate(mapId);
+            }
+        }
+
+        public static void Copy(string mapId, bool fa, out string title, out string geography)
+        {
+            switch (mapId)
+            {
+                case "CC":
+                    title = fa ? "چهارراه شهر" : "CITY CROSSROADS";
+                    geography = fa
+                        ? "خیابان‌های باز، مسیر خدماتی و کوچه‌های پوشیده."
+                        : "Open streets, a service lane and covered blocks.";
+                    return;
+                case "MP":
+                    title = fa ? "رویکرد شکست زره" : "ARMOR BREAK APPROACH";
+                    geography = fa
+                        ? "یک جاده پهن و یک مسیر کناری. اینجا گردنه کوهستانی نیست."
+                        : "A broad road and a side route. This ground is not a mountain pass.";
+                    return;
+                case "IB":
+                    title = fa ? "حوضه صنعتی" : "INDUSTRIAL BASIN";
+                    geography = fa
+                        ? "حیاط‌های صنعتی، مسیر باربری و پالایشگاه."
+                        : "Industrial yards, a freight route and the refinery.";
+                    return;
+                case "AP":
+                    title = fa ? "دشت فرودگاه" : "AIRFIELD PLAINS";
+                    geography = fa
+                        ? "یک باند، پیشخان و جاده‌های دور فرودگاه."
+                        : "One runway, the apron and the perimeter roads.";
+                    return;
+                default:
+                    title = fa ? "پایگاه کویر" : "DESERT BASE";
+                    geography = fa
+                        ? "جاده‌های باز کویر و لبه شهر."
+                        : "Open desert roads and the edge of the city.";
+                    return;
+            }
+        }
+
+        public static void ObjectiveCopy(string objectiveId, bool fa, out string title, out string shortLabel)
+        {
+            switch (objectiveId)
+            {
+                case "FC":
+                    title = fa ? "کنترل خط" : "FRONTLINE CONTROL";
+                    shortLabel = fa ? "خط" : "FRONT";
+                    return;
+                case "BT":
+                    title = fa ? "شکستن خط" : "BREAKTHROUGH";
+                    shortLabel = fa ? "شکست" : "BREAK";
+                    return;
+                case "CE":
+                    title = fa ? "اسکورت کاروان" : "CONVOY ESCORT";
+                    shortLabel = fa ? "کاروان" : "CONVOY";
+                    return;
+                default:
+                    title = fa ? "حمله به پایگاه" : "BASE ASSAULT";
+                    shortLabel = fa ? "پایگاه" : "BASE";
+                    return;
+            }
+        }
+
+        public static void ProfileCopy(string code, bool fa, out string label)
+        {
+            switch (code)
+            {
+                case "A": label = fa ? "هوایی" : "AIR"; return;
+                case "C": label = fa ? "ترکیبی" : "COMBINED"; return;
+                case "E": label = fa ? "آماده" : "ESTABLISHED"; return;
+                case "F": label = fa ? "میدانی" : "FIELD"; return;
+                case "G": label = fa ? "زمینی" : "GROUND"; return;
+                default: label = code ?? string.Empty; return;
+            }
+        }
+
+        public static void DifficultyCopy(Game.Skirmish.Contracts.SkirmishDifficultyId difficulty, bool fa, out string label)
+        {
+            switch (difficulty)
+            {
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Recruit:
+                    label = fa ? "تازه‌کار" : "RECRUIT";
+                    return;
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Veteran:
+                    label = fa ? "کهنه‌کار" : "VETERAN";
+                    return;
+                case Game.Skirmish.Contracts.SkirmishDifficultyId.Commander:
+                    label = fa ? "فرمانده" : "COMMANDER";
+                    return;
+                default:
+                    label = fa ? "عادی" : "REGULAR";
+                    return;
+            }
+        }
+    }
+}

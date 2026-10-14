@@ -1,0 +1,45 @@
+{
+  "result": "PassedTestsMissingBaselineOutputs",
+  "wrapper_exit": 0,
+  "actual_process_exit_observed": true,
+  "tests": {
+    "binder": 8,
+    "logical_areas": 15
+  },
+  "native_census_marker_passed": true,
+  "baseline_and_census_json_recovered": false,
+  "cause": "Unity Temp cleanup removed output artifacts before post-wrapper collection",
+  "correction": "Persist baseline and census to ignored Logs/SkirmishProduction before rerun; no baseline constants or job pins inferred",
+  "archive_sha256": "a708048b24b9791a773f1133a1581861bb7206d95737d2dc7bfca4656c8fd31c",
+  "sources": [
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "sha256": "3b3aab65c5260ef45461fe1fce132a4714f0864b42d40cbc331a6bec10e646cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveAreaConfig.cs",
+      "sha256": "3d32be055e3530783bf980e97ed203ba53e85719bdf8647b050d576832f1c90c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredLayoutBinderTests.cs",
+      "sha256": "859d889bede3133dd677b2c81a605c03cc37ea41547363bc4a212783ded8663c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveAreaConfigTests.cs",
+      "sha256": "399c337b255f0f843f8f5f4283c5ac5cc5ef97600f75af4d8722e1294a71d558"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveFoundationValidation.cs",
+      "sha256": "ca76c3f118dbaf8769ba6d1662849f0d36052841f9da6718b3b4d0f089b209bf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "41c5d27774de7bb8c3c1e7f1675245dd2dc10bea6b3cddfe5b8142a8702944ea"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+      "sha256": "918e29c6d9f7205c6065e0d765d283b3e323732389461c6af3aeb5f4474aac1e"
+    }
+  ],
+  "native_gameplay_certified": false
+}

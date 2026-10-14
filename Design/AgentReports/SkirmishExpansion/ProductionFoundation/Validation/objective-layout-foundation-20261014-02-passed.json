@@ -1,0 +1,48 @@
+{
+  "result": "Passed",
+  "wrapper_exit": 0,
+  "actual_process_exit_observed": true,
+  "required_marker": "[SkirmishObjectiveFoundationValidation] result=Passed",
+  "tests": {
+    "binder": 8,
+    "logical_areas": 15
+  },
+  "baseline_catalogs": 4,
+  "baseline_configurations": 12,
+  "compiler_patch_applied": false,
+  "baseline_sha256": "0d03f125c9fc77a13a74f82e1109e7bc5950bf3837325081b7a04cc32e558837",
+  "census_sha256": "2668ae63ba3ff7507d5c304b81118a88b2dca8af01e6a9a848c7a6df6163efe1",
+  "archive_sha256": "858c842a47b3bbee18ea4f656fd9d40e651a42975003c2abefe4783b66f151b0",
+  "sources": [
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "sha256": "3b3aab65c5260ef45461fe1fce132a4714f0864b42d40cbc331a6bec10e646cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveAreaConfig.cs",
+      "sha256": "3d32be055e3530783bf980e97ed203ba53e85719bdf8647b050d576832f1c90c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishMeasuredLayoutBinderTests.cs",
+      "sha256": "859d889bede3133dd677b2c81a605c03cc37ea41547363bc4a212783ded8663c"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveAreaConfigTests.cs",
+      "sha256": "399c337b255f0f843f8f5f4283c5ac5cc5ef97600f75af4d8722e1294a71d558"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishObjectiveFoundationValidation.cs",
+      "sha256": "2badd577ebb446fc5b4bbeb68d1af4e2c33368960eff08cd535857e7a81380a1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "41c5d27774de7bb8c3c1e7f1675245dd2dc10bea6b3cddfe5b8142a8702944ea"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+      "sha256": "918e29c6d9f7205c6065e0d765d283b3e323732389461c6af3aeb5f4474aac1e"
+    }
+  ],
+  "native_gameplay_certified": false,
+  "camera_acceptance": "Pending readable infantry and aircraft framing plus actual render kind evidence"
+}

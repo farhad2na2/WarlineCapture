@@ -1,0 +1,9 @@
+{
+  "hubVersion": "3.22.2",
+  "hubLicensingClient": "1.18.3+d7ffd15",
+  "currentValidationMode": "GUI through checked-in macOS wrapper",
+  "batchModeRetested": false,
+  "reason": "Checked-in wrapper and mandatory execution contract still reject batchmode. No wrapper or licensing behavior changed during mission qualification.",
+  "editorLicensingClientBundlePlistVersion": "1.2.0",
+  "editorLicensingClientFileVersion": "Not established by bundle plist"
+}

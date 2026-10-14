@@ -1,0 +1,26 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "wrapperExit": 2,
+  "sourceHash": "0a1cf531aac6e0e3dc868a5b7c42eb3289f8ff777b9c2a952fe1f0f4e9e18d38",
+  "sourceManifestUnchanged": true,
+  "reason": "Save/Exit reached setup. Continue contact ended, but scene remained Menu and no restored session appeared before step4 watchdog. Driver advanced on dispatch without observed activation; cause not yet isolated.",
+  "inputAudit": {
+    "recordedContacts": 13,
+    "completedContacts": 13,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 7
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "trace": "s005-aria-live-104734-en-88a0dacc30c54ce8aa736b12ebd819a7.jsonl",
+  "log": "native-635-current-save-resume-en.log"
+}

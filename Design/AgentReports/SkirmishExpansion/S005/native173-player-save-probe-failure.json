@@ -1,0 +1,7 @@
+{
+  "run": 173,
+  "result": "Failed",
+  "countsForReadiness": false,
+  "reason": "Player Save/Resume timed out at step=1; probe selected a disabled duplicate PauseButton before the usable native control.",
+  "evidencePreserved": true
+}

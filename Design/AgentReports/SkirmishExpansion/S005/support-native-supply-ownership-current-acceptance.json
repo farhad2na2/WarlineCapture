@@ -1,0 +1,78 @@
+{
+  "sourceHash": "7e527eb268564340b126fc8f9e52c3585c38d78d6aef7b1d973c03c820e419be",
+  "result": "Passed focused and native manual journey scope",
+  "tests": 18,
+  "runs": [
+    {
+      "run": 318,
+      "log": "tests-318-native-supply-ownership.log",
+      "tests": 13,
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "logSha256": "cb6b4663c3c9de0b06473f868c2c6ea806cc8d4eb5647107137b0f38d8adb4fa"
+    },
+    {
+      "run": 320,
+      "log": "tests-320-native-strike-supply-regression.log",
+      "tests": 5,
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "logSha256": "d9667e9025a7933093cf57a8759db41ad327c6b756e93111df742589ad6fa631"
+    }
+  ],
+  "failedDispatch": {
+    "log": "tests-319-native-strike-supply-regression.log",
+    "reason": "Wrong test namespace; corrected run320 passed"
+  },
+  "nativeSupportActivated": false,
+  "playerReady": false,
+  "scope": "Native Supply collector/attempt scope, shared economy-bank eligibility, no cached-bank bypass, terminal cleanup and pause preservation",
+  "remaining": [
+    "Native Support activation and legal public routes",
+    "Native Para population/actor ownership and payload recovery",
+    "Bilateral source-fit and enabled role lifecycle gates",
+    "Current-source bilingual fresh baseline and stratified stress",
+    "Final owner visual and human/device acceptance"
+  ],
+  "nativeManual": {
+    "sourceHash": "7e527eb268564340b126fc8f9e52c3585c38d78d6aef7b1d973c03c820e419be",
+    "configHash": "128f61e981d234a4fe000ef66bced489b14c8875bd07f3ed1224baddd2747b48",
+    "setupHash": "AB417F8E",
+    "result": "Passed",
+    "countsForCurrentSource": true,
+    "playerReady": false,
+    "scope": "Complete native Persian manual mission after native Supply ownership fix; no native Support use",
+    "locale": "fa-IR",
+    "seed": 104734,
+    "size": "Standard",
+    "difficulty": "Regular",
+    "nativeMenuEntry": true,
+    "normalInput": true,
+    "normalSpeed": true,
+    "normalSpeedEvidence": "ManualProbe checks timeScale1 on every playing frame",
+    "outcome": "Victory",
+    "matchSeconds": 142.8729,
+    "completedGestures": 84,
+    "acceptedCommands": 70,
+    "receiptViolations": 0,
+    "unexpectedSamples": 0,
+    "humanInterventions": 0,
+    "nativeAttackReceipts": 13,
+    "frozenResult": true,
+    "returnTo": "MAIN MENU",
+    "wrapperExit": 0,
+    "receiptExit": 0,
+    "log": "native-321-supply-ownership-manual-fa.log",
+    "logSha256": "0906d822206b9eb3d2f30389f11a3865e2f5ccc7f662b24a3b9e82458f7bead1",
+    "realHumanDeviceAcceptance": false,
+    "loggedLowFpsWindowMedian": 39.2
+  },
+  "postValidationFingerprint": "final-322-native-supply-source-independent-fingerprint.json",
+  "sourceUnchangedDuringValidation": true,
+  "editorFinal": {
+    "compiled": true,
+    "idle": true,
+    "validationRunning": false,
+    "port": 7801
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005GuidancePlayLifecycle1116.cs",
+      "entry": "S005GuidancePlayLifecycle1116.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 962,
+      "executeMs": 1,
+      "assemblyName": "PipelineRunScript_S005GuidancePlayLifecycle1116_75bd1b24325d4fecb98980fbe9786712",
+      "success": true,
+      "result": "Prepared source-neutral1116; RunValidation through checked wrapper only."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

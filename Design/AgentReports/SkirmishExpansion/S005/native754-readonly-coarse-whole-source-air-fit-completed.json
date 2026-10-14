@@ -1,0 +1,19 @@
+{
+  "result": "Completed",
+  "sourceHash": "c370d3474096d4ecfb6be051388789897bd2804b0e29f862d122fd7c93d6d46f",
+  "wrapperExit": 0,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-754-opening-audited-once-air-fit-pre-source-manifest.json",
+  "postManifest": "final-754-readonly-air-fit-completed-post-source-manifest.json",
+  "log": "native-754-current-manual-en-seed104734.log",
+  "logSha256": "081f2d8e14f6f72dc0dcdab83411b434b012c07c228d6ec3935d0b781a92a310",
+  "data": "s005-aria-live-104734-en-a0a5322442e74415ad60beedbbe01146.jsonl.airport-source-fit.json",
+  "samples": 4096,
+  "nativeValidSites": 582,
+  "insidePlayableSites": 0,
+  "playableNonOverlappingPairs": 0,
+  "scope": "ReadOnlyWholeExistingSourceCoarseNativeValidator",
+  "limitation": "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.",
+  "capacityCertified": false,
+  "playerReady": false
+}

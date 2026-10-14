@@ -1,0 +1,22 @@
+{
+  "status": "Frozen external source; no native compile/load/execution",
+  "sourceHash": "8f937872662c8f01c10743577750126f0f1f284b92da57d9fb09456555d3485f",
+  "fixture": "/private/tmp/GroundPauseRepro1227.cs",
+  "fixtureSha256": "a081ffefce2c2623672a95279ecf7c02ab00f3305a8d8153b36e853eeba1d754",
+  "loadOnlyEntry": "GroundPauseRepro1227.Run",
+  "beforeFixEntry": "GroundPauseRepro1227.RunBeforeFix",
+  "futureConservationEntry": "GroundPauseRepro1227.RunConservation",
+  "dryFlags": {
+    "dry_run": true,
+    "timeout_ms": 30000
+  },
+  "scope": "10 actual system-handle small disposable-World cases; realjobs/ECB playback and RuntimeGameplay SimulationActive0 with worlddt0; positive controls4. No mainworld/Play/Assets writes, no1216 failure causality certificate.",
+  "expectedBeforeFix": "Engaged infantry in-range+chase rotates with dt0, inactive runtime; active zero-delta control also reproduces. Grid dt0 transforms remain stable, near-final vehicle can advance/clear actual path. Grid infantry rotations355/363 unreachable at dt0 because301 requiresremainingDistance>0.",
+  "pins": {
+    "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs": "7b67282b1fcfc3b52cc36b70e5506e8fea1ddc3ba69a6286426abb66f030f638",
+    "Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs": "231c1770ac516c9f1ab3cbecb076b900612dc827a6b816e8bc3453197167e002",
+    "Assets/Game/Scripts/Components/UnitVehicleMovementUtility.cs": "86b6c15ef132708b0d65b346e1231a4181fdb9f9e37ba791554e4ec0ac14f9a5",
+    "Assets/Game/Scripts/Components/GridComponents.cs": "494f74e590a4003f95971aacc71401ce7d4de5a63bdea3d26777bd8d66d11d1c",
+    "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs": "e2806c6db4b5efd9873311109e4bcece2b1bd8efba4de4798eab3a358c8be3ea"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "status": "FailedBeforeNativeDispatch",
+  "cause": "Global run-number replacement corrupted the 1213 substring inside one source SHA-256",
+  "path": "Assets/Game/Scripts/Components/SkirmishMatchComponents.cs",
+  "expectedByFaultyPreparedManifest": "f71ad44b84e739981215bae20a1820292cb3deb0dbf4bc974dbe1608062c640c",
+  "actualUnchangedSha256": "f71ad44b84e739981213bae20a1820292cb3deb0dbf4bc974dbe1608062c640c",
+  "runnerExit": 1,
+  "unityInvokedByRunner": false,
+  "sourceWritten": false,
+  "readinessClaim": false
+}

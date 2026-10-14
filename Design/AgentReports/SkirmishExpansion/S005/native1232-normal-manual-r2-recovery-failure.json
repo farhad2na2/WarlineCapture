@@ -1,0 +1,20 @@
+{
+  "status": "FailedBeforeRecovery",
+  "sourceHash": "30d9daad50e1c354d73cafd9fe29df2ad979dffeefb63759cf1e1d419cc638fe",
+  "primaryFailure": "baseGuardCameraFocusNotObserved",
+  "secondaryFailures": [
+    "observer teardown Path.GetFullPath empty save-root",
+    "runner empty trace IndexError before failure summary"
+  ],
+  "nativeExit": 1,
+  "wrapperExit": 1,
+  "runnerExit": 1,
+  "fullSourceUnchanged": true,
+  "paidReadinessReached": false,
+  "saveContinueReached": false,
+  "normalWins": 0,
+  "mainEditorIdle": "native1232-after-failed-closure-idle.json",
+  "log": "native-1232-normal-manual-r2-recovery-en-seed155926.log",
+  "postManifest": "final-1232-normal-manual-r2-recovery-post-source-manifest.json",
+  "logSha256": "ca671c070e69d5605b1f06b829bbc942dde322936fa5792da746cc4b6c1e4e02"
+}

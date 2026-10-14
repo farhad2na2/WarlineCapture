@@ -1,0 +1,86 @@
+{
+  "result": "PreparedNotExecuted",
+  "fixture": "/private/tmp/S005VehicleCombatEffects1061.cs",
+  "fixtureSha256": "82dd2e9a6774acc8cabb6730df87ea136d8c3689bb4d502da3cea193bbe6a5d0",
+  "runner": "/private/tmp/s005-run-vehicle-combat-1061.py",
+  "runnerSha256": "1df2f7830ae7c385d74162fc8064189addb62c2c5f33d62c4553229526b06b14",
+  "sourceOrEditorMutationsByReviewer": false,
+  "compileOrNativeExecutionByReviewer": false,
+  "pythonSyntaxCheck": "Passed",
+  "roles": [
+    "Car",
+    "ApcFast",
+    "ApcArmored",
+    "Tank",
+    "ApcHeavy",
+    "Siege"
+  ],
+  "scope": "Smallest exact-entity subgroup of armed ground roles: six single-member paid vehicles. Native1024 basic delivery already exists; this subgroup specifically adds real native combat effects, not normal whole-mission acceptance.",
+  "actualCombatEvidenceRequired": [
+    "Actual enabled GroundStaging overlay and living producer",
+    "Paid actual native queue request, live reservation, exact unchanged price/member count",
+    "Actual native delivered member with role overlay/shared actor/group ownership",
+    "Native Touch squad-card selection without selection-tag injection",
+    "Public SkirmishArmyCommandService.TryAttack accepted for selected paid member and native enemy Armored APC",
+    "Read existing CombatDamageObservationElement only; new EventId/frame, exact paid SourceEntity, exact hostile TargetEntity, DamageApplied>0",
+    "Expected DirectFire for five roles and GroundMissile for Siege; event and actual target HP loss",
+    "Native actor death capacity release and idempotency under disclosed HealthZero stimulus",
+    "Owned Play cleanup"
+  ],
+  "isolatedSetup": [
+    "FullArsenal readiness;1800 materials and storage fuel/oil fills",
+    "Enemy strategy disabled; opening units retired except actual native enemy Armored APC",
+    "Retained native hostile retaliation disabled and full vision granted",
+    "Before each command, still-living hostile Current reset to unchanged Max and target relocated within actual weapon range/grid bounds; own vehicle position not written",
+    "Target original transform/grid restored after observed hit"
+  ],
+  "neverInjected": [
+    "Shots",
+    "Projectiles",
+    "Damage events",
+    "Result outcomes",
+    "Own actor positions",
+    "Selection tags",
+    "Native EngageTarget components",
+    "Weapon damage/range",
+    "Prices/caps/rates",
+    "Physical map geometry"
+  ],
+  "runnerGuards": [
+    "Explicit root --heavy-lane-owner main1061 only after T7 releases heavy lane",
+    "Idle main ownership and unique artifacts",
+    "Exact external fixture SHA",
+    "Current supplied source equals fresh preflight before any Unity call",
+    "Load-only entry; fresh pre-dispatch source equality",
+    "Checked macOS GUI reuse wrapper720s; fixture watchdog600s",
+    "Missing/malformed native receipt preserves active ownership and evidence, no alternate route",
+    "Wrapper/native0, all per-role pass markers, completed native Touch audit, exactly six ordered valid raw damage rows",
+    "Fresh post-source equals supplied/preflight/pre-dispatch; scoped proof includes hashes",
+    "Clear state only if still exact native1061 owner"
+  ],
+  "dryRunCompileInstruction": [
+    "Parent only, no heavy validation: rtk proxy unity command run_script --file /private/tmp/S005VehicleCombatEffects1061.cs --entry S005VehicleCombatEffects1061.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+    "Dry compilation is not role effect proof; preserve compiler output, repair external fixture before load if required."
+  ],
+  "launchInstruction": "After T7 release and parent compile review: rtk proxy python3 /private/tmp/s005-run-vehicle-combat-1061.py <CURRENT-PRE-source-manifest.json> --heavy-lane-owner main1061",
+  "limitations": [
+    "Not compiled/loaded/executed yet; private existing harness field and UI paging dependencies must be checked by parent",
+    "Public native API Attack is not native Touch Attack, so no normal-input combat certificate",
+    "Hostile target setup does not qualify ordinary map clearance/path/fog/retaliation survival",
+    "One exact paid-source event can fail closed on mixed-source damage or target disposal; never fallback to synthetic effects",
+    "No infantry cohort effects, AntiAir legal air hit, air roles, transport recovery, negative-domain matrix or complete normal mission",
+    "Target death before a subsequent case fails; no revive fallback. Siege is last case.",
+    "Scoped technical role evidence only; player/device acceptance and complete normal-input ARIA/result/return remain separate"
+  ],
+  "nextClosingWork": "Parent compile and run this subgroup once heavy lane is released. Future infantry can use one paid homogeneous cohort plus disclosed retirement/disablement of all other shooters and preserve SourceEntity=null raw mixed-source telemetry as group-level role attribution.",
+  "technicallyReady": false,
+  "playerReady": false,
+  "parentDryRunCompile": {
+    "result": "FailedPreserved",
+    "archive": "compile1061-vehicle-effects-dry-run.json",
+    "error": "CS0103 ObserveMoveReceipt undefined",
+    "classLoadedOrExecuted": false
+  },
+  "externalRepair": "Removed stale AriaCommandEvidence.Recorded subscription to undefined ObserveMoveReceipt. Attack is disclosed public native API outside Touch command audit; native Touch selection/evidence and accepted command count remain existing driver mechanisms. No production source changes.",
+  "compileAfterRepair": "Pending parent dry-run"
+}

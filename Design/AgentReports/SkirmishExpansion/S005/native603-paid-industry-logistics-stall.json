@@ -1,0 +1,406 @@
+{
+  "result": "Failed",
+  "sourceHash": "6153a6bd8e4931ceb9f327287094530d4359a31a95187d4eb656dfd2528bdbc5",
+  "prePostMatch": true,
+  "wrapperExit": 1,
+  "normalBudgetPreserved": true,
+  "completeMatchCertified": false,
+  "reason": "All three living Oil trucks stalled after closely spaced paid industry construction; no deliveries or fabrication resumed during observed multi-minute stall. Aborted through authorized evidence method.",
+  "diagnosis": "Narrow blocked-cell approach lanes are the current hypothesis; spacing strategy retry required before confirming causality.",
+  "stalledSamples": [
+    {
+      "elapsed": 368.3691101074219,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 383.4078674316406,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 398.3979187011719,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 413.4951477050781,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 428.5263977050781,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 443.59722900390625,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 458.3603820800781,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 473.43768310546875,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 488.4498291015625,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 503.4961853027344,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 518.4978637695312,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 533.5195922851562,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 548.4927368164062,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    },
+    {
+      "elapsed": 563.5045776367188,
+      "Materials": {
+        "FactionId": 1,
+        "Current": 30,
+        "Capacity": 800,
+        "LifetimeFabricated": 700,
+        "LifetimeImported": 0,
+        "LifetimeRewarded": 0,
+        "LifetimeExported": 0,
+        "LifetimeSpent": 1120,
+        "LifetimeConstructionSpent": 400,
+        "LifetimeRepairSpent": 0,
+        "LifetimeInfrastructureSpent": 0,
+        "LifetimeUpgradeSpent": 240,
+        "LifetimeProductionSpent": 480,
+        "Version": 24
+      },
+      "OilLogistics": {
+        "FactionId": 1,
+        "TrayRouteAssignmentCount": 58,
+        "TrayRouteReassignmentCount": 0,
+        "TrayRouteFailureCount": 0,
+        "OilDeliveredToRefineries": 312.0,
+        "OilDeliveredToFabricationDepots": 128.0,
+        "Version": 113
+      }
+    }
+  ],
+  "economyTrace": "s005-aria-live-155926-en-acb33be9297c4ff985aa837b13ab58aa.jsonl.economy.jsonl",
+  "economySha256": "6a204a432cc87fb3c9c512c14c7953f748b2f386cfcb1d816113df5213ba4449"
+}

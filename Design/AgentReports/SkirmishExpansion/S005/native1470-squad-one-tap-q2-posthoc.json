@@ -1,0 +1,61 @@
+{
+  "result": "PassedPosthocScopedNativePaidFighterFirstCardTouchAfterMap",
+  "actor": {
+    "attemptId": "expanded-s005-104734-4871301326ca4a48967633379ade9ebb",
+    "index": 770,
+    "version": 11,
+    "paidReservation": 1003,
+    "groupId": 17
+  },
+  "mapClose": {
+    "contact": 40,
+    "dispatchFrame": 6298,
+    "endFrame": 6303,
+    "uiHitFrame": 6299,
+    "screenPoint": {
+      "x": 1900.68017578125,
+      "y": 967.52392578125
+    }
+  },
+  "firstCard": {
+    "contact": 41,
+    "dispatchFrame": 6318,
+    "endFrame": 6323,
+    "selectionRestoredFrame": 6323
+  },
+  "pairedNativeContacts": 41,
+  "inputViolations": 0,
+  "acceptedCommandsBeforeAndAfter": 6,
+  "completionSource": "StartupOnlyReuseModeExistingEditorValidation",
+  "paidAirCombatCertified": false,
+  "normalMission": false,
+  "playerReady": false,
+  "originalRunnerResult": "Failed",
+  "originalRunnerFailure": "native1470-squad-one-tap-failure.json",
+  "originalRunnerFailureSha256": "3114a8246e9781bea05030473e9b7c9fe1422f281328e59eb7a613adcbf1779f",
+  "sourceHash": "98785c8f815bc315556e2a5b11de9ea81ec1514389e0c5dc6e32727e155fc9d6",
+  "sourceFiles": 43310,
+  "fullSourceUnchanged": true,
+  "wrapperExit": 0,
+  "nativeExit": 0,
+  "immutableEvidence": {
+    "native-1470-squad-one-tap.log": "b3afee856418b5889d7d4bc1150fdbd9f178c5fa6f19e288c51a43fe9a98911f",
+    "native1470-fighter-public-preparation.jsonl": "5af28faec910eb23deaef5c942507aaffb17bf654604437b566ee0e5002f9f50",
+    "native1470-bilateral-airport.touch.jsonl": "ca90b0fce03b5fc5517a78f13be766f1b48e9967cb3b01ef8759f7ca6295cf2e",
+    "native1470-squad-one-tap-failure.json": "3114a8246e9781bea05030473e9b7c9fe1422f281328e59eb7a613adcbf1779f",
+    "pre1470-one-tap-source-manifest.json": "bbec9b460054ed86c5d9e5c2a0146274cd6410cb01e746450a77cfb7796df68a",
+    "final-1470-squad-one-tap-post-source-manifest.json": "bbec9b460054ed86c5d9e5c2a0146274cd6410cb01e746450a77cfb7796df68a"
+  },
+  "q2ScriptSha256": "e5ee4c50772b9fdb9a098ddd0bd33cc0ff71f78b300c183d4fc21a4db6589aa7",
+  "offlineNegativeControls": [
+    "missing_close_contact",
+    "extra_close_contact",
+    "wrong_close_point",
+    "missing_ui_hit",
+    "card_retry",
+    "wrong_actor",
+    "absent_existing_editor_pass"
+  ],
+  "offlineNegativeControlCount": 7,
+  "evidenceInterpretation": "Post-hoc corrected offline qualification only; original failed runner evidence retained; no new Unity execution"
+}

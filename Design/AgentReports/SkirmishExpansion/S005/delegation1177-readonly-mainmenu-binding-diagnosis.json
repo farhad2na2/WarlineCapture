@@ -1,0 +1,66 @@
+{
+  "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+  "scope": "Read-only diagnosis of preserved closed1177 normal manual/R2/HeavyAPC SaveContinue/Victory run; no Unity or source edits",
+  "nativeRunResult": "Actual wrapper/native0, strict evaluator Failed only renderedMainMenu/closure gates; no override of preserved failure",
+  "actualFrozenVictorySeconds": 230.615,
+  "actualNativeInputAudit": {
+    "recordedContacts": 167,
+    "completedContacts": 167,
+    "phases": {
+      "Menu": 9,
+      "PlayerResume": 39,
+      "Manual": 118,
+      "Terminal": 1
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "actualTerminalContactFrames": [
+    9100,
+    9101,
+    9102
+  ],
+  "lastResultBoundFrame": 9101,
+  "actualDestinationCanvasContext": [
+    {
+      "frame": 9103,
+      "ownerPath": "GameUIRoot/GameUICanvas",
+      "screenWidth": 2400.0,
+      "screenHeight": 1080.0,
+      "canvasWidth": 2400.0,
+      "canvasHeight": 1080.0,
+      "nativeViewportMatched": true
+    }
+  ],
+  "actualDestinationScreenshot": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-155926-en-d75d7392df954f1db0b31b6135f087d6.jsonl.terminal-destination.png",
+  "actualDestinationScreenshotSha256": "47e8d16c28298ecc084576824bb56019d5a2e63fdef00754d5e3a15fe416fcd4",
+  "visualInspection": "Native screenshot displays unobscured actual MainMenu and readable SKIRMISH card. No screenshot replacement or regenerated UI used.",
+  "cause": "Observer searched Button.name==Card_Skirmish plus TMP descendants. Actual Card_Skirmish is a non-Button container. The native Button and UIShellRouteButtonView are child Hotspot; Title is its sibling under Card_Skirmish. Both wrong predicates prevent any destination observation regardless native rendering.",
+  "sourceEvidence": [
+    {
+      "path": "Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs",
+      "line": 688,
+      "fact": "BuildCompactModeCard creates card RectTransform, direct child Title and AddRouteHotspot"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs",
+      "line": 846,
+      "fact": "Child Hotspot has Button and typed UIShellRouteButtonView OpenMenuRoute/QuickCustomSetup/PushHistory true"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "line": 178,
+      "fact": "MainMenu controlsVisible is true by route policy, not exact rendered card validation; waits2seconds then screenshot,1secondthenFinish. Independent strict observer still needed."
+    }
+  ],
+  "timingConclusion": "No evidence of product return failure or QA closing before any actual MainMenu Canvas. Actual route MainMenu completed/flushed; actual matching GameUICanvas callback recorded9103. Wrong exact object ownership is sufficient cause. Keep terminal observer strict; no timing changes proposed.",
+  "affectedNeverLoaded": "1178v2,1180v1;1182 also locates Hotspot but searches label descendants rather than sibling Title",
+  "recommendedFix": "Exact native typed route/Hotspot direct-parent Card_Skirmish and direct-sibling Title; actual localized title copy, presented Button, exact primitive identity rows; retain all viewport/glyph/alpha/cull/frozen-result/chronology/source/Touch/closure guards",
+  "playerReady": false
+}

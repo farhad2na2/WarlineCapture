@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "status": "ScopedFirstResourceBatchObservation_NotWholeLifecyclePass",
+  "raw": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1212-lifecycle-observation.jsonl",
+  "rawSha256AtObservation": "c1add866270600512c49d0e4318fb036eb5e9c3b536c9cf6c07f39703500d74f",
+  "attempt": "expanded-s005-104734-ca8c8785acc046319b4dfe74d3690444",
+  "firstFrame": 969,
+  "firstElapsed": 0.3333333432674408,
+  "firstState": "ReadOnlyBeforeUnchangedAssertions;SpawnComplete=1;SpawnVisualPending=0;InitializationComplete=1;Phase=Playing;SupplyInitialized=True;SharedBuildingsReady=True;ExpectedMaterials=450;ExpectedCapacity=800;ExpectedOil=120;ExpectedFuel=350",
+  "bothUnchangedFreshAssertionsPassed": true,
+  "factions": [
+    {
+      "faction": 1,
+      "bankCount": 1,
+      "banks": [
+        {
+          "FactionId": 1,
+          "Current": 450,
+          "Capacity": 800,
+          "LifetimeFabricated": 0,
+          "LifetimeImported": 0,
+          "LifetimeRewarded": 0,
+          "LifetimeExported": 0,
+          "LifetimeSpent": 0,
+          "LifetimeConstructionSpent": 0,
+          "LifetimeRepairSpent": 0,
+          "LifetimeInfrastructureSpent": 0,
+          "LifetimeUpgradeSpent": 0,
+          "LifetimeProductionSpent": 0,
+          "Version": 1
+        }
+      ],
+      "storeCount": 4,
+      "nativeOilRead": 120,
+      "storedOilSum": 120.31095123291016,
+      "storedFuelSum": 350.0,
+      "nonCurrentOwnedStores": [],
+      "reservedOilOutbound": 0.0,
+      "reservedFuelOutbound": 0.0,
+      "profiles": [
+        {
+          "PeriodSeconds": 60.0,
+          "OilPerPeriod": 120.0,
+          "FuelPerPeriod": 0.0,
+          "OilPerFuelBatch": 0.0,
+          "FuelPerBatch": 0.0,
+          "FuelBatchSeconds": 30.0,
+          "FuelBatchProgressSeconds": 0.0
+        },
+        {
+          "PeriodSeconds": 60.0,
+          "OilPerPeriod": 0.0,
+          "FuelPerPeriod": 120.0,
+          "OilPerFuelBatch": 30.0,
+          "FuelPerBatch": 60.0,
+          "FuelBatchSeconds": 30.0,
+          "FuelBatchProgressSeconds": 0.0
+        }
+      ],
+      "fabrication": [
+        {
+          "RuntimeBuildingId": 11,
+          "OwnerFactionId": 1,
+          "ProductionEnabled": 1,
+          "OutputCapacityPolicy": 0,
+          "OilConsumedPerCycle": 10.0,
+          "MaterialsOutputPerCycle": 50,
+          "CycleDurationSeconds": 30.0,
+          "CycleProgressSeconds": 0.0,
+          "Status": 2,
+          "BlockReason": 1,
+          "Version": 3
+        }
+      ]
+    },
+    {
+      "faction": 2,
+      "bankCount": 1,
+      "banks": [
+        {
+          "FactionId": 2,
+          "Current": 450,
+          "Capacity": 800,
+          "LifetimeFabricated": 0,
+          "LifetimeImported": 0,
+          "LifetimeRewarded": 0,
+          "LifetimeExported": 0,
+          "LifetimeSpent": 0,
+          "LifetimeConstructionSpent": 0,
+          "LifetimeRepairSpent": 0,
+          "LifetimeInfrastructureSpent": 0,
+          "LifetimeUpgradeSpent": 0,
+          "LifetimeProductionSpent": 0,
+          "Version": 1
+        }
+      ],
+      "storeCount": 4,
+      "nativeOilRead": 120,
+      "storedOilSum": 120.31095123291016,
+      "storedFuelSum": 350.0,
+      "nonCurrentOwnedStores": [],
+      "reservedOilOutbound": 0.0,
+      "reservedFuelOutbound": 0.0,
+      "profiles": [
+        {
+          "PeriodSeconds": 60.0,
+          "OilPerPeriod": 120.0,
+          "FuelPerPeriod": 0.0,
+          "OilPerFuelBatch": 0.0,
+          "FuelPerBatch": 0.0,
+          "FuelBatchSeconds": 30.0,
+          "FuelBatchProgressSeconds": 0.0
+        },
+        {
+          "PeriodSeconds": 60.0,
+          "OilPerPeriod": 0.0,
+          "FuelPerPeriod": 120.0,
+          "OilPerFuelBatch": 30.0,
+          "FuelPerBatch": 60.0,
+          "FuelBatchSeconds": 30.0,
+          "FuelBatchProgressSeconds": 0.0
+        }
+      ],
+      "fabrication": [
+        {
+          "RuntimeBuildingId": 12,
+          "OwnerFactionId": 2,
+          "ProductionEnabled": 1,
+          "OutputCapacityPolicy": 0,
+          "OilConsumedPerCycle": 10.0,
+          "MaterialsOutputPerCycle": 50,
+          "CycleDurationSeconds": 30.0,
+          "CycleProgressSeconds": 0.0,
+          "Status": 2,
+          "BlockReason": 1,
+          "Version": 3
+        }
+      ]
+    }
+  ],
+  "interpretation": "First observed physical oil120.310951 each demonstrates native fractional extraction while logical grant120/floor120 passes. Exact bank/fuel/zero lifetimes and ownership show no startupgrant defect inthisbatch. Prior1198 failure has no values and remainsunattributed; do not retrofit1198 pass or infer specific failedfield.",
+  "laterFailure": [
+    {
+      "stage": "LifecycleFailure",
+      "phase": 8,
+      "frame": 1887,
+      "reason": "System.ArgumentException: A component with type:Game.Components.SkirmishObjectiveClockComponent has not been added to the entity. Entities Journaling may be able to help determine more information. Please enable Entities Journaling for a more helpful error message.\n  at Unity.Entities.EntityComponentStore.AssertEntityHasComponent (Unity.Entities.Entity entity, Unity.Entities.ComponentType componentType) [0x00026] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityComponentStoreDebug.cs:342 \n  at Unity.Entities.EntityComponentStore.AssertEntityHasComponent (Unity.Entities.Entity entity, Unity.Entities.TypeIndex componentTypeIndex) [0x00000] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityComponentStoreDebug.cs:364 \n  at Unity.Entities.EntityDataAccess.GetComponentData[T] (Unity.Entities.Entity entity) [0x00006] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityDataAccess.cs:1229 \n  at Unity.Entities.EntityManager.GetComponentData[T] (Unity.Entities.Entity entity) [0x00006] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/EntityManager.cs:420 \n  at S005Lifecycle1212.Tick () [0x002c8] in /private/tmp/s005-lifecycle1212/S005Lifecycle1212.cs:191 "
+    }
+  ],
+  "wholeLifecycleQualified": false,
+  "productionFixRecommended": false,
+  "limits": "Read-only raw parsing. No Editor/source/fixture edits or Unity calls. Root owns final wrapper/native/source closure proof."
+}

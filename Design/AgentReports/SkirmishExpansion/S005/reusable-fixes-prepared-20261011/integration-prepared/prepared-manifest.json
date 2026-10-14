@@ -1,0 +1,55 @@
+{
+  "status": "Prepared_ForRootReview_NotApplied_NoUnityOrGit",
+  "files": [
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/integrate_main.py",
+      "sha256": "a04f050c985b0c41c68a7138f60a56f89fa008a6b06d19d4e5048fc751eca981",
+      "bytes": 11560
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/integration-plan.json",
+      "sha256": "02f226f15136d5afd9c9110817b6f7c5f2b85b19acc6c774a851b036db7ff1b2",
+      "bytes": 27932
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/read-only-preflight.json",
+      "sha256": "15247ee89e50a9d07cf6c71ffc4eee654b5f6ad9d2607419b2c9724da9bdc613",
+      "bytes": 737
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/offline_safety_controls.py",
+      "sha256": "67529cdd44ba86d2c10265319890841285552d690a42ee9f590e5935627dbce8",
+      "bytes": 8974
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/offline-safety-proof.json",
+      "sha256": "58ec24acab742eb2a85b90872b124f9126962d80262e7007d654b4e0cb3d0fbf",
+      "bytes": 993
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/focused-entries.json",
+      "sha256": "36b14f8eda2c87892a757a199d6c1b90ccec01d7faec06dc1fb7e5f3b3d85287",
+      "bytes": 5291
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/README.md",
+      "sha256": "c7f333b722c943261219cf4a3edf78e1c9b72a03aab4fc93952f33bcab84f82b",
+      "bytes": 3257
+    },
+    {
+      "path": "/private/tmp/s005-enemy-main-integration-prepared/prepare_plan.py",
+      "sha256": "601586ea1c78a3dce5e2ee114847c24ac080f1036dfaa46bcf81a33c33f42245",
+      "bytes": 2744
+    }
+  ],
+  "durableIndexSha256": "a5b48a28315ed4f03cd39ae370985098b1a3936f52ac389b600094e9096a7a30",
+  "orderedEntries": 50,
+  "finalFiles": 47,
+  "existingOriginalAndAdjacentMetaBackups": 26,
+  "absenceRecords": 34,
+  "focusedSuites": 7,
+  "offlineSafetyControls": 10,
+  "mainSourceWrites": 0,
+  "unityCalls": 0,
+  "gitCalls": 0
+}

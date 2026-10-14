@@ -1,0 +1,64 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/S005BilateralMixedAir1106.cs",
+      "entry": "S005BilateralMixedAir1106.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1106.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1106.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 128,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1106.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 128,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1106.AirRow.syntheticSpawn' is never assigned to, and will always have its default value false",
+          "line": 468,
+          "column": 587,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005BilateralMixedAir1106.AirRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 468,
+          "column": 602,
+          "id": "CS0649"
+        }
+      ],
+      "compileMs": 226,
+      "executeMs": 2,
+      "assemblyName": "PipelineRunScript_S005BilateralMixedAir1106_227885207c954da799c66ead5f9a3174",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

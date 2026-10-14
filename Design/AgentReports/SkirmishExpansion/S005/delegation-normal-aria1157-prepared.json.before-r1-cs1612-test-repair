@@ -1,0 +1,198 @@
+{
+  "runId": 1157,
+  "status": "PreparedSourcePinsRefreshed_ActualAcceptedOrderR1_HoldForCurrentCandidateCompilationFocusedQualification",
+  "scope": "One complete normal-input S005 Standard/Regular CombinedArms Field/R1 ARIA English seed130368, native Menu to Launch to Play/Confirm to genuine Finished/Victory to frozen result to native AdjustSetup return.",
+  "soleActuator": "Existing public Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEn; observer has no gameplay writes.",
+  "entry": "S005NormalAria1157Observer.RunValidation",
+  "loadOnlyEntry": "S005NormalAria1157Observer.Run",
+  "normalDefaults": {
+    "catalog": "S005",
+    "definition": "skirmish.s005",
+    "size": "Standard",
+    "difficulty": "Regular",
+    "army": "CombinedArms",
+    "start": "FieldBase",
+    "readiness": "Field",
+    "readinessValue": 1,
+    "seed": 130368,
+    "deadlineSeconds": 1080,
+    "locale": "en",
+    "sharedFog": true,
+    "developmentFullVision": false
+  },
+  "disclosedExistingHarnessFixtures": [
+    "Unique native isolated QA profile with five Chapter1 completions preserving progression gate",
+    "EditorMemoryOnly S005 candidate catalog row (no shipping catalog edit/publication)",
+    "Fixed seed through existing native setup adjustment",
+    "Existing background native Touch handling"
+  ],
+  "forbiddenGameplayWrites": [
+    "No synthetic match resources/readiness/poses/air-state/visibility/damage/outcomes/clocks/orders",
+    "No observer Touch or API orders, no camera guidance issuing commands",
+    "No terrain/roads/environment/physical geometry alterations",
+    "No shipping Planned gate bypass or player-ready declaration"
+  ],
+  "nativeInputPath": [
+    "Card_Skirmish",
+    "ScenarioCard_S005 through native catalog/scroll",
+    "LaunchButton",
+    "WatchAriaPlay then ConfirmWatchAriaTouch",
+    "Actual native ARIA input driver without silent restart",
+    "Actual Victory/frozen result",
+    "SkirmishResult/CampaignStyleResult/Adjust -> native setup S005/same seed"
+  ],
+  "readOnlyObserver": [
+    "Actual rendered setup objective/title",
+    "Actual resolved attempt/setup and optional paid producer reservations",
+    "Actual pre-consent purpose/next action via native AriaTutorialBriefingView",
+    "Panel WatchAriaPlay becomes Stop while active; native AriaInstantStop observed when modal fallback visible",
+    "Actual visible YOUR BASE/ENEMY BASE/TIME LEFT strip",
+    "Actual rendered Victory and native AdjustSetup destination",
+    "All observations flat Serializable primitive/string fields"
+  ],
+  "requiredClosure": [
+    "Wrapper/native receipt both zero",
+    "Correct main Editor idle after receipt",
+    "Full complete source/material manifests preflight/pre-dispatch/post equal supplied current source",
+    "Native exact normal-speed and counted-win row/current census hash",
+    "All raw native Touch rows zero unexpected/interventions/receipt violations",
+    "Existing strict contact audit Menu+Terminal pairing and only explicitly supported Finished/no-command cancellation",
+    "All native accepted command receipts verified",
+    "Unique actual native trace and copied counted evidence equal",
+    "Preserve any Loss/Draw/timeout/source change/observer or input failure; no rerun masking"
+  ],
+  "budget": {
+    "existingHarnessWallSeconds": 1500,
+    "observerReadOnlyDeadlineSeconds": 1740,
+    "checkedReuseWrapperSeconds": 1800
+  },
+  "pending": [
+    "Root source/API review",
+    "Native outer+nested drycompile success before load",
+    "Explicit main1157 heavy-lane release after other Editor run closure",
+    "Actual complete normal match/receipt/closure/evaluation"
+  ],
+  "notEstablished": [
+    "Six seed EN/FA acceptance matrix",
+    "Manual player journey",
+    "Full role/cargo/air target effects",
+    "Checkpoint recovery",
+    "Visual approval",
+    "Real player/device/performance acceptance",
+    "Shipping publication",
+    "Player readiness"
+  ],
+  "compileInstruction": "rtk proxy unity command run_script --file /private/tmp/S005NormalAria1157Observer.cs --entry S005NormalAria1157Observer.Run --dry_run true --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "runInstruction": "rtk proxy python3 /private/tmp/s005-run-normal-aria-1157.py <actual-current-post-source-manifest.json> --heavy-lane-owner main1157",
+  "actualDispatch": "rtk proxy Tools/CI/invoke_unity_macos.sh --reuse --timeout 1800 --log <reportdir>/native-1157-normal-aria-en-seed130368.log -- -executeMethod S005NormalAria1157Observer.RunValidation",
+  "passOutput": "native1157-normal-aria-pass.json",
+  "failureOutput": "native1157-normal-aria-failure.json",
+  "playerReady": false,
+  "fixture": "/private/tmp/S005NormalAria1157Observer.cs",
+  "fixtureSha256": "2ff98caf905ec796958b23983aa4462023712246781516fa076a6082d9fc2d9f",
+  "runner": "/private/tmp/s005-run-normal-aria-1157.py",
+  "runnerSha256": "0c4455510ef01e5dc28fa99ca7c4f5b4c4f78752a2dea2798ad7babed79b80dd",
+  "sourceManifestHelper": "/private/tmp/warline-s005-source-manifest.py",
+  "sourceManifestHelperSha256": "bbcbe12d05c2fe24705f58113b5f6525115f13b3d3f55650e202ec804e687144",
+  "sourceContracts": {
+    "AGENTS.md": "5714ed71c8273ec318673026fb4ab50c0b21bae45c70a27a7872ec29e46c6aaf",
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md": "32f39ac04d90e33e2d2d7851857d0b029b35c2582de355848075675f9364fc14",
+    "Design/Roadmap/Skirmish_Expansion/MATCH_SETUP.md": "4ab56169ce64c4e6abb49af7a3f470dabcd467afac1ba48eef25c55a32c2991a",
+    "Tools/CI/invoke_unity_macos.sh": "962deaefce86aba9d04e688cf7fc9ca8c8626ce8fad8271fb3587e869b4fab92",
+    "Tools/CI/wait_existing_unity_validation.py": "50a3d3c8ca8254d0b8db9320d8f7e186c0be3ed751ef18ca27a8a76ebcbbe16d",
+    "Tools/CI/audit_skirmish_native_contacts.py": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "e41423a1f8c286f9c9a15db3993ec94ff879454524d83932461443f6802efb21",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs": "5e009eccf5c0aa67427409df8322d4c9d727fa70576722c2cd624a9ba8a7fea1",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AriaConsentProbe.cs": "1d12056dbab216d4096384e7e4056262a2ea677df5d98299cae4eae6e53fed3a",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs": "791b8230520174256144e3d21c53c5d846e860aa8b61a08b8085780e5fcc3221",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionProbe.cs": "bf48e94fe88dafe873588c9d1d8154eb368bb35c9782518ab5a4b200796edcd6",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs": "3715d91c620e803aeafc0ab3ea5956ee0328b5e0b3c184a2225ce5ea597d32ea",
+    "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs": "a513217a35cd1926468b82e054aea7deee9416223964415e5ed5f744a4261372",
+    "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Watch.cs": "3b4f17d519220f280c6fd397dfc6c5f7974804e03f4f45d01889e3ee2ac44a28",
+    "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.Scenarios.cs": "36c6ceaaeef5900d2326b34986b97ca33a1fb0cad943ee7dbf72e1110bed185f",
+    "Assets/Game/Scripts/UI/Components/SkirmishMatchView.cs": "2c48887dee25a19716bc03996e7dfac07d88508024c1678a5263773ba82607c9",
+    "Assets/Game/Scripts/UI/Contracts/IUiSkirmishGateway.cs": "85ada27c5256fe7eef2aa6974ea4bb964ed46d91319fc42ab6de43f086d42a39",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs": "360b8d1b089c00cb86497b93e8199aa218f234a226d975e7159da8b09d9f9234",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs": "7c12c4ec9b799883b34706c6cbb58fb79a99560c70cd0d86c23447da03679b30",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResolvedSetupRecord.cs": "29843aeb8a623e1d190a6f1eba6fa2c95086aae8a0df0f93003b16b3ccf8574a",
+    "Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs": "0b71eee1657e9a79b213fbae5764ac75cba73172e563d22ad4e23f4be5284c21",
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs": "6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a",
+    "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs": "10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b",
+    "Assets/Game/Scripts/Components/SkirmishMatchComponents.cs": "f71ad44b84e739981213bae20a1820292cb3deb0dbf4bc974dbe1608062c640c",
+    "Assets/Game/Scripts/Systems/AttackMoveSystem.cs": "6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c",
+    "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs": "50fea5f262a0314dd0b487364afc56538d757d82878c8ea8bfdbaa633469bc01"
+  },
+  "pythonSyntaxOnly": "Passed; no native compile/load/execution",
+  "repositoryMutation": "Only this preparation report; no source/Assets edits, staging or Editor calls",
+  "reviewCorrection": "New unique never-loaded successor from1153 render callback observer. Preserve1152/1154 older EditorUpdate observer scaffold untouched. Sole actuator existing public native MenuProbe. No production/harness edits or gameplay writes. Hold until1153actualclosure/rootreview.",
+  "nativeCompile": "Pending unique revised fixture drycompile; never loaded; preserved before-post-result-r1 bytes",
+  "observerCoordinateDiagnosis": "delegation-normal1151-observer-coordinate-diagnosis.json",
+  "sourceCandidate": {
+    "reviewedManifest": "/private/tmp/aria1151-hidden-base-approach-fix/manifest-r1.json",
+    "reviewedManifestSha256": "994e602e7162d13341e92901bf57f6e13089b9a8068be066acad10beb5c99211",
+    "reviewedPatchSha256": "02d10827121538ddba871ec18b98d76610d7df2a6c0dc78bbef954cdac3b9638",
+    "sourceFileChanges": [
+      {
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+        "before": "9b3fc69ec4f4bce9b53d42dff52f09f3a5178d99f8ebe675db9c7eceaf0f871f",
+        "after": "6638cf1a9d295e689539b069d3d6573707a8d81faf19125b41f80aeab4d30e0a",
+        "origin": "Exact reviewed manifest-r1 base/staged SHA",
+        "previouslyPinnedByAdapter": false
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs",
+        "before": "26a1a833dd77dd488d6b010fb5b4fa1e1250a8ca1f404415e7dd2f288308ab57",
+        "after": "10cce05055c9dadbec6136b51c57c0db01d9eec60ccbe59686f731350acaa98b",
+        "origin": "Exact reviewed manifest-r1 base/staged SHA",
+        "previouslyPinnedByAdapter": false
+      }
+    ],
+    "originalWholeSource": "8c2cf8d559b00c4e9c5df62f241dbf71a8b309871fec021264a9c89f19a3c92a",
+    "newWholeSourceHash": "Pending root exact1159 current fullsource helper result",
+    "currentQualification": "Root native1155 all15 PASS incl AriaSkirmishPlanValidation107; this prep does not rerun/reclassify that evidence"
+  },
+  "runnerStaging": {
+    "pythonSyntaxOnly": "Passed",
+    "notExecuted": true,
+    "runArtifacts": "Unique ID names checked absent before preparation; runner checks actual artifacts/current fullsource preflight/idle/ownedheavy release before load",
+    "currentSourcePins": "All existing1153 r1source contracts matched atpreparation"
+  },
+  "publicEntry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2",
+  "locale": "en",
+  "currentCandidateSourceHash": "Pending root exact1159 current fullsource helper result",
+  "normalizedDiff": "Exact byte-equivalent to1153 after normalizing uniqueID, seed130368\u2192104734 and publicentryRunS005EditorAriaEnSeed2\u2192RunS005EditorAriaEn. Runner exact equivalent after normalizing uniqueID/seed.",
+  "currentCompilationOrMatchQualification": "None for this prepared unique fixture; source15suite qualification is root-owned and does not establish this normal match.",
+  "postResultAttributionRevision": {
+    "revision": 1,
+    "originalFixtureSha256": "cc563c44c1f5ae2c95cca842cf920c23a2106eb0cc8d83fa3704f2b070ebbd5c",
+    "originalRunnerSha256": "c84a662dd67a85f0631bf0422d0f65a86ab48f3b26ab7ff68552bc3a94e4de57",
+    "actualResultPrerequisite": "Native same-session SkirmishMatchState Finished+Victory AND SkirmishResultComponent Frozen+Victory+sameSessionId plus exact actual rendered Victory label",
+    "returnSequence": "Setup visible during initial binding overlap remains Setup, cannot set returnSeen. AdjustSetup only after actual native frozen/rendered Victory witness. Runner enforces chronological result-before-return, same attempt/outcome/flags and frames.",
+    "loaded1153Limit": "Never alter loaded1153; its bindingSeen-based AdjustSetup classification cannot independently prove post-result attribution. Normal terminal harness result/return proof remains separate and strict."
+  },
+  "acceptedOrderAppliedSourceRefresh": {
+    "reviewedManifest": "/private/tmp/aria1153-accepted-attackmove-groups/manifest-r1.json",
+    "reviewedManifestSha256": "c1dd9319af90a19f03a135b98f3a55a15c34335c9ebb919a960b2484199134d8",
+    "reviewedPatchSha256": "ceba139bce132f5bb46640d0db022dc14805a83167a570fdb7b90f1d02541692",
+    "actualFiles": [
+      {
+        "path": "Assets/Game/Scripts/Systems/AttackMoveSystem.cs",
+        "beforeSHA": "bca4c2f617c180f3067c1e7b8216800fd72c2671b85fb30d272913375d469d80",
+        "afterSHA": "6333c6b475c5c304f5fffb159fdcd59fc95505a1a78d0b79d93ff6919e699d4c"
+      },
+      {
+        "path": "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
+        "beforeSHA": "71b2397350693a5de0bb0f5cbd86a100482a6570ce77dafb6f63c9d30347eb6e",
+        "afterSHA": "50fea5f262a0314dd0b487364afc56538d757d82878c8ea8bfdbaa633469bc01"
+      }
+    ],
+    "previouslyPinnedContractsUnchanged": true,
+    "fixtureRunnerBytesUnchanged": true,
+    "rootApplyAuthorization": "Root direct message exactr1 applied production6333c6b4/test50fea5f2; actual files independently SHA verified",
+    "actualNewWholeSource": "Pending root current1159 fullmanifest helper result; supplied freshcandidate required, f65baseline not accepted",
+    "nativeProductionCompilation": "Root compilation underway; no outcome inferred"
+  },
+  "pendingSourceRefresh": "Per-file applied r1 pins refreshed; wholecandidate hash/root compilation+focused qualification pending"
+}

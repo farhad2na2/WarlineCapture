@@ -1,0 +1,14 @@
+{
+  "log": "tests116-minimap-cache.log",
+  "tests": 10,
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "logSha256": "117b66dca32009e454b0e8c2facf5b9a4b74e1117b90caa2c279f7e08db572be",
+  "continuousCoverage": true,
+  "narrowRoadsRetained": true,
+  "verticalRectangleMerge": true,
+  "blobReplacementInvalidatesCache": true,
+  "liveOverlaysRemainDynamic": true,
+  "nativePerformance": "Pending native117",
+  "playerReady": false
+}

@@ -1,0 +1,181 @@
+{
+  "result": "PassedActualBaselineAndMutations",
+  "positiveOriginalControlAndVisualParsers": 2,
+  "negativeControls": 43,
+  "cases": [
+    {
+      "case": "wrong-attempt",
+      "rejected": true
+    },
+    {
+      "case": "unverified-stop",
+      "rejected": true
+    },
+    {
+      "case": "stop-command-increase",
+      "rejected": true
+    },
+    {
+      "case": "hold-cleared-false",
+      "rejected": true
+    },
+    {
+      "case": "synthetic-hold-receipt",
+      "rejected": true
+    },
+    {
+      "case": "missing-hold-ended",
+      "rejected": true
+    },
+    {
+      "case": "paused-clock-drift",
+      "rejected": true
+    },
+    {
+      "case": "short-pause",
+      "rejected": true
+    },
+    {
+      "case": "unrestored-owner",
+      "rejected": true
+    },
+    {
+      "case": "old-order-resurrected",
+      "rejected": true
+    },
+    {
+      "case": "missing-native-move-phase",
+      "rejected": true
+    },
+    {
+      "case": "input-intervention",
+      "rejected": true
+    },
+    {
+      "case": "unpaired-input",
+      "rejected": true
+    },
+    {
+      "case": "controls-incomplete",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-x",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-y",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-z",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-qx",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-qy",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-qz",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-qw",
+      "rejected": true
+    },
+    {
+      "case": "paused-transform-scale",
+      "rejected": true
+    },
+    {
+      "case": "move1-under1m",
+      "rejected": true
+    },
+    {
+      "case": "move1-nonfinite",
+      "rejected": true
+    },
+    {
+      "case": "move1-wrong-origin",
+      "rejected": true
+    },
+    {
+      "case": "move1-receipt-recycled",
+      "rejected": true
+    },
+    {
+      "case": "move2-under1m",
+      "rejected": true
+    },
+    {
+      "case": "move2-nonfinite",
+      "rejected": true
+    },
+    {
+      "case": "move2-wrong-origin",
+      "rejected": true
+    },
+    {
+      "case": "move2-receipt-recycled",
+      "rejected": true
+    },
+    {
+      "case": "missing-NativeRenderedResultText",
+      "rejected": true
+    },
+    {
+      "case": "missing-NativeMainMenuDestination",
+      "rejected": true
+    },
+    {
+      "case": "missing-RenderedViewportContext",
+      "rejected": true
+    },
+    {
+      "case": "foreign-result-attempt",
+      "rejected": true
+    },
+    {
+      "case": "native-nonzero",
+      "rejected": true
+    },
+    {
+      "case": "wrapper-nonzero",
+      "rejected": true
+    },
+    {
+      "case": "source-equality-drift",
+      "rejected": true
+    },
+    {
+      "case": "wrong-idle-project",
+      "rejected": true
+    },
+    {
+      "case": "wrong-owned-method",
+      "rejected": true
+    },
+    {
+      "case": "fog-failure-before-controls",
+      "rejected": true
+    },
+    {
+      "case": "fog-lease-unrestored",
+      "rejected": true
+    },
+    {
+      "case": "wrong-original-error",
+      "rejected": true
+    },
+    {
+      "case": "fog-failure-hidden",
+      "rejected": true
+    }
+  ],
+  "nativeEvidenceModified": false,
+  "unityCalled": false
+}

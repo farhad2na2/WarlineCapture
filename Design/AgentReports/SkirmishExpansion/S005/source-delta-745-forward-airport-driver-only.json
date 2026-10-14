@@ -1,0 +1,9 @@
+{
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs"
+  ],
+  "fromSourceHash": "fc2043066afb43cfd364259f378d664816bc947afd58514ca3e288e73eb6be86",
+  "toSourceHash": "3e48d3106d52df52327e36c66fb35e97ca995dc6eb7a87fa630022d26fb23cef",
+  "shippingRuntimeConfigsMaterialsAndPhysicalSourceUnchanged": true,
+  "change": "Normal-input qualification chooses legal Airport candidates near midpoint of the two public base positions; native placement validator, budgets and aircraft reserve remain unchanged. Actual source fit and cycle pending."
+}

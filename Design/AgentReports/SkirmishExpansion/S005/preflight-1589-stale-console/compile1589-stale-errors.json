@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 1,
+      "returned": 1,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005EarlyRoute1588] failure=Real frozen same-attempt Victory terminal required",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005EarlyRoute1588:Tick () (at /private/tmp/s005-normal-south-flank1588-2fab-prepared/S005NormalSouthFlank1588Observer.cs:1749)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T05:47:31.9926680Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

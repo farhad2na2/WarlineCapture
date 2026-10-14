@@ -1,0 +1,12 @@
+{
+  "result": "Failed",
+  "expectedRegressionFailure": true,
+  "actualWrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "assertion": "A stationary live unit must not disappear from occupancy when no UnitGrid changes occur.",
+  "sourceUnchanged": true,
+  "pre": "tests-741-shared-occupancy-membership-red-pre-source-manifest.json",
+  "post": "tests-741-shared-occupancy-membership-red-post-source-manifest.json",
+  "log": "tests-741-shared-occupancy-membership-red.log",
+  "logSha256": "96d01fc8c61108195371fdff5cfdcb0f472b7ecdffffc7af8462b97501facdd0"
+}

@@ -1,0 +1,82 @@
+{
+  "mission": "S005",
+  "sourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "playerReady": false,
+  "supportEnabled": false,
+  "releaseSupportPrerequisite": false,
+  "result": "CurrentSourceSharedChecksInProgress",
+  "recoveryTests": 51,
+  "log": "tests-353-expired-target-recovery.log",
+  "wrapperExit": 0,
+  "receiptExit": 0,
+  "nativeCombatRetry": "native-354-expired-target-combat-save.log",
+  "failedPrevious": "native352-core-combat-save-failure.json",
+  "remainingGates": [
+    "Current-source native recovery and bilingual recertification",
+    "Complete role lifecycles",
+    "Bilateral aircraft capacity",
+    "Final visual and human/device acceptance"
+  ],
+  "combatRecovery": "Historical native paid Siege recovery passed; final-source recertification pending",
+  "combatRecoveryEvidence": "native393-core-recovery-evidence.json",
+  "boardedRecovery": "Pre-repair passed; current-source native recertification pending",
+  "boardedRecoveryEvidence": "native355-core-recovery-evidence.json",
+  "sharedChecksEvidence": "tests403-current-airport-focused-evidence.json",
+  "manualPersianEvidence": "native357-core-manual-fa-evidence.json",
+  "bilingualMatrix": "Pending new source recertification",
+  "historicalCompleteBaseline": "core-4e-complete-baseline-certification.json",
+  "currentSourceFingerprint": "final-505-shared-frontage-and-evidence-pre-independent-fingerprint.json",
+  "factionResearchRepair": "Runtime ownership repaired; economy and 50 recovery checks passed on preceding source; final-source suites running",
+  "paidTankEvidenceHistorical": "native380-core-recovery-evidence.json",
+  "siegeFailureEvidence": "native386-paid-siege-failure.json",
+  "airportFailureEvidence": "native404-airport-placement-failure.json",
+  "airportConstructionEvidenceHistorical": "native409-airport-construction-evidence.json",
+  "currentSourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "airportQualification": "Native473 paid Airport/Strike and first native fire; no touchdown/refuel/second sortie. Current source qualification pending.",
+  "fixedWingFailureEvidenceHistorical": [
+    "native414-fixed-wing-affordability-failure.json",
+    "native420-two-truck-affordability-failure.json"
+  ],
+  "oilExpansionProgress": {
+    "run": "native-434-paid-strike-oil-expansion-cycle.log",
+    "normalInput": true,
+    "paidSecondPumpBuilt": true,
+    "pumpCount": 2,
+    "pumpCost": 100,
+    "normalStartingStocks": true,
+    "productionRatesChanged": false,
+    "physicalSourceChanged": false,
+    "flightCyclePassed": false
+  },
+  "currentAutomatedEvidence": "aria-safety-current-progress.json",
+  "currentRecoveryStagingCertified": false,
+  "latestNativeStatus": {
+    "run": 500,
+    "status": "Outcome/result/return passed; strict input audit pending terminal-cancel evidence rerun",
+    "evidence": "native500-fa-outcome-return-input-audit-pending.json",
+    "countsForCurrentSource": false
+  },
+  "latestRetainedFailure": "native486-assault-watchdog-failure.json",
+  "latestNativeOutcomePass": "native490-aria-menu-result-return-pass.json",
+  "historicalStatusAliases": {
+    "currentBakedRoleCensus": "native359-current-baked-role-census.json",
+    "activeNative": "native-467-full-batch-fuel-strike-cycle.log",
+    "currentNativeCaptureRun": "native467 paid Strike cycle with full-batch refinery supply and safe reserve",
+    "currentCandidateCertification": "Editor-only fixed-wing qualification compiles cleanly; native414 running. Earlier Airport, Siege and helicopter passes retained as historical. Full role/capacity and final-source certification pending.",
+    "activeNativeRun": "native-483-three-oil-two-fuel-return-repair.log",
+    "currentFingerprint": "final-479-aria-opening-fixed-pre-independent-fingerprint.json",
+    "activeNativeValidation": 483,
+    "currentQualificationProgress": "ARIA480, shared gameplay481 and physical economy profile482 passed; native483 running after idempotent return repair, with three paid Oil trucks and two early Tankers."
+  },
+  "currentSourceFingerprintPending": false,
+  "currentCandidateCertification": "Current source checks in progress; final native baseline, full roles, flight capacity, visuals and device acceptance remain pending.",
+  "currentCandidateNormalJourneysPending": true,
+  "activeNativeRun": "native-508-shared-frontage-aria-en-seed2.log",
+  "activeValidation": {
+    "run": 508,
+    "kind": "Complete native English ARIA mission",
+    "log": "native-508-shared-frontage-aria-en-seed2.log",
+    "status": "Running"
+  },
+  "currentQualificationProgress": "Current shared506 and matrix507 passed. English seed130368 normal-input native journey508 running against the updated shared map. Remaining flight, role, bilateral capacity, recovery, visual review and device gates are not certified."
+}

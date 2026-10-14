@@ -1,0 +1,7 @@
+{
+  "sourceHash": "4d56d09f3e82f3e0e057bfc4c2ff75b25623f9c61eea5679464adae91830ca03",
+  "log": "tests-495-shared-gameplay-with-starting-support.log",
+  "logSha256": "e04f9a0473fd01cc0efed38a220b4cbf98d9afa07a6a70ecb3e5204df14721bf",
+  "wrapperExit": 1,
+  "reason": "Tanker commitment fixture expected only manually added live/pending Tankers, omitting the newly restored authored starting Tanker. Expected2, actual3. Updated fixture separately asserts starting1 and retains its lost/foreign/pending/stock checks."
+}

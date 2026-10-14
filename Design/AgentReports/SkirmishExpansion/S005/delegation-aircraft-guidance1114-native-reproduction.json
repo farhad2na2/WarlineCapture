@@ -1,0 +1,19 @@
+{
+  "result": "PassedScopedActualHelperTransientRecreationReproduced",
+  "actualWrapperExit": 0,
+  "nativeBridgeExit": 0,
+  "wholeSourceUnchanged": true,
+  "wholeSourceSha256": "72c3698f8db8d836ec8ba4d92a5d8b243b5779c90d2b769ac8c2170f99360f55",
+  "wholeSourceFiles": 47533,
+  "preSource": "/private/tmp/delegation-t7-guidance1114-complete-pre.json",
+  "postSource": "/private/tmp/delegation-t7-guidance1114-complete-post.json",
+  "nativeIdleSceneExact": true,
+  "log": "/private/tmp/delegation-t7-guidance1114-before-fix.log",
+  "logSha256": "6acbaf3d47d1eab91217d1c193fb356b2cdbd15b233dd2c94f42241de61b81d9",
+  "isolatedPriorOverlayDestroyed": true,
+  "actualPublicOwnerDispose": true,
+  "transientRecreation": 1,
+  "persistentEditorLeak": false,
+  "actualNativePlayStopCertified": false,
+  "wholeMissionCertified": false
+}

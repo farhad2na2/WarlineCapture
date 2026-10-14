@@ -1,0 +1,13 @@
+{
+  "sourceHash": "31eab475b92bb49c3fa2d6b94d49dccf476cb527b060be91083cd53f046f10d2",
+  "previousFullSourceHash": "e35ea8533c2eca91a52f436419a4df39747afedf43575592f356ecbe9fb9a817",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "materialsIdentical": true,
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "scope": "Editor fixed-wing qualification strategy guards in front of actual own Ground Staging through normal AttackMove touches and scans all currently presented squad pages; no enemy actor query or rules/resource changes. Other legacy aircraft probes retain their original HQ-relative positions.",
+  "normalNativeConfirmation": "Pending",
+  "retainedFailure": "native798-normal-paid-strike-cycle-failure.json"
+}

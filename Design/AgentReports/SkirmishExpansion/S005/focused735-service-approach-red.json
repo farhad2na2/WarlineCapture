@@ -1,0 +1,13 @@
+{
+  "result": "Failed as expected (regression reproduction)",
+  "sourceHash": "d0a3dbcc4a41a8d9c8699341d4215640f7046ef60462a1933ce05b0059852e74",
+  "sourceUnchanged": true,
+  "preSourceManifest": "tests-735-service-approach-red-pre-source-manifest.json",
+  "postSourceManifest": "tests-735-service-approach-red-post-source-manifest.json",
+  "log": "tests-735-service-approach-red.log",
+  "logSha256": "8907e87eeef7dfe4df9ae81165148663f45db1dc744a7dad69163ee2f052770d",
+  "actualWrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "assertion": "A clear cell outside transfer range must not start a haul that cannot load.",
+  "native734RootCauseConfirmed": false
+}

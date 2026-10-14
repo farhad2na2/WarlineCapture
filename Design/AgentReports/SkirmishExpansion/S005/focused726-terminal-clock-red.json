@@ -1,0 +1,11 @@
+{
+  "result": "FailedExpectedRegression",
+  "sourceHash": "c3ee6ff32392bc76472ec1408cfd336944d8743ac9fd15e962161103f0b190a1",
+  "wrapperExit": 0,
+  "wrapperExitArtifact": "tests-726-terminal-clock-red.log.exit",
+  "log": "tests-726-terminal-clock-red.log",
+  "logSha256": "163ed43bd4fc78d2cb60169f038e121dd494f56ee2f7a846883ebe9b635d06ef",
+  "sourceManifestUnchanged": true,
+  "scope": "Expanded objective suite including same-update terminal clock freeze and later projection preservation",
+  "nativeReadiness": "Pending"
+}

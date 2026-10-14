@@ -1,0 +1,33 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new {playing=UnityEditor.EditorApplication.isPlaying,changing=UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,compiling=UnityEditor.EditorApplication.isCompiling,updating=UnityEditor.EditorApplication.isUpdating,running=Game.Editor.ExistingEditorValidation.IsRunning,project=UnityEngine.Application.dataPath,quality=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()],msaa=UnityEngine.QualitySettings.antiAliasing};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "playing": false,
+        "changing": false,
+        "compiling": false,
+        "updating": false,
+        "running": false,
+        "project": "/Users/farhad/Projects/WarlineCapture/Assets",
+        "quality": "Mobile",
+        "msaa": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -69,3 +69,19 @@ gate after correcting identity-splice, source-ordering and queue-ownership gaps.
 It independently reran all four tests and actor-swap, stage-only fresh completion,
 route-only acceleration and missing-attempt mutations; each negative rejected.
 This review establishes no native capture-schema compatibility or gameplay win.
+
+Windows PowerShell portability follow-up: `Get-FileHash` is unavailable in the
+host's actual `powershell.exe` environment. The runner uses local .NET
+FileStream/SHA256/BitConverter hashing instead. JSON reads explicitly use UTF8;
+preparation and claim files may contain a UTF8 BOM and Unicode paths. The shared
+queue currently requires job JSON in UTF8 **without BOM** and rejects BOM jobs;
+the adapter preserves that contract. All other PowerShell cmdlets used by this
+runner were resolved under the actual executable.
+
+`rtk proxy python Tools/CI/s005_windows_runner_portability_test.py` passed four
+real plan-mode tests: known SHA256 (`abc`) through Unicode/spaced paths and BOM
+preparation/claim; binary-byte SHA256 plus candidate tamper rejection; source
+mutation rejection; and explicit BOM-job rejection. Dummy Unity and observer
+paths were never launched or installed, no Assets directory was created, and the
+native attempt artifact directory remained absent. These are platform/plan
+checks only; native dispatch remains pending.

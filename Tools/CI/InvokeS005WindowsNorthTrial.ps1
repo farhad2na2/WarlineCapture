@@ -13,10 +13,16 @@ param(
     [Parameter(Mandatory=$false)][switch]$GuiLicensing
 )
 $ErrorActionPreference="Stop"
+function Get-S005Sha256([string]$LiteralPath){
+    $stream=[IO.File]::Open($LiteralPath,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+    $sha=[Security.Cryptography.SHA256]::Create()
+    try{return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-','').ToLowerInvariant()}
+    finally{$sha.Dispose();$stream.Dispose()}
+}
 $projectRoot=(Resolve-Path -LiteralPath $ProjectPath).Path
-$preparation=Get-Content -Raw -LiteralPath (Join-Path $PreparedDirectory "PREPARATION.json") | ConvertFrom-Json
-$job=Get-Content -Raw -LiteralPath $JobFile | ConvertFrom-Json
-$claim=Get-Content -Raw -LiteralPath $ClaimFile | ConvertFrom-Json
+$preparation=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $PreparedDirectory "PREPARATION.json") | ConvertFrom-Json
+$job=Get-Content -Raw -Encoding UTF8 -LiteralPath $JobFile | ConvertFrom-Json
+$claim=Get-Content -Raw -Encoding UTF8 -LiteralPath $ClaimFile | ConvertFrom-Json
 $runId=[string]$preparation.runId
 if($runId -notmatch '^\d{4,}$' -or [int]$runId -le 1631){throw "Fresh S005 run ID required"}
 if($job.catalog_id -ne "S005" -or $job.seed -ne 155926 -or $job.locale -ne "FA" -or
@@ -26,7 +32,7 @@ if($job.catalog_id -ne "S005" -or $job.seed -ne 155926 -or $job.locale -ne "FA" 
 & rtk proxy $Python (Join-Path $PSScriptRoot "skirmish_production_queue.py") preflight --job $JobFile --project $projectRoot
 if($LASTEXITCODE -ne 0){throw "Shared pinned-job preflight failed"}
 $draft=Join-Path $PreparedDirectory $preparation.candidate
-$draftHash=(Get-FileHash -LiteralPath $draft -Algorithm SHA256).Hash.ToLowerInvariant()
+$draftHash=Get-S005Sha256 $draft
 if($draftHash -ne $preparation.candidateSha256){throw "Prepared observer bytes changed"}
 $method="S005NormalNorthFlank${runId}Observer.RunValidation"
 $plan=[ordered]@{result="PreparedPlanOnly";executeMethod=$method;runId=$runId;job_id=$job.job_id;
@@ -39,7 +45,7 @@ $installed=(Resolve-Path -LiteralPath $InstalledObserver).Path
 $assetsPrefix=$projectRoot.TrimEnd('\')+'\Assets\'
 if(-not $installed.StartsWith($assetsPrefix,[StringComparison]::OrdinalIgnoreCase) -or
    -not $installed.EndsWith('.cs') -or
-   (Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash.ToLowerInvariant() -ne $draftHash){
+   (Get-S005Sha256 $installed) -ne $draftHash){
     throw "Reviewed external observer must be installed as a unique Editor-only .cs before source freeze"
 }
 if($installed -notmatch '[\\/]Editor[\\/]'){throw "Observer installation must be Editor-only"}
@@ -52,12 +58,12 @@ if($claim.token -notmatch '.+' -or $claim.attempt_id -notmatch '^attempt-' -or -
 $artifact=[IO.Path]::GetFullPath($claim.artifact_directory)
 if([IO.Path]::GetFullPath($RunDirectory) -ne $artifact){throw "Use exact queue-allocated attempt artifact directory"}
 $queueDirectory=Split-Path -Parent $artifact
-$liveClaim=Get-Content -Raw -LiteralPath (Join-Path $queueDirectory "claim.json") | ConvertFrom-Json
+$liveClaim=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $queueDirectory "claim.json") | ConvertFrom-Json
 foreach($field in @('attempt_id','token','worker','started_utc','job_sha256','artifact_directory')){
     if($claim.$field -ne $liveClaim.$field){throw "Canonical live queue claim differs: $field"}
 }
 if(Test-Path -LiteralPath (Join-Path $artifact 'result.json')){throw "Queue attempt already finished"}
-$state=Get-Content -Raw -LiteralPath (Join-Path $projectRoot "Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json") | ConvertFrom-Json
+$state=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $projectRoot "Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json") | ConvertFrom-Json
 if($null -ne $state.activeRun){throw "Existing S005 native lane ownership remains"}
 if(-not (Get-Process -Name 'Unity Hub' -ErrorAction SilentlyContinue)){throw "Keep Unity Hub open and signed in"}
 $editors=@(Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'")
@@ -84,7 +90,7 @@ $plan.result="WrapperStarting";$plan.dispatchEnabled=$true
 $metadataLock=Join-Path $queueDirectory '.metadata-lock'
 New-Item -ItemType Directory -Path $metadataLock -ErrorAction Stop | Out-Null
 try{
-    $liveClaim=Get-Content -Raw -LiteralPath (Join-Path $queueDirectory "claim.json") | ConvertFrom-Json
+    $liveClaim=Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $queueDirectory "claim.json") | ConvertFrom-Json
     foreach($field in @('attempt_id','token','worker','started_utc','job_sha256','artifact_directory')){
         if($claim.$field -ne $liveClaim.$field){throw "Live claim changed during source snapshot: $field"}
     }

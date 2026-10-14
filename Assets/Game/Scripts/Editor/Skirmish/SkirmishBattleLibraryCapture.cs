@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Game.Configs;
 using Game.Runtime;
@@ -200,7 +199,6 @@ namespace Game.Editor
             if (root == null || !GameLocalization.IsRightToLeft)
                 return;
             TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
-            var missing = new List<char>();
             for (int i = 0; i < texts.Length; i++)
             {
                 TMP_Text text = texts[i];
@@ -212,12 +210,12 @@ namespace Game.Editor
                 TMP_FontAsset font = text.font;
                 if (font == null)
                     throw new InvalidOperationException("FA text has no TMP font on " + text.name + ".");
-                missing.Clear();
+                uint[] missing;
                 bool present = font.HasCharacters(value, out missing, true, false);
-                if (!present || (missing != null && missing.Count > 0))
+                if (!present || (missing != null && missing.Length > 0))
                 {
                     string shown = value.Length > 48 ? value.Substring(0, 48) : value;
-                    int code = missing != null && missing.Count > 0 ? missing[0] : 0;
+                    int code = missing != null && missing.Length > 0 ? (int)missing[0] : 0;
                     throw new InvalidOperationException(
                         "FA text is missing a glyph on " + text.name + " U+" + code.ToString("X4") + " text=" + shown);
                 }

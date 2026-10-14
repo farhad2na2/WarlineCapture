@@ -37,6 +37,7 @@ namespace Game.UI.Runtime
         private readonly Func<int, int> _randomIndex;
         private readonly ISkirmishLibraryPrefs _prefs;
         private readonly Action<SkirmishDifficultyId> _setLaunchDifficulty;
+        private readonly Func<string, SkirmishLibraryBriefingSource> _briefingSource;
         private readonly bool _showPlanned;
         private int _suspend;
         private int _interactionDepth;
@@ -56,7 +57,8 @@ namespace Game.UI.Runtime
             Func<int, int> randomIndex = null,
             bool showPlanned = false,
             ISkirmishLibraryPrefs prefs = null,
-            Action<SkirmishDifficultyId> setLaunchDifficulty = null)
+            Action<SkirmishDifficultyId> setLaunchDifficulty = null,
+            Func<string, SkirmishLibraryBriefingSource> briefingSource = null)
         {
             if (catalog != null)
             {
@@ -70,6 +72,7 @@ namespace Game.UI.Runtime
             _showPlanned = showPlanned;
             _prefs = prefs ?? new PlayerPrefsLibraryStore();
             _setLaunchDifficulty = setLaunchDifficulty;
+            _briefingSource = briefingSource;
             _filter = default;
             EnsureSelectedMap();
         }
@@ -343,7 +346,7 @@ namespace Game.UI.Runtime
                     MapId = MapOrder[i],
                     TitleLocKey = TheaterTitleKey(MapOrder[i]),
                     SubtitleLocKey = "ui.skirmish.theater." + MapOrder[i].ToLowerInvariant() + ".subtitle",
-                    PlatePreviewKey = "skirmish.plate." + MapOrder[i],
+                    PlatePreviewKey = SkirmishLibraryPreviewAssets.ResolvePlateKey(MapOrder[i]),
                     PublishedCount = CountPublished(MapOrder[i], null),
                     WonCount = _medals.CountFor(MapOrder[i]),
                     Medals = new SkirmishMedalTotals
@@ -441,7 +444,7 @@ namespace Game.UI.Runtime
 
             ResolveAccess(entry, out SkirmishCardAccess access, out string reason, out string storeProduct);
             bool published = entry.IsPlayable;
-            return new SkirmishBriefingState
+            var briefing = new SkirmishBriefingState
             {
                 ScenarioId = entry.ScenarioId,
                 TitleLocKey = TitleKey(entry),
@@ -460,6 +463,39 @@ namespace Game.UI.Runtime
                             string.Equals(_selectedScenarioId, entry.ScenarioId, StringComparison.Ordinal) &&
                             IsMedalDifficulty(_difficulty)
             };
+            ApplyBriefingFacts(entry, published, ref briefing);
+            return briefing;
+        }
+
+        private void ApplyBriefingFacts(
+            SkirmishBattleCatalogEntry entry,
+            bool published,
+            ref SkirmishBriefingState briefing)
+        {
+            string objective = CanonicalObjective(entry.ObjectiveId);
+            briefing.ObjectiveLocKey = string.IsNullOrEmpty(objective)
+                ? string.Empty
+                : "ui.skirmish.objective." + objective.ToLowerInvariant();
+
+            SkirmishLibraryBriefingSource source = default;
+            if (_briefingSource != null)
+                source = _briefingSource(entry.ScenarioId ?? string.Empty);
+
+            if (source.Found)
+            {
+                briefing.DeadlineSeconds = source.DeadlineSeconds;
+                briefing.RecommendedSize = source.RecommendedSize;
+                briefing.StartingStructureCount = source.StartingStructureCount;
+                briefing.MapWidthMetres = source.MapWidthMetres;
+                briefing.MapDepthMetres = source.MapDepthMetres;
+                return;
+            }
+
+            briefing.DeadlineSeconds = published ? (int)SkirmishPresetConfig.MatchDurationSeconds : 0;
+            briefing.RecommendedSize = SkirmishSizeId.None;
+            briefing.StartingStructureCount = 0;
+            briefing.MapWidthMetres = 0f;
+            briefing.MapDepthMetres = 0f;
         }
 
         private SkirmishBattleCardState BuildCard(string mapId, string objectiveId, string army, string start, int pinIndex)
@@ -476,7 +512,7 @@ namespace Game.UI.Runtime
                     PinId = pinId,
                     Access = SkirmishCardAccess.Planned,
                     LockedReasonLocKey = "ui.skirmish.locked.planned",
-                    PreviewSpriteKey = "skirmish.plate." + mapId
+                    PreviewSpriteKey = SkirmishLibraryPreviewAssets.ResolvePreviewKey(null, false, mapId)
                 };
             }
 
@@ -492,9 +528,8 @@ namespace Game.UI.Runtime
                 SubtitleLocKey = "ui.skirmish." + entry.ScenarioId.ToLowerInvariant() + ".subtitle",
                 ArmyLocKey = ArmyKey(entry.ArmyProfile),
                 StartLocKey = StartKey(entry.StartProfile),
-                PreviewSpriteKey = entry.IsPlayable
-                    ? "skirmish.preview." + entry.ScenarioId
-                    : "skirmish.plate." + entry.MapId,
+                PreviewSpriteKey = SkirmishLibraryPreviewAssets.ResolvePreviewKey(
+                    entry.ScenarioId, entry.IsPlayable, entry.MapId),
                 PinId = pinId,
                 Medals = MaskFor(entry.ScenarioId),
                 Access = access,

@@ -57,6 +57,33 @@ namespace Game.Composition
                 SkirmishMedalLedgerReader.FromProfile(catalog),
                 canonicalId => ContentAccessRuntime.Evaluate(canonicalId),
                 showPlanned: SkirmishLibraryViewModel.ShowPlannedCards,
-                setLaunchDifficulty: difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
+                setLaunchDifficulty: difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty,
+                briefingSource: ReadBriefingSource);
+
+        private static SkirmishLibraryBriefingSource ReadBriefingSource(string scenarioId)
+        {
+            SkirmishExpansionCatalogConfig catalog = SkirmishExpansionCatalogConfig.Load();
+            if (catalog == null ||
+                !catalog.TryGetDefinition(scenarioId, out SkirmishScenarioDefinitionConfig definition) ||
+                definition == null)
+                return default;
+
+            SkirmishSizeId size = definition.RecommendedSize == SkirmishSizeId.None
+                ? SkirmishSizeId.Standard
+                : definition.RecommendedSize;
+            return new SkirmishLibraryBriefingSource
+            {
+                Found = true,
+                DeadlineSeconds = definition.ObjectiveConfig != null
+                    ? definition.ObjectiveConfig.DeadlineSeconds(size)
+                    : 0,
+                RecommendedSize = size,
+                StartingStructureCount = definition.StartPackageConfig != null
+                    ? definition.StartPackageConfig.StandardStructureCount
+                    : 0,
+                MapWidthMetres = definition.MapLayout != null ? definition.MapLayout.WorldWidthMetres : 0f,
+                MapDepthMetres = definition.MapLayout != null ? definition.MapLayout.WorldDepthMetres : 0f
+            };
+        }
     }
 }

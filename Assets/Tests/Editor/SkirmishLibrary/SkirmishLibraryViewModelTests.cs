@@ -301,13 +301,89 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishLibraryLevel.Theater, model.Level);
         }
 
+        [Test]
+        public void PlayableBriefingWithoutCompiledDefinitionUsesLegacyClockAndLeavesSizeBlank()
+        {
+            var entries = new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S001", "DB", "BA", "G", "F", true, 0)
+            };
+            var model = Model(entries, new SkirmishMedalLedger(null, entries));
+            Assert.IsTrue(model.SelectScenarioId("S001"));
+            SkirmishBriefingState briefing = model.Briefing;
+            Assert.AreEqual("ui.skirmish.objective.ba", briefing.ObjectiveLocKey);
+            Assert.AreEqual(900, briefing.DeadlineSeconds);
+            Assert.AreEqual(SkirmishSizeId.None, briefing.RecommendedSize);
+            Assert.AreEqual(0, briefing.StartingStructureCount);
+            Assert.AreEqual(0f, briefing.MapWidthMetres);
+            Assert.AreEqual(0f, briefing.MapDepthMetres);
+
+            string previewAsset = SkirmishLibraryPreviewAssets.PreviewPath("S001");
+            string plateAsset = SkirmishLibraryPreviewAssets.PlatePath("DB");
+            Assert.AreEqual(
+                SkirmishLibraryPreviewAssets.HasAsset(previewAsset) ? previewAsset : "skirmish.preview.S001",
+                Card(model.Battlefield.MapCards, "DB.BA.0").PreviewSpriteKey);
+            Assert.AreEqual(
+                SkirmishLibraryPreviewAssets.HasAsset(plateAsset) ? plateAsset : "skirmish.plate.DB",
+                Pin(model, "DB").PlatePreviewKey);
+        }
+
+        [Test]
+        public void CompiledBriefingSourceSuppliesDeadlineSizeStructuresAndMapExtent()
+        {
+            var entries = new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S001", "DB", "BA", "G", "F", true, 0)
+            };
+            var source = new SkirmishLibraryBriefingSource
+            {
+                Found = true,
+                DeadlineSeconds = 1080,
+                RecommendedSize = SkirmishSizeId.Standard,
+                StartingStructureCount = 7,
+                MapWidthMetres = 600f,
+                MapDepthMetres = 420f
+            };
+            var model = Model(entries, new SkirmishMedalLedger(null, entries), briefingSource: _ => source);
+            Assert.IsTrue(model.SelectScenarioId("S001"));
+            SkirmishBriefingState briefing = model.Briefing;
+            Assert.AreEqual(1080, briefing.DeadlineSeconds);
+            Assert.AreEqual(SkirmishSizeId.Standard, briefing.RecommendedSize);
+            Assert.AreEqual(7, briefing.StartingStructureCount);
+            Assert.AreEqual(600f, briefing.MapWidthMetres);
+            Assert.AreEqual(420f, briefing.MapDepthMetres);
+            Assert.AreNotEqual(900, briefing.DeadlineSeconds);
+        }
+
+        [Test]
+        public void PlannedBriefingWithoutCompiledDefinitionDoesNotInventTimeOrSize()
+        {
+            var entries = new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S005", "DB", "BA", "G", "E", false, -1)
+            };
+            var model = Model(entries, new SkirmishMedalLedger(null, entries), showPlanned: true);
+            Assert.IsTrue(model.SelectScenarioId("S005"));
+            SkirmishBriefingState briefing = model.Briefing;
+            Assert.AreEqual(0, briefing.DeadlineSeconds);
+            Assert.AreEqual(SkirmishSizeId.None, briefing.RecommendedSize);
+            Assert.AreEqual(0, briefing.StartingStructureCount);
+            Assert.AreEqual(0f, briefing.MapWidthMetres);
+            Assert.AreEqual(0f, briefing.MapDepthMetres);
+            string plateAsset = SkirmishLibraryPreviewAssets.PlatePath("DB");
+            Assert.AreEqual(
+                SkirmishLibraryPreviewAssets.HasAsset(plateAsset) ? plateAsset : "skirmish.plate.DB",
+                Card(model.Battlefield.MapCards, "DB.BA.1").PreviewSpriteKey);
+        }
+
         private static SkirmishLibraryViewModel Model(
             List<SkirmishBattleCatalogEntry> entries,
             SkirmishMedalLedger ledger,
             Func<string, ContentAccessState> access = null,
             Func<int, int> randomIndex = null,
             bool showPlanned = false,
-            ISkirmishLibraryPrefs prefs = null) =>
+            ISkirmishLibraryPrefs prefs = null,
+            Func<string, SkirmishLibraryBriefingSource> briefingSource = null) =>
             new(
                 entries,
                 new FakeSkirmishMedalReader(ledger),
@@ -315,7 +391,8 @@ namespace Game.Tests.Editor
                 randomIndex,
                 showPlanned,
                 prefs ?? new MemoryPrefs(),
-                difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
+                difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty,
+                briefingSource);
 
         private static SkirmishTheaterPinState Pin(SkirmishLibraryViewModel model, string mapId)
         {

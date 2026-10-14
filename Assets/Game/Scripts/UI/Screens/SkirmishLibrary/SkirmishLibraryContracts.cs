@@ -119,6 +119,22 @@ namespace Game.UI.Runtime
         public string LockedReasonLocKey;
         public string StoreRouteProductId;
         public bool CanLaunch;
+        public string ObjectiveLocKey;
+        public int DeadlineSeconds;
+        public SkirmishSizeId RecommendedSize;
+        public int StartingStructureCount;
+        public float MapWidthMetres;
+        public float MapDepthMetres;
+    }
+
+    public struct SkirmishLibraryBriefingSource
+    {
+        public bool Found;
+        public int DeadlineSeconds;
+        public SkirmishSizeId RecommendedSize;
+        public int StartingStructureCount;
+        public float MapWidthMetres;
+        public float MapDepthMetres;
     }
 
     public struct SkirmishLibraryFilter

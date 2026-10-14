@@ -12,6 +12,7 @@ Programmer 2's screen should own one `SkirmishLibraryViewModel` and drop the stu
 - evaluates access with `ContentAccessRuntime.Evaluate`
 - writes the selected difficulty with `difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty`
 - passes `ShowPlannedCards` (`UNITY_EDITOR` or `DEVELOPMENT_BUILD`)
+- reads compiled briefing facts with `briefingSource: ReadBriefingSource` (`SkirmishExpansionCatalogConfig.TryGetDefinition`)
 
 The screen calls `RestoreFromPrefs` after the factory returns. `Game.UI.Runtime` does not reference `Game.Runtime`. The view model reads medals only through `ISkirmishMedalReader`. The result card reads `MedalScenarioId`, `MedalDifficulty`, and `MedalIsFirstAward` from the skirmish gateway and does not reference `SkirmishMedalLedger`. Before composition binds, the screen uses an empty reader and treats access as allowed.
 
@@ -41,6 +42,10 @@ The theater header reads overall progress from `SkirmishTheaterState`:
 - `OverallMedalsEarned` — Recruit + Regular + Veteran + Commander on those scenarios
 - `OverallMedalsPossible` — `OverallPublishedCount * 4`
 - `OverallMedalTotals` — the same four counts read through `ISkirmishMedalReader`
+
+Briefing adds sourced facts only. `ObjectiveLocKey` comes from the catalog objective id. When a compiled definition exists, `DeadlineSeconds`, `RecommendedSize`, `StartingStructureCount`, `MapWidthMetres`, and `MapDepthMetres` come from that definition. A playable scenario with no definition uses `SkirmishPresetConfig.MatchDurationSeconds` (900) and leaves the size, structure count, and map extent at zero. A planned scenario with no definition leaves the deadline at zero as well. There is no unitless size integer and no per-scenario enemy count.
+
+`PreviewSpriteKey` is `Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.{ScenarioId}.png` when that sprite exists, otherwise `skirmish.preview.{ScenarioId}` for a playable card and the plate key for a planned card. `PlatePreviewKey` is `Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.{MapId}.png` when that sprite exists, otherwise `skirmish.plate.{MapId}`. Player builds keep the logical keys. `Game.Editor.SkirmishLibraryPreviewCapture.Run` writes the PNGs.
 
 ## Button sounds
 

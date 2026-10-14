@@ -75,6 +75,7 @@ namespace Game.Editor
                             var info = new FileInfo(path);
                             if (!info.Exists || info.Length < 2048)
                                 throw new InvalidOperationException("Capture was empty: " + path);
+                            RejectFlatCapture(path);
                             written++;
                         }
                     }
@@ -147,9 +148,10 @@ namespace Game.Editor
             serialized.FindProperty("baseAssaultPreset").boolValue = true;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             view.Bind(default);
+            view.ApplyLibraryCaptureDemo();
+            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             view.PresentLibraryCapture(state);
             Canvas.ForceUpdateCanvases();
-            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                 text.ForceMeshUpdate();
 
@@ -165,6 +167,41 @@ namespace Game.Editor
             RenderTexture.active = previous;
             File.WriteAllBytes(path, image.EncodeToPNG());
             UnityEngine.Object.DestroyImmediate(image);
+        }
+
+        private static void RejectFlatCapture(string path)
+        {
+            var probe = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!probe.LoadImage(File.ReadAllBytes(path)))
+                    throw new InvalidOperationException("Capture could not be read: " + path);
+                Color32[] pixels = probe.GetPixels32();
+                if (pixels == null || pixels.Length < 64)
+                    throw new InvalidOperationException("Capture had no pixels: " + path);
+                int step = Math.Max(1, pixels.Length / 8000);
+                int samples = 0;
+                int minR = 255, minG = 255, minB = 255, maxR = 0, maxG = 0, maxB = 0;
+                for (int i = 0; i < pixels.Length; i += step)
+                {
+                    Color32 pixel = pixels[i];
+                    if (pixel.r < minR) minR = pixel.r;
+                    if (pixel.g < minG) minG = pixel.g;
+                    if (pixel.b < minB) minB = pixel.b;
+                    if (pixel.r > maxR) maxR = pixel.r;
+                    if (pixel.g > maxG) maxG = pixel.g;
+                    if (pixel.b > maxB) maxB = pixel.b;
+                    samples++;
+                }
+
+                int spread = (maxR - minR) + (maxG - minG) + (maxB - minB);
+                if (samples < 32 || spread < 48)
+                    throw new InvalidOperationException("Capture is blank or uniform: " + path + " spread=" + spread);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(probe);
+            }
         }
 
         private struct CaptureSize

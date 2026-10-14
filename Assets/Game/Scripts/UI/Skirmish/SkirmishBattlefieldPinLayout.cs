@@ -59,8 +59,8 @@ namespace Game.UI.Runtime
             if (mapIndex < 0 || objectiveIndex < 0)
                 return false;
             Vector2 point = Arc[slot] + MapNudge[mapIndex] + ObjectiveNudge[objectiveIndex];
-            point.x = Mathf.Clamp(point.x, 0.18f, 0.82f);
-            point.y = Mathf.Clamp(point.y, 0.18f, 0.76f);
+            point.x = Mathf.Clamp(point.x, 0.22f, 0.78f);
+            point.y = Mathf.Clamp(point.y, 0.28f, 0.70f);
             centreFromTopLeft = point;
             return true;
         }
@@ -78,8 +78,8 @@ namespace Game.UI.Runtime
             }
 
             Vector2 point = Arc[armyIndex * 2 + startIndex] + MapNudge[map] + ObjectiveNudge[objective];
-            point.x = Mathf.Clamp(point.x, 0.18f, 0.82f);
-            point.y = Mathf.Clamp(point.y, 0.18f, 0.76f);
+            point.x = Mathf.Clamp(point.x, 0.22f, 0.78f);
+            point.y = Mathf.Clamp(point.y, 0.28f, 0.70f);
             centreFromTopLeft = point;
             return true;
         }

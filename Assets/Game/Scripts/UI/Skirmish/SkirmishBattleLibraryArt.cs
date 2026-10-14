@@ -44,6 +44,30 @@ namespace Game.UI.Runtime
             }
         }
 
+        public static string ObjectiveIcon(string objectiveId)
+        {
+            switch ((objectiveId ?? string.Empty).ToUpperInvariant())
+            {
+                case "FC": return ResourceRoot + "icon_objective_fc";
+                case "BT": return ResourceRoot + "icon_objective_bt";
+                case "CE": return ResourceRoot + "icon_objective_ce";
+                default: return ResourceRoot + "icon_objective_ba";
+            }
+        }
+
+        public static string ArmyIcon(string army)
+        {
+            switch ((army ?? string.Empty).ToUpperInvariant())
+            {
+                case "A": return ResourceRoot + "icon_army_a";
+                case "C": return ResourceRoot + "icon_army_c";
+                default: return ResourceRoot + "icon_army_g";
+            }
+        }
+
+        public static string NewBadge => ResourceRoot + "icon_new";
+        public static string Crest => ResourceRoot + "icon_crest";
+
         public static string PreviewKey(string scenarioId, string mapId)
         {
             switch (scenarioId)

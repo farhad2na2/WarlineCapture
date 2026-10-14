@@ -1,3 +1,4 @@
+using System.Text;
 using RTLTMPro;
 using TMPro;
 using UnityEngine;
@@ -152,7 +153,8 @@ namespace Game.UI.Runtime
                 rtlText.Farsi = containsRightToLeftText;
                 rtlText.PreserveNumbers = !ContainsEasternDigits(localized);
                 rtlText.ForceFix = containsRightToLeftText;
-                rtlText.text = localized;
+                // Keep scenario ids such as S004 in source order inside Persian sentences.
+                rtlText.text = containsRightToLeftText ? IsolateLatinRuns(localized) : localized;
                 lastApplied = rtlText.OriginalText;
                 return;
             }
@@ -160,7 +162,7 @@ namespace Game.UI.Runtime
             // Codes, filenames, acronyms, and callsigns can intentionally remain Latin in an RTL
             // locale. Do not reverse those strings (for example APC must not become CPA).
             target.isRightToLeftText = containsRightToLeftText;
-            target.text = containsRightToLeftText ? ShapeForRendering(localized) : localized;
+            target.text = containsRightToLeftText ? ShapeForRendering(IsolateLatinRuns(localized)) : localized;
             lastApplied = target.text;
         }
 
@@ -285,6 +287,40 @@ namespace Game.UI.Runtime
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum); ApplyLocalization();}
         public void ConfigureFontBounds(float minimum,float maximum)
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum);}
+        private static string IsolateLatinRuns(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.IndexOf('\u2066') >= 0)
+                return value ?? string.Empty;
+            var builder = new StringBuilder(value.Length + 8);
+            int index = 0;
+            while (index < value.Length)
+            {
+                bool latin = IsIsolatedLatin(value[index]);
+                int end = index + 1;
+                while (end < value.Length && IsIsolatedLatin(value[end]) == latin)
+                    end++;
+                if (latin)
+                {
+                    builder.Append('\u2066');
+                    builder.Append(value, index, end - index);
+                    builder.Append('\u2069');
+                }
+                else
+                    builder.Append(value, index, end - index);
+                index = end;
+            }
+
+            return builder.ToString();
+        }
+
+        private static bool IsIsolatedLatin(char value)
+        {
+            return (value >= 'A' && value <= 'Z')
+                || (value >= 'a' && value <= 'z')
+                || (value >= '0' && value <= '9')
+                || value == '/' || value == '-' || value == '+' || value == '.' || value == '#';
+        }
+
         private static bool ContainsArabicScript(string value)
         {
             if(value==null) return false;

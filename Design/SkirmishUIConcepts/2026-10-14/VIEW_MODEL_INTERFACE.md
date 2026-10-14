@@ -89,3 +89,5 @@ Marker: `[SkirmishBattleLibraryCapture] result=Passed`.
 PNGs: `Design/AgentReports/SkirmishBattleLibrary/2026-10-14/{theater|map|grid}-{16x9|20x9|4x3}-{en|fa-IR}.png` (18 files).
 
 These captures are Editor renders. They are not visual sign-off, a normal-input playthrough, or device acceptance.
+
+The capture calls `QuickCustomScreenView.ApplyLibraryCaptureDemo()` so the PNGs show wins, medals and a recommendation. That fill stays off the runtime stub. A blank or uniform PNG fails the marker. A flat grey frame, including the `-nographics` clear colour, is a failed capture.

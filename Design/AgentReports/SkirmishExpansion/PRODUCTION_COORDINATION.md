@@ -62,3 +62,11 @@ Review worker reports and the offline queue slice; run meaningful negative contr
 - S005 worker prepared a dispatch-disabled Windows north1632 observer draft and preparation helper, retaining historical1628 failure evidence. It requires coordinator review and portable runner/qualifier before any live trial. No release or normal-input victory is inferred.
 
 Next assignments while Unity compiles: authoring worker prepares minimal config-only builder/launch proposal; qualification worker prepares generic adapter contract and packet coverage controls; S005 worker reconstructs portable runner/qualifier offline. Keep current C# frozen.
+
+### Stable commits and follow-up checks
+
+- `5bdcfc1d8` pushed to origin/main: coordinator checkpoint plus offline preflight/queue foundation. Coordinator subsequently verified all 19 current queue tests, including every packet's 120 mission sections / 720 baseline job preparations. These are not gameplay runs.
+- Required generator `--check` initially failed: sparse checkout omitted linked contracts, then Windows default cp1252 decoding, path separators and CRLF planning-inventory bytes produced drift. The linked contracts are now materialized. Reviewed correction uses explicit UTF-8, portable paths and canonical LF planning roster hashes matching all 75 committed source blobs. No packets, setup vectors, roster assets or native source-guard policies were changed.
+- Coordinator independently passed all four planning portability regressions and full generator check: `[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=75 mode=check`.
+- S005 portable runner/qualifier is undergoing independent static/offline review; initial review identified evidence-splicing and live-claim ownership gaps, which must be corrected before dispatch. The observer draft remains disabled.
+- Next builder implementation is reserved to authoring worker in NEW SkirmishConfigOnlyBatchBuilder.cs / focused tests. Prepare outside imported Assets until current native validation finishes. Root owns SkirmishS002AriaRunHarness.cs and any public adapter integration; no concurrent edits there.

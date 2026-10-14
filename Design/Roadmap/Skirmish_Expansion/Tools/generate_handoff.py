@@ -352,6 +352,21 @@ def build(include_roster_audit=True):
         outputs['ROSTER_SOURCE_AUDIT.csv']=csv_text(roster_audit())
     return outputs
 
+def planning_source_inventory_values(raw):
+    """Portable planning inventory only: hash UTF-8 source with CRLF normalized to LF.
+
+    This matches Git's canonical text blobs. Native candidate/source guard hashes
+    intentionally keep their separate, existing provenance policies.
+    """
+    canonical = raw.replace(b'\r\n', b'\n')
+    name = re.search(r'^  displayName: ([^\r\n]*)', canonical.decode('utf-8'), re.M)
+    return (name.group(1) if name else '', hashlib.sha256(canonical).hexdigest())
+
+
+def planning_output_matches(path, expected):
+    return path.exists() and path.read_text(encoding='utf-8') == expected
+
+
 def roster_audit():
     canonical={
       'Chr_Soldier_Male_02_Alt_04':'role.rifle','Chr_Soldier_Male_01':'role.gunner',
@@ -372,17 +387,17 @@ def roster_audit():
         # supplements the original 23 building sources; certification stays Pending.
         assert len(paths)==(51 if kind=='Unit' else 24),(kind,len(paths))
         for p in paths:
-            raw=p.read_bytes();s=raw.decode('utf-8');name=re.search(r'^  displayName: (.*)',s,re.M)
+            display_name, source_hash = planning_source_inventory_values(p.read_bytes())
             key=p.stem.removeprefix(prefix).removesuffix('_Config')
             if kind=='Building': role='';disposition='Supported facility or defensive variant' if key in structures else 'Scenario/Sandbox or visual source only'
             elif key in canonical: role=canonical[key];disposition='Canonical role candidate; capability certification required'
             elif any(x in key for x in ('Civilian','Pilot','Leader','Bombsuit')): role='';disposition='Scenario/Sandbox only; no invented special combat ability'
             elif 'Insurgent' in key or 'Contractor' in key: role='';disposition='Alternate-faction appearance after explicit equivalent-role certification'
             elif key=='Veh_Truck_Canopy': role='';disposition='Transport/logistics variant after seat/role/cap accounting certification'
-            elif name and ('Rifleman' in name.group(1) or 'Marksman' in name.group(1)): role='';disposition='Role appearance variant; preserve role equivalence and shared cap'
+            elif 'Rifleman' in display_name or 'Marksman' in display_name: role='';disposition='Role appearance variant; preserve role equivalence and shared cap'
             else: role='';disposition='Scenario/Sandbox candidate; distinct sidearm/special role not in core five-role scope'
-            result.append(dict(asset_kind=kind,source_config=str(p.relative_to(REPO)),observed_display_name=name.group(1) if name else '',
-              source_sha256=hashlib.sha256(raw).hexdigest(),proposed_role=role,proposed_disposition=disposition,
+            result.append(dict(asset_kind=kind,source_config=p.relative_to(REPO).as_posix(),observed_display_name=display_name,
+              source_sha256=source_hash,proposed_role=role,proposed_disposition=disposition,
               evidence='SourceReadOnly',runtime_certification='Pending',
               planned_use_contexts=('S023 CE DB Combined; S095 CE IB Combined' if 'convoy_objective' in role else 'S005 BA DB Combined; S095 CE IB Combined') if role else 'Record accepted variant/facility/scenario context before claiming coverage'))
     return result
@@ -413,7 +428,7 @@ def main():
         for name,text in outputs.items():
             p=ROOT/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text,encoding='utf-8')
     else:
-        drift=[name for name,text in outputs.items() if not (ROOT/name).exists() or (ROOT/name).read_text()!=text]
+        drift=[name for name,text in outputs.items() if not planning_output_matches(ROOT/name, text)]
         if drift: raise SystemExit('Planning artifact drift; review inputs then regenerate: '+', '.join(drift))
     if args.packets_only:
         print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 campaignReusePlans=120 futureMapPlans=114 codedMapExclusions=6 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))

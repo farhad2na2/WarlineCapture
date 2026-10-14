@@ -1,0 +1,25 @@
+{
+  "action": "CopiedEvidenceAppendOnly",
+  "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\convoy-_uxa5qll",
+  "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-convoy-cdts1j1o",
+  "files": [
+    {
+      "file": "actual-editor-reference-compile.log",
+      "sha256": "07b25a70013f39735c72111b5bb855e0ce77095a694e0c3046daf8bfd44e01b7"
+    },
+    {
+      "file": "offline-14-rules.log",
+      "sha256": "f48ae6707801a4860d58d74a688173c5345a90d0b9b641247fbf93b8bad0e990"
+    },
+    {
+      "file": "offline-compile.log",
+      "sha256": "d3e20502c4d773c46dd8e85011907ce9ce320be6c3231d8849265e6b184b085a"
+    },
+    {
+      "file": "source-and-tool-manifest.json",
+      "sha256": "0e61dd2db90e1139f2a2a1e64fd2518ac7afa115913d573227cf290178f2e41b"
+    }
+  ],
+  "nativeExecutionCertified": false,
+  "validationOutcomeInCopiedLogsOnly": true
+}

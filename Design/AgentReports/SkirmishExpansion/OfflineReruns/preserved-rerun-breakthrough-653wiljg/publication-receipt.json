@@ -1,0 +1,25 @@
+{
+  "action": "CopiedEvidenceAppendOnly",
+  "source": "D:\\Projects\\WarlineCapture\\Logs\\SkirmishProduction\\Offline\\ObjectiveEvidence\\breakthrough-ve0qk_6h",
+  "output": "D:\\Projects\\WarlineCapture\\Design\\AgentReports\\SkirmishExpansion\\OfflineReruns\\preserved-rerun-breakthrough-653wiljg",
+  "files": [
+    {
+      "file": "actual-editor-reference-compile.log",
+      "sha256": "c53b657255164bb9c877334cc239971d61968ce005aa25b858d90ecdea72544d"
+    },
+    {
+      "file": "offline-15-rules.log",
+      "sha256": "ca75b95e9293143111ab3ba49a700a050b40c06c87ec2a4df93acee2f010f004"
+    },
+    {
+      "file": "offline-compile.log",
+      "sha256": "3aaeb7eaff7caf70fd2e69849e177322f1cfd9b8035fe64d4b71c6accfcb4651"
+    },
+    {
+      "file": "source-and-tool-manifest.json",
+      "sha256": "667c86849124f2f95e31516516e9e74dfaf6a2c2a8d94dc11929ee277775e6c0"
+    }
+  ],
+  "nativeExecutionCertified": false,
+  "validationOutcomeInCopiedLogsOnly": true
+}

@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/FC/offline-reducer-20261014/actual-editor-reference-compile.log",
+      "latest_sha256": "29bbd6c5934e555cb5c3f184c1fa3aa1b1a524e596777c048d7ba25144286172",
+      "head_sha256": "29bbd6c5934e555cb5c3f184c1fa3aa1b1a524e596777c048d7ba25144286172",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/FC/offline-reducer-20261014/offline-13-rules.log",
+      "latest_sha256": "c89e29043be439e589e2c9fcc1841716420b4a552e7f5ce84d1fb354c56835bd",
+      "head_sha256": "c89e29043be439e589e2c9fcc1841716420b4a552e7f5ce84d1fb354c56835bd",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/FC/offline-reducer-20261014/offline-compile.log",
+      "latest_sha256": "515ad557faf9c03c1a7e6decd69efdab548801d5b39ca5ce8bec11420dcd7c49",
+      "head_sha256": "515ad557faf9c03c1a7e6decd69efdab548801d5b39ca5ce8bec11420dcd7c49",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/BT/offline-reducer-20261014/actual-editor-reference-compile.log",
+      "latest_sha256": "a57537313a9a5ea226473a254770332bfbeddcdb21995e94397352affc791dfd",
+      "head_sha256": "a57537313a9a5ea226473a254770332bfbeddcdb21995e94397352affc791dfd",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/BT/offline-reducer-20261014/offline-15-rules.log",
+      "latest_sha256": "580a19065086c4eca6df5f597a43394ff7b96abe9e3b90438d9faff9df068fe7",
+      "head_sha256": "580a19065086c4eca6df5f597a43394ff7b96abe9e3b90438d9faff9df068fe7",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/BT/offline-reducer-20261014/offline-compile.log",
+      "latest_sha256": "be0ddeac07c75ee736e600c76565ef0b26061385360f259c1d4f2f8a9fd02b8a",
+      "head_sha256": "be0ddeac07c75ee736e600c76565ef0b26061385360f259c1d4f2f8a9fd02b8a",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/CE/offline-reducer-20261014/actual-editor-reference-compile.log",
+      "latest_sha256": "3120e6adc7c968b6441a7627a835a77bbee83e52ac1d887f8867ba97e883ef07",
+      "head_sha256": "3120e6adc7c968b6441a7627a835a77bbee83e52ac1d887f8867ba97e883ef07",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/CE/offline-reducer-20261014/offline-14-rules.log",
+      "latest_sha256": "c03b44d185f2b4d6a4bc3ba6c41e4d8a80c7e683bb881ec20756449a6185e19b",
+      "head_sha256": "c03b44d185f2b4d6a4bc3ba6c41e4d8a80c7e683bb881ec20756449a6185e19b",
+      "bytes_equal_head": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/CE/offline-reducer-20261014/offline-compile.log",
+      "latest_sha256": "5e7238bb5dd08b96513ab3509237fe2f5e80aeb438ff574f369d990edca99a45",
+      "head_sha256": "5e7238bb5dd08b96513ab3509237fe2f5e80aeb438ff574f369d990edca99a45",
+      "bytes_equal_head": true
+    }
+  ],
+  "restore_requested": true
+}

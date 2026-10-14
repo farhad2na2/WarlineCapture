@@ -60,7 +60,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--job", type=Path, required=True)
+    identity_mode=parser.add_mutually_exclusive_group(required=True)
+    identity_mode.add_argument("--job", type=Path)
+    identity_mode.add_argument("--capture-only",action="store_true",help="Capture fresh bytes for packet construction; never marks native qualification")
     args = parser.parse_args()
     manifest = snapshot(args.project.resolve())
     builds, build_hash = build_snapshot(args.project.resolve())
@@ -68,6 +70,9 @@ if __name__ == "__main__":
         json.dump(dict(source_manifest=manifest, candidate_sha256=candidate_hash(manifest),
                        build_manifest=builds, build_sha256=build_hash), output, indent=2)
         output.write("\n")
+    if args.capture_only:
+        print("[S005WindowsSourceSnapshot] result=CapturedUnqualified files="+str(len(manifest)))
+        raise SystemExit(0)
     job = json.loads(args.job.read_text(encoding="utf-8-sig"))
     if sorted(job["source_manifest"], key=lambda row: row["path"]) != manifest:
         raise SystemExit("Complete source bytes differ from pinned job; preserve snapshot and repin.")

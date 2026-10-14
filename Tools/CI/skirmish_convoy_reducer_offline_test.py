@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from skirmish_offline_evidence import new_evidence_directory
 
 
 class ConvoyOfflineTests(unittest.TestCase):
@@ -19,9 +20,8 @@ class ConvoyOfflineTests(unittest.TestCase):
     def setUpClass(cls):
         cls.project = Path(__file__).resolve().parents[2]
         cls.drafts = cls.project / "Tools/CI/SkirmishProductionDrafts"
-        cls.evidence = cls.project / "Design/AgentReports/SkirmishExpansion/CE/offline-reducer-20261014"
-        cls.evidence.mkdir(parents=True, exist_ok=True)
-        cls.temp_root = cls.project / "Temp/SkirmishConvoyOfflineTests"
+        cls.evidence = new_evidence_directory(cls.project, "convoy")
+        cls.temp_root = cls.project / "Logs/SkirmishProduction/Offline/ConvoyTests"
         cls.temp_root.mkdir(parents=True, exist_ok=True)
         cls.temp = tempfile.TemporaryDirectory(prefix="compiled-", dir=cls.temp_root)
         cls.output = Path(cls.temp.name).resolve()

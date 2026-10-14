@@ -4,6 +4,7 @@ using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
+using Game.UI.Runtime;
 using UnityEngine;
 
 namespace Game.UI.Skirmish
@@ -16,6 +17,7 @@ namespace Game.UI.Skirmish
         public const string ObjectivePrefsKey = "Warline.Skirmish.Library.Objective";
         public const string LayoutPrefsKey = "Warline.Skirmish.Library.Layout";
         public const string DifficultyPrefsKey = "Warline.Skirmish.Library.Difficulty";
+        public const int DevOverallPublishedCount = 120;
 
         private static readonly string[] MapOrder = { "DB", "CC", "MP", "IB", "AP" };
         private static readonly string[] ObjectiveOrder = { "BA", "FC", "BT", "CE" };
@@ -37,6 +39,7 @@ namespace Game.UI.Skirmish
         private readonly Func<SkirmishMedalSaveData[]> _medalSource;
         private readonly bool _showPlanned;
         private int _suspend;
+        private int _interactionDepth;
 
         private SkirmishLibraryLevel _level = SkirmishLibraryLevel.Theater;
         private SkirmishBattlefieldLayout _layout = SkirmishBattlefieldLayout.Map;
@@ -72,6 +75,7 @@ namespace Game.UI.Skirmish
         }
 
         public event Action Changed;
+        public event Action<SkirmishLibraryInteraction> Interaction;
 
         public static SkirmishMedalSaveData[] LoadProfileMedals()
         {
@@ -134,6 +138,7 @@ namespace Game.UI.Skirmish
                 EnsureSelectedMap();
                 Persist();
                 Notify();
+                Raise(SkirmishLibraryInteractionKind.Selected, "theater", UIAudioEventKind.ScreenBack);
                 return true;
             }
 
@@ -146,6 +151,7 @@ namespace Game.UI.Skirmish
                 _selectedObjectiveId = FirstObjectiveOnMap(canonical);
             Persist();
             Notify();
+            Raise(SkirmishLibraryInteractionKind.Selected, canonical, UIAudioEventKind.TabSelect);
             return true;
         }
 
@@ -166,6 +172,7 @@ namespace Game.UI.Skirmish
                 _selectedScenarioId = FirstScenarioOnObjective(_selectedMapId, canonical);
             Persist();
             Notify();
+            Raise(SkirmishLibraryInteractionKind.Selected, canonical, UIAudioEventKind.TabSelect);
             return true;
         }
 
@@ -174,6 +181,7 @@ namespace Game.UI.Skirmish
             _layout = layout;
             Persist();
             Notify();
+            Raise(SkirmishLibraryInteractionKind.Clicked, layout.ToString(), UIAudioEventKind.TabSelect);
         }
 
         public bool SelectScenarioId(string scenarioId)
@@ -190,6 +198,13 @@ namespace Game.UI.Skirmish
             _level = SkirmishLibraryLevel.Battlefield;
             Persist();
             Notify();
+            ResolveAccess(entry, out SkirmishCardAccess access, out _, out _);
+            Raise(
+                SkirmishLibraryInteractionKind.Selected,
+                entry.ScenarioId,
+                access == SkirmishCardAccess.Playable
+                    ? UIAudioEventKind.CardSelect
+                    : UIAudioEventKind.CardLocked);
             return true;
         }
 
@@ -200,23 +215,35 @@ namespace Game.UI.Skirmish
             _difficulty = difficulty;
             Persist();
             Notify();
+            Raise(SkirmishLibraryInteractionKind.Selected, difficulty.ToString(), UIAudioEventKind.TabSelect);
         }
 
         public void ZoomIn()
         {
             if (_level == SkirmishLibraryLevel.Battlefield)
                 return;
-            EnsureSelectedMap();
-            if (string.IsNullOrEmpty(_selectedMapId))
+            _interactionDepth++;
+            try
             {
-                string recommended = FindRecommended();
-                string map = MapOf(recommended);
-                if (!string.IsNullOrEmpty(map))
-                    _selectedMapId = map;
+                EnsureSelectedMap();
+                if (string.IsNullOrEmpty(_selectedMapId))
+                {
+                    string recommended = FindRecommended();
+                    string map = MapOf(recommended);
+                    if (!string.IsNullOrEmpty(map))
+                        _selectedMapId = map;
+                }
+
+                if (!string.IsNullOrEmpty(_selectedMapId))
+                    SelectMapCollection(_selectedMapId);
+            }
+            finally
+            {
+                _interactionDepth--;
             }
 
-            if (!string.IsNullOrEmpty(_selectedMapId))
-                SelectMapCollection(_selectedMapId);
+            if (_level == SkirmishLibraryLevel.Battlefield)
+                Raise(SkirmishLibraryInteractionKind.Clicked, _selectedMapId, UIAudioEventKind.ScreenForward);
         }
 
         public void BackToTheater()
@@ -225,6 +252,7 @@ namespace Game.UI.Skirmish
             EnsureSelectedMap();
             Persist();
             Notify();
+            Raise(SkirmishLibraryInteractionKind.Clicked, "theater", UIAudioEventKind.ScreenBack);
         }
 
         public string QuickBattle()
@@ -236,18 +264,39 @@ namespace Game.UI.Skirmish
             if (index < 0 || index >= owned.Count)
                 index = 0;
             SkirmishBattleCatalogEntry entry = owned[index];
-            SelectScenarioId(entry.ScenarioId);
+            _interactionDepth++;
+            try
+            {
+                SelectScenarioId(entry.ScenarioId);
+            }
+            finally
+            {
+                _interactionDepth--;
+            }
+
+            Raise(SkirmishLibraryInteractionKind.Clicked, entry.ScenarioId, UIAudioEventKind.ButtonPrimaryClick);
             return entry.ScenarioId;
         }
 
         public void ApplyFilter(SkirmishLibraryFilter filter)
         {
             _filter = filter;
-            bool jumped = HasConstraint(filter) &&
-                          TryFirstMatch(filter, out SkirmishBattleCatalogEntry hit) &&
-                          SelectScenarioId(hit.ScenarioId);
+            bool jumped;
+            _interactionDepth++;
+            try
+            {
+                jumped = HasConstraint(filter) &&
+                         TryFirstMatch(filter, out SkirmishBattleCatalogEntry hit) &&
+                         SelectScenarioId(hit.ScenarioId);
+            }
+            finally
+            {
+                _interactionDepth--;
+            }
+
             if (!jumped)
                 Notify();
+            Raise(SkirmishLibraryInteractionKind.Clicked, filter.SearchText ?? string.Empty, UIAudioEventKind.ButtonSecondaryClick);
         }
 
         public bool Launch()
@@ -256,6 +305,7 @@ namespace Game.UI.Skirmish
             if (!briefing.CanLaunch)
                 return false;
             SkirmishLibraryLaunchContext.Difficulty = briefing.SelectedDifficulty;
+            Raise(SkirmishLibraryInteractionKind.Clicked, briefing.ScenarioId, UIAudioEventKind.ButtonPrimaryClick);
             return true;
         }
 
@@ -341,11 +391,25 @@ namespace Game.UI.Skirmish
                 });
             }
 
+            SkirmishMedalDifficultyTotals overallMedals = TotalsAcrossCatalog();
+            int earned = overallMedals.Recruit + overallMedals.Regular + overallMedals.Veteran + overallMedals.Commander;
+            int published = _showPlanned ? DevOverallPublishedCount : CountPublished(null, null);
             return new SkirmishTheaterState
             {
                 Pins = pins.ToArray(),
                 SelectedMapId = _selectedMapId ?? string.Empty,
-                RecommendedScenarioId = recommended ?? string.Empty
+                RecommendedScenarioId = recommended ?? string.Empty,
+                OverallWonCount = CountWon(null),
+                OverallPublishedCount = published,
+                OverallMedalsEarned = earned,
+                OverallMedalsPossible = published * 4,
+                OverallMedalTotals = new SkirmishMedalTotals
+                {
+                    Recruit = overallMedals.Recruit,
+                    Regular = overallMedals.Regular,
+                    Veteran = overallMedals.Veteran,
+                    Commander = overallMedals.Commander
+                }
             };
         }
 
@@ -679,6 +743,50 @@ namespace Game.UI.Skirmish
             return totals;
         }
 
+        private int CountWon(string mapId)
+        {
+            int count = 0;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < _catalog.Count; i++)
+            {
+                SkirmishBattleCatalogEntry entry = _catalog[i];
+                if (!string.IsNullOrEmpty(mapId) &&
+                    !string.Equals(entry.MapId, mapId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (!seen.Add(entry.ScenarioId))
+                    continue;
+                if (_ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Recruit) ||
+                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Regular) ||
+                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Veteran) ||
+                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Commander))
+                    count++;
+            }
+
+            return count;
+        }
+
+        private SkirmishMedalDifficultyTotals TotalsAcrossCatalog()
+        {
+            var totals = new SkirmishMedalDifficultyTotals();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < _catalog.Count; i++)
+            {
+                string scenarioId = _catalog[i].ScenarioId;
+                if (!seen.Add(scenarioId))
+                    continue;
+                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Recruit))
+                    totals.Recruit++;
+                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Regular))
+                    totals.Regular++;
+                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Veteran))
+                    totals.Veteran++;
+                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Commander))
+                    totals.Commander++;
+            }
+
+            return totals;
+        }
+
         private int CountPublished(string mapId, string objectiveId)
         {
             int count = 0;
@@ -957,6 +1065,13 @@ namespace Game.UI.Skirmish
         {
             if (_suspend == 0)
                 Changed?.Invoke();
+        }
+
+        private void Raise(SkirmishLibraryInteractionKind kind, string targetId, UIAudioEventKind sound)
+        {
+            if (_suspend != 0 || _interactionDepth != 0)
+                return;
+            Interaction?.Invoke(new SkirmishLibraryInteraction(kind, targetId, sound));
         }
 
         private sealed class PlayerPrefsLibraryStore : ISkirmishLibraryPrefs

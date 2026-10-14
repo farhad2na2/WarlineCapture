@@ -246,6 +246,8 @@ namespace Game.UI.Runtime
         {
             if (!baseAssaultPreset) return;
             SelectScenario(scenarioIndex);
+            if (!string.IsNullOrEmpty(SkirmishLibraryReturn.PendingScenarioId))
+                ReturnLibraryToScenario(SkirmishLibraryReturn.PendingScenarioId);
             _config.MapSeed = seed;
             Bind(_config);
             _configStore?.Apply(ReadConfigFromControls());

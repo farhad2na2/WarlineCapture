@@ -32,6 +32,8 @@ namespace Game.UI.Contracts
         public string MedalScenarioId;
         public byte MedalDifficulty;
         public bool MedalIsFirstAward;
+        // Expanded session catalog id, including repeats that earn no new medal.
+        public string CatalogId;
     }
     public struct UiExpandedSquadPage
     {

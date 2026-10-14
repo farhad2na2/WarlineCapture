@@ -1,5 +1,6 @@
 using System;
 using Game.Skirmish.Contracts;
+using Game.UI.Runtime;
 
 namespace Game.UI.Skirmish
 {
@@ -59,6 +60,11 @@ namespace Game.UI.Skirmish
         public SkirmishTheaterPinState[] Pins;
         public string SelectedMapId;
         public string RecommendedScenarioId;
+        public int OverallWonCount;
+        public int OverallPublishedCount;
+        public int OverallMedalsEarned;
+        public int OverallMedalsPossible;
+        public SkirmishMedalTotals OverallMedalTotals;
     }
 
     public struct SkirmishObjectiveTabState
@@ -125,6 +131,29 @@ namespace Game.UI.Skirmish
         public SkirmishDifficultyId? MedalMissing;
     }
 
+    public enum SkirmishLibraryInteractionKind
+    {
+        Clicked,
+        Selected
+    }
+
+    public readonly struct SkirmishLibraryInteraction
+    {
+        public SkirmishLibraryInteraction(
+            SkirmishLibraryInteractionKind kind,
+            string targetId,
+            UIAudioEventKind sound)
+        {
+            Kind = kind;
+            TargetId = targetId ?? string.Empty;
+            Sound = sound;
+        }
+
+        public SkirmishLibraryInteractionKind Kind { get; }
+        public string TargetId { get; }
+        public UIAudioEventKind Sound { get; }
+    }
+
     public interface ISkirmishLibraryPrefs
     {
         string Get(string key, string fallback);
@@ -135,6 +164,7 @@ namespace Game.UI.Skirmish
     public interface ISkirmishLibraryViewModel
     {
         event Action Changed;
+        event Action<SkirmishLibraryInteraction> Interaction;
         SkirmishLibraryLevel Level { get; }
         SkirmishTheaterState Theater { get; }
         SkirmishBattlefieldState Battlefield { get; }

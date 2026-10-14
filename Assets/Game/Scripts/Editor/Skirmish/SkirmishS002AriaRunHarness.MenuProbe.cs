@@ -223,6 +223,8 @@ namespace Game.Editor
             {
                 if (AdvancePresentedLibraryNavigation(buttons))
                     return;
+                if (!HasNewLibraryChrome(buttons) && AdvanceLibraryViewModel())
+                    return;
                 foreach (var b in buttons)
                     if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
                     { if (MenuTap(b)) menuStep = 4; return; }
@@ -350,6 +352,56 @@ namespace Game.Editor
                 menuStep = 4;
             }
 
+            return true;
+        }
+
+        private static bool AdvanceLibraryViewModel()
+        {
+            if (menuLibraryBeat == 4)
+                return false;
+            ResolveLibraryTarget();
+            QuickCustomScreenView setup = null;
+            foreach (var candidate in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+            {
+                if (!candidate.IsBaseAssaultSetup)
+                    continue;
+                setup = candidate;
+                break;
+            }
+
+            if (setup == null)
+                return false;
+
+            ISkirmishLibraryViewModel library;
+            try
+            {
+                library = setup.Library;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("[S004MenuJourney] phase=LibraryViewModel skipped=" + exception.Message);
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            if (!SkirmishLibraryNavigation.OpenTheaterBattlefieldCard(library, menuLibraryMap, catalogId))
+            {
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            setup.SelectScenarioId(catalogId);
+            if (!string.Equals(setup.SelectedScenarioId, catalogId, StringComparison.Ordinal) ||
+                !string.Equals(library.Briefing.ScenarioId, catalogId, StringComparison.OrdinalIgnoreCase))
+            {
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            menuLastTapAt = EditorApplication.timeSinceStartup;
+            menuStep = 4;
+            Debug.Log("[S004MenuJourney] phase=LibraryViewModel input=ViewModel navigation=Theater,Battlefield,Card map=" +
+                      menuLibraryMap + " scenario=" + catalogId + " briefing=" + library.Briefing.ScenarioId);
             return true;
         }
 

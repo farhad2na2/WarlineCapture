@@ -102,6 +102,33 @@ namespace Game.UI.Runtime
             TouchLibrary(library => library.SelectMapCollection(_mapFilter));
         }
 
+        public bool ReturnLibraryToScenario(string scenarioId)
+        {
+            if (!baseAssaultPreset)
+                return false;
+            if (!string.IsNullOrEmpty(scenarioId))
+                SkirmishLibraryReturn.Queue(scenarioId);
+            EnsureLibraryViewModel();
+            if (!SkirmishLibraryReturn.Apply(_libraryViewModel))
+                return false;
+
+            string selected = _libraryViewModel.Briefing.ScenarioId;
+            if (TryFindEntry(selected, out SkirmishBattleCatalogEntry entry))
+            {
+                _selectedScenarioId = entry.ScenarioId;
+                _mapFilter = _libraryViewModel.Battlefield.MapId ?? string.Empty;
+                if (entry.IsPlayable)
+                {
+                    _config.ScenarioIndex = entry.PlayableScenarioIndex;
+                    PlayerPrefs.SetString(LastScenarioIdPrefsKey, _selectedScenarioId);
+                    PlayerPrefs.Save();
+                }
+            }
+
+            return _libraryViewModel.Level == SkirmishLibraryLevel.Battlefield &&
+                   string.Equals(_libraryViewModel.Briefing.ScenarioId, selected, StringComparison.Ordinal);
+        }
+
         private void EnsureLibraryViewModel()
         {
             if (_libraryViewModel != null)

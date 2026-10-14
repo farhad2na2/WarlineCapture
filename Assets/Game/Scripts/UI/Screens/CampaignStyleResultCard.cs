@@ -33,6 +33,10 @@ namespace Game.UI.Runtime
         public bool ShowAdjust;
         public bool ActionsEnabled;
         public string Signature;
+        public bool ShowMedal;
+        public string MedalText;
+        public bool ShowBattlefieldBack;
+        public string BattlefieldBackLabel;
     }
 
     /// <summary>
@@ -59,9 +63,11 @@ namespace Game.UI.Runtime
         private TMP_Text[] performanceLabels;
         private TMP_Text[] performanceValues;
         private TMP_Text missionHeading;
+        private TMP_Text medalLabel;
+        private TMP_Text battlefieldLabel;
         private RectTransform[] filledStars;
         private V3StarGraphic[] outlinedStars;
-        private Button retryButton, replayButton, leaveButton, adjustButton;
+        private Button retryButton, replayButton, leaveButton, adjustButton, battlefieldButton;
         private ResultStarSequence stars;
         private string shownSignature;
 
@@ -102,6 +108,11 @@ namespace Game.UI.Runtime
             adjustButton.onClick.AddListener(() => adjust?.Invoke());
         }
 
+        public void BindBattlefield(Action battlefield)
+        {
+            battlefieldButton.onClick.AddListener(() => battlefield?.Invoke());
+        }
+
         public void Present(in ModeResultContent content)
         {
             Color accent = content.Victory ? Green : Loss;
@@ -135,6 +146,12 @@ namespace Game.UI.Runtime
             Set(performanceValues[1], content.Performance2Value);
             Set(performanceValues[2], content.Performance3Value);
             Set(missionHeading, string.IsNullOrEmpty(content.ObjectiveTitle) ? "THIS MISSION" : content.ObjectiveTitle);
+            medalLabel.gameObject.SetActive(content.ShowMedal);
+            if (content.ShowMedal)
+                Set(medalLabel, content.MedalText);
+            battlefieldButton.gameObject.SetActive(content.ShowBattlefieldBack);
+            if (content.ShowBattlefieldBack)
+                Set(battlefieldLabel, string.IsNullOrEmpty(content.BattlefieldBackLabel) ? "BATTLEFIELD" : content.BattlefieldBackLabel);
             Fit();
             if (shownSignature == content.Signature)
                 return;
@@ -211,6 +228,9 @@ namespace Game.UI.Runtime
 
             var match = Panel("MatchFacts", transform, new Vector2(1011f, -469f), new Vector2(646f, 164f), DarkTop, DarkBottom, Line);
             missionHeading = MakeLabel(match, new Vector2(24f, -48f), new Vector2(598f, 68f), 28f, Blue, TextAlignmentOptions.MidlineLeft);
+            medalLabel = MakeLabel(match, new Vector2(24f, -112f), new Vector2(598f, 40f), 22f, Gold, TextAlignmentOptions.MidlineLeft);
+            medalLabel.gameObject.name = "Medal";
+            medalLabel.gameObject.SetActive(false);
 
             var summaryPanel = Panel("Summary", transform, new Vector2(15f, -790f), new Vector2(754f, 134f), DarkTop, DarkBottom, Line);
             summary = MakeLabel(summaryPanel, new Vector2(28f, -22f), new Vector2(698f, 90f), 24f, BodyTextColor, TextAlignmentOptions.MidlineLeft);
@@ -221,6 +241,9 @@ namespace Game.UI.Runtime
             adjustButton = ActionButton("Adjust", new Vector2(1011f, -649f), DarkTop, DarkBottom, Line, "ADJUST SETUP");
             adjustLabel = adjustButton.GetComponentInChildren<TMP_Text>();
             adjustButton.gameObject.SetActive(false);
+            battlefieldButton = ActionButton("Battlefield", new Vector2(15f, -649f), DarkTop, DarkBottom, Line, "BATTLEFIELD");
+            battlefieldLabel = battlefieldButton.GetComponentInChildren<TMP_Text>();
+            battlefieldButton.gameObject.SetActive(false);
         }
 
         private Button ActionButton(string name, Vector2 position, Color top, Color bottom, Color border, string label)

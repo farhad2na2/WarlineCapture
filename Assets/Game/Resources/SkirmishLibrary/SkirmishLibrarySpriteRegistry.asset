@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7c4e91b2d8f4c6a9e1b0d3f5a7c8e24, type: 3}
+  m_Name: SkirmishLibrarySpriteRegistry
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.SkirmishLibrarySpriteRegistry
+  entries:
+  - Key: Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.AP.png
+    Sprite: {fileID: 21300000, guid: ebb716588698843eda0fa2a8ada56169, type: 3}
+  - Key: skirmish.plate.AP
+    Sprite: {fileID: 21300000, guid: ebb716588698843eda0fa2a8ada56169, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.CC.png
+    Sprite: {fileID: 21300000, guid: ba1b74a74931041f2b96e5dba0d5aeb5, type: 3}
+  - Key: skirmish.plate.CC
+    Sprite: {fileID: 21300000, guid: ba1b74a74931041f2b96e5dba0d5aeb5, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.DB.png
+    Sprite: {fileID: 21300000, guid: edc87de7117504e43bbf0d64ec14f4af, type: 3}
+  - Key: skirmish.plate.DB
+    Sprite: {fileID: 21300000, guid: edc87de7117504e43bbf0d64ec14f4af, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.IB.png
+    Sprite: {fileID: 21300000, guid: f7a62f42950dc48998135ea284847d43, type: 3}
+  - Key: skirmish.plate.IB
+    Sprite: {fileID: 21300000, guid: f7a62f42950dc48998135ea284847d43, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Plates/skirmish.plate.MP.png
+    Sprite: {fileID: 21300000, guid: 01d8fc972e00f4440a1bff536a93d94d, type: 3}
+  - Key: skirmish.plate.MP
+    Sprite: {fileID: 21300000, guid: 01d8fc972e00f4440a1bff536a93d94d, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S001.png
+    Sprite: {fileID: 21300000, guid: 5280968adb8124365bd8ae92d6301cae, type: 3}
+  - Key: skirmish.preview.S001
+    Sprite: {fileID: 21300000, guid: 5280968adb8124365bd8ae92d6301cae, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S002.png
+    Sprite: {fileID: 21300000, guid: 9eb4336287b4a4a0aaef45fd42fa657e, type: 3}
+  - Key: skirmish.preview.S002
+    Sprite: {fileID: 21300000, guid: 9eb4336287b4a4a0aaef45fd42fa657e, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S003.png
+    Sprite: {fileID: 21300000, guid: 5b68ca9644fdc4973b1058a55839ed85, type: 3}
+  - Key: skirmish.preview.S003
+    Sprite: {fileID: 21300000, guid: 5b68ca9644fdc4973b1058a55839ed85, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S004.png
+    Sprite: {fileID: 21300000, guid: f26ece97d418b459e8f3945d56bf2e3a, type: 3}
+  - Key: skirmish.preview.S004
+    Sprite: {fileID: 21300000, guid: f26ece97d418b459e8f3945d56bf2e3a, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S025.png
+    Sprite: {fileID: 21300000, guid: 3468afd92f0404e7a8a0d56585c06f52, type: 3}
+  - Key: skirmish.preview.S025
+    Sprite: {fileID: 21300000, guid: 3468afd92f0404e7a8a0d56585c06f52, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S073.png
+    Sprite: {fileID: 21300000, guid: df2abba54db0c4dd18d2e4f99ae3379a, type: 3}
+  - Key: skirmish.preview.S073
+    Sprite: {fileID: 21300000, guid: df2abba54db0c4dd18d2e4f99ae3379a, type: 3}

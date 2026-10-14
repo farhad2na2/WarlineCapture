@@ -2030,7 +2030,13 @@ namespace Game.UI.Runtime
 
         private static void CoverCrop(RawImage image, float frameWidth, float frameHeight)
         {
-            float sourceAspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+            float sourceWidth = image.texture != null && image.texture.width > 0
+                ? image.texture.width
+                : SkirmishLibraryPreviewAssets.Width;
+            float sourceHeight = image.texture != null && image.texture.height > 0
+                ? image.texture.height
+                : SkirmishLibraryPreviewAssets.Height;
+            float sourceAspect = sourceWidth / sourceHeight;
             if (frameWidth < 2f || frameHeight < 2f)
             {
                 image.uvRect = new Rect(0f, 0f, 1f, 1f);

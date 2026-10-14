@@ -61,6 +61,7 @@ namespace Game.Editor
         [MenuItem("Game/UI/V3/Rebuild SCN-13 Skirmish Setup")]
         public static void Build()
         {
+            SkirmishLibrarySpriteRegistryBuilder.Rebuild();
             V3UiFoundationBuilder.EnsureBuilt();
             LoadAssets();
 

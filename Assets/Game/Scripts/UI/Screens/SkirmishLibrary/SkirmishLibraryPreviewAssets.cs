@@ -5,8 +5,6 @@ namespace Game.UI.Runtime
         public const int Width = 512;
         public const int Height = 288;
         public const string Root = "Assets/Game/Art/SkirmishLibrary";
-        private static readonly System.Collections.Generic.Dictionary<string, UnityEngine.Texture2D> Loaded =
-            new System.Collections.Generic.Dictionary<string, UnityEngine.Texture2D>(System.StringComparer.Ordinal);
         private static UnityEngine.Texture2D _placeholder;
 
         public static string PreviewPath(string scenarioId) =>
@@ -70,25 +68,11 @@ namespace Game.UI.Runtime
 
         public static UnityEngine.Texture2D Load(string key)
         {
-            string path = CanonicalPath(key);
-            if (!HasAsset(path))
+            if (string.IsNullOrEmpty(key))
                 return null;
-            if (Loaded.TryGetValue(path, out UnityEngine.Texture2D cached) && cached != null)
-                return cached;
-
-            string root = System.IO.Path.GetDirectoryName(UnityEngine.Application.dataPath);
-            string absolute = System.IO.Path.Combine(root ?? string.Empty, path);
-            byte[] bytes = System.IO.File.ReadAllBytes(absolute);
-            var texture = new UnityEngine.Texture2D(Width, Height, UnityEngine.TextureFormat.RGBA32, false);
-            if (!UnityEngine.ImageConversion.LoadImage(texture, bytes))
-            {
-                UnityEngine.Object.Destroy(texture);
+            SkirmishLibrarySpriteRegistry registry = SkirmishLibrarySpriteRegistry.Load();
+            if (registry == null || !registry.TryGetTexture(key, out UnityEngine.Texture2D texture))
                 return null;
-            }
-
-            texture.name = System.IO.Path.GetFileNameWithoutExtension(path);
-            texture.hideFlags = UnityEngine.HideFlags.HideAndDontSave;
-            Loaded[path] = texture;
             return texture;
         }
 

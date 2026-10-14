@@ -177,6 +177,7 @@ namespace Game.Editor
                 safeFrame?.ClearSimulatedInsets();
             instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             view.PresentLibraryCapture(state);
+            RejectUnresolvedSprites(view.Library);
             Canvas.ForceUpdateCanvases();
             foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                 text.ForceMeshUpdate();
@@ -221,6 +222,57 @@ namespace Game.Editor
                     throw new InvalidOperationException(
                         "FA text is missing a glyph on " + text.name + " U+" + code.ToString("X4") + " text=" + shown);
                 }
+            }
+        }
+
+        internal static void RejectUnresolvedSprites(ISkirmishLibraryViewModel library)
+        {
+            if (library == null)
+                throw new InvalidOperationException("Sprite check has no library.");
+            SkirmishTheaterPinState[] pins = library.Theater.Pins;
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                    RequireResolvedSprite(pins[i].PlatePreviewKey);
+            }
+
+            SkirmishBattlefieldState field = library.Battlefield;
+            RequireCardSprites(field.MapCards);
+            RequireCardSprites(field.GridCards);
+            RequireFolderSprites(SkirmishLibraryPreviewAssets.Root + "/Previews");
+            RequireFolderSprites(SkirmishLibraryPreviewAssets.Root + "/Plates");
+        }
+
+        private static void RequireCardSprites(SkirmishBattleCardState[] cards)
+        {
+            if (cards == null)
+                return;
+            for (int i = 0; i < cards.Length; i++)
+                RequireResolvedSprite(cards[i].PreviewSpriteKey);
+        }
+
+        private static void RequireResolvedSprite(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return;
+            if (SkirmishLibraryPreviewAssets.Load(key) == null)
+                throw new InvalidOperationException("Sprite key is set but resolved to null: " + key);
+        }
+
+        private static void RequireFolderSprites(string folder)
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string absolute = Path.Combine(projectRoot ?? string.Empty, folder);
+            if (!Directory.Exists(absolute))
+                throw new InvalidOperationException("Sprite folder is missing: " + folder);
+            string[] files = Directory.GetFiles(absolute, "*.png");
+            Array.Sort(files, StringComparer.Ordinal);
+            for (int i = 0; i < files.Length; i++)
+            {
+                string assetPath = folder + "/" + Path.GetFileName(files[i]);
+                string logical = Path.GetFileNameWithoutExtension(files[i]);
+                RequireResolvedSprite(assetPath);
+                RequireResolvedSprite(logical);
             }
         }
 

@@ -136,6 +136,7 @@ namespace Game.Editor
             instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
             instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
             view.PresentLibraryCapture("theater");
+            SkirmishBattleLibraryCapture.RejectUnresolvedSprites(view.Library);
 
             var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
             created.Add(target);

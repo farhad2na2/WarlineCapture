@@ -1,0 +1,7 @@
+{
+  "source": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+  "beforeSha256": "dd3779fb618313a34140ec08d32ab6eaa2c84b92210a76480bd297db11c7936d",
+  "afterSha256": "8d656521921df4ea9a0b0a2c8bb72fe4fb75238ca7ea99324d4bb3c6bc10b07b",
+  "scope": "Explicit publicpan during ordinaryHUDzoom; delivery cancellation retained. No Fighter movement/combat change.",
+  "nativeValidationPending": true
+}

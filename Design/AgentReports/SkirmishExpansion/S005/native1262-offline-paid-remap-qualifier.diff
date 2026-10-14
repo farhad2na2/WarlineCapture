@@ -1,0 +1,31 @@
+--- immutable1262-paid-qualifier
++++ offline-remap-qualifier
+@@ -14,7 +14,27 @@
+  facts={'reservation':rid,'faction':1,'role':'ApcHeavy','producer':paid['producer'],'materialsPaid':paid['materialsPaid'],'members':1,'deliveredMembers':1,'supplyCost':6,'actorStableId':stable,'attempt':attempt}
+  if any(saved.get(k)!=v for k,v in facts.items()) or saved.get('paused') is not True or abs(saved['elapsed']-checkpoint['savedElapsed'])>.001:raise ValueError('Saved paid receipt identity/paused clock differs')
+  states=[r for r in rows if r['stage']=='NativePaidReceiptState' and r['reservation']==rid]
+- if not states or any(any(r.get(k)!=v for k,v in facts.items()) for r in states):raise ValueError('Actual runtime paid receipt facts changed')
++ # Runtime IDs belong to the freshly reconstructed building namespace.
++ # Preserve exact saved/pre IDs; only completed same-attempt native recovery may remap.
++ stablefacts={k:v for k,v in facts.items() if k!='producer'}
++ if not states or any(any(r.get(k)!=v for k,v in stablefacts.items()) for r in states):raise ValueError('Actual runtime paid receipt invariant facts changed')
++ preStates=[r for r in states if not r['recoveredNativeComplete']]
++ postStates=[r for r in states if r['recoveredNativeComplete']]
++ if not preStates or any(r['producer']!=paid['producer'] for r in preStates):raise ValueError('Pre-recovery producer runtime identity changed')
++ producerActors=[a for a in snapshot['Actors'] if a['OldRuntimeBuildingId']==paid['producer']]
++ if len(producerActors)!=1:raise ValueError('Exactly one saved live producer identity required for remap')
++ producerActor=producerActors[0]
++ import base64,struct
++ nativeParts={p['Type']:p for p in producerActor['Parts']}
++ info=struct.unpack('<7i',base64.b64decode(nativeParts['Game.Components.RuntimeBuildingCombatInfo']['Data']))
++ faction=base64.b64decode(nativeParts['Game.Components.Faction']['Data'])[0]
++ hp=struct.unpack('<2i',base64.b64decode(nativeParts['Game.Components.UnitHealth']['Data']))
++ if producerActor['Id']!='building.ground_staging.1' or producerActor['PrefabKey']!='Building_GroundStaging' or producerActor['IsStructure']!=1 or not producerActor['HasProduction'] or info[0]!=paid['producer'] or info[1]!=1 or faction!=1 or hp[0]<=0:raise ValueError('Saved exact own living GroundStaging producer provenance differs')
++ if not postStates or recovered['attempt']!=attempt or not recovered['recoveredNativeComplete'] or any(r['frame']<recovered['frame'] or r['elapsed']<checkpoint['savedElapsed'] for r in postStates):raise ValueError('Producer transition must follow genuine same-attempt completed native recovery')
++ remappedIds={r['producer'] for r in postStates}
++ if len(remappedIds)!=1 or next(iter(remappedIds))<=0:raise ValueError('Recovered producer ID must be positive and remain constant')
++ if any(r['frame']>=postStates[0]['frame'] for r in preStates):raise ValueError('Producer ID transition chronology overlaps pre/recovered observations')
++
+  restored=[r for r in states if r['recoveredNativeComplete']]
+  if not restored or recovered['attempt']!=attempt or recovered['runtimeReadiness']!='Established' or recovered['elapsed']<checkpoint['savedElapsed']:raise ValueError('Actual same-attempt restored paid receipt/R2 missing')
+  paused=[r for r in pre if r['paused'] and abs(r['elapsed']-checkpoint['savedElapsed'])<=.05]

@@ -1,0 +1,74 @@
+{
+  "sourceHash": "77b51a57825f280875176624fc1992f5e8de58728f5b95b68d3b19bc15847045",
+  "result": "Passed",
+  "checks": 56,
+  "runs": [
+    {
+      "run": 247,
+      "kind": "Runtime",
+      "tests": 8,
+      "log": "tests-247-support-faction-runtime.log",
+      "logSha256": "8d6a748875494280e33db60a3b65c3b1333247a6ff9ae7c60b3348c9235c958f",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 248,
+      "kind": "UiAria",
+      "tests": 10,
+      "log": "tests-248-support-ui-isolation.log",
+      "logSha256": "98ca5bc84bc9671d546446f5829394ed7e8bc9f9d0286153e64ce45063968259",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 249,
+      "kind": "Campaign",
+      "tests": 6,
+      "log": "tests-249-support-campaign-regression.log",
+      "logSha256": "d0e8e01d00be97dd326ba30bc33c451fb6af4285fd6984ed45bbc6dd301b4c85",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 250,
+      "kind": "Smoke",
+      "tests": 4,
+      "log": "tests-250-support-smoke-regression.log",
+      "logSha256": "c96b1b8a76be90a8ca8462a903c9336ad85baf1728407b010a9cb6a1cfcd828e",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 251,
+      "kind": "Strike",
+      "tests": 10,
+      "log": "tests-251-support-strike-regression.log",
+      "logSha256": "5696e55c32f46ced08230e07ed942ddd015592d4bfa9d52625eecb18ca603a2e",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 252,
+      "kind": "Paratrooper",
+      "tests": 9,
+      "log": "tests-252-support-paratrooper-regression.log",
+      "logSha256": "ca771e8c86766c2326948a89d07a4ba6263f566334eb9e8c1c92fda05f8f546d",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 253,
+      "kind": "Supply",
+      "tests": 9,
+      "log": "tests-253-support-supply-regression.log",
+      "logSha256": "d84511300a7b93314bf758cbb4262e4fdccbaa022dd8f2c8b16427783942f8ee",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    }
+  ],
+  "scope": "Focused automated Support isolation and existing Campaign/effect regressions; no native S005 Support use established",
+  "skirmishSupportActive": false,
+  "playerReady": false,
+  "normalInputMissionAcceptance": false
+}

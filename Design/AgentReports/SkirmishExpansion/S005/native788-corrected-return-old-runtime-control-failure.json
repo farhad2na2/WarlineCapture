@@ -1,0 +1,12 @@
+{
+  "result": "FailedAsExpected",
+  "validationResult": "Failed",
+  "wrapperExit": 0,
+  "passMarkerPresent": false,
+  "prePostIdentical": true,
+  "sourceHash": "0b29efa8fbecf2ec071c9628bfa1561f8f5dab90015a144c3201fde1fcbbfc7b",
+  "log": "native-788-corrected-return-old-runtime-control.log",
+  "observedFirstMovementPhase": 2,
+  "reason": "Original Return issues another move maneuver instead of beginning runway return",
+  "normalInputMissionCertified": false
+}

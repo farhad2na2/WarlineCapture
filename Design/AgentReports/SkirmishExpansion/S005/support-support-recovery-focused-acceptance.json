@@ -1,0 +1,82 @@
+{
+  "sourceHash": "d9bdc907477342fd50d3535a6c79e622d4c9e5010421d8ca0931c48556ae781b",
+  "result": "Passed",
+  "supportChecks": 65,
+  "runs": [
+    {
+      "run": 291,
+      "kind": "Runtime",
+      "log": "tests-291-support-recovery-runtime.log",
+      "logSha256": "8d6165d2495739b2a1f07aaa568fe143e4064a6183031383b9c24b6e09215eec",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 11
+    },
+    {
+      "run": 292,
+      "kind": "Smoke",
+      "log": "tests-292-support-recovery-smoke.log",
+      "logSha256": "e75525c6287427f5eff67c2c1d037cbac6a6560d2977e35c3e6ad56269aac6f4",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 293,
+      "kind": "UiAria",
+      "log": "tests-293-support-recovery-uiaria.log",
+      "logSha256": "8c12bd82c69d2f17aea5d1169fd7e95388a1b0676113db0605ed040d09716dba",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 294,
+      "kind": "Supply",
+      "log": "tests-294-support-recovery-supply.log",
+      "logSha256": "9fd2fe08716485813e17165d51af33d2299a85957308d07369032ede1bf7a26f",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 295,
+      "kind": "Campaign",
+      "log": "tests-295-support-recovery-campaign.log",
+      "logSha256": "94a7cd69d1643e3eaa8cd5d943773a2e2bfc3c727c8a44c38e3ad963912a9627",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 296,
+      "kind": "Strike",
+      "log": "tests-296-support-recovery-strike.log",
+      "logSha256": "6eb4a01f03942fbc4c321d3b00b24b7de9f3ff2192e0f3f3da268fea3b42937b",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 297,
+      "kind": "Paratrooper",
+      "log": "tests-297-support-recovery-paratrooper.log",
+      "logSha256": "bfa7fd6091ed64b763b4111f8a1f5b4e97458a05c4595cf7a4bfd3aa6a19e5a4",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 9
+    },
+    {
+      "run": 298,
+      "kind": "SkirmishSharedMaterials",
+      "log": "tests-298-support-recovery-skirmishsharedmaterials.log",
+      "logSha256": "375f5c3831171520fd4d248a4ab088ce6099df5df1cefeeadbcb9e7372089418",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": null
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

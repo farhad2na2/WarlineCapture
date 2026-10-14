@@ -1,0 +1,22 @@
+{
+  "scope": "Bounded external normal-input Stop diagnosis only; not full S005 readiness",
+  "result": "InvalidDiagnosticEvidence",
+  "firstFrame": 1,
+  "lastFrame": 90,
+  "frameCount": 90,
+  "frameGaps": [],
+  "complete": true,
+  "firstFreshAccepted": null,
+  "firstWheelClosed": 4,
+  "firstPairedTouch": 4,
+  "firstFourNativeStopped": 4,
+  "firstAllGates": null,
+  "finalFailedBitMask": 1,
+  "finalFailedBits": [
+    "No fresh accepted HUD Stop result"
+  ],
+  "errors": [
+    "Missing/duplicate original four Rocketeer identities at offset 1"
+  ],
+  "wrapperExpectedNonzero": true
+}

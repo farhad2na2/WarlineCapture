@@ -1,0 +1,32 @@
+{
+  "mission": "S005",
+  "result": "Failed",
+  "wrapperExit": 2,
+  "reason": "Native 18-minute Draw before launch; advanced-air timing missed",
+  "sourceHash": "3ab523ac4a01de7ce723b1a7dfadf5ab250236882e12fe2fe3096d7f61e65baa",
+  "preManifest": "final-658-airport-camera-factory-return-post-source-manifest.json",
+  "postManifest": "final-659-native-factory-controls-strike-cycle-post-source-manifest.json",
+  "allSourceAndMaterialsUnchanged": true,
+  "log": "native-659-native-factory-controls-strike-cycle.log",
+  "contacts": {
+    "recorded": 140,
+    "ended": 140,
+    "errors": 0
+  },
+  "nativeObservations": [
+    "[S005FixedWingCycle] phase=PaidDelivery role=Strike cost=520 nativeActor=1 runwayHome=1 receipt=1005",
+    "[S005FixedWingCycle] phase=PauseFabrication id=11 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=16 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=17 input=Touch",
+    "[S005FixedWingCycle] phase=PauseFabrication id=18 input=Touch",
+    "[S005FixedWingCycle] phase=FuelPriority allLivingFabricationPaused=1 input=Touch productionFlagsObserved=1",
+    "[S005FixedWingCycle] phase=Progress stage=4 materials=30 fuel=410 actor=1 nativeFire=0"
+  ],
+  "readonlyDiagnostics": [
+    "Tanker component/footprint/order inspections",
+    "Pathfinding busy singleton inspection"
+  ],
+  "noDiagnosticGameplayMutation": true,
+  "pendingPathHaulerStarvation": "Hypothesis supported by stationary tankers and busy flag; regression/native verification pending",
+  "playerReady": false
+}

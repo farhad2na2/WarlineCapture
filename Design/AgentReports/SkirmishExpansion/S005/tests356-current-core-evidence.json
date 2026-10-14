@@ -1,0 +1,24 @@
+{
+  "sourceHash": "4e620debdff668450cdd5f7e53c2c64999974f6836273e7ae7a66ff898eb80a7",
+  "result": "Passed",
+  "countsForCurrentSource": true,
+  "playerReady": false,
+  "scope": "Focused shared movement, native input receipt, ARIA, army, economy, checkpoint checks",
+  "requiredMarkers": [
+    "[UnitMoveOrderFocusedValidation] result=Passed tests=22",
+    "[AIFactionControlStartupValidation] result=Passed tests=4",
+    "[SkirmishS002AriaHarnessTests] result=Passed",
+    "[SkirmishExpandedAriaTests] result=Passed",
+    "[SkirmishExpandedArmyTests] result=Passed",
+    "[SkirmishExpandedEconomyTests] result=Passed",
+    "[SkirmishExpandedCheckpointTests] result=Passed",
+    "[SkirmishS002AriaHarnessTests] result=Passed",
+    "[AriaTouchInputValidation] result=Passed cases=22",
+    "[SkirmishSharedMaterialsTests] result=Passed",
+    "[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.SkirmishSharedMaterialsTests.RunFocusedValidation"
+  ],
+  "log": "tests-356-core-shared-materials.log",
+  "logSha256": "824556aaebf7ed14f0cca7a21f3127d8275e02f58d7f2664d58e486490040ed9",
+  "wrapperExit": 0,
+  "receiptExit": 0
+}

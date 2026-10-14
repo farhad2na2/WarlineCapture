@@ -1,0 +1,21 @@
+{
+  "result": "PassedFocusedRecordedRunwayApproachFuel",
+  "sourceHash": "7628812e19f39e3c96399f0ada4e233037ec7eba96b9e5824c9b9c4ab66e3e3a",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-793-native-aircraft-world-position-fuel-fix-pre-source-manifest.json",
+  "postSourceManifest": "final-793-native-aircraft-world-position-fuel-fix-post-source-manifest.json",
+  "wrapperExitCode": 0,
+  "requiredPassMarker": "[RunwayApproachFuelValidation] result=Passed cases=2 existingFuelRegressions=8",
+  "log": "native-793-aircraft-world-position-fuel-fix.log",
+  "caseMarkers": [
+    "[RunwayApproachFuelCase] result=Passed step=0.03333334 elapsed=88.4000046104193 outsideFrames=342 fuelSpent=655.5",
+    "[RunwayApproachFuelCase] result=Passed step=0.1 elapsed=88.4000013172626 outsideFrames=113 fuelSpent=654"
+  ],
+  "oldRuntimeControlFailure": "native792-runway-approach-fuel-accounting-control-failure.json",
+  "scope": "Real movement+fuel systems in isolated World replay complete recorded native791 approach at30Hz and10Hz, including external ground-grid flight and taxi; eight existing fuel/safety/ground regressions.",
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "retainedDiagnostics": [
+    "Persistent allocator leak diagnostic4 retained in full log"
+  ]
+}

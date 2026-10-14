@@ -1,0 +1,12 @@
+{
+  "result": "PreparedNeverLoaded",
+  "predecessor1126": "native1126-isolated-paid-boarded-recovery-failure.json",
+  "change": "Assign isolated SaveRoot after inherited startup establishes its own profile root, with native SavePath reflection equality before every recovery frame. Public native SaveExit had succeeded, but predecessor archived a root that startup had superseded.",
+  "fixture": "/private/tmp/S005BoardedRecovery1130.cs",
+  "fixtureSha256": "ad9303728bcac32c8d9c99a14ee33f96486211400cb1296dd80612d5289cb0b2",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1130.py",
+  "runnerSha256": "c32e3e2fb93c68027c6db696c425b65bacfc0e8ced9fd0a2c55fcbc41ed35c51",
+  "productionSourceChanged": false,
+  "payloadWrittenOrAlteredByFixture": false,
+  "saveContinueCertified": false
+}

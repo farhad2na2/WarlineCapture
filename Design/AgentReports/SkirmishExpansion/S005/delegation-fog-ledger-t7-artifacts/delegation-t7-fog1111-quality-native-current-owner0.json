@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "if(UnityEditor.EditorApplication.isPlaying || UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating || Game.Editor.ExistingEditorValidation.IsRunning) throw new System.InvalidOperationException(\"Editor must be idle\"); if(UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()]!=\"Mobile\") throw new System.InvalidOperationException(\"Only current Mobile may change\"); UnityEngine.QualitySettings.antiAliasing=0; var asset=UnityEditor.AssetDatabase.LoadAllAssetsAtPath(\"ProjectSettings/QualitySettings.asset\")[0]; var so=new UnityEditor.SerializedObject(asset); var levels=so.FindProperty(\"m_QualitySettings\"); for(int i=0;i<levels.arraySize;i++){var level=levels.GetArrayElementAtIndex(i);if(level.FindPropertyRelative(\"name\").stringValue==\"Mobile\") level.FindPropertyRelative(\"antiAliasing\").intValue=0;} so.ApplyModifiedPropertiesWithoutUndo();UnityEditor.EditorUtility.SetDirty(asset);UnityEditor.AssetDatabase.SaveAssets(); return new { CurrentLevel=UnityEngine.QualitySettings.GetQualityLevel(),Name=UnityEngine.QualitySettings.names[UnityEngine.QualitySettings.GetQualityLevel()],ActualAA=UnityEngine.QualitySettings.antiAliasing };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "CurrentLevel": 1,
+        "Name": "Mobile",
+        "ActualAA": 0
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture-MenuUiUx"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

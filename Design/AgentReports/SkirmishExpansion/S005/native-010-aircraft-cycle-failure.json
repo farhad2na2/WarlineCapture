@@ -1,0 +1,24 @@
+{
+  "mission": "S005",
+  "device": "Editor",
+  "candidateHash": "514693d22f952f68591038d4e5875fea2845f6ffbd4a0b7cba4779d969185ff3",
+  "wrapperExit": 2,
+  "result": "Failed",
+  "reason": "secondSortieNotLaunched",
+  "passedObservations": [
+    "Paid R2 upgrade",
+    "Paid Helipad placed within 2m of touched valid site, real rendered model",
+    "Paid logistics truck and mining income",
+    "Paid attack helicopter delivered",
+    "First attack order accepted and airborne fuel expenditure observed",
+    "Return order accepted and touchdown at home observed"
+  ],
+  "firstSortieFuelSpent": 92,
+  "fuelAvailableAfterReturn": 108,
+  "secondAttackIssued": 0,
+  "secondAttackReasonCode": 6,
+  "secondAttackReason": "TargetNotAttackable",
+  "cause": "Unresolved; retain failure, do not claim aircraft lifecycle passed",
+  "log": "native-010-aircraft-cycle-failed.log",
+  "playerReady": false
+}

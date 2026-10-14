@@ -1,0 +1,53 @@
+import hashlib,json,pathlib,re,shutil,subprocess,sys
+
+root=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+p=root/'Design/AgentReports/SkirmishExpansion/S005'
+pre='final-990-m02-content-pack-binding-repair-post-source-manifest.json'
+proofs=[]
+for n,m in [(992,2),(991,1),(993,3),(994,4),(995,5)]:
+    log=f'native-{n}-shared-campaign-m{m:02d}-en-fa-journey.log'
+    method=f'CampaignInputJourney971.RunM{m:02d}'
+    f=p/'TECHNICAL_READINESS_CURRENT.json';s=json.loads(f.read_text())
+    assert s['activeRun'] is None and not (p/log).exists()
+    assert json.loads((p/pre.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']==s['sourceHash']
+    s.update(activeRun=f'native{n}',activeLog=log,activeScope=method,activePreManifest=pre)
+    f.write_text(json.dumps(s,indent=2)+'\n')
+    wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--reuse','--timeout','2400','--log',str(p/log),'--','-executeMethod',method],cwd=root).returncode
+    (p/(log+'.wrapper-exit')).write_text(str(wrapper)+'\n')
+    bridge=int((p/(log+'.exit')).read_text()) if (p/(log+'.exit')).exists() else None
+    t=(p/log).read_text(errors='replace') if (p/log).exists() else ''
+    post=f'final-{n}-shared-campaign-m{m:02d}-post'
+    subprocess.run(['rtk','proxy','python3','/private/tmp/warline-s005-source-manifest.py',post],cwd=root,check=True)
+    post+='-source-manifest.json'
+    same=json.loads((p/pre).read_text())==json.loads((p/post).read_text())
+    sha=json.loads((p/post.replace('-source-manifest.json','-independent-fingerprint.json')).read_text())['sourceHash']
+    victories=re.findall(r'\[CampaignPlayerJourney\] victory=(\S+) locale=(\S+)',t)
+    mission=['first_contact','establish_base','radar_warning','airlift','breach_assault'][m-1]
+    mission=f'saga.ch01.m{m:02d}.{mission}'
+    errors=[]
+    if wrapper!=0 or bridge!=0:errors.append('Wrapper/native bridge failure')
+    if not same:errors.append('Full source changed')
+    if victories!=[(mission,'en'),(mission,'fa-IR')]:errors.append('Missing exact bilingual native victories')
+    if '[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for '+mission not in t:errors.append('Missing successful result and campaign return marker')
+    out=re.search(r'\[CampaignTutorialEntry\] evidence=(\S+)',t)
+    screenshots=[]
+    if out:
+        evidence=pathlib.Path(out[1]); dest=p/f'native{n}-campaign-m{m:02d}-screens';dest.mkdir(exist_ok=False)
+        for path in sorted(evidence.glob('*.png')):
+            shutil.copy2(path,dest/path.name);screenshots.append(str((dest/path.name).relative_to(p)))
+    if not screenshots:errors.append('No native screenshots')
+    if '[CampaignNativeSelection] result=Passed' not in t:errors.append('Missing audited native selection companion pass marker')
+    shutil.copy2('/private/tmp/CampaignInputJourney971.cs',p/f'native{n}-campaign-selection-driver.cs.txt')
+    name=f'native{n}-shared-campaign-m{m:02d}-en-fa-journey-'+('pass' if not errors else 'failure')+'.json'
+    proof=dict(result='Passed' if not errors else 'Failed',scope='Affected Campaign regression using checked native player-action journey; UI raycast clicks and screen-position command requests, not a strict native Touch audit',sourceHash=sha,fullSourceUnchanged=same,preManifest=pre,postManifest=post,actualWrapperExit=wrapper,nativeBridgeExit=bridge,log=log,logSha256=hashlib.sha256((p/log).read_bytes()).hexdigest() if (p/log).exists() else None,mission=mission,victories=victories,screenshots=screenshots,normalMissionOutcomeNotInjected=True,availabilityAndGuidanceFixture=True,strictNativeTouchAudit=False,realHumanDeviceAcceptance=False,errors=errors)
+    (p/name).write_text(json.dumps(proof,indent=2)+'\n');proofs.append(name)
+    s=json.loads(f.read_text());s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None)
+    s.setdefault('currentCampaignRegressionProofs',[]).append(name)
+    f.write_text(json.dumps(s,indent=2)+'\n')
+    with (p/'CURRENT_ACCEPTANCE.md').open('a') as md:md.write(f'\nNative{n}: Campaign M{m} bilingual player-action regression {proof["result"]}; wrapper{wrapper}/bridge{bridge}; full source unchanged={same}. Input scope is native raycast UI clicks and screen-position command requests, without outcome injection. Proof `{name}`.\n')
+    print(json.dumps(dict(completed=n,result=proof['result'],errors=errors)),flush=True)
+    if errors:sys.exit(3)
+    pre=post
+name='native991-995-shared-campaign-m1-m5-regression-matrix.json'
+(p/name).write_text(json.dumps(dict(result='Passed',sourceHash=sha,proofs=proofs,missions=5,locales=['en','fa-IR'],scope='Shared Campaign native player-action regression; separate from strict Touch and human/device acceptance',normalMissionOutcomeNotInjected=True,strictNativeTouchAudit=False,technicallyReady=False,playerReady=False),indent=2)+'\n')
+s=json.loads(f.read_text());s['currentCampaignRegressionMatrix']=name;f.write_text(json.dumps(s,indent=2)+'\n')

@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs",
+      "baseSha256": "61e75ea683e6726258dd48ca8c46bf84c2c76ac921d6b29ff0c6bd6d7ead1092",
+      "stagedSha256": "c34f71f9d3409424b423ba8e4f9b401945258fb15dc315b80c12641615351a31",
+      "stagedPath": "/private/tmp/fogfix1091-consumers-vfx-testfix/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs"
+    }
+  ],
+  "patchSha256": "825c206c09225f9330764d8fb7e6e94427cc3121e0a74c39d0a4a746998dcae3",
+  "cause": "Actual Ground EnqueueImpactVfx always appends explosion+smoke; CombatGameObjectVfxRequests.Enqueue creates request regardless of null prefab. Test must assert both actual positions, preserve exact zero hidden effects."
+}

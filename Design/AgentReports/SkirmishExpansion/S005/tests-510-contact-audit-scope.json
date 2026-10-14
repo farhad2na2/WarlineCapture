@@ -1,0 +1,54 @@
+{
+  "result": "Passed",
+  "cases": [
+    {
+      "name": "paired native phases",
+      "passed": true
+    },
+    {
+      "name": "inactive menu prior counter",
+      "passed": true
+    },
+    {
+      "name": "Runtime inactive audit rejected",
+      "passed": true
+    },
+    {
+      "name": "Manual inactive audit rejected",
+      "passed": true
+    },
+    {
+      "name": "PlayerResume inactive audit rejected",
+      "passed": true
+    },
+    {
+      "name": "active runtime violation rejected",
+      "passed": true
+    },
+    {
+      "name": "inactive menu unexpected still rejected",
+      "passed": true
+    },
+    {
+      "name": "explicit terminal no-command cancellation",
+      "passed": true
+    },
+    {
+      "name": "cancellation command accepted rejected",
+      "passed": true
+    },
+    {
+      "name": "playing cancellation rejected",
+      "passed": true
+    },
+    {
+      "name": "no terminal return rejected",
+      "passed": true
+    },
+    {
+      "name": "missing Ended rejected",
+      "passed": true
+    }
+  ],
+  "completeMatchCertified": false
+}

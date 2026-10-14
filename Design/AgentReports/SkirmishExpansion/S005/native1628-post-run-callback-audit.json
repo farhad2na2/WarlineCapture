@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-native1628-connected-review-only/callback-audit1628.cs",
+      "entry": "S005CallbackAudit1628.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 41,
+      "executeMs": 2,
+      "assemblyName": "PipelineRunScript_callback-audit1628_118c3f717d1d4078af0edda9d14188f7",
+      "success": true,
+      "result": "EditorApplication.update:|EditorApplication.delayCall:|Canvas.willRenderCanvases:|Application.s_LogCallbackHandler:|AriaCommandEvidence.Recorded:"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

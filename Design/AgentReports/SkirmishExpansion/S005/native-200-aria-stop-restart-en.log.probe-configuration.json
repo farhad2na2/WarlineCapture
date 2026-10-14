@@ -1,0 +1,8 @@
+{
+  "parameter": "WARLINE_S004_STOP_PROBE",
+  "value": "1",
+  "catalog": "S005",
+  "arming": "Editor update callback observes next artifactId change, before consent",
+  "scope": "Test branch only; actions use presented native Touch controls",
+  "sourceAssetsChanged": false
+}

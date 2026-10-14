@@ -1,0 +1,155 @@
+{
+  "scope": "Exact1110 scoped9 PASS with recorded import preflightAA issue and1111 scoped19 PASS postownerAA0; not wholemain/native mission readiness",
+  "files": [
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-ledger9.log",
+      "path": "delegation-t7-fog1110-ledger9.log",
+      "sha256": "ae708e8e11dca5cdf02fc40be5618f6940cecaeda908e38142262fb9a6138290",
+      "bytes": 3977
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-ledger9.log.dispatch.json",
+      "path": "delegation-t7-fog1110-ledger9.log.dispatch.json",
+      "sha256": "1dfad6be8fbae3ff821462a5d35219c6b8d77fd7097a50e0743aa3e44754f8af",
+      "bytes": 945
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-ledger9.log.exit",
+      "path": "delegation-t7-fog1110-ledger9.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-recompile-request.json",
+      "path": "delegation-t7-fog1110-recompile-request.json",
+      "sha256": "845592abaebe5fef9d9542e470114de757517371d51e9527fc5dfe61377d1056",
+      "bytes": 448
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-native-quality-post.json",
+      "path": "delegation-t7-fog1110-native-quality-post.json",
+      "sha256": "74b5c966861f14b831fec09d991bbf02bbad12e33ad307f83ae70a443bfc5308",
+      "bytes": 2069
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-recompile-status01.json",
+      "path": "delegation-t7-fog1110-recompile-status01.json",
+      "sha256": "ec18532325eec7d1c8604a91c43844759e14fb706cd660f1a72f68a2bef7aa69",
+      "bytes": 404
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-idle-preproof.json",
+      "path": "delegation-t7-fog1110-idle-preproof.json",
+      "sha256": "09980e6066826d83c36ac7c4d915a28221c97d75df08ca1cdc8125486c6757b9",
+      "bytes": 923
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/pre-source.json",
+      "path": "delegation-t7-fog1110-preserve/pre-source.json",
+      "sha256": "08db63a27d57f5746b9647e152f780fa38ca2679900a356b431dc7a06f9bb02b",
+      "bytes": 9968882
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/post-source.json",
+      "path": "delegation-t7-fog1110-preserve/post-source.json",
+      "sha256": "08db63a27d57f5746b9647e152f780fa38ca2679900a356b431dc7a06f9bb02b",
+      "bytes": 9968882
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/import-source-delta.json",
+      "path": "delegation-t7-fog1110-preserve/import-source-delta.json",
+      "sha256": "ea5169ac59a335052ea02e3b5363f896f4c1b08e23227ca15c2e8c45a98c875f",
+      "bytes": 2641
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/run-source-delta.json",
+      "path": "delegation-t7-fog1110-preserve/run-source-delta.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/applied-index.json",
+      "path": "delegation-t7-fog1110-preserve/applied-index.json",
+      "sha256": "1babd69132e5a0976e8645737b0cba558ee1dc3d05f187a255790bfb3d56811f",
+      "bytes": 5324
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/closure.json",
+      "path": "delegation-t7-fog1110-preserve/closure.json",
+      "sha256": "7b7db985363f398a917d218ac9ed9706f8004769a43b9502e7ad5a19af5b9e8a",
+      "bytes": 478
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs.meta",
+      "path": "delegation-t7-fog1110-preserve/generated-metas/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs.meta",
+      "sha256": "1dae7cb165bff0dd6af5bb30b12b8d7beb9b943ff28ac91a85f1d13f82154587",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs.meta",
+      "path": "delegation-t7-fog1110-preserve/generated-metas/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs.meta",
+      "sha256": "11c3dc98702dc56b6b17bc19d2f0544abd6e8e4ab620162f8e5b543df2e3cf2a",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1110-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs.meta",
+      "path": "delegation-t7-fog1110-preserve/generated-metas/Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs.meta",
+      "sha256": "7273bf05f4bd98b96059dd311ba06e6ca7bde5025a8bf1de3e4097cfce58d4f8",
+      "bytes": 59
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-core19.log.exit",
+      "path": "delegation-t7-fog1111-core19.log.exit",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-core19.log",
+      "path": "delegation-t7-fog1111-core19.log",
+      "sha256": "98ccbdaee825383d1b0e763dcbc69d2eae7e546a651948a8be40df8643da1f8b",
+      "bytes": 3427
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-core19.log.dispatch.json",
+      "path": "delegation-t7-fog1111-core19.log.dispatch.json",
+      "sha256": "ea77beeddd75bb5bf6d26db1b9f097f27009666f3832efde13a49da3ef2b8b83",
+      "bytes": 944
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-quality-native-current-owner0.json",
+      "path": "delegation-t7-fog1111-quality-native-current-owner0.json",
+      "sha256": "924f791af0790e57e7cad91ae66f8c185a4883bbe746c3928e8dd2b78aba6682",
+      "bytes": 1730
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-idle-native-quality-post.json",
+      "path": "delegation-t7-fog1111-idle-native-quality-post.json",
+      "sha256": "d48818f1c4cc112ed5d27bf17ae9b44352682f3751140f81a9da8a84fa3242b8",
+      "bytes": 1197
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-preserve/pre-source.json",
+      "path": "delegation-t7-fog1111-preserve/pre-source.json",
+      "sha256": "2742aec53ab1e798173bf847d4d1fb160bf89d836b1dfed7759cfee3314012c1",
+      "bytes": 9968882
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-preserve/post-source.json",
+      "path": "delegation-t7-fog1111-preserve/post-source.json",
+      "sha256": "2742aec53ab1e798173bf847d4d1fb160bf89d836b1dfed7759cfee3314012c1",
+      "bytes": 9968882
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-preserve/run-source-delta.json",
+      "path": "delegation-t7-fog1111-preserve/run-source-delta.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2
+    },
+    {
+      "source": "/private/tmp/delegation-t7-fog1111-preserve/closure.json",
+      "path": "delegation-t7-fog1111-preserve/closure.json",
+      "sha256": "ebaf9a8e43946e7f41c59c876368e1015cb8e8b18e766792df3ab744f35d786a",
+      "bytes": 401
+    }
+  ]
+}

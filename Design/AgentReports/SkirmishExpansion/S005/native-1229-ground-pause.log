@@ -1,0 +1,181 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.UnitGroundMovementPauseTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedInfantryInRange","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:87)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedInfantryChase","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:88)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridInfantryZeroDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:89)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridVehicleZeroDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:90)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridVehicleNearArrivalCleanup","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:91)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedActiveZeroDelta","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":true,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:92)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedChasePositiveDelta","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"missingGameplayState":false,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:93)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridInfantryPositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"missingGameplayState":false,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:94)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridVehiclePositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.0,"simulationActive":true,"missingGameplayState":false,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:95)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedInRangePositiveDeltaFacing","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.0,"rotationDelta":0.7653668522834778,"simulationActive":true,"missingGameplayState":false,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:96)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedInactivePositiveDelta","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:97)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridInfantryInactivePositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:98)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridVehicleNearArrivalInactivePositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":false,"missingGameplayState":false,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:99)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedMissingGameplayPositiveDelta","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"missingGameplayState":true,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:100)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridInfantryMissingGameplayPositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.7653668522834778,"simulationActive":true,"missingGameplayState":true,"transformChanged":true,"gridChanged":false,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:101)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridVehicleMissingGameplayPositiveDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.25,"positionDelta":0.5,"rotationDelta":0.0,"simulationActive":true,"missingGameplayState":true,"transformChanged":true,"gridChanged":true,"kinematicsChanged":true,"pathChanged":false,"targetChanged":false,"positiveControl":true,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:102)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"EngagedMissingGameplayZeroDelta","system":"UnitEngagedMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":true,"missingGameplayState":true,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":-1,"currentPathIndex":-1}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:103)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTestsCase] {"scenario":"GridNearArrivalMissingGameplayZeroDelta","system":"UnitGridMovementSystem","mode":"Conservation","delta":0.0,"positionDelta":0.0,"rotationDelta":0.0,"simulationActive":true,"missingGameplayState":true,"transformChanged":false,"gridChanged":false,"kinematicsChanged":false,"pathChanged":false,"targetChanged":false,"positiveControl":false,"originalPathIndex":0,"currentPathIndex":0}
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:Case (string,bool,bool,bool,bool,bool,single,bool,bool) (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:116)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:104)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitGroundMovementPauseTests] result=Passed actualSystems=2 cases=18 conservationCases=11 positiveControls=7 inactivePositiveCases=3 missingGameplayCases=5 missionFailureCauseCertified=0
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.UnitGroundMovementPauseTests:RunFocusedValidation () (at Assets/Tests/Editor/UnitGroundMovementPauseTests.cs:105)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1229-ground-pause.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.UnitGroundMovementPauseTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:143)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

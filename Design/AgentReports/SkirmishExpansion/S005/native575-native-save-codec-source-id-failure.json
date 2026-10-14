@@ -1,0 +1,12 @@
+{
+  "playerReady": false,
+  "result": "Failed",
+  "sourceHash": "be4e45b96c468826de1b7ccb745d9900c68e4c42570e4f2d7298be586e583deb",
+  "prePostMatched": true,
+  "step": 3,
+  "reason": "Player Save & Exit failed / AtomicWriteFailed",
+  "rootCause": "Codec expected legacy map/faction/cell/prefab aliases; capture uses persistent map/source/mapId/stableId aliases",
+  "persisted": false,
+  "nativeRecoveryComplete": false,
+  "next": "Repeat native Save/Continue after strict source identity codec repair"
+}

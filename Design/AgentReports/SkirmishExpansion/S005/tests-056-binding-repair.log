@@ -1,0 +1,38 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.V3UiLocalizationCatalogBuilder.RepairExistingUiBindings
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_7b03e139/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ConfiguredUiTables] result=Passed configEntries=492
+UnityEngine.Debug:Log (object)
+Game.Editor.V3UiLocalizationCatalogBuilder:ApplyConfiguredUiTables () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.Configs.cs:91)
+Game.Editor.V3UiLocalizationCatalogBuilder:RepairExistingUiBindings () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.Configs.cs:156)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7b03e139/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[V3UiLocalizationCatalogBuilder] validation=Passed prefabs=40 bindings=1237 en=4185 fa=4185
+UnityEngine.Debug:Log (object)
+Game.Editor.V3UiLocalizationCatalogBuilder:ValidateBindingsAndCoverage () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:387)
+Game.Editor.V3UiLocalizationCatalogBuilder:RepairExistingUiBindings () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.Configs.cs:176)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7b03e139/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingUiBindings] result=Passed prefabs=40
+UnityEngine.Debug:Log (object)
+Game.Editor.V3UiLocalizationCatalogBuilder:RepairExistingUiBindings () (at Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.Configs.cs:177)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_7b03e139/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.V3UiLocalizationCatalogBuilder.RepairExistingUiBindings
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+PipelineEvaluation.PipelineEval_7b03e139/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

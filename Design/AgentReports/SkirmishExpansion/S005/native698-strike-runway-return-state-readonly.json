@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager; using(var q=em.CreateEntityQuery(typeof(Game.Components.UnitAirComponent),typeof(Game.Components.SkirmishUnitRoleComponent),typeof(Game.Components.Faction))) using(var es=q.ToEntityArray(Unity.Collections.Allocator.Temp)){foreach(var e in es){if(em.GetComponentData<Game.Components.Faction>(e).Id!=1 || em.GetComponentData<Game.Components.SkirmishUnitRoleComponent>(e).Role!=Game.Skirmish.Contracts.SkirmishRoleKind.Strike)continue; return \"entity=\"+e.Index+\" air=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitAirComponent>(e))+\" transform=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Unity.Transforms.LocalTransform>(e))+\" move=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitMove>(e))+\" fuel=\"+UnityEngine.JsonUtility.ToJson(em.GetComponentData<Game.Components.UnitFuelConsumption>(e));}}return \"Paid Strike absent\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "entity=870 air={\"HomePosition\":{\"x\":832.3399658203125,\"y\":0.8241641521453857,\"z\":670.6199951171875},\"HomeCell\":{\"x\":832,\"y\":670},\"HomeInitialized\":1,\"ReturningHome\":1,\"Airborne\":1,\"UsesRunway\":1,\"TakeoffRolling\":0,\"LandingRolling\":0,\"AttackRunActive\":5,\"AttackManeuverTurnSign\":1,\"AttackPassGoalCell\":{\"x\":0,\"y\":0},\"ReturnApproachInitialized\":0,\"RunwayTakeoffPosition\":{\"x\":832.3239135742188,\"y\":0.8241641521453857,\"z\":767.6749877929688},\"RunwayTakeoffCell\":{\"x\":832,\"y\":767},\"RunwayLandingPosition\":{\"x\":832.3399658203125,\"y\":0.8241641521453857,\"z\":670.6199951171875},\"RunwayLandingCell\":{\"x\":832,\"y\":670},\"AttackRunExitPosition\":{\"x\":832.2840576171875,\"y\":31.610071182250978,\"z\":1008.7296752929688},\"FixedWingCruiseY\":33.120147705078128,\"FixedWingCruiseYInitialized\":1} transform={\"Position\":{\"x\":743.978759765625,\"y\":33.120147705078128,\"z\":510.75347900390627},\"Scale\":1.0,\"Rotation\":{\"value\":{\"x\":0.04260877147316933,\"y\":-0.15901809930801392,\"z\":-0.25528764724731448,\"w\":0.9527465105056763}}} move={\"Speed\":36.0,\"WalkSpeed\":36.0,\"RoadSpeedMultiplier\":1.0,\"ArriveDistance\":0.05000000074505806} fuel={\"GroundFuelPerCell\":0.0,\"AirFuelPerCell\":0.25,\"Enabled\":1}"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

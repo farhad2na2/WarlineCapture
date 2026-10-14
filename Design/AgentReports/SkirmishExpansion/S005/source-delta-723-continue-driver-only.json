@@ -1,0 +1,14 @@
+{
+  "previousSourceHash": "ba35c99af680bae25aa9df70c9a55c8b55ebdcd771647f49150301b5a88b2566",
+  "currentSourceHash": "69efe7634459e836193e538902799ee7f9b68945f7f84cd08fd0aef042b9a5e5",
+  "beforeManifest": "final-722-public-continue-retry-driver-timeout-post-source-manifest.json",
+  "afterManifest": "final-723-continue-retry-observe-restored-session-pre-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsAndPhysicalMapUnchanged": true,
+  "all562MaterialsUnchanged": true,
+  "change": "Observe a session created by an already tapped Continue after the driver retries; all native recovery identity/clock/receipt/cleanup checks retained",
+  "staticDiffCheck": "Passed",
+  "nativeRecoveryValidation": "Public Save/Continue EN and FA and complete resumed native Victories passed723/724"
+}

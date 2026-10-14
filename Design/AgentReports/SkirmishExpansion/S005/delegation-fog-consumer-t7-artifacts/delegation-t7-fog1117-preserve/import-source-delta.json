@@ -1,0 +1,12 @@
+[
+  {
+    "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogVfxTests.cs",
+    "before": "61e75ea683e6726258dd48ca8c46bf84c2c76ac921d6b29ff0c6bd6d7ead1092",
+    "after": "c34f71f9d3409424b423ba8e4f9b401945258fb15dc315b80c12641615351a31"
+  },
+  {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "before": "67bdaed4f7210652978b969e44487e407e94f8ba0edac284762d32ba1b2f8449",
+    "after": "c9262d2e43ac2691a563737472666dc3bff8b3d86bd8552f9fa7b29ae3dc7a39"
+  }
+]

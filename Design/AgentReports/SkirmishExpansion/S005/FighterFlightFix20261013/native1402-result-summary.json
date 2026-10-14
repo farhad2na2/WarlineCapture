@@ -1,0 +1,16 @@
+{
+  "result": "FailedBeforeCameraAndFighterDamage",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "fullSourceUnchanged": true,
+  "leaseReleased": true,
+  "paidAirportsPassed": true,
+  "antiAirPassed": true,
+  "finalAdmissionDistance": 31.6156044,
+  "finalHeadingDot": 0.96682918,
+  "holdTouchDistance": 31.7382126,
+  "cause": "Grazing final fly-through has too little32m dwell time for real press/release",
+  "productionDefectEstablished": false,
+  "successor": 1403,
+  "fixtureFinalWaypointDelta": "Downstream120m to60m; alert point and strict actual32m Hold unchanged"
+}

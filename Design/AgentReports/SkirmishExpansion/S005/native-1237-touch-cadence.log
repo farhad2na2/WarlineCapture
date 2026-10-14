@@ -1,0 +1,87 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.AriaTouchInputValidation.RunTouchCadenceFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalMouse type=FastMouse generated=False
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:199)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:331)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:131)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:231)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalMouse type=FastMouse generated=False
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:199)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:331)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:150)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:231)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalTouch type=FastTouchscreen generated=False
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:199)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:331)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:164)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:231)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchInput] physicalTakeover device=AriaInputFixturePhysicalMouse type=FastMouse generated=False
+UnityEngine.Debug:Log (object)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:199)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.AriaTouchInputValidation:PumpInput () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:331)
+Game.Editor.AriaTouchInputValidation:<RunCadenceCases>g__Pump|2_0 (Game.Editor.AriaTouchInputValidation/<>c__DisplayClass2_0&) (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:251)
+Game.Editor.AriaTouchInputValidation:RunCadenceCases (Game.UI.Runtime.AriaTouchInputUiSystemHelper,UnityEngine.InputSystem.UI.InputSystemUIInputModule,UnityEngine.GameObject,UnityEngine.InputSystem.Mouse,UnityEngine.Vector2,System.Func`1<int>) (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:303)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:192)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:231)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchInputValidation] result=Passed cases=28
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaTouchInputValidation:Run () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:194)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:231)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AriaTouchCadenceValidation] result=Passed cases=6 existingCases=22
+UnityEngine.Debug:Log (object)
+Game.Editor.AriaTouchInputValidation:RunTouchCadenceFocusedValidation () (at Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs:232)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.AriaTouchInputValidation.RunTouchCadenceFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1237-touch-cadence.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

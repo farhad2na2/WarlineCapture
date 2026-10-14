@@ -8314,6 +8314,12 @@ MonoBehaviour:
       value: "Established base"
     - key: ui.skirmish.start.f
       value: "Field base"
+    - key: ui.skirmish.size.large_war
+      value: Large War
+    - key: ui.skirmish.size.standard
+      value: Standard
+    - key: ui.skirmish.size.war
+      value: War
     - key: ui.skirmish.start_failed
       value: Skirmish could not start
     - key: ui.skirmish.start_failed.buildingplacement
@@ -24564,6 +24570,12 @@ MonoBehaviour:
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
     - key: ui.skirmish.start.f
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.size.large_war
+      value: "\u062C\u0646\u06AF \u0628\u0632\u0631\u06AF"
+    - key: ui.skirmish.size.standard
+      value: "\u0627\u0633\u062A\u0627\u0646\u062F\u0627\u0631\u062F"
+    - key: ui.skirmish.size.war
+      value: "\u062C\u0646\u06AF"
     - key: ui.skirmish.start_failed
       value: "\u0646\u0628\u0631\u062F \u0634\u0631\u0648\u0639 \u0646\u0634\u062F"
     - key: ui.skirmish.start_failed.buildingplacement

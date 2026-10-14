@@ -1,8 +1,12 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using Game.Components;
+using Game.Composition;
 using Game.Configs;
+using Game.Skirmish.Contracts;
 using Game.UI.Runtime;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -20,6 +24,19 @@ namespace Game.Editor
             "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset";
         private const string IndustrialBasinMapPath =
             "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset";
+        private const string MountainPassPlayableMapPath =
+            "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset";
+        private const string AirfieldPlainsPlayableMapPath =
+            "Assets/Game/GeneratedOperationMaps/CH04M04GroundedSignal/Definition.asset";
+        private const string MatchVolumeProfilePath =
+            "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Lighting/Military_Demo_Gameplay.asset";
+
+        // Match.unity "Directional Light". Desert Base's runtime scene has no sun, so a
+        // match keeps this light while SkirmishS004CampaignLighting supplies the fill.
+        private static readonly Quaternion MatchSunRotation =
+            new Quaternion(-0.048195288f, 0.74310285f, -0.6193119f, 0.24885356f);
+        private static readonly Color MatchSunColor = new Color(1f, 0.977f, 0.935f, 1f);
+        private const float MatchSunIntensity = 1.25f;
 
         private static readonly string[] BattlefieldOrder = { "DB", "CC", "MP", "IB", "AP" };
 
@@ -72,6 +89,7 @@ namespace Game.Editor
             if (catalog == null)
                 throw new InvalidOperationException("SkirmishBattleCatalog is missing.");
 
+            SkirmishExpansionCatalogConfig expansion = SkirmishExpansionCatalogConfig.Load();
             int count = 0;
             IReadOnlyList<SkirmishBattleCatalogEntry> entries = catalog.Entries;
             for (int i = 0; i < entries.Count; i++)
@@ -79,9 +97,16 @@ namespace Game.Editor
                 SkirmishBattleCatalogEntry entry = entries[i];
                 if (!entry.IsPlayable)
                     continue;
+                SkirmishScenarioDefinitionConfig definition = null;
+                if (expansion != null)
+                    expansion.TryGetDefinition(entry.ScenarioId, out definition);
                 OperationMapDefinition map = ResolveScenarioMap(entry);
                 string scenePath = RequireScene(map, entry.ScenarioId);
-                OperationMapCameraConfig camera = RequirePlanningCamera(map);
+                if (!TryCardFocus(entry, map, definition, out Vector3 player, out Vector3 enemy, out bool established))
+                    throw new InvalidOperationException(
+                        "No card focus for published scenario " + entry.ScenarioId + ".");
+                OperationMapCameraConfig camera = FrameCard(entry.ScenarioId, player, enemy, established);
+                RejectPlateDuplicate(map, camera, entry.ScenarioId);
                 string output = SkirmishLibraryPreviewAssets.PreviewPath(entry.ScenarioId);
                 shots.Add(new Shot
                 {
@@ -89,6 +114,10 @@ namespace Game.Editor
                     OutputAssetPath = output,
                     Camera = camera,
                     LogLine = "[SkirmishLibraryPreviewCapture] preview=" + entry.ScenarioId +
+                              " framing=card" +
+                              " established=" + (established ? "1" : "0") +
+                              " player=" + Format(player) +
+                              " enemy=" + Format(enemy) +
                               " scene=" + scenePath +
                               " camera=" + camera.CameraId +
                               " output=" + output
@@ -112,7 +141,15 @@ namespace Game.Editor
                 {
                     if (mapId == "MP" || mapId == "AP")
                     {
-                        Debug.Log("[SkirmishLibraryPreviewCapture] plate=Skipped map=" + mapId + " reason=NoOperationMap");
+                        if (TryPlayablePlate(mapId, shots))
+                        {
+                            count++;
+                            continue;
+                        }
+
+                        Debug.Log(
+                            "[SkirmishLibraryPreviewCapture] plate=Placeholder map=" + mapId +
+                            " reason=NoPlayableMap");
                         continue;
                     }
 
@@ -128,6 +165,7 @@ namespace Game.Editor
                     OutputAssetPath = output,
                     Camera = camera,
                     LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
+                              " framing=plate" +
                               " scene=" + scenePath +
                               " camera=" + camera.CameraId +
                               " output=" + output
@@ -136,6 +174,37 @@ namespace Game.Editor
             }
 
             return count;
+        }
+
+        private static bool TryPlayablePlate(string mapId, List<Shot> shots)
+        {
+            string assetPath = mapId == "MP" ? MountainPassPlayableMapPath : AirfieldPlainsPlayableMapPath;
+            OperationMapDefinition map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(assetPath);
+            string scenePath = map != null ? ScenePathOrNull(map) : null;
+            if (map == null || string.IsNullOrEmpty(scenePath))
+                return false;
+
+            bool overview = TryOverviewCamera(map, out OperationMapCameraConfig camera);
+            if (!overview)
+            {
+                PlateBounds(map, out Vector3 min, out Vector3 max);
+                camera = FrameTopDown(mapId, min, max);
+            }
+
+            string output = SkirmishLibraryPreviewAssets.PlatePath(mapId);
+            shots.Add(new Shot
+            {
+                ScenePath = scenePath,
+                OutputAssetPath = output,
+                Camera = camera,
+                LogLine = "[SkirmishLibraryPreviewCapture] plate=" + mapId +
+                          " framing=" + (overview ? "overview" : "top-down") +
+                          " source=" + map.OperationMapId +
+                          " scene=" + scenePath +
+                          " camera=" + camera.CameraId +
+                          " hud=off fog=off output=" + output
+            });
+            return true;
         }
 
         private static OperationMapDefinition ResolveScenarioMap(SkirmishBattleCatalogEntry entry)
@@ -226,11 +295,19 @@ namespace Game.Editor
 
         private static string RequireScene(OperationMapDefinition map, string label)
         {
+            string path = ScenePathOrNull(map);
+            if (string.IsNullOrEmpty(path))
+                throw new InvalidOperationException(
+                    "Planning scene missing for " + label + " map " + map.OperationMapId + ".");
+            return path;
+        }
+
+        private static string ScenePathOrNull(OperationMapDefinition map)
+        {
             string guid = map.SourceSceneReference != null ? map.SourceSceneReference.AssetGUID : null;
             string path = string.IsNullOrEmpty(guid) ? null : AssetDatabase.GUIDToAssetPath(guid);
             if (string.IsNullOrEmpty(path) || !File.Exists(ProjectPath(path)))
-                throw new InvalidOperationException(
-                    "Planning scene missing for " + label + " map " + map.OperationMapId + ".");
+                return null;
             return path;
         }
 
@@ -246,6 +323,219 @@ namespace Game.Editor
 
             throw new InvalidOperationException(
                 "Planning camera '" + (id ?? "<null>") + "' missing on " + map.OperationMapId + ".");
+        }
+
+        private static bool TryOverviewCamera(OperationMapDefinition map, out OperationMapCameraConfig camera)
+        {
+            ReadOnlySpan<OperationMapCameraConfig> cameras = map.Cameras;
+            for (int i = 0; i < cameras.Length; i++)
+            {
+                string id = cameras[i].CameraId ?? string.Empty;
+                if (id.IndexOf("overview", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    camera = cameras[i];
+                    return true;
+                }
+            }
+
+            camera = default;
+            return false;
+        }
+
+        private static bool TryCardFocus(
+            SkirmishBattleCatalogEntry entry,
+            OperationMapDefinition map,
+            SkirmishScenarioDefinitionConfig definition,
+            out Vector3 player,
+            out Vector3 enemy,
+            out bool established)
+        {
+            player = default;
+            enemy = default;
+            bool air = IsAir(entry, definition);
+            established = IsEstablished(entry, definition);
+            if (definition != null &&
+                definition.MapLayout != null &&
+                TryLayoutFocus(definition, map, air, established, out player, out enemy))
+                return true;
+            return TryMapFocus(map, air, out player, out enemy);
+        }
+
+        private static bool TryLayoutFocus(
+            SkirmishScenarioDefinitionConfig definition,
+            OperationMapDefinition map,
+            bool air,
+            bool established,
+            out Vector3 player,
+            out Vector3 enemy)
+        {
+            player = default;
+            enemy = default;
+            SkirmishMapLayoutConfig layout = definition.MapLayout;
+            string playerRole = null;
+            if (air && layout.TryGetAnchor("air.player", out _))
+                playerRole = "air.player";
+            else if (established && layout.TryGetAnchor(SkirmishObjectiveIds.BasePlayer, out _))
+                playerRole = SkirmishObjectiveIds.BasePlayer;
+            else if (layout.TryGetAnchor("staging.player", out _))
+                playerRole = "staging.player";
+            else if (layout.TryGetAnchor(SkirmishObjectiveIds.BasePlayer, out _))
+                playerRole = SkirmishObjectiveIds.BasePlayer;
+            if (playerRole == null || !layout.TryGetAnchor(playerRole, out SkirmishLayoutAnchorConfig playerAnchor))
+                return false;
+
+            string enemyRole = definition.ObjectiveConfig != null &&
+                               !string.IsNullOrEmpty(definition.ObjectiveConfig.EnemyBaseRoleId)
+                ? definition.ObjectiveConfig.EnemyBaseRoleId
+                : SkirmishObjectiveIds.BaseEnemy;
+            if (!layout.TryGetAnchor(enemyRole, out SkirmishLayoutAnchorConfig enemyAnchor) &&
+                !layout.TryGetAnchor(SkirmishObjectiveIds.BaseEnemy, out enemyAnchor))
+                return false;
+
+            player = new Vector3(playerAnchor.WorldX, AnchorHeight(map, 1), playerAnchor.WorldZ);
+            enemy = new Vector3(enemyAnchor.WorldX, AnchorHeight(map, 2), enemyAnchor.WorldZ);
+            return true;
+        }
+
+        private static bool TryMapFocus(OperationMapDefinition map, bool air, out Vector3 player, out Vector3 enemy)
+        {
+            player = default;
+            enemy = default;
+            if (map == null)
+                return false;
+            bool havePlayer = air &&
+                              (TryAnchor(map, OperationMapAnchorKind.Helipad, 1, out player) ||
+                               TryAnchor(map, OperationMapAnchorKind.Runway, 1, out player));
+            if (!havePlayer)
+                havePlayer = TryAnchor(map, OperationMapAnchorKind.Deployment, 1, out player);
+            bool haveEnemy = TryAnchor(map, OperationMapAnchorKind.Deployment, 2, out enemy) ||
+                             TryAnchor(map, OperationMapAnchorKind.Base, 2, out enemy) ||
+                             TryAnchor(map, OperationMapAnchorKind.Objective, 2, out enemy);
+            return havePlayer && haveEnemy;
+        }
+
+        private static bool TryAnchor(
+            OperationMapDefinition map,
+            OperationMapAnchorKind kind,
+            int factionId,
+            out Vector3 position)
+        {
+            ReadOnlySpan<OperationMapAnchorConfig> anchors = map.Anchors;
+            for (int i = 0; i < anchors.Length; i++)
+            {
+                if (anchors[i].Kind == kind && anchors[i].FactionId == factionId)
+                {
+                    position = anchors[i].Position;
+                    return true;
+                }
+            }
+
+            position = default;
+            return false;
+        }
+
+        private static float AnchorHeight(OperationMapDefinition map, int factionId)
+        {
+            if (map != null && TryAnchor(map, OperationMapAnchorKind.Deployment, factionId, out Vector3 deployment))
+                return deployment.y;
+            return 0f;
+        }
+
+        private static bool IsAir(SkirmishBattleCatalogEntry entry, SkirmishScenarioDefinitionConfig definition)
+        {
+            if (definition != null && definition.ArmyProfileConfig != null)
+                return definition.ArmyProfileConfig.Kind == SkirmishArmyProfileId.AirMobile;
+            return string.Equals(entry.ArmyProfile, "A", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsEstablished(SkirmishBattleCatalogEntry entry, SkirmishScenarioDefinitionConfig definition)
+        {
+            if (definition != null && definition.StartPackageConfig != null)
+                return definition.StartPackageConfig.Kind == SkirmishStartPackageId.EstablishedBase;
+            return string.Equals(entry.StartProfile, "E", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static OperationMapCameraConfig FrameCard(
+            string scenarioId,
+            Vector3 player,
+            Vector3 enemy,
+            bool established)
+        {
+            Vector3 look = Vector3.Lerp(player, enemy, 0.62f);
+            Vector3 back = player - enemy;
+            back.y = 0f;
+            if (back.sqrMagnitude < 0.01f)
+                back = Vector3.back;
+            back.Normalize();
+            Vector3 side = Vector3.Cross(Vector3.up, back);
+            if (side.sqrMagnitude < 0.01f)
+                side = Vector3.right;
+            side.Normalize();
+
+            float separation = Vector2.Distance(new Vector2(player.x, player.z), new Vector2(enemy.x, enemy.z));
+            float distance = Mathf.Clamp(separation * 0.38f, 80f, 280f);
+            float heightFactor = 0.32f;
+            float fov = 36f;
+            if (established)
+            {
+                distance *= 0.55f;
+                heightFactor = 0.42f;
+                fov = 32f;
+            }
+
+            Vector3 position = look + back * distance + side * (distance * 0.28f) + Vector3.up * (distance * heightFactor);
+            Quaternion rotation = Quaternion.LookRotation(look - position, Vector3.up);
+            return new OperationMapCameraConfig(
+                "camera.skirmish.card." + (scenarioId ?? "scenario").ToLowerInvariant(),
+                position,
+                rotation.eulerAngles,
+                false,
+                fov,
+                0f,
+                false);
+        }
+
+        private static void RejectPlateDuplicate(
+            OperationMapDefinition map,
+            OperationMapCameraConfig card,
+            string scenarioId)
+        {
+            OperationMapCameraConfig plate = RequirePlanningCamera(map);
+            float positionGap = Vector3.Distance(plate.Position, card.Position);
+            float angleGap = Quaternion.Angle(Quaternion.Euler(plate.EulerAngles), Quaternion.Euler(card.EulerAngles));
+            if (positionGap < 5f && angleGap < 2f)
+                throw new InvalidOperationException(
+                    "Card camera for " + scenarioId + " matches the plate camera " + plate.CameraId + ".");
+        }
+
+        private static void PlateBounds(OperationMapDefinition map, out Vector3 min, out Vector3 max)
+        {
+            min = map.Bounds.PlayableMin;
+            max = map.Bounds.PlayableMax;
+            if (max.x - min.x < 1f || max.z - min.z < 1f)
+            {
+                min = map.Bounds.WorldMin;
+                max = map.Bounds.WorldMax;
+            }
+        }
+
+        private static OperationMapCameraConfig FrameTopDown(string mapId, Vector3 min, Vector3 max)
+        {
+            Vector3 center = (min + max) * 0.5f;
+            float width = Mathf.Max(1f, max.x - min.x);
+            float depth = Mathf.Max(1f, max.z - min.z);
+            float aspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+            float ortho = Mathf.Max(depth * 0.5f, (width * 0.5f) / aspect) * 1.02f;
+            float height = Mathf.Max(max.y, min.y) + 50f;
+            Quaternion look = Quaternion.LookRotation(Vector3.down, Vector3.forward);
+            return new OperationMapCameraConfig(
+                "camera.skirmish." + mapId.ToLowerInvariant() + ".topdown",
+                new Vector3(center.x, height, center.z),
+                look.eulerAngles,
+                true,
+                60f,
+                ortho,
+                false);
         }
 
         private static void RenderGrouped(List<Shot> shots)
@@ -275,6 +565,9 @@ namespace Game.Editor
             Debug.Log("[SkirmishLibraryPreviewCapture] scene=" + scenePath + " subscenes=" + subScenes +
                       " renderers=" + UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None).Length);
 
+            ApplyMatchPresentation(opened, out GameObject createdSun, out GameObject createdVolume);
+            DisableHudAndFog();
+
             Canvas[] canvases = UnityEngine.Object.FindObjectsByType<Canvas>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
             var enabled = new bool[canvases.Length];
@@ -286,14 +579,7 @@ namespace Game.Editor
 
             var cameraObject = new GameObject("SkirmishLibraryPreviewCamera");
             Camera camera = cameraObject.AddComponent<Camera>();
-            int uiLayer = LayerMask.NameToLayer("UI");
-            camera.cullingMask = uiLayer >= 0 ? ~(1 << uiLayer) : ~0;
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.12f, 0.14f, 0.16f, 1f);
-            camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 8000f;
-            camera.allowHDR = false;
-            camera.allowMSAA = false;
+            ApplyMatchCamera(camera);
 
             try
             {
@@ -306,12 +592,185 @@ namespace Game.Editor
             finally
             {
                 UnityEngine.Object.DestroyImmediate(cameraObject);
+                if (createdSun != null)
+                    UnityEngine.Object.DestroyImmediate(createdSun);
+                if (createdVolume != null)
+                    UnityEngine.Object.DestroyImmediate(createdVolume);
                 for (int i = 0; i < canvases.Length; i++)
                 {
                     if (canvases[i] != null)
                         canvases[i].enabled = enabled[i];
                 }
             }
+        }
+
+        private static void ApplyMatchPresentation(Scene opened, out GameObject createdSun, out GameObject createdVolume)
+        {
+            createdSun = null;
+            createdVolume = null;
+            Scene daylight = FindDaylightScene(opened);
+            if (daylight.IsValid() && daylight.isLoaded && SceneManager.GetActiveScene() != daylight)
+                SceneManager.SetActiveScene(daylight);
+
+            RenderSettings.fog = false;
+            SkirmishS004CampaignLighting.ApplyDaylightFill();
+
+            Light sun = FindDirectional(daylight);
+            if (sun == null)
+            {
+                createdSun = new GameObject("SkirmishLibraryMatchSun");
+                sun = createdSun.AddComponent<Light>();
+                sun.type = LightType.Directional;
+                sun.color = MatchSunColor;
+                sun.intensity = MatchSunIntensity;
+                sun.shadows = LightShadows.Soft;
+                createdSun.transform.rotation = MatchSunRotation;
+            }
+
+            RenderSettings.sun = sun;
+            DisableOtherDirectionals(sun);
+            createdVolume = EnsureMatchVolume();
+            Debug.Log(
+                "[SkirmishLibraryPreviewCapture] lighting=MatchDaylight fog=off post=on volume=Military_Demo_Gameplay sun=" +
+                sun.intensity.ToString("0.00", CultureInfo.InvariantCulture));
+        }
+
+        private static Scene FindDaylightScene(Scene opened)
+        {
+            if (SkirmishS004CampaignLighting.HasAuthoredDaylight(opened))
+                return opened;
+            int count = SceneManager.sceneCount;
+            for (int i = 0; i < count; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (SkirmishS004CampaignLighting.HasAuthoredDaylight(scene))
+                    return scene;
+            }
+
+            return opened;
+        }
+
+        private static Light FindDirectional(Scene scene)
+        {
+            if (!scene.IsValid() || !scene.isLoaded)
+                return null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                foreach (Light light in root.GetComponentsInChildren<Light>(false))
+                {
+                    if (light.enabled && light.type == LightType.Directional && light.intensity > 0f)
+                        return light;
+                }
+            }
+
+            return null;
+        }
+
+        private static void DisableOtherDirectionals(Light keep)
+        {
+            Light[] lights = UnityEngine.Object.FindObjectsByType<Light>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < lights.Length; i++)
+            {
+                if (lights[i] != null && lights[i] != keep && lights[i].type == LightType.Directional)
+                    lights[i].enabled = false;
+            }
+        }
+
+        private static GameObject EnsureMatchVolume()
+        {
+            ScriptableObject profile = AssetDatabase.LoadAssetAtPath<ScriptableObject>(MatchVolumeProfilePath);
+            if (profile == null)
+                throw new InvalidOperationException("Match volume profile missing at " + MatchVolumeProfilePath + ".");
+
+            Type volumeType = Type.GetType("UnityEngine.Rendering.Volume, Unity.RenderPipelines.Core.Runtime");
+            if (volumeType == null)
+                throw new InvalidOperationException("URP Volume type is unavailable.");
+
+            MonoBehaviour[] behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null || behaviour.GetType() != volumeType)
+                    continue;
+                object shared = volumeType.GetProperty("sharedProfile")?.GetValue(behaviour);
+                if (shared != profile)
+                    continue;
+                AssignVolume(behaviour, profile);
+                return null;
+            }
+
+            var volumeObject = new GameObject("SkirmishLibraryMatchVolume");
+            AssignVolume(volumeObject.AddComponent(volumeType), profile);
+            return volumeObject;
+        }
+
+        private static void AssignVolume(Component volume, ScriptableObject profile)
+        {
+            var serialized = new SerializedObject(volume);
+            SerializedProperty isGlobal = serialized.FindProperty("m_IsGlobal") ?? serialized.FindProperty("isGlobal");
+            SerializedProperty weight = serialized.FindProperty("weight");
+            SerializedProperty sharedProfile = serialized.FindProperty("sharedProfile");
+            if (sharedProfile == null)
+                throw new InvalidOperationException("Volume.sharedProfile is not serialized.");
+            if (isGlobal != null)
+                isGlobal.boolValue = true;
+            if (weight != null)
+                weight.floatValue = 1f;
+            sharedProfile.objectReferenceValue = profile;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void ApplyMatchCamera(Camera camera)
+        {
+            int uiLayer = LayerMask.NameToLayer("UI");
+            camera.cullingMask = uiLayer >= 0 ? ~(1 << uiLayer) : ~0;
+            camera.clearFlags = RenderSettings.skybox != null
+                ? CameraClearFlags.Skybox
+                : CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.62f, 0.70f, 0.78f, 1f);
+            camera.nearClipPlane = 0.3f;
+            camera.farClipPlane = 8000f;
+            camera.allowHDR = true;
+            camera.allowMSAA = false;
+            camera.aspect = SkirmishLibraryPreviewAssets.Width / (float)SkirmishLibraryPreviewAssets.Height;
+
+            Type dataType = Type.GetType(
+                "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
+            if (dataType == null)
+                throw new InvalidOperationException("URP camera data is unavailable.");
+            Component data = camera.GetComponent(dataType) ?? camera.gameObject.AddComponent(dataType);
+            dataType.GetProperty("renderPostProcessing")?.SetValue(data, true);
+        }
+
+        private static void DisableHudAndFog()
+        {
+            MonoBehaviour[] behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null)
+                    continue;
+                string typeName = behaviour.GetType().Name;
+                if (typeName.IndexOf("Fog", StringComparison.OrdinalIgnoreCase) >= 0)
+                    behaviour.enabled = false;
+                if (typeName == "Volume")
+                    MuteFogVolume(behaviour);
+            }
+        }
+
+        private static void MuteFogVolume(MonoBehaviour volume)
+        {
+            string objectName = volume.gameObject != null ? volume.gameObject.name : string.Empty;
+            object profile = volume.GetType().GetProperty("sharedProfile")?.GetValue(volume)
+                             ?? volume.GetType().GetProperty("profile")?.GetValue(volume);
+            string profileName = profile != null ? profile.ToString() : string.Empty;
+            if (objectName.IndexOf("Fog", StringComparison.OrdinalIgnoreCase) < 0 &&
+                profileName.IndexOf("Fog", StringComparison.OrdinalIgnoreCase) < 0)
+                return;
+            volume.GetType().GetProperty("weight")?.SetValue(volume, 0f);
         }
 
         private static int OpenSubScenesForPreview(Scene root)
@@ -342,6 +801,7 @@ namespace Game.Editor
 
         private static void RenderShot(Camera camera, Shot shot, bool write)
         {
+            ApplyMatchCamera(camera);
             OperationMapCameraConfig pose = shot.Camera;
             camera.orthographic = pose.Orthographic;
             camera.fieldOfView = pose.FieldOfView > 0f ? pose.FieldOfView : 60f;
@@ -421,6 +881,11 @@ namespace Game.Editor
             string root = Path.GetDirectoryName(Application.dataPath);
             return Path.Combine(root ?? string.Empty, assetPath);
         }
+
+        private static string Format(Vector3 value) =>
+            "(" + value.x.ToString("0.0", CultureInfo.InvariantCulture) + "," +
+            value.y.ToString("0.0", CultureInfo.InvariantCulture) + "," +
+            value.z.ToString("0.0", CultureInfo.InvariantCulture) + ")";
 
         private struct Shot
         {

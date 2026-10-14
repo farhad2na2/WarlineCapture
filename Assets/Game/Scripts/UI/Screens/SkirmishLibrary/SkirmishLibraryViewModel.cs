@@ -488,14 +488,46 @@ namespace Game.UI.Runtime
                 briefing.StartingStructureCount = source.StartingStructureCount;
                 briefing.MapWidthMetres = source.MapWidthMetres;
                 briefing.MapDepthMetres = source.MapDepthMetres;
-                return;
+            }
+            else
+            {
+                briefing.DeadlineSeconds = published ? (int)SkirmishPresetConfig.MatchDurationSeconds : 0;
+                briefing.RecommendedSize = SkirmishSizeId.None;
+                briefing.StartingStructureCount = 0;
+                briefing.MapWidthMetres = 0f;
+                briefing.MapDepthMetres = 0f;
             }
 
-            briefing.DeadlineSeconds = published ? (int)SkirmishPresetConfig.MatchDurationSeconds : 0;
-            briefing.RecommendedSize = SkirmishSizeId.None;
-            briefing.StartingStructureCount = 0;
-            briefing.MapWidthMetres = 0f;
-            briefing.MapDepthMetres = 0f;
+            briefing.ShowTime = briefing.DeadlineSeconds > 0;
+            if (source.Found && TrySizeLocKey(briefing.RecommendedSize, out string sizeKey))
+            {
+                briefing.ShowSize = true;
+                briefing.SizeLocKey = sizeKey;
+            }
+            else
+            {
+                briefing.ShowSize = false;
+                briefing.SizeLocKey = string.Empty;
+            }
+        }
+
+        private static bool TrySizeLocKey(SkirmishSizeId size, out string key)
+        {
+            switch (size)
+            {
+                case SkirmishSizeId.Standard:
+                    key = "ui.skirmish.size.standard";
+                    return true;
+                case SkirmishSizeId.War:
+                    key = "ui.skirmish.size.war";
+                    return true;
+                case SkirmishSizeId.LargeWar:
+                    key = "ui.skirmish.size.large_war";
+                    return true;
+                default:
+                    key = string.Empty;
+                    return false;
+            }
         }
 
         private SkirmishBattleCardState BuildCard(string mapId, string objectiveId, string army, string start, int pinIndex)

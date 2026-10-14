@@ -295,6 +295,9 @@ namespace Game.Tests.Editor
                              "ui.skirmish.objective.ba",
                              "ui.skirmish.army.g",
                              "ui.skirmish.start.f",
+                             "ui.skirmish.size.standard",
+                             "ui.skirmish.size.war",
+                             "ui.skirmish.size.large_war",
                              "ui.skirmish.locked.not_owned",
                              "ui.skirmish.medal.first",
                              "ui.skirmish.result.battlefield"
@@ -479,6 +482,7 @@ namespace Game.Tests.Editor
             key.StartsWith("ui.skirmish.objective.", StringComparison.Ordinal) ||
             key.StartsWith("ui.skirmish.army.", StringComparison.Ordinal) ||
             key.StartsWith("ui.skirmish.start.", StringComparison.Ordinal) ||
+            key.StartsWith("ui.skirmish.size.", StringComparison.Ordinal) ||
             key.StartsWith("ui.skirmish.locked.", StringComparison.Ordinal) ||
             key.StartsWith("ui.skirmish.medal.", StringComparison.Ordinal) ||
             key == "ui.skirmish.result.battlefield";

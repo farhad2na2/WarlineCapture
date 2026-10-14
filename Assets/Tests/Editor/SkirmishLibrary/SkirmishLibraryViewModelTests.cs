@@ -313,6 +313,9 @@ namespace Game.Tests.Editor
             SkirmishBriefingState briefing = model.Briefing;
             Assert.AreEqual("ui.skirmish.objective.ba", briefing.ObjectiveLocKey);
             Assert.AreEqual(900, briefing.DeadlineSeconds);
+            Assert.IsTrue(briefing.ShowTime);
+            Assert.IsFalse(briefing.ShowSize);
+            Assert.AreEqual(string.Empty, briefing.SizeLocKey);
             Assert.AreEqual(SkirmishSizeId.None, briefing.RecommendedSize);
             Assert.AreEqual(0, briefing.StartingStructureCount);
             Assert.AreEqual(0f, briefing.MapWidthMetres);
@@ -348,6 +351,9 @@ namespace Game.Tests.Editor
             Assert.IsTrue(model.SelectScenarioId("S001"));
             SkirmishBriefingState briefing = model.Briefing;
             Assert.AreEqual(1080, briefing.DeadlineSeconds);
+            Assert.IsTrue(briefing.ShowTime);
+            Assert.IsTrue(briefing.ShowSize);
+            Assert.AreEqual("ui.skirmish.size.standard", briefing.SizeLocKey);
             Assert.AreEqual(SkirmishSizeId.Standard, briefing.RecommendedSize);
             Assert.AreEqual(7, briefing.StartingStructureCount);
             Assert.AreEqual(600f, briefing.MapWidthMetres);
@@ -366,6 +372,9 @@ namespace Game.Tests.Editor
             Assert.IsTrue(model.SelectScenarioId("S005"));
             SkirmishBriefingState briefing = model.Briefing;
             Assert.AreEqual(0, briefing.DeadlineSeconds);
+            Assert.IsFalse(briefing.ShowTime);
+            Assert.IsFalse(briefing.ShowSize);
+            Assert.AreEqual(string.Empty, briefing.SizeLocKey);
             Assert.AreEqual(SkirmishSizeId.None, briefing.RecommendedSize);
             Assert.AreEqual(0, briefing.StartingStructureCount);
             Assert.AreEqual(0f, briefing.MapWidthMetres);
@@ -374,6 +383,37 @@ namespace Game.Tests.Editor
             Assert.AreEqual(
                 SkirmishLibraryPreviewAssets.HasAsset(plateAsset) ? plateAsset : "skirmish.plate.DB",
                 Card(model.Battlefield.MapCards, "DB.BA.1").PreviewSpriteKey);
+        }
+
+        [Test]
+        public void SizeLocKeyNamesWarAndLargeWarWithoutUsingStructureCount()
+        {
+            AssertSizeName(SkirmishSizeId.War, "ui.skirmish.size.war");
+            AssertSizeName(SkirmishSizeId.LargeWar, "ui.skirmish.size.large_war");
+        }
+
+        private static void AssertSizeName(SkirmishSizeId size, string key)
+        {
+            var entries = new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S002", "DB", "BA", "G", "E", true, 4)
+            };
+            var source = new SkirmishLibraryBriefingSource
+            {
+                Found = true,
+                DeadlineSeconds = 1500,
+                RecommendedSize = size,
+                StartingStructureCount = 10,
+                MapWidthMetres = 600f,
+                MapDepthMetres = 420f
+            };
+            var model = Model(entries, new SkirmishMedalLedger(null, entries), briefingSource: _ => source);
+            Assert.IsTrue(model.SelectScenarioId("S002"));
+            Assert.IsTrue(model.Briefing.ShowTime);
+            Assert.IsTrue(model.Briefing.ShowSize);
+            Assert.AreEqual(key, model.Briefing.SizeLocKey);
+            Assert.AreEqual(10, model.Briefing.StartingStructureCount);
+            Assert.AreEqual(size, model.Briefing.RecommendedSize);
         }
 
         private static SkirmishLibraryViewModel Model(

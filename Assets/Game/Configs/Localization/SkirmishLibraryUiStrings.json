@@ -101,6 +101,36 @@
       ]
     },
     {
+      "key": "ui.skirmish.size.standard",
+      "source": "Standard",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "استاندارد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.size.war",
+      "source": "War",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جنگ"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.size.large_war",
+      "source": "Large War",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جنگ بزرگ"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.objective.ce",
       "source": "Convoy escort",
       "translations": [

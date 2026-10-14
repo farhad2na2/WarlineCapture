@@ -125,6 +125,9 @@ namespace Game.UI.Runtime
         public int StartingStructureCount;
         public float MapWidthMetres;
         public float MapDepthMetres;
+        public string SizeLocKey;
+        public bool ShowSize;
+        public bool ShowTime;
     }
 
     public struct SkirmishLibraryBriefingSource

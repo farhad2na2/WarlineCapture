@@ -16,6 +16,8 @@ namespace Game.UI.Runtime
         private RectTransform _objectiveColumn;
         private RectTransform _progressTrack;
         private Image _progressFill;
+        private RectTransform _overallStrip;
+        private Image _overallFill;
         private RectTransform _statRow;
         private RawImage _briefingPreview;
         private RectTransform _medalGrid;
@@ -32,7 +34,7 @@ namespace Game.UI.Runtime
                 _catalogEntries,
                 ledger,
                 _ => ContentAccessState.Allowed,
-                showPlanned: false,
+                showPlanned: true,
                 prefs: new CaptureLibraryPrefs());
             UseLibraryViewModel(model);
         }
@@ -153,6 +155,8 @@ namespace Game.UI.Runtime
                 _medalGrid = FindOrCreate(rules, "MedalGrid");
             }
 
+            EnsureOverallProgressStrip(preview);
+
             EnsureOrnateCorners(preview as RectTransform);
             EnsureOrnateCorners(rules as RectTransform);
 
@@ -236,28 +240,118 @@ namespace Game.UI.Runtime
             }
         }
 
+        private void EnsureOverallProgressStrip(Transform preview)
+        {
+            if (preview == null)
+                return;
+            _overallStrip = FindOrCreate(preview, "OverallProgressStrip");
+            if (_overallStrip.Find("Caption") != null)
+            {
+                _overallFill = _overallStrip.Find("Bar/Fill")?.GetComponent<Image>();
+                return;
+            }
+
+            TintPanel(_overallStrip.gameObject);
+            V3GradientGraphic plate = _overallStrip.GetComponent<V3GradientGraphic>();
+            if (plate != null)
+                plate.Configure(
+                    new Color(0.05f, 0.08f, 0.09f, 0.96f),
+                    new Color(0.02f, 0.04f, 0.05f, 0.96f),
+                    new Color(0.93f, 0.78f, 0.38f, 1f),
+                    3f);
+
+            var caption = CreateBoundLabel(_overallStrip, "Caption", "ui.skirmish.library.battles_won", "Battles won");
+            PlaceTopLeft(caption.rectTransform, 10f, 8f, 210f, 28f);
+            caption.alignment = TextAlignmentOptions.MidlineLeft;
+            caption.textWrappingMode = TextWrappingModes.NoWrap;
+            caption.overflowMode = TextOverflowModes.Ellipsis;
+
+            var count = CreateLabel(_overallStrip, "Count", 18f);
+            PlaceTopLeft(count.rectTransform, 220f, 8f, 110f, 28f);
+            count.alignment = TextAlignmentOptions.MidlineLeft;
+            count.textWrappingMode = TextWrappingModes.NoWrap;
+            count.isRightToLeftText = false;
+
+            var bar = new GameObject("Bar", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            bar.transform.SetParent(_overallStrip, false);
+            PlaceTopLeft(bar.rectTransform, 10f, 42f, 320f, 14f);
+            bar.color = new Color(0.08f, 0.12f, 0.14f, 1f);
+            bar.raycastTarget = false;
+            var fill = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            fill.transform.SetParent(bar.transform, false);
+            fill.color = new Color(0.91f, 0.72f, 0.22f, 1f);
+            fill.raycastTarget = false;
+            _overallFill = fill;
+
+            var difficulties = new[]
+            {
+                SkirmishDifficultyId.Recruit,
+                SkirmishDifficultyId.Regular,
+                SkirmishDifficultyId.Veteran,
+                SkirmishDifficultyId.Commander
+            };
+            for (int i = 0; i < difficulties.Length; i++)
+            {
+                var slot = new GameObject("Medal" + i, typeof(RectTransform)).GetComponent<RectTransform>();
+                slot.SetParent(_overallStrip, false);
+                PlaceTopLeft(slot, 348f + i * 104f, 10f, 100f, 48f);
+                var icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                icon.transform.SetParent(slot, false);
+                PlaceTopLeft(icon.rectTransform, 0f, 8f, 32f, 32f);
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                icon.sprite = Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true, difficulties[i]));
+                var tier = CreateLabel(slot, "Count", 18f);
+                PlaceTopLeft(tier.rectTransform, 36f, 8f, 60f, 32f);
+                tier.alignment = TextAlignmentOptions.MidlineLeft;
+                tier.textWrappingMode = TextWrappingModes.NoWrap;
+                tier.isRightToLeftText = false;
+            }
+        }
+
         private void PresentProgress(SkirmishTheaterState theater, bool fa)
         {
-            if (_progressTrack == null)
+            if (_progressTrack != null)
+                _progressTrack.gameObject.SetActive(false);
+            if (_overallStrip == null)
                 return;
+            bool show = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+            _overallStrip.gameObject.SetActive(show);
+            if (!show)
+                return;
+
             int won = theater.OverallWonCount;
             int published = theater.OverallPublishedCount;
             float ratio = published > 0 ? Mathf.Clamp01(won / (float)published) : 0f;
-            if (_progressFill != null)
+            if (_overallFill != null)
             {
-                RectTransform bar = _progressFill.transform.parent as RectTransform;
-                if (bar != null && bar.name == "Bar")
-                    PlaceTopLeft(bar, 0f, 30f, 500f, 16f);
-                var fill = _progressFill.rectTransform;
+                RectTransform fill = _overallFill.rectTransform;
                 fill.anchorMin = Vector2.zero;
-                fill.anchorMax = new Vector2(Mathf.Max(0.04f, ratio), 1f);
-                fill.offsetMin = new Vector2(1f, 1f);
-                fill.offsetMax = new Vector2(-1f, -1f);
-                fill.SetParent(bar != null ? bar : _progressFill.transform.parent, false);
+                fill.anchorMax = new Vector2(ratio, 1f);
+                fill.offsetMin = Vector2.zero;
+                fill.offsetMax = Vector2.zero;
+                fill.pivot = new Vector2(0f, 0.5f);
             }
 
-            SetCopy(_progressTrack.Find("Caption")?.GetComponent<TMP_Text>(), fa ? "نبردهای برده" : "BATTLES WON", 16f, 22f);
-            SetCopy(_progressTrack.Find("Count")?.GetComponent<TMP_Text>(), won + "/" + published, 16f, 22f);
+            SetCopy(
+                _overallStrip.Find("Caption")?.GetComponent<TMP_Text>(),
+                LibraryText("ui.skirmish.library.battles_won", fa),
+                14f,
+                20f);
+            TMP_Text count = _overallStrip.Find("Count")?.GetComponent<TMP_Text>();
+            SetCopy(count, won + " / " + published, 15f, 22f);
+            if (count != null)
+                count.isRightToLeftText = false;
+
+            SkirmishMedalTotals medals = theater.OverallMedalTotals;
+            int[] tiers = { medals.Recruit, medals.Regular, medals.Veteran, medals.Commander };
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                TMP_Text tier = _overallStrip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                SetCopy(tier, tiers[i].ToString(), 14f, 20f);
+                if (tier != null)
+                    tier.isRightToLeftText = false;
+            }
         }
 
         private void PresentStatTiles(SkirmishBriefingState briefing, bool hasCard, SkirmishBattleCardState card, bool fa)

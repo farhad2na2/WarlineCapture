@@ -251,6 +251,8 @@ namespace Game.UI.Runtime
                     return fa ? "این نبرد الان شروع نمی شود." : "This battle cannot be started.";
                 case "locked.planned":
                     return string.Empty;
+                case "battles_won":
+                    return fa ? "نبردهای برده" : "Battles won";
                 default:
                     return string.Empty;
             }

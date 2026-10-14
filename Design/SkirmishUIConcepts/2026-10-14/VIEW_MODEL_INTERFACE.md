@@ -8,7 +8,7 @@ View methods `SelectScenarioId` and `SelectMapCollection` stay `void` and forwar
 
 ## Live data the screen reads
 
-- Theatre header: `OverallWonCount` / `OverallPublishedCount`. In the editor that denominator is `DevOverallPublishedCount` (120). In a release build it is the published Playable count.
+- Theatre progress strip: `OverallWonCount` / `OverallPublishedCount`, plus `OverallMedalTotals` for Recruit, Regular, Veteran, and Commander. In the editor that denominator is `DevOverallPublishedCount` (120). In a release build it is the published Playable count. The strip sits on the bottom of the map, theatre only, and is not drawn inside the battlefield summary.
 - Region pins and objective tabs: `WonCount` / `PublishedCount` for that map or objective. The map's 6 cards and the grid's 24 slots are layout lengths, not the win denominator.
 - Medal icons: `SkirmishMedalMask` on the card and briefing, and `SkirmishMedalTotals` on the theatre pin.
 - Recommended Next: `RecommendedScenarioId`, `IsRecommended`, and the briefing `TitleLocKey` for that scenario.

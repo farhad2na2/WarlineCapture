@@ -244,7 +244,7 @@ namespace Game.UI.Runtime
                 SetActive(_recommendedPanel, !battlefield);
                 SetActive(_difficultyRow, battlefield);
                 SetActive(_medalRow, true);
-                SetActive(_progressTrack, !battlefield);
+                SetActive(_progressTrack, false);
                 SetActive(_statRow, battlefield);
                 SetActive(_medalGrid, !battlefield);
                 SetActive(_briefingPreview, battlefield);
@@ -1215,14 +1215,25 @@ namespace Game.UI.Runtime
                 screenTitle.offsetMin = new Vector2(64f, screenTitle.offsetMin.y);
             Transform preview = transform.Find("SkirmishSetupComposition/OperationPreview");
             Transform plate = preview != null ? preview.Find("MapPreviewClip") : null;
+            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
             if (plate is RectTransform plateRect)
             {
                 plateRect.anchorMin = new Vector2(0f, 0f);
                 plateRect.anchorMax = new Vector2(1f, 1f);
                 plateRect.pivot = new Vector2(0f, 1f);
-                plateRect.offsetMin = new Vector2(8f, 8f);
+                plateRect.offsetMin = new Vector2(8f, theater ? 84f : 8f);
                 plateRect.offsetMax = new Vector2(-8f, -104f);
                 MaskRect(plateRect);
+            }
+
+            if (_overallStrip != null && preview is RectTransform previewRect)
+            {
+                _overallStrip.SetParent(previewRect, false);
+                _overallStrip.anchorMin = new Vector2(0f, 0f);
+                _overallStrip.anchorMax = new Vector2(1f, 0f);
+                _overallStrip.pivot = new Vector2(0.5f, 0f);
+                _overallStrip.anchoredPosition = new Vector2(0f, 8f);
+                _overallStrip.sizeDelta = new Vector2(-16f, 68f);
             }
 
             if (_libraryPins is RectTransform pinRect)
@@ -1305,7 +1316,7 @@ namespace Game.UI.Runtime
             if (_recommendedPanel != null)
                 PlaceTopLeft(_recommendedPanel, 12f, 268f, 526f, 80f);
             if (_progressTrack != null)
-                PlaceTopLeft(_progressTrack, 12f, 356f, 526f, 52f);
+                _progressTrack.gameObject.SetActive(false);
             if (_briefingPreview != null)
                 PlaceTopLeft(_briefingPreview.rectTransform, 16f, 140f, 518f, 100f);
             if (_statRow != null)
@@ -1804,6 +1815,8 @@ namespace Game.UI.Runtime
                 RaiseDepth(preview, "OrnamentCorner" + i);
                 RaiseDepth(rules, "OrnamentCorner" + i);
             }
+            if (_overallStrip != null)
+                _overallStrip.SetAsLastSibling();
             EnsurePanelShadow(rules as RectTransform);
             EnsurePanelFrame(rules as RectTransform);
             if (rules != null && preview != null)

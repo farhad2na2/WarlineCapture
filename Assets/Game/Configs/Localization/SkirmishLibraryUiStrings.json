@@ -1,6 +1,16 @@
 {
   "entries": [
     {
+      "key": "ui.skirmish.library.battles_won",
+      "source": "Battles won",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبردهای برده"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.theater.mp.title",
       "source": "ARMOR APPROACH",
       "translations": [

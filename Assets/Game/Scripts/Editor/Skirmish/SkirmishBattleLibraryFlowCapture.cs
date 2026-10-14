@@ -143,10 +143,13 @@ namespace Game.Editor
             string suffix = locale == "fa-IR" ? "fa-IR" : "en";
             Shot(view, camera, target, width, height, Path.Combine(folder, "01-theater-" + suffix + ".png"));
             AssertStep(view.Library.Level == SkirmishLibraryLevel.Theater, "Theatre did not stay on the theatre.");
+            AssertOverallProgress(instance, view);
 
             Click(Require(instance, SkirmishLibraryControlNames.ZoomIn));
             Shot(view, camera, target, width, height, Path.Combine(folder, "02-zoom-" + suffix + ".png"));
             AssertStep(view.Library.Level == SkirmishLibraryLevel.Battlefield, "Zoom In did not open the battlefield.");
+            Transform hiddenStrip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
+            AssertStep(hiddenStrip == null || !hiddenStrip.gameObject.activeInHierarchy, "Overall progress strip stayed on the battlefield.");
             AssertStep(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Map, "Zoom In did not open the map.");
 
             Click(Require(instance, SkirmishLibraryControlNames.ObjectiveTab("BA")));
@@ -181,6 +184,28 @@ namespace Game.Editor
         {
             if (!condition)
                 throw new InvalidOperationException(message);
+        }
+
+        private static void AssertOverallProgress(GameObject instance, QuickCustomScreenView view)
+        {
+            Transform strip = instance.transform.Find("SkirmishSetupComposition/OperationPreview/OverallProgressStrip");
+            AssertStep(strip != null && strip.gameObject.activeInHierarchy, "Theatre overall progress strip is missing.");
+            SkirmishTheaterState theater = view.Library.Theater;
+            string progress = theater.OverallWonCount + " / " + theater.OverallPublishedCount;
+            TMP_Text count = strip.Find("Count")?.GetComponent<TMP_Text>();
+            AssertStep(count != null && count.text == progress, "Overall progress count is not " + progress + ".");
+            int[] medals =
+            {
+                theater.OverallMedalTotals.Recruit,
+                theater.OverallMedalTotals.Regular,
+                theater.OverallMedalTotals.Veteran,
+                theater.OverallMedalTotals.Commander
+            };
+            for (int i = 0; i < medals.Length; i++)
+            {
+                TMP_Text tier = strip.Find("Medal" + i + "/Count")?.GetComponent<TMP_Text>();
+                AssertStep(tier != null && tier.text == medals[i].ToString(), "Medal tier " + i + " is not the view-model total.");
+            }
         }
 
         private static Button Require(GameObject root, string name)

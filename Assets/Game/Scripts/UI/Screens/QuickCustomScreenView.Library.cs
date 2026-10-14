@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Game.Configs;
+using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Skirmish;
@@ -27,7 +29,6 @@ namespace Game.UI.Runtime
         private bool _librarySearchApplied;
         private bool _libraryChromeReady;
         private bool _libraryPresenting;
-        private ISkirmishLibraryViewModel _libraryViewModel;
 
         private RectTransform _libraryRegions;
         private RectTransform _libraryPins;
@@ -41,27 +42,67 @@ namespace Game.UI.Runtime
         private readonly List<Button> _regionButtons = new List<Button>();
 
         public SkirmishDifficultyId SelectedLibraryDifficulty =>
-            _libraryViewModel?.Briefing?.SelectedDifficulty ?? SkirmishDifficultyId.Regular;
+            _libraryViewModel != null ? _libraryViewModel.Briefing.SelectedDifficulty : SkirmishDifficultyId.Regular;
 
         public ISkirmishLibraryViewModel LibraryViewModel => _libraryViewModel;
 
-        public void UseLibraryViewModel(ISkirmishLibraryViewModel viewModel)
+        public void UseLibraryViewModel(SkirmishLibraryViewModel viewModel)
         {
-            if (_libraryViewModel != null)
-                _libraryViewModel.Changed -= OnLibraryViewModelChanged;
+            UnwireLibraryNotifications();
             EnsureLibraryCards();
-            _libraryViewModel = viewModel ?? new SkirmishLibraryStubViewModel(_catalogEntries);
-            _libraryViewModel.Changed += OnLibraryViewModelChanged;
+            if (viewModel == null)
+            {
+                _libraryViewModel = null;
+                EnsureLibraryViewModel();
+                return;
+            }
+
+            _libraryViewModel = viewModel;
+            WireLibraryNotifications();
             _libraryViewModel.RestoreFromPrefs();
+        }
+
+        private bool _libraryNotificationsWired;
+
+        private void WireLibraryNotifications()
+        {
+            if (_libraryViewModel == null || _libraryNotificationsWired)
+                return;
+            _libraryViewModel.Changed += OnLibraryViewModelChanged;
+            _libraryViewModel.Interaction += OnLibraryInteraction;
+            _libraryNotificationsWired = true;
+        }
+
+        private void UnwireLibraryNotifications()
+        {
+            if (_libraryViewModel == null || !_libraryNotificationsWired)
+                return;
+            _libraryViewModel.Changed -= OnLibraryViewModelChanged;
+            _libraryViewModel.Interaction -= OnLibraryInteraction;
+            _libraryNotificationsWired = false;
+        }
+
+        private static void OnLibraryInteraction(SkirmishLibraryInteraction interaction)
+        {
+            UIAudioEventGateway.Raise(interaction.Sound);
         }
 
         private SkirmishLibraryLevel LibraryLevel =>
             _libraryViewModel != null ? _libraryViewModel.Level : SkirmishLibraryLevel.Theater;
 
         private SkirmishBattlefieldLayout LibraryLayout =>
-            _libraryViewModel?.Battlefield?.Layout ?? SkirmishBattlefieldLayout.Map;
+            _libraryViewModel != null ? _libraryViewModel.Battlefield.Layout : SkirmishBattlefieldLayout.Map;
 
-        private string LibraryMapId => _libraryViewModel?.Theater?.SelectedMapId ?? "DB";
+        private string LibraryMapId
+        {
+            get
+            {
+                if (_libraryViewModel == null)
+                    return "DB";
+                string map = _libraryViewModel.Theater.SelectedMapId;
+                return string.IsNullOrEmpty(map) ? "DB" : map;
+            }
+        }
 
         public void EnsureBattleLibraryChrome()
         {
@@ -132,21 +173,6 @@ namespace Game.UI.Runtime
 
         private void LoadLibraryMemory() => EnsureLibraryViewModel();
 
-        private void EnsureLibraryViewModel()
-        {
-            EnsureLibraryCards();
-            if (_libraryViewModel == null)
-            {
-                _libraryViewModel = new SkirmishLibraryStubViewModel(_catalogEntries);
-                _libraryViewModel.Changed += OnLibraryViewModelChanged;
-                _libraryViewModel.RestoreFromPrefs();
-                return;
-            }
-
-            if (_libraryViewModel is SkirmishLibraryStubViewModel stub && stub.EntryCount != _catalogEntries.Count)
-                stub.SetEntries(_catalogEntries);
-        }
-
         private void OnLibraryViewModelChanged()
         {
             if (_libraryPresenting || !baseAssaultPreset)
@@ -166,13 +192,20 @@ namespace Game.UI.Runtime
         {
             if (_libraryViewModel == null)
                 return;
-            _libraryViewModel.ApplyFilter(new SkirmishLibraryFilter
+            SkirmishLibraryFilter next = new SkirmishLibraryFilter
             {
                 SearchText = _searchFilter,
                 ArmyProfile = _armyFilter,
                 StartProfile = _startFilter,
                 MedalMissing = _missingMedalOnly ? SelectedLibraryDifficulty : (SkirmishDifficultyId?)null
-            });
+            };
+            SkirmishLibraryFilter current = _libraryViewModel.Filter;
+            if (string.Equals(current.SearchText ?? string.Empty, next.SearchText ?? string.Empty, StringComparison.Ordinal) &&
+                string.Equals(current.ArmyProfile ?? string.Empty, next.ArmyProfile ?? string.Empty, StringComparison.Ordinal) &&
+                string.Equals(current.StartProfile ?? string.Empty, next.StartProfile ?? string.Empty, StringComparison.Ordinal) &&
+                current.MedalMissing == next.MedalMissing)
+                return;
+            _libraryViewModel.ApplyFilter(next);
         }
 
         private void PresentBattleLibrary()
@@ -226,17 +259,19 @@ namespace Game.UI.Runtime
                 if (grid)
                     PresentGrid(field, fa);
                 PresentBriefingChrome(theater, field, briefing, fa, battlefield);
-                SkirmishTheaterPinState selectedPin = FindTheaterPin(theater, field != null ? field.MapId : theater?.SelectedMapId);
-                PresentProgress(selectedPin, fa);
-                PresentBriefingPreview(briefing, selectedPin, battlefield);
+                string pinMap = string.IsNullOrEmpty(field.MapId) ? theater.SelectedMapId : field.MapId;
+                bool hasPin = TryFindTheaterPin(theater, pinMap, out SkirmishTheaterPinState selectedPin);
+                PresentProgress(theater, fa);
+                PresentBriefingPreview(briefing, hasPin, selectedPin, battlefield);
                 if (!battlefield)
-                    PresentTheaterDetail(selectedPin, fa);
+                    PresentTheaterDetail(fa);
                 PresentFilterLabels(fa);
                 PresentLibraryFooter(fa, battlefield);
                 StyleCommandButtons(battlefield);
                 PlaceLibraryFooter();
                 PresentCaptureCredits();
                 PresentScreenHeading(theater, field, fa, battlefield);
+                ApplyLibraryDepth();
             }
             finally
             {
@@ -293,10 +328,11 @@ namespace Game.UI.Runtime
             string key = SkirmishBattleLibraryArt.TheaterPlate;
             if (battlefield)
             {
-                key = SkirmishBattleLibraryArt.Plate(field != null ? field.MapId : LibraryMapId);
-                SkirmishTheaterPinState pin = FindTheaterPin(_libraryViewModel.Theater, field != null ? field.MapId : LibraryMapId);
-                if (pin != null && !string.IsNullOrEmpty(pin.PlatePreviewKey))
-                    key = pin.PlatePreviewKey;
+                string mapId = string.IsNullOrEmpty(field.MapId) ? LibraryMapId : field.MapId;
+                key = SkirmishBattleLibraryArt.Plate(mapId);
+                if (TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin) &&
+                    !string.IsNullOrEmpty(pin.PlatePreviewKey))
+                    key = LibraryArtKey(pin.PlatePreviewKey, mapId);
             }
 
             Texture2D texture = Resources.Load<Texture2D>(key);
@@ -315,15 +351,15 @@ namespace Game.UI.Runtime
                 return;
             ClearChildren(_libraryRegions);
             _regionButtons.Clear();
-            if (theater?.Pins == null)
+            if (theater.Pins == null)
                 return;
-            for (int i = 0; i < theater.Pins.Count; i++)
+            for (int i = 0; i < theater.Pins.Length; i++)
             {
                 SkirmishTheaterPinState pin = theater.Pins[i];
                 if (!TryRegion(pin.MapId, out Rect region, out Vector2 centre))
                     continue;
                 bool selected = string.Equals(pin.MapId, theater.SelectedMapId, StringComparison.OrdinalIgnoreCase);
-                var button = CreateHitButton(_libraryRegions, "Region_" + pin.MapId);
+                var button = CreateHitButton(_libraryRegions, SkirmishLibraryControlNames.TheaterPin(pin.MapId));
                 PlaceRegion(button.GetComponent<RectTransform>(), region);
                 var wash = button.targetGraphic as Image;
                 if (wash != null)
@@ -359,9 +395,9 @@ namespace Game.UI.Runtime
                     DestroyUi(_objectiveTabButtons[i].gameObject);
             }
             _objectiveTabButtons.Clear();
-            if (field?.Tabs == null)
+            if (field.Tabs == null)
                 return;
-            for (int i = 0; i < field.Tabs.Count; i++)
+            for (int i = 0; i < field.Tabs.Length; i++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[i];
                 var button = CreateChromeButton(battleLibraryMapTabs, "ObjectiveTab_" + objective.ObjectiveId);
@@ -370,7 +406,7 @@ namespace Game.UI.Runtime
                 layout.minHeight = 64f;
                 layout.flexibleWidth = 1f;
                 bool selected = string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase);
-                TintButton(button, selected, false);
+                TintButton(button, selected, true);
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
                 var label = CreateLabel(button.transform, "Label", 18f);
@@ -383,11 +419,11 @@ namespace Game.UI.Runtime
         private void PresentPins(SkirmishBattlefieldState field)
         {
             ClearChildren(_libraryPins);
-            if (field?.MapCards == null)
+            if (field.MapCards == null)
                 return;
-            for (int i = 0; i < field.MapCards.Count; i++)
+            for (int i = 0; i < field.MapCards.Length; i++)
             {
-                if (field.MapCards[i] != null)
+                if (!IsEmptyCard(field.MapCards[i]))
                     CreateBattleCard(_libraryPins, field.MapCards[i], true);
             }
         }
@@ -395,7 +431,7 @@ namespace Game.UI.Runtime
         private void PresentGrid(SkirmishBattlefieldState field, bool fa)
         {
             ClearChildren(_libraryGrid);
-            if (field?.GridCards == null || field.Tabs == null)
+            if (field.GridCards == null || field.Tabs == null)
                 return;
             PresentBattlefieldTabs(field.MapId, fa);
             string[] armies = { "G", "A", "C" };
@@ -422,7 +458,7 @@ namespace Game.UI.Runtime
                 }
             }
 
-            int rows = field.Tabs.Count;
+            int rows = field.Tabs.Length;
             for (int row = 0; row < rows; row++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[row];
@@ -434,22 +470,26 @@ namespace Game.UI.Runtime
                 rowIcon.preserveAspect = true;
                 rowIcon.raycastTarget = false;
                 var rowLabel = CreateLabel(_libraryGrid, "Row_" + objective.ObjectiveId, 14f);
-                PlaceTopLeft(rowLabel.rectTransform, 4f, y + 46f, LibraryGridOriginX - 10f, 32f);
+                PlaceTopLeft(rowLabel.rectTransform, 4f, y + 44f, LibraryGridOriginX - 10f, 44f);
                 rowLabel.alignment = TextAlignmentOptions.Center;
                 rowLabel.textWrappingMode = TextWrappingModes.Normal;
-                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
-                SetCopy(rowLabel, shortLabel, 14f, 16f);
-                rowLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                rowLabel.overflowMode = TextOverflowModes.Overflow;
+                SetCopy(
+                    rowLabel,
+                    LibraryText(objective.TitleLocKey, fa) + "\n" + objective.WonCount + "/" + objective.PublishedCount,
+                    11f,
+                    14f);
                 for (int column = 0; column < 6; column++)
                 {
                     int index = row * 6 + column;
-                    if (index >= field.GridCards.Count)
+                    if (index >= field.GridCards.Length)
                         break;
                     SkirmishBattleCardState card = field.GridCards[index];
-                    RectTransform widget = card != null
-                        ? CreateBattleCard(_libraryGrid, card, false, LibraryGridCardWidth, LibraryGridCardHeight)
-                        : CreateEmptyGridCell(_libraryGrid, field.MapId, objective.ObjectiveId, armies[column / 2], starts[column % 2]);
+                    RectTransform widget = IsEmptyCard(card)
+                        ? CreateEmptyGridCell(_libraryGrid, field.MapId, objective.ObjectiveId, armies[column / 2], starts[column % 2])
+                        : CreateBattleCard(_libraryGrid, card, false, LibraryGridCardWidth, LibraryGridCardHeight);
                     PlaceTopLeft(widget, LibraryGridOriginX + column * LibraryGridStride, y, LibraryGridCardWidth, LibraryGridCardHeight);
+                    AddSiblingShadow(widget);
                 }
             }
         }
@@ -470,8 +510,11 @@ namespace Game.UI.Runtime
                 label.alignment = TextAlignmentOptions.Center;
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.overflowMode = TextOverflowModes.Overflow;
-                SkirmishBattleLibraryArt.ShortTitle(mapId, fa, out string title);
-                SetCopy(label, title, 15f, 18f);
+                string title = mapId;
+                if (_libraryViewModel != null &&
+                    TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState mapPin))
+                    title = LibraryText(mapPin.TitleLocKey, fa);
+                SetCopy(label, title, 13f, 16f);
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }
@@ -480,8 +523,12 @@ namespace Game.UI.Runtime
         private void SelectGridBattlefield(string mapId)
         {
             EnsureLibraryViewModel();
-            _libraryViewModel.SelectMapCollection(mapId);
-            _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Grid);
+            bool sameBattlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield &&
+                string.Equals(_libraryViewModel.Battlefield.MapId, mapId, StringComparison.OrdinalIgnoreCase);
+            if (!sameBattlefield)
+                _libraryViewModel.SelectMapCollection(mapId);
+            if (_libraryViewModel.Battlefield.Layout != SkirmishBattlefieldLayout.Grid)
+                _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Grid);
             _mapFilter = mapId;
             PresentScenarioChoices();
         }
@@ -501,11 +548,13 @@ namespace Game.UI.Runtime
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             float footer = pin ? 56f : 36f;
             MaskRect(rect);
-            TintButton(button, card.IsSelected, card.Access == SkirmishCardAccess.Playable, pin);
+            bool playable = card.Access == SkirmishCardAccess.Playable;
+            TintButton(button, card.IsSelected, playable, true);
+            button.interactable = !string.IsNullOrEmpty(card.ScenarioId);
             var preview = new GameObject("Preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
             preview.transform.SetParent(button.transform, false);
             Stretch(preview.rectTransform, 3f, 3f, 3f, footer);
-            preview.texture = Resources.Load<Texture2D>(card.PreviewSpriteKey);
+            preview.texture = Resources.Load<Texture2D>(CardPreviewResource(card));
             preview.color = preview.texture != null ? Color.white : new Color(0.12f, 0.16f, 0.18f, 1f);
             preview.raycastTarget = false;
             var armyIcon = new GameObject("ArmyIcon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -519,7 +568,16 @@ namespace Game.UI.Runtime
             title.alignment = TextAlignmentOptions.MidlineLeft;
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Ellipsis;
-            SetCopy(title, LibraryText(card.ArmyLocKey, fa), 13f, 16f);
+            SetCopy(title, LibraryText(card.TitleLocKey, fa), 13f, 16f);
+            if (card.IsRecommended)
+            {
+                var recommended = CreateLabel(button.transform, "Recommended", 12f);
+                PlaceTopLeft(recommended.rectTransform, 4f, 2f, width - 8f, 16f);
+                recommended.alignment = TextAlignmentOptions.MidlineLeft;
+                recommended.textWrappingMode = TextWrappingModes.NoWrap;
+                recommended.color = new Color(0.95f, 0.82f, 0.28f, 1f);
+                SetCopy(recommended, fa ? "پیشنهاد" : "NEXT", 11f, 13f);
+            }
             float medal = pin ? 20f : 16f;
             AddMedalIcons(button.transform, card.Medals, 4f, height - medal - 2f, medal);
             if (card.Access == SkirmishCardAccess.Playable && card.Medals == SkirmishMedalMask.None)
@@ -542,6 +600,8 @@ namespace Game.UI.Runtime
 
             string captured = card.ScenarioId;
             button.onClick.AddListener(() => OnLibraryCard(captured));
+            if (pin)
+                AddSiblingShadow(rect);
             return rect;
         }
 
@@ -558,11 +618,6 @@ namespace Game.UI.Runtime
             preview.texture = Resources.Load<Texture2D>(SkirmishBattleLibraryArt.CellPreview(mapId, objectiveId, army, start));
             preview.color = preview.texture != null ? new Color(0.45f, 0.45f, 0.45f, 1f) : new Color(0.1f, 0.12f, 0.13f, 1f);
             preview.raycastTarget = false;
-            var caption = CreateLabel(rect, "Empty", 13f);
-            PlaceTopLeft(caption.rectTransform, 4f, LibraryGridCardHeight - 20f, LibraryGridCardWidth - 8f, 16f);
-            caption.alignment = TextAlignmentOptions.Center;
-            caption.textWrappingMode = TextWrappingModes.NoWrap;
-            SetCopy(caption, "—", 12f, 14f);
             return rect;
         }
 
@@ -588,15 +643,16 @@ namespace Game.UI.Runtime
 
         private void PresentBriefingChrome(SkirmishTheaterState theater, SkirmishBattlefieldState field, SkirmishBriefingState briefing, bool fa, bool battlefield)
         {
-            SkirmishTheaterPinState pin = FindTheaterPin(theater, field != null ? field.MapId : theater?.SelectedMapId);
+            string pinMap = string.IsNullOrEmpty(field.MapId) ? theater.SelectedMapId : field.MapId;
+            bool hasPin = TryFindTheaterPin(theater, pinMap, out SkirmishTheaterPinState pin);
             Transform rules = transform.Find("SkirmishSetupComposition/BaseAssaultRules");
             TMP_Text title = rules != null ? rules.GetComponentInChildren<TMP_Text>(true) : null;
             Transform titleTransform = FindDeep(rules, "Title");
             if (titleTransform != null)
                 title = titleTransform.GetComponent<TMP_Text>();
-            if (battlefield && briefing != null)
-                SetCopy(title, LibraryTitle(briefing.ScenarioId, fa), 16f, 26f);
-            else if (pin != null)
+            if (battlefield && !string.IsNullOrEmpty(briefing.ScenarioId))
+                SetCopy(title, LibraryText(briefing.TitleLocKey, fa), 16f, 26f);
+            else if (hasPin)
                 SetCopy(title, LibraryText(pin.TitleLocKey, fa), 16f, 26f);
             if (title != null)
             {
@@ -609,15 +665,18 @@ namespace Game.UI.Runtime
                 TMP_Text heading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
                 TMP_Text body = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
                 SetCopy(heading, fa ? "پیشنهاد بعدی" : "RECOMMENDED NEXT");
-                if (theater == null || string.IsNullOrEmpty(theater.RecommendedScenarioId))
+                if (string.IsNullOrEmpty(theater.RecommendedScenarioId))
                     SetCopy(body, fa ? "هنوز پیشنهادی نیست." : "No recommendation yet.");
+                else if (string.Equals(briefing.ScenarioId, theater.RecommendedScenarioId, StringComparison.Ordinal) &&
+                         !string.IsNullOrEmpty(briefing.TitleLocKey))
+                    SetCopy(body, LibraryText(briefing.TitleLocKey, fa));
                 else
                     SetCopy(body, LibraryTitle(theater.RecommendedScenarioId, fa));
             }
 
-            PresentMedalRow(briefing, pin, fa, battlefield);
+            PresentMedalRow(briefing, hasPin, pin, fa, battlefield);
             PresentDifficulty(briefing, fa);
-            bool notOwned = briefing != null && briefing.Access == SkirmishCardAccess.NotOwned;
+            bool notOwned = briefing.Access == SkirmishCardAccess.NotOwned;
             if (_libraryStoreButton != null)
                 _libraryStoreButton.gameObject.SetActive(notOwned);
             SetActive(FindDeep(rules, "Opponent"), _advancedOpen);
@@ -627,31 +686,46 @@ namespace Game.UI.Runtime
             SetActive(FindDeep(rules, "Intel"), _advancedOpen);
             SetActive(transform.Find("SkirmishSetupComposition/OperationPreview/SeedMetric"), _advancedOpen);
 
-            SkirmishBattleCardState selectedCard = null;
-            if (field?.MapCards != null)
+            SkirmishBattleCardState selectedCard = default;
+            bool hasCard = false;
+            if (field.MapCards != null)
             {
-                for (int i = 0; i < field.MapCards.Count; i++)
+                for (int i = 0; i < field.MapCards.Length; i++)
                 {
-                    if (field.MapCards[i] != null && field.MapCards[i].IsSelected)
+                    if (!IsEmptyCard(field.MapCards[i]) && field.MapCards[i].IsSelected)
+                    {
                         selectedCard = field.MapCards[i];
+                        hasCard = true;
+                    }
+                }
+            }
+            if (!hasCard && field.GridCards != null)
+            {
+                for (int i = 0; i < field.GridCards.Length; i++)
+                {
+                    if (!IsEmptyCard(field.GridCards[i]) && field.GridCards[i].IsSelected)
+                    {
+                        selectedCard = field.GridCards[i];
+                        hasCard = true;
+                    }
                 }
             }
             if (battlefield)
-                PresentStatTiles(briefing, selectedCard, fa);
-            if (scenarioDescription != null && !battlefield && pin != null)
+                PresentStatTiles(briefing, hasCard, selectedCard, fa);
+            if (scenarioDescription != null && !battlefield && hasPin)
                 SetCopy(scenarioDescription, LibraryText(pin.SubtitleLocKey, fa), 15f, 22f);
-            else if (scenarioDescription != null && briefing != null)
+            else if (scenarioDescription != null && !string.IsNullOrEmpty(briefing.ScenarioId))
             {
                 string purpose = MixedText(LibraryPurpose(briefing, fa), fa);
-                string reason = MixedText(LibraryText(briefing.LockedReasonLocKey, fa), fa);
+                string reason = LibraryReason(briefing, fa);
                 SetCopy(scenarioDescription, string.IsNullOrEmpty(reason) ? purpose : purpose + "\n" + reason, 15f, 22f);
             }
 
             if (launchButton != null && !_savedMatchAvailable)
-                launchButton.interactable = !battlefield || (briefing != null && briefing.CanLaunch);
+                launchButton.interactable = !battlefield || briefing.CanLaunch;
         }
 
-        private void PresentMedalRow(SkirmishBriefingState briefing, SkirmishTheaterPinState pin, bool fa, bool battlefield)
+        private void PresentMedalRow(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool fa, bool battlefield)
         {
             if (_medalRow == null)
                 return;
@@ -662,9 +736,9 @@ namespace Game.UI.Runtime
                 SkirmishDifficultyId.Veteran,
                 SkirmishDifficultyId.Commander
             };
-            SkirmishMedalTotals totals = pin != null ? pin.Medals : default;
+            SkirmishMedalTotals totals = hasPin ? pin.Medals : default;
             int[] counts = { totals.Recruit, totals.Regular, totals.Veteran, totals.Commander };
-            SkirmishMedalMask mask = briefing != null ? briefing.Medals : SkirmishMedalMask.None;
+            SkirmishMedalMask mask = briefing.Medals;
             for (int i = 0; i < difficulties.Length; i++)
             {
                 Transform slot = _medalRow.Find("Slot" + i);
@@ -695,14 +769,14 @@ namespace Game.UI.Runtime
                 SkirmishDifficultyId.Veteran,
                 SkirmishDifficultyId.Commander
             };
-            SkirmishDifficultyId selected = briefing != null ? briefing.SelectedDifficulty : SelectedLibraryDifficulty;
+            SkirmishDifficultyId selected = briefing.SelectedDifficulty;
             for (int i = 0; i < difficulties.Length; i++)
             {
                 Transform slot = _difficultyRow.Find("DifficultyChoice_" + difficulties[i]);
                 if (slot == null)
                     continue;
                 var button = slot.GetComponent<Button>();
-                bool offered = briefing == null || DifficultyOffered(briefing, difficulties[i]);
+                bool offered = DifficultyOffered(briefing, difficulties[i]);
                 TintButton(button, offered && difficulties[i] == selected, offered);
                 SkirmishBattleLibraryArt.DifficultyCopy(difficulties[i], fa, out string label);
                 TMP_Text choice = slot.GetComponentInChildren<TMP_Text>(true);
@@ -745,15 +819,20 @@ namespace Game.UI.Runtime
             toggle.gameObject.SetActive(battlefield);
             SetCopy(toggle.Find("MapChoice/Label")?.GetComponent<TMP_Text>(), fa ? "نقشه" : "MAP");
             SetCopy(toggle.Find("GridChoice/Label")?.GetComponent<TMP_Text>(), fa ? "جدول" : "GRID");
-            TintButton(toggle.Find("MapChoice")?.GetComponent<Button>(), LibraryLayout == SkirmishBattlefieldLayout.Map, false);
-            TintButton(toggle.Find("GridChoice")?.GetComponent<Button>(), LibraryLayout == SkirmishBattlefieldLayout.Grid, false);
+            Button mapChoice = toggle.Find("MapChoice")?.GetComponent<Button>();
+            Button gridChoice = toggle.Find("GridChoice")?.GetComponent<Button>();
+            TintButton(mapChoice, LibraryLayout == SkirmishBattlefieldLayout.Map, true);
+            TintButton(gridChoice, LibraryLayout == SkirmishBattlefieldLayout.Grid, true);
+            AliasControl(mapChoice, SkirmishLibraryControlNames.LayoutMap);
+            AliasControl(gridChoice, SkirmishLibraryControlNames.LayoutGrid);
         }
 
         private void PresentScreenHeading(SkirmishTheaterState theater, SkirmishBattlefieldState field, bool fa, bool battlefield)
         {
             TMP_Text screenTitle = transform.Find("SkirmishSetupComposition/ScreenTitlePanel/ScreenTitle")?.GetComponent<TMP_Text>();
-            SkirmishTheaterPinState headingPin = FindTheaterPin(theater, field != null ? field.MapId : theater?.SelectedMapId);
-            string mapTitle = headingPin != null ? LibraryText(headingPin.TitleLocKey, fa) : (fa ? "صحنه نبرد" : "THEATRE");
+            string headingMap = string.IsNullOrEmpty(field.MapId) ? theater.SelectedMapId : field.MapId;
+            bool hasHeading = TryFindTheaterPin(theater, headingMap, out SkirmishTheaterPinState headingPin);
+            string mapTitle = hasHeading ? LibraryText(headingPin.TitleLocKey, fa) : (fa ? "صحنه نبرد" : "THEATRE");
             string route = !battlefield
                 ? (fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP")
                 : (fa ? "زد و خورد | " : "SKIRMISH | ") + mapTitle;
@@ -790,6 +869,7 @@ namespace Game.UI.Runtime
                 TMP_Text backLabel = back.GetComponentInChildren<TMP_Text>(true);
                 if (backLabel != null)
                     backLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                AttachAudio(back, UIAudioEventKind.ScreenBack);
             }
 
             x += backWidth + gap;
@@ -805,15 +885,13 @@ namespace Game.UI.Runtime
 
         private void PresentCaptureCredits()
         {
-            if (!(_libraryViewModel is SkirmishLibraryStubViewModel stub) || !stub.IsCaptureDemo)
-                return;
             MainMenuAccountHeaderView header = GetComponentInChildren<MainMenuAccountHeaderView>(true);
             if (header == null)
                 return;
             header.enabled = false;
             if (header.Value == null)
                 return;
-            header.Value.text = SkirmishLibraryStubViewModel.CaptureDemoCredits;
+            header.Value.text = ReadProfileCredits();
             header.Value.isRightToLeftText = false;
             header.Value.textWrappingMode = TextWrappingModes.NoWrap;
         }
@@ -857,6 +935,31 @@ namespace Game.UI.Runtime
             button.onClick.AddListener(action);
             if (!string.IsNullOrEmpty(label))
                 SetCopy(button.GetComponentInChildren<TMP_Text>(true), label);
+            if (action == OnLibraryZoom)
+                AliasControl(button, SkirmishLibraryControlNames.ZoomIn);
+            else if (action == OnLibraryQuickBattle)
+                AliasControl(button, SkirmishLibraryControlNames.QuickBattle);
+            else if (action == OnLibraryFilters)
+                AliasControl(button, SkirmishLibraryControlNames.Filters);
+            else if (action == OnLibraryTheater)
+                AliasControl(button, SkirmishLibraryControlNames.TheaterMap);
+            else if (action == LaunchMatch)
+                AliasControl(button, SkirmishLibraryControlNames.StartBattle);
+
+            bool localSound = action == OnLibraryFilters || action == OnLibraryAdvanced;
+            if (localSound)
+                AttachAudio(button, UIAudioEventKind.ButtonSecondaryClick);
+            else
+                ClearButtonAudio(button);
+        }
+
+        private static void ClearButtonAudio(Button button)
+        {
+            if (button == null)
+                return;
+            UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
+            if (audio != null)
+                DestroyUi(audio);
         }
 
         private void OnLibraryFilters()
@@ -890,15 +993,38 @@ namespace Game.UI.Runtime
         {
             EnsureLibraryViewModel();
             string catalogId = _libraryViewModel.QuickBattle();
-            if (!string.IsNullOrEmpty(catalogId))
+            if (string.IsNullOrEmpty(catalogId))
             {
-                SelectScenarioId(catalogId);
+                _libraryViewModel.ZoomIn();
+                _mapFilter = LibraryMapId;
+                PresentScenarioChoices();
                 return;
             }
 
-            _libraryViewModel.ZoomIn();
-            _mapFilter = LibraryMapId;
-            PresentScenarioChoices();
+            AdoptLibrarySelection(catalogId);
+        }
+
+        private void AdoptLibrarySelection(string scenarioId)
+        {
+            if (!TryFindEntry(scenarioId, out SkirmishBattleCatalogEntry entry))
+            {
+                PresentScenarioChoices();
+                return;
+            }
+
+            _selectedScenarioId = entry.ScenarioId;
+            if (!string.IsNullOrEmpty(entry.MapId))
+                _mapFilter = entry.MapId;
+            if (entry.IsPlayable)
+            {
+                _config.ScenarioIndex = entry.PlayableScenarioIndex;
+                PlayerPrefs.SetString(LastScenarioIdPrefsKey, _selectedScenarioId);
+                PlayerPrefs.Save();
+            }
+
+            Bind(_config);
+            if (entry.IsPlayable)
+                _configStore?.Apply(ReadConfigFromControls());
         }
 
         private void OnLibraryCard(string catalogId) => SelectScenarioId(catalogId);
@@ -906,8 +1032,8 @@ namespace Game.UI.Runtime
         private void SelectTheaterRegion(string mapId)
         {
             EnsureLibraryViewModel();
-            _libraryViewModel.BackToTheater();
             _libraryViewModel.SelectMapCollection(mapId);
+            _libraryViewModel.BackToTheater();
             _mapFilter = mapId;
             PresentScenarioChoices();
         }
@@ -1027,6 +1153,7 @@ namespace Game.UI.Runtime
             var label = CreateBoundLabel(_libraryStoreButton.transform, "Label", "ui.skirmish.library_store", "OPEN STORE");
             Stretch(label.rectTransform, 8f, 8f, 6f, 6f);
             _libraryStoreButton.onClick.AddListener(OnLibraryStore);
+            AttachAudio(_libraryStoreButton, UIAudioEventKind.ButtonPrimaryClick);
         }
 
         private void EnsureModeToggle(Transform preview)
@@ -1250,14 +1377,97 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static string LibraryText(string key, bool fa)
+        private string LibraryText(string key, bool fa)
         {
             if (string.IsNullOrEmpty(key))
                 return string.Empty;
+            if (key.EndsWith("locked.planned", StringComparison.Ordinal))
+                return string.Empty;
             string localized = UiShellRuntimeGateway.Localization.Get(key, string.Empty);
-            if (!string.IsNullOrEmpty(localized))
+            if (!IsSuppressedLibraryCopy(localized))
                 return localized;
-            return SkirmishBattleLibraryArt.Fallback(key, fa);
+            string art = SkirmishBattleLibraryArt.Fallback(key, fa);
+            if (!IsSuppressedLibraryCopy(art))
+                return art;
+            return ResolveCatalogCopy(key, fa);
+        }
+
+        private string LibraryReason(SkirmishBriefingState briefing, bool fa)
+        {
+            if (string.IsNullOrEmpty(briefing.LockedReasonLocKey) ||
+                briefing.LockedReasonLocKey.EndsWith("locked.planned", StringComparison.Ordinal))
+                return string.Empty;
+            string reason = MixedText(LibraryText(briefing.LockedReasonLocKey, fa), fa);
+            return IsSuppressedLibraryCopy(reason) ? string.Empty : reason;
+        }
+
+        private static bool IsSuppressedLibraryCopy(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return true;
+            return value == "—"
+                || value.IndexOf("in development", StringComparison.OrdinalIgnoreCase) >= 0
+                || value.IndexOf("در حال ساخت", StringComparison.Ordinal) >= 0;
+        }
+
+        private string ResolveCatalogCopy(string key, bool fa)
+        {
+            if (string.IsNullOrEmpty(key))
+                return string.Empty;
+            if (key == "ui.skirmish.base_assault_map" || key == "ui.skirmish.theater.db.title" || key == "ui.skirmish.theater.db.subtitle")
+            {
+                SkirmishBattleLibraryArt.Copy("DB", fa, out string title, out string place);
+                return key.EndsWith(".subtitle", StringComparison.Ordinal) ? place : title;
+            }
+            if (key == "ui.skirmish.city_crossroads_map" || key.StartsWith("ui.skirmish.theater.cc.", StringComparison.Ordinal))
+            {
+                SkirmishBattleLibraryArt.Copy("CC", fa, out string title, out string place);
+                return key.EndsWith(".subtitle", StringComparison.Ordinal) ? place : title;
+            }
+            if (key == "ui.skirmish.industrial_basin_map" || key.StartsWith("ui.skirmish.theater.ib.", StringComparison.Ordinal))
+            {
+                SkirmishBattleLibraryArt.Copy("IB", fa, out string title, out string place);
+                return key.EndsWith(".subtitle", StringComparison.Ordinal) ? place : title;
+            }
+            if (key.StartsWith("ui.skirmish.theater.", StringComparison.Ordinal))
+            {
+                string body = key.Substring("ui.skirmish.theater.".Length);
+                int dot = body.IndexOf('.');
+                string mapId = (dot >= 0 ? body.Substring(0, dot) : body).ToUpperInvariant();
+                SkirmishBattleLibraryArt.Copy(mapId, fa, out string title, out string place);
+                return key.EndsWith(".subtitle", StringComparison.Ordinal) ? place : title;
+            }
+            if (key.StartsWith("ui.skirmish.objective.", StringComparison.Ordinal))
+            {
+                SkirmishBattleLibraryArt.ObjectiveCopy(key.Substring("ui.skirmish.objective.".Length).ToUpperInvariant(), fa, out _, out string shortLabel);
+                return shortLabel;
+            }
+            if (key.StartsWith("ui.skirmish.army.", StringComparison.Ordinal) || key.StartsWith("ui.skirmish.start.", StringComparison.Ordinal))
+            {
+                SkirmishBattleLibraryArt.ProfileCopy(key.Substring(key.LastIndexOf('.') + 1).ToUpperInvariant(), fa, out string label);
+                return label;
+            }
+            if (key.StartsWith("ui.skirmish.locked.", StringComparison.Ordinal))
+                return string.Empty;
+            if (key.StartsWith("ui.skirmish.s", StringComparison.Ordinal) && TryFindEntry(ScenarioIdFromLocKey(key), out SkirmishBattleCatalogEntry entry))
+            {
+                if (key.EndsWith(".title", StringComparison.Ordinal) && !string.IsNullOrEmpty(entry.TitleEnglish))
+                    return entry.TitleEnglish;
+                if (fa && !string.IsNullOrEmpty(entry.DescriptionFarsi))
+                    return entry.DescriptionFarsi;
+                return entry.DescriptionEnglish ?? string.Empty;
+            }
+            return string.Empty;
+        }
+
+        private static string ScenarioIdFromLocKey(string key)
+        {
+            const string prefix = "ui.skirmish.";
+            if (string.IsNullOrEmpty(key) || !key.StartsWith(prefix, StringComparison.Ordinal))
+                return string.Empty;
+            string body = key.Substring(prefix.Length);
+            int dot = body.IndexOf('.');
+            return (dot >= 0 ? body.Substring(0, dot) : body).ToUpperInvariant();
         }
 
         private string LibraryTitle(string scenarioId, bool fa)
@@ -1280,6 +1490,9 @@ namespace Game.UI.Runtime
 
         private string LibraryPurpose(SkirmishBriefingState briefing, bool fa)
         {
+            string described = LibraryText(briefing.DescriptionLocKey, fa);
+            if (!string.IsNullOrEmpty(described))
+                return described;
             string localized = LibraryText(briefing.PurposeLocKey, fa);
             if (!string.IsNullOrEmpty(localized))
                 return localized;
@@ -1308,9 +1521,9 @@ namespace Game.UI.Runtime
 
         private static bool DifficultyOffered(SkirmishBriefingState briefing, SkirmishDifficultyId difficulty)
         {
-            if (briefing?.AvailableDifficulties == null)
-                return true;
-            for (int i = 0; i < briefing.AvailableDifficulties.Count; i++)
+            if (briefing.AvailableDifficulties == null)
+                return false;
+            for (int i = 0; i < briefing.AvailableDifficulties.Length; i++)
             {
                 if (briefing.AvailableDifficulties[i] == difficulty)
                     return true;
@@ -1319,17 +1532,43 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private static SkirmishTheaterPinState FindTheaterPin(SkirmishTheaterState theater, string mapId)
+        private static bool TryFindTheaterPin(SkirmishTheaterState theater, string mapId, out SkirmishTheaterPinState pin)
         {
-            if (theater?.Pins == null)
-                return null;
-            for (int i = 0; i < theater.Pins.Count; i++)
+            pin = default;
+            if (theater.Pins == null || string.IsNullOrEmpty(mapId))
+                return false;
+            for (int i = 0; i < theater.Pins.Length; i++)
             {
                 if (string.Equals(theater.Pins[i].MapId, mapId, StringComparison.OrdinalIgnoreCase))
-                    return theater.Pins[i];
+                {
+                    pin = theater.Pins[i];
+                    return true;
+                }
             }
 
-            return null;
+            return false;
+        }
+
+        private static bool IsEmptyCard(SkirmishBattleCardState card) => string.IsNullOrEmpty(card.ScenarioId);
+
+        private static string CardPreviewResource(SkirmishBattleCardState card)
+        {
+            if (!string.IsNullOrEmpty(card.MapId) && !string.IsNullOrEmpty(card.ObjectiveId))
+                return SkirmishBattleLibraryArt.CellPreview(card.MapId, card.ObjectiveId, card.ArmyProfile, card.StartProfile);
+            return LibraryArtKey(card.PreviewSpriteKey, card.MapId);
+        }
+
+        private static string LibraryArtKey(string key, string mapId)
+        {
+            if (string.IsNullOrEmpty(key))
+                return string.IsNullOrEmpty(mapId) ? SkirmishBattleLibraryArt.TheaterPlate : SkirmishBattleLibraryArt.Plate(mapId);
+            const string plate = "skirmish.plate.";
+            const string preview = "skirmish.preview.";
+            if (key.StartsWith(plate, StringComparison.OrdinalIgnoreCase))
+                return SkirmishBattleLibraryArt.Plate(key.Substring(plate.Length));
+            if (key.StartsWith(preview, StringComparison.OrdinalIgnoreCase))
+                return SkirmishBattleLibraryArt.PreviewKey(key.Substring(preview.Length), mapId);
+            return key;
         }
 
         private static bool TryRegion(string mapId, out Rect region, out Vector2 centre)
@@ -1368,6 +1607,8 @@ namespace Game.UI.Runtime
             graphic.Configure(new Color(0.09f, 0.13f, 0.15f, 0.92f), new Color(0.02f, 0.05f, 0.06f, 0.92f), new Color(0.26f, 0.32f, 0.34f, 1f), 2f);
             var button = rect.GetComponent<Button>();
             button.targetGraphic = graphic;
+            var state = rect.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
+            state.Bind(graphic);
             return button;
         }
 
@@ -1379,17 +1620,26 @@ namespace Game.UI.Runtime
 
         private static void TintButton(Button button, bool selected, bool playable, bool opaque = false)
         {
-            V3GradientGraphic gradient = button != null ? button.targetGraphic as V3GradientGraphic : null;
-            if (gradient == null)
+            if (button == null)
                 return;
-            float body = opaque ? 1f : 0.94f;
-            if (!playable && !selected)
+            SkirmishLibraryButtonStateView state = button.GetComponent<SkirmishLibraryButtonStateView>();
+            if (state == null && button.targetGraphic is V3GradientGraphic graphic)
             {
-                gradient.Configure(new Color(0.08f, 0.08f, 0.09f, body), new Color(0.03f, 0.03f, 0.04f, body), new Color(0.72f, 0.58f, 0.22f, 1f), 2f);
+                state = button.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
+                state.Bind(graphic);
+            }
+
+            if (state != null)
+            {
+                state.Apply(selected, playable || selected, opaque);
                 return;
             }
 
-            gradient.Configure(
+            V3GradientGraphic fallback = button.targetGraphic as V3GradientGraphic;
+            if (fallback == null)
+                return;
+            float body = opaque ? 1f : 0.94f;
+            fallback.Configure(
                 selected ? new Color(0.15f, 0.28f, 0.12f, 1f) : new Color(0.07f, 0.12f, 0.14f, body),
                 selected ? new Color(0.05f, 0.12f, 0.06f, 1f) : new Color(0.02f, 0.05f, 0.06f, body),
                 selected ? new Color(0.95f, 0.72f, 0.15f, 1f) : new Color(0.93f, 0.78f, 0.38f, 1f),
@@ -1497,6 +1747,159 @@ namespace Game.UI.Runtime
             rect.offsetMin = new Vector2(4f, 4f);
             rect.offsetMax = new Vector2(-4f, -4f);
             rect.pivot = new Vector2(0.5f, 0.5f);
+        }
+
+        private static void AttachAudio(Button button, UIAudioEventKind kind)
+        {
+            if (button == null)
+                return;
+            UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
+            if (audio == null)
+                audio = button.gameObject.AddComponent<UIButtonAudioEventView>();
+            audio.Configure(kind);
+        }
+
+        private static void AliasControl(Component owner, string controlName)
+        {
+            if (owner == null || string.IsNullOrEmpty(controlName))
+                return;
+            if (owner.transform.Find(controlName) != null)
+                return;
+            var alias = new GameObject(controlName, typeof(RectTransform));
+            alias.transform.SetParent(owner.transform, false);
+        }
+
+        private static void AddSiblingShadow(RectTransform widget)
+        {
+            if (widget == null || widget.parent == null)
+                return;
+            var shadow = new GameObject("DepthShadow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            shadow.SetParent(widget.parent, false);
+            shadow.anchorMin = widget.anchorMin;
+            shadow.anchorMax = widget.anchorMax;
+            shadow.pivot = widget.pivot;
+            shadow.sizeDelta = widget.sizeDelta;
+            shadow.anchoredPosition = widget.anchoredPosition + new Vector2(10f, -10f);
+            shadow.SetSiblingIndex(widget.GetSiblingIndex());
+            Image image = shadow.GetComponent<Image>();
+            image.color = new Color(0f, 0f, 0f, 0.5f);
+            image.raycastTarget = false;
+        }
+
+        private void ApplyLibraryDepth()
+        {
+            Transform composition = transform.Find("SkirmishSetupComposition");
+            Transform preview = composition != null ? composition.Find("OperationPreview") : null;
+            Transform plate = preview != null ? preview.Find("MapPreviewClip") : null;
+            Transform rules = composition != null ? composition.Find("BaseAssaultRules") : null;
+            EnsurePanelShadow(plate as RectTransform);
+            if (_libraryRegions != null)
+                _libraryRegions.SetAsLastSibling();
+            if (_libraryPins != null)
+                _libraryPins.SetAsLastSibling();
+            if (_libraryGrid != null)
+                _libraryGrid.SetAsLastSibling();
+            for (int i = 0; i < 4; i++)
+            {
+                RaiseDepth(preview, "OrnamentCorner" + i);
+                RaiseDepth(rules, "OrnamentCorner" + i);
+            }
+            EnsurePanelShadow(rules as RectTransform);
+            EnsurePanelFrame(rules as RectTransform);
+            if (rules != null && preview != null)
+                rules.SetSiblingIndex(preview.GetSiblingIndex() + 1);
+            EnsureFooterPlate(composition);
+            Transform footerShadow = composition != null ? composition.Find("LibraryFooterShadow") : null;
+            Transform footerPlate = composition != null ? composition.Find("LibraryFooterPlate") : null;
+            if (footerShadow != null)
+                footerShadow.SetAsLastSibling();
+            if (footerPlate != null)
+                footerPlate.SetAsLastSibling();
+            Transform back = composition != null ? composition.Find("BackButton") : null;
+            if (back != null)
+                back.SetAsLastSibling();
+            if (resetButton != null)
+                resetButton.transform.SetAsLastSibling();
+            if (randomizeSeedButton != null)
+                randomizeSeedButton.transform.SetAsLastSibling();
+            if (launchButton != null)
+                launchButton.transform.SetAsLastSibling();
+            RaiseDepth(composition, "SafeAreaEdgeLeft");
+            RaiseDepth(composition, "SafeAreaEdgeRight");
+            RaiseDepth(composition, "SafeAreaEdgeTop");
+            RaiseDepth(composition, "SafeAreaEdgeBottom");
+            RaiseDepth(composition, "SafeAreaNotch");
+        }
+
+        private static void RaiseDepth(Transform parent, string childName)
+        {
+            Transform child = parent != null ? parent.Find(childName) : null;
+            if (child != null)
+                child.SetAsLastSibling();
+        }
+
+        private static void EnsurePanelShadow(RectTransform panel)
+        {
+            if (panel == null || panel.parent == null || panel.parent.Find(panel.name + "Shadow") != null)
+                return;
+            var shadow = new GameObject(panel.name + "Shadow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            shadow.SetParent(panel.parent, false);
+            shadow.anchorMin = panel.anchorMin;
+            shadow.anchorMax = panel.anchorMax;
+            shadow.pivot = panel.pivot;
+            shadow.anchoredPosition = panel.anchoredPosition + new Vector2(12f, -14f);
+            shadow.sizeDelta = panel.sizeDelta;
+            shadow.SetSiblingIndex(panel.GetSiblingIndex());
+            Image image = shadow.GetComponent<Image>();
+            image.color = new Color(0f, 0f, 0f, 0.55f);
+            image.raycastTarget = false;
+        }
+
+        private static void EnsurePanelFrame(RectTransform panel)
+        {
+            if (panel == null || panel.Find("DepthFrame") != null)
+                return;
+            var frame = new GameObject("DepthFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(V3GradientGraphic)).GetComponent<RectTransform>();
+            frame.SetParent(panel, false);
+            Stretch(frame);
+            frame.SetAsFirstSibling();
+            V3GradientGraphic graphic = frame.GetComponent<V3GradientGraphic>();
+            graphic.raycastTarget = false;
+            graphic.Configure(new Color(0.05f, 0.08f, 0.09f, 0.94f), new Color(0.02f, 0.04f, 0.05f, 0.94f), new Color(0.93f, 0.78f, 0.38f, 1f), 3f);
+        }
+
+        private void EnsureFooterPlate(Transform composition)
+        {
+            if (composition == null || composition.Find("LibraryFooterPlate") != null)
+                return;
+            var plate = new GameObject("LibraryFooterPlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(V3GradientGraphic)).GetComponent<RectTransform>();
+            plate.SetParent(composition, false);
+            PlaceTopLeft(plate, 8f, 808f, 1656f, 124f);
+            V3GradientGraphic graphic = plate.GetComponent<V3GradientGraphic>();
+            graphic.raycastTarget = false;
+            graphic.Configure(new Color(0.04f, 0.07f, 0.08f, 0.96f), new Color(0.02f, 0.03f, 0.04f, 0.96f), new Color(0.93f, 0.78f, 0.38f, 1f), 3f);
+            var shadow = new GameObject("LibraryFooterShadow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
+            shadow.SetParent(composition, false);
+            PlaceTopLeft(shadow, 16f, 820f, 1656f, 124f);
+            shadow.SetSiblingIndex(plate.GetSiblingIndex());
+            Image image = shadow.GetComponent<Image>();
+            image.color = new Color(0f, 0f, 0f, 0.45f);
+            image.raycastTarget = false;
+        }
+
+        private static string ReadProfileCredits()
+        {
+            try
+            {
+                int credits = SaveService.CreateDefault().LoadProfile().credits;
+                if (credits < 0)
+                    credits = 0;
+                return credits.ToString("N0", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                return "0";
+            }
         }
 
         private static void PlaceTopLeft(RectTransform rect, float x, float y, float width, float height)

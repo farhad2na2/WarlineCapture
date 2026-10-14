@@ -94,7 +94,6 @@ namespace Game.UI.Runtime
             Bind(_config);
             if (entry.IsPlayable)
                 _configStore?.Apply(ReadConfigFromControls());
-            TouchLibrary(library => library.SelectScenarioId(entry.ScenarioId));
         }
 
         public void SelectMapCollection(string mapId)
@@ -104,7 +103,6 @@ namespace Game.UI.Runtime
             _libraryViewModel.SelectMapCollection(_mapFilter);
             EnsureLibraryCards();
             PresentScenarioChoices();
-            TouchLibrary(library => library.SelectMapCollection(_mapFilter));
         }
 
         public bool ReturnLibraryToScenario(string scenarioId)
@@ -146,13 +144,17 @@ namespace Game.UI.Runtime
         private void EnsureLibraryViewModel()
         {
             if (_libraryViewModel != null)
+            {
+                WireLibraryNotifications();
                 return;
+            }
             if (_catalogEntries.Count == 0)
                 ReloadCatalogEntries();
             _libraryViewModel = _libraryFactory != null
                 ? _libraryFactory(_catalogEntries)
                 : SkirmishLibraryViewModel.CreateUnbound(_catalogEntries);
             _libraryViewModel.RestoreFromPrefs();
+            WireLibraryNotifications();
         }
 
         private void TouchLibrary(Action<ISkirmishLibraryViewModel> action)
@@ -257,15 +259,6 @@ namespace Game.UI.Runtime
                 {
                     UiLocalizedText.Set(scenarioDescription, briefing.Brief);
                 }
-                else if (!selected.IsPlayable
-                    && !(_libraryViewModel is SkirmishLibraryStubViewModel captureDemo && captureDemo.IsCaptureDemo))
-                {
-                    UiLocalizedText.Set(
-                        scenarioDescription,
-                        fa
-                            ? "این نبرد هنوز آماده نیست. یکی از نبردهای Ready را انتخاب کن."
-                            : "This battle is still in development. Select a Ready battle to deploy.");
-                }
                 else
                 {
                     UiLocalizedText.Set(
@@ -282,7 +275,8 @@ namespace Game.UI.Runtime
                 UiLocalizedText.Set(searchHint, fa ? "جست‌وجوی نبرد (S004، کویر، ...)" : "Search battles (S004, Desert, ...)");
 
             PresentCompiledBriefing(selected, fa);
-            _savedMatchAvailable = selected.IsPlayable && UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
+            _savedMatchAvailable = !_suppressSavedMatch && selected.IsPlayable &&
+                UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
             if (launchButton != null)
             {
                 launchButton.interactable = selected.IsPlayable;

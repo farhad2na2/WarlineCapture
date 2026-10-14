@@ -192,7 +192,7 @@ namespace Game.Editor
             UnityEngine.Object.DestroyImmediate(image);
         }
 
-        private static void RejectFlatCapture(string path)
+        internal static void RejectFlatCapture(string path)
         {
             var probe = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             try

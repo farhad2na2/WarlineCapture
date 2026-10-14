@@ -250,7 +250,7 @@ namespace Game.UI.Runtime
                 case "locked.unavailable":
                     return fa ? "این نبرد الان شروع نمی شود." : "This battle cannot be started.";
                 case "locked.planned":
-                    return fa ? "این نبرد هنوز در حال ساخت است." : "This battle is still in development.";
+                    return string.Empty;
                 default:
                     return string.Empty;
             }

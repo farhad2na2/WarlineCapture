@@ -1,5 +1,8 @@
 using System;
 using System.Text;
+using Game.Configs;
+using Game.Missions.Contracts;
+using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Skirmish;
 using TMPro;
@@ -18,12 +21,59 @@ namespace Game.UI.Runtime
         private RectTransform _medalGrid;
         private Image _crestImage;
         private bool _libraryLayoutHooked;
+        private bool _suppressSavedMatch;
 
         public void ApplyLibraryCaptureDemo()
         {
-            EnsureLibraryViewModel();
-            if (_libraryViewModel is SkirmishLibraryStubViewModel stub)
-                stub.ApplyCaptureDemo();
+            _suppressSavedMatch = true;
+            EnsureLibraryCards();
+            var ledger = new SkirmishMedalLedger(CaptureMedalRows(), _catalogEntries);
+            var model = new SkirmishLibraryViewModel(
+                _catalogEntries,
+                ledger,
+                _ => ContentAccessState.Allowed,
+                showPlanned: false,
+                prefs: new CaptureLibraryPrefs());
+            UseLibraryViewModel(model);
+        }
+
+        private static SkirmishMedalSaveData[] CaptureMedalRows()
+        {
+            return new[]
+            {
+                CaptureMedal("S001", SkirmishDifficultyId.Recruit),
+                CaptureMedal("S001", SkirmishDifficultyId.Regular),
+                CaptureMedal("S002", SkirmishDifficultyId.Recruit),
+                CaptureMedal("S025", SkirmishDifficultyId.Regular),
+                CaptureMedal("S073", SkirmishDifficultyId.Recruit)
+            };
+        }
+
+        private static SkirmishMedalSaveData CaptureMedal(string catalogId, SkirmishDifficultyId difficulty)
+        {
+            return new SkirmishMedalSaveData
+            {
+                catalogId = catalogId,
+                difficulty = (byte)difficulty,
+                contentVersion = 1,
+                firstEarnedUtc = "2026-10-14T00:00:00Z",
+                sessionId = "capture"
+            };
+        }
+
+        private sealed class CaptureLibraryPrefs : ISkirmishLibraryPrefs
+        {
+            private readonly System.Collections.Generic.Dictionary<string, string> _values =
+                new System.Collections.Generic.Dictionary<string, string>();
+
+            public string Get(string key, string fallback) =>
+                _values.TryGetValue(key ?? string.Empty, out string value) ? value : fallback ?? string.Empty;
+
+            public void Set(string key, string value) => _values[key ?? string.Empty] = value ?? string.Empty;
+
+            public void Save()
+            {
+            }
         }
 
         private void EnsureLibraryPass(Transform composition, Transform preview, Transform rules)
@@ -160,9 +210,9 @@ namespace Game.UI.Runtime
                 return;
             ClearChildren(_objectiveColumn);
             PlaceTopLeft(_objectiveColumn, 8f, 8f, 88f, 420f);
-            if (field?.Tabs == null)
+            if (field.Tabs == null)
                 return;
-            for (int i = 0; i < field.Tabs.Count; i++)
+            for (int i = 0; i < field.Tabs.Length; i++)
             {
                 SkirmishObjectiveTabState objective = field.Tabs[i];
                 var button = CreateChromeButton(_objectiveColumn, "ObjectiveTab_" + objective.ObjectiveId);
@@ -180,19 +230,18 @@ namespace Game.UI.Runtime
                 label.alignment = TextAlignmentOptions.Center;
                 label.textWrappingMode = TextWrappingModes.Normal;
                 label.overflowMode = TextOverflowModes.Overflow;
-                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
-                SetCopy(label, shortLabel, 14f, 18f);
+                SetCopy(label, LibraryText(objective.TitleLocKey, fa) + "\n" + objective.WonCount + "/" + objective.PublishedCount, 12f, 16f);
                 string captured = objective.ObjectiveId;
                 button.onClick.AddListener(() => SelectLibraryObjective(captured));
             }
         }
 
-        private void PresentProgress(SkirmishTheaterPinState pin, bool fa)
+        private void PresentProgress(SkirmishTheaterState theater, bool fa)
         {
             if (_progressTrack == null)
                 return;
-            int won = pin != null ? pin.WonCount : 0;
-            int published = pin != null ? pin.PublishedCount : 0;
+            int won = theater.OverallWonCount;
+            int published = theater.OverallPublishedCount;
             float ratio = published > 0 ? Mathf.Clamp01(won / (float)published) : 0f;
             if (_progressFill != null)
             {
@@ -211,25 +260,31 @@ namespace Game.UI.Runtime
             SetCopy(_progressTrack.Find("Count")?.GetComponent<TMP_Text>(), won + "/" + published, 16f, 22f);
         }
 
-        private void PresentStatTiles(SkirmishBriefingState briefing, SkirmishBattleCardState card, bool fa)
+        private void PresentStatTiles(SkirmishBriefingState briefing, bool hasCard, SkirmishBattleCardState card, bool fa)
         {
             if (_statRow == null)
                 return;
-            bool demo = _libraryViewModel is SkirmishLibraryStubViewModel stub && stub.IsCaptureDemo;
-            string time = demo ? SkirmishLibraryStubViewModel.CaptureDemoTime : string.Empty;
-            string forces = demo ? SkirmishLibraryStubViewModel.CaptureDemoForces : string.Empty;
-            string size = demo ? SkirmishLibraryStubViewModel.CaptureDemoSize : string.Empty;
-            string credits = demo ? SkirmishLibraryStubViewModel.CaptureDemoCredits : string.Empty;
-            if (!demo && briefing != null)
-            {
-                forces = LibraryText(briefing.ArmyLocKey, fa);
-                size = card != null ? LibraryText(card.SubtitleLocKey, fa) : LibraryText(briefing.StartLocKey, fa);
-            }
+            string forces = LibraryText(briefing.ArmyLocKey, fa);
+            string start = LibraryText(hasCard ? card.StartLocKey : briefing.StartLocKey, fa);
+            if (string.IsNullOrEmpty(forces) && TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry entry))
+                SkirmishBattleLibraryArt.ProfileCopy(entry.ArmyProfile, fa, out forces);
+            if (string.IsNullOrEmpty(start) && TryFindEntry(briefing.ScenarioId, out SkirmishBattleCatalogEntry startEntry))
+                SkirmishBattleLibraryArt.ProfileCopy(startEntry.StartProfile, fa, out start);
+            int medals = CountMedals(briefing.Medals);
+            SetTile(_statRow.Find("Time"), fa ? "مدال" : "MEDALS", medals + "/4");
+            SetTile(_statRow.Find("Forces"), fa ? "نیرو" : "FORCES", string.IsNullOrEmpty(forces) ? "0" : forces);
+            SetTile(_statRow.Find("Size"), fa ? "شروع" : "START", string.IsNullOrEmpty(start) ? "0" : start);
+            SetTile(_statRow.Find("Credits"), fa ? "اعتبار" : "CREDITS", ReadProfileCredits());
+        }
 
-            SetTile(_statRow.Find("Time"), fa ? "زمان" : "TIME", time);
-            SetTile(_statRow.Find("Forces"), fa ? "نیرو" : "FORCES", forces);
-            SetTile(_statRow.Find("Size"), fa ? "اندازه" : "SIZE", size);
-            SetTile(_statRow.Find("Credits"), fa ? "اعتبار" : "CREDITS", credits);
+        private static int CountMedals(SkirmishMedalMask mask)
+        {
+            int count = 0;
+            if ((mask & SkirmishMedalMask.Recruit) != 0) count++;
+            if ((mask & SkirmishMedalMask.Regular) != 0) count++;
+            if ((mask & SkirmishMedalMask.Veteran) != 0) count++;
+            if ((mask & SkirmishMedalMask.Commander) != 0) count++;
+            return count;
         }
 
         private void SetTile(Transform tile, string caption, string value)
@@ -237,20 +292,18 @@ namespace Game.UI.Runtime
             if (tile == null)
                 return;
             SetCopy(tile.Find("Caption")?.GetComponent<TMP_Text>(), caption, 13f, 16f);
-            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), string.IsNullOrEmpty(value) ? "—" : value, 15f, 20f);
+            SetCopy(tile.Find("Value")?.GetComponent<TMP_Text>(), string.IsNullOrEmpty(value) ? "0" : value, 15f, 20f);
         }
 
-        private void PresentBriefingPreview(SkirmishBriefingState briefing, SkirmishTheaterPinState pin, bool battlefield)
+        private void PresentBriefingPreview(SkirmishBriefingState briefing, bool hasPin, SkirmishTheaterPinState pin, bool battlefield)
         {
             if (_briefingPreview == null)
                 return;
-            string key = battlefield && briefing != null
-                ? briefing.ScenarioId
-                : null;
+            string key = battlefield ? briefing.ScenarioId : null;
             string resource = !string.IsNullOrEmpty(key)
-                ? SkirmishBattleLibraryArt.PreviewKey(key, pin != null ? pin.MapId : LibraryMapId)
-                : pin != null && !string.IsNullOrEmpty(pin.PlatePreviewKey)
-                    ? pin.PlatePreviewKey
+                ? SkirmishBattleLibraryArt.PreviewKey(key, hasPin ? pin.MapId : LibraryMapId)
+                : hasPin && !string.IsNullOrEmpty(pin.PlatePreviewKey)
+                    ? LibraryArtKey(pin.PlatePreviewKey, pin.MapId)
                     : SkirmishBattleLibraryArt.TheaterPlate;
             Texture2D texture = Resources.Load<Texture2D>(resource);
             _briefingPreview.texture = texture;
@@ -258,7 +311,7 @@ namespace Game.UI.Runtime
             _briefingPreview.raycastTarget = false;
         }
 
-        private void PresentTheaterDetail(SkirmishTheaterPinState pin, bool fa)
+        private void PresentTheaterDetail(bool fa)
         {
             if (_medalGrid == null)
                 return;
@@ -285,8 +338,6 @@ namespace Game.UI.Runtime
             hint.alignment = TextAlignmentOptions.MidlineLeft;
             hint.textWrappingMode = TextWrappingModes.NoWrap;
             SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 14f, 16f);
-            if (pin == null)
-                return;
         }
 
         private void StyleCommandButtons(bool battlefield)
@@ -361,6 +412,11 @@ namespace Game.UI.Runtime
             if (gradient == null)
                 return;
             gradient.Configure(top, bottom, new Color(0.93f, 0.78f, 0.38f, 1f), 3f);
+            SkirmishLibraryButtonStateView state = button.GetComponent<SkirmishLibraryButtonStateView>();
+            if (state == null)
+                state = button.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
+            state.Bind(gradient);
+            state.ApplyPalette(top, bottom, new Color(0.93f, 0.78f, 0.38f, 1f), button.interactable, false);
         }
 
         private static void MaskRect(RectTransform rect)

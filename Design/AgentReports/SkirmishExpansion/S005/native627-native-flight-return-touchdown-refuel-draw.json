@@ -1,0 +1,35 @@
+{
+  "result": "Failed",
+  "playerReady": false,
+  "wrapperExit": 2,
+  "sourceHash": "3ab3466c8b8cfe228668169b7f0476cc52140581150ad60c3cc7f71d6258af15",
+  "sourceManifestUnchanged": true,
+  "normalMatchOutcome": "Draw",
+  "paidLocalFuelStorage": 40,
+  "localStoreDeliveredAt817Seconds": 176,
+  "paidStrikeReceipt": 1006,
+  "launchFuel": 1075,
+  "nativeFire": true,
+  "normalReturn": true,
+  "nativeTouchdownAtHome": true,
+  "touchdownFuel": 166,
+  "refuelReserveRecovered": false,
+  "secondSortie": false,
+  "reason": "Complete first firing/normal Return/touchdown; native match ended during fuel reserve recovery.",
+  "inputAudit": {
+    "recordedContacts": 135,
+    "completedContacts": 135,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 130
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  }
+}

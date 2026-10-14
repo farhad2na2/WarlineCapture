@@ -1,0 +1,20 @@
+{
+  "priorSource": "c1344500f331ac05b66807cb94cf1cebc3a9893afaab50734ef8a875f0448980",
+  "currentSource": "f052e3e0abd5cb8267bce27872df5d952f5f3ad8488bf4b3a0c73ef4c859eea1",
+  "changes": [
+    {
+      "path": "Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs",
+      "before": "959e25eef5141623d417b57c9baaf21fb32e4d420b142f48c896ac708017a2c3",
+      "after": "b2118411ee8e922798fffc6eae9919cb51bffa87724eb4541b7c127f683f902d"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+      "before": "a95094703224923a6327c036748e73bac304b2f570614d4dce4c13ea06380f99",
+      "after": "3919a8a340142eed703c9260c6e9a8604cac8c605317ec7bd1a01bd01488231c"
+    }
+  ],
+  "productionUnchanged": true,
+  "sixPriorAiSuitesDependencyQualified": true,
+  "normalPlaythroughs": 0,
+  "playerReady": false
+}

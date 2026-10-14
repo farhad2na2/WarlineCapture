@@ -1,0 +1,64 @@
+{
+  "result": "ReadOnlyFinalLedgerReviewNoRemainingConcreteBlocker",
+  "manifestSha256": "8d6cb0c95175ec0998c8704a13830cd9fb787496289b9014ce93ebc699b73cd5",
+  "patchSha256": "cf500a203ffe58b2709f843f885622cf4ebddf9ad71ae537f0f62687c03d02a7",
+  "fileHashes": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "sha256": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "sha256": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "sha256": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "sha256": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "sha256": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "sha256": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6",
+      "matches": true
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "sha256": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65",
+      "matches": true
+    }
+  ],
+  "allManifestFilesMatch": true,
+  "scope": "Exact 8-file revised staged bundle, 9 prepared actual-system cases, no Unity/source mutation/validation pass claim.",
+  "resolvedFinding": "NotifyObservedDeath now samples actual current sameattempt live native observers and applies identical CurrentObservation predicate shared with positiveTime updater; priorVisible alone does not remove hidden death record. It may remove already actually observedHealth0 without inventing pose/time/health writes. Ninth nativeFinalize edge moves100m and dies before next fogtick and requiresfrozenmemory.",
+  "verified": [
+    "Shared TrySampleObserver/CurrentObservation extraction preserves old acquisition Euclidean, native detector domain/Chebyshev/alive, exact previously emitted activeScan sourceentity+stableID/request/radius semantics.",
+    "Native Finalizer is positiveclock/currentnonlegacyplaying/sessionpaused guard; no current passive enemy-health read can remove LastSeen unless observedHP0/currentnativeobservation establishes death.",
+    "Stable scalar ledger optional Parts snapshot/capture/validate/apply and worldage/nativeScanFrame rebase retain absent destroyed contact without Entity references.",
+    "Session identity reset, cleanup buffer removal and replay cannot leak oldattempt ledger.",
+    "Existing observedDeath and hiddenDeath + beforeNextTickHiddenDeath cases cover fresh source sampling semantics."
+  ],
+  "remainingLimits": [
+    "Parent still must drycompile/run actual focused nine cases and validate integration; this is static exactbundle review.",
+    "No actual populated ledger SaveExit/presentedContinue proof from ordinary boarded1102 emptyledger fixture; keep scopes distinct.",
+    "Parent consumer bridge must enumerate session ledger for absent contacts if player UI promises20sLastSeen memory; service persistence alone does not render icon.",
+    "No device/performance or normalwholemission readiness claim."
+  ],
+  "initialFindingReport": "delegation-ledger-contact-review-20261011.json"
+}

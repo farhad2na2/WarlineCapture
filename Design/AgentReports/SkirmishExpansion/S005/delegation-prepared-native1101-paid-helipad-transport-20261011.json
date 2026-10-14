@@ -1,0 +1,32 @@
+{
+  "result": "PreparedNotCompiledNotLoadedNotRun",
+  "fixture": "/private/tmp/S005PaidTransportHeli1101.cs",
+  "runner": "/private/tmp/s005-run-paid-transport-heli-1101.py",
+  "hashes": {
+    "/private/tmp/S005PaidTransportHeli1101.cs": "66a3d460c46a3f04d9a420f6676c6fadbb04aec66c233a4986372b902152cea9",
+    "/private/tmp/s005-run-paid-transport-heli-1101.py": "db7da5be630f2461990a2df413d28974e66beff094032d741284a57058159104"
+  },
+  "scope": "One actual native Touch legal paid Helipad on unchanged Campaign geometry, paidRifle4 and paidTransportHeli, exact actual Board/loadedMove/ExitAll/unlink/body+typed marker restoration/death native capacity conservation. Save/Continue not performed.",
+  "derivedFrom": {
+    "transport": "S005PaidTransport1097.cs frozen executed twoAPCs; failed missingHelipad retained",
+    "nativeHelipadUiPipeline": "S005HelipadRolesSmoke1052.cs actual successful paid native standalone Helipad pipeline, same catalog-owner/surface/fullmap candidate Touch/realCanConfirm/Tap confirmation helpers"
+  },
+  "differences": [
+    "Disjoint producer-build phases70..73 avoid transport20..29 collisions. Build Helipad before first Rifle queue/card selection.",
+    "R2 Established actual allowed readiness; no Airport. Real materials topups/readiness/starting actor retirement/native API requests and healthzero death disclosed.",
+    "Actual native Helipad ECS runtime owner/attempt/id/footprint receipt serialized and TransportHeli native reservation producer must equal this real ID.",
+    "Native queue acceptance request9001/Rifle and9002/TransportHeli with real distinct reservation IDs logged.",
+    "Unchanged exact typed SelectionMarkerVisualChild.Value predicate; all other visual/body scales remain exact snapshots. All eight capacity counters conserved across actual five phases.",
+    "All actual rawTouch rows audited even between native command audit resets; real native accepted contacts required.",
+    "Unload button enumeration returns only after accepted real Tap; does not stop at inactive duplicate."
+  ],
+  "limits": [
+    "External only; parent must drycompile and review before native load.",
+    "No normal-input whole mission / checkpoint / aircombat / player-device / readiness certificate.",
+    "Candidate lots remain current native legality unproved until actual Touch and CanConfirm. Bounded scan exhaustion is not map-source impossibility."
+  ],
+  "dryCompile": "rtk proxy unity command run_script --file /private/tmp/S005PaidTransportHeli1101.cs --entry S005PaidTransportHeli1101.Run --dry_run true --timeout_ms 30000 --project-path /Users/farhad/Projects/WarlineCapture --format json",
+  "nativeInvocation": "rtk proxy python3 /private/tmp/s005-run-paid-transport-heli-1101.py <CURRENT_FULL_SOURCE_MANIFEST_BASENAME> --heavy-lane-owner main1101",
+  "noUnityCallsByAgent": true,
+  "noProductionSourceChanges": true
+}

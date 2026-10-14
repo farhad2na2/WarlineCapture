@@ -1,0 +1,82 @@
+{
+  "status": "ReadOnlyCurrentSourceAudit_Active1282Excluded",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "activeRunNotQualified": "native1282 paidPlane cargo; no outcome presumed",
+  "completedDoNotRepeat": [
+    {
+      "proof": "native1263-1266-1276-1268-current-aria-matrix.json",
+      "sha256": "9a8fbcb1ba21e81e3c2e40cbfeaeaaf7101c358734292c1f72cef663ba0136c3"
+    },
+    {
+      "proof": "native1262-offline-audited-proof.json",
+      "sha256": "f309b1294e7255e8ba95ad1ec73b1c1ce5b7ab15efd05ba44cc99d5ed7200757"
+    },
+    {
+      "proof": "native1273-lifecycle-pass.json",
+      "sha256": "7319b0fa8311f2c1c2ec7d7ca19d3783eecc0474ee692dcf895e0847c623a783"
+    },
+    {
+      "proof": "delegation-native1258-ground-carrier-closure.json",
+      "sha256": "26b5860c661fa29c016f2cc7d53bb85e50953ed344dd03d18ec44fc1beafac31"
+    }
+  ],
+  "priorityAfterQueuedRoleAndManualGates": {
+    "recommendation": "One current-source normal passive-player pressure + escort-progress + Editor measurement run, using frozen1274 lineage after metadata repair/review/drycompile.",
+    "reason": "Approved AI plan Step2 groundpressure/Step3 boundedrecovery and Step4 native orchestration changed after historical1219. Current six player wins establish faircounterplay, not coherent passive objective capability/paid escorts on full60de. One run can record natural enemyDefeat before1080, real paid replacement/escort trajectories and usable frame/GC/ECS data; no second passive match solelyforperformance.",
+    "prepared": "/private/tmp/s005-passive-performance1274/manifest.json",
+    "manifestSha256": "4b3938fbd76ada14140df08ca1293bcf7b6b56a1f9eba23b9c9de77e90ffa3ed",
+    "nativePending": true,
+    "metadataGap": "prepared.json still names cargo1272 fixture/method/publicEntry/executionOwner, inconsistent with actual runner1274. Owning aircraft agent informed; preserve frozen original and correct metadata explicitly before root execution.",
+    "measurementLimits": "Editor QA overhead/counter availability retained; not Android targetbudget/worstpopulation/deviceacceptance."
+  },
+  "nextBoundedTechnicalSequence": [
+    {
+      "gate": "Affected Campaign M3 FA+EN complete journey/renderedCampaign return",
+      "prepared": "/private/tmp/campaign-m3-current1286/manifest.json",
+      "currentEvidence": "1281 genuineFA Victory but missingreturn/census; terminalconvoyElements2/resolved1.1286 menuobserver separates actualmenu from frozenVictory; originalconvoy2 gate retained. EN counterpart requires same exact bounded correction under a uniqueID if1283 was not alreadyattempted.",
+      "doNotClaim": "No production returnbug proven; no fullM3 acceptance yet."
+    },
+    {
+      "gate": "Materially distinct native flank approach win/result/return",
+      "reason": "DB_BA164 +X27/X39 direct/flank requirement. Existing sixARIA and1262manual do not prove actualflanktrajectory; names/seeds alone insufficient.",
+      "minimum": "One predeclared compatible normalinputflank journey with actual accepted route/order telemetry,naturalVictory/renderedreturn; combine with remainingmanualgate only if actual recorded path substantiates it."
+    },
+    {
+      "gate": "Remaining enabled-role lifecycle/service/recovery dependency reconciliation",
+      "minimum": "Use exact leafhash+actualmechanism evidence for unchangedroles; paidPlane cargo is not PlaneSave/Continue, AA/Fighter effects are not nativefuelservice/secondsortie or enemyairorchestration. Keep concrete unproven sharedaircargo/recovery/service scopes pending rather than22wholemissionwins."
+    }
+  ],
+  "failureEvidencePreserved": [
+    {
+      "proof": "native1281-campaign-m3-failure.json",
+      "sha256": "ce9498f912d4416a27c1d2032c4541bbe4f05a02624b47cb801a9334dde4f2e8"
+    },
+    {
+      "proof": "native1284-paid-air-effects-failure.json",
+      "sha256": "9f0a9ca87f6e924426113aef711275f8469ba94b5c5f4794b2d44206c3cb0159"
+    }
+  ],
+  "noRedundantRuns": [
+    "Do not repeat current6caseStandardRegularARIAmatrix on unchanged60de.",
+    "Do not repeat1273tenSurrenderReplaysetupcycles toobtaincombatwin; X17background/interruption/memory remainsseparate.",
+    "Do not repeatEN1262R2/APCSaveContinue justbecauseFAfailed.",
+    "Do not repeat1106paidbilateralAir2emptyflight when dependentpaidair/cargofixtures alreadyexerciseactualfacilities and unchangedleafmechanisms.",
+    "Do not use20Fieldonlymatches toclaim20alternatingField/Establishedfamily; S006Establishedunimplemented.",
+    "Do not expandunexposedsize/difficulty,Support,newmaps orforcedcombatquotas."
+  ],
+  "pendingSeparate": [
+    "Realowner visual review",
+    "Realhuman/device/background/interruption/memory+performanceacceptance",
+    "Heldoutdeploymentseed and authoredstrategy/familystress remain honest scoped obligations"
+  ],
+  "staleReadinessText": [
+    "Top-level pending/nextWork stillpointsfailed1270 and frozen1275/1277 ratherthan latest1284/1281/1286; preservehistory, reconcileonlyafteractiveclosure.",
+    "Historicalsections stillsay10cyclespending or1242focusedpending, but current1273 and focusedcorrections arecompleted; do not useoldheadings asnewrerunrequirements."
+  ],
+  "sourceEvidence": [
+    "Design/AgentReports/SkirmishExpansion/S005/ENEMY_AI_IMPROVEMENT_PLAN_20261011.md:163-170,180-218",
+    "Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md:X17/X18/X27/X36-X39",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md:150-164"
+  ],
+  "noUnityOrProductionOrSharedReadinessWrites": true
+}

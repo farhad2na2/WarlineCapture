@@ -1,0 +1,9 @@
+{
+  "kind": "EvidenceParserCorrection",
+  "run": 717,
+  "originalParserFailure": "startswith rejected intact normal-speed marker with unrelated dot/quote prefix",
+  "log": "native-717-current-aria-fa-IR-seed130368.log",
+  "requiredMarker": "[SkirmishNormalSpeed] latch=True terminalScale=0 matchSeconds=244.3036 wallSeconds=245.316547417 counted=True",
+  "correction": "Require exact latch=True terminalScale=0 marker and counted=True anywhere on the log line; all other source/outcome/input/actual-wrapper gates unchanged",
+  "gameplayChanged": false
+}

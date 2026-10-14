@@ -1,0 +1,62 @@
+[
+  {
+    "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+    "before": null,
+    "after": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db"
+  },
+  {
+    "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs.meta",
+    "before": null,
+    "after": "7273bf05f4bd98b96059dd311ba06e6ca7bde5025a8bf1de3e4097cfce58d4f8"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+    "before": null,
+    "after": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs.meta",
+    "before": null,
+    "after": "11c3dc98702dc56b6b17bc19d2f0544abd6e8e4ab620162f8e5b543df2e3cf2a"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+    "before": "27d4a04afc69364b609e1144fbecdf57ff66c434d4d307a0c581d83a4a13ec1a",
+    "after": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+    "before": "0031bb7905203788aba0b3c3f686428b20fe40c73ad070d8b54da1dde9d6871e",
+    "after": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+    "before": "b830c138e24720b64325223ce859f711cb56ed7054cb3f8876d8cf4e88c46b34",
+    "after": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9"
+  },
+  {
+    "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+    "before": "e031ad24b5b5ab8959305db91af7a0b2ec90ffa111869e6a6e7b3b5358ff9fde",
+    "after": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849"
+  },
+  {
+    "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+    "before": "ba2f0223933b8f6966b97bc8f14499b347a5297c2050bb0c265ce983d866640e",
+    "after": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6"
+  },
+  {
+    "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+    "before": null,
+    "after": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65"
+  },
+  {
+    "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs.meta",
+    "before": null,
+    "after": "1dae7cb165bff0dd6af5bb30b12b8d7beb9b943ff28ac91a85f1d13f82154587"
+  },
+  {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "before": "67bdaed4f7210652978b969e44487e407e94f8ba0edac284762d32ba1b2f8449",
+    "after": "f4324caa2b7b019ef74a1b8c04dce4fb462cc9a7cda227115e1203a8c211b25e"
+  }
+]

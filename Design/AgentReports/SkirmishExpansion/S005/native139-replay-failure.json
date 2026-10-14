@@ -1,0 +1,14 @@
+{
+  "run": 139,
+  "result": "Failed",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "nativeMissionOutcome": "Victory",
+  "normalInput": true,
+  "baseHp": 800,
+  "replayFreshSceneUnloadObserved": true,
+  "terminalFailure": "replayRetainedBattlefieldEntity:Entity(368:5)",
+  "hypothesis": "Persistent faction bank; stricter follow-up distinguishes account reset from physical state disposal. Initial blanket identity assertion retained as failed evidence.",
+  "log": "native-139-replay-en.log",
+  "playerReady": false
+}

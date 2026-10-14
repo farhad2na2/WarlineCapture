@@ -1,0 +1,19 @@
+{
+  "run": 171,
+  "sourceHash": "72aeeb20147d9c2319d01e8641b443677e96852a7acb213513866f8661ece8d7",
+  "result": "Failed",
+  "log": "native-171-player-save-resume-en.log",
+  "saveThroughNativeControls": "Passed",
+  "continue": "Not attempted by probe",
+  "cause": "Probe waited for em.Exists=false on cleanup-only static blocker remnants before a fresh grid could process them.",
+  "oldPhysicalCensus": 386,
+  "oldOwnedActorsRemaining": 0,
+  "oldCleanupEntitiesRemaining": 344,
+  "remainingComponents": [
+    "StaticBlockerPrevBounds",
+    "CleanupEntity"
+  ],
+  "fix": "Check removal of physical/gameplay components before Continue and require all old entities gone after fresh-scene recovery.",
+  "countsForCurrentSource": false,
+  "playerReady": false
+}

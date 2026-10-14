@@ -1,0 +1,12 @@
+{
+  "result": "PreparedNeverLoaded",
+  "predecessor1130": "native1130-isolated-paid-boarded-recovery-failure.json",
+  "change": "Reuse initialized GUID-owned inherited validation profile/save root without switching environments. Require exact native SavePath before recovery; archive actual checkpoint to explicit reportdir. Preserve explicit native startup-to-recovery Tick handoff.",
+  "fixture": "/private/tmp/S005BoardedRecovery1134.cs",
+  "fixtureSha256": "4b90b670e9aa2f32da59fb2ba977508062bcd593402802ccb66db90196158732",
+  "runner": "/private/tmp/s005-run-boarded-recovery-1134.py",
+  "runnerSha256": "8a8fd16fa2dc6eaa19d8d70647d86b0e5b262a7023c2e3784677d4dc53b4b358",
+  "productionSourceChanged": false,
+  "payloadWrittenOrAlteredByFixture": false,
+  "saveContinueCertified": false
+}

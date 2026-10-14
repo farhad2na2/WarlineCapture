@@ -1,0 +1,964 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAirportPlacementProbe
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_e6ffd031/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:RunEditorJourney (string,bool,bool,string,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:56)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorHeavyApcSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:57)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorSiegeSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:76)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorAirportPlacementProbe () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:81)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6ffd031/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S004MenuProfileFixture] chapter1Completed=5 progressionGate=Preserved isolatedProfile=1
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchCatalog (string,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:551)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchFromEnvironment () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:490)
+Game.Editor.SkirmishS002AriaRunHarness:RunFocusedAriaAndExit () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:220)
+Game.Editor.SkirmishS002AriaRunHarness:RunEditorJourney (string,bool,bool,string,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:94)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorHeavyApcSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:57)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorSiegeSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:76)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorAirportPlacementProbe () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:81)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6ffd031/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=2400x1080 selectedIndex=14
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:441)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchCatalog (string,int,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:565)
+Game.Editor.SkirmishS002AriaRunHarness:LaunchFromEnvironment () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:490)
+Game.Editor.SkirmishS002AriaRunHarness:RunFocusedAriaAndExit () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:220)
+Game.Editor.SkirmishS002AriaRunHarness:RunEditorJourney (string,bool,bool,string,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:94)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorHeavyApcSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:57)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorSiegeSaveResumeEn () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:76)
+Game.Editor.SkirmishS002AriaRunHarness:RunS005EditorAirportPlacementProbe () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:81)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_e6ffd031/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute] attribute on Game.Runtime.CampaignMissionArmorBreakAircraftOrderSystem targeting Game.Runtime.UnitTargetOrderSystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.SimulationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=QuickCustomSetup
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=QuickCustomSetup
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[S004SetupText] label=OperationName rect=(x:0.00, y:-54.00, width:784.00, height:54.00) fontSize=30 characters=33 visible=33 overflow=False
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickS004MenuPlayerFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:182)
+Game.Editor.SkirmishS004MenuInputFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:215)
+
+[S004SetupText] label=SeedHelp rect=(x:0.00, y:-106.00, width:1275.25, height:106.00) fontSize=28 characters=104 visible=104 overflow=False
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickS004MenuPlayerFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:182)
+Game.Editor.SkirmishS004MenuInputFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:215)
+
+[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S005,Launch seedFixture=155926
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickS004MenuPlayerFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:190)
+Game.Editor.SkirmishS004MenuInputFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:215)
+
+[SkirmishLaunch] queued expanded catalog=S005 definition=skirmish.s005 start=FieldBase difficulty=Regular size=Standard seed=155926 mapHint=0
+UnityEngine.Debug:Log (object)
+Game.Composition.SkirmishLaunchProjection:TryQueueExpanded (Unity.Entities.EntityManager,string,int) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:136)
+Game.Composition.SkirmishLaunchProjection:TryQueue (Unity.Entities.EntityManager,Game.Configs.QuickGameConfig) (at Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs:66)
+Game.Composition.MatchLaunchCommand:QueueMatchRoute (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:362)
+Game.Composition.MatchLaunchCommand:QueueMatchRoute () (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:327)
+Game.Composition.MatchLaunchCommand:LaunchMatch (UnityEngine.Component) (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:315)
+Game.UI.Runtime.QuickCustomScreenFlowUiSystemHelper:LaunchMatch (Game.UI.Runtime.QuickCustomScreenView,Game.UI.Contracts.IQuickCustomGameConfigStore,Game.UI.Contracts.IMatchLaunchCommand) (at Assets/Game/Scripts/UI/Screens/QuickCustomScreenFlowUiSystemHelper.cs:34)
+Game.UI.Runtime.QuickCustomScreenView:LaunchMatch () (at Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs:309)
+UnityEngine.EventSystems.EventSystem:Update () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/UGUI/EventSystem/EventSystem.cs:516)
+
+[GameLaunch] submitted authoritative Match route request. alreadyQueued=0
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchLaunchCommand:QueueMatchRoute (Unity.Entities.EntityManager) (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:373)
+Game.Composition.MatchLaunchCommand:QueueMatchRoute () (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:327)
+Game.Composition.MatchLaunchCommand:LaunchMatch (UnityEngine.Component) (at Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs:315)
+Game.UI.Runtime.QuickCustomScreenFlowUiSystemHelper:LaunchMatch (Game.UI.Runtime.QuickCustomScreenView,Game.UI.Contracts.IQuickCustomGameConfigStore,Game.UI.Contracts.IMatchLaunchCommand) (at Assets/Game/Scripts/UI/Screens/QuickCustomScreenFlowUiSystemHelper.cs:34)
+Game.UI.Runtime.QuickCustomScreenView:LaunchMatch () (at Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs:309)
+UnityEngine.EventSystems.EventSystem:Update () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Runtime/UGUI/EventSystem/EventSystem.cs:516)
+
+'Game.Runtime.SkirmishSessionCleanupSystem' creates a query during OnUpdate. Please create queries in OnCreate and store them in the system for use in OnUpdate instead. This is significantly faster.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.SystemState:CheckOnUpdate_Query () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:551)
+Unity.Entities.SystemState:GetEntityQuery (Unity.Entities.ComponentType) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemState.cs:834)
+Game.Runtime.SkirmishSessionCleanupSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs:22)
+Game.Runtime.SkirmishSessionCleanupSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[SkirmishS002AriaRun] selected catalog=S005 definition=skirmish.s005 version=2 size=Standard difficulty=Regular seed=155926 locale=en
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:685)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishAcceptanceCensus] result=Passed catalog=S005 definition=skirmish.s005 version=2 code=7c1a77a843ad1df50f7274c1365211f7e92e8a7b006fb49861532ef0d05af6d4 config=b8e5add18b91eac6c9880273cf283120ba3bb5fffdc9ffb7d3ccb84605e215c0 setup=CEE5C4FD seed=155926 playable=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:687)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapLaunchIdentity] source=Compatibility mission=skirmish.base_assault scenario=scenario.skirmish.desert_base_standard operationMap=opmap.skirmish.desert_base_01_s005
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:392)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:329)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:241)
+
+[FrameRateDiag:PreGame] fps=2.5 avgFrame=405.0ms updateAvg=1.3ms updateMax=1.3ms cpuFrame=14.7ms cpuMain=9.9ms cpuRender=1.5ms gpu=3.1ms drawCalls=10 batches=0 setPass=36 tris=1964 verts=5632 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=1.00,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=7833MB reserved=10133MB mono=6255MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.5ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=118 source=profilerCounters drawCalls=10 batches=0 setPass=36 tris=1964 verts=5632 topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, Metadata, MapSurface, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:474)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>,System.Func`1<Game.Configs.MapBuildingPlacementConfig>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:178)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:766)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag:PreGame] fps=4.1 avgFrame=246.1ms updateAvg=0.0ms updateMax=0.0ms cpuFrame=12.3ms cpuMain=7.9ms cpuRender=8.6ms gpu=75.8ms drawCalls=10 batches=125 setPass=36 tris=1964 verts=5632 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=4,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8521MB reserved=10468MB mono=6256MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.0ms stepStats=none topSystems=disabled markers=disabled
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=1439 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FrameRateDiag:PreGame] fps=0.4 avgFrame=2392.8ms updateAvg=9.2ms updateMax=18.0ms cpuFrame=405.0ms cpuMain=381.4ms cpuRender=1.6ms gpu=1.5ms drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9268MB reserved=10751MB mono=6207MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.4ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=121 source=profilerCounters drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 topSystems=disabled markers=disabled
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:490)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:605)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:124)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[LoadingGate] ready frame=128 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[PerfDiag:PreGame] slowUpdate frame=128 total=55.7ms gc=0/0/0 cpuFrame=33.2ms cpuMain=29.2ms cpuRender=1.4ms gpu=10.1ms steps=BuildingStartup=54.8ms, MainMenu=0.1ms units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 memory=alloc=9249MB reserved=10731MB mono=6207MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Update hitch frame=129 BuildingPlacement=2387.2ms, GC=0/0/0, Total=2411.7ms
+[PerfDiag] slowUpdate frame=129 total=2411.7ms gc=0/0/0 cpuFrame=15.1ms cpuMain=10.8ms cpuRender=1.3ms gpu=10.5ms steps=RoadBuild=4.7ms, BuildingPlacement=2387.2ms, Selection=18.0ms, DayNight=0.0ms, CitizenPopulation=0.1ms, MainMenu=1.5ms units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 memory=alloc=9307MB reserved=10749MB mono=6219MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=1.1 avgFrame=869.6ms updateAvg=308.5ms updateMax=2411.7ms cpuFrame=15.1ms cpuMain=10.8ms cpuRender=1.3ms gpu=10.5ms drawCalls=10 batches=0 setPass=33 tris=1961 verts=5623 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9307MB reserved=10749MB mono=6219MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=130 Gap=2432.8ms GC=0/0/0 LastSteps=RoadBuild=4.7ms, BuildingPlacement=2387.2ms, Selection=18.0ms, DayNight=0.0ms, CitizenPopulation=0.1ms, MainMenu=1.5ms
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:282)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=LiveContractObserved configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 authoredVehicles=22
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|41 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:621)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Update hitch frame=140 BuildingPlacement=1230.1ms, GC=0/0/0, Total=1230.4ms
+[PerfDiag] slowUpdate frame=140 total=1230.4ms gc=0/0/0 cpuFrame=11.2ms cpuMain=7.4ms cpuRender=1.0ms gpu=8.5ms steps=RoadBuild=0.0ms, BuildingPlacement=1230.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.1ms units=4953 models=22 sourceKeys=4953 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=10 batches=0 setPass=33 tris=1971 verts=5643 memory=alloc=9325MB reserved=10750MB mono=6226MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=141 Gap=1585.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=1230.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.1ms
+[SkirmishPlacementGeometry] geometry=64664 buildingBounds=1073 packed=True
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingPlacementAuthoredBuildingCache:Ensure (Unity.Entities.EntityManager,Game.Components.GridConfig) (at Assets/Game/Scripts/Systems/BuildingPlacementAuthoredBuildingCache.cs:62)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRuntimeSpawnRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Unity.Entities.EntityManager,Unity.Entities.Entity,single,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:392)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:ProcessRequests (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,Unity.Entities.EntityManager,Unity.Entities.Entity,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:164)
+Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper:Update (Game.Runtime.BuildingDefinitionPrefabSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper,Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingProductionRequestSystemHelper,Game.Runtime.BuildingProductionRequestSystemHelper/Context,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper,Game.Runtime.BuildingRuntimeReadModelCompositionSystemHelper/Context,Game.Runtime.FactionResourceCompositionSystemHelper,Unity.Entities.EntityManager,Unity.Entities.EntityQuery,System.Collections.Generic.IReadOnlyDictionary`2<int, Game.Runtime.RuntimeBuildingEntity>,single,int) (at Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs:114)
+Game.Runtime.BuildingRuntimePublishCompositionSystemHelper:Update (Game.Runtime.BuildingRuntimePublishCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs:65)
+Game.Runtime.BuildingPlacementRuntimeTickContextCompositionSystemHelper/<>c__DisplayClass4_0:<Create>b__5 () (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs:70)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:189)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|41 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:613)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:584)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:293)
+
+[FreezeDetect] Update hitch frame=141 BuildingPlacement=1956.5ms, GC=0/0/0, Total=1957.0ms
+[PerfDiag] slowUpdate frame=141 total=1957.0ms gc=0/0/0 cpuFrame=7.7ms cpuMain=4.3ms cpuRender=2.5ms gpu=3.9ms steps=RoadBuild=0.0ms, BuildingPlacement=1956.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.2ms units=4967 models=22 sourceKeys=4967 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=666 batches=0 setPass=52 tris=8231679 verts=10866545 memory=alloc=9388MB reserved=10769MB mono=6235MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=2.8 avgFrame=351.2ms updateAvg=266.1ms updateMax=1957.0ms cpuFrame=7.7ms cpuMain=4.3ms cpuRender=2.5ms gpu=3.9ms drawCalls=666 batches=0 setPass=52 tris=8231679 verts=10866545 units=4967 models=22 sourceKeys=4967 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9388MB reserved=10769MB mono=6235MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[FreezeDetect] Frame gap frame=142 Gap=3065.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=1956.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.2ms
+[PerfDiag] slowUpdate frame=142 total=34.6ms gc=0/0/0 cpuFrame=8.1ms cpuMain=4.5ms cpuRender=1.0ms gpu=9.1ms steps=RoadBuild=0.0ms, BuildingPlacement=0.9ms, Selection=1.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.2ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=726 batches=0 setPass=54 tris=8438371 verts=11244319 memory=alloc=9401MB reserved=10756MB mono=6241MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=143 Gap=215.0ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.9ms, Selection=1.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.2ms
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:100)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[FrameRateDiag] fps=3.8 avgFrame=265.7ms updateAvg=9.1ms updateMax=34.6ms cpuFrame=33.5ms cpuMain=28.0ms cpuRender=0.8ms gpu=21.4ms drawCalls=1875 batches=0 setPass=129 tris=10950301 verts=15927550 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=23 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9408MB reserved=10761MB mono=6243MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=167 total=30.7ms gc=0/0/0 cpuFrame=69.1ms cpuMain=60.7ms cpuRender=6.9ms gpu=18.3ms steps=RoadBuild=0.1ms, BuildingPlacement=14.6ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.8ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9388MB reserved=10761MB mono=6243MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=13.0 avgFrame=77.0ms updateAvg=12.3ms updateMax=30.7ms cpuFrame=68.1ms cpuMain=57.2ms cpuRender=1.2ms gpu=22.1ms drawCalls=1881 batches=0 setPass=129 tris=10969563 verts=15971738 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=22 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9383MB reserved=10760MB mono=6244MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=183 source=profilerCounters drawCalls=1881 batches=0 setPass=129 tris=10969563 verts=15971738 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=18.6 avgFrame=53.8ms updateAvg=7.9ms updateMax=22.1ms cpuFrame=36.7ms cpuMain=32.6ms cpuRender=1.0ms gpu=0.2ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=21 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9360MB reserved=10759MB mono=6248MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[SkirmishNativeShaderGate] result=Passed compiling=0 settledSeconds=2
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:NativeShadersAreReady (double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:70)
+Game.Editor.SkirmishS002AriaRunHarness:Tick () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:766)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005PlayerSaveResume] phase=Input step=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:155)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=239 Gap=527.8ms GC=0/0/0 LastSteps=RoadBuild=2.2ms, BuildingPlacement=0.4ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.8ms
+[PerfDiag] slowUpdate frame=239 total=25.5ms gc=0/0/0 cpuFrame=96.5ms cpuMain=86.2ms cpuRender=12.2ms gpu=38.6ms steps=RoadBuild=0.2ms, BuildingPlacement=2.6ms, Selection=0.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=22.0ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1887 batches=0 setPass=129 tris=10988825 verts=16015926 memory=alloc=9353MB reserved=10759MB mono=6249MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=240 Gap=180.8ms GC=0/0/0 LastSteps=RoadBuild=0.2ms, BuildingPlacement=2.6ms, Selection=0.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=22.0ms
+[FrameRateDiag] fps=10.1 avgFrame=99.1ms updateAvg=12.3ms updateMax=25.5ms cpuFrame=512.2ms cpuMain=122.3ms cpuRender=10.3ms gpu=0.2ms drawCalls=1888 batches=0 setPass=130 tris=10988827 verts=16015930 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=21 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9351MB reserved=10759MB mono=6250MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[SkirmishS003HelipadProbe] touch=SquadCard1 point=(94.00, 125.67)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:95)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=243 Gap=153.4ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=17.1ms
+[PerfDiag] slowUpdate frame=243 total=53.0ms gc=0/0/0 cpuFrame=197.9ms cpuMain=160.8ms cpuRender=1.4ms gpu=44.9ms steps=RoadBuild=0.1ms, BuildingPlacement=5.7ms, Selection=25.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=21.8ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1887 batches=0 setPass=129 tris=10988825 verts=16015926 memory=alloc=9349MB reserved=10759MB mono=6250MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=244 Gap=154.7ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=5.7ms, Selection=25.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=21.8ms
+[FreezeDetect] Frame gap frame=245 Gap=188.8ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=18.1ms
+[FreezeDetect] Frame gap frame=246 Gap=228.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.4ms, Selection=23.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.7ms
+[SkirmishS003HelipadProbe] touch=AttackCommand point=(1370.58, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:100)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=250 total=39.0ms gc=0/0/0 cpuFrame=128.0ms cpuMain=112.8ms cpuRender=1.3ms gpu=24.0ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=22.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.9ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9343MB reserved=10760MB mono=6251MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005AircraftBaseGuard] input=Touch command=AttackMove slot=0 world=(1013.19, 0.01, 650.98) point=(1644.90, 978.74)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:143)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Update hitch frame=262 Selection=624.9ms, GC=0/0/0, Total=645.7ms
+[PerfDiag] slowUpdate frame=262 total=645.7ms gc=0/0/0 cpuFrame=59.1ms cpuMain=50.6ms cpuRender=1.1ms gpu=18.7ms steps=RoadBuild=0.1ms, BuildingPlacement=0.4ms, Selection=624.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=20.4ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3810 batches=0 setPass=304 tris=22195030 verts=32447124 memory=alloc=9400MB reserved=10765MB mono=6298MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=10.1 avgFrame=99.1ms updateAvg=49.3ms updateMax=645.7ms cpuFrame=59.1ms cpuMain=50.6ms cpuRender=1.1ms gpu=18.7ms drawCalls=3810 batches=0 setPass=304 tris=22195030 verts=32447124 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=17 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9400MB reserved=10765MB mono=6298MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=263 Gap=744.4ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.4ms, Selection=624.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=20.4ms
+[SkirmishS003HelipadProbe] touch=ClearSquadSelection point=(772.41, 291.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:149)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=35 played=1 status=Presented reason=Played at=41.71 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[FreezeDetect] Frame gap frame=264 Gap=162.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=15.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=20.6ms
+[SkirmishS003HelipadProbe] touch=SquadCard2 point=(255.60, 125.67)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:95)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[SkirmishS003HelipadProbe] touch=AttackCommand point=(1370.58, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:100)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=7.8 avgFrame=127.4ms updateAvg=15.1ms updateMax=36.9ms cpuFrame=45.2ms cpuMain=39.2ms cpuRender=1.3ms gpu=23.5ms drawCalls=3820 batches=0 setPass=290 tris=22386958 verts=32859002 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=12 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9389MB reserved=10765MB mono=6300MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=293 Gap=435.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=1.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.2ms
+[S005AircraftBaseGuard] cameraInput=FullMapTouch world=(1013.06, 0.01, 647.98) from=(868.54, 605.42) to=(930.98, 628.13) drag=True
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FocusPresentedGuardSite (double,UnityEngine.Vector3) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:74)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:118)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=302 total=82.6ms gc=0/0/0 cpuFrame=42.1ms cpuMain=35.9ms cpuRender=1.1ms gpu=1.7ms steps=RoadBuild=0.1ms, BuildingPlacement=0.2ms, Selection=1.0ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=80.9ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9400MB reserved=10765MB mono=6307MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=9.9 avgFrame=100.9ms updateAvg=16.6ms updateMax=82.6ms cpuFrame=52.5ms cpuMain=36.0ms cpuRender=1.0ms gpu=16.2ms drawCalls=6948 batches=0 setPass=503 tris=42712201 verts=67555211 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=12 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9394MB reserved=10764MB mono=6307MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=304 source=profilerCounters drawCalls=6948 batches=0 setPass=503 tris=42712201 verts=67555211 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=305 Gap=214.9ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=1.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=12.4ms
+[SkirmishS003HelipadProbe] touch=CloseAction point=(1900.68, 967.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:FocusPresentedGuardSite (double,UnityEngine.Vector3) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:50)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:118)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=312 total=67.7ms gc=0/0/0 cpuFrame=66.4ms cpuMain=52.0ms cpuRender=0.9ms gpu=24.6ms steps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=1.0ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=66.3ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=4084 batches=0 setPass=328 tris=23032780 verts=34113360 memory=alloc=9395MB reserved=10764MB mono=6308MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=315 Gap=226.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=1.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.5ms
+[S005AircraftBaseGuard] input=Touch command=AttackMove slot=1 world=(1013.06, 0.01, 647.98) point=(1237.31, 574.06)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:143)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=9.8 avgFrame=102.4ms updateAvg=17.2ms updateMax=67.7ms cpuFrame=48.0ms cpuMain=41.7ms cpuRender=0.8ms gpu=0.2ms drawCalls=4042 batches=0 setPass=304 tris=23030384 verts=34108568 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=9 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9394MB reserved=10764MB mono=6311MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=328 total=56.7ms gc=0/0/0 cpuFrame=54.0ms cpuMain=47.1ms cpuRender=0.9ms gpu=20.6ms steps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=56.0ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2016 batches=0 setPass=149 tris=11514890 verts=17053769 memory=alloc=9389MB reserved=10764MB mono=6311MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SkirmishS003HelipadProbe] touch=ClearSquadSelection point=(772.41, 291.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:149)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[SkirmishS003HelipadProbe] touch=SquadCard3 point=(417.19, 125.67)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:95)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=11.5 avgFrame=87.3ms updateAvg=15.2ms updateMax=56.7ms cpuFrame=56.4ms cpuMain=48.9ms cpuRender=1.0ms gpu=16.1ms drawCalls=2026 batches=0 setPass=150 tris=11543817 verts=17120119 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=8 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9372MB reserved=10763MB mono=6313MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[SkirmishS003HelipadProbe] touch=AttackCommand point=(1370.58, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:100)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005AircraftBaseGuard] input=Touch command=AttackMove slot=2 world=(1012.92, 0.01, 644.98) point=(1259.87, 548.41)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:143)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Update hitch frame=360 Selection=1084.2ms, GC=0/0/0, Total=1092.7ms
+[PerfDiag] slowUpdate frame=360 total=1092.7ms gc=0/0/0 cpuFrame=91.4ms cpuMain=84.7ms cpuRender=0.8ms gpu=24.7ms steps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=1084.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=8.2ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=4050 batches=0 setPass=298 tris=23087630 verts=34240230 memory=alloc=9486MB reserved=10810MB mono=6392MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=12.5 avgFrame=80.0ms updateAvg=95.7ms updateMax=1092.7ms cpuFrame=91.4ms cpuMain=84.7ms cpuRender=0.8ms gpu=24.7ms drawCalls=4050 batches=0 setPass=298 tris=23087630 verts=34240230 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=8 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9486MB reserved=10810MB mono=6392MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[SkirmishS003HelipadProbe] touch=ClearSquadSelection point=(772.41, 291.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:149)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=361 Gap=1237.1ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=1084.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=8.2ms
+[FreezeDetect] Frame gap frame=362 Gap=186.9ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=8.2ms, Selection=1.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=17.4ms
+[SkirmishS003HelipadProbe] touch=SquadCard4 point=(578.79, 125.67)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:95)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=367 total=26.5ms gc=0/0/0 cpuFrame=133.3ms cpuMain=112.2ms cpuRender=3.4ms gpu=22.5ms steps=RoadBuild=0.1ms, BuildingPlacement=0.7ms, Selection=0.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.9ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2013 batches=0 setPass=138 tris=11543371 verts=17119227 memory=alloc=9479MB reserved=10813MB mono=6393MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=370 Gap=169.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.6ms, Selection=16.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=20.6ms
+[SkirmishS003HelipadProbe] touch=AttackCommand point=(1370.58, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:100)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=4.9 avgFrame=206.0ms updateAvg=20.8ms updateMax=37.8ms cpuFrame=127.0ms cpuMain=112.2ms cpuRender=1.4ms gpu=19.8ms drawCalls=2017 batches=0 setPass=149 tris=11515130 verts=17054249 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=9 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9474MB reserved=10813MB mono=6395MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005AircraftBaseGuard] input=Touch command=AttackMove slot=3 world=(1012.79, 0.01, 641.98) point=(1283.31, 521.76)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:143)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Update hitch frame=384 Selection=384.9ms, GC=0/0/0, Total=401.8ms
+[PerfDiag] slowUpdate frame=384 total=401.8ms gc=0/0/0 cpuFrame=51.8ms cpuMain=44.3ms cpuRender=1.0ms gpu=25.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.4ms, Selection=384.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=16.4ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2017 batches=0 setPass=149 tris=11515130 verts=17054249 memory=alloc=9525MB reserved=10848MB mono=6444MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=385 Gap=458.1ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.4ms, Selection=384.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=16.4ms
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=76 played=1 status=Presented reason=Played at=55.14 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[SkirmishS003HelipadProbe] touch=ClearSquadSelection point=(772.41, 291.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:149)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=10.1 avgFrame=99.4ms updateAvg=30.5ms updateMax=401.8ms cpuFrame=44.0ms cpuMain=38.6ms cpuRender=0.9ms gpu=20.5ms drawCalls=2034 batches=0 setPass=133 tris=11492342 verts=16995276 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=11 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9514MB reserved=10849MB mono=6445MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=396 source=profilerCounters drawCalls=2034 batches=0 setPass=133 tris=11492342 verts=16995276 topSystems=disabled markers=disabled
+[SkirmishS003HelipadProbe] touch=SquadCard5 point=(740.39, 125.67)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:95)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[SkirmishS003HelipadProbe] touch=AttackCommand point=(1370.58, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:100)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=12.0 avgFrame=83.6ms updateAvg=12.9ms updateMax=21.1ms cpuFrame=55.7ms cpuMain=47.5ms cpuRender=1.2ms gpu=26.7ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=11 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9466MB reserved=10833MB mono=6448MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005AircraftBaseGuard] input=Touch command=AttackMove slot=4 world=(1012.66, 0.01, 638.99) point=(1307.69, 494.05)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:143)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Update hitch frame=423 Selection=435.9ms, GC=0/0/0, Total=440.5ms
+[PerfDiag] slowUpdate frame=423 total=440.5ms gc=0/0/0 cpuFrame=88.3ms cpuMain=81.4ms cpuRender=9.9ms gpu=39.5ms steps=RoadBuild=0.1ms, BuildingPlacement=0.2ms, Selection=435.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.2ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9531MB reserved=10852MB mono=6496MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=424 Gap=540.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.2ms, Selection=435.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=4.2ms
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=92 played=1 status=Presented reason=Played at=58.78 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[SkirmishS003HelipadProbe] touch=ClearSquadSelection point=(772.41, 291.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TapHelipadButton (UnityEngine.UI.Button,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs:285)
+Game.Editor.SkirmishS002AriaRunHarness:GuardPresentedBase (double,Game.UI.Runtime.SkirmishMatchView,Game.UI.Runtime.MatchOverlayCommandControlsView) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs:149)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:190)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005RoleLifecycle] phase=ProducerDefense input=Touch groups=5
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:195)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=10.1 avgFrame=99.0ms updateAvg=32.5ms updateMax=440.5ms cpuFrame=49.3ms cpuMain=43.2ms cpuRender=7.2ms gpu=32.6ms drawCalls=2003 batches=0 setPass=132 tris=11470052 verts=16937388 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=13 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9545MB reserved=10865MB mono=6498MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PlayerSaveResume] phase=Touch step=0 button=BuildCommand point=(2257.76, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:238)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=444 Gap=324.1ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.1ms
+[PerfDiag] slowUpdate frame=444 total=27.9ms gc=0/0/0 cpuFrame=86.9ms cpuMain=80.6ms cpuRender=1.2ms gpu=16.9ms steps=RoadBuild=0.1ms, BuildingPlacement=0.4ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=27.1ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9562MB reserved=10873MB mono=6505MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005PlayerSaveResume] phase=Touch step=0 button=VehiclesTab point=(263.52, 709.57)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:238)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PlayerSaveResume] phase=Touch step=0 button=ItemView - Cargo Truck point=(1109.66, 345.79)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:238)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=11.4 avgFrame=88.0ms updateAvg=11.9ms updateMax=27.9ms cpuFrame=76.3ms cpuMain=70.6ms cpuRender=0.9ms gpu=18.2ms drawCalls=2000 batches=0 setPass=123 tris=11470238 verts=16937760 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=13 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9568MB reserved=10887MB mono=6509MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PlayerSaveResume] phase=Touch step=0 button=BuildButton point=(1505.52, 85.14)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:238)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=476 Gap=174.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=11.7ms
+[FrameRateDiag] fps=11.0 avgFrame=91.3ms updateAvg=13.7ms updateMax=22.6ms cpuFrame=121.4ms cpuMain=101.9ms cpuRender=0.6ms gpu=25.0ms drawCalls=2012 batches=0 setPass=132 tris=11498945 verts=17003670 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=13 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9588MB reserved=10906MB mono=6513MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=489 total=68.5ms gc=0/0/0 cpuFrame=77.3ms cpuMain=67.2ms cpuRender=1.2ms gpu=26.2ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=67.8ms units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2015 batches=0 setPass=132 tris=11508576 verts=17025764 memory=alloc=9590MB reserved=10907MB mono=6513MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=490 Gap=170.9ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=67.8ms
+[FrameRateDiag] fps=13.0 avgFrame=76.7ms updateAvg=13.4ms updateMax=68.5ms cpuFrame=50.9ms cpuMain=45.1ms cpuRender=7.7ms gpu=38.6ms drawCalls=2010 batches=0 setPass=128 tris=11508274 verts=17025249 units=4999 models=54 sourceKeys=4999 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=13 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9609MB reserved=10924MB mono=6516MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=514 source=profilerCounters drawCalls=2010 batches=0 setPass=128 tris=11508274 verts=17025249 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=536 total=56.1ms gc=0/0/0 cpuFrame=49.6ms cpuMain=44.5ms cpuRender=0.7ms gpu=0.1ms steps=RoadBuild=0.1ms, BuildingPlacement=43.4ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=12.4ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=2010 batches=0 setPass=128 tris=11508274 verts=17025249 memory=alloc=9626MB reserved=10940MB mono=6519MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005RoleLifecycle] phase=LogisticsBeforeResearch role=LogisticsTruck cost=100 count=1 input=Touch
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:230)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PlayerSaveResume] phase=Touch step=0 button=YOUR MAIN BASE point=(901.33, 912.50)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:91)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=13.0 avgFrame=77.0ms updateAvg=13.6ms updateMax=56.1ms cpuFrame=104.5ms cpuMain=89.2ms cpuRender=1.1ms gpu=17.9ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=13 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9630MB reserved=10944MB mono=6519MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=542 Gap=280.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=5.6ms, Selection=0.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=7.8ms
+[S005PlayerSaveResume] phase=Touch step=0 button=BuildCommand point=(2257.76, 106.16)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:102)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=546 Gap=377.2ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.2ms
+[PerfDiag] slowUpdate frame=546 total=36.1ms gc=0/0/0 cpuFrame=131.8ms cpuMain=114.1ms cpuRender=1.1ms gpu=34.8ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=35.1ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1810 batches=0 setPass=137 tris=10923906 verts=15909782 memory=alloc=9649MB reserved=10954MB mono=6526MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005PlayerSaveResume] phase=BlockedTouch step=0 button=ItemView - Field Fabrication Depot active=True interactable=False point=(0.00, 0.00) screen=2400x1080 safe=(x:0.00, y:0.00, width:2400.00, height:1080.00) firstHit=none
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:746)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:102)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PlayerSaveResume] phase=Touch step=0 button=ItemView - Field Fabrication Depot point=(631.88, 345.79)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:102)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=8.8 avgFrame=113.7ms updateAvg=15.3ms updateMax=36.1ms cpuFrame=87.2ms cpuMain=82.7ms cpuRender=1.0ms gpu=0.3ms drawCalls=1813 batches=0 setPass=129 tris=10923806 verts=15909658 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9651MB reserved=10963MB mono=6528MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PlayerSaveResume] phase=Touch step=0 button=BuildButton point=(1505.52, 85.14)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:PlayerResumeTap (UnityEngine.UI.Button) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:756)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:102)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=564 Gap=180.9ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.2ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=12.7ms
+[FreezeDetect] Frame gap frame=567 Gap=162.3ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=5.4ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=12.5ms
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(952.48, 0.01, 681.68) hit=V3GradientLayer
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(949.49, 0.01, 613.74)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=583 total=60.4ms gc=0/0/0 cpuFrame=52.0ms cpuMain=44.4ms cpuRender=0.8ms gpu=21.2ms steps=RoadBuild=0.1ms, BuildingPlacement=0.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=59.7ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1960 batches=0 setPass=148 tris=11084735 verts=16207063 memory=alloc=9672MB reserved=10982MB mono=6533MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=12.4 avgFrame=80.6ms updateAvg=14.5ms updateMax=60.4ms cpuFrame=80.9ms cpuMain=71.8ms cpuRender=7.3ms gpu=35.2ms drawCalls=1960 batches=0 setPass=148 tris=11084735 verts=16207063 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9671MB reserved=10982MB mono=6533MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(952.83, 0.01, 689.67) hit=V3GradientLayer
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(949.14, 0.01, 605.75)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(946.48, 0.01, 681.94) hit=V3GradientLayer
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(943.49, 0.01, 614.01)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=12.3 avgFrame=81.4ms updateAvg=13.6ms updateMax=24.7ms cpuFrame=98.2ms cpuMain=91.0ms cpuRender=1.3ms gpu=27.6ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9687MB reserved=10996MB mono=6536MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(946.84, 0.01, 689.93) hit=V3GradientLayer
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(943.14, 0.01, 606.01)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(970.46, 0.01, 680.88) hit=V3GradientLayer
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(967.47, 0.01, 612.95)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=11.0 avgFrame=91.0ms updateAvg=15.1ms updateMax=24.9ms cpuFrame=82.3ms cpuMain=76.4ms cpuRender=1.3ms gpu=22.4ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9588MB reserved=10999MB mono=6539MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=631 source=profilerCounters drawCalls=0 batches=0 setPass=0 tris=0 verts=0 topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=SiteSkipped reason=OutsideView kind=Fabrication site=(970.81, 0.01, 688.88)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:146)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(967.12, 0.01, 604.96)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=638 total=26.1ms gc=0/0/0 cpuFrame=70.5ms cpuMain=59.9ms cpuRender=1.2ms gpu=27.2ms steps=RoadBuild=0.1ms, BuildingPlacement=0.7ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.1ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3916 batches=0 setPass=294 tris=22138468 verts=32358660 memory=alloc=9506MB reserved=10999MB mono=6540MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=Site input=Touch site=(910.52, 0.01, 683.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=652 total=27.8ms gc=0/0/0 cpuFrame=72.2ms cpuMain=64.1ms cpuRender=1.0ms gpu=21.6ms steps=RoadBuild=0.1ms, BuildingPlacement=1.2ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.4ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=8965MB reserved=10761MB mono=6541MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=11.1 avgFrame=89.8ms updateAvg=15.5ms updateMax=27.8ms cpuFrame=74.6ms cpuMain=60.8ms cpuRender=1.2ms gpu=22.5ms drawCalls=0 batches=0 setPass=0 tris=0 verts=0 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8967MB reserved=10759MB mono=6542MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=Site input=Touch site=(907.53, 0.01, 615.59)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[PerfDiag] slowUpdate frame=664 total=27.1ms gc=0/0/0 cpuFrame=60.3ms cpuMain=55.1ms cpuRender=1.1ms gpu=0.2ms steps=RoadBuild=0.1ms, BuildingPlacement=1.4ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.5ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1958 batches=0 setPass=148 tris=11065422 verts=16172296 memory=alloc=8967MB reserved=10706MB mono=6543MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=Site input=Touch site=(910.87, 0.01, 691.52)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=11.9 avgFrame=84.0ms updateAvg=14.3ms updateMax=27.1ms cpuFrame=63.1ms cpuMain=53.6ms cpuRender=1.0ms gpu=22.5ms drawCalls=3916 batches=0 setPass=294 tris=22130844 verts=32344592 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8967MB reserved=10688MB mono=6545MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(907.18, 0.01, 607.60) hit=PlacementBarPanel
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=SiteSkipped reason=OutsideView kind=Fabrication site=(982.45, 0.01, 680.36)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:146)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(979.46, 0.01, 612.42)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=SiteSkipped reason=OutsideView kind=Fabrication site=(982.80, 0.01, 688.35)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:146)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(979.11, 0.01, 604.43)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=11.2 avgFrame=88.9ms updateAvg=15.2ms updateMax=24.8ms cpuFrame=65.8ms cpuMain=56.1ms cpuRender=0.9ms gpu=0.1ms drawCalls=3918 batches=0 setPass=296 tris=22130344 verts=32343744 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8969MB reserved=10683MB mono=6548MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=Site input=Touch site=(898.53, 0.01, 684.05)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(895.54, 0.01, 616.12) hit=PlacementBarPanel
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PaidIndustry] phase=Site input=Touch site=(898.88, 0.01, 692.04)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:162)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FrameRateDiag] fps=13.6 avgFrame=73.8ms updateAvg=12.7ms updateMax=24.9ms cpuFrame=58.3ms cpuMain=50.7ms cpuRender=8.3ms gpu=47.3ms drawCalls=1960 batches=0 setPass=148 tris=11084735 verts=16207063 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8971MB reserved=10677MB mono=6552MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=740 total=27.5ms gc=0/0/0 cpuFrame=53.9ms cpuMain=47.2ms cpuRender=1.1ms gpu=25.9ms steps=RoadBuild=0.1ms, BuildingPlacement=2.4ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.8ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1960 batches=0 setPass=148 tris=11084735 verts=16207063 memory=alloc=8972MB reserved=10675MB mono=6553MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[S005PaidIndustry] phase=SiteSkipped reason=UiOcclusion kind=Fabrication site=(895.19, 0.01, 608.12) hit=PlacementBarPanel
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidIndustryBuilding (double,string,int,int,string,int,int) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:154)
+Game.Editor.SkirmishS002AriaRunHarness:TickPaidGroundIndustryProbe (Unity.Entities.EntityManager,double) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs:67)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:250)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[S005PlayerSaveResume] result=Failed step=0 reason=No legal visible Fabrication site on Campaign source.
+UnityEngine.Debug:LogError (object)
+Game.Editor.SkirmishS002AriaRunHarness:TickPlayerResumeFrame () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:416)
+Game.Editor.SkirmishS005PlayerResumeFrame:Update () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:763)
+
+[FreezeDetect] Frame gap frame=744 Gap=152.1ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=2.5ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=15.1ms
+[FreezeDetect] Frame gap frame=745 Gap=210.4ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.7ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=46.3ms
+[PerfDiag] slowUpdate frame=745 total=49.0ms gc=0/0/0 cpuFrame=102.2ms cpuMain=84.8ms cpuRender=1.0ms gpu=21.6ms steps=RoadBuild=0.1ms, BuildingPlacement=2.2ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=46.6ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1960 batches=0 setPass=148 tris=11084735 verts=16207063 memory=alloc=8979MB reserved=10675MB mono=6556MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=746 Gap=170.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=2.2ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=46.6ms
+[FreezeDetect] Update hitch frame=746 MainMenu=285.1ms, GC=0/0/0, Total=289.2ms
+[FreezeDetect] Frame gap frame=747 Gap=1054.3ms GC=1/1/1 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.2ms, Selection=2.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=285.1ms
+[FrameRateDiag] fps=6.5 avgFrame=154.5ms updateAvg=35.0ms updateMax=289.2ms cpuFrame=153.4ms cpuMain=136.6ms cpuRender=1.6ms gpu=25.1ms drawCalls=3920 batches=0 setPass=296 tris=22169470 verts=32414126 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=8987MB reserved=10674MB mono=6170MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=747 source=profilerCounters drawCalls=3920 batches=0 setPass=296 tris=22169470 verts=32414126 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=760 Gap=213.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.7ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.3ms
+[PerfDiag] slowUpdate frame=760 total=35.8ms gc=0/0/0 cpuFrame=58.5ms cpuMain=51.7ms cpuRender=2.7ms gpu=17.4ms steps=RoadBuild=0.2ms, BuildingPlacement=2.3ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.9ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3914 batches=0 setPass=296 tris=22189521 verts=32450147 memory=alloc=8997MB reserved=10674MB mono=6171MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=761 Gap=185.4ms GC=0/0/0 LastSteps=RoadBuild=0.2ms, BuildingPlacement=2.3ms, Selection=0.4ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.9ms
+[FreezeDetect] Frame gap frame=762 Gap=177.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=22.6ms
+[FreezeDetect] Frame gap frame=763 Gap=152.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.2ms, Selection=0.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.3ms
+[PerfDiag] slowUpdate frame=763 total=27.3ms gc=0/0/0 cpuFrame=205.7ms cpuMain=130.5ms cpuRender=3.5ms gpu=3.0ms steps=RoadBuild=1.5ms, BuildingPlacement=1.2ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.4ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1958 batches=0 setPass=149 tris=11114167 verts=16264754 memory=alloc=9000MB reserved=10673MB mono=6171MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=764 Gap=164.1ms GC=0/0/0 LastSteps=RoadBuild=1.5ms, BuildingPlacement=1.2ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.4ms
+[FreezeDetect] Frame gap frame=766 Gap=156.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=21.6ms
+[FrameRateDiag] fps=9.0 avgFrame=110.9ms updateAvg=19.1ms updateMax=35.8ms cpuFrame=157.2ms cpuMain=142.9ms cpuRender=2.7ms gpu=31.8ms drawCalls=1962 batches=0 setPass=149 tris=11094616 verts=16229581 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9007MB reserved=10673MB mono=6171MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=767 Gap=169.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=2.3ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=32.4ms
+[PerfDiag] slowUpdate frame=767 total=35.6ms gc=0/0/0 cpuFrame=161.8ms cpuMain=131.5ms cpuRender=1.3ms gpu=25.3ms steps=RoadBuild=0.5ms, BuildingPlacement=1.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.9ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1966 batches=0 setPass=150 tris=11104249 verts=16251679 memory=alloc=9009MB reserved=10673MB mono=6172MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=768 Gap=186.9ms GC=0/0/0 LastSteps=RoadBuild=0.5ms, BuildingPlacement=1.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.9ms
+[FreezeDetect] Frame gap frame=769 Gap=150.1ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=30.5ms
+[FrameRateDiag] fps=9.9 avgFrame=101.1ms updateAvg=18.1ms updateMax=35.6ms cpuFrame=66.5ms cpuMain=58.7ms cpuRender=1.4ms gpu=21.6ms drawCalls=1970 batches=0 setPass=148 tris=11103946 verts=16260672 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9020MB reserved=10672MB mono=6173MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=790 total=25.3ms gc=0/0/0 cpuFrame=68.0ms cpuMain=57.8ms cpuRender=1.1ms gpu=29.0ms steps=RoadBuild=0.1ms, BuildingPlacement=1.3ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.8ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3940 batches=0 setPass=296 tris=22207892 verts=32521344 memory=alloc=9022MB reserved=10672MB mono=6173MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=798 total=27.9ms gc=0/0/0 cpuFrame=95.8ms cpuMain=84.5ms cpuRender=1.2ms gpu=25.8ms steps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.7ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1970 batches=0 setPass=148 tris=11103946 verts=16260672 memory=alloc=9017MB reserved=10671MB mono=6174MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=801 Gap=152.8ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.6ms
+[PerfDiag] slowUpdate frame=802 total=27.0ms gc=0/0/0 cpuFrame=139.1ms cpuMain=130.2ms cpuRender=1.3ms gpu=23.8ms steps=RoadBuild=0.1ms, BuildingPlacement=1.2ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.6ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1970 batches=0 setPass=148 tris=11103946 verts=16260672 memory=alloc=9012MB reserved=10671MB mono=6174MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=805 Gap=176.7ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=30.7ms
+[FrameRateDiag] fps=9.0 avgFrame=111.4ms updateAvg=19.3ms updateMax=31.7ms cpuFrame=137.1ms cpuMain=125.5ms cpuRender=1.6ms gpu=21.7ms drawCalls=1970 batches=0 setPass=148 tris=11103946 verts=16260672 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9015MB reserved=10670MB mono=6177MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=809 total=39.6ms gc=0/0/0 cpuFrame=141.2ms cpuMain=133.8ms cpuRender=1.2ms gpu=22.7ms steps=RoadBuild=0.2ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=38.2ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3940 batches=0 setPass=296 tris=22207892 verts=32521344 memory=alloc=9019MB reserved=10670MB mono=6177MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=810 Gap=166.3ms GC=0/0/0 LastSteps=RoadBuild=0.2ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=38.2ms
+[FreezeDetect] Frame gap frame=813 Gap=160.1ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=22.0ms
+[PerfDiag] slowUpdate frame=813 total=31.0ms gc=0/0/0 cpuFrame=164.5ms cpuMain=146.2ms cpuRender=1.0ms gpu=21.9ms steps=RoadBuild=0.5ms, BuildingPlacement=0.9ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=29.4ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1970 batches=0 setPass=148 tris=11103946 verts=16260672 memory=alloc=9025MB reserved=10668MB mono=6177MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=816 Gap=157.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=38.8ms
+[PerfDiag] slowUpdate frame=817 total=30.1ms gc=0/0/0 cpuFrame=144.0ms cpuMain=132.0ms cpuRender=1.2ms gpu=29.3ms steps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=29.0ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1967 batches=0 setPass=149 tris=11143060 verts=16331036 memory=alloc=9032MB reserved=10666MB mono=6181MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=818 Gap=174.4ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=29.0ms
+[FreezeDetect] Frame gap frame=819 Gap=161.1ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=22.2ms
+[FreezeDetect] Frame gap frame=820 Gap=162.7ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.0ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=28.6ms
+[PerfDiag] slowUpdate frame=820 total=32.2ms gc=0/0/0 cpuFrame=134.9ms cpuMain=122.8ms cpuRender=3.4ms gpu=22.9ms steps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=31.0ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1967 batches=0 setPass=149 tris=11143060 verts=16331036 memory=alloc=9037MB reserved=10666MB mono=6182MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=7.1 avgFrame=141.4ms updateAvg=27.7ms updateMax=40.4ms cpuFrame=134.9ms cpuMain=122.8ms cpuRender=3.4ms gpu=22.9ms drawCalls=1967 batches=0 setPass=149 tris=11143060 verts=16331036 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9037MB reserved=10666MB mono=6182MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=822 Gap=171.0ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.7ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.6ms
+[FreezeDetect] Frame gap frame=824 Gap=159.2ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.0ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=27.9ms
+[PerfDiag] slowUpdate frame=824 total=26.0ms gc=0/0/0 cpuFrame=135.8ms cpuMain=125.0ms cpuRender=1.8ms gpu=25.1ms steps=RoadBuild=0.1ms, BuildingPlacement=2.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.6ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1971 batches=0 setPass=148 tris=11103696 verts=16260248 memory=alloc=9032MB reserved=10665MB mono=6182MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=825 Gap=160.6ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=2.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.6ms
+[FrameRateDiag] fps=9.2 avgFrame=108.8ms updateAvg=19.1ms updateMax=29.1ms cpuFrame=65.3ms cpuMain=58.7ms cpuRender=1.3ms gpu=18.8ms drawCalls=1971 batches=0 setPass=148 tris=11109414 verts=16270961 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9028MB reserved=10662MB mono=6183MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=839 source=profilerCounters drawCalls=1971 batches=0 setPass=148 tris=11109414 verts=16270961 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=847 total=28.1ms gc=0/0/0 cpuFrame=62.0ms cpuMain=54.3ms cpuRender=1.3ms gpu=28.7ms steps=RoadBuild=0.1ms, BuildingPlacement=1.3ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.5ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1972 batches=0 setPass=149 tris=11123259 verts=16295439 memory=alloc=9030MB reserved=10660MB mono=6184MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=854 total=31.9ms gc=0/0/0 cpuFrame=101.4ms cpuMain=90.6ms cpuRender=1.0ms gpu=17.1ms steps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=30.8ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1972 batches=0 setPass=149 tris=11123259 verts=16295439 memory=alloc=9030MB reserved=10660MB mono=6185MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=855 Gap=199.4ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=30.8ms
+[FreezeDetect] Frame gap frame=857 Gap=184.3ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=1.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=28.7ms
+[FrameRateDiag] fps=9.3 avgFrame=107.4ms updateAvg=18.2ms updateMax=31.9ms cpuFrame=195.5ms cpuMain=154.9ms cpuRender=1.9ms gpu=0.7ms drawCalls=1972 batches=0 setPass=149 tris=11123259 verts=16295439 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9030MB reserved=10659MB mono=6185MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=860 total=26.0ms gc=0/0/0 cpuFrame=182.5ms cpuMain=136.8ms cpuRender=1.2ms gpu=31.7ms steps=RoadBuild=0.1ms, BuildingPlacement=1.1ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.7ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=0 batches=0 setPass=0 tris=0 verts=0 memory=alloc=9029MB reserved=10658MB mono=6185MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=868 total=27.5ms gc=0/0/0 cpuFrame=74.4ms cpuMain=66.4ms cpuRender=0.9ms gpu=22.1ms steps=RoadBuild=0.2ms, BuildingPlacement=0.9ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.3ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1972 batches=0 setPass=149 tris=11123259 verts=16295439 memory=alloc=9032MB reserved=10656MB mono=6188MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=11.4 avgFrame=87.9ms updateAvg=15.3ms updateMax=27.5ms cpuFrame=82.6ms cpuMain=75.0ms cpuRender=7.9ms gpu=39.7ms drawCalls=3946 batches=0 setPass=298 tris=22246518 verts=32590878 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9037MB reserved=10651MB mono=6197MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=896 total=26.3ms gc=0/0/0 cpuFrame=66.2ms cpuMain=54.3ms cpuRender=1.0ms gpu=19.3ms steps=RoadBuild=0.3ms, BuildingPlacement=1.3ms, Selection=0.6ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=24.0ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1973 batches=0 setPass=149 tris=11125235 verts=16299177 memory=alloc=9032MB reserved=10648MB mono=6204MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=12.2 avgFrame=81.9ms updateAvg=14.2ms updateMax=26.3ms cpuFrame=67.5ms cpuMain=57.8ms cpuRender=0.9ms gpu=24.1ms drawCalls=1972 batches=0 setPass=149 tris=11123509 verts=16295863 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9039MB reserved=10648MB mono=6214MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=926 total=26.6ms gc=0/0/0 cpuFrame=68.0ms cpuMain=59.9ms cpuRender=1.5ms gpu=21.1ms steps=RoadBuild=0.1ms, BuildingPlacement=1.3ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=25.1ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1971 batches=0 setPass=148 tris=11103946 verts=16260672 memory=alloc=9057MB reserved=10646MB mono=6241MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=932 total=28.1ms gc=0/0/0 cpuFrame=79.8ms cpuMain=59.4ms cpuRender=0.9ms gpu=20.2ms steps=RoadBuild=0.0ms, BuildingPlacement=1.8ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=26.0ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=3943 batches=0 setPass=297 tris=22207894 verts=32521348 memory=alloc=9065MB reserved=10646MB mono=6248MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=12.9 avgFrame=77.3ms updateAvg=13.9ms updateMax=28.1ms cpuFrame=79.8ms cpuMain=59.4ms cpuRender=0.9ms gpu=20.2ms drawCalls=3943 batches=0 setPass=297 tris=22207894 verts=32521348 units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=20 render=screen=2400x1080,batch=0,quality=0:PC,vSync=0,targetFps=-1,pipeline=Campaign Map Rendering,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=9065MB reserved=10646MB mono=6248MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[S004ManualReceiptAudit] result=Failed measured=0 touches=0 commands=0 violations=0 unexpected=0 interventions=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1265)
+Game.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S005PaidGroundRoleObservation] result=NotObserved role=Siege paidCost=420 seen=0 commandedMovement=0 displacement=0 nativeFire=0 receivedDamage=0 deathReleased=0 input=Touch fullRosterCertificate=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:ReportPaidGroundRoleObservation () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs:468)
+Game.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1271)
+Game.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[S004ManualNative] result=Failed outcome=None seconds=73.16877 reason=playerSaveResume=No legal visible Fabrication site on Campaign source. input=Touch ariaStarted=0 actions=0 attackReceipts=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FinishEvidence (bool,string,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1273)
+Game.Editor.SkirmishS002AriaRunHarness:PollFinishSourceHash () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1204)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Frame gap frame=950 Gap=273.0ms GC=0/0/0 LastSteps=RoadBuild=0.1ms, BuildingPlacement=0.9ms, Selection=0.1ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=5.3ms
+[PerfDiag] slowUpdate frame=950 total=25.1ms gc=0/0/0 cpuFrame=59.9ms cpuMain=49.6ms cpuRender=1.1ms gpu=31.5ms steps=RoadBuild=0.1ms, BuildingPlacement=1.5ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=23.2ms units=5000 models=55 sourceKeys=5000 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 drawCalls=1971 batches=0 setPass=148 tris=11103946 verts=16260672 memory=alloc=9086MB reserved=10645MB mono=6265MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SkirmishValidationExit] result=Requested code=2
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishS002AriaRunHarness:FinishQuitAfterPlayMode () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs:1442)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAirportPlacementProbe
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:PollCompletion () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:150)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

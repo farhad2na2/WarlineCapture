@@ -1,0 +1,30 @@
+{
+  "sourceHash": "a93be1cd029d445ad31005510a186b9ef099877762339930fa2edb942c10e4a2",
+  "playerReady": false,
+  "nativeRun": "native-467-full-batch-fuel-strike-cycle.log",
+  "nativeStatus": "running",
+  "checks": [
+    {
+      "log": "tests-464-full-batch-oil-routing-profile.log",
+      "marker": "[SkirmishFacilityEconomyProfileTests] result=Passed tests=7",
+      "sha256": "ef8ce0daf70ddafc7dac8f7e71305d5b484fc0084a712f0502f45ff0638c4eef",
+      "exit": 0
+    },
+    {
+      "log": "tests-465-hauler-transfer-regression.log",
+      "marker": "[ResourceHaulerFocusedValidation] result=Passed tests=31",
+      "sha256": "8d06cffec8b29e88a32cef442f48e2000f7831ff3028c532ab622cff7084504d",
+      "exit": 0
+    },
+    {
+      "log": "tests-466-oil-priority-expanded-economy.log",
+      "marker": "[SkirmishExpandedEconomyTests] result=Passed",
+      "sha256": "1c2f926c4b53dadc480c0ee99806a44fca88efb88d1370463b2cf1c7d98e7501",
+      "exit": 0
+    }
+  ],
+  "historicalFailure": "native461-insufficient-fuel-and-routing-failure.json",
+  "productionThroughputCertified": false,
+  "aircraftCycleCertified": false,
+  "completeMatchCertified": false
+}

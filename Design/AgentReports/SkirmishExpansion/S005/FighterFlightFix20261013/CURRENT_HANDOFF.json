@@ -1,0 +1,43 @@
+{
+  "status": "Native1403 closed: flight/camera scope passed; full combat failed manual causality",
+  "package": "/private/tmp/s005-fighter-flight1403",
+  "durablePackage": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/FighterFlightFix20261013/prepared1403",
+  "sourceHash": "53e9306252f470b78e446b3167d6e3f6c89caeea960710c34253a412dfae3806",
+  "fixtureSha256": "a25a444702093d4638c129b0dcf188a80ea8b5444b2f2a5099f399a0066ce5d6",
+  "productionFlightChanged": false,
+  "normalMissionOrDeviceReadiness": false,
+  "completed": {
+    "cameraFixMerged": "0e4828c667176ea50934aec8f27fac95f3c1cf08",
+    "intermediateGoalContractCorrected": true,
+    "publicCameraDefaultNormalizationImplemented": true,
+    "grazingFinalRouteRecipeChangedTo60m": true
+  },
+  "remaining": [
+    "S005 owner: prove actual Fighter damage after accepted public Attack receipt, preserving all original visibility/airborne/paid/combat gates",
+    "Normal mission and device acceptance remain separate"
+  ],
+  "dispatchCommand": "rtk proxy python3 -B /private/tmp/s005-fighter-flight1403/runner.py current-fighter1401-post-rebuild-source-manifest.json --dry-compile-proof /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1403-paid-air-reviewed-dry-run.json --heavy-lane-owner main1403",
+  "nativeProgress": {
+    "actualHeldDistance": 22.64090347290039,
+    "actualHeadingDot": 0.9693173170089722,
+    "routeCycle": 1,
+    "publicNormalizationRequests": 1,
+    "cameraBeforeY": 44.04752731323242,
+    "cameraAfterY": 99.95167541503906,
+    "troopReceiptsUnchanged": true
+  },
+  "mainEditorReserved": false,
+  "leaseReleased": true,
+  "sharedOwnerAtHandoff": "native1414",
+  "wrapperExit": 1,
+  "nativeExit": 1,
+  "fullSourceUnchanged": true,
+  "validatedProof": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/FighterFlightFix20261013/native1403-flight-camera-scoped-validation.json",
+  "nextPlan": {
+    "preserve": "Event2/frame3848 preceded receipt77/frame3849. Keep full1403 failed evidence.",
+    "measure": "Measure native first-visible lead interval and paired Touch acceptance latency before another fullrun.",
+    "boundedFixtureCorrection": "Use a legal public approach with enough existing allied fog visibility lead, or a legal second native approach after accepted command. No fog/pose/airborne/speed/fuel writes.",
+    "notEstablished": "No production flight or Hold defect demonstrated; autonomous native hit applied22.",
+    "freshEvidence": "Use fresh successor ID/current source pins; never relabel1403."
+  }
+}

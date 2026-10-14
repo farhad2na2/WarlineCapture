@@ -1,0 +1,8 @@
+{
+  "result": "FailedAsExpected",
+  "wrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "log": "tests-664-alternate-hauler-path-before-fix.log",
+  "failure": "Active native alternate endpoint path replaced every hauling tick",
+  "scope": "Isolated regression; no native readiness claim"
+}

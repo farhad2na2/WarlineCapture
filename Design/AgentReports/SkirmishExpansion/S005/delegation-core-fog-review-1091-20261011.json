@@ -1,0 +1,59 @@
+{
+  "result": "ReadOnlyReviewWithConcreteFindingsSentToAuthor",
+  "scope": "Staged core fog + optional checkpoint + native Scan capability only; no Assets/Unity changes. Parent separately reviews consumers.",
+  "findings": [
+    {
+      "id": "detector-metric",
+      "priority": "P2",
+      "stagedPath": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "evidence": "Native ThreatDetectionWarningSystem.cs:353,497-498 uses Chebyshev grid distance. Initial staged fog combined detector radius with Euclidean acquisition, losing diagonal native contacts.",
+      "state": "Author reports corrected; latest inspected staged Fog has separate ThreatRadiusCells/Chebyshev test.",
+      "nextCheck": "Parent validate diagonal Air/Ground actual-system cases from latest frozen bundle."
+    },
+    {
+      "id": "detector-candidate-domain",
+      "priority": "P2",
+      "stagedPath": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "evidence": "Native ThreatDetectionWarningSystem.cs:455-468 excludes RuntimeBuildingCombatInfo and nonair contacts unless UnitMovementBehavior GroundVehicle. Initial staged fog detector treats every nonair actor as Ground, granting detector sight to infantry/structures outside native detector candidate domain.",
+      "state": "Sent exact source evidence to aircraft_tests; awaiting author latest correction.",
+      "nextCheck": "Separate ordinary combat acquisition from detector eligibility; include actual GroundVehicle and structure/sample flags, regression for detector-only infantry/structure negatives."
+    },
+    {
+      "id": "disabled-passenger-expiry",
+      "priority": "P2",
+      "stagedPath": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "evidence": "UpdateSession owned-contact EntityQuery uses default options (excludes Disabled); native UnitTransportPassengerStateSystem.cs:125 adds Disabled after boarding. A previously Visible hostile passenger then drops out of updates and its knowledge never ages to LastSeen/Unknown.",
+      "state": "Sent concrete repro and scoped recommendation to aircraft_tests and parent.",
+      "nextCheck": "Include disabled owned contacts for aging; prevent enemy direct/nativeScan re-observation of hidden passenger/disabled contact. Observe\u2192native hidden tags\u2192move\u2192positive20s must freeze LastSeen pose then expire; preserve own cargo knowledge."
+    }
+  ],
+  "verifiedWithoutAdditionalConcreteDefect": [
+    "Expanded native Scan source ownership/capacityReleased/native Faction/current session/Playing/objective pause checks, target same-attempt filter and actual filtered feed count.",
+    "Scan sustain requires prior actually emitted ObservationKind2, same source Entity+stableID/request and live matching active order inside native Scan area.",
+    "Optional supplemental buffer codec leaves old component layouts unchanged and absent buffer accepted; old Visible saved observed state migration and old LastSeen\u2192Unknown are explicitly scoped.",
+    "Capture copies buffer before stale/dead/released/recycled/unidentified source handle normalization; frozen observed data/provenance retained, references use stable-ID remap.",
+    "Clock offset shifts active observed timestamp and native Scan frame; positive-delta and Playing/pause guards prevent paused writes. Normal production scaled clock assumption still needs actual native pause proof.",
+    "Copied contact/observer data avoids EntityManager access inside pairwise comparisons; O(contact*observer) work remains a native/device performance measurement, no unsupported regression claim."
+  ],
+  "testLimit": "LastSeen pause test initially advances elapsed to100 while guarded, then resumes at10. This establishes guarded writes rather than monotonic resumed-clock age conservation. Sent author recommendation for monotonic/frozen pause test; no production clock defect inferred because normal native scaled elapsed freezes.",
+  "reviewedCurrentStagedHashes": {
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs": "d7e496aac47e910810c3f83993ef000abfac5b30062a3746332e5d295e5b3e36",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs": "762c6cf2d7b1a035b337045af3c12e6b16b25b43d20e3d8071b1ed23c3ba3535",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs": "334c668208ea22ebd3429b292c6f06ef8e80f99b93c484631114b34423909f92",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs": "0031bb7905203788aba0b3c3f686428b20fe40c73ad070d8b54da1dde9d6871e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs": "440d428ebaafdab468c37282f9a0ec125979a049d9798b2d4deb23e319bd6662",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs": "d40c735192b172233eb7915b24c4bdfd702f9de496f18b52f40ae9c4f8bf038e",
+    "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs": "3e17d0fbdab1c071328298530131c510151ea7a6259050af2d785aa949cb9e0e",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs": "b0b6fb9a8b19e3d5136412d39e4f407b168e5b9a0de645963b7c178ddcf1e942",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs": "3d1938ef7cdef4e4140661e98420714c97fb06a06943dc9f3dfb17c9d94db2ba",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs": "77ba60ceb5d9936f6f7d9e2b140aec6503245dccb609233c8873c0250d2555ba",
+    "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs": "662ad652fbd101344afb5104f4fcf16c043eb3b99231a85d7903c844980d3d82"
+  },
+  "manifestSnapshotSha256": "80914e69a4364a59b1798352140c945c450aa9e666a8148d05e1b7ae1ff84e6c",
+  "stagedBundleStillBeingRevised": true,
+  "noFrozenBundleApproval": true,
+  "noUnityCalls": true,
+  "noSourceEdits": true,
+  "normalMissionCertified": false,
+  "playerReady": false
+}

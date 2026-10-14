@@ -1,0 +1,84 @@
+{
+  "result": "FrozenRootAndIndependentReviewedAwaitingNativeCompile1110AndRegression1111",
+  "manifestPath": "/private/tmp/fogfix1091-ledger/manifest.json",
+  "manifestSha256": "8d6cb0c95175ec0998c8704a13830cd9fb787496289b9014ce93ebc699b73cd5",
+  "patchSha256": "cf500a203ffe58b2709f843f885622cf4ebddf9ad71ae537f0f62687c03d02a7",
+  "cases": 9,
+  "method": "Game.Tests.Editor.SkirmishFogLedgerTests.RunFocusedValidation",
+  "frozenCoreManifestUnchanged": true,
+  "frozenFollowupManifestUnchanged": true,
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Components/Skirmish/SkirmishContactLedgerElement.cs",
+      "basePath": null,
+      "baseSha256": null,
+      "stagedSha256": "b98cf29313e0ac49b748368aba7b1dc27f97a976e10cd46f24d78e04c9f353db"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.Ledger.cs",
+      "basePath": null,
+      "baseSha256": null,
+      "stagedSha256": "517fbf215cd8bc6d3aa07884c4e5def1d6813d2ea4b50bebba922dbef339238b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "basePath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+      "baseSha256": "27d4a04afc69364b609e1144fbecdf57ff66c434d4d307a0c581d83a4a13ec1a",
+      "stagedSha256": "0e46b36edaba43ebcde4310df1787c52c3452f68dc58c65627b50659d8935e3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "basePath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+      "baseSha256": "0031bb7905203788aba0b3c3f686428b20fe40c73ad070d8b54da1dde9d6871e",
+      "stagedSha256": "23d24da07a6f842c5f7ab30067dc4b1ffbf2046b2a163e59430e99d83de10e8b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "basePath": "/private/tmp/fogfix1091/Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "baseSha256": "b830c138e24720b64325223ce859f711cb56ed7054cb3f8876d8cf4e88c46b34",
+      "stagedSha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "basePath": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs",
+      "baseSha256": "e031ad24b5b5ab8959305db91af7a0b2ec90ffa111869e6a6e7b3b5358ff9fde",
+      "stagedSha256": "5c0f21dbd43b10b291bd4cececc41c44db08d2a517ac8b6b4cd143fbe41a8849"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "basePath": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Systems/UnitDeathSystem.cs",
+      "baseSha256": "ba2f0223933b8f6966b97bc8f14499b347a5297c2050bb0c265ce983d866640e",
+      "stagedSha256": "92f46c6e3e6934bd42352e76591d7f093945f43b91e1587c0f447104d5060ef6"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "stagedPath": "/private/tmp/fogfix1091-ledger/Assets/Tests/Editor/SkirmishExpansion/SkirmishFogLedgerTests.cs",
+      "basePath": null,
+      "baseSha256": null,
+      "stagedSha256": "ea2e94763ea736ddde953748256549c2300912eef8128fdf8d55824b58854d65"
+    }
+  ],
+  "technicalScope": "Session-owned stable-ID frozen observer contact ledger survives actual native actor destruction, observed native death does not resurrect known-dead markers, source-less records survive session checkpoint codec and timer/frame rebasing",
+  "nativeExecutionPerformed": false,
+  "repoRuntimeFilesModifiedByThisStep": false,
+  "normalMissionCertified": false,
+  "playerReady": false,
+  "pending": [
+    "Independent source review",
+    "Native compilation",
+    "Actual8-case focused suite",
+    "Paid Drone1098 shared-fog native input sequence",
+    "Whole mission acceptance remains independent"
+  ],
+  "reviewCorrection": "Added actual no-intervening-fog-tick moveout\u2192Health0\u2192FinalizeDeath control. V1 manifest+patch preserved review-v1; no native execution of V1 occurred.",
+  "observedDeath": "Finalizer shares exact CurrentObservation + TrySampleObserver helpers with normal updater; stale Visible alone cannot establish current seen death. Removes only actually currently observed death or previously observed HP0, no knowledge timestamp/pose writes.",
+  "frozenMetadata": "/private/tmp/fogfix1091-ledger/FROZEN.json",
+  "independentReview": "delegation-final-ledger-contact-review-20261011.json"
+}

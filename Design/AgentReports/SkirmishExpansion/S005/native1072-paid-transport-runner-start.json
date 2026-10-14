@@ -1,0 +1,8 @@
+{
+  "requestedHeavyLaneOwner": "main1072",
+  "coordination": "Explicit root acknowledgement required after T7 release; this token is not an inferred release",
+  "preManifest": "final-1092-fixedwing-capacity-post-source-manifest.json",
+  "preflightManifest": "final-1072-paid-transport-preflight-source-manifest.json",
+  "fixtureSha256": "0c08b6378c8fbcc8ce1f209af29ff934496ff57b046a9c4669c62be015abed41",
+  "validationMethod": "S005PaidTransport1072.RunValidation"
+}

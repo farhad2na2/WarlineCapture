@@ -1,0 +1,96 @@
+"""Fail-closed interpretation of a read-only S005 ten-Replay census.
+
+Completeness is the only pass claim. Increasing memory remains an unresolved
+diagnostic, never a leak attribution or Android performance certificate.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+COUNTERS = ("nativeAllocated", "graphicsDriver", "managed", "resident")
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
+
+
+def qualify(census: dict, lifecycle: dict, source_hash: str) -> dict:
+    require(census.get("result") == "CompleteReadOnlyCensus", "Incomplete raw census")
+    require(census.get("sourceHash") == source_hash, "Census source differs")
+    require(census.get("freshAttempts") == 11 and census.get("boundaries") == 12,
+            "Exactly eleven fresh and one menu boundary required")
+    require(all(census.get(k) is False for k in
+                ("memoryCleanupQualified", "frameBudgetQualified", "deviceBudgetQualified", "leakProven")),
+            "Census overclaims memory, frame, device or leak proof")
+    require(census.get("physicalCleanupObserved") is True and
+            census.get("retiredStudyPhysicalInAnyWorld") == [],
+            "Retired physical ownership survived")
+    require(lifecycle.get("result") == "PassedScopedNormalNativeElevenAttemptTenReplayConservation" and
+            lifecycle.get("genuineDefeats") == 11 and len(lifecycle.get("attempts", [])) == 11,
+            "Ten-Replay normal lifecycle unqualified")
+    inventory = census.get("inventory")
+    require(isinstance(inventory, list) and len(inventory) == 12,
+            "Boundary inventory incomplete")
+    for index, row in enumerate(inventory):
+        phase = "FreshMatch" if index < 11 else "PostUnloadMenu"
+        cycle = max(0, index - 1) if index < 11 else 10
+        require(row.get("boundary") == index and row.get("phase") == phase and
+                row.get("cycle") == cycle, "Noncomparable or out-of-order boundary")
+        require(type(row.get("objects")) is int and row["objects"] >= 0 and
+                row.get("estimatedBytesAreNotGlobalMemory") is True,
+                "Invalid object inventory or byte attribution")
+    trends = census.get("equivalentPhaseMemoryTrends")
+    require(isinstance(trends, list), "Equivalent-phase trends missing")
+    measured = {}
+    for counter in COUNTERS:
+        matches = [row for row in trends if row.get("phase") == "FreshMatch" and
+                   row.get("counter") == counter]
+        require(len(matches) == 1, f"Missing or duplicate {counter} trend")
+        row = matches[0]
+        values = row.get("values")
+        require(row.get("boundaries") == list(range(11)) and
+                isinstance(values, list) and len(values) == 11 and
+                all(type(v) is int and v >= 0 for v in values),
+                f"Incomplete {counter} comparable samples")
+        rise = all(b > a for a, b in zip(values, values[1:]))
+        require(row.get("available") is True and row.get("strictlyIncreasing") is rise and
+                row.get("delta") == values[-1] - values[0],
+                f"Inconsistent {counter} trend calculation")
+        measured[counter] = {"first": values[0], "last": values[-1],
+                             "delta": values[-1] - values[0],
+                             "strictlyIncreasing": rise}
+    raw = census.get("losslessRawInventory")
+    require(isinstance(raw, list) and len(raw) >= 12,
+            "Lossless raw snapshot references missing")
+    counts = [row["objects"] for row in inventory[:11]]
+    return {
+        "result": "CompleteReadOnlyTenReplayObservation",
+        "sourceHash": source_hash,
+        "freshAttempts": 11,
+        "actualReplays": 10,
+        "boundaries": 12,
+        "freshObjectCounts": counts,
+        "freshObjectCountDelta": counts[-1] - counts[0],
+        "freshObjectCountStrictlyIncreasing": all(b > a for a, b in zip(counts, counts[1:])),
+        "equivalentPhaseMemory": measured,
+        "physicalCleanupObserved": True,
+        "memoryCleanupQualified": False,
+        "frameBudgetQualified": False,
+        "deviceBudgetQualified": False,
+        "leakProven": False,
+        "ownerAttributionPending": True,
+    }
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("census", type=Path)
+    parser.add_argument("lifecycle", type=Path)
+    parser.add_argument("--source", required=True)
+    args = parser.parse_args()
+    print(json.dumps(qualify(json.loads(args.census.read_text()),
+                             json.loads(args.lifecycle.read_text()), args.source), indent=2))

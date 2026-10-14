@@ -1,0 +1,34 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.SkirmishGroundCarrierDeathTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1257-ground-carrier-death.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Expected: 1
+  But was:  0
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+Game.Tests.Editor.SkirmishGroundCarrierDeathTests.PartialUnloadRetainsRemainingIdentityAndReservesReleasedCells () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs:146)
+Game.Tests.Editor.SkirmishGroundCarrierDeathTests.RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs:204)
+UnityEngine.Debug:LogException(Exception)
+Game.Tests.Editor.SkirmishGroundCarrierDeathTests:RunFocusedValidation() (at Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs:213)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+<>c__DisplayClass0_0:<Run>b__0() (at Design/AgentReports/SkirmishExpansion/S005/native-1257-ground-carrier-death.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SkirmishGroundCarrierDeathTests] result=Failed
+UnityEngine.Debug:LogError (object)
+Game.Tests.Editor.SkirmishGroundCarrierDeathTests:RunFocusedValidation () (at Assets/Tests/Editor/SkirmishExpansion/SkirmishGroundCarrierDeathTests.cs:213)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1257-ground-carrier-death.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Tests.Editor.SkirmishGroundCarrierDeathTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:119)
+WarlineExistingValidationDispatch/<>c__DisplayClass0_0:<Run>b__0 () (at Design/AgentReports/SkirmishExpansion/S005/native-1257-ground-carrier-death.log.dispatch.cs:1)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

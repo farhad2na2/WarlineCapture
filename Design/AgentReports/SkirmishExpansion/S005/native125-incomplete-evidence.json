@@ -1,0 +1,16 @@
+{
+  "mission": "S005",
+  "result": "Failed",
+  "log": "native-125-aria-en-dressing-audit.log",
+  "wrapperExit": 124,
+  "completionReceipt": null,
+  "countsForCurrentSource": false,
+  "observedOutcome": "Victory",
+  "matchSeconds": 245.137,
+  "observedReturn": "MAIN MENU",
+  "reason": "Editor exited before final source verification and completion receipt",
+  "lastProfilerWarning": "Buffered 536903680 bytes; maxUsedMemory 536870912 bytes",
+  "exitCause": "Not established",
+  "preservedSceneBackups": "/private/tmp/warline-s005-scene-backups-20261005-126",
+  "playerReady": false
+}

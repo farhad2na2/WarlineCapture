@@ -1,0 +1,11 @@
+{
+  "previousSourceHash": "2a81b1c316f92e1d431bfb0e85ba577bd9be4373cda2a614622c7411aa136cbb",
+  "sourceHash": "162af97548a94c4b21429212d8ee45005c3b08500f5ddf32739a2879296bfd38",
+  "changedFiles": [
+    "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+    "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+  ],
+  "sharedRuntimeChanged": true,
+  "physicalMapsConfigsAndAll562MaterialsUnchanged": true,
+  "change": "Shared service approach selection uses the existing arrival predicate; rejects remote parking cells and bounds search to footprints that can reach a real service bay."
+}

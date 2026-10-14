@@ -1,0 +1,25 @@
+{
+  "status": "AppliedNativeCompilePending",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "baseSha256": "e41423a1f8c286f9c9a15db3993ec94ff879454524d83932461443f6802efb21",
+      "stagedSha256": "98f3e8be8cb31b415a85e7bd6ef5b4970552cad8807474bbd768c6dd397ad4f2",
+      "bytes": 87136
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/ValidationBackgroundInputScope.cs",
+      "baseSha256": null,
+      "stagedSha256": "635271256848c5b67901543a42465ce169f9ce0042fa5c31b7d57b42267311f9",
+      "bytes": 6823
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/ValidationBackgroundInputScope.cs.meta",
+      "baseSha256": null,
+      "stagedSha256": "68dc43259f2ebbd477bafca14aa5eb8c24385675055fffaa4a37badd9d50ef16",
+      "bytes": 60
+    }
+  ],
+  "playerReady": false,
+  "scope": "Shared Editor validation input lifecycle; no gameplay/economy/map changes"
+}

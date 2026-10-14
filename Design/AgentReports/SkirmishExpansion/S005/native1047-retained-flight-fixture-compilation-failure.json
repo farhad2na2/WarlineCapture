@@ -1,0 +1,9 @@
+{
+  "result": "FailedFixtureCompilation",
+  "scope": "External fixture references internal SkirmishLaunchProjection; CS0122",
+  "load": "load1047-retained-flight-fixture.json",
+  "wrapperStarted": false,
+  "nativeRecoveryStarted": false,
+  "sourceEdited": false,
+  "playerReady": false
+}

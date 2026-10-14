@@ -1,0 +1,303 @@
+{
+  "auditDate": "2026-10-11",
+  "timeZone": "Europe/Berlin",
+  "createdUtc": "2026-10-11T15:48:37.481715+00:00",
+  "head": "c88c79c5453532a3dca9c9c2fd0c9d37603daed7",
+  "scope": "Read-only source and existing evidence audit; new plan and audit manifest only. No native runs or behavior changes performed.",
+  "implementationStatus": "Authorized: owner explicitly released the hold on 2026-10-11; implement the linked plan.",
+  "requestThreadId": "01a102b7-8485-79e1-94a3-660e377433dc",
+  "implementationThreadId": "01a10222-a76b-7593-a577-416eff36f59b",
+  "requestMessageId": "01a12b9d-9a92-75f3-ac45-29881693a8e3",
+  "laterOwnerHoldMessageId": "01a12b9f-78da-7fb2-81bb-f18e83779e83",
+  "agentInput": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/ENEMY_AI_AUDIT_INPUT_20261011.md",
+    "sha256": "2adb39590e54b01f1fe2519aa3101aff7b17d1a56d8f2c4f3ff33362b5b62aba"
+  },
+  "plan": {
+    "path": "Design/AgentReports/SkirmishExpansion/S005/ENEMY_AI_IMPROVEMENT_PLAN_20261011.md",
+    "sha256": "2be0b2105821dab8be018c95a74f1fc9857444c4ab52d4dedd89c7344d9a2c8c",
+    "priorHeldVersionSha256": "158240364cc49976fe14db7fc8dd0fb62cbfbca50b98e1b8ae19a0a4a2668cf6"
+  },
+  "sourceFiles": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "sha256": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStrategyScoring.cs",
+      "sha256": "bc6ee4883e562a06a2383557b8d57ee3f0da95853f9d64b9285da15579c91d8c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishStrategyContracts.cs",
+      "sha256": "5e096e6f804b6c1b39d729b6c0a62d738eff6a03a5290a9698967e219eb670a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs",
+      "sha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs",
+      "sha256": "eabc863cce51a8b21077f8319d7a602d778f29ed2b72c29fc3759e9d95cc349d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs",
+      "sha256": "360b8d1b089c00cb86497b93e8199aa218f234a226d975e7159da8b09d9f9234"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs",
+      "sha256": "3b791341500d0e0ef0b64afc950eb5a3ea52da5b7267fe9df73c3138113b66b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs",
+      "sha256": "b9829bc5aeaef8daee8c98d1fce4d5ebd3b85c704d40843281bce6a5bc9217ab"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs",
+      "sha256": "fd1e39966c3af35812c85eae224a37ddddd47e4ec4b28dcae242a85fdbfc1a1b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs",
+      "sha256": "27aeaf807161d2e5cc557a09a4d9ad1d5182ad06b335d3b57db986f8b13c1300"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "sha256": "30b093f0fb36db788ccb4db6ba9d22d1016b401b5307cb1f9fd2100947b7dc7a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "sha256": "b205aa50d12d86a3c799a17cc05c657c71a9075c5f197f25375456a49617e00f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "sha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "sha256": "79f2d050e72203757d5ef6e49df0fb32ee281232bef45dfc138b7825d698c7d0"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs",
+      "sha256": "3a7961d067cda199b68c6653a749408d8f64fc1761d4721ba5980c8a490bff68"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+      "sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/MATCH_SETUP.md",
+      "sha256": "4ab56169ce64c4e6abb49af7a3f470dabcd467afac1ba48eef25c55a32c2991a"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/OBJECTIVE_IMPLEMENTATION.md",
+      "sha256": "d2a2d80a6e179b53a2cf72db46b1643daab3c7e6c4334096c07d05b846158fdb"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/TECHNICAL_ARCHITECTURE.md",
+      "sha256": "ac3f1b6151ebbfc25078994cc8898bd7f20909f6fdf5590cb2ca85e094944e56"
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797"
+    }
+  ],
+  "baselineProofs": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1171-normal-aria-pass.json",
+      "sha256": "c4259f666fa3fac5f6ceda69d5bb6ed78c2335fd67b3c65da6b2ef46b308272e",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 233.071,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 233.071,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 2,
+        "pathFollowing": 4,
+        "leadX": 933.969,
+        "leadZ": 610.456
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-en-a7332ec72c7049b69f5c79674d721ae2.jsonl",
+      "traceSha256": "370c81c25d1b5012aa79f0c0352117b4caf9356fbae156383dd2783126fef66d",
+      "sampleCount": 114,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1172-normal-aria-pass.json",
+      "sha256": "f9cd08c68cafda9c0607f02791ab89d6332334bd0bfda38e4ea08e2cb5a0a560",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 234.984,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 234.984,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 3,
+        "pathFollowing": 6,
+        "leadX": 933.818,
+        "leadZ": 610.433
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-130368-en-7d96a52d91184abb8f665e1a99071fa6.jsonl",
+      "traceSha256": "01be2086e339005ca4343a40482d3c587188822522e0348e592956442d128124",
+      "sampleCount": 115,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1173-normal-aria-pass.json",
+      "sha256": "b3cf12eb7cb51fda7589b773c5efd6ce93c7d28e30e06503a4dcbfba1910dad8",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 241.313,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 241.313,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 2,
+        "pathFollowing": 6,
+        "leadX": 922.034,
+        "leadZ": 624.47
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-155926-en-9294279c2c404b9a9b1b3cc18ef039b0.jsonl",
+      "traceSha256": "76e8ed829d2f427b486cdb96846c45fcc3fb1ccfc6e49a215635ca856ebd39d9",
+      "sampleCount": 118,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1176-normal-aria-pass.json",
+      "sha256": "addb039bca21f89fc3b9a21bff3666127a8aa31ead03b1a255ee0e9699a5efad",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 232.394,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 232.394,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 2,
+        "pathFollowing": 4,
+        "leadX": 933.898,
+        "leadZ": 610.484
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-104734-fa-1816e744f79e41a194cfb35c4d0b74ac.jsonl",
+      "traceSha256": "964b7d3a0fff2ffaccf6d8733ae1f1a4cf0d3de030a9baed45cf98bafdc03524",
+      "sampleCount": 114,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1165-normal-aria-pass.json",
+      "sha256": "e0c2b624209344f98488b9c52fe288231a9d2589cb31a55f61fe1556e45ab0e9",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 234.546,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 234.546,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 3,
+        "pathFollowing": 6,
+        "leadX": 922.144,
+        "leadZ": 624.45
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-130368-fa-9b444a8e65c141dcbbc6d7ac30196e81.jsonl",
+      "traceSha256": "46d529bb9235b682e5c742183a22f5949715a6c77010f2bf5896bd316a02188f",
+      "sampleCount": 115,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S005/native1166-normal-aria-pass.json",
+      "sha256": "65c7771e82ed4d266bd804226de6229a5ecc8c52b4f62082cb56a8267affb433",
+      "result": "Passed",
+      "sourceHash": "d5afc88f225920451037f6e1c9f7e9d83dfc567e3bbdadfb5b6d65d9ee6774f4",
+      "fullSourceUnchanged": true,
+      "terminal": {
+        "elapsed": 252.282,
+        "phase": "Finished",
+        "outcome": "Victory",
+        "reason": "MainBaseDestroyed",
+        "simulationActive": 0,
+        "clockElapsed": 252.282,
+        "clockPaused": 1,
+        "playerBaseHp": 800,
+        "enemyBaseHp": 0,
+        "playerUnits": 25,
+        "pathRequests": 2,
+        "pathFollowing": 1,
+        "leadX": 922.503,
+        "leadZ": 602.318
+      },
+      "actualWrapperExit": 0,
+      "nativeBridgeExit": 0,
+      "trace": "Design/AgentReports/SkirmishExpansion/S005/s005-aria-live-155926-fa-fe1b216d6ae641d4b1695a2e832cbec0.jsonl",
+      "traceSha256": "7afcd595625b35769beab10ce0ad6ba34f3be2159727573b3fbeb3163a944b90",
+      "sampleCount": 123,
+      "sampledPositivePlayerBaseHpMin": 800,
+      "sampledPositivePlayerBaseHpMax": 800
+    }
+  ],
+  "limitations": [
+    "Existing completed runs do not establish causal enemy weaknesses or a universal win rate.",
+    "Missing viewport marker is not proof of fog invisibility.",
+    "No new runtime, performance, device or player acceptance claimed.",
+    "Concurrent S005 work can advance the checkout; recheck hashes before implementation."
+  ],
+  "ownerRelease": {
+    "date": "2026-10-11",
+    "timeZone": "Europe/Berlin",
+    "threadId": "01a102b7-8485-79e1-94a3-660e377433dc",
+    "quote": "yes release the hold with the agent plan",
+    "supersedesHoldMessageId": "01a12b9f-78da-7fb2-81bb-f18e83779e83",
+    "messageId": "01a12ba9-9587-70a2-ba19-477c36ac1817"
+  }
+}

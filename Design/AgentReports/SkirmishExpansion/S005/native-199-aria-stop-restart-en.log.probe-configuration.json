@@ -1,0 +1,9 @@
+{
+  "parameter": "WARLINE_S004_STOP_PROBE",
+  "value": "1",
+  "catalog": "S005",
+  "scope": "Harness branch selection only; all actions delivered through presented native Touch controls",
+  "sourceAssetsChanged": false,
+  "stopCoverage": "NotExecuted: parameter set after initial consent finished",
+  "countsForStopRestartGate": false
+}

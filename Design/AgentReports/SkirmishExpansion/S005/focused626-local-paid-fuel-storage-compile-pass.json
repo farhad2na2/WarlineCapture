@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "tests": 3,
+  "wrapperExit": 0,
+  "requiredMarker": "[SkirmishProducerMessageTests] result=Passed tests=3",
+  "log": "tests-626-local-paid-fuel-storage-compile.log",
+  "currentSourceHash": "3ab3466c8b8cfe228668169b7f0476cc52140581150ad60c3cc7f71d6258af15",
+  "changedFromNative625": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AirportPlacement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs"
+  ],
+  "allMaterialsUnchanged": true,
+  "scope": "Compilation and producer regressions only; native flight remains pending"
+}

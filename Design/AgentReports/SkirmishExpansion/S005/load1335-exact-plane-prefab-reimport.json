@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-plane-prefab-reimport1335/S005PlanePrefabReimport1335.cs",
+      "entry": "S005PlanePrefabReimport1335.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 667,
+      "executeMs": 13,
+      "assemblyName": "PipelineRunScript_S005PlanePrefabReimport1335_c5a1ec7a598b4335848399c82a8cc721",
+      "success": true,
+      "result": "Loaded only; exact prefab reimport requires owned repository-wrapper RunValidation."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

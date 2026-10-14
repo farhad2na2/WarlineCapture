@@ -1,0 +1,37 @@
+{
+  "result": "UnqualifiedConcurrentSourceDelta",
+  "previousSourceHash": "792cb736578cb585c5f92a92ff93794d184c351ddb67445b5da13ad1c18cef70",
+  "currentSourceHash": "f6bc5ad610c44b95802d903d7d3357132cb8dbb23001717bac4d7650d9e1f81e",
+  "changedFiles": [
+    "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_Cracks.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_FlatPaving.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_KerbPaving.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_Lanes.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_SandSpill.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DistrictSurfaceMask.asset",
+    "Assets/Game/Art/MapBeautify/DenseCity/DistrictSurfaceMask.asset.meta",
+    "Assets/Game/Rendering/Shaders/GroundMacroVariation.shader",
+    "Assets/Game/Rendering/Shaders/SkirmishDistrictSurfaces.hlsl",
+    "Assets/Game/Rendering/Shaders/SkirmishDistrictSurfaces.hlsl.meta",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Build.cs",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Build.cs.meta",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Validation.cs",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.Validation.cs.meta",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.cs",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/SkirmishSurfacePolish.cs.meta"
+  ],
+  "changedMaterials": [
+    "Assets/Game/Art/MapBeautify/DenseCity/CityStreetAsphalt.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/KerbPaving.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/OutskirtsSand.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/RoadSand.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_03_A.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_GroundVariation_PolygonMilitary_Mat_04_A.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/Warm_PolygonMilitary_GroundVariation.mat",
+    "Assets/Game/Art/MapBeautify/DenseCity/WornAsphalt.mat",
+    "Assets/Game/Rendering/Materials/PolygonMilitary_GroundVariation.mat"
+  ],
+  "shippingGameplaySourceUnchanged": true,
+  "physicalSceneUnchanged": true,
+  "currentSourceCertified": false
+}

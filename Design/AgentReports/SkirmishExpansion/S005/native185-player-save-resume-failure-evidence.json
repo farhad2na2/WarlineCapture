@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "reason": "Probe compared logical Persian text against presentation glyphs; visible enabled Continue control not selected",
+  "log": "native-185-player-save-resume-fa.log",
+  "logSha256": "b0b603d6c090e4588a58cb353dbc9a696e63879206430f7d68c6548c11da0f4f",
+  "wrapperExit": 1,
+  "receiptExit": 1,
+  "countedWin": 0,
+  "countsForCurrentSource": false,
+  "playerSave": "Passed",
+  "playerContinue": "NotExercised",
+  "sourceHash": "4e4607dac200263f918d48fdac947da59198f886399b3ab8cebc5108cc749b18"
+}

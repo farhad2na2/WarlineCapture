@@ -1,0 +1,10 @@
+{
+  "result": "Failed",
+  "wrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "prePostIdentical": true,
+  "sourceHash": "4501a4ca112a4c3ccbd26ac90fcf4759e17e4f8e71289ca0a08e77d1853f57ed",
+  "log": "native-787-aircraft-return-fix.log",
+  "failure": "Proximity assertion also rejects a legitimate go-around; native landing sequence requires a more specific first-frame behavior assertion",
+  "shippingFixCertified": false
+}

@@ -1,0 +1,147 @@
+diff --git a/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs b/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
+index 9421880ae..eca4faca6 100644
+--- a/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
++++ b/Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
+@@ -18,6 +18,17 @@ namespace Game.UI.Runtime
+                 ApplyInteractionState(Game.Tactical.Contracts.TacticalCommandMode.None,false);
+             selectionInstruction=null;
+         }
++        internal void SetNormalSquadCardSelectionInstruction()
++        {
++            bool fa = UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");
++            selectionInstruction = fa
++                ? "کارت «گروه تفنگدار» رو بزن تا هر چهار سرباز انتخاب بشن."
++                : "Tap the Rifle Squad card to select all four soldiers.";
++            if (_currentInstructionBody != selectionInstruction)
++                ApplyInstruction(UiShellRuntimeGateway.Localization.Get("ui.aria.normal_selection.title", fa ? "نیروها رو انتخاب کن" : "Select units"),
++                    selectionInstruction, UiTutorialNarrationPhase.PrimaryAction);
++            SetContinueAvailable(false);
++        }
+         internal void SetNormalSelectionInstruction(bool selectMode,bool drag)
+         {
+             bool fa=UiShellRuntimeGateway.Localization.CurrentLocaleCode.StartsWith("fa");
+diff --git a/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs b/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
+index 0b778fada..52f04aabc 100644
+--- a/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
++++ b/Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.SelectionDrag.cs
+@@ -59,6 +59,26 @@ namespace Game.UI.Runtime
+             return _selectionBoxRequested && _selectionBox!=null && _selectionBox.gameObject.activeInHierarchy &&
+                 SelectionDragIsUnobstructed();
+         }
++        internal bool TryShowPresentedSquadTutorialControl(string captionKey)
++        {
++            var button = ResolveSquadTutorialControl();
++            if (button == null || !button.IsActive() || !button.IsInteractable()) return false;
++            var rect = button.transform as RectTransform;
++            var canvas = button.GetComponentInParent<Canvas>()?.rootCanvas;
++            Camera eventCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
++            Vector2 point = RectTransformUtility.WorldToScreenPoint(eventCamera, rect.TransformPoint(rect.rect.center));
++            if (!Screen.safeArea.Contains(point)) return false;
++            var events = EventSystem.current;
++            if (events != null)
++            {
++                var pointer = new PointerEventData(events) { position = point };
++                _selectionHits.Clear(); events.RaycastAll(pointer, _selectionHits);
++                if (_selectionHits.Count == 0 || !(_selectionHits[0].gameObject.transform == button.transform ||
++                    _selectionHits[0].gameObject.transform.IsChildOf(button.transform))) return false;
++            }
++            ShowTutorialControl(button, captionKey);
++            return HasVisibleDirectTutorialTarget;
++        }
+         private bool SelectionDragIsUnobstructed()
+         {
+             var events = EventSystem.current;
+diff --git a/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs b/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
+index 14ff2f1be..6042bf1a2 100644
+--- a/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
++++ b/Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
+@@ -226,16 +226,33 @@ namespace Game.UI.Runtime
+         {
+             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || !target.NeedsSelection) return;
+             _selectionActionRequested=true;
+-            _embeddedTutorialView.SetNormalSelectionInstruction(_activeCommandMode==TacticalCommandMode.Select,target.DragSelection);
+             if(_activeCommandMode!=TacticalCommandMode.Select)
+-            {Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;}
++            {
++                _embeddedTutorialView.SetNormalSelectionInstruction(false,target.DragSelection);
++                Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;
++            }
+             if(target.DragSelection)
+             {
+                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
++                // First Contact's normal card selects its full four-soldier squad.
++                // If HUD chrome blocks the world drag, guide that visible existing control.
++                if (!_highlightPresentationSystem.TryObserveVisibleSelectionDrag(out _, out _) &&
++                    UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var mission) &&
++                    mission.MissionId == "saga.ch01.m01.first_contact" &&
++                    _highlightPresentationSystem.TryShowPresentedSquadTutorialControl("ui.aria.select_group"))
++                {
++                    _embeddedTutorialView.SetNormalSquadCardSelectionInstruction();
++                    return;
++                }
++                _embeddedTutorialView.SetNormalSelectionInstruction(true,true);
+                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
+                 {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+             }
+-            else ShowTutorialWorld(target.Selection,true);
++            else
++            {
++                _embeddedTutorialView.SetNormalSelectionInstruction(true,false);
++                ShowTutorialWorld(target.Selection,true);
++            }
+         }
+ 
+         private void ShowSelectionOrControl(Button button,string key)
+diff --git a/Assets/Tests/Editor/MissionGroupSelectionTests.cs b/Assets/Tests/Editor/MissionGroupSelectionTests.cs
+index 31e78d9f1..84b090b4b 100644
+--- a/Assets/Tests/Editor/MissionGroupSelectionTests.cs
++++ b/Assets/Tests/Editor/MissionGroupSelectionTests.cs
+@@ -147,6 +147,48 @@ public sealed class MissionGroupSelectionTests
+         em.SetComponentData(actor,new Faction {Id=1});em.SetComponentData(actor,new UnitHealth {Current=100});
+         return actor;
+     }
++    [Test]
++    public void SquadCardFallbackRequiresVisibleUncoveredNormalControl()
++    {
++        var canvasObject = new GameObject("Squad fallback canvas", typeof(RectTransform), typeof(Canvas), typeof(UnityEngine.UI.GraphicRaycaster));
++        var canvas = canvasObject.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32760;
++        var buttonObject = new GameObject("RifleSquad", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
++        buttonObject.transform.SetParent(canvasObject.transform, false);
++        var rect = buttonObject.GetComponent<RectTransform>(); rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f,.5f); rect.sizeDelta = new Vector2(140,100);
++        var button = buttonObject.GetComponent<UnityEngine.UI.Button>(); int clicks = 0; button.onClick.AddListener(() => clicks++);
++        var pulseObject = new GameObject("Pulse", typeof(RectTransform), typeof(UnityEngine.UI.Image)); pulseObject.transform.SetParent(canvasObject.transform,false); pulseObject.GetComponent<UnityEngine.UI.Image>().raycastTarget = false;
++        var oldEvents = UnityEngine.EventSystems.EventSystem.current;
++        var eventsObject = new GameObject("Fallback events",typeof(UnityEngine.EventSystems.EventSystem));
++        UnityEngine.EventSystems.EventSystem.current = eventsObject.GetComponent<UnityEngine.EventSystems.EventSystem>();
++        var helper = new Game.UI.Runtime.AssistantHighlightPresentationSystemHelper();
++        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
++        typeof(Game.UI.Runtime.AssistantHighlightPresentationSystemHelper).GetField("_panelPulse",flags).SetValue(helper,pulseObject.GetComponent<UnityEngine.UI.Image>());
++        typeof(Game.UI.Runtime.AssistantHighlightPresentationSystemHelper).GetField("_squadGuidanceButton",flags).SetValue(helper,button);
++        GameObject cover = null;
++        try
++        {
++            Canvas.ForceUpdateCanvases();
++            Assert.IsTrue(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group"),"Guide the real visible squad card.");
++            Assert.AreEqual(0,clicks,"Presenting guidance must never select or order troops.");
++            button.interactable = false; Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); button.interactable = true;
++            buttonObject.SetActive(false); Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); buttonObject.SetActive(true);
++            rect.anchoredPosition = new Vector2(Screen.width*2,0); Canvas.ForceUpdateCanvases(); Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group")); rect.anchoredPosition = Vector2.zero;
++            cover = new GameObject("Blocking panel",typeof(RectTransform),typeof(UnityEngine.UI.Image)); cover.transform.SetParent(canvasObject.transform,false);
++            var coverRect = cover.GetComponent<RectTransform>(); coverRect.anchorMin = coverRect.anchorMax = coverRect.pivot = new Vector2(.5f,.5f); coverRect.sizeDelta = new Vector2(200,200); Canvas.ForceUpdateCanvases();
++            Assert.IsFalse(helper.TryShowPresentedSquadTutorialControl("ui.aria.select_group"),"A covered card cannot be suggested as reachable input.");
++            Assert.AreEqual(0,clicks);
++        }
++        finally
++        {
++            helper.Unbind(); UnityEngine.EventSystems.EventSystem.current = oldEvents;
++            UnityEngine.Object.DestroyImmediate(eventsObject); UnityEngine.Object.DestroyImmediate(canvasObject);
++        }
++    }
++    public static void ValidatePresentedSquadCardFallback()
++    {
++        new MissionGroupSelectionTests().SquadCardFallbackRequiresVisibleUncoveredNormalControl();
++        Debug.Log("[MissionSquadCardFallback] result=Passed visible, disabled, inactive, offscreen, covered controls; normalClickInjected=0");
++    }
+     public static void RunFull()
+     {
+         try

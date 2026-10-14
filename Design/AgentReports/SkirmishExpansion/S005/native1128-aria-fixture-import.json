@@ -1,0 +1,15 @@
+{
+  "result": "AppliedReviewedTestOnlyFixtureCorrection",
+  "manifestSha256": "2e77c811580815bce6a0bc9e1d67598a48757ec3cd9f0cc23c0489074f8c2218",
+  "files": [
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs",
+      "baseSha256": "8e30e4c968b40b4e00b67bfb92cd90f86a22105e0adb5feac8932db334dc7c56",
+      "stagedSha256": "3a7961d067cda199b68c6653a749408d8f64fc1761d4721ba5980c8a490bff68",
+      "stagedPath": "/private/tmp/aria-fog1118-fixture-fix/Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs"
+    }
+  ],
+  "backup": "/private/tmp/s005-aria-fixture-before1128.cs",
+  "nativeCompilePending": true,
+  "productionBehaviorChangedByCorrection": false
+}

@@ -1,0 +1,8 @@
+{
+  "sourceHash": "7026c612e038266aee61d3d7c1c9b345f224646330a4e6ffee95c3067e61d426",
+  "sourceFiles": 43310,
+  "sourceBytes": 4851915351,
+  "seconds": 5.617474625,
+  "method": "Independent Python SHA-256 with C# BinaryWriter UTF-8 manifest and Ordinal UTF-16 path ordering",
+  "scope": "All source extensions in Assets/Packages/ProjectSettings; no exclusions added"
+}

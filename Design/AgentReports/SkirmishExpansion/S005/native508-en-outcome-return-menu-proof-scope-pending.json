@@ -1,0 +1,22 @@
+{
+  "playerReady": false,
+  "sourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+  "log": "native-508-shared-frontage-aria-en-seed2.log",
+  "logSha256": "c72c9ee50e3a03903e2ae005220784f54270580ef6d14b201ad5fa92c6bb2c4d",
+  "trace": "s005-aria-live-130368-en-cb1441d8fedd4261a3b167a995008f4c.jsonl.touch.jsonl",
+  "traceSha256": "e8f2fa34dc891768baba42a60cdf88ac3b9e956e9e541ad1bdae91b5ea1d77ec",
+  "outcome": "Victory",
+  "elapsedSeconds": 234.125,
+  "playerBaseHealth": 800,
+  "enemyBaseHealth": 0,
+  "sourcePrePostMatched": true,
+  "wrapperExitCode": 0,
+  "completeNativeJourneyCertified": false,
+  "observedIssues": [
+    "English setup PLAY label retained shaped Persian text",
+    "Menu evidence included a stale negative-test receipt count; audit Active state was not recorded"
+  ],
+  "runtimeReceiptViolations": 0,
+  "recordedEndedContacts": 108,
+  "retainedEvidence": true
+}

@@ -1,0 +1,42 @@
+{
+  "status": "PreparedForBeforeFixReproductionAndReviewNotCompiledNotExecuted",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "baseSha256": "728ede114a68a447834a11deba703706b764bb503ba60c9c17d6e0fd72e815f7",
+      "stagedSha256": "c58710c100bab6217ce3302caf260c473da964d67f8533158c885374df02ca77"
+    },
+    {
+      "path": "Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "stagedPath": "/private/tmp/guidance-lifecycle-fix/Assets/Tests/Editor/AssistantGuidanceLifecycleTests.cs",
+      "baseSha256": null,
+      "stagedSha256": "edb70fc99627391fb311712a07d3e25206e062c517611698224410be7ec9dcc3"
+    }
+  ],
+  "patchSha256": "e35f7e542335f8c1b1886e216d8591d1f1d02aa001c64fc5de0a0e5983ad2850",
+  "sourceCauseChain": [
+    "MatchSceneView.OnDisable/OnDestroy calls ShutdownMatchRuntimeBound",
+    "MatchBootstrapCompositionSystemHelper.OnDestroy\u2192ShutdownRuntime:651 invokes MainMenu.Dispose",
+    "MainMenuPlayUI.Dispose:97 guided cleanup BEFORE assistant Unbind:100",
+    "DisposeGuidedHudRuntime:33 invokes assistant.BindResourceStrip(null)",
+    "Highlight.UiSurfaceGuidance.BindResourceStrip:41 calls ApplyVisual",
+    "Highlight.Guidance.ApplyVisual calls ApplyScreenTargetIndicator",
+    "Highlight.TargetVisuals.EnsureScreenTargetIndicator creates root when prior indicator destroyed while panelPulse still bound"
+  ],
+  "correction": "Move existing assistant.Unbind before guided cleanup, revoking panelPulse creation authority before resource detach redraw",
+  "productionFiles": 1,
+  "GuidanceUnbindOwnCalls": "ClearDirectTutorialCue and detach helpers do not invoke ApplyVisual; original hypothesis of direct Unbind redraw not supported",
+  "nativeWarning": "Observed native1101 teardown warning; post-closure overlay census empty. No permanent Editor leak claimed. Precise Unity destruction order requires native reproduction.",
+  "focusedEditModeMethod": "Game.Tests.Editor.AssistantGuidanceLifecycleTests.RunFocusedValidation",
+  "editModeMarker": "[AssistantGuidanceLifecycleTests] result=Passed cases=2 scope=ActualHelperEditModePlayTeardownPending",
+  "beforeFixExpected": "Public ownerDispose creates replacement overlay from missing prior overlay before real assistant-unbind callback; first test asserts0 and should fail1. Failure cleanup clears callback and real owner/HUD safely.",
+  "playTest": "Game.Tests.Editor.AssistantGuidanceLifecycleTests.PlayOwnerOnDestroyAndRebindPreserveOverlayLifecycle",
+  "playMarker": "[AssistantGuidancePlayLifecycle] result=Passed ownerOnDestroy=1 overlayRecreated=0 rebindVisible=1 M3OverlayRootPreserved=1",
+  "playPrecondition": "Native Editor temporary empty scene, no dense mission; UnityTest enters/exits actual Play, native Object.Destroy\u2192MonoBehaviour.OnDestroy invokes actual MainMenu.Dispose, delayed destruction then freshBind/render positive control",
+  "scope": "Isolated real helper lifecycle, not wholemission qualification",
+  "M3OverlayHierarchyFixPreserved": true,
+  "sourceEditsPerformed": false,
+  "UnityCallsPerformed": false,
+  "frozenFogBundleUnchanged": true
+}

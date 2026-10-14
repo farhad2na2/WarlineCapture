@@ -1,0 +1,15 @@
+{
+  "log": "tests114-minimap-coverage.log",
+  "tests": 9,
+  "wrapperExit": 0,
+  "completionReceipt": 0,
+  "logSha256": "e1374a788efc8d8b7612e045329fcd445425c13cdb15925ddf438242773dd209",
+  "continuousCoverage": true,
+  "narrowRoadsRetained": true,
+  "encodings": [
+    "SingleLayerCompact",
+    "LayeredLegacy"
+  ],
+  "nativeVisualReview": "Running native115",
+  "playerReady": false
+}

@@ -1,0 +1,32 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.OperationMapRenderDatabaseBuilder.RunSourceParityValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:95)
+PipelineEvaluation.PipelineEval_0ca3d2f5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapRenderEligibilityInventoryProbe] result=Passed rows=124167 eligible=59503 excluded=64664 joined=72889 prototypes=9492 parts=15036 report=Design/AgentReports/2026-07-28_dense_city_render_virtualization_eligibility_inventory.json sourceRows=Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz prototypeRecipes=Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json logicalPlacements=Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json spatialCells=Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json capacityBudget=Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json capacitySlots=7291
+UnityEngine.Debug:Log (object)
+Game.Editor.OperationMapRenderEligibilityInventoryProbe:Run () (at Assets/Game/Scripts/Editor/OperationMapRenderEligibilityInventoryProbe.cs:189)
+Game.Editor.OperationMapRenderDatabaseBuilder:RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:40)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:97)
+PipelineEvaluation.PipelineEval_0ca3d2f5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+InvalidOperationException: Dense dirt-road material migration expected 18 logical parts, found 0.
+Game.Editor.OperationMapRenderDatabaseBuilder.BuildRecords (Game.Editor.OperationMapRenderDatabaseBuilder+BuildInputs inputs, Game.Editor.OperationMapRenderDatabaseBuilder+GeneratedRecords& records) (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:417)
+Game.Editor.OperationMapRenderDatabaseBuilder.BuildCandidate () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:215)
+Game.Editor.OperationMapRenderDatabaseBuilder.RunDeterminismValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:64)
+Game.Editor.OperationMapRenderDatabaseBuilder.RunSourceParityValidation () (at Assets/Game/Scripts/Editor/OperationMapRenderDatabaseBuilder.cs:41)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:123)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.OperationMapRenderDatabaseBuilder.RunSourceParityValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:124)
+PipelineEvaluation.PipelineEval_0ca3d2f5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

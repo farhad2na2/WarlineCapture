@@ -1,0 +1,18 @@
+{
+  "explicitHeavyLaneOwner": "main1466r4",
+  "sourceHash": "7026c612e038266aee61d3d7c1c9b345f224646330a4e6ffee95c3067e61d426",
+  "preManifest": "current-fighter1466r4-integrated-ui-source-manifest.json",
+  "preflightManifest": "final-1466r4-paid-air-preflight-source-manifest.json",
+  "preDispatchManifest": "final-1466r4-paid-air-pre-dispatch-source-manifest.json",
+  "method": "S005PaidEnemyAirEffects1466r4.RunValidation",
+  "fixtureSha256": "b15b6e78dff363e3f3aebca88540d3233e938ec81b73ef01c7e28ddda15cb192",
+  "runnerSha256": "87a34664e70e5d0cbd8ed383eede286dae7267e8637ac15054713c6239a49b94",
+  "dryCompileProof": "compile1466r4-paid-air-attack-update-bracket-dry-run.json",
+  "dryCompileProofSha256": "f700f55c2c472a67a60acf6e8ec975c8c50714fa796fdf3a516c78b421c99cd6",
+  "loadOnlyProof": "/private/tmp/s005-fighter-update1466r4-prepared/load-only1466r4-reviewed.json",
+  "loadOnlyProofSha256": "356a64b45776fa232cd5a6bdf94170b053793373378d36237525895e5816de51",
+  "normalMission": false,
+  "fundingReadinessOpeningDeathIsolation": true,
+  "paidNativeProduction": true,
+  "targetPoseAirFlagsFogOrDamageInjected": false
+}

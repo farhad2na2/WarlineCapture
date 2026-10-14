@@ -1,0 +1,11 @@
+--- 1392
++++ 1403
+@@ -915,7 +915,7 @@
+         var r=ReadIntercept(em,"ApproachPoll");ObserveLeg1(em,r);
+         if(patrolMoveReceipt==0||!r.airborne||r.returningHome!=0||r.takeoffRolling!=0||r.landingRolling!=0)return;
+         if(interceptLeg==0){if(!r.nearCommandGoal||!r.nativeGoalMatches)return;interceptRearReceipt=patrolMoveReceipt;LogIntercept(em,"NativeRearApproachArrived");StartInterceptCommand(em,1);return;}
+-        if(interceptLeg==1){if(!r.nearCommandGoal||!r.aligned||!r.nativeGoalMatches)return;interceptApproachReceipt=patrolMoveReceipt;LogIntercept(em,"NativeApproachArrived");StartInterceptCommand(em,2);return;}
++        if(interceptLeg==1){if(!r.nearCommandGoal||!r.nativeGoalMatches)return;interceptApproachReceipt=patrolMoveReceipt;LogIntercept(em,"NativeApproachArrived");StartInterceptCommand(em,2);return;}
+         if(trajectoryFrame==Time.frameCount)return;
+         trajectoryFrame=Time.frameCount;trajectorySamples++;r.trajectorySamples=trajectorySamples;r.stage="NativeFlyThroughSample";
+         File.AppendAllText(interceptPath,JsonUtility.ToJson(r)+"\n");

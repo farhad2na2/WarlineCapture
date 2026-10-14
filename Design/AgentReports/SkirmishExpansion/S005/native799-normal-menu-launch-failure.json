@@ -1,0 +1,14 @@
+{
+  "result": "FailedBeforeMissionLaunch",
+  "sourceHash": "31eab475b92bb49c3fa2d6b94d49dccf476cb527b060be91083cd53f046f10d2",
+  "sourceUnchanged": true,
+  "preSourceManifest": "final-799-own-producer-relative-complete-presented-defense-pre-source-manifest.json",
+  "postSourceManifest": "final-799-menu-launch-failure-closed-post-source-manifest.json",
+  "wrapperExitCode": 2,
+  "log": "native-799-current-manual-en-seed155926.log",
+  "failureMarker": "[S004MenuJourney] result=Failed reason=controlsTimeout step=1",
+  "missionCensusRecorded": false,
+  "missionPlayEvidence": false,
+  "defenseStrategyExercised": false,
+  "playerReady": false
+}

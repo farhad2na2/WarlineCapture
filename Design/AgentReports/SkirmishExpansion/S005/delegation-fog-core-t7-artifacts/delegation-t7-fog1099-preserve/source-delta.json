@@ -1,0 +1,18 @@
+[
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+  "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs",
+  "Assets/Game/Scripts/Components/Skirmish/SkirmishContactKnowledgeElement.cs.meta",
+  "Assets/Game/Scripts/Configs/Skirmish/SkirmishIntelConfig.cs",
+  "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogService.cs",
+  "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.Clocks.cs",
+  "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+  "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs",
+  "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedFogUpdateSystem.cs.meta",
+  "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+  "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+  "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs",
+  "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedDefinitionTests.cs",
+  "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs",
+  "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedFogTests.cs.meta",
+  "ProjectSettings/QualitySettings.asset"
+]

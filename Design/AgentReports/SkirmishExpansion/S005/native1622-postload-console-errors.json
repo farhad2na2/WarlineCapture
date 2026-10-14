@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command get_console_logs",
+  "data": {
+    "command": "get_console_logs",
+    "parameters": {
+      "severity": "error",
+      "limit": "1000"
+    },
+    "result": {
+      "total": 2,
+      "returned": 2,
+      "logs": [
+        {
+          "type": "Error",
+          "message": "[S005NormalSouthFlank1625] companionFailure=1 originalFailurePreserved=1",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005NormalSouthFlank1625Observer:CloseAfterCompanionFailure () (at /private/tmp/s005-full-south-flank1625-source-0df6/S005NormalSouthFlank1625Observer.cs:282)\nS005NormalSouthFlank1625Observer:Observe () (at /private/tmp/s005-full-south-flank1625-source-0df6/S005NormalSouthFlank1625Observer.cs:193)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T15:18:06.6642160Z"
+        },
+        {
+          "type": "Error",
+          "message": "[S005ManualFogFallback1625] failed=1 nativeGameplayUntouched=1 reason=Original route Rocketeer cohort lost before direct Barracks effect",
+          "stackTrace": "UnityEngine.Debug:LogError (object)\nS005ManualFogFallback1625:Tick () (at /private/tmp/s005-full-south-flank1625-source-0df6/S005NormalSouthFlank1625Observer.cs:1514)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)\n",
+          "timestampUtc": "2026-10-14T15:18:06.6337730Z"
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Volumes/T7/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

@@ -1,0 +1,87 @@
+{
+  "status": "FrozenExternalOnly_NativeDryCompileSerializationAndJourneyPending",
+  "bundle": "/private/tmp/campaign-m3-current1281",
+  "manifestSha256": "e301916e36cfb1da45fe38af25e0be8f598c8b4334e2c869b4e1f4e5fe3eb43c",
+  "fixtureSha256": "411ab682dcc9901ad59b24e1d157853441042e4041bd1e6d9799dd66781840c7",
+  "runnerSha256": "7bf613c34cff70f91a1d453de2d5cef457f4c76d595ce8aef4d70467342a9258",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "sourceContracts": 128,
+  "offlineControls": 24,
+  "archive": "delegation-campaign-m3-1281-prepared.zip",
+  "archiveSha256": "e709b91fbdacd2b85d830b2af0efea603f1aaa3ba5006f6fd8edad306cc51d06",
+  "finding": {
+    "result": "ProvenValidationOraclePhaseMismatch",
+    "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+    "native1275Failure": "native1275-campaign-m3-failure.json",
+    "native1275FailureSha256": "b004c6fdd3861c12c66743e103d6168a1bbca21ff26ad8594275b07ef8d218e6",
+    "originalFixtureSha256": "b52455b840784b610ab400ebc4b029ed1733939feabcb292155dbcb1b0348244",
+    "originalRunnerSha256": "9661403efdcefb93c1076fdb15a679e58502a71f81759db86e0e437a659df02e",
+    "actualLaunch": {
+      "frame": 941,
+      "entry": 7,
+      "locale": "fa-IR",
+      "mission": "saga.ch01.m03.radar_warning",
+      "launchOrigin": "CampaignOperations",
+      "phase": "Engage",
+      "outcome": "None",
+      "returnDestination": "None",
+      "session": "campaign-m03-0000000000000001"
+    },
+    "cause": "Observer demanded terminal return destination during nonterminal launch. Actual public Campaign origin was correct.",
+    "sourceEvidence": [
+      {
+        "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs",
+        "lines": "340-352",
+        "semantics": "CreateRuntime initializes Preparing/OutcomeNone/ReturnDestinationNone and preserves public request LaunchOrigin."
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDefenseRuleUtility.cs",
+        "lines": "19-22,40-46",
+        "semantics": "Active defense leaves return destination None; terminal actual outcome sets Result/CampaignOperations."
+      }
+    ],
+    "successorId": 1281,
+    "changes": [
+      "Launch requires real CampaignOperations origin, native nonterminal OutcomeNone and ReturnDestinationNone.",
+      "Exact CampaignOperations return remains required at native Victory and later rendered Campaign destination.",
+      "Independent offline parser matches actual lifecycle phases; six new negative controls retain strict origin/terminal checks."
+    ],
+    "publicEntryChanged": false,
+    "productionChanged": false,
+    "nativeExecuted": false,
+    "wholeCampaignPassed": false,
+    "englishQualified": false
+  },
+  "dryCommand": [
+    "rtk",
+    "proxy",
+    "unity",
+    "command",
+    "run_script",
+    "--file",
+    "/private/tmp/campaign-m3-current1281/CampaignSelectionJourney1281.cs",
+    "--entry",
+    "CampaignSelectionJourney1281.Run",
+    "--dry_run",
+    "true",
+    "--timeout_ms",
+    "30000",
+    "--project-path",
+    "/Users/farhad/Projects/WarlineCapture",
+    "--format",
+    "json"
+  ],
+  "runCommand": [
+    "rtk",
+    "proxy",
+    "python3",
+    "/private/tmp/campaign-m3-current1281/run_campaign_m3_1281.py",
+    "final-1268-normal-aria-post-source-manifest.json",
+    "--dry-compile-proof",
+    "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/compile1281-campaign-m3-reviewed-dry-run.json",
+    "--heavy-lane-owner",
+    "main1281",
+    "--scope",
+    "fa-IR"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "result": "StaticRuntimePauseMutationDiagnosed",
+  "runtimePauseBugProvenBy": "Actual native1018 paused->Save quaternion changed with Position/Scale/air/movement identical; independent current simulation formula reproduces saved quaternion after exactly four zero-delta calls. Native focused regression execution pending.",
+  "notFixtureTimingOnly": true,
+  "noAssetsChangedByAgent": true,
+  "normalInputRecoveryStillPending": true,
+  "evidence": "readonly1042-flight-checkpoint-field-diff.json",
+  "nativeOriginalSave": {
+    "file": "native1018-failed-comparison-original-checkpoint.json",
+    "bytes": 10343680,
+    "sha256": "fcc3d8abe89aa6b0c47f82914e9717190037586683579195fda18c9c0215c95e",
+    "contentsEdited": false,
+    "payloadPrinted": false
+  },
+  "source": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+  "sourceSha256": "72a95c2ce6ee9ff02a000e0dac81b2a7e757e5c1158eefaedc7e84d06bb40fb4",
+  "cause": {
+    "onUpdate": "No nonpositive-delta guard; paused Simulation delta0 still runs flight state code.",
+    "operation": "ApplyFixedWingFlight extracts bank as asin(worldRight.y), extracts pitch as asin(worldForward.y), then reconstructs rotation regardless of delta. Pitch-roll coupling makes bank extraction lossy.",
+    "zeroDeltaWrites": "Yaw/Position advance0; bankStep/pitchStep0; reconstituted orientation still differs. Other paths can FaceTarget, snap short arrivals, initialize home or remove transit at zero delta.",
+    "presentationDistinction": "This writes simulation actor LocalTransform in UnitAirMovementSystem, not a model-only render transform or helicopter blade child. Fixed-wing movement/steering uses this rotation afterward."
+  },
+  "independentFormulaReproduction": {
+    "scope": "Offline double precision math; not Unity native execution or player readiness",
+    "pausedQuaternion": {
+      "x": -0.06234676018357277,
+      "y": 0.616716742515564,
+      "z": 0.14551718533039093,
+      "w": 0.7711018323898315
+    },
+    "savedQuaternion": {
+      "x": -0.06933119893074036,
+      "y": 0.6159706115722656,
+      "z": 0.13676995038986206,
+      "w": 0.7727013826370239
+    },
+    "firstZeroDeltaQuaternion": {
+      "x": -0.06420073055437897,
+      "y": 0.6165265163642516,
+      "z": 0.1431980870974875,
+      "w": 0.7715358894229514
+    },
+    "fourZeroDeltaQuaternion": {
+      "x": -0.06933119575979035,
+      "y": 0.6159706685212157,
+      "z": 0.13676995462730482,
+      "w": 0.7727013008448279
+    },
+    "savedQuaternionErrorNormAfterFourCalls": 9.980559650116202e-08,
+    "positionRemainsUnchanged": true
+  },
+  "preparedFix": {
+    "file": "/private/tmp/s005-air-pause-zero-delta.patch",
+    "archive": "delegation-aircraft-pause-zero-delta-prepared.patch.txt",
+    "applied": false,
+    "compiled": false,
+    "scope": "Return OnUpdate before any state reads/writes when simulation dt<=0. Keeps positive-time flight algorithm unchanged.",
+    "whySystemGuard": "A helper-only quaternion fix leaves dt0 initialization, arrival snap/transit removal and other air-state mutations able to advance paused simulation.",
+    "queueUiCheckpointScope": "Native production, UI/input command acceptance, menu and checkpoint services are separate systems; guard freezes flight-owned transitions only. Orders remain pending for resumed positive simulation time.",
+    "initializationDeliveryScope": "UnitAirMovement-owned home initialization and taxi completion intentionally defer while paused. Positive-delta control covers resumed taxi completion; native queued-production lifecycle is not disabled."
+  },
+  "preparedRegression": {
+    "file": "/private/tmp/S005AirPauseRegression1044.cs",
+    "archive": "delegation-aircraft-pause1044-prepared.cs.txt",
+    "compiled": false,
+    "executed": false,
+    "isolatedWorld": true,
+    "normalMissionAcceptance": false,
+    "cases": [
+      "Banked fixed-wing Move using real1018 paused quaternion",
+      "Banked fixed-wing Return",
+      "VTOL Move",
+      "New delivery transit at assigned home",
+      "New UnitTarget queued while paused supersedes previous air intent on positive delta"
+    ],
+    "perCase": "120 exact zero-delta transform/flight/grid/order/transit stable frames, then positive-delta movement/transit/intent control.",
+    "preFixExpected": "Failure with actual zero-delta transform/state mutation; preserve failure log.",
+    "postFixExpected": "Five cases and positive controls Pass, no gameplay or production budgets changed.",
+    "original1043Failure": "Nested JsonUtility.FromJson<Sample> defaulted unmanaged component fields, so fixture failed preflight before testing; preserve native1043 failure, not a native simulation reproduction.",
+    "stateInput": "Exact real1018 compact component literal initializers generated from readonly1042; no nested struct deserialization.",
+    "persistentCiTest": "/private/tmp/AirPauseConservationTests.cs",
+    "persistentCiPatch": "/private/tmp/s005-air-pause-persistent-test.patch"
+  },
+  "nextNativeRecoveryPlan": [
+    "Keep original native1018 failure and checkpoint bytes immutable. Record current old-source whole-manifest, new code candidate hash and unchanged save schema/content/map/prefab geometry identity. Do not silently relabel original pre-fix save as new-source capture.",
+    "After source patch compile/focused native regression, use isolated QA profile with a byte-identical COPY of original native1018 Save through normal Menu Continue; no Payload rewrite, manufactured actors, resource/role/order changes or injected outcome.",
+    "Compare actual restored attempt/receipt1005/native paidStrike520, static runway/home and immutable prefab movement exactly; permit observed positive-time resumed flight transform evolution only within actual native simulation-clock bound. Preserve full native Touch contacts and disposed original-world lineage.",
+    "Immediately use real Pause control while restored aircraft remains airborne; capture actual paused snapshot once native Paused is observed. Intentionally wait several paused frames/at least1second; verify LocalTransform and all mutable aircraft state remain byte-exact before real Save.",
+    "Use native Save\u2192Menu; retain exact newly written native checkpoint bytes before Continue can consume it. Compare ALL paused snapshot parts including quaternion to newly saved actor parts. This specifically closes paused-state conservation defect under corrected runtime.",
+    "Native Menu Continue again; verify same attempt/paid receipt/runway, resumed real airborne motion and owned cleanup. Count as scoped split-session normal aircraft recovery with original native1018 lineage, not a new uninterrupted whole-current-source normal mission or counted ARIA victory.",
+    "If save compatibility rejects the old real checkpoint under new runtime, preserve exact native rejection and perform a fresh normal paidflight Save/Continue. Do not bypass compatibility or reserialize/rewrite Payload to make it load."
+  ],
+  "additionalAcceptance": "Fresh full-source normal complete matches and other air-role/source-fit/device gates remain governed by authoritative report. Split recovery scoped evidence cannot substitute for them."
+}

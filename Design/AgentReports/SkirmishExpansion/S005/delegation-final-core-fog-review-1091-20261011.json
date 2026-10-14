@@ -1,0 +1,26 @@
+{
+  "result": "ReadOnlyFinalCoreReviewNoRemainingConcreteBlocker",
+  "scope": "11 frozen staged core files including typed unarmed expanded Drone Scan exception and focused19cases. Consumer patch reviewed separately by root. No Unity compilation/runtime/device pass inferred.",
+  "manifestSha256": "12891c061b857c3cf237b36498bc6de12b5ec4b46dded5be54fe4f9457f4c8e8",
+  "corePatchSha256": "5628843c3331ded6f761b70f69245eeaaf604bd3b07ff9c46e01cfc345b0ee57",
+  "allStagedFilesMatchFrozenManifest": true,
+  "resolvedFindings": [
+    "Native detector uses separate Chebyshev radius; combat acquisition remains horizontal Euclidean.",
+    "Detector sample excludes RuntimeBuildingCombatInfo, Ground matches native UsesVehicleMotion and Air matches actual UnitAirMovement lookup. Regression adds actual native detector candidate component.",
+    "Disabled owned contacts remain in aging query; Presentable guard prevents fresh opposing Scan/direct observation of hidden passenger cargo; own observer knowledge preserved.",
+    "Native positive-time pause test uses monotonic paused elapsed2 then resume10/expiry21.",
+    "Checkpoint observer normalization includes disabled/passenger/death-animation/health-zero as well as stale/released/recycled/unidentified."
+  ],
+  "droneException": "CanAttack0 preserved; permits only native shared expanded Drone role with attempt ownership/capacity not released. Actual native Scan source gate additionally verifies source alive, native Faction equals ownership and current Playing/nonpaused same session. Other unarmed/legacy/tag-only/released negative controls retained.",
+  "checkpoint": "Optional buffer registered without old component byte-layout change, stable entity remap and copied-data dead source normalization preserve frozen data; positive active observed timestamp/frame rebasing reviewed.",
+  "tests": "Focused runner enumerates19 actual-system calls including both observer factions/native Scan/feed count, direct independence, monotonic pause/20s expiry, disabled cargo freeze/expiry, matching detector metric/sample, optional remap/clock and six source invalidations/legacy migration. Tests prepared, not run by this reviewer.",
+  "remainingRequiredValidation": [
+    "Root exact-base application/dry compilation/focused native tests.",
+    "Actual native visibility/picking/consumer integration and paidDrone/ReconScan proof.",
+    "Shared Intel config asset native serialization to developmentFullVision false and affected mission validation.",
+    "Normal mission/ARIA/checkpoint/device acceptance separately."
+  ],
+  "noAssetsEdits": true,
+  "noUnityCalls": true,
+  "playerReady": false
+}

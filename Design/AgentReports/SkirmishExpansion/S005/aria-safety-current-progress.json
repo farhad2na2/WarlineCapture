@@ -1,0 +1,182 @@
+{
+  "retainedNativeFailure": "native486-assault-watchdog-failure.json",
+  "repairs": [
+    "Preserve in-progress return maneuver and landing state when Fuel remains zero",
+    "Present Tanker affordability and live/pending commitments to ARIA",
+    "ARIA buys two Tankers through visible controls after preserving the structure assault",
+    "Present Strike status to aircraft return/service planner",
+    "Recognize only new closest approach derived from presented own minimap contacts; preserve stall timeout",
+    "Spawn matrix-authored starting Tanker and Oil trucks for both factions; support remains outside combat Supply"
+  ],
+  "nativeFixture": "Existing fixed-wing paid-truck strategy needs adjustment to account for restored starting support before next flight test",
+  "currentFlightCycleCertified": false,
+  "playerReady": false,
+  "retainedRegressionFailure": {
+    "log": "tests-477-aria-tanker-and-strike-status.log",
+    "sourceHash": "70e2c20ccf4d841821357eaed8883a1e1e765a6d35f54313d6035f4eb87ad05f",
+    "wrapperExit": 1,
+    "reason": "Supply action ran before the opening infantry reinforcement; original assertion Expected71 but was72 retained."
+  },
+  "automatedEvidence480To482Scope": "Passed on 73ef before harness-only menu/terminal trace attribution; gameplay source unchanged, whole-source evidence historical.",
+  "native483ScopedRepairObserved": {
+    "firstSortie": true,
+    "nativeReturnLandingParking": true,
+    "fullCycle": false,
+    "fullMatch": false
+  },
+  "priorNativeOutcomePass": "native490-aria-menu-result-return-pass.json",
+  "historicalAutomatedEvidence494": {
+    "log": "tests-494-real-starting-logistics-matrix.log",
+    "countsForCurrentSource": false
+  },
+  "retainedFailure497": {
+    "log": "tests-497-shared-gameplay-starting-support-fixture-fixed.log",
+    "wrapperExit": 1,
+    "reason": "Army fixture expected eight groups but actual authored logistics add three; corrected assertions retain paging boundaries."
+  },
+  "latestNativeOutcomeEvidence": "native517-en-menu-aria-result-return-pass.json",
+  "latestNativeOutcomeCountsForCurrentSource": false,
+  "historicalStatusAliases": {
+    "sourceHash": "e8085e4aeb8d5d1aa66ab655dffaf450f8022ebc4785fb4ad52e7fbdb6c087a2",
+    "preFingerprint": "final-493-starting-logistics-fixed-pre-independent-fingerprint.json",
+    "compile": "Passed",
+    "ariaSuite": "Passed489",
+    "sharedRegression": "Running495",
+    "economyProfile": "Passed482",
+    "matrixRegression": "Passed494",
+    "currentAutomatedEvidence": [
+      {
+        "log": "tests-506-shared-frontage-current-gameplay.log",
+        "sha256": "1931c60b6e4d9582cbfa9fa4b87eda470ae831e1d8c39675ad48c43c30918bb7",
+        "wrapperExit": 0,
+        "receiptExit": 0,
+        "requiredMarkersVerified": true
+      },
+      {
+        "log": "tests-507-shared-frontage-setup-matrix.log",
+        "sha256": "440565a4714fa913d67156a45ad79d3d952c70d5ff68869b25d91a5559389b86",
+        "wrapperExit": 0,
+        "receiptExit": 0,
+        "requiredMarkersVerified": true
+      }
+    ],
+    "activeNativeRun": "native-508-shared-frontage-aria-en-seed2.log",
+    "activeValidation": 508,
+    "nativeStatus": "490 normal-input outcome/result/return passed on prior source; starting support restored; native rerun pending",
+    "currentRegressionsPassed": true,
+    "sourceHashBeforeSourceDiagnostic": "cd08265f9882c706ed723fc6c059deef86d2da00ce2680ecaca6354934602941",
+    "beforeNative634_sourceHash": "78296f070aa8be95c31c198fce48938dd962fd380f08fde548207b325b04562d",
+    "beforeNative634_currentSourceFingerprint": "673bb90fc2893ccf53adb658a6edc2213940b1fcffa409ce2c8799d92c8f6c58",
+    "beforeNative634_currentCandidateEvidence": {
+      "producerMessage": "Focused616 Passed, 3 tests; expanded Tanker correctly names Ground Staging.",
+      "nativeAircraft": "Native622 Running. Native621 wrapper0/missing required marker, incomplete at445.247s; source unchanged and85 contacts ended. Native619 retained normal Draw after launch/fire/return/touchdown.",
+      "fullMatches": "Native610 EN and native611 FA seed104734 are preceding-source passes (54c86e64), not current-source acceptance.",
+      "freshSaveContinue": "Native587/588 passed on preceding 956db3d5 source. Current-source broader checkpoint gate pending.",
+      "visuals": "Deferred by owner.",
+      "playerDevice": "Pending.",
+      "placementSearch": "Focused618 compile Passed; per-file diff exactly two Editor driver files, all562 materials unchanged."
+    },
+    "beforeNative634_currentValidation": "source-fit-524-dense-current-render-parity.log",
+    "beforeNative634_currentCandidatePreHash": "78296f070aa8be95c31c198fce48938dd962fd380f08fde548207b325b04562d"
+  },
+  "sourceFingerprintPending": false,
+  "currentRegressionsPassed": true,
+  "activeNativeRun": null,
+  "activeValidation": 524,
+  "currentValidation": "native-634-current-aria-fa-seed130368.log",
+  "currentCandidateNormalJourneysPending": true,
+  "currentRecoveryStagingCertified": false,
+  "currentCandidateCertification": "Pending current-source normal-input journeys, capacity, flight cycle and final visual/device acceptance",
+  "currentSourceFingerprint": "2953728b711b45a6e7bb0be21192ff4bde25850a9c1b0f4513311d28765e6863",
+  "currentAutomatedEvidence": [
+    {
+      "log": "shared-map-510-cityedge-palette-scope.log",
+      "sha256": "954ac463fb4aa98c3efff3073a4747c198be73ee54f4d5d29f80483c5036427c",
+      "receiptExit": 0,
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "tests-514-button-locale-restores-editor.log",
+      "sha256": "91c938587a8fc724098f4aa1126e92958ce46c5407613c42c0c77f2b0bb00caa",
+      "receiptExit": 0,
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "shared-ui-512-unit-type-localization.log",
+      "sha256": "2346a69a017e1adc35b5abc3ad3db6a8d4860776c0fbceb76384c5156401d581",
+      "receiptExit": 0,
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "tests-515-restored-editor-current-gameplay.log",
+      "sha256": "89232fd86dfaefad384b8ff74f43642b32160c706785fe9870467d26a1eb8fd0",
+      "receiptExit": 0,
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    },
+    {
+      "log": "tests-516-palette-locale-setup-matrix.log",
+      "sha256": "845d2ff05bfdcc93df4cec0d7fc532060fcb1dbee2070a951e9d514d505b8a2d",
+      "receiptExit": 0,
+      "wrapperExit": 0,
+      "requiredMarkersVerified": true
+    }
+  ],
+  "currentPhysicalSource": "opmap.skirmish.desert_base_01",
+  "currentAction": "Current seeded rear deployment English normal mission validation",
+  "logicalBindingValidation": 528,
+  "denseNativeStartupPassed": true,
+  "denseNativeVisualAccepted": false,
+  "denseCheckpointStagingPassed": false,
+  "lastNativeValidation": 534,
+  "lastCompleteEnglishJourney": 546,
+  "lastJourneySourceHash": "d22b0b68d30abc0b898f699d824b7d9652297b9e55a2dcdce6e05fcd199702c0",
+  "currentCandidatePreHash": "45fec66e1f6c98ae3aae21e18b7923ad31ab2b8bcb8c2db3e7cff07460773420",
+  "latestAutomatedCheck": {
+    "run": 560,
+    "matrixConfigurations": 12,
+    "existingMissionRegressions": "Passed",
+    "scenarioBytesPreserved": true
+  },
+  "lastAutomatedValidation": "570 delivery search tests=3 Passed; 571 shared helicopter lifecycle Passed; 572 12 setups + regressions Passed",
+  "currentSourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+  "sourceHash": "2953728b711b45a6e7bb0be21192ff4bde25850a9c1b0f4513311d28765e6863",
+  "activeRun": "native669",
+  "activeLog": "native-654-short-fabrication-selection-pause-resume.log",
+  "currentCandidateEvidence": {
+    "producerMessage": "Focused630 Passed3 on current source",
+    "normalAria": "Native633 EN seed130368 full Victory/result/return passed",
+    "nativeAircraft": "Native632 failed setup watchdog; advanced-air timing, refuel/second sortie, bilateral capacity unresolved",
+    "freshRecovery": "Pending current-source Save/Continue"
+  },
+  "updatedUtc": "2026-10-07T10:11:35.245759+00:00",
+  "currentSourceFingerprintPending": false,
+  "latestAircraftFailure": {
+    "run": 621,
+    "proof": "native621-paid-refinery-incomplete-editor-exit.json",
+    "exitCauseKnown": false,
+    "sourceUnchanged": true
+  },
+  "status": "InProgress",
+  "latestCurrentAriaProof": "native634-current-aria-fa-seed130368-victory.json",
+  "currentNativeCaptureRun": "Native634 Farsi seed130368",
+  "completedCurrentRuns": [],
+  "regularStandardAriaMatrix": "Pending current45fec66e source. Native633/634 EN/FA seed130368 passed previous0a1cf531 source; only Editor recovery driver changed.",
+  "latestCurrentRecoveryProof": "native638-current-farsi-save-continue-resumed-victory.json",
+  "currentStatusAuthority": "TECHNICAL_READINESS_CURRENT.json",
+  "currentStatus": "InProgress",
+  "technicallyReady": false,
+  "authoritativeReadinessReport": "TECHNICAL_READINESS_CURRENT.json",
+  "historicalRootSourceHash": "2953728b711b45a6e7bb0be21192ff4bde25850a9c1b0f4513311d28765e6863",
+  "currentReadiness": {
+    "sourceHash": "e479e1531f410284a3eb4e410473228bec172b56241129e46fb35b74b4c6a602",
+    "playerReady": false,
+    "technicallyReady": false,
+    "focusedProof": "focused668-supply-plots-before-factory-expansion-compile-pass.json",
+    "nativeProofs": [],
+    "historicalRunsNotCurrentCertification": true
+  }
+}

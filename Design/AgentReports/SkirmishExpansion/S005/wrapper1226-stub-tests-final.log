@@ -1,0 +1,15 @@
+test_acknowledgement_failure_requires_exact_native_ownership (__main__.ReuseDispatchTests) ... ok
+test_foreign_owner_cannot_pass_using_success_receipt (__main__.ReuseDispatchTests) ... ok
+test_missing_native_receipt_times_out (__main__.ReuseDispatchTests) ... ok
+test_native_failure_receipt_fails (__main__.ReuseDispatchTests) ... ok
+test_prior_log_is_preserved_before_cli (__main__.ReuseDispatchTests) ... ok
+test_quoted_project_and_log_are_exact_owned_arguments (__main__.ReuseDispatchTests) ... ok
+test_short_timeout_caps_native_dispatch_budget (__main__.ReuseDispatchTests) ... ok
+test_sidecar_is_exclusive_and_existing_bytes_are_preserved (__main__.ReuseDispatchTests) ... ok
+test_supported_run_script_and_native_budget_are_distinct (__main__.ReuseDispatchTests) ... ok
+test_unsupported_dispatch_without_native_evidence_fails (__main__.ReuseDispatchTests) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.453s
+
+OK

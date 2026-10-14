@@ -1,0 +1,48 @@
+{
+  "result": "PreparedNotCompiledOrRun",
+  "fixture": "/private/tmp/S005RetainedFlightPauseSaveContinue1047.cs",
+  "runner": "/private/tmp/s005-run-retained-flight-1047.py",
+  "originalSave": "native1018-failed-comparison-original-checkpoint.json",
+  "originalBytes": 10343680,
+  "originalSha256": "fcc3d8abe89aa6b0c47f82914e9717190037586683579195fda18c9c0215c95e",
+  "originalAttempt": "expanded-s005-155926-38009fc4c64c4f759c81744272db63bc",
+  "publicUiContacts": [
+    "Existing menu S005 setup journey LaunchMissionButton presents Continue when actual retained save is available",
+    "HUD PauseButton through existing PlayerResumeTap raycast-safe real Touch",
+    "PauseOptionsV3PopupView.RestartButton presents Save & Exit",
+    "Returned S005 QuickCustomScreenView.LaunchMissionButton presents native Continue after stable 0.5 second button presentation"
+  ],
+  "normalInputFlow": [
+    "Fresh harness isolated QA profile, original real save file byte-identical copy; no direct restore call",
+    "Native first Continue, same attempt/paid receipt1005/Strike520, original home/runway/movement parameters/immutable prefabSpeed36",
+    "Positive-time flight \u22651 wall second and \u22650.25 simulation seconds; displacement clock-bounded",
+    "Native Pause; hold only QA input scheduling; exact Air/Movement/LocalTransform including quaternion and objective clock for \u22651.5 wall seconds/30 Editor observations",
+    "Native Save & Exit; copy actual produced save before public Continue consumes it; exact NEW paused component values and clock equal actual file",
+    "Native second Continue, old paused actor destroyed, same attempt/receipt/configuration; positive-time clock-bounded flight",
+    "Native helper UI contacts counted; no unexpected input or observed receipt violations; no claim of new gameplay command audit from empty UI-only stream"
+  ],
+  "normalFlightPoseCaveat": "Do not require old saved rotation to equal a later normally resumed and then paused rotation: positive-time flight legitimately changes pose. Exactness is established for NEW paused sampling to its actual native Save; original failed capture stays byte-identical evidence.",
+  "profileCleanup": {
+    "harness": "Finish restores prior WARLINE_VALIDATION_SAVE_ROOT, disposes own Touch drivers, exits owned Play world; source fingerprint mismatch fails closed",
+    "fixture": "Checks originalSave SHA unchanged, ownedWorld disposed, prior profile env restored. Retains unique QA profile path for audit, no recursive delete. Real player profile untouched. Parent can later remove only exact generated unique aria-play-validation-profile/artifact-id directory after both world and profile ownership checks; preserve original and fresh native checkpoints/report."
+  },
+  "runnerChecks": [
+    "activeRun must be null; supplied pre-source manifest must exist",
+    "Unique class/load report preserved; process exit plus outer success plus data.result.success all required before wrapper",
+    "Repository macOS --reuse wrapper only; no new Editor/quit/reset/kill",
+    "Wrapper and bridge receipt, source manifest before/after exact, all actual native markers, original SHA and fresh native file required",
+    "Missing native receipt retains active run for inspection; cannot silently mark complete"
+  ],
+  "scope": "Scoped split-session normal-input retained paid flight recovery only; original1018 recruitment/orders audited separately. No injected simulation/checkpoint fields/funding/readiness/actors/orders/outcomes; not fresh uninterrupted complete match/ARIA win/result/return/readiness certification.",
+  "wrapperReview": {
+    "file": "Tools/CI/wait_existing_unity_validation.py",
+    "relativePathCorrection": "pathlib.Path(project).resolve() / Assets matches canonical Application.dataPath including relative and trailing slash project values",
+    "tests": "rtk proxy python3 -B Tools/CI/test_wait_existing_unity_validation.py: 13 tests Passed, 0.035 seconds",
+    "concreteIssue": null,
+    "failClosed": "Owned exact header required even dispatch0; missing/wrong ownership, invalid/empty completion, late receipt and expired timeout fail. Existing Editor always preserved."
+  },
+  "preparedFixtureSha256": "6b195df6848748903bb4656354503d2df1a65b77ff902ed7ebead6694507b00c",
+  "preparedRunnerSha256": "cc3c7648d9e2d58c95dff7cfd35a0752a9b437e2ae2cfa03f6c3daa6a6457a86",
+  "technicallyReady": false,
+  "playerReady": false
+}

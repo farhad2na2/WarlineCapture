@@ -1,0 +1,31 @@
+[UnityInvokeMac] LicensingMode: existing GUI Editor; project=/Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] Existing executeMethod: Game.Tests.Editor.SkirmishEnemyConstructionAdapterTests.RunFocusedValidation; LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1237-construction.log; TimeoutSeconds: 180
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native-1237-construction.log.dispatch.cs",
+      "entry": "WarlineExistingValidationDispatch.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 26,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_native-1237-construction.log.dispatch_9b9aa44751254c8e81b4f30c6ee07ecc",
+      "success": true,
+      "result": "scheduled"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}
+[UnityInvokeMac] ERROR: live validation failed with status '1'.

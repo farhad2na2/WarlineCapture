@@ -1,0 +1,54 @@
+{
+  "sourceHash": "d22b0b68d30abc0b898f699d824b7d9652297b9e55a2dcdce6e05fcd199702c0",
+  "sourcePrePostMatched": true,
+  "allMaterialBytesMatched": true,
+  "nativeOutcome": {
+    "elapsed": 196.729,
+    "phase": "Finished",
+    "outcome": "Victory",
+    "reason": "MainBaseDestroyed",
+    "simulationActive": 0,
+    "clockElapsed": 196.729,
+    "clockPaused": 1,
+    "playerBaseHp": 800,
+    "enemyBaseHp": 0,
+    "playerUnits": 23,
+    "pathRequests": 4,
+    "pathFollowing": 1,
+    "leadX": 864.36,
+    "leadZ": 618.223
+  },
+  "inputAudit": {
+    "recordedContacts": 87,
+    "completedContacts": 86,
+    "phases": {
+      "Menu": 5,
+      "Runtime": 81,
+      "Terminal": 1
+    },
+    "terminalCancellations": [
+      {
+        "contact": [
+          97,
+          2,
+          81
+        ],
+        "frame": 2970,
+        "acceptedCommands": 30,
+        "reason": "Native Finished disposal; no command accepted during contact"
+      }
+    ],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": false,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": true,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates."
+  },
+  "wrapperExit": 0,
+  "resultFrozenAndReturned": true,
+  "oneEnglishNormalInputJourneyPassed": true,
+  "wholeMissionPlayerReady": false,
+  "visualAccepted": false
+}

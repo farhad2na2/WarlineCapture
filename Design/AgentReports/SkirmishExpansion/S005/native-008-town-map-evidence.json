@@ -1,0 +1,18 @@
+{
+  "candidateHash": "fbd4a7f8650ab08d46a04140c6057ab668509e3ec0563f50610912d49a066e56",
+  "nativeStartupRoster": "Passed: 28 initial units, 14 structures, paid aircraft absent",
+  "nativeSourceReadiness": "Passed",
+  "nativeMapCapture": "Passed: 2400x1080 PNG",
+  "wrapperExit": 0,
+  "normalInputMissionAcceptance": false,
+  "visualOwnerAcceptance": "Pending",
+  "playerReady": false,
+  "physicalSceneryScope": "Shared existing CityEdgeAirfield map; inherited by all consumers",
+  "sourceConsumers": [
+    "CH01-M04",
+    "CH04-M01",
+    "S004",
+    "S005"
+  ],
+  "screenshot": "native-008-town-map-opening.png"
+}

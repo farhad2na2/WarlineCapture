@@ -1,0 +1,17 @@
+{
+  "status": "DurableOfflineReplayPassed",
+  "wrapperOrUnityCalls": 0,
+  "runner": "native1262-offline-durable-qualifier.py",
+  "runnerSha256": "d2dc1b5133468d3d25a040c7a88aac3851a0c7f60cdb2791e692f9a7bfaad971",
+  "proof": "native1262-offline-durable-replay-proof.json",
+  "proofSha256": "d8c32a6738bb10f2830a5f9d572ef8a8c2fa8493b9e09589a81e6e9895f31ae9",
+  "parentIndex": "native1262-offline-audited-evidence-index.json",
+  "parentIndexSha256": "575e003a8a487b4a30b55b0346d9f80544e40f86064a654cdef03465d9c7a691",
+  "originalFailurePreserved": true,
+  "acceptanceAndReadinessEdited": false,
+  "playerReady": false,
+  "limitations": [
+    "Post-recovery producer stable building ID was not directly censused; attributed through verified native source path.",
+    "Does not establish overall player readiness, human/device acceptance, all-Touch ARIA, Stop/takeover or discrete Move/Hold."
+  ]
+}

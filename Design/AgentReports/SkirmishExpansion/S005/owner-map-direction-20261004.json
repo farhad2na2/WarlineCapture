@@ -1,0 +1,18 @@
+{
+  "ownerDirection": [
+    "Use a denser sector; feel free to add props and trees",
+    "Some buildings should have barriers, yards or walls between them"
+  ],
+  "scope": "Existing shared Campaign CityEdgeAirfield scenery and S005 logical placement/camera packaging",
+  "preserved": [
+    "terrain",
+    "roads",
+    "runway geometry",
+    "navigation grid",
+    "S004 mission binding",
+    "fixed mission budgets"
+  ],
+  "implementation": "Selected town courtyard walls outside the source playable rectangle, trees on blocked verges or outside playable space, nonblocking ground vegetation, southern frontage camera",
+  "nativeVisualReview": "Pending updated captures",
+  "playerReady": false
+}

@@ -1,0 +1,431 @@
+{
+  "adjacentMetaHashes": {
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs.meta": "164ce1e4994720ce288e40ae3a92089b63feb336813002a55dbf3e652ec7667c",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs.meta": "4ea6d6fb6e9aad0c06ecf53de67f535a3b21b1037c0cffbaf930ef8ebda0c50f",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs.meta": "822a287cda2d5d9493344d33b162b9145a00f9bce99c64ae963a3be0b56989b0",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs.meta": "1b9ea54992b4435e86b5f998ffe05c1b620bf44c6c631a237177723fae2ce842",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs.meta": "0c0dbbfa13e80d4aad4babcdfefbbefa2b35c22819659ee2bbf7fef47ec3df6d",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs.meta": "0ae8dfdf44c76befc3c2b3ff07ff08635f5480d18069a2c53343758c235ccf18",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs.meta": "4ff66dc9e51f1c2915a83f3ecd5f7f3efc62d17cb1ddcb72d3860b6b60f1e3c4",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs.meta": "9ca40058aea2c7fef5bbc1ca7ffd952de24b77d65820d1e58e6d7834a836a301",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs.meta": "29166fa2280a48db4b62649de4d6eb199c783e95e8f9e78fd5bddfd9cf266bb1",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs.meta": "365b52ad5b8d7d0fbf04751c64bda64167d01641c472562398ad18f259172444",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs.meta": "a4105fe2eca845339033f6d8f8695998eae81144cb81d7f350fbd2abb1cfb175",
+    "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs.meta": "ee5c28a5914c303d47753ce489862558334c846dffa92a48a93b8eb0f5ae342c",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs.meta": "f84f91d511744d2854dc03b5ba725741c83e05d4c977220a93c53e31c17edf28"
+  },
+  "durableIndexSha256": "a5b48a28315ed4f03cd39ae370985098b1a3936f52ac389b600094e9096a7a30",
+  "finalHashes": {
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs": "bc1c4344e2be74fc1a209d6e275ee6cdb68556e08d3560b807fd55232d6d21d9",
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs.meta": "6e2bcca62cd775603a5326103d85b4859459cfd002d3d14b9af83c35e5250c9d",
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs": "cc8b43569a48c07d2218d5622f089093b2b36b553d9614c25ce7393e04716e47",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs": "6a62c1e7003ec9da39c8b28aac12e7d33226ca7db3c220c908aa5bcc1f43ce85",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs": "979be0e1c4e58c7ca76e0d5fe02e47b9b6b46a328c407a82f7cae96a916a3b69",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs.meta": "12bb851a03d42a80daa31a49691f5335d0b095e273df6df910441e03336bf701",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs": "ec282c3dc14bfb6a1f71871e55d52eeecb61b38b1b845e8df63b412c2a94402d",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs.meta": "cf6a89939bf1aa52c906598fd49b2a846a20ec40a3cb43c94e534d3ec2410bee",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs": "98ae45b9527119a059a870cfd7660343ab8e63fd4736691b99b1955e4b38e5e5",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs": "9f761b97d6bc18686aa83e29e60c5529d9eb67723221b29c516e2a6e3971bd2c",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": "9b26993acfe2251f42d313316bfbf4c06fbdb611b147d9aac8be2eb67b28ee3c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs": "1b7ca29f173ef4326652e851b88d0f40f3bd2e8c9b40e6812a5364478f8b5fa5",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs": "47a416e62f4ccf77d6a26718938ee7a51abcf1d340718a6b0f19644db9013bfc",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs.meta": "bcdda7bc4dedac5306054a6779dbcad805de4c1ae67bdf4dc8edbe681371804c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs": "4fab180b1c400a97fd99cf23d5cf0befab27b77f50b1a65a13c05439632306b8",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs.meta": "a1b218edb2e48181dae4425b1ffb1920abaca49d5c66821c9d0110cd01b23220",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs": "af4e63071af6f0ef01d018b3927981f488b2ae16d5ab0e52eedf0c3a8650a9b8",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs.meta": "d429fe3dcb587ca88660f7162f82f5a100c244c5dea37fe651d9427e7fe91f8f",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs": "e6995e3015198c1c689f6c3a34d251bed36af453a2a9740b880e0fd69e844ade",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs.meta": "90430895cb286447a60f20e17a70946c64c59111e9e3961ea684c53912124d05",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs": "d13f67d6d1b1a88e8d4dfcc9f9e54712ba5de804f8a311ec8a6812a4a5054707",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs.meta": "7e2dda17302f6136c4414962fb331083c521fe324cc28e20f63881447e795375",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs": "791eb690e000b340b1b67fde925b4dca0afbf76acc543702450981b4a2daea73",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs.meta": "7648442cdde9477f24cc96fefb405fcbcd02b93aa99d193379e2c0506c65210c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs": "11272239b452bc3e0b30ffe6de7579429be548276ed9e2f304146f3d5dfc4396",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs.meta": "f911dc0e1e405900acc2c80af8d074464baad82ce3f5c4b3978c07f0cd6d9ee7",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs": "a51a2162938940732a42e3c5297067340b42ef20244b3100326bf9e03c720127",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs": "92bca79d4d907ca12d53475c84c70718bdb94159991b39f38abd1bc510a97fb7",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs": "b1650d121d447e30437fd986851cb7a7973c6caf2edfd49234d6d8b9008c424c",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs": "51977d17a2915ab8ccf152d25a3e387691ab21b495aaa5e46a4d742de850fc92",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs": "e2d4e5bfff71b964925643d1ec6c8002a2e69e5f07ab378076ecb21d5486ad9d",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs": "03891f47828a439a2378869ae567010650da41c60e6a7e02501b60ad3ccbbfb1",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs.meta": "27fb81ac21e8fb2f56fad9dd9f1276a070a94618af242364768370cc7b0cea7e",
+    "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs": "713468bac94cf43de5c994664206448723e13db9d8fc41d31ae8a5e1b4c9a272",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs": "a79f5b486cc14cd2bda7134c7ee991105ad2ef17cfafbea8368a17ad411e229d",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs.meta": "7470b8532eb671534e4eb57092f6fbc017a423e77a19b5bc7a40cfd57b93cf47",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs": "5c0577f8b24a7f612028d340557ae80142cc2fdb70809ea429d654273ac116ba",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs.meta": "117debaac07fffbbb18362c9b3d53039a9e150ee7ccdd6a48139af8443759c76",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs": "98b71a99ece7f147256500883b53252b29bb58fcdc9c3e3699a012198b108e38",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs.meta": "541252dce5d98977a2edab7ed406c5c3d7f823e8ffdcb2da89b284ac60346c13",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs.meta": "9291b01524489fca24a7f1bf30ae8b8dc47a3a4ad41311ed9121fb4ccf801bdf",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs": "2635d69a3f2397020f74bbf6146a5062db4c3e1a04f7cc303c49dc864e2398ca",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs.meta": "473e57f687373c2911c0006ef7ab6957e6cf8fe9838155be32805fcf20eb41d2",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs": "2cfdd83b8569aae24dfcbb0b4ef7732ab317ec74ade45b16c172191f5c0d83c4",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs.meta": "9ee435a6122d5a227083e32100f226483191e1f243a549cd4abb199485fac1dc",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs": "a95094703224923a6327c036748e73bac304b2f570614d4dce4c13ea06380f99"
+  },
+  "initialBaseHashes": {
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs": null,
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs.meta": null,
+    "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs": "b525b62d467edd1f92d3e975e07c7314b562ca53e94fd8ecab2a70413cb21847",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs": "eabc863cce51a8b21077f8319d7a602d778f29ed2b72c29fc3759e9d95cc349d",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs": null,
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs.meta": null,
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs": null,
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs.meta": null,
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs": "f0e494573d39f838f3cbe5b0815004f060c87a3cecdfd0d5f31fadd9777a9b9e",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs": "360b8d1b089c00cb86497b93e8199aa218f234a226d975e7159da8b09d9f9234",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs": "6aeaa95ba4b6e125148d8e4097940eec3b7dbb22b15d136fb3c31863868911e8",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs.meta": null,
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs": "79f2d050e72203757d5ef6e49df0fb32ee281232bef45dfc138b7825d698c7d0",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs": "3181c90294fe3b5a2bfe1448e70f8b6968de8565a0a297fda96822828314110e",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs": "d45c033405fbab5242c5e6816ab8ffaeadfec0e05127c6bd98aba99b05a5c173",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs": null,
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs.meta": null,
+    "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs.meta": null,
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs": "6e408c7bf06f9d21015b6bd9486c9d8a49d192cbf322bfddfc8d8d7c66b2e174"
+  },
+  "intendedWrites": "Each of the 47 exact final paths once, after in-memory validation of 50 ordered entries",
+  "layerOrder": [
+    "foundation",
+    "compile-followup",
+    "production-v4",
+    "commander-v2",
+    "ground-rollout-v1"
+  ],
+  "nativeIdle": "Root must verify native idle and source freeze before applying; script does not call Unity",
+  "orderedSteps": [
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs",
+      "stagedSha256": "bc1c4344e2be74fc1a209d6e275ee6cdb68556e08d3560b807fd55232d6d21d9"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyPlannerV1Components.cs.meta",
+      "stagedSha256": "6e2bcca62cd775603a5326103d85b4859459cfd002d3d14b9af83c35e5250c9d"
+    },
+    {
+      "baseSha256": "b525b62d467edd1f92d3e975e07c7314b562ca53e94fd8ecab2a70413cb21847",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs",
+      "stagedSha256": "cc8b43569a48c07d2218d5622f089093b2b36b553d9614c25ce7393e04716e47"
+    },
+    {
+      "baseSha256": "eabc863cce51a8b21077f8319d7a602d778f29ed2b72c29fc3759e9d95cc349d",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishDifficultyConfig.cs",
+      "stagedSha256": "6a62c1e7003ec9da39c8b28aac12e7d33226ca7db3c220c908aa5bcc1f43ce85"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs",
+      "stagedSha256": "979be0e1c4e58c7ca76e0d5fe02e47b9b6b46a328c407a82f7cae96a916a3b69"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicyCompiler.cs.meta",
+      "stagedSha256": "12bb851a03d42a80daa31a49691f5335d0b095e273df6df910441e03336bf701"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs",
+      "stagedSha256": "ec282c3dc14bfb6a1f71871e55d52eeecb61b38b1b845e8df63b412c2a94402d"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEnemyPolicySnapshot.cs.meta",
+      "stagedSha256": "cf6a89939bf1aa52c906598fd49b2a846a20ec40a3cb43c94e534d3ec2410bee"
+    },
+    {
+      "baseSha256": "f0e494573d39f838f3cbe5b0815004f060c87a3cecdfd0d5f31fadd9777a9b9e",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "stagedSha256": "98ae45b9527119a059a870cfd7660343ab8e63fd4736691b99b1955e4b38e5e5"
+    },
+    {
+      "baseSha256": "360b8d1b089c00cb86497b93e8199aa218f234a226d975e7159da8b09d9f9234",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs",
+      "stagedSha256": "9f761b97d6bc18686aa83e29e60c5529d9eb67723221b29c516e2a6e3971bd2c"
+    },
+    {
+      "baseSha256": "193fdd6b8706c9ea8ec6c6b09bf0f4680c54e8daa0149199b9d35c7f1a6217f0",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "stagedSha256": "3bfa56c432519f66cd67757e93238b98bb4b741e27a8763aa9d1d7c56ed4b911"
+    },
+    {
+      "baseSha256": "6aeaa95ba4b6e125148d8e4097940eec3b7dbb22b15d136fb3c31863868911e8",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs",
+      "stagedSha256": "1b7ca29f173ef4326652e851b88d0f40f3bd2e8c9b40e6812a5364478f8b5fa5"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "stagedSha256": "2b98cbcfc04e9205b74b984ca3563f46df9b29895ce0aa9664f29d7eb19ae42d"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs.meta",
+      "stagedSha256": "bcdda7bc4dedac5306054a6779dbcad805de4c1ae67bdf4dc8edbe681371804c"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "stagedSha256": "11272239b452bc3e0b30ffe6de7579429be548276ed9e2f304146f3d5dfc4396"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs.meta",
+      "stagedSha256": "f911dc0e1e405900acc2c80af8d074464baad82ce3f5c4b3978c07f0cd6d9ee7"
+    },
+    {
+      "baseSha256": "79f2d050e72203757d5ef6e49df0fb32ee281232bef45dfc138b7825d698c7d0",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "stagedSha256": "5a83faf43365a86a98c434ebab22401446c4802e3ee62f7484822915280c169a"
+    },
+    {
+      "baseSha256": "3e6f73d76877ea62cd3cf48762bc4ee1d58c77b723610ebcae37ce040c5a90b9",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "stagedSha256": "b1650d121d447e30437fd986851cb7a7973c6caf2edfd49234d6d8b9008c424c"
+    },
+    {
+      "baseSha256": "3181c90294fe3b5a2bfe1448e70f8b6968de8565a0a297fda96822828314110e",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativePlayerSaveService.cs",
+      "stagedSha256": "51977d17a2915ab8ccf152d25a3e387691ab21b495aaa5e46a4d742de850fc92"
+    },
+    {
+      "baseSha256": "d45c033405fbab5242c5e6816ab8ffaeadfec0e05127c6bd98aba99b05a5c173",
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs",
+      "stagedSha256": "e2d4e5bfff71b964925643d1ec6c8002a2e69e5f07ab378076ecb21d5486ad9d"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs",
+      "stagedSha256": "03891f47828a439a2378869ae567010650da41c60e6a7e02501b60ad3ccbbfb1"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishEnemyPolicyContracts.cs.meta",
+      "stagedSha256": "27fb81ac21e8fb2f56fad9dd9f1276a070a94618af242364768370cc7b0cea7e"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs",
+      "stagedSha256": "2cfdd83b8569aae24dfcbb0b4ef7732ab317ec74ade45b16c172191f5c0d83c4"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "foundation",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs.meta",
+      "stagedSha256": "9ee435a6122d5a227083e32100f226483191e1f243a549cd4abb199485fac1dc"
+    },
+    {
+      "baseSha256": "6e408c7bf06f9d21015b6bd9486c9d8a49d192cbf322bfddfc8d8d7c66b2e174",
+      "bundle": "foundation",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs",
+      "stagedSha256": "a95094703224923a6327c036748e73bac304b2f570614d4dce4c13ea06380f99"
+    },
+    {
+      "baseSha256": "5a83faf43365a86a98c434ebab22401446c4802e3ee62f7484822915280c169a",
+      "bundle": "compile-followup",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointCodec.cs",
+      "stagedSha256": "92bca79d4d907ca12d53475c84c70718bdb94159991b39f38abd1bc510a97fb7"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "production-v4",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs",
+      "stagedSha256": "d13f67d6d1b1a88e8d4dfcc9f9e54712ba5de804f8a311ec8a6812a4a5054707"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "production-v4",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs.meta",
+      "stagedSha256": "7e2dda17302f6136c4414962fb331083c521fe324cc28e20f63881447e795375"
+    },
+    {
+      "baseSha256": "7e053ba16bf943e040cf4f35da7fde7ec20d1b6addffc53d10899ddeb7a240a2",
+      "bundle": "production-v4",
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "stagedSha256": "713468bac94cf43de5c994664206448723e13db9d8fc41d31ae8a5e1b4c9a272"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "production-v4",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs",
+      "stagedSha256": "d41e9dc98307ec3701c3b6cf4411d41ae350194d65f5824258b320e729a45b72"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "production-v4",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPaidProductionAdapterTests.cs.meta",
+      "stagedSha256": "9291b01524489fca24a7f1bf30ae8b8dc47a3a4ad41311ed9121fb4ccf801bdf"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "stagedSha256": "4fab180b1c400a97fd99cf23d5cf0befab27b77f50b1a65a13c05439632306b8"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs.meta",
+      "stagedSha256": "a1b218edb2e48181dae4425b1ffb1920abaca49d5c66821c9d0110cd01b23220"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs",
+      "stagedSha256": "791eb690e000b340b1b67fde925b4dca0afbf76acc543702450981b4a2daea73"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs.meta",
+      "stagedSha256": "7648442cdde9477f24cc96fefb405fcbcd02b93aa99d193379e2c0506c65210c"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs",
+      "stagedSha256": "e6995e3015198c1c689f6c3a34d251bed36af453a2a9740b880e0fd69e844ade"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs.meta",
+      "stagedSha256": "90430895cb286447a60f20e17a70946c64c59111e9e3961ea684c53912124d05"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs",
+      "stagedSha256": "af4e63071af6f0ef01d018b3927981f488b2ae16d5ab0e52eedf0c3a8650a9b8"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs.meta",
+      "stagedSha256": "d429fe3dcb587ca88660f7162f82f5a100c244c5dea37fe651d9427e7fe91f8f"
+    },
+    {
+      "baseSha256": "007dc2e8367c45502f9c96c7c9be671354118f8dfcae887a634fbe1877a19b4e",
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs",
+      "stagedSha256": "a51a2162938940732a42e3c5297067340b42ef20244b3100326bf9e03c720127"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs",
+      "stagedSha256": "2635d69a3f2397020f74bbf6146a5062db4c3e1a04f7cc303c49dc864e2398ca"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPerceptionTests.cs.meta",
+      "stagedSha256": "473e57f687373c2911c0006ef7ab6957e6cf8fe9838155be32805fcf20eb41d2"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs",
+      "stagedSha256": "5c0577f8b24a7f612028d340557ae80142cc2fdb70809ea429d654273ac116ba"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyDecisionRulesTests.cs.meta",
+      "stagedSha256": "117debaac07fffbbb18362c9b3d53039a9e150ee7ccdd6a48139af8443759c76"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs",
+      "stagedSha256": "a79f5b486cc14cd2bda7134c7ee991105ad2ef17cfafbea8368a17ad411e229d"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "commander-v2",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCommanderTests.cs.meta",
+      "stagedSha256": "7470b8532eb671534e4eb57092f6fbc017a423e77a19b5bc7a40cfd57b93cf47"
+    },
+    {
+      "baseSha256": "2b98cbcfc04e9205b74b984ca3563f46df9b29895ce0aa9664f29d7eb19ae42d",
+      "bundle": "commander-v2",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "stagedSha256": "47a416e62f4ccf77d6a26718938ee7a51abcf1d340718a6b0f19644db9013bfc"
+    },
+    {
+      "baseSha256": "3bfa56c432519f66cd67757e93238b98bb4b741e27a8763aa9d1d7c56ed4b911",
+      "bundle": "ground-rollout-v1",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "stagedSha256": "9b26993acfe2251f42d313316bfbf4c06fbdb611b147d9aac8be2eb67b28ee3c"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "ground-rollout-v1",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs",
+      "stagedSha256": "98b71a99ece7f147256500883b53252b29bb58fcdc9c3e3699a012198b108e38"
+    },
+    {
+      "baseSha256": null,
+      "bundle": "ground-rollout-v1",
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyGroundRolloutTests.cs.meta",
+      "stagedSha256": "541252dce5d98977a2edab7ed406c5c3d7f823e8ffdcb2da89b284ac60346c13"
+    }
+  ],
+  "preservation": "Back up all existing affected originals and adjacent metadata before edits; certify absence of new paths",
+  "project": "/Users/farhad/Projects/WarlineCapture",
+  "schema": 1,
+  "status": "Prepared_NotApplied_NoUnityOrGit"
+}

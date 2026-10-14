@@ -1,0 +1,23 @@
+{
+  "sourceHash": "5d3ab5e2564d215f068b28984c0c1833f674cef8d626752f8fa70e88998a2249",
+  "nativeRun594": true,
+  "observation": "Read-only Unity CLI during normal-input aircraft qualification",
+  "dayNightRuntimeVisualsEnabled": false,
+  "hour": 8,
+  "ambientSky": [
+    0.79,
+    0.86,
+    0.96,
+    1
+  ],
+  "ambientEquator": [
+    0.72,
+    0.73,
+    0.74,
+    1
+  ],
+  "fog": false,
+  "skybox": "Default-Skybox",
+  "fixedSharedDaylightApplied": true,
+  "playerReady": false
+}

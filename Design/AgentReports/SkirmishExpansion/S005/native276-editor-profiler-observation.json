@@ -1,0 +1,22 @@
+{
+  "sourceHash": "1f69b3e85fe87dc82499cbfc056becd1df42e96ebf67f4ff9563a668aa26c967",
+  "result": "Native journey Passed; cause of preceding slowdown remains unconfirmed",
+  "normalInputEvidence": "native276-aria-en-evidence.json",
+  "log": "native-276-profiler-aria-en-seed2.log",
+  "logSha256": "dcd6d664fe9a39729a54563a421e083639ea15626e3ad3097e6e37b379283ce8",
+  "samples": 96,
+  "memoryAllocatedRangeMB": [
+    6670,
+    7497
+  ],
+  "diagnostics": "Existing WARLINE_ENABLE_PROFILER_MARKERS environment enabled only for this run; original null restored afterward",
+  "profilingLimit": "Marker samples overlap and include non-time counters such as GfxResource.Register; do not sum marker values or interpret non-time counters as durations",
+  "interpretation": "Some logged slow windows returned near49FPS without a source change. Logs omit windows at55FPS or above, so these values cannot establish full-run performance or compare overall run medians. Different seed and instrumentation also confound comparisons. No causal fix or phone acceptance established.",
+  "nativeSupportUse": false,
+  "playerReady": false,
+  "realDeviceAcceptance": false,
+  "loggedLowFpsWindowMedian": 49.2,
+  "loggedSlowWindowUpdateAvgMedianMs": 4.7,
+  "loggedSlowWindowCpuMainMedianMs": 17.75,
+  "performanceSampleScope": "Only logged two-second gameplay windows below55 FPS; not a whole-run FPS statistic. Faster windows are omitted by PerformanceDiagnosticsSystemHelper."
+}

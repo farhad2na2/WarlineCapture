@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-stop-manual-takeover1359-dispatch-v1/S005NormalStopIdle1359.cs",
+      "entry": "S005NormalStopIdle1359.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [],
+      "compileMs": 259,
+      "executeMs": 0,
+      "assemblyName": "PipelineRunScript_S005NormalStopIdle1359_95782019eb5e4b80b18f257aa65f5eea",
+      "success": true,
+      "result": "False|False|False|False|False|/Users/farhad/Projects/WarlineCapture/Assets"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

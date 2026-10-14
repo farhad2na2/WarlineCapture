@@ -1,0 +1,14 @@
+{
+  "sourceHash": "d1781e9588c3f9aadb0331f070946890f1ef0548bcc903e47733116ad4eae7df",
+  "previousSourceHash": "729448e40801ec1bcb5bbf35cc12450053329a42a20a960dfd929d2e2fb24711",
+  "preSourceManifest": "final-781-three-factory-paid-strike-reviewed-pre-source-manifest.json",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs"
+  ],
+  "allMaterialsIdentical": true,
+  "shippingRuntimeConfigurationsPhysicalMapsUnchanged": true,
+  "scope": "Editor normal-input qualification strategy: buy two extra factories rather than one beside original oil source; record match elapsed and selected conservative fuel reserve. Costs, caps, fuel rules, native inputs and mission deadline unchanged.",
+  "validation": "Pending native781",
+  "staticDiffCheck": "Passed"
+}

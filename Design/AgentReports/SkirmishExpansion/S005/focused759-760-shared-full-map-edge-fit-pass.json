@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "sourceHash": "7fecf45e8da8250b03a73993e4616effc7b9d384ccd575e2b6719edf9940aa4d",
+  "actualWrapperExit": 0,
+  "requiredPassMarker": "[MatchHudMinimapTapTests] result=Passed tests=12",
+  "tests": 12,
+  "fullSourceUnchanged": true,
+  "preManifest": "final-760-shared-full-map-edge-fit-green-pre-source-manifest.json",
+  "postManifest": "final-760-shared-full-map-edge-fit-green-post-source-manifest.json",
+  "log": "tests-760-full-map-edge-fit-green.log",
+  "redProof": "focused759-full-map-edge-clipping-red-failure.json",
+  "nativeAcceptance": "Pending",
+  "playerReady": false
+}

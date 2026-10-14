@@ -1,0 +1,82 @@
+{
+  "sourceHash": "fab34f288dc39cc6aaff038172119a5705e8aaa7b03e4177c33cf746dab808b4",
+  "result": "Passed",
+  "supportChecks": 61,
+  "runs": [
+    {
+      "run": 256,
+      "kind": "Smoke",
+      "tests": 5,
+      "log": "tests-256-lifecycle-smoke.log",
+      "logSha256": "825becec99e33d665a862050dad5c01280a89cd9962bbc269561230f3f32206c",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 257,
+      "kind": "UiAria",
+      "tests": 13,
+      "log": "tests-257-lifecycle-uiaria.log",
+      "logSha256": "18f753ba371891659200748e777c56aefbc9bec74539272dd4a6e53381a89706",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 258,
+      "kind": "Supply",
+      "tests": 10,
+      "log": "tests-258-lifecycle-supply.log",
+      "logSha256": "b6053a674058c2e8d068a23f26046b9eda6804eee384fabdb1fdc892dbfcb6b9",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 259,
+      "kind": "Runtime",
+      "tests": 8,
+      "log": "tests-259-lifecycle-runtime.log",
+      "logSha256": "0a66e8372809ac3d6ebf8ce18135e21719173aa8d99b4655d7a30ea9535dc555",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 260,
+      "kind": "Campaign",
+      "tests": 6,
+      "log": "tests-260-lifecycle-campaign.log",
+      "logSha256": "bc63087b21d64874b4875bc21c2e9d8dc990617c52f0637560be9569403c9afc",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 261,
+      "kind": "Strike",
+      "tests": 10,
+      "log": "tests-261-lifecycle-strike.log",
+      "logSha256": "c52a295ea73d6d24f873b949676932a3d7e1b59c284216ad250f4991f2721ba3",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 262,
+      "kind": "Paratrooper",
+      "tests": 9,
+      "log": "tests-262-lifecycle-paratrooper.log",
+      "logSha256": "f3db6394f90810b718138027269f8ea2c0154b40e7d51d10dd315b7e7bdbd4f5",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    },
+    {
+      "run": 263,
+      "kind": "SkirmishSharedMaterials",
+      "tests": null,
+      "log": "tests-263-lifecycle-skirmishsharedmaterials.log",
+      "logSha256": "c319b5fe8590bd99f34833ebe1c936d7ce80ddc9b4116a13ca9fb3ee36aadef9",
+      "wrapperExit": 0,
+      "receiptExit": 0
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

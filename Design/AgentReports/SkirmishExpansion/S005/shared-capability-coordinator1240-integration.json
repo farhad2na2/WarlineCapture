@@ -1,0 +1,87 @@
+{
+  "manifestSha256": "a1bb8b0990851a22c13d48aec1e2b6901f34335f3163319ad7ec3f9aae21dd37",
+  "idleProof": "native1239-after-reload-idle.json",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyCapabilityV1Components.cs",
+      "before": null,
+      "after": "c7d8b0c7e33994dc9c39b40c4173fb150f03da2aa9b2db77885e4b8639f32148"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishEnemyCapabilityV1Components.cs.meta",
+      "before": null,
+      "after": "41e2d95fc685c25be0f3dcf51537471f68dd0ce60a6b7007f44c29fceb619715"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+      "before": null,
+      "after": "7938ef153799090caf432f94b07c5cba8cef842da80c12e2d499e328bec0882b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs.meta",
+      "before": null,
+      "after": "5b536553e2869866e07a608934d37aa3de85729fb3477de576f56c95e8f3eb6f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCommands.cs",
+      "before": null,
+      "after": "058e42a2531235be4c9d2c1dccaa3913bb5666cc68b6fa12d3903d3725570ad6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCommands.cs.meta",
+      "before": null,
+      "after": "ecdd54428243ef63b99dbac8f861b2afab681faa2f4920863f09335ccb5a1b11"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+      "before": null,
+      "after": "5a6f1b253e9c019db669a89139713130407c76a3e698671e83e569f74558cef1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs.meta",
+      "before": null,
+      "after": "a534f99bc4de9de3b6c431f4a0b8a18e385056b699ea385f655a47b8d5a7efda"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs",
+      "before": null,
+      "after": "7a9ff529b768a24e0cc2bd0299579e426d54fd668c6d778528f82d8cf59106be"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyCapabilityTests.cs.meta",
+      "before": null,
+      "after": "afee557b144df684a465eb4745e66575b914e44ec5a0c6d5c6a77bdf92d4748e"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishEnemyPolicyV1Tests.cs",
+      "before": "2ca6c301d23efe7795f6eb040d08946ec8c6bf1a425875b45e187b1b45d7ba90",
+      "after": "c5beb43db4eab93c0b9c66df02693c56b0f15a662ae9d6771c2d48eb09777452"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointParts.cs",
+      "before": "242e863a86ba86f6516efc1482328dcd8ab3498a48cef3c31c8813565c02846c",
+      "after": "093e8c7b847b29e4fe99544211875f3cade614d6c94c044cf4b3489729435012",
+      "composition": "13 guarded capability snippets plus exact shared coordinator hooks"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCheckpointPolicy.cs",
+      "before": "730b451b145ff8477c9743a4c0d082cfc7c6149c80141cfb33ba36a6a02f668d",
+      "after": "5be8f0a1a5674b9312dc0a03916ac300e260a37de1f0dc04d1689538e39dd269",
+      "composition": "13 guarded capability snippets plus exact shared coordinator hooks"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+      "before": "11272239b452bc3e0b30ffe6de7579429be548276ed9e2f304146f3d5dfc4396",
+      "after": "1e1f28054a898cd004848fa0a6b4d3394f6a5d0e8e77e805f4c637372a98f65b",
+      "composition": "13 guarded capability snippets plus exact shared coordinator hooks"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs",
+      "before": "dc2852bc83377d3f18d029ccb0906b65e486883c076c3d5ba8c5647f856315fa",
+      "after": "6a80bf1168f2221885b454acbd068d924f02fa7eaebb959b01f6a37e078a8c4a",
+      "composition": "13 guarded capability snippets plus exact shared coordinator hooks"
+    }
+  ],
+  "scope": "Compiled/focused native checks pending; no readiness claim",
+  "supersedesUnexecutedFocusedSpec": "/private/tmp/s005-focused1239-spec.json"
+}

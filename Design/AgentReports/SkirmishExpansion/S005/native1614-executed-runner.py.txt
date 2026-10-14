@@ -1,0 +1,265 @@
+"""Single-use checked macOS native1614 full S005 public-input route; external QA only."""
+import argparse,hashlib,importlib.util,json,pathlib,re,subprocess,sys
+import release_review
+ROOT=pathlib.Path('/Users/farhad/Projects/WarlineCapture')
+REPORT=ROOT/'Design/AgentReports/SkirmishExpansion/S005'
+STATE=REPORT/'TECHNICAL_READINESS_CURRENT.json'
+PREP=pathlib.Path('/private/tmp/s005-full-south-flank1614-source-3751/prepared.json')
+PACKAGE=PREP.parent
+FIXTURE=PACKAGE/'S005NormalSouthFlank1614Observer.cs'
+HELPER=pathlib.Path('/private/tmp/warline-s005-source-manifest.py')
+IDLE=PACKAGE/'S005NormalRecoveryIdle1614.cs'
+QUALIFIER=PACKAGE/'manual-fog-fallback-qualifier.py'
+DEFENSE_QUALIFIER=PACKAGE/'home-defense-qualifier.py'
+FLANK_QUALIFIER=PACKAGE/'south-flank-qualifier.py'
+REINFORCEMENT_QUALIFIER=PACKAGE/'reinforcement-south-qualifier.py'
+PLANNER_QUALIFIER=PACKAGE/'fresh-planner-qualifier.py'
+PAID_QUALIFIER=PACKAGE/'paid-recovery-qualifier.py'
+CATALOG_QUALIFIER=PACKAGE/'catalog-touch-qualifier.py'
+AUDIT_OPERANDS_QUALIFIER=PACKAGE/'audit-operands-qualifier.py'
+FALLBACK='native1614-manual-fog-fallback.jsonl'
+LOG='native-1614-normal-paid-south-flank-fa-seed155926.log'
+OBS='native1614-normal-paid-south-flank-observation.jsonl'
+ARCHIVE='native1614-normal-paid-south-flank-observer.cs.txt'
+METHOD='S005NormalSouthFlank1614Observer.RunValidation'
+PIN='3751581fe7fb8acd2c7c6c865956fbb675b8ebd9e828473db803718d87d8282d'
+def read(p):return json.loads(p.read_text())
+def sha(b):return hashlib.sha256(b).hexdigest()
+def new_json(p,d):
+ with p.open('x') as f:f.write(json.dumps(d,indent=2)+'\n')
+def import_module_from_file(name,path):
+ spec=importlib.util.spec_from_file_location(name,path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+def idle_state():
+ s=read(STATE)
+ if s.get('activeRun') is not None:raise RuntimeError('Main heavy lane already owned: '+str(s.get('activeRun')))
+ return s
+def manifest(prefix):
+ for suffix in ('-source-manifest.json','-independent-fingerprint.json'):
+  if (REPORT/(prefix+suffix)).exists():raise RuntimeError('Preserve existing manifest '+prefix)
+ subprocess.run(['rtk','proxy','python3',str(HELPER),prefix],cwd=ROOT,check=True)
+ return prefix+'-source-manifest.json'
+def cli_json(arguments,path):
+ result=subprocess.run(['rtk','proxy','unity','command',*arguments,'--project-path',str(ROOT),'--format','json'],cwd=ROOT,capture_output=True,text=True)
+ with path.open('x') as f:f.write(result.stdout)
+ if result.stderr:new_json(path.with_name(path.name+'.stderr.json'),{'stderr':result.stderr,'exit':result.returncode})
+ value=json.loads(result.stdout);data=value.get('data') or {};params=data.get('parameters') or {};nested=data.get('result') or {}
+ if result.returncode!=0 or value.get('success') is not True or not isinstance(data,dict) or data.get('success') is False or not isinstance(nested,dict) or nested.get('success') is not True or data.get('command')!=arguments[0] or data.get('target',{}).get('projectPath')!=str(ROOT):raise RuntimeError('Native CLI outer/nested/target failure: '+path.name)
+ if arguments[0]=='run_script':
+  expected_file=arguments[arguments.index('--file')+1];expected_entry=arguments[arguments.index('--entry')+1]
+  if params.get('file')!=expected_file or params.get('entry')!=expected_entry or params.get('dry_run') in ('true',True) or any(str(d.get('severity','')).lower()=='error' for d in nested.get('diagnostics',[])):raise RuntimeError('Native CLI loaded file/entry/compiler response differs: '+path.name)
+ return nested.get('result')
+def native_idle(tag):
+ value=cli_json(['run_script','--file',str(IDLE),'--entry','S005NormalRecoveryIdle1614.Run','--timeout_ms','30000'],REPORT/('native1614-'+tag+'-native-idle.json'))
+ if value!='False|False|False|False|False|'+str(ROOT/'Assets'):raise RuntimeError('Correct main Editor/five native owner flags are not idle: '+tag+' actual='+repr(value))
+ap=argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--reviewed-3751',action='store_true')
+ap.add_argument('--offline-proof-only',action='store_true',help='Verify sealed release/source/collisions without any Unity call or output mutation')
+ap.add_argument('--heavy-lane-owner',required=True,choices=['main1614'])
+args=ap.parse_args()
+prep=read(PREP)
+if not args.reviewed_3751 or prep.get('sourceHash')!=PIN:raise RuntimeError('Exact current-source review token/pin required')
+for name,digest in prep['packageHashes'].items():
+ if sha((PACKAGE/name).read_bytes())!=digest:raise RuntimeError('External package changed after offline seal: '+name)
+if sha(HELPER.read_bytes())!=prep['sourceManifestHelperSha256']:raise RuntimeError('Whole-source manifest helper changed')
+release=PACKAGE/'release-review.json'
+if not release.is_file() or read(release).get('result')!='Released1614ConnectedProof' or read(release).get('packageSealSha256')!=sha(PREP.read_bytes()):raise RuntimeError('Exact reviewed connected release absent')
+release_review.verify_connected_proof_hashes(read(release),REPORT)
+sourceBasis=REPORT/prep['sourcePinBasis']
+if sha(sourceBasis.read_bytes())!=prep['sourceManifestSha256'] or read(REPORT/prep['sourceFingerprintBasis'])['sourceHash']!=PIN:raise RuntimeError('Frozen full-source basis changed')
+for name,digest in prep['sourceContracts'].items():
+ if sha((ROOT/name).read_bytes())!=digest:raise RuntimeError('Protected source contract changed: '+name)
+for name,digest in prep['historicalEvidenceSha256'].items():
+ if sha((REPORT/name).read_bytes())!=digest:raise RuntimeError('Preserved historical failure evidence changed: '+name)
+for name,digest in prep['historicalExternalSha256'].items():
+ if sha(pathlib.Path(name).read_bytes())!=digest:raise RuntimeError('Preserved predecessor fixture changed: '+name)
+idle_state()
+for name in prep['expectedOutputNames']:
+ if (REPORT/name).exists():raise RuntimeError('Preserve prior output/collision: '+name)
+for prefix in ('final-1614-normal-paid-south-flank-preflight','final-1614-normal-paid-south-flank-pre-dispatch','final-1614-normal-paid-south-flank-post'):
+ for suffix in ('-source-manifest.json','-independent-fingerprint.json'):
+  if (REPORT/(prefix+suffix)).exists():raise RuntimeError('Preserve prior source evidence: '+prefix+suffix)
+if args.offline_proof_only:
+ print(json.dumps({'result':'PassedOfflinePredispatch','sourceHash':PIN,'releaseProofsMapped':len(release_review.PROOFS),'sourceContracts':len(prep['sourceContracts']),'outputCollisions':0,'unityCalls':0}),flush=True)
+ sys.exit(0)
+preflight=manifest('final-1614-normal-paid-south-flank-preflight')
+if read(sourceBasis)!=read(REPORT/preflight):raise RuntimeError('Supplied source differs from current source; no Unity call started')
+if read(REPORT/preflight.replace('-source-manifest.json','-independent-fingerprint.json'))['sourceHash']!=PIN:raise RuntimeError('Whole source differs from reviewed reconstructed current candidate; no Unity call started')
+native_idle('before-load');idle_state()
+new_json(REPORT/'native1614-runner-start.json',{'explicitHeavyLaneOwner':args.heavy_lane_owner,'coordination':'Root supplied token only after explicit T7 release; no implicit ownership takeover','preManifest':prep['sourcePinBasis'],'preflightManifest':preflight,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'method':METHOD,'normalInput':True,'matchResourcesPosesDamageVisibilityClocksOutcomeWrittenByAdapter':False})
+with (REPORT/ARCHIVE).open('xb') as f:f.write(FIXTURE.read_bytes())
+with (REPORT/'native1614-executed-runner.py.txt').open('xb') as f:f.write(pathlib.Path(__file__).read_bytes())
+cli_json(['run_script','--file',str(FIXTURE),'--entry','S005NormalSouthFlank1614Observer.Run','--timeout_ms','30000'],REPORT/'load1614-normal-paid-south-flank-observer.json')
+predispatch=manifest('final-1614-normal-paid-south-flank-pre-dispatch')
+if read(sourceBasis)!=read(REPORT/predispatch):raise RuntimeError('Source changed before native dispatch')
+native_idle('before-dispatch');s=idle_state();s.update(activeRun='native1614',activeLog=LOG,activeScope=METHOD,activePreManifest=prep['sourcePinBasis']);STATE.write_text(json.dumps(s,indent=2)+'\n')
+print('native1614 normal Menu/ManualR2Recovery FA155926; explicit root heavy-lane ownership; checked macOS reuse wrapper',flush=True)
+wrapper=subprocess.run(['rtk','proxy','Tools/CI/invoke_unity_macos.sh','--project',str(ROOT),'--reuse','--timeout','1800','--log',str(REPORT/LOG),'--','-executeMethod',METHOD],cwd=ROOT).returncode
+with (REPORT/(LOG+'.wrapper-exit')).open('x') as f:f.write(str(wrapper)+'\n')
+receipt=REPORT/(LOG+'.exit')
+if not receipt.is_file() or not re.fullmatch(r'-?\d+\s*',receipt.read_text()):
+ print('Missing/malformed actual native receipt. Keep ownership/evidence; no fallback launch or termination.',flush=True);sys.exit(4)
+native=int(receipt.read_text().strip())
+try:native_idle('after-close')
+except Exception as e:
+ new_json(REPORT/'native1614-unclosed-ownership.json',{'result':'Unclosed','wrapperExit':wrapper,'nativeExit':native,'reason':str(e),'ownershipPreserved':True,'playerReady':False});raise
+callback_audit=None;callback_audit_error=None
+try:callback_audit=cli_json(['run_script','--file',str(PACKAGE/'callback-audit1614.cs'),'--entry','S005CallbackAudit1614.Run','--timeout_ms','30000'],REPORT/'native1614-post-run-callback-audit.json')
+except Exception as e:callback_audit_error=str(e)
+post=manifest('final-1614-normal-paid-south-flank-post')
+same=read(sourceBasis)==read(REPORT/preflight)==read(REPORT/predispatch)==read(REPORT/post)
+fp=read(REPORT/post.replace('-source-manifest.json','-independent-fingerprint.json'));h=fp['sourceHash']
+text=(REPORT/LOG).read_text(errors='replace');errors=[]
+if callback_audit_error or callback_audit!='EditorApplication.update:|EditorApplication.delayCall:|Canvas.willRenderCanvases:|Application.s_LogCallbackHandler:|AriaCommandEvidence.Recorded:':errors.append('Post-run external callback census is not empty: '+str(callback_audit_error or callback_audit))
+if wrapper!=0 or native!=0:errors.append('Actual wrapper/native exit must both be0 for counted win')
+if not same:errors.append('Full source/material manifests changed')
+
+markers=['[ExistingEditorValidation] result=Passed executeMethod='+METHOD,'[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0','[S004MenuProfileFixture] chapter1Completed=5 progressionGate=Preserved isolatedProfile=1','[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S005,Launch seedFixture=155926 nativeSessionObserved=1','[SkirmishNativeShaderGate] result=Passed compiling=0 settledSeconds=2','[S005RoleLifecycle] phase=PaidDelivery role=ApcHeavy','[S004ManualReceiptAudit] result=Passed measured=1','[S004ManualNative] result=Passed outcome=Victory','[SkirmishTerminalProbe] frozen=1 returnInput=Touch target=MAIN MENU','[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU','[SkirmishValidationExit] result=Requested code=0']
+for marker in markers:
+ if marker not in text:errors.append('Missing actual native manual marker '+marker)
+for forbidden in ('[SkirmishS002AriaRun] watchStarted=1','[S004AriaConsent] result=Passed','[S005NativeRecoveryCase] result=Passed','[S005PaidBuildingClearanceCompletion] result=Passed','[S005NormalSouthFlank1614] observerFailure=1'):
+ if forbidden in text:errors.append('Unexpected ARIA/isolated-only/observer-failure path '+forbidden)
+if re.search(r'error CS\d+|Compilation failed',text):errors.append('Native compiler failure')
+obs=[];binding=None;trace=None;terminal=None;audit=None;commands=[];snapshot=None;research=[];recovered=None;paid=None;fogproof=None;handoffproof=None;paidproof=None;defenseproof=None;arbitrationproof=None;flankproof=None;reinforcementproof=None;plannerproof=None;operandproof=None;catalogproof=None;stopproof=None;rawtouch=[]
+try:
+ initial_obs=[json.loads(line) for line in (REPORT/OBS).read_text().splitlines() if line.strip()]
+ initial_bindings=[r for r in initial_obs if r.get('stage')=='ActualResolvedBinding']
+ if len(initial_bindings)!=1:raise ValueError('Unique actual binding absent for raw Touch census')
+ initial_trace=pathlib.Path(initial_bindings[0]['tracePath'])
+ if initial_trace.parent!=REPORT or not re.fullmatch(r's005-aria-live-155926-fa-[0-9a-f]{32}\.jsonl',initial_trace.name):raise ValueError('Actual trace path differs')
+ rawtouch=[json.loads(line) for line in pathlib.Path(str(initial_trace)+'.touch.jsonl').read_text().splitlines() if line.strip()]
+except Exception as e:errors.append('Independent native raw Touch census: '+str(e))
+try:
+ obs=[json.loads(line) for line in (REPORT/OBS).read_text().splitlines() if line.strip()]
+ if any(r['stage']=='ObserverFailure' for r in obs):errors.append('Read-only observer failed')
+ contexts=[r for r in obs if r['stage']=='RenderedViewportContext' and r.get('nativeViewportMatched') is True]
+ if not contexts or any(r.get('samplingPhase')!='CanvasWillRenderCanvases' or abs(r['canvasWidth']-r['screenWidth'])>1 or abs(r['canvasHeight']-r['screenHeight'])>1 for r in contexts):errors.append('Actual native Canvas render viewport evidence missing/invalid')
+ boundrows=[r for r in obs if r['stage']=='NativeBoundText']
+ for role in ('SetupTitle','SetupObjective','HudPurposeTitle','HudPurposeBody','PlayerBaseCaption','EnemyBaseCaption','CurrentMatchClock','AriaControl','ResultText','MainMenuSkirmishControl'):
+  if not any(r['role']==role and r.get('exactBoundReference') is True and r.get('samplingPhase')=='CanvasWillRenderCanvases' and r['activeText'] is True and r['culledText'] is False and r['textAlpha']>.01 and r['ancestorAlpha']>.01 and r['visibleGlyphs']>0 and r['safeAreaOverlap'] is True and r['renderedBody'] is True for r in boundrows):errors.append('Strict actual native bound rendered text missing: '+role)
+ if not any(r['stage']=='NormalDriverFlags' and r['normalDriverFlags'] is True for r in obs):errors.append('Native public manual/R2/recovery driver flags not verified')
+ bindings=[r for r in obs if r['stage']=='ActualResolvedBinding']
+ if len(bindings)!=1:raise ValueError('Exactly one initial actual resolved native session required')
+ binding=bindings[0]
+ required={'catalog':'S005','definition':'skirmish.s005','size':'Standard','difficulty':'Regular','army':'CombinedArms','start':'FieldBase','readiness':'Field','readinessValue':1,'seed':155926,'deadline':1080,'objective':'BaseAssault','sharedFog':True,'developmentFullVision':False,'locale':'fa-IR'}
+ if any(binding.get(k)!=v for k,v in required.items()):errors.append('Actual initial resolved setup/gates differ')
+ if not binding['attempt']:errors.append('Actual attempt identity absent')
+ if not any(r['stage']=='NativeSetupBriefing' and r['seed']==155926 and r['renderedTitle'] and r['renderedObjective'] and r['localizedObjectiveCopy'] for r in obs):errors.append('Actual initial S005 purpose/failure-rule copy missing')
+ if not any(r['stage']=='NativeHudPurpose' and not r['ariaActive'] and r['renderedTitle'] and r['renderedBody'] and r['localizedPurposeCopy'] for r in obs):errors.append('Actual manual purpose/next action missing')
+ if any(r.get('ariaActive') is True for r in obs):errors.append('ARIA was active in manual-only normal path')
+ if not any(r['stage']=='NativeAriaControl' and not r['ariaActive'] and r['presentedControl'] and r['renderedBody'] for r in obs):errors.append('Actual inactive ARIA Play control not presented/rendered')
+ if not any(r['stage']=='NativeObjectiveStrip' and not r['ariaActive'] and not r['finished'] and all(r.get(k) is True for k in ('renderedPlayerBase','renderedEnemyBase','renderedClock','exactPlayerBinding','exactEnemyBinding','exactClockBinding','clockNumberPresentAndCurrent')) and r.get('expectedPlayerCaption')=='پایگاه شما' and r.get('expectedEnemyCaption')=='پایگاه دشمن' and r.get('modelClockNumber') and r.get('nativeClockNumber')==r.get('modelClockNumber') for r in obs):errors.append('Actual typed rendered base captions/current clock missing')
+ victories=[i for i,r in enumerate(obs) if r['stage']=='NativeRenderedResultText' and r['finished'] and r['frozenVictory'] and r['renderedTitle'] and r['renderedVictoryWitnessed'] and r['outcome']=='Victory' and r['attempt']==binding['attempt'] and r['localizedVictoryCopy'] is True]
+ destinations=[(i,r) for i,r in enumerate(obs) if r['stage']=='NativeMainMenuDestination']
+ if not destinations or any(not r.get('exactMainMenuOwner') or not r.get('exactMainMenuTitle') or r.get('mainMenuIntent')!='OpenMenuRoute' or r.get('mainMenuRoute')!='QuickCustomSetup' or not r.get('controlPath','').endswith('/Card_Skirmish/Hotspot') or not r.get('mainMenuTitlePath','').endswith('/Card_Skirmish/Title') or not r.get('expectedMainMenuCaption') or not r.get('actualMainMenuCaption') for _,r in destinations):errors.append('Exact actual typed MainMenu Hotspot/directCard/siblingTitle/localized binding missing')
+ if not victories or not destinations or any(i<=min(victories) or r['frame']<obs[min(victories)]['frame'] or r['attempt']!=binding['attempt'] or r['shellRoute']!='MainMenu' or r['outcome']!='Victory' or not all(r.get(k) is True for k in ('finished','frozenVictory','renderedVictoryWitnessed','presentedControl','renderedBody','unobscuredDestination','destinationSessionAbsent')) for i,r in destinations):errors.append('Actual rendered MainMenu destination must follow same-attempt native frozen/rendered Victory')
+ closed=[r for r in obs if r['stage']=='ClosedObserver']
+ if len(closed)!=1 or not all(closed[0].get(k) is True for k in ('setupSeen','bindingSeen','purposeSeen','manualPlaySeen','resultSeen','returnSeen')):errors.append('Strict manual observer closure incomplete')
+ runtime=[r for r in obs if r['stage']=='NativeManualRuntime']
+ if not runtime or any(r['attempt']!=binding['attempt'] for r in runtime):errors.append('Actual native same-attempt runtime sequence missing')
+ playing=[r for r in runtime if r['simulationActive'] and not r['paused']]
+ if not playing or any(abs(r['timeScale']-1)>.0001 for r in playing):errors.append('Observed actual normal speed failed')
+ research=[r for r in obs if r['stage']=='NativePaidResearch' and r['faction']==1 and r['researchKind']=='Readiness']
+ ids=set(r['researchId'] for r in research)
+ if len(ids)!=1 or 0 in ids or any(r['attempt']!=binding['attempt'] or r['materialsPaid']!=240 or r['expectedCost']!=240 or r['expectedResearchSeconds']!=45 for r in research):errors.append('Exactly one genuine paid240 native R2 readiness queue required')
+ progressing=[r for r in research if r['researchPhase'] in ('Queued','Researching') and 0<r['researchRemainingSeconds']<=45.001]
+ completed=[r for r in research if r['researchPhase']=='Completed' and r['researchRemainingSeconds']==0 and r['runtimeReadiness']=='Established' and r['readinessValue']==2]
+ if not progressing or not completed or min(r['elapsed'] for r in completed)-progressing[0]['elapsed']<progressing[0]['researchRemainingSeconds']-.55:errors.append('Actual normal-clock R2 progress/completion45-second contract not observed')
+ if not any(r['runtimeReadiness']=='Field' and r['readinessValue']==1 for r in runtime) or not any(r['runtimeReadiness']=='Established' and r['readinessValue']==2 for r in runtime):errors.append('Native real Field→Established transition missing')
+ if any(r[k]!=0 for r in runtime for k in ('infantryUpgrade','vehicleUpgrade','aircraftUpgrade')):errors.append('Unexpected category upgrades in level-zero R2 journey')
+ heavy=[r for r in obs if r['stage']=='NativePaidReservation' and r['faction']==1 and r['role']=='ApcHeavy' and r['phase']=='Live' and r['producer']>0 and r['expectedCost']>0 and r['materialsPaid']==r['expectedCost'] and r['deliveredMembers']==r['members']==1]
+ if len(heavy)!=1:errors.append('Exactly one real paid/delivered HeavyAPC receipt required')
+ else:paid=heavy[0]
+ preactors=[r for r in runtime if paid and r['reservation']==paid['reservation'] and r['actorCount']==1 and r['actorHealth']>0 and r['actorStableId'] and not r['recoveredNativeComplete']]
+ if not preactors or not paid:errors.append('Actual paid HeavyAPC delivery witness missing')
+ trace=pathlib.Path(binding['tracePath'])
+ if trace.parent!=REPORT or not re.fullmatch(r's005-aria-live-155926-fa-[0-9a-f]{32}\.jsonl',trace.name):raise ValueError('Actual unique native manual trace path differs')
+ rows=[json.loads(line) for line in trace.read_text().splitlines() if line.strip()]
+ if not rows:raise ValueError('Actual native manual trace is empty; preserve native failure instead of indexing missing terminal')
+ terminal=rows[-1]
+ if terminal['phase']!='Finished' or terminal['outcome']!='Victory' or terminal['clockPaused']!=1 or terminal['simulationActive']!=0 or not 0<terminal['elapsed']<=1080 or terminal.get('playerBaseHp',0)<=0 or terminal.get('enemyBaseHp',1)>0:errors.append('Actual terminal native Victory/home-base-survival/enemy-base-destruction missing')
+ try:
+  handoffrows=[json.loads(line) for line in (REPORT/'native1614-early-route-handoff.jsonl').read_text().splitlines() if line.strip()]
+  handoffproof=import_module_from_file('early1614',PACKAGE/'early-handoff-qualifier.py').qualify(handoffrows,binding['attempt'])
+ except Exception as e:errors.append('Native early paid handoff qualifier: '+str(e))
+ if not rawtouch or any(any(row.get(k)!=0 for k in ('unexpected','interventions','receiptViolations')) for row in rawtouch):errors.append('All native raw Touch rows must have zero unexpected/interventions/receipt violations')
+ spec=importlib.util.spec_from_file_location('s005_native_contact_audit',ROOT/'Tools/CI/audit_skirmish_native_contacts.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);audit=module.audit(rawtouch)
+ if audit['errors'] or not all(audit[k] for k in ('strictRecordedContacts','strictAllContactsEnded','nativeMenuContactsRecorded','terminalContactsRecorded')):errors.append('Strict native Menu/PlayerResume/Manual/Terminal contact pairing failed')
+ commands=[json.loads(line) for line in pathlib.Path(str(trace)+'.commands.jsonl').read_text().splitlines() if line.strip()]
+ if not commands or any(c['verified'] is not True or not c['receipt'] for c in commands):errors.append('Actual accepted manual command receipt verification failed')
+ if not any(c['operation'] in ('AttackMove','ArmyAttack') for c in commands):errors.append('Actual verified manual attack/advance command absent')
+ fallbackrows=[json.loads(line) for line in (REPORT/FALLBACK).read_text().splitlines() if line.strip()]
+ spec=importlib.util.spec_from_file_location('s005_normal_fog_qualifier1614',QUALIFIER);fogmodule=importlib.util.module_from_spec(spec);spec.loader.exec_module(fogmodule)
+ route_rounds={r['round'] for r in fallbackrows if r['stage']=='LeaseStarted' and r.get('routeLease') is True}
+ spec=importlib.util.spec_from_file_location('s005_south_flank1614',FLANK_QUALIFIER);flankmodule=importlib.util.module_from_spec(spec);spec.loader.exec_module(flankmodule)
+ flankrows=[json.loads(line) for line in (REPORT/'native1614-south-flank.jsonl').read_text().splitlines() if line.strip()]
+ reinforcementrows=[json.loads(line) for line in (REPORT/'native1614-reinforcement-south-route.jsonl').read_text().splitlines() if line.strip()]
+ reinforcementproof=import_module_from_file('s005_reinforcement_south1614',REINFORCEMENT_QUALIFIER).qualify(reinforcementrows,fallbackrows,commands,flankrows,binding['attempt'])
+ plannerrows=[json.loads(line) for line in (REPORT/'native1614-fresh-rocketeer-planner.jsonl').read_text().splitlines() if line.strip()]
+ plannerproof=import_module_from_file('s005_fresh_planner1614',PLANNER_QUALIFIER).qualify(plannerrows,flankrows,reinforcementrows,fallbackrows,obs,binding['attempt'])
+ directactorrows=[json.loads(line) for line in (REPORT/'native1614-direct-attack-actors.jsonl').read_text().splitlines() if line.strip()]
+ flankproof=flankmodule.qualify(flankrows,fallbackrows,commands,directactorrows,binding['attempt'],bool(victories),bool(destinations and all(row['attempt']==binding['attempt'] and row['outcome']=='Victory' and row['destinationSessionAbsent'] for _,row in destinations)))
+ stoprows=[json.loads(line) for line in (REPORT/'native1614-stop-frames.jsonl').read_text().splitlines() if line.strip()]
+ stopproof=import_module_from_file('s005_flat_stop1614',PREP.parent/'qualify_stop_flat.py').analyze(stoprows)
+ if stopproof['result']!='StopSatisfied' or stopproof['firstAllGates'] is None:raise ValueError('Exact public flat four-actor Stop gate failed: '+str(stopproof))
+ completedIds={r['stable'] for r in flankrows if r['stage']=='RouteCompleted'}
+ if set(x[0] for x in stopproof['originalActorBinding'])!=completedIds:raise ValueError('Stop actor identities differ from four completed original route actors')
+ fogproof=fogmodule.qualify(fallbackrows,commands,binding['attempt'],required=False,terminal_proof={'renderedVictoryPassed':bool(victories),'sameAttemptReturnPassed':bool(destinations),'strictContactAudit':bool(audit and not audit['errors'] and audit['strictRecordedContacts'] and audit['strictAllContactsEnded'])},route_proof=flankproof,reinforcement_proof=reinforcementproof)
+
+except (OSError,KeyError,ValueError,TypeError,StopIteration,IndexError) as e:errors.append('Missing/malformed actual normal manual evidence: '+str(e))
+try:
+ defenserows=[json.loads(line) for line in (REPORT/'native1614-manual-home-defense.jsonl').read_text().splitlines() if line.strip()]
+ if binding is None:raise ValueError('Actual resolved attempt required')
+ defenseproof=import_module_from_file('s005_home_defense1614',DEFENSE_QUALIFIER).qualify(defenserows,binding['attempt'])
+ earlyheld=[r for r in defenserows if r.get('stage')=='NativeHomeHeld' and 0<r.get('elapsed',0)<120 and r.get('members',0)>0 and r.get('held') is True]
+ if not earlyheld:raise ValueError('No useful public home Move/Hold before 120s')
+ if not any(r.get('stage')=='HomeDefenseHandoff' for r in [json.loads(line) for line in (REPORT/'native1614-early-route-handoff.jsonl').read_text().splitlines() if line.strip()]):raise ValueError('Paid setup did not hand off through settled home-defense lease')
+except Exception as e:errors.append('Public home-defense proof: '+str(e))
+try:
+ if binding is None:raise ValueError('Actual resolved attempt absent')
+ arbitrationproof=import_module_from_file('home_arbitration1614',PACKAGE/'home_arbitration.py').qualify(
+  [json.loads(line) for line in (REPORT/FALLBACK).read_text().splitlines() if line.strip()],
+  [json.loads(line) for line in (REPORT/'native1614-manual-home-defense.jsonl').read_text().splitlines() if line.strip()],
+  [json.loads(line) for line in (REPORT/'native1614-early-route-handoff.jsonl').read_text().splitlines() if line.strip()],binding['attempt'])
+except Exception as e:errors.append('Independent public Touch home/route arbitration: '+str(e))
+try:
+ catalogrows=[json.loads(line) for line in (REPORT/'native1614-catalog-touch-census.jsonl').read_text().splitlines() if line.strip()]
+ spec=importlib.util.spec_from_file_location('catalog1614',CATALOG_QUALIFIER);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+ catalogproof=mod.qualify(catalogrows,rawtouch if binding else [])
+except Exception as e:errors.append('Catalog correction proof: '+str(e))
+cameraCloseProof=None;renderedCloseProof=None;renderedCommandProof=None;renderedMapProof=None
+try:
+ cameraCloseRows=[json.loads(l) for l in (REPORT/'native1614-camera-close-admission.jsonl').read_text().splitlines() if l.strip()]
+ fallbackRows=[json.loads(l) for l in (REPORT/FALLBACK).read_text().splitlines() if l.strip()]
+ cameraCloseProof=import_module_from_file('camera_close',pathlib.Path(__file__).parent/'camera-close-qualifier.py').qualify(cameraCloseRows,fallbackRows)
+ geometryRows=[json.loads(l) for l in (REPORT/'native1614-camera-close-geometry.jsonl').read_text().splitlines() if l.strip()]
+ renderedCloseProof=import_module_from_file('rendered_close',pathlib.Path(__file__).parent/'rendered-close-qualifier.py').qualify(cameraCloseRows,geometryRows)
+except Exception as ex:errors.append('Actual camera close admission: '+str(ex))
+try:
+ commandAdmissionRows=[json.loads(l) for l in (REPORT/'native1614-route-input-admission.jsonl').read_text().splitlines() if l.strip()]
+ renderedCommandProof=import_module_from_file('rendered_command',pathlib.Path(__file__).parent/'rendered-command-qualifier.py').qualify(commandAdmissionRows,rawtouch,binding['attempt'])
+except Exception as ex:errors.append('Actual rendered route command/reselection admission: '+str(ex))
+try:
+ mapRows=[json.loads(l) for l in (REPORT/'native1614-rendered-map-positioning.jsonl').read_text().splitlines() if l.strip()]
+ flankRows=[json.loads(l) for l in (REPORT/'native1614-south-flank.jsonl').read_text().splitlines() if l.strip()]
+ renderedMapProof=import_module_from_file('rendered_map',pathlib.Path(__file__).parent/'rendered-map-qualifier.py').qualify(mapRows,rawtouch,commandAdmissionRows,fallbackRows,flankRows,binding['attempt'])
+except Exception as ex:errors.append('Actual rendered map/fifth ground input: '+str(ex))
+groundDiagnosticProof=None
+try:
+ diagnosticRows=[json.loads(line) for line in (REPORT/'native1614-ground-touch-diagnostic.jsonl').read_text().splitlines() if line.strip()]
+ diagnosticAdmissions=[json.loads(line) for line in (REPORT/'native1614-route-input-admission.jsonl').read_text().splitlines() if line.strip()]
+ if not binding:raise ValueError('Actual resolved binding required for diagnostic coverage')
+ diagnosticTouch=[json.loads(line) for line in pathlib.Path(binding['tracePath']+'.touch.jsonl').read_text().splitlines() if line.strip()]
+ dm=import_module_from_file('ground1614',pathlib.Path(__file__).parent/'ground-diagnostic-qualifier.py')
+ groundDiagnosticProof=dm.qualify(diagnosticRows,diagnosticAdmissions,diagnosticTouch,binding['attempt'])
+except Exception as e:errors.append('Native ground diagnostic coverage failed: '+str(e))
+proof={'groundDiagnosticProof':groundDiagnosticProof,'renderedMapProof':renderedMapProof,'renderedCommandProof':renderedCommandProof,'result':'Passed' if not errors else 'Failed','catalogTouchProof':catalogproof,'scope':'Two distinct southern Rocketeer cohorts after genuine public paidR2/HeavyAPC setup: original four-anchor route, public Stop, paid Heavy APC Scan, exact visible Barracks direct Attack and damage, public-Touch-selected paid fresh reinforcement, native home-base survival, natural Victory/rendered result/MainMenu. QA scheduling only; no SaveContinue/recovery qualification; public existing Car/ArmoredAPC home defense required. Hybrid native UI/tactical Touch; not human/device or full ARIA matrix.','sourceHash':h,'fullSourceUnchanged':same,'preManifest':prep['sourcePinBasis'],'preflightManifest':preflight,'preDispatchManifest':predispatch,'postManifest':post,'actualWrapperExit':wrapper,'nativeBridgeExit':native,'postRunCallbackAudit':callback_audit,'postRunCallbackAuditError':callback_audit_error,'log':LOG,'logSha256':sha((REPORT/LOG).read_bytes()),'fixture':ARCHIVE,'fixtureSha256':prep['fixtureSha256'],'executedRunnerSha256':sha(pathlib.Path(__file__).read_bytes()),'observation':OBS,'observationSha256':sha((REPORT/OBS).read_bytes()) if (REPORT/OBS).is_file() else None,'actualResolvedSetup':binding,'trace':trace.name if trace is not None else None,'terminal':terminal,'inputAudit':audit,'nativePaidHeavyAPC':paid,'nativeRecoveredIdentity':recovered,'nativeResearchObservationCount':len(research),'nativeFogApproach':fogproof,'flatPerActorStop':stopproof,'paidRecoveryLifecycle':paidproof,'publicHomeDefense':defenseproof,'homeRouteTouchArbitration':arbitrationproof,'nativeAuditOperandConservation':operandproof,'cameraCloseProof':cameraCloseProof,'renderedCloseProof':renderedCloseProof,'materialAlternateSouthernApproach':flankproof,'freshRocketeerSouthReinforcements':reinforcementproof,'freshPublicTouchPlanner':plannerproof,'homeDefenseGate':{'nativeVictoryWithHomeBaseAlive':bool(terminal and terminal.get('phase')=='Finished' and terminal.get('outcome')=='Victory' and terminal.get('playerBaseHp',0)>0),'specificDefenderOrderQualified':bool(defenseproof and arbitrationproof)},'countsForLivePaidActorRecovery':False,'countsForSaveContinue':False,'nativeEarlyPaidHandoff':handoffproof,'reconstructedLineage':'Current 3751 complete source pin; native1601/native1604/native1608/native1609/native1611/native1612 failures preserved','original1601Recovered':False,'exactOriginal128ContractListRecovered':False,'reviewedContractCount':len(prep['sourceContracts']),'normalInput':True,'rendererObservedNormalSpeed':bool(not errors),'countsForCurrentManualAcceptance':not errors,'countsForSecondMaterialApproach':bool(flankproof and not errors),'countsForAriaSeedBaseline':False,'fundingReadinessActorPoseDamageVisibilityOutcomeInjected':False,'qaSchedulerTransferredAfterGenuinePaidDelivery':True,'designatedBaseEffectScope':'Southern route qualifier requires public Stop/paid Scan/direct visible Barracks Touch, four exact paired native receipts, four original actor Attack intents/paths, and post-acceptance attributable original-Rocketeer Barracks damage visible at impact after verified four-anchor traversal.','errors':errors,'playerReady':False,'realHumanDeviceAcceptance':False}
+diagnostic=REPORT/'native1614-passenger-carrier-identity.jsonl'
+packed=REPORT/'native1614-packed-render-census.jsonl'
+proof['packedRenderDiagnostic']={'path':packed.name,'sha256':sha(packed.read_bytes()) if packed.is_file() else None,'scope':'Read-only actual readiness operands/shell/match/harness stages; no rendering or startup override'}
+proof['passengerCarrierIdentityDiagnostic']={'path':diagnostic.name,'sha256':sha(diagnostic.read_bytes()) if diagnostic.is_file() else None,'scope':'Read-only per-observed-native-frame current-attempt owned passenger/carrier links, including Disabled; not exact capture-instruction interception or a standalone readiness gate'}
+new_json(REPORT/('native1614-normal-paid-south-flank-'+('pass' if not errors else 'failure')+'.json'),proof)
+s=read(STATE)
+if s.get('activeRun')!='native1614':raise RuntimeError('Main ownership changed; do not clear unrelated lane')
+s.update(activeRun=None,activeLog=None,activeScope=None,activePreManifest=None,latestNormalManual1614='native1614-normal-paid-south-flank-'+('pass' if not errors else 'failure')+'.json');STATE.write_text(json.dumps(s,indent=2)+'\n')
+print(json.dumps({'result':proof['result'],'errors':errors,'sourceHash':h,'playerReady':False}),flush=True)
+sys.exit(0 if not errors else 2)

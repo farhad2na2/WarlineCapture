@@ -1,0 +1,13 @@
+{
+  "errors": [
+    "missing or malformed evidence: [Errno 2] No such file or directory: '/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1551-aria-en155926.log'"
+  ],
+  "expectedSource": "2fab5c15f84bc1d81fa5cbc44716b49a337368dd82ce21f445eb4752cd262dfc",
+  "locale": "en",
+  "log": "native1551-aria-en155926.log",
+  "method": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3",
+  "result": "Failed",
+  "run": 1551,
+  "scope": "One normal-input S005 Standard/Regular ARIA Editor journey; not full mission/player readiness",
+  "seed": 155926
+}

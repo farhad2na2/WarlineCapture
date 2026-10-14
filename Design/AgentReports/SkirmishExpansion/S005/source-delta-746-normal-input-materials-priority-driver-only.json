@@ -1,0 +1,10 @@
+{
+  "fromSourceHash": "3e48d3106d52df52327e36c66fb35e97ca995dc6eb7a87fa630022d26fb23cef",
+  "toSourceHash": "285ab83e0400b7f419a20fa73cfe15bd09c597064dd83cff775df5460589b562",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PaidGroundIndustry.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.PlayerResumeProbe.cs"
+  ],
+  "shippingRuntimeConfigsMaterialsAndPhysicalSourceUnchanged": true,
+  "change": "Qualification uses normal truck selection and factory world taps to fund both active factories. Only own units/stocks observed; no order/cargo/resource writes. Native acknowledgment and full paid air-cycle pending."
+}

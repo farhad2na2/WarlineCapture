@@ -1,0 +1,99 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-paid-air-effects1310-v2/S005PaidEnemyAirEffects1310.cs",
+      "entry": "S005PaidEnemyAirEffects1310.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.DamageRow.visibilityInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 547,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.PatrolRow.poseAirborneInjected' is never assigned to, and will always have its default value false",
+          "line": 819,
+          "column": 252,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.QueueRow.synthesized' is never assigned to, and will always have its default value false",
+          "line": 538,
+          "column": 196,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.DamageRow.airFlagsInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 517,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.AirportRow.ownershipRelabeled' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 371,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.DamageRow.poseInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 534,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.AirportRow.sourceGeometryChanged' is never assigned to, and will always have its default value false",
+          "line": 133,
+          "column": 390,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.DamageRow.damageInjected' is never assigned to, and will always have its default value false",
+          "line": 540,
+          "column": 502,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "Field 'S005PaidEnemyAirEffects1310.AirportRow.planIndex' is never assigned to, and will always have its default value 0",
+          "line": 133,
+          "column": 288,
+          "id": "CS0649"
+        },
+        {
+          "severity": "warning",
+          "message": "The field 'S005PaidEnemyAirEffects1310.shooterAirborneObserved' is assigned but its value is never used",
+          "line": 535,
+          "column": 86,
+          "id": "CS0414"
+        }
+      ],
+      "compileMs": 383,
+      "executeMs": 6,
+      "assemblyName": "PipelineRunScript_S005PaidEnemyAirEffects1310_a163ab77d5964533a4ed32ff851e29b0",
+      "success": true,
+      "result": "Fixture loaded only; execute RunValidation through the repository wrapper."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

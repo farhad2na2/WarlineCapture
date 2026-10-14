@@ -1,0 +1,26 @@
+{
+  "validation": "527",
+  "result": "Failed",
+  "reason": "Invalid four-segment operation-map ID; retry uses valid underscore suffix",
+  "files": [
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset",
+      "sha256": "b09184c1841eb5c13144e048376c858eee8c24705707f3f60da1ee3eb4810bc0",
+      "sameBytes": false,
+      "sameExceptCloneName": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "sha256": "49024fd41c51322292f72512cbef762750925e69a3e0eacd425db74e4163c7a3",
+      "sameBytes": false,
+      "sameExceptCloneName": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c",
+      "sameBytes": true,
+      "sameExceptCloneName": true
+    }
+  ],
+  "playerReady": false
+}

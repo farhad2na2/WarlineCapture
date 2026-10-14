@@ -1,0 +1,28 @@
+{
+  "mission": "S005",
+  "result": "Passed",
+  "scope": "PaidBoardedPassengersSaveContinueUnload",
+  "sourceHash": "9d6b00b06834664f54784f70246eda56bf569a30d2b890b1d051721523f074a1",
+  "wrapperExit": 0,
+  "sourceIdentityUnchanged": true,
+  "preFingerprint": "final-686-focused-native-passenger-recovery-pre-independent-fingerprint.json",
+  "postFingerprint": "final-686-focused-native-passenger-recovery-post-independent-fingerprint.json",
+  "log": "native-686-focused-native-passenger-recovery-en.log",
+  "logSha256": "de230626c8e19127e3d65721ceebeccaf7e43eb4254f04ff2de2e8d4f35a707f",
+  "markers": [
+    "[S005PassengerSave] result=Passed restoredAndUnloaded=4 input=Touch",
+    "[S005PlayerSaveResume] result=Passed input=Touch gestures=49 oldPhysicalGone=4979 paidReceiptPreserved=1 sameAttempt=1 savedElapsed=156.1488 paidRole=ApcHeavy paidCost=280 combatGestures=0 combatSave=0 boardedSave=1 passengers=4 commands=6 receiptViolations=0 resumedMissionAcceptance=Pending",
+    "[S005NativeRecoveryCase] result=Passed reason=nativePaidBoardedPassengerRecoveryOnly codeHash=9d6b00b06834664f54784f70246eda56bf569a30d2b890b1d051721523f074a1 scope=PaidBoardedPassengersSaveContinueUnload completeMatchCertified=0 countedWin=0"
+  ],
+  "contactAudit": "native686-touch-contact-audit.json",
+  "normalInput": true,
+  "restoredAndUnloadedPassengers": 4,
+  "paidRole": "ApcHeavy",
+  "paidCost": 280,
+  "oldPhysicalGone": 4979,
+  "paidReceiptPreserved": true,
+  "sameAttempt": true,
+  "completeMatchCertified": false,
+  "countedWin": false,
+  "playerReady": false
+}

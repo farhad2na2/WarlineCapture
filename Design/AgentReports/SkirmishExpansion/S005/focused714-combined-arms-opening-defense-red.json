@@ -1,0 +1,13 @@
+{
+  "result": "Failed",
+  "wrapperExit": 0,
+  "requiredPassMarkerPresent": false,
+  "sourceHash": "8f7b602f13fa967830b5d4b562cc4cc69d23e48c6380b3d6a4d9edc04bbc62db",
+  "sourceUnchanged": true,
+  "preManifest": "tests-714-combined-arms-opening-defense-red-pre-source-manifest.json",
+  "postManifest": "tests-714-combined-arms-opening-defense-red-post-source-manifest.json",
+  "log": "tests-714-combined-arms-opening-defense-red.log",
+  "logSha256": "dd1e04f068c4b7a4dc605471128e5f668f94fa354165b1ac4c26934a63df73a3",
+  "assertion": "Combined Arms opening should request visible player-focus control before committing assault; expected51 actual0",
+  "playerReady": false
+}

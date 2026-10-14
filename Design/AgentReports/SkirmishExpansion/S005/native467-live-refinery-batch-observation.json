@@ -1,0 +1,20 @@
+{
+  "sourceHash": "a93be1cd029d445ad31005510a186b9ef099877762339930fa2edb942c10e4a2",
+  "nativeRun": 467,
+  "scope": "Bounded read-only component observation during normal-input run",
+  "pumpRates": [
+    120,
+    120
+  ],
+  "refinery": {
+    "storedOil": 8,
+    "reservedOilInbound": 16,
+    "storedFuel": 240,
+    "fuelRateMetadata": 120,
+    "inputPerBatch": 30,
+    "batchProgressSeconds": 1.0063076
+  },
+  "steadyStateThroughputCertified": false,
+  "usableDeliveryCertified": false,
+  "playerReady": false
+}

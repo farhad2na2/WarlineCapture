@@ -1,0 +1,39 @@
+{
+  "run": "native601",
+  "result": "Passed",
+  "scope": "Normal-input paid fabrication, readiness and Airport construction only",
+  "sourceHash": "9560906d31b50a9be5d0c402d527800daa45c15b4c8eada4bb158b460923865e",
+  "independentPrePostMatched": true,
+  "wrapperExit": 0,
+  "logExit": 0,
+  "nativeAirportProducer": true,
+  "originalObjective": false,
+  "normalBudget": true,
+  "campaignPhysicalSourceModified": false,
+  "cameraFocusAddedTroopCommands": false,
+  "airportGroundSample": 1,
+  "paidFabricationAdded": 2,
+  "contactAudit": {
+    "recordedContacts": 57,
+    "completedContacts": 57,
+    "phases": {
+      "Menu": 5,
+      "PlayerResume": 52
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-8e1719f3209a4980a64f0b1bd42d3543.jsonl.touch.jsonl",
+    "sha256": "c1ec8d25c756aa8ac7c2c574089594b52ed8eaf6e8f473c013c8a0fdd544cc91"
+  },
+  "fixedWingLifecycle": "Pending",
+  "bilateralCapacity": "Pending",
+  "completeMatchCertified": false,
+  "playerReady": false,
+  "screenshot": "s005-aria-live-155926-en-8e1719f3209a4980a64f0b1bd42d3543.jsonl.airport-committed.png"
+}

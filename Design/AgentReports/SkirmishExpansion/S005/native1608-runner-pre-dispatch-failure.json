@@ -1,0 +1,14 @@
+{
+  "result": "FailedBeforeUnity",
+  "sourceHash": "3751581fe7fb8acd2c7c6c865956fbb675b8ebd9e828473db803718d87d8282d",
+  "stage": "Runner release-proof hash check",
+  "error": "FileNotFoundError: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/sourcePre",
+  "cause": "The runner used a release-proof label as a file name instead of resolving that label through the prepared proof map.",
+  "unityInvoked": false,
+  "nativeMatchStarted": false,
+  "nativeLogCreated": false,
+  "heavyLaneActive": false,
+  "editorReadyAndStoppedAfterFailure": true,
+  "originalRunnerPreserved": "/private/tmp/s005-full-south-flank1608-source-3751/runner.py (pre-repair bytes must be archived by package owner)",
+  "playerReady": false
+}

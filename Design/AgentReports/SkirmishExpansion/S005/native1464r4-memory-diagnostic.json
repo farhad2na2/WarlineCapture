@@ -1,0 +1,54 @@
+{
+  "result": "CompleteReadOnlyTenReplayObservation",
+  "sourceHash": "3846bdfdf94779742fc0f956a4e945b3eff9c2dea4eef539e1b18709fa1c2a65",
+  "freshAttempts": 11,
+  "actualReplays": 10,
+  "boundaries": 12,
+  "freshObjectCounts": [
+    48838,
+    46657,
+    46735,
+    46813,
+    46891,
+    46969,
+    47047,
+    47125,
+    47203,
+    47281,
+    47359
+  ],
+  "freshObjectCountDelta": -1479,
+  "freshObjectCountStrictlyIncreasing": false,
+  "equivalentPhaseMemory": {
+    "nativeAllocated": {
+      "first": 9016549644,
+      "last": 16395329747,
+      "delta": 7378780103,
+      "strictlyIncreasing": true
+    },
+    "graphicsDriver": {
+      "first": 3143525792,
+      "last": 2919154108,
+      "delta": -224371684,
+      "strictlyIncreasing": false
+    },
+    "managed": {
+      "first": 3711623168,
+      "last": 4019150848,
+      "delta": 307527680,
+      "strictlyIncreasing": false
+    },
+    "resident": {
+      "first": 2804056064,
+      "last": 897859584,
+      "delta": -1906196480,
+      "strictlyIncreasing": false
+    }
+  },
+  "physicalCleanupObserved": true,
+  "memoryCleanupQualified": false,
+  "frameBudgetQualified": false,
+  "deviceBudgetQualified": false,
+  "leakProven": false,
+  "ownerAttributionPending": true
+}

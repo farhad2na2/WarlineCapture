@@ -1,0 +1,37 @@
+{
+  "result": "Failed",
+  "sourceHash": "5739769c8fae713e714eedf16fa258b9d86f004d77ce690fd97ce2ba10aea747",
+  "wrapperExit": 2,
+  "seed": 155926,
+  "locale": "en",
+  "normalBudget": true,
+  "timingTarget": "Failed: no advanced air within8\u201312min",
+  "airportConstruction": "Passed: paid native producer/actor through touch",
+  "strikeDelivery": "Passed: paid520M receipt1005 with native runway home",
+  "airCycle": "Failed: stage2 fabrication-pause selection loop; no native fire, launch, return/refuel or second sortie claimed",
+  "terminal": "Qualification wall watchdog; no normal Draw claimed",
+  "qualificationInterventions": "One read-only CLI search-state inspection; no actors/resources/orders/clock/assets modified",
+  "sourceManifestUnchanged": true,
+  "preManifest": "final-650-supply-relative-placement-pre-source-manifest.json",
+  "postManifest": "final-650-supply-relative-placement-post-source-manifest.json",
+  "trace": "s005-aria-live-155926-en-71c686b853c6412c8fe5ec6cfd325a8b.jsonl",
+  "log": "native-650-supply-relative-strike-cycle.log",
+  "inputAudit": {
+    "recordedContacts": 167,
+    "completedContacts": 167,
+    "phases": {
+      "Menu": 6,
+      "PlayerResume": 161
+    },
+    "terminalCancellations": [],
+    "errors": [],
+    "strictRecordedContacts": true,
+    "strictAllContactsEnded": true,
+    "nativeMenuContactsRecorded": true,
+    "terminalContactsRecorded": false,
+    "completeMatchCertified": false,
+    "note": "Input pairing only. At most one native Finished cancellation with explicit no-command evidence; outcome, result-return, source identity and wrapper pass are separate gates.",
+    "trace": "s005-aria-live-155926-en-71c686b853c6412c8fe5ec6cfd325a8b.jsonl.touch.jsonl",
+    "sha256": "4dfba2fb5ed465a8d7608e2c3ee982af1df3963b8d360de8388efaa4835d2701"
+  }
+}

@@ -1,0 +1,541 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
+using Game.UI.Runtime;
+using Game.UI.Contracts;
+using Game.Tactical.Contracts;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+
+// External isolated native prerequisite gate. No production source/physical map changes.
+// Player Airport uses actual native Touch/catalog/current validator/payment/construction.
+// Enemy Airport uses actual native AIBuildPlanner payment/request/processing/settlement,
+// temporary planner/control/funds/readiness setup disclosed. No ownership relabel or fake facility.
+// Successor1542 retains real bilateral paid Airport gate and adds four paid mixed air actors. Air combat/cargo remain pending.
+public static class S005BilateralMixedAir1542
+{
+    static TaskCompletionSource<int> completion;
+    static World world;
+    static Entity session, boundary;
+    static FixedString64Bytes attempt;
+    static SystemHandle enemySystem;
+    static bool enemyEnabled, changedEnemy;
+    static double deadline, caseDeadline, next;
+    static int phase, buildSite; static bool siteTapped; static double catalogSeenAt; static bool catalogLogged; static bool buildDispatched; static double buildDispatchedAt; static UnityEngine.UI.Button clickedBuild;
+    static bool failed;
+    static bool rotatedPlacement;
+    static readonly List<Vector3> sourceSites=new(); static readonly Dictionary<Vector3,bool> sourceRotations=new();
+    static string failure;
+    static readonly string touchPath="/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-bilateral-airport.touch.jsonl";
+    [Serializable] struct NativeTouchRow { public int frame,device,acceptedCommands,receiptViolations;public float time;public string kind,phase;public uint generation,dispatched,completed,samples,unexpected,interventions;public Vector2 position;public bool commandAuditActive,matchFinished; }
+    static AriaTouchInputUiSystemHelper touch;
+    static int inputFrame=-1;
+    [Serializable] sealed class PlacementCandidate { public Vector3 world; public string source; public bool rotated; } static readonly List<PlacementCandidate> placementCandidates=new(); static int actualPlacementTouches,actualBlockedPlacements; static double candidateSince; static bool candidatesPrepared; static bool anchorsCached; static Vector3 playerBaseAnchor,enemyBaseAnchor; static double surfaceBlockedSince; static int viewRepairs; static bool viewRepairQueued;
+    static readonly BindingFlags privateStatic=BindingFlags.Static|BindingFlags.NonPublic;
+    static object Get(string name)=>harness.GetField(name,privateStatic).GetValue(null);
+    static void Set(string name,object value)=>harness.GetField(name,privateStatic).SetValue(null,value);
+    static bool Tap(UnityEngine.UI.Button button)=>(bool)harness.GetMethod("PlayerResumeTap",privateStatic).Invoke(null,new object[]{button});
+
+    static BuildDrawerCatalogRuntimeView ResolveLiveCatalog(out BuildDrawerView drawer)
+    {
+        BuildDrawerCatalogRuntimeView found=null;drawer=null;
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            var ownView=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            if(ownView==null || !ownView.IsOpen)continue; // Match native ResolveCatalogTarget assigned-view gate exactly.
+            if(found!=null){DumpNativeBuildInventory("MultipleAssignedOpenCatalogs",clickedBuild);throw new InvalidOperationException("Multiple catalogs assigned to open native drawer views; ambiguous fixture ownership.");}
+            found=candidate;drawer=ownView;
+        }
+        return found;
+    }
+    static string Hierarchy(Transform transform)
+    {
+        if(transform==null)return "none";var names=new List<string>();
+        for(int depth=0;transform!=null&&depth<10;depth++,transform=transform.parent)names.Add(transform.name);
+        names.Reverse();return string.Join("/",names);
+    }
+    static string ButtonState(UnityEngine.UI.Button button)
+    {
+        if(button==null)return "button=none";
+        return "button="+button.name+" id="+button.GetEntityId()+" active="+button.IsActive()+" interactable="+button.IsInteractable()+" hierarchy="+Hierarchy(button.transform);
+    }
+    static void DumpNativeBuildInventory(string reason,UnityEngine.UI.Button buildButton)
+    {
+        int catalogs=0,drawers=0;
+        Debug.Log("[S005BilateralAirportNativeBuildInventory] reason="+reason+" "+ButtonState(buildButton)+" touchBusy="+(touch!=null&&touch.IsBusy));
+        foreach(var candidate in UnityEngine.Object.FindObjectsByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include))
+        {
+            if(catalogs++>=12)break;
+            var assigned=(BuildDrawerView)typeof(BuildDrawerCatalogRuntimeView).GetField("view",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(candidate);
+            Debug.Log("[S005BilateralAirportNativeCatalogOwner] reason="+reason+" catalog="+candidate.GetEntityId()+" active="+candidate.isActiveAndEnabled+" hierarchy="+Hierarchy(candidate.transform)+" assignedView="+(assigned!=null?assigned.GetEntityId().ToString():"none")+" assignedActive="+(assigned!=null&&assigned.isActiveAndEnabled)+" assignedOpen="+(assigned!=null&&assigned.IsOpen)+" assignedHierarchy="+Hierarchy(assigned!=null?assigned.transform:null));
+        }
+        foreach(var drawer in UnityEngine.Object.FindObjectsByType<BuildDrawerView>(FindObjectsInactive.Include))
+        {
+            if(drawers++>=12)break;
+            Debug.Log("[S005BilateralAirportNativeDrawerOwner] reason="+reason+" drawer="+drawer.GetEntityId()+" active="+drawer.isActiveAndEnabled+" open="+drawer.IsOpen+" hierarchy="+Hierarchy(drawer.transform));
+        }
+        foreach(var controls in UnityEngine.Object.FindObjectsByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Include))
+            Debug.Log("[S005BilateralAirportNativeBuildControls] reason="+reason+" controls="+controls.GetEntityId()+" active="+controls.isActiveAndEnabled+" "+ButtonState(controls.BuildButton));
+    }
+
+    static bool LogLiveCatalog(BuildDrawerCatalogRuntimeView catalog, BuildDrawerView drawer)
+    {
+        var keys=new List<string>();
+        var field=typeof(BuildDrawerCatalogRuntimeView).GetField("_items",BindingFlags.Instance|BindingFlags.NonPublic);
+        foreach(var item in (IEnumerable<BuildDrawerCatalogItem>)field.GetValue(catalog))
+            if(item.Prefab!=null && keys.Count<64)keys.Add(item.Prefab.name);
+        var source=typeof(BuildDrawerCatalogRuntimeView).GetField("buildingPlacementConfig",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog) as ScriptableObject;
+        var category=typeof(BuildDrawerCatalogRuntimeView).GetField("_activeCategory",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        var restriction=typeof(BuildDrawerCatalogRuntimeView).GetField("_cat",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog);
+        bool missionRestricted=(bool)restriction.GetType().GetField("_restricted",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        var missionAllowed=(List<string>)restriction.GetType().GetField("_allowedBuildingConfigIds",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(restriction);
+        Debug.Log("[S005BilateralAirportLiveCatalogRestriction] missionRestricted="+missionRestricted+" allowed="+string.Join(",",missionAllowed));
+        Debug.Log("[S005BilateralAirportLiveCatalog] catalog="+catalog.GetEntityId()+" drawer="+drawer.GetEntityId()+" assignedViewOpen="+drawer.IsOpen+" active="+catalog.isActiveAndEnabled+" category="+category+" source="+(source!=null?source.name:"none")+" keys="+string.Join(",",keys));
+        return keys.Contains("Building_Airport");
+    }
+
+    static Type harness => typeof(Game.Editor.SkirmishS002AriaRunHarness);
+    static FieldInfo Hold => harness.GetField("nativeProductionStage",BindingFlags.Static|BindingFlags.NonPublic);
+    public static object Run() => "Fixture loaded only; execute RunValidation through the repository wrapper.";
+    public static Task<int> RunValidation()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Refusing to mutate an existing Play session.");
+        if(File.Exists("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-bilateral-mixed-air.air.jsonl")||File.Exists(touchPath)||File.Exists("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-bilateral-airport.placement.jsonl"))throw new InvalidOperationException("Preserve existing unique bilateral Airport Touch/placement evidence");File.WriteAllText(touchPath,"");
+        enemyPreview=ownPaidObserved=enemyCompletionObserved=false;enemyPlan=Entity.Null;plannerHeld=false;priorPlans.Clear();ownRuntimeId=0;completion=new TaskCompletionSource<int>(); phase=0;failed=changedEnemy=false;world=null;rotatedPlacement=false;sourceSites.Clear();sourceRotations.Clear();
+        airIndex=0;paidAir.Clear();airActor=Entity.Null;deadline=EditorApplication.timeSinceStartup+1500;next=0;buildSite=0;siteTapped=false;catalogSeenAt=0;catalogLogged=false;buildDispatched=false;buildDispatchedAt=0;clickedBuild=null;anchorsCached=false;playerBaseAnchor=enemyBaseAnchor=Vector3.zero;surfaceBlockedSince=0;viewRepairs=0;viewRepairQueued=false;placementCandidates.Clear();actualPlacementTouches=actualBlockedPlacements=0;candidateSince=0;candidatesPrepared=false;
+        Game.Editor.SkirmishS002AriaRunHarness.RunS005StartupEn();
+        // Bound this isolated fixture's Editor watchdog to its own limit.
+        // The mission's simulation deadline and all gameplay budgets stay intact.
+        harness.GetField("deadline",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,deadline);
+        Hold.SetValue(null,999);
+        EditorApplication.update+=Tick; Canvas.willRenderCanvases+=InputFrame; AriaTouchInputUiSystemHelper.Evidence+=ObserveOwnTouch;AriaCommandEvidence.Recorded+=ObserveAirReceipt; touch=null; inputFrame=-1;
+        Debug.Log("[S005BilateralAirportMovement] scope=IsolatedNativeIndependentlyPaidBilateralAirportPrerequisiteOnly normalMission=0 fundingInjected=BothFactions readinessGranted=FullArsenal deathStimulus=HealthZero openingActorsRetired=1 enemyStrategyDisabled=1 temporaryNativeAIPlannerAndFaction2Control=1 playerNativeTouchPaidConstruction=1 enemyNativePlannerPaidConstruction=1 ownershipRelabeled=0 geometryCapsPricesUnchanged=1 aircraftCapacityCertified=0 airCombatCertified=0");
+        return completion.Task;
+    }
+    static bool enemyPreview,ownPaidObserved,enemyCompletionObserved;static Entity enemyPlan;static SystemHandle planner;static bool plannerOriginalEnabled,plannerHeld;static FactionTacticalMaterialsComponent ownBeforeBuild,enemyBeforeBuild;static BuildingRuntimeSpawnRequest pendingEnemy;
+    static Vector2Int ownOrigin,ownFootprint,enemyOrigin,enemyFootprint;static RectInt ownRect,enemyRect;static int ownRuntimeId,enemyMaterialsCost;static FixedString128Bytes enemyConfiguredKey;
+    static readonly Dictionary<Entity,AIBuildPlan> priorPlans=new();
+    [Serializable] struct AirportRow {public string phase,configuredKey;public int frame,requestId,faction,ownerFlag,status,nativeResult,cost,materialsCost,materialsSpentDelta,beforeMaterials,afterMaterials,runtimeId,originX,originZ,footprintX,footprintZ,rectX,rectZ,rectWidth,rectHeight,planIndex;public bool granted,allowNonbuildable,rotated,relocated,fullPreviewValid,ownershipRelabeled,sourceGeometryChanged;}
+    static void Tick()
+    {
+        try
+        {
+            double now=EditorApplication.timeSinceStartup;
+            if(phase==9)
+            {
+                if(EditorApplication.isPlayingOrWillChangePlaymode)return;
+                bool cleanup=world==null||!world.IsCreated;if(!cleanup){using var q=world.EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));cleanup=q.IsEmptyIgnoreFilter;}
+                if(!cleanup)throw new InvalidOperationException("Attempt actors remain after owned cleanup.");
+                Debug.Log("[S005BilateralAirportMovementCleanup] result=Passed attemptsRemoved=1");EditorApplication.update-=Tick;completion.TrySetResult(failed?1:0);return;
+            }
+            if(now>deadline)throw new TimeoutException("Bilateral paid mixed-air bounded watchdog.");
+            if(now<next)return;next=now+.1;
+            if(!EditorApplication.isPlaying)return;
+            if(world==null){world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated){world=null;return;}}
+            var em=world.EntityManager;
+            if(phase==0)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishResolvedSetupRecord));if(q.CalculateEntityCount()!=1)return;
+                session=q.GetSingletonEntity();var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);if(s.SpawnComplete==0||s.Phase!=SkirmishSessionPhase.Playing)return;attempt=s.SessionId;
+                if(SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1)||SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,2))throw new InvalidOperationException("Gate requires both Airports actually purchased; pre-existing producer cannot qualify.");
+                enemySystem=world.Unmanaged.GetExistingUnmanagedSystem<SkirmishEnemyStrategySystem>();if(enemySystem!=SystemHandle.Null){enemyEnabled=world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled;world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=false;changedEnemy=true;}
+                using(var actors=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var units=actors.ToEntityArray(Allocator.Temp))foreach(var actor in units)Kill(em,actor);
+                var r=em.GetComponentData<SkirmishResearchStateComponent>(session);r.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,r);
+                var er=em.GetComponentData<SkirmishEnemyResearchStateComponent>(session);er.State.Readiness=SkirmishReadinessStage.FullArsenal;em.SetComponentData(session,er);
+                using(var boundaryQuery=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingRuntimeSpawnRequest)))boundary=boundaryQuery.GetSingletonEntity();
+                planner=world.Unmanaged.GetExistingUnmanagedSystem<AIBuildPlannerSystem>();if(planner==SystemHandle.Null)throw new InvalidOperationException("Native AI paid construction system missing.");plannerOriginalEnabled=world.Unmanaged.ResolveSystemStateRef(planner).Enabled;world.Unmanaged.ResolveSystemStateRef(planner).Enabled=false;plannerHeld=true;
+                caseDeadline=now+20;phase=1;return;
+            }
+            if(!Mathf.Approximately(Time.timeScale,1f))throw new InvalidOperationException("Native speed required; no pause or clock acceleration.");
+            if(phase==1)
+            {
+                var c=em.GetComponentData<SkirmishCapacityComponent>(session);var e=em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
+                if(c.InfantryLive+c.GroundLive+c.AirLive+c.SupplyLive!=0||e.InfantryLive+e.GroundLive+e.AirLive+e.SupplyLive!=0){if(now>caseDeadline)throw new TimeoutException("Opening actual death release incomplete.");return;}
+                if(c.AirCap!=2||e.AirCap!=2)throw new InvalidOperationException("Actual Standard bilateral Air2 configuration required.");
+                Debug.Log("[S005BilateralAirCapacityConfiguration] playerAirCap="+c.AirCap+" enemyAirCap="+e.AirCap+" playerAirLive="+c.AirLive+" enemyAirLive="+e.AirLive+" aircraftDelivered=0 capacityCertified=0");
+                SkirmishMaterialsService.Write(em,session,1,1800);ownBeforeBuild=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1));
+                touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Native Touch unavailable");Set("playerResumeTouch",touch);caseDeadline=now+360;phase=20;return;
+            }
+            if(phase>=60){TickAir(em,now);return;}
+            if(now>caseDeadline)throw new TimeoutException("Bilateral Airport prerequisite phase "+phase);
+            if(phase==23)
+            {
+                if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,1))return;
+                var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1));
+                if(bank.LifetimeConstructionSpent-ownBeforeBuild.LifetimeConstructionSpent!=enemyMaterialsCost)throw new InvalidOperationException("Actual player Airport construction spend differs native preview price.");
+                ownRuntimeId=ReadAirportRuntime(em,1,ownOrigin,ownFootprint);
+                Debug.Log("[S005BilateralAirportReceipt] "+JsonUtility.ToJson(new AirportRow{phase="PlayerNativeTouchPaid",frame=Time.frameCount,faction=1,runtimeId=ownRuntimeId,materialsCost=enemyMaterialsCost,materialsSpentDelta=bank.LifetimeConstructionSpent-ownBeforeBuild.LifetimeConstructionSpent,beforeMaterials=ownBeforeBuild.Current,afterMaterials=bank.Current,originX=ownOrigin.x,originZ=ownOrigin.y,footprintX=ownFootprint.x,footprintZ=ownFootprint.y,rectX=ownRect.x,rectZ=ownRect.y,rectWidth=ownRect.width,rectHeight=ownRect.height,fullPreviewValid=true}));
+                ownPaidObserved=true;enemyPreview=true;ResetPlacementUi();SkirmishMaterialsService.Write(em,session,1,1800);SkirmishMaterialsService.Write(em,session,2,1800);phase=20;caseDeadline=now+360;return;
+            }
+            if(phase==42)
+            {
+                var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);if(touch.IsBusy||placement!=null&&placement.HasPendingPlacement)return;
+                IssueNativeEnemyPlan(em);phase=43;caseDeadline=now+90;return;
+            }
+            if(phase==43)
+            {
+                var requests=em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);BuildingRuntimeSpawnRequest completed=default;bool found=false;
+                foreach(var request in requests)if(request.RequestId==pendingEnemy.RequestId&&request.PlanEntity==enemyPlan){completed=request;found=true;break;}
+                if(!found)throw new InvalidOperationException("Native construction request disappeared before receipt capture.");if(completed.Status==BuildingRuntimeSpawnRequest.Pending)return;
+                if(!enemyCompletionObserved){LogEnemyReceipt(em,completed,"EnemyNativeCompletionCaptured");enemyCompletionObserved=true;}
+                if(completed.Status!=BuildingRuntimeSpawnRequest.Succeeded){SettleNativePlan(em,false);throw new InvalidOperationException("Actual paid enemy Airport construction failed: "+completed.ResultCode);}
+                if(completed.FactionId!=2||completed.HasOwnerFaction!=1||completed.AuthoredStartingGrant!=0||completed.AllowNonBuildableEnemy!=0||completed.RotateVertical!=0||completed.ActualOrigin.x!=enemyOrigin.x||completed.ActualOrigin.y!=enemyOrigin.y||completed.ActualFootprint.x!=enemyFootprint.x||completed.ActualFootprint.y!=enemyFootprint.y||completed.BuildingRuntimeId<=0)throw new InvalidOperationException("Enemy native receipt ownership/flags/origin/footprint differs validated candidate; relocation gate remains unresolved.");
+                if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,2))return;
+                int actualId=ReadAirportRuntime(em,2,enemyOrigin,enemyFootprint);if(actualId!=completed.BuildingRuntimeId||actualId==ownRuntimeId)throw new InvalidOperationException("Independently owned Airport identity mismatch.");
+                if(ownRect.Overlaps(enemyRect))throw new InvalidOperationException("Bilateral effective runway rectangles overlap.");
+                if(!HasRunway(em,1,ownRuntimeId)||!HasRunway(em,2,actualId))return;
+                RequireRunwayOwner(em,1,ownRuntimeId);RequireRunwayOwner(em,2,actualId);SettleNativePlan(em,true);
+                Debug.Log("[S005BilateralAirportPrerequisite] result=Passed owners=2 playerRuntimeId="+ownRuntimeId+" enemyRuntimeId="+actualId+" nativePaidConstruction=1 fullPreviewAndRuntimeValidation=1 relocation=0 ownershipRelabeled=0 physicalGeometryChanged=0 aircraftCapacityCertified=0 airCombatCertified=0");enemyRuntimeId=actualId;phase=60;caseDeadline=now+240;return;
+            }
+        }
+        catch(Exception e){if(phase==9){EditorApplication.update-=Tick;Debug.LogException(e);completion.TrySetResult(1);}else Finish(true,e.ToString());}
+    }
+    static object Member(object obj,string name)
+    {
+        if(obj==null)throw new InvalidOperationException("Missing native placement member "+name);var t=obj.GetType();var flags=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
+        return t.GetProperty(name,flags)?.GetValue(obj)??t.GetField(name,flags)?.GetValue(obj)??throw new MissingMemberException(t.FullName,name);
+    }
+    static void SnapshotLegalPreview()
+    {
+        var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();var source=harness.GetMethod("FindAirportPlacementSource",privateStatic).Invoke(null,new object[]{Member(Member(Member(scene,"MatchBootstrap"),"BuildingUiCommandContext"),"CanConfirmBuildingPlacement"),new HashSet<object>(),0});
+        var lifecycle=Member(source,"BuildingPlacementLifecycleCompositionSystemHelper");var active=Member(lifecycle,"ActivePlacement");var definition=Member(active,"Definition");
+        if(!(bool)Member(active,"IsValid")||(bool)Member(active,"AutoRotateVertical")!=rotatedPlacement)throw new InvalidOperationException("Full native Airport preview is not currently valid/rotation aligned.");
+        var origin=(Vector2Int)Member(active,"OriginCell");var args=new object[]{source,Entity.Null,default(GridConfig),default(DynamicBuffer<GridRoad>),default(DynamicBlockerComponent)};if(!(bool)harness.GetMethod("ReadAirportGrid",privateStatic).Invoke(null,args))throw new InvalidOperationException("No native Airport grid.");var grid=(GridConfig)args[2];
+        var camera=Member(source,"BuildingPlacementGridCameraSystemHelper");var footprint=(Vector2Int)camera.GetType().GetMethod("GetPlacementFootprint",BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).Invoke(camera,new object[]{definition,rotatedPlacement});
+        var rect=(RectInt)harness.GetMethod("AirportEffectiveRect",privateStatic).Invoke(null,new object[]{source,definition,origin,grid,rotatedPlacement});
+        var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>("Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset");var min=GridUtils.WorldToCell(grid,map.Bounds.PlayableMin);var max=GridUtils.WorldToCell(grid,map.Bounds.PlayableMax);if(rect.xMin<min.x||rect.yMin<min.y||rect.xMax>max.x||rect.yMax>max.y)throw new InvalidOperationException("Actual Airport preview exceeds logical bounds.");
+        enemyMaterialsCost=(int)Member(definition,"MaterialsCost");if(enemyMaterialsCost<=0)throw new InvalidOperationException("Real paid Airport price missing.");
+        if(enemyPreview){if(rotatedPlacement)throw new InvalidOperationException("Native AI plan supports unrotated candidate only.");enemyOrigin=origin;enemyFootprint=footprint;enemyRect=rect;}else{ownOrigin=origin;ownFootprint=footprint;ownRect=rect;}
+    }
+    static void ResetPlacementUi(){sourceSites.Clear();sourceRotations.Clear();placementCandidates.Clear();buildSite=0;siteTapped=false;catalogSeenAt=0;catalogLogged=buildDispatched=false;buildDispatchedAt=0;clickedBuild=null;rotatedPlacement=false;candidateSince=0;candidatesPrepared=false;}
+    static void IssueNativeEnemyPlan(EntityManager em)
+    {
+        if(!ownPaidObserved||ownRect.Overlaps(enemyRect))throw new InvalidOperationException("Current independently clear bilateral previews required.");
+        bool found=false;foreach(var item in em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundary))if(item.BuildingId.ToString().Contains("airport",StringComparison.OrdinalIgnoreCase)&&item.CanRequest!=0&&item.MaterialsCost==enemyMaterialsCost){if(found)throw new InvalidOperationException("Ambiguous Airport native config.");enemyConfiguredKey=item.BuildingId;found=true;}if(!found)throw new InvalidOperationException("Actual configured native paid Airport request unavailable.");
+        using(var q=em.CreateEntityQuery(typeof(AIBuildPlan)))using(var plans=q.ToEntityArray(Allocator.Temp))foreach(var entity in plans){var plan=em.GetComponentData<AIBuildPlan>(entity);priorPlans.Add(entity,plan);plan.Enabled=0;em.SetComponentData(entity,plan);}
+        enemyPlan=em.CreateEntity();em.AddComponentData(enemyPlan,new AIBuildPlan{FactionId=2,Enabled=1,BaseCenterCell=new int2(enemyOrigin.x,enemyOrigin.y),BuildIntervalSeconds=.1f,LastBuildTime=-1000});em.AddBuffer<AIBuildPlanEntry>(enemyPlan).Add(new AIBuildPlanEntry{BuildingId=new FixedString64Bytes(enemyConfiguredKey.ToString())});
+        enemyBeforeBuild=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,2));UpdatePlannerWithTemporaryControl(em);
+        bool receiptFound=false;foreach(var r in em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary))if(r.PlanEntity==enemyPlan){if(receiptFound)throw new InvalidOperationException("More than one native plan request.");pendingEnemy=r;receiptFound=true;}
+        if(!receiptFound||pendingEnemy.Status!=BuildingRuntimeSpawnRequest.Pending||pendingEnemy.FactionId!=2||pendingEnemy.AuthoredStartingGrant!=0||pendingEnemy.AllowNonBuildableEnemy!=0||pendingEnemy.HasOwnerFaction!=1||pendingEnemy.MaterialsCost!=enemyMaterialsCost||pendingEnemy.Cost!=0)throw new InvalidOperationException("Actual native paid pending Airport receipt missing or invalid.");
+        var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,2));if(enemyBeforeBuild.LifetimeConstructionSpent+enemyMaterialsCost!=bank.LifetimeConstructionSpent||enemyBeforeBuild.Current-enemyMaterialsCost!=bank.Current)throw new InvalidOperationException("Actual native enemy Materials construction payment missing.");
+        var pausedPlan=em.GetComponentData<AIBuildPlan>(enemyPlan);pausedPlan.Enabled=0;em.SetComponentData(enemyPlan,pausedPlan);LogEnemyReceipt(em,pendingEnemy,"EnemyNativePendingPaidCaptured");
+    }
+    static void UpdatePlannerWithTemporaryControl(EntityManager em)
+    {
+        using var q=em.CreateEntityQuery(typeof(FactionControlConfigTag),typeof(FactionControlEntry));if(q.CalculateEntityCount()!=1)throw new InvalidOperationException("Native faction control boundary missing.");var entity=q.GetSingletonEntity();var entries=em.GetBuffer<FactionControlEntry>(entity);int at=-1;for(int i=0;i<entries.Length;i++)if(entries[i].FactionId==2)at=i;if(at<0)throw new InvalidOperationException("Native faction2 control entry absent.");var saved=entries[at];var temp=saved;temp.AIControlled=1;entries[at]=temp;
+        try{world.Unmanaged.ResolveSystemStateRef(planner).Enabled=true;world.GetExistingSystem<AIBuildPlannerSystem>().Update(world.Unmanaged);}
+        finally{world.Unmanaged.ResolveSystemStateRef(planner).Enabled=false;entries=em.GetBuffer<FactionControlEntry>(entity);if(entries[at].FactionId!=2)throw new InvalidOperationException("Control entry identity changed.");entries[at]=saved;}
+    }
+    static void SettleNativePlan(EntityManager em,bool successful)
+    {
+        var plan=em.GetComponentData<AIBuildPlan>(enemyPlan);plan.Enabled=1;plan.BuildIntervalSeconds=3600;plan.LastBuildTime=(float)world.Unmanaged.Time.ElapsedTime;em.SetComponentData(enemyPlan,plan);UpdatePlannerWithTemporaryControl(em);var settled=em.GetComponentData<AIBuildPlan>(enemyPlan);
+        foreach(var r in em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary))if(r.PlanEntity==enemyPlan)throw new InvalidOperationException("Native planner did not settle/remove captured request.");
+        Debug.Log("[S005BilateralAirportPlanSettlement] nextBuildIndex="+settled.NextBuildIndex+" nativeCompletionConsumed=1 temporaryControlRestored=1");if(successful&&settled.NextBuildIndex!=1)throw new InvalidOperationException("Successful native plan did not advance exactly one entry.");RestorePlanner(em);
+    }
+    static void LogEnemyReceipt(EntityManager em,BuildingRuntimeSpawnRequest r,string label)
+    {
+        var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,2));Debug.Log("[S005BilateralAirportReceipt] "+JsonUtility.ToJson(new AirportRow{phase=label,frame=Time.frameCount,configuredKey=r.BuildingId.ToString(),requestId=r.RequestId,faction=r.FactionId,ownerFlag=r.HasOwnerFaction,status=r.Status,nativeResult=r.ResultCode,cost=r.Cost,materialsCost=r.MaterialsCost,materialsSpentDelta=bank.LifetimeConstructionSpent-enemyBeforeBuild.LifetimeConstructionSpent,beforeMaterials=enemyBeforeBuild.Current,afterMaterials=bank.Current,runtimeId=r.BuildingRuntimeId,originX=r.Status==BuildingRuntimeSpawnRequest.Succeeded?r.ActualOrigin.x:r.PreferredOrigin.x,originZ=r.Status==BuildingRuntimeSpawnRequest.Succeeded?r.ActualOrigin.y:r.PreferredOrigin.y,footprintX=r.ActualFootprint.x,footprintZ=r.ActualFootprint.y,rectX=enemyRect.x,rectZ=enemyRect.y,rectWidth=enemyRect.width,rectHeight=enemyRect.height,granted=r.AuthoredStartingGrant!=0,allowNonbuildable=r.AllowNonBuildableEnemy!=0,rotated=r.RotateVertical!=0,relocated=r.Status==BuildingRuntimeSpawnRequest.Succeeded&&(r.ActualOrigin.x!=enemyOrigin.x||r.ActualOrigin.y!=enemyOrigin.y),fullPreviewValid=true}));
+    }
+    static int ReadAirportRuntime(EntityManager em,byte faction,Vector2Int origin,Vector2Int footprint)
+    {
+        int id=0;using var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishStructureIdentityComponent),typeof(RuntimeBuildingCombatInfo),typeof(UnitHealth));using var es=q.ToEntityArray(Allocator.Temp);foreach(var e in es){var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);var s=em.GetComponentData<SkirmishStructureIdentityComponent>(e);var r=em.GetComponentData<RuntimeBuildingCombatInfo>(e);if(!own.SessionId.Equals(attempt)||own.FactionId!=faction||s.Producer!=SkirmishProducerKind.Airport||em.GetComponentData<UnitHealth>(e).Current<=0)continue;if(r.OwnerFactionId!=faction||r.OriginCell.x!=origin.x||r.OriginCell.y!=origin.y||r.FootprintCells.x!=footprint.x||r.FootprintCells.y!=footprint.y||id!=0)throw new InvalidOperationException("Actual owned Airport geometry/identity differs preview.");id=r.RuntimeBuildingId;}if(id<=0)throw new InvalidOperationException("Actual owned Airport not adopted yet.");return id;
+    }
+    static bool HasRunway(EntityManager em,byte faction,int runtimeId)
+    {
+        int count=0;foreach(var r in em.GetBuffer<BuildingFactionRunwayReadModel>(boundary))if(r.BuildingRuntimeId==runtimeId){if(r.FactionId!=faction)throw new InvalidOperationException("Native runway owner mismatch.");count++;}
+        if(count>1)throw new InvalidOperationException("Duplicate native runway ownership rows.");return count==1;
+    }
+    static void RequireRunwayOwner(EntityManager em,byte faction,int runtimeId){int count=0;foreach(var r in em.GetBuffer<BuildingFactionRunwayReadModel>(boundary))if(r.BuildingRuntimeId==runtimeId){if(r.FactionId!=faction)throw new InvalidOperationException("Airport runway owner differs real paid receipt.");count++;Debug.Log("[S005BilateralAirportRunway] faction="+faction+" runtimeId="+runtimeId+" takeoffCell="+r.TakeoffCell+" landingCell="+r.LandingCell+" ownerReadModelNative=1");}if(count!=1)throw new InvalidOperationException("Exactly one owned native runway readmodel required.");}
+    static void RestorePlanner(EntityManager em){foreach(var pair in priorPlans)if(em.Exists(pair.Key))em.SetComponentData(pair.Key,pair.Value);priorPlans.Clear();if(enemyPlan!=Entity.Null&&em.Exists(enemyPlan))em.DestroyEntity(enemyPlan);enemyPlan=Entity.Null;if(plannerHeld){world.Unmanaged.ResolveSystemStateRef(planner).Enabled=plannerOriginalEnabled;plannerHeld=false;}}
+    static void ObserveOwnTouch(AriaTouchInputUiSystemHelper driver,string kind,Vector2 point)
+    {
+        if(!ReferenceEquals(driver,touch))return;
+        if(kind=="Ended")AriaCommandEvidence.ObserveRelease(Time.frameCount,point);
+        File.AppendAllText(touchPath,JsonUtility.ToJson(new NativeTouchRow {frame=Time.frameCount,time=Time.unscaledTime,kind=kind,phase="Runtime",device=driver.DeviceId,generation=driver.Generation,dispatched=driver.DispatchedGestures,completed=driver.CompletedGestures,samples=driver.AcceptedSamples,unexpected=driver.UnexpectedSamples,interventions=driver.PhysicalInterventions,position=point,commandAuditActive=AriaCommandEvidence.Active,acceptedCommands=AriaCommandEvidence.AcceptedCommands,receiptViolations=AriaCommandEvidence.Violations,matchFinished=false})+"\n");
+    }
+    static bool PreparePlacementCandidates()
+    {
+        if(candidatesPrepared)return true;
+        // This existing helper scans only the active native preview/current Campaign
+        // geometry and returns candidates plus required rotation. Native Touch and
+        // Confirm still decide actual legal placement; no ForceValid/pose mutation.
+        bool ready=(bool)harness.GetMethod("FindPlacementSourceCandidates",privateStatic).Invoke(null,new object[]{sourceSites,16,!enemyPreview,"Airport",sourceRotations});
+        if(!ready)return false;
+        if(sourceSites.Count==0)throw new InvalidOperationException("No bounded current Airport candidate; not exhaustive source-fit proof.");
+        foreach(var site in sourceSites)
+            placementCandidates.Add(new PlacementCandidate{world=site,source="ExistingNativeAirportFullValidator:currentLegalityStillRequiresTouchCommit",rotated=sourceRotations[site]});
+        // Nearby candidates first saves normal map navigation without moving camera directly.
+        placementCandidates.Sort((a,b)=>(a.world-(enemyPreview?enemyBaseAnchor:playerBaseAnchor)).sqrMagnitude.CompareTo((b.world-(enemyPreview?enemyBaseAnchor:playerBaseAnchor)).sqrMagnitude));
+        candidatesPrepared=true;
+        Debug.Log("[S005BilateralAirportPlacementSearch] candidates="+placementCandidates.Count+" actualFullNativeValidator=1 forceValid=0 physicalGeometryChanged=0 inputCommitRequired=1 sourceFitExhaustive=0");
+        return true;
+    }
+    [Serializable] sealed class PlacementObservation
+    {
+        public string phase,source,rawNativeStatus,shownStatus,title,footprint,materialsCost,oilCost,fuelCost,readiness,validityPanelStatus;
+        public int candidate,actualTouches,actualBlocked,ownMaterials,currentDollars,activeMaterialsCost,activeCreditsCost;
+        public Vector3 world,camera;
+        public bool hasPending,canConfirmNative,confirmActive,confirmInteractable,fullMapOpen;
+    }
+    static void ObservePlacement(BuildPlacementConfirmationBarView placement,string phaseName)
+    {
+        var command=(IBuildingUiCommand)typeof(BuildPlacementConfirmationBarView).GetField("_commandSystem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(placement);
+        UiShellRuntimeGateway.TryReadSkirmish(out var model);UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness);
+        var candidate=placementCandidates[buildSite];var map=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        var row=new PlacementObservation {phase=phaseName,candidate=buildSite,actualTouches=actualPlacementTouches,actualBlocked=actualBlockedPlacements,world=candidate.world,source=candidate.source,rawNativeStatus=command?.PlacementStatusText,shownStatus=placement.StatusText?.text,title=placement.TitleText?.text,footprint=placement.FootprintText?.text,materialsCost=placement.MaterialsCostText?.text,oilCost=placement.OilCostText?.text,fuelCost=placement.FuelCostText?.text,ownMaterials=model.OwnMaterials,currentDollars=command?.CurrentDollars??-1,activeMaterialsCost=command?.ActivePlacementCost??-1,activeCreditsCost=command?.ActivePlacementCreditsCost??-1,readiness="stage="+readiness.Stage+" visible="+readiness.Visible+" upgradeEligible="+readiness.CanUpgrade+" pending="+readiness.InProgress+" reason="+readiness.Reason,validityPanelStatus=placement.ValidityPanel!=null?placement.ValidityPanel.StatusText?.text:null,hasPending=placement.HasPendingPlacement,canConfirmNative=command!=null&&command.CanConfirmBuildingPlacement,confirmActive=placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive(),confirmInteractable=placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable(),fullMapOpen=map!=null&&map.IsOpen,camera=Camera.main!=null?Camera.main.transform.position:Vector3.zero};
+        string json=JsonUtility.ToJson(row);Debug.Log("[S005BilateralAirportNativePlacementObservation] "+json);
+        File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-bilateral-airport.placement.jsonl",json+"\n");
+        if(actualPlacementTouches<=6||row.canConfirmNative)ScreenCapture.CaptureScreenshot("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-airport-placement-"+(enemyPreview?"enemy":"player")+"-"+buildSite+"-"+phaseName+"-frame"+Time.frameCount+".png");
+    }
+
+    static Canvas RootCanvas(Component component)
+    {
+        var canvas=component!=null?component.GetComponentInParent<Canvas>()?.rootCanvas:null;
+        return canvas!=null&&canvas.isActiveAndEnabled&&canvas.gameObject.activeInHierarchy?canvas:null;
+    }
+    static Canvas ResolvePresentedInputCanvas()
+    {
+        var fullMap=UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+        if(fullMap!=null&&fullMap.IsOpen)
+        {var fullCanvas=RootCanvas(fullMap.CloseAction)??RootCanvas(fullMap.Minimap);if(fullCanvas!=null)return fullCanvas;}
+        var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+        if(placement!=null&&placement.HasPendingPlacement&&placement.ConfirmButton!=null&&placement.ConfirmButton.IsActive())
+        {var canvas=RootCanvas(placement.ConfirmButton);if(canvas!=null)return canvas;}
+        var catalog=ResolveLiveCatalog(out var drawer);
+        if(drawer!=null&&drawer.IsOpen)
+        {
+            var canvas=RootCanvas(drawer.DrawerRoot!=null?drawer.DrawerRoot.transform:drawer.transform);
+            if(canvas==null)canvas=RootCanvas(drawer.CloseButton);
+            if(canvas!=null)return canvas;
+        }
+        var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+        var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+        return RootCanvas(tray)??RootCanvas(hud);
+    }
+    static void SurfaceBlocked(Canvas canvas,double now)
+    {
+        if(surfaceBlockedSince==0)
+        {
+            surfaceBlockedSince=now;
+            Debug.Log("[S005BilateralAirportNativeInputSurface] phase="+phase+" presentedCanvas="+(canvas!=null?Hierarchy(canvas.transform):"none")+" canvasPixels="+(canvas!=null?canvas.pixelRect.ToString():"none")+" renderScreen="+Screen.width+"x"+Screen.height+" guard=ExactPresentedCanvasWidth");
+            if(phase>=20)DumpNativeBuildInventory("InputSurfaceBlocked",clickedBuild);
+        }
+        if(now-surfaceBlockedSince>=1&&!viewRepairQueued&&viewRepairs<2&&!touch.IsBusy)
+        {
+            viewRepairQueued=true;
+            EditorApplication.delayCall+=()=>
+            {
+                viewRepairQueued=false;if(!EditorApplication.isPlaying||phase==9)return;
+                // Existing harness fixed Game View strategy. Only Editor presentation changes.
+                try
+                {
+                    typeof(Game.Editor.MainMenuV3PrefabBuilder).GetMethod("SetGameViewResolution",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{1920,1080});
+                    viewRepairs++;surfaceBlockedSince=EditorApplication.timeSinceStartup;
+                    Debug.Log("[S005BilateralAirportNativeInputSurface] action=ExistingFixedGameViewStrategy width=1920 height=1080 retry="+viewRepairs+" simulationUntouched=1");
+                }
+                catch(Exception error){Finish(true,"Existing native Game View correction failed: "+error);}
+
+            };
+        }
+        if(now-surfaceBlockedSince>6&&touch.IsBusy)
+            throw new InvalidOperationException("Native gesture pending while no matching presented Canvas exists; bounded fixture/input-surface failure, no BilateralAirportPrerequisite queue attempted.");
+        if(now-surfaceBlockedSince>3&&viewRepairs>=2)
+            throw new InvalidOperationException("Native input surface did not match presented Canvas after bounded existing Game View correction; fixture/presentation failure, no producer or queue defect proven.");
+    }
+
+    static void InputFrame()
+    {
+        if(!EditorApplication.isPlaying||Time.frameCount==inputFrame||touch==null||phase==9)return;
+        try
+        {
+            double surfaceNow=EditorApplication.timeSinceStartup;
+            var canvas=ResolvePresentedInputCanvas();
+            if(canvas==null||Mathf.Abs(canvas.pixelRect.width-Screen.width)>1){SurfaceBlocked(canvas,surfaceNow);return;}
+            surfaceBlockedSince=0;inputFrame=Time.frameCount;
+            touch.Tick(Time.unscaledTime);
+            if(touch.PlayerInterrupted||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0)throw new InvalidOperationException("Native movement Touch audit failed");
+            double now=EditorApplication.timeSinceStartup;
+            if(touch.IsBusy||now<(double)Get("playerResumeDue")||world==null||!world.IsCreated||phase is not (20 or 21 or 22 or 23 or 41 or 62 or 63 or 64))return;
+            var em=world.EntityManager;
+            if(phase>=60){AirInput(em,now);return;}
+            if(phase>=20)
+            {
+                var hud=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                var catalog=ResolveLiveCatalog(out var drawer);
+                var placement=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+                var buildControls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                if(phase==41){if(placement==null||!placement.HasPendingPlacement){phase=42;return;}if(Tap(placement.CancelButton))phase=42;return;}
+                if(phase==20)
+                {
+                    if(hud==null)return;
+                    playerBaseAnchor=hud.PlayerBaseObjectivePosition;enemyBaseAnchor=hud.EnemyBaseObjectivePosition;
+                    if((enemyBaseAnchor-playerBaseAnchor).sqrMagnitude<1)throw new InvalidOperationException("Public HUD base anchors not ready before Build.");
+                    anchorsCached=true;
+                    if(Tap(enemyPreview?hud.EnemyFocusButton:hud.PlayerFocusButton))
+                    {phase=21;Debug.Log("[S005BilateralAirportPublicAnchorCache] source=VisibleHUD beforeBuild=1 player="+playerBaseAnchor+" enemy="+enemyBaseAnchor+" actorStateReadForPlacement=0");}
+                    return;
+                }
+                if(!anchorsCached)throw new InvalidOperationException("No legitimate public HUD base anchor cache for placement.");
+                if(phase==21)
+                {
+                    if(placement!=null&&placement.HasPendingPlacement){phase=22;return;}
+                    if(catalog!=null && !catalogLogged){catalogLogged=true;catalogSeenAt=now;LogLiveCatalog(catalog,drawer);}
+                    if(catalog==null)
+                    {
+                        if(!buildDispatched)
+                        {
+                            DumpNativeBuildInventory("BeforeBuildContact",buildControls?.BuildButton);
+                            if(Tap(buildControls?.BuildButton))
+                            {
+                                clickedBuild=buildControls.BuildButton;buildDispatched=true;buildDispatchedAt=now;
+                                Debug.Log("[S005BilateralAirportNativeBuildContact] dispatched=1 "+ButtonState(clickedBuild));
+                            }
+                            return;
+                        }
+                        if(now-buildDispatchedAt>=3)
+                        {
+                            DumpNativeBuildInventory("NoAssignedOpenCatalogAfterBuild",clickedBuild);
+                            throw new InvalidOperationException("No native catalog with assigned open view appeared within 3 seconds after actual Build Touch. Fixture/UI ownership unresolved; no BilateralAirportPrerequisite producer or queue defect proven.");
+                        }
+                        return;
+                    }
+                    var build=catalog.ResolveCatalogTarget(BuildDrawerCategory.Buildings,"Building_Airport");
+                    if(build==null && now-catalogSeenAt>3)
+                    {
+                        bool included=LogLiveCatalog(catalog,drawer);
+                        DumpNativeBuildInventory("AssignedOpenCatalogMissingAirportControl",clickedBuild);
+                        throw new InvalidOperationException("Actual native catalog assigned to open view has no Airport control; keyIncluded="+included+". Producer UI prerequisite unresolved; no BilateralAirportPrerequisite queue attempted.");
+                    }
+                    if(!Tap(build)&&build!=null)harness.GetMethod("PlayerResumeScrollTo",privateStatic).Invoke(null,new object[]{build});return;
+                }
+                if(phase==23)return;
+                if(placement==null||!placement.HasPendingPlacement)throw new InvalidOperationException("Native placement closed before Airport commit.");
+                if(!PreparePlacementCandidates())return;
+                if(siteTapped)
+                {
+                    ObservePlacement(placement,"AfterCompletedGroundTouch");
+                    if(placement.ConfirmButton!=null&&placement.ConfirmButton.IsInteractable())
+                    {SnapshotLegalPreview();if(enemyPreview){phase=41;Debug.Log("[S005BilateralAirportEnemyPreview] fullNativeValid=1 unrotated=1 playerConfirmNotIssued=1 cancelBeforeNativePlan=1");return;}if(Tap(placement.ConfirmButton)){phase=23;Debug.Log("[S005BilateralAirportProducer] phase=NativeAirportConfirmed forceValid=0 relocationInjected=0 actualPlacementTouches="+actualPlacementTouches+" candidate="+buildSite);}return;}
+                    actualBlockedPlacements++;siteTapped=false;buildSite++;candidateSince=0;
+                }
+                if(buildSite>=placementCandidates.Count)throw new InvalidOperationException("Bounded current native Airport candidates exhausted after actual Touch observations="+actualPlacementTouches+" blocked="+actualBlockedPlacements+". This sample is not exhaustive source-fit/impossibility proof.");
+                var candidate=placementCandidates[buildSite];
+                if(rotatedPlacement!=candidate.rotated)
+                {if(Tap(placement.RotateButton)){rotatedPlacement=candidate.rotated;candidateSince=0;}return;}
+                if(candidateSince==0){candidateSince=now;ObservePlacement(placement,"BeforeCandidateTouchOrNativeNavigation");}
+                if(now-candidateSince>20)
+                {
+                    ObservePlacement(placement,"UnobservedCandidateNavigationTimeout");
+                    throw new InvalidOperationException("Candidate could not be exposed/touched through normal full-map input within20secs; not counted invalid; source-fit remains unqualified. candidate="+buildSite);
+                }
+                // False means navigation/input not yet complete, never 'bad lot'.
+                if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{candidate.world,now}))
+                {siteTapped=true;actualPlacementTouches++;Debug.Log("[S005BilateralAirportProducer] phase=NativePlacementTouch candidate="+candidate.world+" candidateIndex="+buildSite+" actualTouches="+actualPlacementTouches+" source="+candidate.source+" input=Touch offscreenCandidateConsumed=0");}
+                return;
+            }
+
+        }
+        catch(Exception e){Finish(true,e.ToString());}
+    }
+    static void Kill(EntityManager em,Entity actor){var h=em.GetComponentData<UnitHealth>(actor);h.Current=0;em.SetComponentData(actor,h);}
+    static void Finish(bool abort,string reason)
+    {
+        failed=abort;failure=reason;
+        if(plannerHeld&&world!=null&&world.IsCreated)RestorePlanner(world.EntityManager);
+        Canvas.willRenderCanvases-=InputFrame; AriaTouchInputUiSystemHelper.Evidence-=ObserveOwnTouch;AriaCommandEvidence.Recorded-=ObserveAirReceipt;
+        if(touch!=null){if(touch.IsBusy||touch.DispatchedGestures!=touch.CompletedGestures||touch.UnexpectedSamples!=0||touch.PhysicalInterventions!=0){failed=abort=true;reason+=";IncompleteNativeTouchStream";}Debug.Log("[S005BilateralAirportMovementInput] dispatched="+touch.DispatchedGestures+" completed="+touch.CompletedGestures+" acceptedCommands="+AriaCommandEvidence.AcceptedCommands+" violations="+AriaCommandEvidence.Violations);touch.Dispose();touch=null;Set("playerResumeTouch",null);AriaCommandEvidence.End();}
+        if(changedEnemy && world!=null && world.IsCreated && enemySystem!=SystemHandle.Null)world.Unmanaged.ResolveSystemStateRef(enemySystem).Enabled=enemyEnabled;
+        changedEnemy=false;Hold.SetValue(null,0);phase=9;
+        Debug.Log("[S005BilateralAirportClosure] result="+(abort?"Failed":"Passed")+" paidAirportPrerequisiteOnly=0 aircraftCapacityCertified="+(abort?0:1)+" airCombatCertified=0 normalMission=0 reason="+reason);
+        harness.GetMethod("Finish",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{abort,"isolatedBilateralPaidAirportPrerequisite:"+reason});
+    }
+    static int airIndex,enemyRuntimeId,airRequestId;static uint airReceiptId,priorReceipt,moveReceipt,returnReceipt;
+    static Entity airActor;static SkirmishRoleOverlay airRole;static byte airFaction;
+    static FactionTacticalMaterialsComponent airBefore;static float3 airOrigin,airHome;static int2 homeCell;
+    static Vector3 airDestination;static bool nativeAirMove,taxiObserved,takeoffObserved,returnObserved;
+    static float taxiDistance,airDistance;static double diagnosticAt;static readonly List<Entity> paidAir=new();
+    static UnityEngine.UI.Button returnStableButton;static Vector2 returnStablePoint;static double returnStableSince;static int returnAttempts;
+    [Serializable] struct AirRow {public string phase,role,input,attemptId;public int frame,faction,requestId,actorIndex,actorVersion,producerId,materialsPaid,expectedCost,beforeMaterials,afterMaterials,productionSpentDelta,airCap,airLive,airReserved,homeCellX,homeCellZ,takeoffCellX,takeoffCellZ,landingCellX,landingCellZ;public uint reservationId,moveReceipt,returnReceipt;public float x,y,z,homeX,homeY,homeZ,displacement,taxiDistance,homeDistance;public bool usesRunway,airborne,takeoffRolling,landingRolling,returningHome,homeInitialized,taxiObserved,takeoffObserved,returnObserved,syntheticSpawn,poseInjected;}
+    static void LogAir(EntityManager em,string label)
+    {
+        var a=em.GetComponentData<UnitAirComponent>(airActor);var p=em.GetComponentData<LocalTransform>(airActor).Position;var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,airFaction));
+        int cap,live,reserved;ReadAirCapacity(em,airFaction,out cap,out live,out reserved);
+        var row=new AirRow{phase=label,role=airRole.RoleKind.ToString(),input=airFaction==1?"NativeTouch":"NativeMovementAPIOutsideTouchAudit",attemptId=attempt.ToString(),frame=Time.frameCount,faction=airFaction,requestId=airRequestId,reservationId=airReceiptId,actorIndex=airActor.Index,actorVersion=airActor.Version,producerId=airFaction==1?ownRuntimeId:enemyRuntimeId,materialsPaid=airRole.MaterialsCost,expectedCost=airRole.MaterialsCost,beforeMaterials=airBefore.Current,afterMaterials=bank.Current,productionSpentDelta=bank.LifetimeProductionSpent-airBefore.LifetimeProductionSpent,airCap=cap,airLive=live,airReserved=reserved,moveReceipt=moveReceipt,returnReceipt=returnReceipt,x=p.x,y=p.y,z=p.z,homeX=a.HomePosition.x,homeY=a.HomePosition.y,homeZ=a.HomePosition.z,homeCellX=a.HomeCell.x,homeCellZ=a.HomeCell.y,takeoffCellX=a.RunwayTakeoffCell.x,takeoffCellZ=a.RunwayTakeoffCell.y,landingCellX=a.RunwayLandingCell.x,landingCellZ=a.RunwayLandingCell.y,homeInitialized=a.HomeInitialized!=0,usesRunway=a.UsesRunway!=0,airborne=a.Airborne!=0,takeoffRolling=a.TakeoffRolling!=0,landingRolling=a.LandingRolling!=0,returningHome=a.ReturningHome!=0,displacement=math.distance(airOrigin,p),homeDistance=math.distance(airHome,p),taxiDistance=taxiDistance,taxiObserved=taxiObserved,takeoffObserved=takeoffObserved,returnObserved=returnObserved};
+        string json=JsonUtility.ToJson(row);Debug.Log("[S005BilateralMixedAirRow] "+json);File.AppendAllText("/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/native1542-bilateral-mixed-air.air.jsonl",json+"\n");
+    }
+    static void ReadAirCapacity(EntityManager em,byte faction,out int cap,out int live,out int reserved){if(faction==1){var c=em.GetComponentData<SkirmishCapacityComponent>(session);cap=c.AirCap;live=c.AirLive;reserved=c.AirReserved;}else{var c=em.GetComponentData<SkirmishEnemyCapacityComponent>(session);cap=c.AirCap;live=c.AirLive;reserved=c.AirReserved;}}
+    static void RequireAirCapacity(EntityManager em,byte faction,int expectedLive){ReadAirCapacity(em,faction,out int cap,out int live,out int reserved);if(cap!=2||live!=expectedLive||reserved!=0)throw new InvalidOperationException("Native faction"+faction+" Air2 mismatch live="+live+" reserved="+reserved);}
+    static void RequireOwnedHome(EntityManager em)
+    {
+        var a=em.GetComponentData<UnitAirComponent>(airActor);bool match=false;foreach(var r in em.GetBuffer<BuildingFactionRunwayReadModel>(boundary)){if(r.BuildingRuntimeId!=(airFaction==1?ownRuntimeId:enemyRuntimeId))continue;if(r.FactionId!=airFaction)throw new InvalidOperationException("Paid producer runway owner mismatch");bool forward=math.all(a.RunwayTakeoffCell==r.TakeoffCell)&&math.all(a.RunwayLandingCell==r.LandingCell);bool reverse=math.all(a.RunwayTakeoffCell==r.LandingCell)&&math.all(a.RunwayLandingCell==r.TakeoffCell);match=forward||reverse;}if(!match)throw new InvalidOperationException("Actual paid aircraft thresholds do not match its actual faction-owned paid Airport");
+    }
+    static void TickAir(EntityManager em,double now)
+    {
+        if(now>caseDeadline)throw new TimeoutException("Mixed bilateral paid air phase="+phase+" index="+airIndex);
+        foreach(var retained in paidAir)if(!em.Exists(retained)||em.GetComponentData<UnitHealth>(retained).Current<=0)throw new InvalidOperationException("Previously paid air actor lost before bilateral Air2 proof");
+        if(phase==60)
+        {
+            AriaCommandEvidence.End();
+            if(airIndex==4){RequireAirCapacity(em,1,2);RequireAirCapacity(em,2,2);if(paidAir.Count!=4)throw new InvalidOperationException("Exactly four paid native actors required");Debug.Log("[S005BilateralMixedAir] result=Passed paidActors=4 playerAirCap=2 playerAirLive=2 playerAirReserved=0 enemyAirCap=2 enemyAirLive=2 enemyAirReserved=0 mixedFighterPlaneEachFaction=1 nativeTaxiTakeoffHomeReturn=1 airCombatCertified=0 planeCargoCertified=0 normalMission=0");Finish(false,"actualFourPaidMixedAirBilateralTaxiTakeoffHomeReturn");return;}
+            airFaction=(byte)(airIndex<2?1:2);var desired=airIndex%2==0?SkirmishRoleKind.Fighter:SkirmishRoleKind.TransportPlane;var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;bool foundRole=false;foreach(var r in setup.RoleOverlays)if(r.RoleKind==desired){airRole=r;foundRole=true;break;}if(!foundRole||!SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId).Allows(airRole.RoleId))throw new InvalidOperationException("Current allowed air role missing");RequireAirCapacity(em,airFaction,airIndex%2);
+            if(!SkirmishProductionService.HasLivingProducer(em,session,SkirmishProducerKind.Airport,airFaction))throw new InvalidOperationException("Real faction owned paid Airport missing before queue");
+            SkirmishMaterialsService.Write(em,session,airFaction,1800);
+            using(var q=em.CreateEntityQuery(typeof(BuildingResourceStorageComponent)))using(var stores=q.ToEntityArray(Allocator.Temp))foreach(var store in stores){var r=em.GetComponentData<BuildingResourceStorageComponent>(store);if(r.OwnerFactionId!=airFaction)continue;r.StoredFuelBarrels=r.FuelStorageCapacity;r.StoredOilBarrels=r.OilStorageCapacity;em.SetComponentData(store,r);}
+            airBefore=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,airFaction));if(airBefore.Current<airRole.MaterialsCost)throw new InvalidOperationException("Actual clamped faction bank cannot pay configured native aircraft price");
+            priorReceipt=0;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.ReservationId>priorReceipt)priorReceipt=r.ReservationId;
+            airRequestId=9101+airIndex;em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Add(new BuildingFactionUnitProductionRequest{RequestId=airRequestId,RequestOwner=session,RequestAttempt=attempt,FactionId=airFaction,UnitId=new FixedString128Bytes(Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(desired))),Status=BuildingFactionUnitProductionRequest.Pending});
+            airReceiptId=0;airActor=Entity.Null;phase=61;caseDeadline=now+180;diagnosticAt=0;return;
+        }
+        if(phase==61)
+        {
+            if(airReceiptId==0){var requests=em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);bool found=false;for(int i=0;i<requests.Length;i++){var r=requests[i];if(r.RequestId!=airRequestId)continue;found=true;if(r.Status==BuildingFactionUnitProductionRequest.Pending)return;if(r.Status!=BuildingFactionUnitProductionRequest.Succeeded)throw new InvalidOperationException("Native faction aircraft queue rejected: "+r.ResultCode);requests.RemoveAt(i);break;}if(!found)throw new InvalidOperationException("Native production completion vanished");foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==airFaction&&r.Role==airRole.RoleKind&&r.ReservationId>priorReceipt){if(airReceiptId!=0)throw new InvalidOperationException("Ambiguous native receipt");airReceiptId=r.ReservationId;}if(airReceiptId==0)throw new InvalidOperationException("Paid native receipt absent");var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,airFaction));if(bank.LifetimeProductionSpent-airBefore.LifetimeProductionSpent!=airRole.MaterialsCost)throw new InvalidOperationException("Actual native payment mismatch");Debug.Log("[S005BilateralMixedAirQueue] faction="+airFaction+" role="+airRole.RoleKind+" requestId="+airRequestId+" reservationId="+airReceiptId+" expectedCost="+airRole.MaterialsCost+" actualPaid="+(bank.LifetimeProductionSpent-airBefore.LifetimeProductionSpent)+" producerId="+(airFaction==1?ownRuntimeId:enemyRuntimeId)+" nativeQueueAccepted=1");}
+            SkirmishProductionReservation receipt=default;foreach(var r in em.GetBuffer<SkirmishProductionReservation>(session))if(r.FactionId==airFaction&&r.ReservationId==airReceiptId)receipt=r;
+            if(receipt.Phase!=SkirmishReservationPhase.Live||receipt.DeliveredMembers!=receipt.MemberCount)return;if(receipt.MemberCount!=1||receipt.MaterialsPaid!=airRole.MaterialsCost||receipt.ProducerRuntimeId!=(airFaction==1?ownRuntimeId:enemyRuntimeId))throw new InvalidOperationException("Native live receipt paid/producer/member mismatch");
+            using(var q=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent),typeof(UnitHealth)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es){var o=em.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(!o.SessionId.Equals(attempt)||o.FactionId!=airFaction||o.ReservationId!=airReceiptId)continue;if(airActor!=Entity.Null&&airActor!=e)throw new InvalidOperationException("Multiple native paid actors");airActor=e;}
+            if(airActor==Entity.Null||em.HasComponent<UnitSpawnTransitTag>(airActor))return;
+            var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(airActor);if(own.CapacityReleased!=0||em.GetComponentData<UnitHealth>(airActor).Current<=0||!em.HasComponent<SkirmishSharedActorTag>(airActor)||!em.HasComponent<SkirmishArmyGroupMembershipComponent>(airActor)||!em.HasComponent<UnitAirMovement>(airActor)||!em.HasComponent<Faction>(airActor)||em.GetComponentData<Faction>(airActor).Id!=airFaction||!em.HasComponent<UnitSourcePrefabKey>(airActor)||Normalize(em.GetComponentData<UnitSourcePrefabKey>(airActor).Value.ToString())!=Normalize(SkirmishRoleCatalogConfig.RuntimePrefabKey(airRole.RoleKind))||em.GetComponentData<SkirmishRoleOverlayComponent>(airActor).Role!=airRole.RoleKind)throw new InvalidOperationException("Actual paid prefab/native air lifecycle mismatch");
+            var a=em.GetComponentData<UnitAirComponent>(airActor);if(a.HomeInitialized==0||a.UsesRunway==0)return;if(a.Airborne!=0||a.TakeoffRolling!=0)throw new InvalidOperationException("Aircraft did not arrive naturally grounded before order");RequireOwnedHome(em);RequireAirCapacity(em,airFaction,airIndex%2+1);paidAir.Add(airActor);
+            airOrigin=em.GetComponentData<LocalTransform>(airActor).Position;airHome=a.HomePosition;homeCell=a.HomeCell;taxiObserved=takeoffObserved=returnObserved=nativeAirMove=false;taxiDistance=airDistance=0;moveReceipt=returnReceipt=0;returnAttempts=0;returnStableButton=null;
+            var anchor=airFaction==1?playerBaseAnchor:enemyBaseAnchor;airDestination=Vector3.Lerp((Vector3)airHome,anchor,.65f);airDestination.y=airHome.y;if(Vector3.Distance(airDestination,(Vector3)airHome)<100)airDestination=Vector3.Lerp((Vector3)airHome,airFaction==1?enemyBaseAnchor:playerBaseAnchor,.2f);airDestination.y=airHome.y;
+            LogAir(em,"PaidGroundedReady");caseDeadline=now+240;
+            if(airFaction==1){AriaCommandEvidence.Begin();phase=62;}else{AriaCommandEvidence.End();if(!SkirmishWorldMovementService.AssignIntent(em,airActor,(float3)airDestination,SkirmishGroupOrderKind.Move,out var result))throw new InvalidOperationException("Native faction2 movement API rejected: "+result);nativeAirMove=true;phase=63;Debug.Log("[S005BilateralMixedAirEnemyMove] result=Accepted faction=2 requestId="+airRequestId+" nativeSharedMovement=1 outsideTouchAudit=1 destination="+airDestination);}
+            return;
+        }
+        if(phase is 62 or 63 or 64 or 65)
+        {
+            var a=em.GetComponentData<UnitAirComponent>(airActor);var p=em.GetComponentData<LocalTransform>(airActor).Position;RequireOwnedHome(em);if(!math.all(a.HomeCell==homeCell)||math.distance(a.HomePosition,airHome)>.01f)throw new InvalidOperationException("Native owned home changed across actual flight");
+            if(nativeAirMove&&a.Airborne==0&&a.TakeoffRolling==0&&!takeoffObserved){taxiDistance=math.max(taxiDistance,math.distance(airOrigin,p));if(taxiDistance>.5f)taxiObserved=true;}if(a.TakeoffRolling!=0)takeoffObserved=true;if(nativeAirMove&&a.Airborne!=0)airDistance=math.max(airDistance,math.distance(airOrigin,p));if(nativeAirMove&&a.ReturningHome!=0)returnObserved=true;
+            if(now>=diagnosticAt){diagnosticAt=now+3;LogAir(em,"NativeFlightPoll");}
+            if(phase==63&&nativeAirMove&&a.Airborne!=0&&airDistance>=5){if(!taxiObserved||!takeoffObserved)throw new InvalidOperationException("No positive native taxi/takeoff-roll observation before airborne");LogAir(em,"NativeAirbornePassed");if(airFaction==1){phase=64;}else{phase=65;Debug.Log("[S005BilateralMixedAirReturn] faction=2 mode=NaturalNativeMovePassCompletion flagsInjected=0");}return;}
+            if(phase==64&&returnReceipt!=0){if(a.ReturningHome==0&&!(a.Airborne==0&&math.distance(p,airHome)<=1.5f))return;returnObserved=true;LogAir(em,"NativeReturnAccepted");phase=65;return;}
+            if(phase==65&&returnObserved&&a.Airborne==0&&a.ReturningHome==0&&a.LandingRolling==0&&a.TakeoffRolling==0&&math.distance(p,airHome)<=1.5f){if(airFaction==1&&(moveReceipt==0||returnReceipt==0||AriaCommandEvidence.Violations!=0))throw new InvalidOperationException("Native Touch Move/Return receipts missing");LogAir(em,"NativeHomeReturnedPassed");AriaCommandEvidence.End();airIndex++;phase=60;caseDeadline=now+240;return;}
+        }
+    }
+    static void ObserveAirReceipt(string operation,uint receipt,bool verified)
+    {
+        if(!verified||receipt==0||airFaction!=1)return;
+        if(phase==63&&operation=="Move"){moveReceipt=receipt;nativeAirMove=true;airOrigin=world.EntityManager.GetComponentData<LocalTransform>(airActor).Position;}
+        if(phase==64&&operation=="ReturnToBase")returnReceipt=receipt;
+    }
+    static void AirInput(EntityManager em,double now)
+    {
+        if(airFaction!=1||phase is not (62 or 64))return;if(!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command))return;var tray=UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();if(tray==null||controls==null)return;
+        using var q=em.CreateEntityQuery(typeof(SelectedUnitTag));using var selected=q.ToEntityArray(Allocator.Temp);bool exact=selected.Length==1&&selected[0]==airActor;
+        if(!exact){if(selected.Length>0||page.SelectedGroups>0){Tap(tray.ClearSelectionButton);return;}if(command.ActiveCommandMode!=TacticalCommandMode.Select){Tap(controls.SelectButton);return;}for(int slot=0;slot<5;slot++)if(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em,session,slot,out var member)&&member==airActor){Tap(tray.VisibleCardButton(slot));return;}if(page.NextPage)Tap(tray.NextPageButton);else if(page.PreviousPage)Tap(tray.PreviousPageButton);return;}
+        if(phase==62){if(command.ActiveCommandMode!=TacticalCommandMode.Move){Tap(controls.MoveButton);return;}if((bool)harness.GetMethod("PlayerResumeWorldPointTap",privateStatic).Invoke(null,new object[]{airDestination,now})){phase=63;Debug.Log("[S005BilateralMixedAirPlayerMove] phase=Contact faction=1 role="+airRole.RoleKind+" requestId="+airRequestId+" input=NativeTouch");}return;}
+        if(command.ActiveCommandMode is not (TacticalCommandMode.Select or TacticalCommandMode.None)){Tap(controls.SelectButton);return;}var wheel=controls.CommandWheelPanel;if(wheel==null)return;if(!wheel.IsOpen){returnStableButton=null;Tap(wheel.OpenButton);return;}var button=wheel.NextReturnButton;if(button==null||!button.IsActive()||!button.IsInteractable())return;object[] pointArgs={button,Vector2.zero};if(!(bool)harness.GetMethod("TryPresentedButtonPoint",privateStatic).Invoke(null,pointArgs))return;Vector2 point=(Vector2)pointArgs[1];if(returnStableButton!=button||Vector2.Distance(returnStablePoint,point)>1){returnStableButton=button;returnStablePoint=point;returnStableSince=now;return;}if(now-returnStableSince<.5)return;if(returnAttempts>=4)throw new InvalidOperationException("Four native Return contacts produced no accepted receipt");if(Tap(button)){returnAttempts++;returnStableButton=null;Debug.Log("[S005BilateralMixedAirPlayerReturn] phase=Contact role="+airRole.RoleKind+" attempt="+returnAttempts+" input=NativeTouch");}
+    }
+    static string Normalize(string key){foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()){var t=assembly.GetType("Game.Runtime.BuildingDefinitionPrefabSystemHelper",false);if(t!=null)return(string)t.GetMethod("NormalizeSpawnableKey",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,new object[]{key});}throw new MissingMemberException("Native spawnable key normalizer missing");}
+
+}

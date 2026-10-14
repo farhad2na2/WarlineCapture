@@ -1,0 +1,73 @@
+{
+  "sourceHash": "3e0e00d5a8280d22c4efe1dac96125f8c8096a1c4708a830bc79891cef7b9db6",
+  "result": "Passed",
+  "supportChecks": 59,
+  "runs": [
+    {
+      "run": 336,
+      "kind": "Runtime",
+      "log": "tests-336-native-rifle-binding-runtime.log",
+      "logSha256": "0053cf6c0bf32b1a2dbe53e6090907f5ccb0b596c003b32a9839e30395611218",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 11
+    },
+    {
+      "run": 337,
+      "kind": "Smoke",
+      "log": "tests-337-native-rifle-binding-smoke.log",
+      "logSha256": "719c1db688cecad49f3dbd91b7de13309a4fa482cf64ccef1638821094726c56",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 338,
+      "kind": "UiAria",
+      "log": "tests-338-native-rifle-binding-uiaria.log",
+      "logSha256": "04f86513eea7abb092d95b5992f3ec3105e09fdf7d09a04cc810cb737e6692b5",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 339,
+      "kind": "Supply",
+      "log": "tests-339-native-rifle-binding-supply.log",
+      "logSha256": "ca0cce99c97f3fed034d1f794976f4e31569b4797f4c5ce14abae0d10f67a32c",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 13
+    },
+    {
+      "run": 340,
+      "kind": "Campaign",
+      "log": "tests-340-native-rifle-binding-campaign.log",
+      "logSha256": "bab96a1e61e759d13fa881113d0a681214b4aab5cfd2fd54bfafdd9d79ed3fab",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 6
+    },
+    {
+      "run": 341,
+      "kind": "Strike",
+      "log": "tests-341-native-rifle-binding-strike.log",
+      "logSha256": "41e306ac961987b5a93f1aef2ee31f5b7f0f441cf5368778858a18c38b48be90",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": 10
+    },
+    {
+      "run": 342,
+      "kind": "SkirmishSharedMaterials",
+      "log": "tests-342-native-rifle-binding-skirmishsharedmaterials.log",
+      "logSha256": "e93ac6f7d94fe2f202439539de44925278dd82a761a60b00b576faa21e070af0",
+      "wrapperExit": 0,
+      "receiptExit": 0,
+      "tests": null
+    }
+  ],
+  "nativeSkirmishSupportActivated": false,
+  "normalInputAcceptance": false,
+  "playerReady": false
+}

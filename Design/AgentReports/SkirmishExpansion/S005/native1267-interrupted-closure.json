@@ -1,0 +1,20 @@
+{
+  "run": "native1267",
+  "result": "Interrupted_Unqualified_LeaseReleased",
+  "nativeCompletionReceiptPresent": false,
+  "wrapperExit": 143,
+  "runnerExit": 4,
+  "countedWin": false,
+  "reason": "The main Editor exited before the checked validation produced a native completion receipt. The user requested pause; only the wrapper's waiting monitor was stopped after Editor exit.",
+  "sourceHash": "60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "matchingManifestSha256": "f4c91c9b89d05c9b272ffc630582fd6fbc01ff2c95a8d9bc7bbfd77889e7d3b1",
+  "matchingManifests": [
+    "final-1266-normal-aria-post-source-manifest.json",
+    "final-1267-normal-aria-preflight-source-manifest.json",
+    "final-1267-normal-aria-pre-dispatch-source-manifest.json",
+    "final-1267-interruption-recovery-audit-source-manifest.json"
+  ],
+  "editorAudit": "Main Editor PID 2448, validation runner and wrapper were absent; unity status --project-path reported STATUS_NO_INSTANCES while Unity Hub remained open.",
+  "scope": "Release only the stale native1267 validation ownership. A new numbered run must repeat FA seed 130368; no result or Victory is inferred from this run.",
+  "playerReady": false
+}

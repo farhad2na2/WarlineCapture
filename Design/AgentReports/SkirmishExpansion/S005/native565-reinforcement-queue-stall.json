@@ -1,0 +1,17 @@
+{
+  "playerReady": false,
+  "result": "Failed",
+  "reason": "ariaStopped:Blocked",
+  "sourceHash": "208c1adf0f585b1bf77ba8a25d5684fac2776bc72bd30ea175f3cbd4aaccdb09",
+  "prePostIndependentHashMatched": true,
+  "nativeInputJourneyComplete": false,
+  "bothBasesHpAtStall": 800,
+  "publicProjectionAtStall": {
+    "RocketeerRecruitPending": true,
+    "OwnStructureAttackUnits": 4,
+    "OwnInfantry": 12,
+    "OwnMaterials": 380
+  },
+  "initialSourceFoundationCentreOverlapCount": 0,
+  "nextInvestigation": "Paid rocketeer queue delivery; no gameplay outcome injected"
+}

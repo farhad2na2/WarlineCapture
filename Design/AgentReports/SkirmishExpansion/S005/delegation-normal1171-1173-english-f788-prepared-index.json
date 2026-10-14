@@ -1,0 +1,50 @@
+{
+  "status": "PreparedExternalOnly_NotCompiled_NotLoaded_NotExecuted",
+  "sourceHash": "f788e01e25897c16ae470e4e4d9d687a574c35eca934aea9aa25ed9f72254893",
+  "native1168CoreProof": "native1168-focused-current-proof.json",
+  "native1168CoreProofSha256": "9407a06c147846550cdca1f3abce211fcc2872a4d85a362d16004e4a58df00de",
+  "cases": [
+    {
+      "id": 1171,
+      "seed": 104734,
+      "locale": "en",
+      "publicEntry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEn",
+      "fixture": "/private/tmp/S005NormalAria1171Observer.cs",
+      "fixtureSha256": "21eb742a81738bcdc31a2e6d8e70b2d02d5185ee84e60b6a87fc7a8714496c02",
+      "runner": "/private/tmp/s005-run-normal-aria-1171.py",
+      "runnerSha256": "72724cfb2c6ac7fc3e97fcbb54e5ae3bcd7e380188dbfdccf13ea4c9d43d6fcb",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1171-prepared.json",
+      "prepSha256": "4eaf1bece62cf7df51b712f54a6a27bed113dc1db78321765326689c9541d93d",
+      "normalizedIDOnly": true
+    },
+    {
+      "id": 1172,
+      "seed": 130368,
+      "locale": "en",
+      "publicEntry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed2",
+      "fixture": "/private/tmp/S005NormalAria1172Observer.cs",
+      "fixtureSha256": "cd544e9a548eb995e212799028d767061c5521f99d3933d376d41ec956c1fafc",
+      "runner": "/private/tmp/s005-run-normal-aria-1172.py",
+      "runnerSha256": "7d0e71f39067fad97db1cd1b49a0bb9e8161f583529b2db5fa99db8cb99edf62",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1172-prepared.json",
+      "prepSha256": "a775d014fc47c331aa82fe2745bd3b539a378d933e484b454a9968df2ffdedc0",
+      "normalizedIDOnly": true
+    },
+    {
+      "id": 1173,
+      "seed": 155926,
+      "locale": "en",
+      "publicEntry": "Game.Editor.SkirmishS002AriaRunHarness.RunS005EditorAriaEnSeed3",
+      "fixture": "/private/tmp/S005NormalAria1173Observer.cs",
+      "fixtureSha256": "95d2c4ee464c3ecc58e5ad0e6dd550cd06f5fc8a6f4f6fc00a77451b50624012",
+      "runner": "/private/tmp/s005-run-normal-aria-1173.py",
+      "runnerSha256": "e5909e4f03eb5db766e6b9fafbaf9ea7d48425c998cbd09bbff23e0644cfbb73",
+      "prep": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/S005/delegation-normal-aria1173-prepared.json",
+      "prepSha256": "f878709884e85d1c8ba6800fd15234a79c2e6651598f4cf431d156456a728bbb",
+      "normalizedIDOnly": true
+    }
+  ],
+  "previousSourceHistoryPreserved": "1162/1157 wins ca845; all templates/evidence untouched",
+  "sourceAndUnityMutations": false,
+  "playerReady": false
+}

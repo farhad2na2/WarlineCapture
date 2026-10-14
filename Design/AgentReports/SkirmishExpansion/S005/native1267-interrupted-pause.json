@@ -1,0 +1,13 @@
+{
+  "run": "native1267",
+  "result": "Interrupted_Unqualified",
+  "scope": "S005 Persian ARIA seed 130368 normal-input validation on source 60de9fddb00f2c22e416b14082f60ad352e173f867515cfe18942f270b4046f9",
+  "reason": "The main Editor exited during the live validation before writing the required native completion receipt. The user requested a pause. After confirming the Editor process was gone, only the checked wrapper's waiting Python monitor was stopped; Unity Hub and other Editors were untouched.",
+  "runnerExit": 4,
+  "nativeCompletionReceiptPresent": false,
+  "countedWin": false,
+  "evidenceLog": "native-1267-normal-aria-fa-seed130368.log",
+  "evidenceObservation": "native1267-normal-aria-observation.jsonl",
+  "ownership": "TECHNICAL_READINESS_CURRENT.json retains activeRun=native1267 until a later explicit recovery audit; no new Editor run was launched.",
+  "playerReady": false
+}

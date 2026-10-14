@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "command": "command run_script",
+  "data": {
+    "command": "run_script",
+    "parameters": {
+      "file": "/private/tmp/s005-placement-material-lifecycle1372/S005PlacementMaterialLifecycle1372.cs",
+      "entry": "S005PlacementMaterialLifecycle1372.Run",
+      "timeout_ms": "30000"
+    },
+    "result": {
+      "diagnostics": [
+        {
+          "severity": "warning",
+          "message": "'EntityId.GetRawData()' is obsolete: 'Please use EntityId.ToULong(EntityId) instead.'",
+          "line": 78,
+          "column": 65,
+          "id": "CS0618"
+        }
+      ],
+      "compileMs": 111,
+      "executeMs": 3,
+      "assemblyName": "PipelineRunScript_S005PlacementMaterialLifecycle1372_5d22b02a97914fb2aecfa1da21974afc",
+      "success": true,
+      "result": "Load-only1372; isolated Play transition requires root checked-wrapper ownership."
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

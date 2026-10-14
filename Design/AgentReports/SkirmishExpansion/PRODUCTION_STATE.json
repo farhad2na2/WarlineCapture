@@ -1,26 +1,24 @@
 {
   "schema_version": 1,
   "enabled": true,
-  "observed_at_utc": "2026-10-14T21:13:03.949014+00:00",
+  "observed_at_utc": "2026-10-14T21:19:33.447961+00:00",
   "goal": "Complete all 120 existing Skirmish missions with required acceptance evidence",
   "coordinator_thread": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
   "heartbeat": "complete-120-skirmish-missions",
-  "main_pushed_head": "40d7c1529",
+  "main_pushed_head": "affe78930",
   "visual_review": "Asynchronous; continue authorized implementation/technical validation, send native screenshots, do not infer approval",
   "native_lane": {
     "owner": "/root",
-    "kind": "S005 warmed native startup screenshot diagnostic with full before/after source manifest",
-    "state": "Unchanged candidate retry after176-second bake caused previous120-second startup timeout and exit crash; noC#changes",
+    "kind": "Shared42objective rules plusS005north/paidplane load-only native canary",
+    "state": "Running; screenshot03 nativePassed but wrapperfailed actual exitcode unavailable; failurepreserved; wrapperfix assigned",
     "project": "D:/Projects/WarlineCapture",
     "editor_pid": null,
-    "wrapper_session": 43290,
-    "log": "Logs/SkirmishProduction/s005-native-review-20261014-03.log",
-    "timeout_seconds": 1200,
+    "wrapper_session": 44540,
+    "log": "Logs/SkirmishProduction/shared-objectives-s005-load-20261014-01.log",
+    "timeout_seconds": 900,
     "source_frozen": true,
-    "required_pass_marker": "[SkirmishS003Startup] result=Passed",
-    "ownership_rule": "Inspect matching actual process command line and wrapper completion before another run; never terminate it to make room",
-    "launch_script": "Logs/SkirmishProduction/capture-s005-20261014-03.ps1",
-    "review_directory": "Logs/SkirmishProduction/s005-native-review-20261014-03"
+    "required_pass_marker": "[SkirmishProductionContinuationValidation] result=Passed",
+    "ownership_rule": "Inspect matching actual process command line and wrapper completion before another run; never terminate it to make room"
   },
   "validated": [
     "19 queue tests",
@@ -61,5 +59,58 @@
     "Complete normal paid-plane/air evidence and six ground BA pilot; expand certified shared capabilities by packets"
   ],
   "player_ready": false,
-  "new_missions_qualified_this_session": 0
+  "new_missions_qualified_this_session": 0,
+  "latest_native_screenshot": "Design/AgentReports/SkirmishExpansion/S005/windows-native-review-20261014/s005-native-en-1920x1080-opening.png",
+  "pending_imports": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFrontlineReducer.cs",
+      "sha256": "644a49a4e68c6c5b8a0172f7ccf0b67434f9dbaf41e813b2fe69ecfc29e6a4a8",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBreakthroughReducer.cs",
+      "sha256": "dc415b10b81c6eed9533be73fc82cf2240d5d79dd9f4b48ec4fdade042f338c1",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoyReducer.cs",
+      "sha256": "2c7dea0d1033bbbebd288e691d515ffde10a7faf7bf1ee89caca5be7f320c74c",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishFrontlineReducerTests.cs",
+      "sha256": "b701ff01c63fb4532b5fc67f44a8920ab1d355c9525b71d2881f6a5dbb75aeb3",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishBreakthroughReducerTests.cs",
+      "sha256": "38208013574d14b143b71506b2f7ff3e11b4a274aea94f752a325ddea4a50203",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishConvoyReducerTests.cs",
+      "sha256": "37d165a83204c651394938fac75b69520efd7bfc3e71197a2951e5a28fc808b9",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedObjectiveReducerValidation.cs",
+      "sha256": "cc939cc470984f09a3fa7fe3596b9e746fcb4926d538b0499f4375293151f706",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishProductionContinuationValidation.cs",
+      "sha256": "5f3401432592e7635989207ac7fb2d0f7a7d2026028d654f01cdb9cf37db3f86",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S005NormalNorthFlank1632Observer.cs",
+      "sha256": "5dda43e1f4a9b6c2aad6d7b2d5b0e6659aeb5541851113da8153fea02ba90fd7",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+      "sha256": "03da52225f3d16ba66b457e8695299ab8d92327b615ecc6fba372005190c776e",
+      "state": "Native focused run44540 pending; do notcommit runtimebefore requiredmarker andwrappercompletion"
+    }
+  ]
 }

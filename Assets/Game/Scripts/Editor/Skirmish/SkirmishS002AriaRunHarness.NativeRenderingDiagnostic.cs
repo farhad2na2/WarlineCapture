@@ -10,7 +10,7 @@ namespace Game.Editor
     {
         [Serializable] private sealed class NativeRenderingDiagnostic
         {
-            public string stage = "OpeningPackedRenderingFailureV2";
+            public string stage = "OpeningPackedRenderingFailureV3";
             public int frame, databaseCount, activeMapCount, cameraSnapshotCount;
             public bool openingPreviouslyAccepted;
             public NativeRenderingDatabaseDiagnostic[] databases;
@@ -45,7 +45,8 @@ namespace Game.Editor
                     state = RenderingScalars(new OperationMapRenderVirtualizationStateComponent { Initialized = 1, InitialViewApplied = 1, RebuildCount = 2, ActiveSlotCount = 129, OverflowCount = 17 }),
                     metrics = RenderingScalars(new OperationMapRenderVirtualizationMetricsComponent { Capacity = 7403, EnabledSlotCount = 129, OverflowCount = 17 }),
                     readiness = RenderingScalars(new OperationMapRenderPackedReadinessComponent { ProxySlotCount = 7403 }),
-                    selector = new NativeRenderingSelectorDiagnostic { captured = true, selectionFailure = "None",
+                    selector = new NativeRenderingSelectorDiagnostic { captured = true, selectionFailure = "None", scheduledCameraVersion = 258,
+                        guardEnvelope = RenderingScalars(new Game.Rendering.OperationMapRenderCellEnvelope { Min = new Unity.Mathematics.int2(4, 6), Max = new Unity.Mathematics.int2(39, 24) }),
                         assignmentResult = new[] { new NativeRenderingScalar { path = "OverflowCount", kind = "System.Int32", value = "17" } },
                         buckets = new[] { new NativeRenderingBucketDiagnostic { index = 4, capacity = 9, selectedRequiredRows = 26, deficit = 17 } } }
                 } },
@@ -63,6 +64,8 @@ namespace Game.Editor
                 RenderingScalarValue(copy.cameraSnapshots[0].scalars, "Projection.c0.x") != "1" ||
                 row.selector == null || !row.selector.captured || row.selector.selectionFailure != "None" ||
                 row.selector.buckets.Length != 1 || row.selector.buckets[0].deficit != 17 ||
+                row.selector.scheduledCameraVersion != 258 || RenderingScalarValue(row.selector.guardEnvelope, "Min.x") != "4" ||
+                RenderingScalarValue(row.selector.guardEnvelope, "Max.y") != "24" ||
                 RenderingScalarValue(row.selector.assignmentResult, "OverflowCount") != "17")
                 throw new InvalidOperationException("Actual scalar values lost from explicit diagnostic JSON");
             Debug.Log("[SkirmishNativeRenderingDiagnosticSerialization] result=Passed syntheticDtoRoundtrip=1 nativeGameplayCertified=0");
@@ -80,6 +83,11 @@ namespace Game.Editor
         {
             public bool captured;
             public string error = "", selectionFailure = "";
+            public uint scheduledCameraVersion, scheduledStateRevision, scheduledCommandVersion;
+            public int assignmentGeneration;
+            public byte hasGuardEnvelope;
+            public bool currentEnvelopeRecomputed;
+            public NativeRenderingScalar[] guardEnvelope, currentRequiredEnvelope, currentMaterializedEnvelope;
             public NativeRenderingScalar[] assignmentResult;
             public int selectedCells, selectedPlacements, selectedLogicalRows;
             public NativeRenderingBucketDiagnostic[] buckets;
@@ -139,6 +147,25 @@ namespace Game.Editor
                 object system = world.Unmanaged.GetUnsafeSystemRef<Game.Rendering.OperationMapRenderVirtualizationInitializationSystem>(handle);
                 if (!((Entity)RenderingField(system, "_initializedDatabaseEntity")).Equals(databaseEntity))
                     throw new InvalidOperationException("Packed system diagnostic database ownership differs");
+                result.scheduledCameraVersion = (uint)RenderingField(system, "_scheduledCameraVersion");
+                result.scheduledStateRevision = (uint)RenderingField(system, "_scheduledStateRevision");
+                result.scheduledCommandVersion = (uint)RenderingField(system, "_commandVersion");
+                result.assignmentGeneration = (int)RenderingField(system, "_assignmentGeneration");
+                result.hasGuardEnvelope = (byte)RenderingField(system, "_hasGuardEnvelope");
+                result.guardEnvelope = RenderingScalars(RenderingField(system, "_guardEnvelope"));
+                using (var cameraQuery = em.CreateEntityQuery(typeof(RuntimeCameraSnapshotComponent)))
+                {
+                    if (cameraQuery.CalculateEntityCount() != 1) throw new InvalidOperationException("Unique actual camera required for envelope diagnostic");
+                    var actualCamera = cameraQuery.GetSingleton<RuntimeCameraSnapshotComponent>();
+                    var actualDatabase = em.GetComponentData<OperationMapRenderDatabaseComponent>(databaseEntity);
+                    var method = typeof(Game.Rendering.OperationMapRenderVirtualizationInitializationSystem).GetMethod("TryBuildCameraEnvelopes", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                    if (method == null) throw new MissingMethodException("Actual camera-envelope query unavailable");
+                    object[] args = { actualDatabase.Blob, actualCamera, default(Game.Rendering.OperationMapRenderCellEnvelope), default(Game.Rendering.OperationMapRenderCellEnvelope) };
+                    result.currentEnvelopeRecomputed = (bool)method.Invoke(null, args);
+                    if (!result.currentEnvelopeRecomputed) throw new InvalidOperationException("Actual camera-envelope diagnostic failed");
+                    result.currentRequiredEnvelope = RenderingScalars(args[2]);
+                    result.currentMaterializedEnvelope = RenderingScalars(args[3]);
+                }
                 object native = RenderingField(system, "_nativeState");
                 object selection = RenderingField(native, "_selectionFailure");
                 object assignment = RenderingField(native, "_assignmentResult");

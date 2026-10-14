@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Game.Configs;
 using Game.Missions.Contracts;
-using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Runtime;
 using UnityEngine;
 
 namespace Game.UI.Skirmish
 {
+    public delegate SkirmishLibraryViewModel SkirmishLibraryFactory(IReadOnlyList<SkirmishBattleCatalogEntry> catalog);
+
     public sealed class SkirmishLibraryViewModel : ISkirmishLibraryViewModel
     {
         public const string ScenarioPrefsKey = "Warline.Skirmish.LastScenarioId";
@@ -32,11 +33,11 @@ namespace Game.UI.Skirmish
         };
 
         private readonly List<SkirmishBattleCatalogEntry> _catalog = new();
-        private readonly SkirmishMedalLedger _ledger;
+        private readonly ISkirmishMedalReader _medals;
         private readonly Func<string, ContentAccessState> _access;
         private readonly Func<int, int> _randomIndex;
         private readonly ISkirmishLibraryPrefs _prefs;
-        private readonly Func<SkirmishMedalSaveData[]> _medalSource;
+        private readonly Action<SkirmishDifficultyId> _setLaunchDifficulty;
         private readonly bool _showPlanned;
         private int _suspend;
         private int _interactionDepth;
@@ -51,12 +52,12 @@ namespace Game.UI.Skirmish
 
         public SkirmishLibraryViewModel(
             IReadOnlyList<SkirmishBattleCatalogEntry> catalog,
-            SkirmishMedalLedger ledger,
+            ISkirmishMedalReader medals,
             Func<string, ContentAccessState> access,
             Func<int, int> randomIndex = null,
             bool showPlanned = false,
             ISkirmishLibraryPrefs prefs = null,
-            Func<SkirmishMedalSaveData[]> medalSource = null)
+            Action<SkirmishDifficultyId> setLaunchDifficulty = null)
         {
             if (catalog != null)
             {
@@ -64,12 +65,12 @@ namespace Game.UI.Skirmish
                     _catalog.Add(catalog[i]);
             }
 
-            _ledger = ledger ?? new SkirmishMedalLedger(null, _catalog);
+            _medals = medals ?? new EmptySkirmishMedalReader();
             _access = access ?? (_ => ContentAccessState.Allowed);
             _randomIndex = randomIndex;
             _showPlanned = showPlanned;
             _prefs = prefs ?? new PlayerPrefsLibraryStore();
-            _medalSource = medalSource;
+            _setLaunchDifficulty = setLaunchDifficulty;
             _filter = default;
             EnsureSelectedMap();
         }
@@ -77,46 +78,14 @@ namespace Game.UI.Skirmish
         public event Action Changed;
         public event Action<SkirmishLibraryInteraction> Interaction;
 
-        public static SkirmishMedalSaveData[] LoadProfileMedals()
-        {
-            try
-            {
-                return SaveService.CreateDefault().LoadProfile().skirmishMedals ?? Array.Empty<SkirmishMedalSaveData>();
-            }
-            catch (Exception)
-            {
-                return Array.Empty<SkirmishMedalSaveData>();
-            }
-        }
-
         public SkirmishLibraryLevel Level => _level;
         public SkirmishLibraryFilter Filter => _filter;
         public SkirmishTheaterState Theater => BuildTheater();
         public SkirmishBattlefieldState Battlefield => BuildBattlefield();
         public SkirmishBriefingState Briefing => BuildBriefing();
 
-        public static SkirmishLibraryViewModel CreateDefault(IReadOnlyList<SkirmishBattleCatalogEntry> catalog)
-        {
-            SkirmishMedalLedger ledger;
-            try
-            {
-                PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
-                ledger = new SkirmishMedalLedger(profile.skirmishMedals, catalog);
-            }
-            catch (Exception)
-            {
-                ledger = new SkirmishMedalLedger(null, catalog);
-            }
-
-            var model = new SkirmishLibraryViewModel(
-                catalog,
-                ledger,
-                canonicalId => ContentAccessRuntime.Evaluate(canonicalId),
-                showPlanned: ShowPlannedCards,
-                medalSource: LoadProfileMedals);
-            model.RestoreFromPrefs();
-            return model;
-        }
+        public static SkirmishLibraryViewModel CreateUnbound(IReadOnlyList<SkirmishBattleCatalogEntry> catalog) =>
+            new(catalog, new EmptySkirmishMedalReader(), _ => ContentAccessState.Allowed, showPlanned: ShowPlannedCards);
 
         public static bool ShowPlannedCards
         {
@@ -304,7 +273,7 @@ namespace Game.UI.Skirmish
             SkirmishBriefingState briefing = BuildBriefing();
             if (!briefing.CanLaunch)
                 return false;
-            SkirmishLibraryLaunchContext.Difficulty = briefing.SelectedDifficulty;
+            _setLaunchDifficulty?.Invoke(briefing.SelectedDifficulty);
             Raise(SkirmishLibraryInteractionKind.Clicked, briefing.ScenarioId, UIAudioEventKind.ButtonPrimaryClick);
             return true;
         }
@@ -369,7 +338,7 @@ namespace Game.UI.Skirmish
             {
                 if (!IsMapVisible(MapOrder[i]))
                     continue;
-                SkirmishMedalDifficultyTotals totals = TotalsForMap(MapOrder[i]);
+                SkirmishMedalTotals totals = TotalsForMap(MapOrder[i]);
                 pins.Add(new SkirmishTheaterPinState
                 {
                     MapId = MapOrder[i],
@@ -377,7 +346,7 @@ namespace Game.UI.Skirmish
                     SubtitleLocKey = "ui.skirmish.theater." + MapOrder[i].ToLowerInvariant() + ".subtitle",
                     PlatePreviewKey = "skirmish.plate." + MapOrder[i],
                     PublishedCount = CountPublished(MapOrder[i], null),
-                    WonCount = _ledger.CountFor(MapOrder[i]),
+                    WonCount = _medals.CountFor(MapOrder[i]),
                     Medals = new SkirmishMedalTotals
                     {
                         Recruit = totals.Recruit,
@@ -391,7 +360,7 @@ namespace Game.UI.Skirmish
                 });
             }
 
-            SkirmishMedalDifficultyTotals overallMedals = TotalsAcrossCatalog();
+            SkirmishMedalTotals overallMedals = TotalsAcrossCatalog();
             int earned = overallMedals.Recruit + overallMedals.Regular + overallMedals.Veteran + overallMedals.Commander;
             int published = _showPlanned ? DevOverallPublishedCount : CountPublished(null, null);
             return new SkirmishTheaterState
@@ -425,7 +394,7 @@ namespace Game.UI.Skirmish
                     ObjectiveId = ObjectiveOrder[i],
                     TitleLocKey = "ui.skirmish.objective." + ObjectiveOrder[i].ToLowerInvariant(),
                     PublishedCount = CountPublished(mapId, ObjectiveOrder[i]),
-                    WonCount = _ledger.CountFor(mapId, ObjectiveOrder[i])
+                    WonCount = _medals.CountFor(mapId, ObjectiveOrder[i])
                 };
             }
 
@@ -544,7 +513,7 @@ namespace Game.UI.Skirmish
             {
                 if (!IsMapVisible(MapOrder[i]) || !HasOwnedMissingRegular(MapOrder[i]))
                     continue;
-                int wins = _ledger.CountFor(MapOrder[i]);
+                int wins = _medals.CountFor(MapOrder[i]);
                 if (wins < bestWins)
                 {
                     bestWins = wins;
@@ -577,7 +546,7 @@ namespace Game.UI.Skirmish
                     continue;
                 if (ResolveCardAccess(entry) != SkirmishCardAccess.Playable)
                     continue;
-                if (!_ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Regular))
+                if (!_medals.Has(entry.ScenarioId, SkirmishDifficultyId.Regular))
                     return true;
             }
 
@@ -593,7 +562,7 @@ namespace Game.UI.Skirmish
                     continue;
                 if (ResolveCardAccess(entry) != SkirmishCardAccess.Playable)
                     continue;
-                if (!_ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Regular))
+                if (!_medals.Has(entry.ScenarioId, SkirmishDifficultyId.Regular))
                     return entry.ScenarioId;
             }
 
@@ -638,7 +607,7 @@ namespace Game.UI.Skirmish
                 !string.Equals(CanonicalStart(entry.StartProfile), CanonicalStart(filter.StartProfile), StringComparison.Ordinal))
                 return false;
             if (filter.MedalMissing.HasValue && IsMedalDifficulty(filter.MedalMissing.Value) &&
-                _ledger.Has(entry.ScenarioId, filter.MedalMissing.Value))
+                _medals.Has(entry.ScenarioId, filter.MedalMissing.Value))
                 return false;
             if (!string.IsNullOrWhiteSpace(filter.SearchText))
             {
@@ -712,31 +681,31 @@ namespace Game.UI.Skirmish
         private SkirmishMedalMask MaskFor(string scenarioId)
         {
             SkirmishMedalMask mask = SkirmishMedalMask.None;
-            if (_ledger.Has(scenarioId, SkirmishDifficultyId.Recruit))
+            if (_medals.Has(scenarioId, SkirmishDifficultyId.Recruit))
                 mask |= SkirmishMedalMask.Recruit;
-            if (_ledger.Has(scenarioId, SkirmishDifficultyId.Regular))
+            if (_medals.Has(scenarioId, SkirmishDifficultyId.Regular))
                 mask |= SkirmishMedalMask.Regular;
-            if (_ledger.Has(scenarioId, SkirmishDifficultyId.Veteran))
+            if (_medals.Has(scenarioId, SkirmishDifficultyId.Veteran))
                 mask |= SkirmishMedalMask.Veteran;
-            if (_ledger.Has(scenarioId, SkirmishDifficultyId.Commander))
+            if (_medals.Has(scenarioId, SkirmishDifficultyId.Commander))
                 mask |= SkirmishMedalMask.Commander;
             return mask;
         }
 
-        private SkirmishMedalDifficultyTotals TotalsForMap(string mapId)
+        private SkirmishMedalTotals TotalsForMap(string mapId)
         {
-            var totals = new SkirmishMedalDifficultyTotals();
+            var totals = new SkirmishMedalTotals();
             for (int i = 0; i < _catalog.Count; i++)
             {
                 if (!string.Equals(_catalog[i].MapId, mapId, StringComparison.OrdinalIgnoreCase))
                     continue;
-                if (_ledger.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Recruit))
+                if (_medals.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Recruit))
                     totals.Recruit++;
-                if (_ledger.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Regular))
+                if (_medals.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Regular))
                     totals.Regular++;
-                if (_ledger.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Veteran))
+                if (_medals.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Veteran))
                     totals.Veteran++;
-                if (_ledger.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Commander))
+                if (_medals.Has(_catalog[i].ScenarioId, SkirmishDifficultyId.Commander))
                     totals.Commander++;
             }
 
@@ -755,32 +724,32 @@ namespace Game.UI.Skirmish
                     continue;
                 if (!seen.Add(entry.ScenarioId))
                     continue;
-                if (_ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Recruit) ||
-                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Regular) ||
-                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Veteran) ||
-                    _ledger.Has(entry.ScenarioId, SkirmishDifficultyId.Commander))
+                if (_medals.Has(entry.ScenarioId, SkirmishDifficultyId.Recruit) ||
+                    _medals.Has(entry.ScenarioId, SkirmishDifficultyId.Regular) ||
+                    _medals.Has(entry.ScenarioId, SkirmishDifficultyId.Veteran) ||
+                    _medals.Has(entry.ScenarioId, SkirmishDifficultyId.Commander))
                     count++;
             }
 
             return count;
         }
 
-        private SkirmishMedalDifficultyTotals TotalsAcrossCatalog()
+        private SkirmishMedalTotals TotalsAcrossCatalog()
         {
-            var totals = new SkirmishMedalDifficultyTotals();
+            var totals = new SkirmishMedalTotals();
             var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < _catalog.Count; i++)
             {
                 string scenarioId = _catalog[i].ScenarioId;
                 if (!seen.Add(scenarioId))
                     continue;
-                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Recruit))
+                if (_medals.Has(scenarioId, SkirmishDifficultyId.Recruit))
                     totals.Recruit++;
-                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Regular))
+                if (_medals.Has(scenarioId, SkirmishDifficultyId.Regular))
                     totals.Regular++;
-                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Veteran))
+                if (_medals.Has(scenarioId, SkirmishDifficultyId.Veteran))
                     totals.Veteran++;
-                if (_ledger.Has(scenarioId, SkirmishDifficultyId.Commander))
+                if (_medals.Has(scenarioId, SkirmishDifficultyId.Commander))
                     totals.Commander++;
             }
 
@@ -1048,12 +1017,7 @@ namespace Game.UI.Skirmish
         private static bool Contains(string value, string search) =>
             !string.IsNullOrEmpty(value) && value.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
 
-        private void RefreshMedals()
-        {
-            if (_medalSource == null)
-                return;
-            _ledger.Replace(_medalSource());
-        }
+        private void RefreshMedals() => _medals.Refresh();
 
         private void Persist()
         {
@@ -1079,6 +1043,14 @@ namespace Game.UI.Skirmish
             public string Get(string key, string fallback) => PlayerPrefs.GetString(key, fallback ?? string.Empty);
             public void Set(string key, string value) => PlayerPrefs.SetString(key, value ?? string.Empty);
             public void Save() => PlayerPrefs.Save();
+        }
+
+        private sealed class EmptySkirmishMedalReader : ISkirmishMedalReader
+        {
+            public bool Has(string catalogId, SkirmishDifficultyId difficulty) => false;
+            public int CountFor(string mapId) => 0;
+            public int CountFor(string mapId, string objectiveId) => 0;
+            public void Refresh() { }
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
+using Game.UI.Skirmish;
 
 namespace Game.UI.Runtime
 {
@@ -41,6 +42,7 @@ namespace Game.UI.Runtime
         private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private IQuickCustomGameConfigStore _quickCustomGameConfigStore;
         private IMatchLaunchCommand _matchLaunchCommand;
+        private SkirmishLibraryFactory _skirmishLibraryFactory;
         private ISelectionDiagnosticsSink _selectionDiagnosticsSink;
         private MainMenuPlayUI _mainMenuPlayUi;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
@@ -232,10 +234,13 @@ namespace Game.UI.Runtime
 
         public void BindQuickCustomRuntimeDependencies(
             IQuickCustomGameConfigStore configStore,
-            IMatchLaunchCommand launchCommand)
+            IMatchLaunchCommand launchCommand,
+            SkirmishLibraryFactory libraryFactory = null)
         {
             _quickCustomGameConfigStore = configStore;
             _matchLaunchCommand = launchCommand;
+            if (libraryFactory != null)
+                _skirmishLibraryFactory = libraryFactory;
             BindQuickCustomScreens(shellView != null ? shellView.gameObject : null);
             BindGameStartButtons(shellView != null ? shellView.gameObject : null);
         }
@@ -325,7 +330,10 @@ namespace Game.UI.Runtime
 
                 QuickCustomScreenView[] views = root.GetComponentsInChildren<QuickCustomScreenView>(true);
                 for (int j = 0; j < views.Length; j++)
-                    views[j]?.BindRuntimeDependencies(_quickCustomGameConfigStore, _matchLaunchCommand);
+                    views[j]?.BindRuntimeDependencies(
+                        _quickCustomGameConfigStore,
+                        _matchLaunchCommand,
+                        _skirmishLibraryFactory);
             }
         }
 

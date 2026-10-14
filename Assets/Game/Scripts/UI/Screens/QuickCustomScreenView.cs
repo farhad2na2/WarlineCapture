@@ -235,10 +235,12 @@ namespace Game.UI.Runtime
 
         public void BindRuntimeDependencies(
             IQuickCustomGameConfigStore configStore,
-            IMatchLaunchCommand launchCommand)
+            IMatchLaunchCommand launchCommand,
+            SkirmishLibraryFactory libraryFactory = null)
         {
             _configStore = configStore;
             _launchCommand = launchCommand;
+            UseLibraryFactory(libraryFactory);
             flowSystem.Initialize(this, _configStore);
         }
 

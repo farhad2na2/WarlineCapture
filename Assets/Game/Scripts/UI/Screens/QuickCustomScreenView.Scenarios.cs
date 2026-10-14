@@ -35,6 +35,8 @@ namespace Game.UI.Runtime
         private string _selectedScenarioId;
         private string _mapFilter = string.Empty;
         private SkirmishLibraryViewModel _libraryViewModel;
+        private SkirmishLibraryFactory _libraryFactory;
+        private bool _libraryFactoryBound;
 
         public ISkirmishLibraryViewModel Library
         {
@@ -129,13 +131,25 @@ namespace Game.UI.Runtime
                    string.Equals(_libraryViewModel.Briefing.ScenarioId, selected, StringComparison.Ordinal);
         }
 
+        internal void UseLibraryFactory(SkirmishLibraryFactory factory)
+        {
+            if (factory == null || _libraryFactoryBound)
+                return;
+            _libraryFactory = factory;
+            _libraryFactoryBound = true;
+            _libraryViewModel = null;
+        }
+
         private void EnsureLibraryViewModel()
         {
             if (_libraryViewModel != null)
                 return;
             if (_catalogEntries.Count == 0)
                 ReloadCatalogEntries();
-            _libraryViewModel = SkirmishLibraryViewModel.CreateDefault(_catalogEntries);
+            _libraryViewModel = _libraryFactory != null
+                ? _libraryFactory(_catalogEntries)
+                : SkirmishLibraryViewModel.CreateUnbound(_catalogEntries);
+            _libraryViewModel.RestoreFromPrefs();
         }
 
         private void TouchLibrary(Action<ISkirmishLibraryViewModel> action)

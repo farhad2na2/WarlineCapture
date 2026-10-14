@@ -508,7 +508,14 @@ namespace Game.Tests.Editor
             Func<int, int> randomIndex = null,
             bool showPlanned = false,
             ISkirmishLibraryPrefs prefs = null) =>
-            new(entries, ledger, access ?? (_ => ContentAccessState.Allowed), randomIndex, showPlanned, prefs ?? new MemoryPrefs());
+            new(
+                entries,
+                new FakeSkirmishMedalReader(ledger),
+                access ?? (_ => ContentAccessState.Allowed),
+                randomIndex,
+                showPlanned,
+                prefs ?? new MemoryPrefs(),
+                difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
 
         private static SkirmishTheaterPinState Pin(SkirmishLibraryViewModel model, string mapId)
         {

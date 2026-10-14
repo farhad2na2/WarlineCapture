@@ -4,24 +4,29 @@ Programmer 2's screen should own one `SkirmishLibraryViewModel` and drop the stu
 
 ## Construction
 
-`QuickCustomScreenView` already owns the instance. Read it from `QuickCustomScreenView.Library` (`ISkirmishLibraryViewModel`). The screen builds it with `SkirmishLibraryViewModel.CreateDefault(catalog)`:
+`QuickCustomScreenView` owns the instance. Read it from `QuickCustomScreenView.Library` (`ISkirmishLibraryViewModel`). Composition builds it and injects it. `MenuBootstrapCompositionSystemHelper` passes `SkirmishLibraryComposition.Create` through `UIShellContentView.BindQuickCustomRuntimeDependencies` into `QuickCustomScreenView.BindRuntimeDependencies`. The first factory is kept; a later match rebind does not replace an in-progress library.
 
-- loads profile medals through `SkirmishMedalLedger`
+`SkirmishLibraryComposition.Create`:
+
+- wraps `SkirmishMedalLedger` in `ISkirmishMedalReader` (`SkirmishMedalLedgerReader`). `Refresh` reloads profile medals
 - evaluates access with `ContentAccessRuntime.Evaluate`
+- writes the selected difficulty with `difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty`
 - passes `ShowPlannedCards` (`UNITY_EDITOR` or `DEVELOPMENT_BUILD`)
-- calls `RestoreFromPrefs`
 
-Tests and tools can construct it directly:
+The screen calls `RestoreFromPrefs` after the factory returns. `Game.UI.Runtime` does not reference `Game.Runtime`. The view model reads medals only through `ISkirmishMedalReader`. The result card reads `MedalScenarioId`, `MedalDifficulty`, and `MedalIsFirstAward` from the skirmish gateway and does not reference `SkirmishMedalLedger`. Before composition binds, the screen uses an empty reader and treats access as allowed.
+
+Tests construct it with a fake reader:
 
 ```csharp
 var library = new SkirmishLibraryViewModel(
     catalog,
-    ledger,
-    id => ContentAccessRuntime.Evaluate(id),
-    showPlanned: SkirmishLibraryViewModel.ShowPlannedCards);
+    medals,
+    id => ContentAccessState.Allowed,
+    showPlanned: SkirmishLibraryViewModel.ShowPlannedCards,
+    setLaunchDifficulty: difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
 ```
 
-`SelectMapCollection("")` is the theater. `SelectScenarioId` opens that scenario's battlefield and card. `Launch()` only stores the selected difficulty on `SkirmishLibraryLaunchContext`. `SkirmishExpandedLaunchResolver` stays the access gate.
+`SelectMapCollection("")` is the theater. `SelectScenarioId` opens that scenario's battlefield and card. `Launch()` calls the injected difficulty callback and does not touch `SkirmishLibraryLaunchContext` itself. `SkirmishExpandedLaunchResolver` stays the access gate.
 
 ## Changed
 
@@ -35,7 +40,7 @@ The theater header reads overall progress from `SkirmishTheaterState`:
 - `OverallPublishedCount` — release: published Playable count; dev/editor (`showPlanned`): `SkirmishLibraryViewModel.DevOverallPublishedCount` (120)
 - `OverallMedalsEarned` — Recruit + Regular + Veteran + Commander on those scenarios
 - `OverallMedalsPossible` — `OverallPublishedCount * 4`
-- `OverallMedalTotals` — the same four counts from `SkirmishMedalLedger`
+- `OverallMedalTotals` — the same four counts read through `ISkirmishMedalReader`
 
 ## Button sounds
 

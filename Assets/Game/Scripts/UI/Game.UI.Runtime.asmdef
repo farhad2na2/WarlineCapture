@@ -17,7 +17,6 @@
         "Game.Missions.Contracts",
         "Game.Components",
         "Game.Operations.Contracts",
-        "Game.Runtime",
         "Game.Skirmish.Contracts"
     ],
     "includePlatforms": [],

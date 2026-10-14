@@ -308,7 +308,14 @@ namespace Game.Tests.Editor
             Func<int, int> randomIndex = null,
             bool showPlanned = false,
             ISkirmishLibraryPrefs prefs = null) =>
-            new(entries, ledger, access ?? (_ => ContentAccessState.Allowed), randomIndex, showPlanned, prefs ?? new MemoryPrefs());
+            new(
+                entries,
+                new FakeSkirmishMedalReader(ledger),
+                access ?? (_ => ContentAccessState.Allowed),
+                randomIndex,
+                showPlanned,
+                prefs ?? new MemoryPrefs(),
+                difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
 
         private static SkirmishTheaterPinState Pin(SkirmishLibraryViewModel model, string mapId)
         {
@@ -379,5 +386,22 @@ namespace Game.Tests.Editor
         {
             public bool Owns(string productId) => false;
         }
+    }
+
+    internal sealed class FakeSkirmishMedalReader : ISkirmishMedalReader
+    {
+        private readonly SkirmishMedalLedger _ledger;
+
+        public FakeSkirmishMedalReader(SkirmishMedalLedger ledger) => _ledger = ledger;
+
+        public bool Has(string catalogId, SkirmishDifficultyId difficulty) =>
+            _ledger.Has(catalogId, difficulty);
+
+        public int CountFor(string mapId) => _ledger.CountFor(mapId);
+
+        public int CountFor(string mapId, string objectiveId) =>
+            _ledger.CountFor(mapId, objectiveId);
+
+        public void Refresh() { }
     }
 }
